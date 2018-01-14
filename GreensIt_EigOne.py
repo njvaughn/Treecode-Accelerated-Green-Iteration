@@ -27,11 +27,15 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import style
-style.use('ggplot')
+import matplotlib.ticker as ticker
+import os
+##style.use('ggplot')
 import scipy as sp
 import scipy.optimize as spo
 from models import *
 from plot_utilities import *
+import mpltex
+
 
 """  Select Model """
 Model = Poschl_Teller # select a class from models.py
@@ -110,7 +114,7 @@ class Bound_States(Model):
     def greens_iterations(self):
         H = self.hamiltonian()
         z= self.z_in
-        z_old = 2*self.z_in
+        z_old = z - 1e-1
         psi = self.psi_in
         # initial orthogonalization
         for i in range(1,energy_levels):
@@ -126,7 +130,7 @@ class Bound_States(Model):
 
         for i in range(energy_levels):  # perform serially
             count = 0
-            while abs(error_vec[i]) > self.z_tolerance and count<4000:
+            while abs(error_vec[i]) > self.z_tolerance:# and count<4000:
                 z_old[i] = z[i]
                 G_z = self.matrix(z[i])
                 psi[i,:] = self.normalize(np.dot(G_z,psi[i,:]))
@@ -145,18 +149,20 @@ class Bound_States(Model):
 
                 error_vec[i] = z_old[i] - z[i]
 ##                error_vec = z_old - z
-                if totalcount%100==0:
-                    print('count ', count)
-                    print('error_vec = ', (error_vec))
+#                 if totalcount%10==0:
+#                     print('count ', count)
+#                     print('error_vec = ', (error_vec))
                 count+=1
                 totalcount+=1
+            print('Greens-It count: ', count)
+            print('Greens-It total count: ', totalcount)
 
         return psi,z
 
 
     ###Eigenvalue-One Methods###
 
-    def inverse_iteration(self,A):
+    def inverse_iteration_with_LU(self,A):
         I = np.eye(len(A))
         psi = self.psi_in
 
@@ -164,72 +170,103 @@ class Bound_States(Model):
         eig_new = 10
         LU = sp.linalg.lu_factor(A-I)
         count=0
-        while abs(eig_new-eig_old) > self.eig_tolerance and count < 5000: # 1e-14 sufficeint for Morse, 1e-16 doesnt improve
+        while abs(eig_new-eig_old) > self.eig_tolerance and count < 10000: # 1e-14 sufficeint for Morse, 1e-16 doesnt improve
             eig_old     = eig_new
             psi         = sp.linalg.lu_solve(LU,psi)
             psi         = psi/np.linalg.norm(psi)
             eig_new     = np.dot(psi,np.dot(A,psi))
             count+=1
+        print("LU count: ",count)
 
         return psi, eig_new 
+    
+    def inverse_iteration_with_GMRES(self,A):
+        I = np.eye(len(A))
+        psi = self.psi_in
+        AminusI = A - I
+        eig_old = 2
+        eig_new = 10
+        count=0
+        while abs(eig_new-eig_old) > self.eig_tolerance and count < 10000: # 1e-14 sufficeint for Morse, 1e-16 doesnt improve
+            eig_old     = eig_new
+            psi,info         = sp.sparse.linalg.gmres(AminusI, psi, tol=1e-01)
+            if info != 0:
+                print("GMRES did not exit cleanly.  Info = ", info)
+            psi         = psi/np.linalg.norm(psi)
+            eig_new     = np.dot(psi,np.dot(A,psi))
+            count+=1
+        print("GMRES count:", count)
+
+        return psi, eig_new
 
 
-    def E_to_Eig_Minus1(self,z):
-        A = self.matrix(z)
-        psi,eig = self.inverse_iteration(A)
-        return eig-1
-
-    def E_guess_BI(self,E_low,E_high):
-        brent_time = time.time()
-        try:
-            z = spo.brenth(self.E_to_Eig_Minus1, self.e_low, self.e_high, xtol=2e-16, rtol=8.8817841970012523e-16,
-                           maxiter=100, full_output=False, disp=True)
-            print('brent time = ', time.time()-brent_time)
-            return z
-        except ValueError as VE:
-            print('Brent Rootfinding failed, no sign change.  Trying to rememdy...')
-
-        low = self.E_to_Eig_Minus1(E_low)
-        high = self.E_to_Eig_Minus1(E_high)
-        if abs(low) < abs(high):
-            E_low = E_low*1.1
-        else:
-            E_high = E_high*0.9
-
-        try:
-            z = spo.brenth(self.E_to_Eig_Minus1, E_low, E_high, xtol=2e-16, rtol=8.8817841970012523e-16,
-                           maxiter=100, full_output=False, disp=True)
-            return z
-        except ValueError as VE:
-            print('Brent Rootfinding still failed.  Adjust E_low and E_high.')
+#     def E_to_Eig_Minus1(self,z):
+#         A = self.matrix(z)
+# #         psi,eig = self.inverse_iteration_with_LU(A)
+#         psi,eig = self.inverse_iteration_with_GMRES(A)
+#         return eig-1
+# 
+#     def E_guess_BI(self,E_low,E_high):
+#         brent_time = time.time()
+#         try:
+#             z = spo.brenth(self.E_to_Eig_Minus1, self.e_low, self.e_high, xtol=2e-16, rtol=8.8817841970012523e-16,
+#                            maxiter=100, full_output=False, disp=True)
+#             print('brent time = ', time.time()-brent_time)
+#             return z
+#         except ValueError as VE:
+#             print('Brent Rootfinding failed, no sign change.  Trying to rememdy...')
+# 
+#         low = self.E_to_Eig_Minus1(E_low)
+#         high = self.E_to_Eig_Minus1(E_high)
+#         if abs(low) < abs(high):
+#             E_low = E_low*1.1
+#         else:
+#             E_high = E_high*0.9
+# 
+#         try:
+#             z = spo.brenth(self.E_to_Eig_Minus1, E_low, E_high, xtol=2e-16, rtol=8.8817841970012523e-16,
+#                            maxiter=100, full_output=False, disp=True)
+#             return z
+#         except ValueError as VE:
+#             print('Brent Rootfinding still failed.  Adjust E_low and E_high.')
 
     def E_guess_Newton(self,E_low,E_high):
         newt_time = time.time()
-##        z_old = self.z_in
+        z_old = self.z_in
 ##        z_old = (E_high+E_low)/2
-        
-        z_old = self.e_true # this is "cheating".  But I could instead manually
+#         z_old= -9.5
+#         z_old = self.e_true # this is "cheating".  But I could instead manually
                             # pick starting values in the target energy's basin
                             # of attraction.  Just have to be careful.
         print('initial z :', z_old)
-        z_new = z_old - 1e-6
+        z_new = z_old - 1e-1
+        count = 0
         while abs(z_new-z_old) > 1e-13:
             z_old = z_new
             A = self.matrix(z_old)
-            psi, eig = self.inverse_iteration(A)
-##            print('eig = ', eig)
+#             psi, eig = self.inverse_iteration_with_LU(A)
+            psi, eig = self.inverse_iteration_with_GMRES(A)
+
+
+##            eig, psi = sp.sparse.linalg.eigs(A, k=1, sigma=1)
+##            eig = np.real(eig)
+##            psi = np.real(psi[:,0])
+            
             z_new = z_old - (1-eig)/eig**2* np.dot( psi, self.V*psi )/np.dot(psi,psi)
+            count+=1
         print('Newton search time: ', time.time()-newt_time)
-        return z_new
+        print('Eig-One with Newton count: ', count)
+        return z_new, psi, eig
 
 
         
     def eigenvalue_one(self):
         
-        z = self.E_guess_Newton(self.e_low, self.e_high)
+        z,psi,eig = self.E_guess_Newton(self.e_low, self.e_high)
 ##        z = self.E_guess_BI(self.e_low, self.e_high)
-        A = self.matrix(z)
-        psi,eig = self.inverse_iteration(A)
+#         A = self.matrix(z)
+# #         psi,eig = self.inverse_iteration_with_LU(A)
+#         psi,eig = self.inverse_iteration_with_GMRES(A)
 
         return psi,z
         
@@ -256,8 +293,8 @@ def GI_driver(x_min,x_max,nx,D,psi_in,z_in,z_tolerance,mesh_levels,energy_levels
     
     # initiate the run, and add in the runtime iteration parameters
 
-    run = Bound_States(xmin,xmax,nx,D)
-    dx = (xmax-xmin)/nx
+    run = Bound_States(x_min,x_max,nx,D)
+    dx = (x_max-x_min)/nx
     e_true_vec = []
     run.wave_true = np.empty((energy_levels,),dtype=object)
     for i in range(energy_levels):
@@ -405,8 +442,8 @@ def EO_driver(x_min,x_max,nx,D,psi_in,eig_tolerance,mesh_levels,refinement_rate,
     
     # initiate the run, and add in the runtime iteration parameters
 
-    run = Bound_States(xmin,xmax,nx,D)
-    dx = (xmax-xmin)/nx
+    run = Bound_States(x_min,x_max,nx,D)
+    dx = (x_max-x_min)/nx
     run.e_true = run.true_energy(n,D)
     run.e_low = 1.4*run.e_true
     run.e_high = 1*run.e_true
@@ -443,7 +480,7 @@ def EO_driver(x_min,x_max,nx,D,psi_in,eig_tolerance,mesh_levels,refinement_rate,
         run.energy_computed[l] = run.e
         run.z_in = run.e.copy()
         run.psi_computed[l] = run.psi.copy()
-        print('time = ', time.time()-driver_time, '\n')
+        print('total time = ', time.time()-driver_time, '\n')
         if l < mesh_levels-1:
             run.mesh_refinement(refinement_rate)
 
@@ -523,17 +560,123 @@ def EO_driver(x_min,x_max,nx,D,psi_in,eig_tolerance,mesh_levels,refinement_rate,
 
        
     print('='*70,'\n')
-##    cont = input('type \'yes\' to calculate another energy level...' + '\n')
-    try:
-        n = int(input('enter another energy level...' + '\n'))
-        print('='*70,'\n')
-        run = EO_driver(xmin,xmax,nx,D,psi_in,eig_tolerance,mesh_levels,refinement_rate,n)
-    except ValueError as VE:
-        return run
+##    try:
+##        n = int(input('enter another energy level...' + '\n'))
+##        print('='*70,'\n')
+##        run = EO_driver(xmin,xmax,nx,D,psi_in,eig_tolerance,mesh_levels,refinement_rate,n)
+##    except ValueError as VE:
+##        return run
               
     return run
 
+def EO_domain_analysis(nx_coarse, nx_mid, nx_fine, xmax_small, xmax_large, save='no'):
+    D = 4
+    n=3
+    eig_tolerance = 1e-14
+    z_in = -7.1
 
+    mesh_levels = 3
+    refinement_rate = 3
+    # short domain, coarse grid
+    psi_in = np.random.rand(nx_coarse)
+    short_coarse = EO_driver(-xmax_small,xmax_small,nx_coarse,D,psi_in,eig_tolerance,mesh_levels,refinement_rate,n=3)
+    psi_sc = short_coarse.wave_matrix[0,-1]
+    wave_true_sc = short_coarse.wave_true
+    
+    sc_grid = np.linspace(-xmax_small,xmax_small,nx_coarse)
+##    plt.figure()
+##    plt.plot(sc_grid,psi_sc,'g')
+##    plt.plot(sc_grid,wave_true_sc,'r')
+##    plt.show()
+
+    # short domain, mid grid
+    psi_in = np.random.rand(nx_mid)
+    short_fine = EO_driver(-xmax_small,xmax_small,nx_mid,D,psi_in,eig_tolerance,mesh_levels,refinement_rate, n=3)
+    psi_sf = short_fine.wave_matrix[0,-1]
+    wave_true_sf = short_fine.wave_true
+    
+    sf_grid = np.linspace(-xmax_small,xmax_small,nx_mid)
+##    plt.figure()
+##    plt.plot(sf_grid,psi_sf,'g')
+##    plt.plot(sf_grid,wave_true_sf,'r')
+##    plt.show()
+    
+
+    # long domain, coarse grid
+    psi_in = np.random.rand(nx_mid)
+    long_coarse = EO_driver(-xmax_large,xmax_large,nx_mid,D,psi_in,eig_tolerance,mesh_levels,refinement_rate, n=3)
+    psi_lc = long_coarse.wave_matrix[0,-1]
+    wave_true_lc = long_coarse.wave_true
+    
+    lc_grid = np.linspace(-xmax_large,xmax_large,nx_mid)
+
+##    plt.figure()
+##    plt.plot(lc_grid,psi_lc,'g')
+##    plt.plot(lc_grid,wave_true_lc,'r')
+##    plt.show()
+
+    
+    # long domain, fine grid
+    psi_in = np.random.rand(nx_fine)
+    long_fine = EO_driver(-xmax_large,xmax_large,nx_fine,D,psi_in,eig_tolerance,mesh_levels,refinement_rate, n=3)
+    psi_lf = long_fine.wave_matrix[0,-1]
+    wave_true_lf = long_fine.wave_true
+
+    lf_grid = np.linspace(-xmax_large,xmax_large,nx_fine)
+
+##    plt.figure()
+##    plt.plot(lf_grid,psi_lf,'g')
+##    plt.plot(lf_grid,wave_true_lf,'r')
+##    plt.show()
+
+    if np.dot(wave_true_sc, psi_sc) < np.dot(wave_true_sc, -psi_sc):
+        psi_sc = -psi_sc
+    if np.dot(wave_true_lc, psi_lc) < np.dot(wave_true_lc, -psi_lc):
+        psi_lc = -psi_lc
+    if np.dot(wave_true_sf, psi_sf) < np.dot(wave_true_sf, -psi_sf):
+        psi_sf = -psi_sf
+    if np.dot(wave_true_lf, psi_lf) < np.dot(wave_true_lf, -psi_lf):
+        psi_lf = -psi_lf
+
+    err_max = 1.5*np.max(abs(wave_true_sc-psi_sc))
+##    err_max = 1E-6
+
+    f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')
+    
+##    plt.subplot(221)
+    ax1.plot(sc_grid, wave_true_sc-psi_sc,'k')
+    ax1.set_ylim([-err_max,err_max])
+    ax1.set_title('$Short\ Domain,\ Coarse\ Grid$')
+    ax1.yaxis.set_major_formatter(ticker.FormatStrFormatter('%0.0e'))
+    ax1.set_yticks([-1e-7, 0 , 1e-7])
+    ax1.set_xticks([-7, 0 ,7])
+    
+##    plt.subplot(223)
+    ax3.plot(sf_grid, wave_true_sf-psi_sf,'k')
+    ax3.set_ylim([-err_max,err_max])
+    ax3.set_title('$Short\ Domain,\ Fine\ Grid$')
+    
+##    plt.subplot(222)
+    ax2.plot(lc_grid, wave_true_lc-psi_lc,'k')
+    ax2.set_ylim([-err_max,err_max])
+    ax2.set_title('$Long\ Domain,\ Coarse\ Grid$')
+    
+##    plt.subplot(224)
+    ax4.plot(lf_grid, wave_true_lf-psi_lf,'k')
+    ax4.set_ylim([-err_max,err_max])
+    ax4.set_title('$Long\ Domain,\ Fine\ Grid$')
+    ax4.yaxis.set_major_formatter(ticker.FormatStrFormatter('%0.0e'))
+    ax4.set_yticks([-1e-7, 0 , 1e-7])
+    ax4.set_xticks([-14,-7, 0 ,7,14])
+
+    plt.tight_layout(pad=0.2, w_pad=0.5, h_pad=1.0)
+    if save != 'no':
+        cwd = os.getcwd()
+        save_dir = '/Users/nathanvaughn/UMich_Drive/Research/Figure_Stockpile/'
+        plt.savefig(save_dir + save + '.pdf',format='pdf')
+    plt.show()
+    return
+   
 
 #################################################################################
 #################################################################################
@@ -541,44 +684,46 @@ def EO_driver(x_min,x_max,nx,D,psi_in,eig_tolerance,mesh_levels,refinement_rate,
 #################################################################################
 #################################################################################
 
+if __name__ == '__main__':
 
 
 
-# for fsw
-# need  self.xendpoints = np.linspace(self.xmin, self.xmax, self.nx+1)
-# to put endpoints at +/- a
-##D = 1
-##a = 5*D
-##len_ratio = 20
-####xmin = -len_ratio*a
-####xmax = len_ratio*a
-####nx = int( len_ratio * 10 ) # using some multiple of len ratio ensures an endpoint occurs at +/- a
-##xmin = -6
-##xmax = 6
-##nx = 100
-
-
-# for others
-D = 4
-xmin = -10  # for PT, 10 is good for EO
-xmax = 10
-nx = 100
-
-
-z_tolerance = 1e-13
-mesh_levels = 5
-energy_levels = 1
-psi_in = np.random.rand(energy_levels,nx)
-z_in = -1.1*np.ones((energy_levels,))
-##z_in = 2*np.ones((energy_levels,))
-refinement_rate = 3
-
-runGI = GI_driver(xmin,xmax,nx,D,psi_in,z_in,z_tolerance,mesh_levels,energy_levels,refinement_rate)
-
-
-eig_tolerance = 1e-14
-psi_in = np.random.rand(nx)
-
-runEO = EO_driver(xmin,xmax,nx,D,psi_in,eig_tolerance,mesh_levels,refinement_rate)
-
-
+    # for fsw
+    # need  self.xendpoints = np.linspace(self.xmin, self.xmax, self.nx+1)
+    # to put endpoints at +/- a
+    ##D = 1
+    ##a = 5*D
+    ##len_ratio = 20
+    ####xmin = -len_ratio*a
+    ####xmax = len_ratio*a
+    ####nx = int( len_ratio * 10 ) # using some multiple of len ratio ensures an endpoint occurs at +/- a
+    ##xmin = -6
+    ##xmax = 6
+    ##nx = 100
+    
+    
+    # for others
+    D = 4
+    xmin = -10  # for PT, 10 is good for EO
+    xmax = 10
+    nx = 100
+    
+    ##
+    z_tolerance = 1e-13
+    mesh_levels = 5
+    energy_levels = 1
+    psi_in = np.random.rand(energy_levels,nx)
+#     z_in = -1.1*np.ones((energy_levels,))
+    z_in = -9.5*np.ones((energy_levels,))
+    ####z_in = 2*np.ones((energy_levels,))
+    refinement_rate = 3
+    ##
+#     runGI = GI_driver(xmin,xmax,nx,D,psi_in,z_in,z_tolerance,mesh_levels,energy_levels,refinement_rate)
+    ##
+    ##
+    eig_tolerance = 1e-14
+    psi_in = np.random.rand(nx)
+    ##
+    runEO = EO_driver(xmin,xmax,nx,D,psi_in,eig_tolerance,mesh_levels,refinement_rate)
+    
+    ##EO_domain_analysis(100, 200, 400, 7, 14, save='domain_effects')
