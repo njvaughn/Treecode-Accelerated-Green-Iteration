@@ -24,6 +24,10 @@ class TestGreenIterations(unittest.TestCase):
         self.assertEqual(self.run.xmin, self.run.grid[0])
         self.assertEqual(self.run.xmax, self.run.grid[-1])
         self.assertEqual(len(self.run.grid), self.run.nx)
+        
+    def testHamiltonianGenerator(self):
+        self.run.add(operanda=2,operandb=3)
+        pass
 
 
 if __name__ == "__main__":

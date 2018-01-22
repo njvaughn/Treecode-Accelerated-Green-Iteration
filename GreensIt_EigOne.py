@@ -36,6 +36,10 @@ from models import *
 from plot_utilities import *
 import mpltex
 
+import cProfile
+from pycallgraph import PyCallGraph
+from pycallgraph.output import GraphvizOutput
+
 
 """  Select Model """
 Model = Poschl_Teller # select a class from models.py
@@ -43,7 +47,16 @@ Model = Poschl_Teller # select a class from models.py
 ##Model = Square
 ##Model = Harmonic_Oscillator
 
-
+class gmres_counter(object):
+    def __init__(self, disp=True):
+        self._disp = disp
+        self.niter = 0
+    def __call__(self, rk=None):
+        self.niter += 1
+#         if self._disp:
+#             print('iter %3i\trk = %s' % (self.niter, str(rk)))
+#             self.niter = 0
+counter = gmres_counter()
 #################################################################################
 #################################################################################
 """                         DEFINE BOUND STATE CLASS                          """ 
@@ -100,6 +113,7 @@ class Bound_States(Model):
         np.diag(np.ones(self.nx-1),1) -np.diag(2*np.ones(self.nx)) ) +
         np.diag(self.V) )
         return H
+    
 
     def orthogonalize(self,psi_in,psi_orth):
         return psi_in - np.dot(psi_in,psi_orth)/np.dot(psi_orth,psi_orth)*psi_orth
@@ -187,9 +201,10 @@ class Bound_States(Model):
         eig_old = 2
         eig_new = 10
         count=0
+#         counter = gmres_counter()
         while abs(eig_new-eig_old) > self.eig_tolerance and count < 10000: # 1e-14 sufficeint for Morse, 1e-16 doesnt improve
             eig_old     = eig_new
-            psi,info         = sp.sparse.linalg.gmres(AminusI, psi, tol=1e-01)
+            psi,info         = sp.sparse.linalg.gmres(AminusI, psi, tol=1e-01, callback=counter)
             if info != 0:
                 print("GMRES did not exit cleanly.  Info = ", info)
             psi         = psi/np.linalg.norm(psi)
@@ -710,7 +725,7 @@ if __name__ == '__main__':
     
     ##
     z_tolerance = 1e-13
-    mesh_levels = 5
+    mesh_levels = 4
     energy_levels = 1
     psi_in = np.random.rand(energy_levels,nx)
 #     z_in = -1.1*np.ones((energy_levels,))
@@ -718,7 +733,7 @@ if __name__ == '__main__':
     ####z_in = 2*np.ones((energy_levels,))
     refinement_rate = 3
     ##
-#     runGI = GI_driver(xmin,xmax,nx,D,psi_in,z_in,z_tolerance,mesh_levels,energy_levels,refinement_rate)
+    runGI = GI_driver(xmin,xmax,nx,D,psi_in,z_in,z_tolerance,mesh_levels,energy_levels,refinement_rate)
     ##
     ##
     eig_tolerance = 1e-14
