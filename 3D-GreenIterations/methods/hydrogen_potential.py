@@ -10,8 +10,8 @@ def potential(x,y,z=0):
     return -1/r
 
 def trueEnergy(n):
-    return 
+    return -1/(2*n*n)
 
-def trueWavefunction(n, xgrid,ygrid,zgrid):
-    psi = np.ndarray((len(xgrid),len(ygrid),len(zgrid)))
-    return psi
+def trueWavefunction(n, x,y,z):
+    return 2*np.exp(- np.sqrt(x*x + y*y + z*z ))
+    
