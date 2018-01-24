@@ -21,7 +21,7 @@ print(__name__)
 def run():
 # print('name == main')
     start = time.time()
-    nx = ny = nz = 10
+    nx = ny = nz = 12
     xmin = ymin = zmin = -6
     xmax = ymax = zmax = 6
     dx = (xmax-xmin)/nx
@@ -40,7 +40,7 @@ def run():
     
     deltaE = 1
     count=1
-    while deltaE > 1e-1:
+    while deltaE > 1e-4:
         print('Green Iteration Count: ', count)
         E_old = E
         t3 = time.time()

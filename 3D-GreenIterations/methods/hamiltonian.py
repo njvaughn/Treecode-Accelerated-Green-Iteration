@@ -8,11 +8,12 @@ import numpy as np
 def Hamiltonian(V,psi,x,y,z):
     # hbar = 1
     # mass = 1
-    delta_psi = Delta(psi,x,y,z)
+    delta_psi = Delta_old(psi,x,y,z)
+    print('using old delta')
     return -delta_psi/2 + V*psi
 
-
-def Delta(psi,x,y,z):
+ 
+def Delta_old(psi,x,y,z):
     delta_x = x[1,0,0] - x[0,0,0]
     delta_y = y[0,1,0] - y[0,0,0]
     delta_z = z[0,0,1] - z[0,0,0]
@@ -24,10 +25,24 @@ def Delta(psi,x,y,z):
     ym = np.roll(psi,-1,axis=1)
     zp = np.roll(psi,1,axis=2)
     zm = np.roll(psi,-1,axis=2)
-    
+     
     delta_psi = (-6*psi + xp + xm + yp + ym + zp + zm)/(delta_x*delta_x)
-    
     return delta_psi
+
+
+def Delta(psi,x,y,z):
+
+    dx = x[1,0,0] - x[0,0,0]
+    dy = y[0,1,0] - y[0,0,0]
+    dz = z[0,0,1] - z[0,0,0]
+    
+    psi_x,psi_y,psi_z = np.gradient(psi,dx,dy,dz,edge_order=2) 
+    
+    psi_xx = np.gradient(psi_x,dx,edge_order=2,axis=0)
+    psi_yy = np.gradient(psi_y,dy,edge_order=2,axis=1)
+    psi_zz = np.gradient(psi_z,dz,edge_order=2,axis=2)
+    
+    return psi_xx+psi_yy+psi_zz
 
 def EnergyUpdate(V,psi,x,y,z):
     dx = x[1,0,0] - x[0,0,0]

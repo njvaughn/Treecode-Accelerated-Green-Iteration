@@ -35,14 +35,14 @@ class TestHamiltonian(unittest.TestCase):
         self.assertAlmostEqual(Delta_psi[0,1,3], Delta_psi[10,18,0], 10, 
                                "Second derivative isn't constant throughout domain.")
         
-    def testHamiltonian(self):
-        xmin = -1; xmax = 1
-        ymin = -1; ymax = 1
-        zmin = -1; zmax = 1
-        nx = ny = nz = 20
-        x,y,z = generate_grid(nx, ny, nz, xmin, xmax, ymin, ymax, zmin, zmax)
-        psi = x*x + y*y + z*z
-        Hamiltonian(potential(x,y,z), psi, x, y, z)
+#     def testHamiltonian(self):
+#         xmin = -1; xmax = 1
+#         ymin = -1; ymax = 1
+#         zmin = -1; zmax = 1
+#         nx = ny = nz = 20
+#         x,y,z = generate_grid(nx, ny, nz, xmin, xmax, ymin, ymax, zmin, zmax)
+#         psi = x*x + y*y + z*z
+#         Hamiltonian(potential(x,y,z), psi, x, y, z)
         
 
 if __name__ == "__main__":
