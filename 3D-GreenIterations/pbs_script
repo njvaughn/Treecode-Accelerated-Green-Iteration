@@ -1,0 +1,16 @@
+#!/bin/sh
+#PBS -S /bin/sh
+#PBS -N out 
+#PBS -l procs=1,mem=4gb,walltime=4:00:00
+#PBS -A lsa_flux
+#PBS -l qos=flux
+#PBS -q flux
+
+#PBS -m abe
+#PBS -j oe
+#PBS -V
+#
+
+cd ~/Greens-Functions-Iterative-Methods/3D-GreenIterations
+python main.py
+
