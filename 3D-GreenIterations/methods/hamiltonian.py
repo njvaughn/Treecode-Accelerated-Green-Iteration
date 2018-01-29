@@ -8,8 +8,7 @@ import numpy as np
 def Hamiltonian(V,psi,x,y,z):
     # hbar = 1
     # mass = 1
-    delta_psi = Delta_old(psi,x,y,z)
-    print('using old delta')
+    delta_psi = Delta(psi,x,y,z)
     return -delta_psi/2 + V*psi
 
  

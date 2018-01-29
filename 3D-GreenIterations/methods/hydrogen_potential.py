@@ -13,5 +13,8 @@ def trueEnergy(n):
     return -1/(2*n*n)
 
 def trueWavefunction(n, x,y,z):
+    print('editing jan 26')
+    if n!=1:
+        print('warning, don\'t have higher energy wavefunctions yet')
     return 2*np.exp(- np.sqrt(x*x + y*y + z*z ))
     

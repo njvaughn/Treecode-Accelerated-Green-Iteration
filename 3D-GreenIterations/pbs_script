@@ -1,16 +1,19 @@
 #!/bin/sh
 #PBS -S /bin/sh
-#PBS -N out 
-#PBS -l procs=1,mem=2gb,walltime=1:00:00
+#PBS -N heatmap 
+#PBS -l procs=1,mem=12gb,walltime=4:00:00
 #PBS -A lsa_flux
 #PBS -l qos=flux
 #PBS -q flux
 
-#PBS -m abe
+#PBS -m a
 #PBS -j oe
 #PBS -V
 #
 
 cd ~/Greens-Functions-Iterative-Methods/3D-GreenIterations
-python main.py
+module load python-anaconda3
+python main.py 20 8 1e-4
+
+# args:  numpts gridsize tolerance
 
