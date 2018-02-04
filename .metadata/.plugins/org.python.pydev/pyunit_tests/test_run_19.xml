@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pydev-testrun version="1.0"?><pydev-testsuite>
+<summary errors="0" failures="1" finished="true" name="Test Run: 137" tests="15" total_time="Finished in: 0.31 secs."/>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="ok" test="TestHamiltonian.testKineticEnergy" time="0.01">
+<stdout><![CDATA[KE error:  0.0441552208381
+]]></stdout>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="ok" test="TestHamiltonian.testPotentialEnergy" time="0.08">
+<stdout><![CDATA[PE error:  -0.00147334577805
+]]></stdout>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="fail" test="TestHamiltonian.testRichardsonExtrapolationKE" time="">
+<stdout><![CDATA[coarse grid KE error:  0.163153285764
+fine grid KE error:  0.0605679484182
+extrapolated KE error:  0.0263728359696
+]]></stdout>
+<stderr><![CDATA[Traceback (most recent call last):
+  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 176, in testRichardsonExtrapolationKE
+    self.assertEqual(0, 1, "0 not equal to 1")
+AssertionError: 0 != 1 : 0 not equal to 1
+]]></stderr>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="ok" test="TestHamiltonian.testRichardsonExtrapolationPE" time="0.07">
+<stdout><![CDATA[coarse grid PE error:  -0.0426667926933
+fine grid PE error:  -0.0227500552504
+extrapolated PE error:  -0.0161111427695
+]]></stdout>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="ok" test="TestHamiltonian.testSecondDerivative" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_convolution.py" status="ok" test="TestConvolution.testSimpleConvolution" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_hydrogen_potential.py" status="ok" test="Test_Hydrogen.test2DPotentialProjection" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_hydrogen_potential.py" status="ok" test="Test_Hydrogen.testAnalyticEnergy" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_hydrogen_potential.py" status="ok" test="Test_Hydrogen.testAnalyticWavefunction" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_hydrogen_potential.py" status="ok" test="Test_Hydrogen.testPotential" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_hydrogen_potential.py" status="ok" test="Test_Hydrogen.testPotentialOnMesh" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_mesh.py" status="ok" test="Test_Mesh.testGrid" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_mesh.py" status="ok" test="Test_Mesh.testIntegrationSchemes" time="0.10">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_mesh.py" status="ok" test="Test_Mesh.testNormalization" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_mesh.py" status="ok" test="Test_Mesh.testSmallGrid" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<launch mode="run">
+<launch_memento><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration local="true" path="unittest-all"/>
+]]></launch_memento>
+</launch>
+</pydev-testsuite>

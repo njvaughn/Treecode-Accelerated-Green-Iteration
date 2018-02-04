@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;3D-GreenIterations/profile_output&apos;" deleteContents="false" description="Delete resource &apos;3D-GreenIterations/profile_output&apos;" element1="/3D-GreenIterations/profile_output" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1517351972837"/>&#x0A;<refactoring comment="Delete resource &apos;3D-GreenIterations/profilestats&apos;" deleteContents="false" description="Delete resource &apos;3D-GreenIterations/profilestats&apos;" element1="/3D-GreenIterations/profilestats" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1517351978179"/>
+</session>

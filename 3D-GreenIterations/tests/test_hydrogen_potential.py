@@ -53,6 +53,11 @@ class Test_Hydrogen(unittest.TestCase):
     
     def testAnalyticWavefunction(self):
         pass
+#         x,y,z = generate_grid(21, 21, 21, -10, 10, -10, 10, -10, 10)
+#         dx = dy = dz = 1
+#         psi = trueWavefunction(0, x, y, z)
+#         
+#         self.assertEqual(np.sum(psi*psi)*dx*dy*dz, 1, "wavefunction isn't normalized")
         
 
 if __name__ == "__main__":

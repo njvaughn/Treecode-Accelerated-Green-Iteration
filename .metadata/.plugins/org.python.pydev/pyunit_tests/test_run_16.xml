@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pydev-testrun version="1.0"?><pydev-testsuite>
+<summary errors="1" failures="2" finished="true" name="Test Run: 134" tests="3" total_time="Finished in: 0.10 secs."/>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="error" test="TestHamiltonian.testKineticEnergy" time="">
+<stdout><![CDATA[error, even number of nodes
+]]></stdout>
+<stderr><![CDATA[Traceback (most recent call last):
+  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 83, in testKineticEnergy
+    W = trapezoid_weight_matrix(nx, ny, nz)
+  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/methods/mesh3D.py", line 57, in trapezoid_weight_matrix
+    W2 = np.multiply.outer(W1,W1)
+TypeError: unsupported operand type(s) for *: 'NoneType' and 'NoneType'
+]]></stderr>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="fail" test="TestHamiltonian.testPotentialEnergy" time="">
+<stdout><![CDATA[PE error:  -0.00147334577805
+]]></stdout>
+<stderr><![CDATA[Traceback (most recent call last):
+  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 75, in testPotentialEnergy
+    self.assertAlmostEqual(computed_PE, true_PE, 3, "potential energy not accurate enough")
+AssertionError: -0.99852665422194808 != -1.0 within 3 places : potential energy not accurate enough
+]]></stderr>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="fail" test="TestHamiltonian.testRichardsonExtrapolationKE" time="">
+<stdout><![CDATA[coarse grid KE error:  0.110555649049
+fine grid KE error:  0.0441552208381
+extrapolated KE error:  0.0220217447678
+]]></stdout>
+<stderr><![CDATA[Traceback (most recent call last):
+  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 176, in testRichardsonExtrapolationKE
+    self.assertEqual(0, 1, "0 not equal to 1")
+AssertionError: 0 != 1 : 0 not equal to 1
+]]></stderr>
+</test>
+<launch mode="run">
+<launch_memento><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration local="true" path="3D-GreenIterations test_Hamiltonian.py [pyunit run]"/>
+]]></launch_memento>
+</launch>
+</pydev-testsuite>
