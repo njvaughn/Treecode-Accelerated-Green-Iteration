@@ -1,9 +1,0 @@
-INSTUPcell_data_structure
-/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/methods/cell_data_structure.py
-INFOS:&&1|1|2|0&&2|3|2|1&&3|4|2|5&&3|6|2|5
-cell_data_structure=2
-psi_grid=6
-coordinate_grid=4
-cell=1
-__init__=3
-cell.__init__=5

@@ -1,0 +1,12 @@
+class cell(object):
+    
+    
+    def __init__(self, gridpoints, psi):
+        self.gridpoints = gridpoints
+        self.psi = psi
+        
+    
+    
+
+
+
