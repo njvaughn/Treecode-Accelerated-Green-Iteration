@@ -1,0 +1,17 @@
+class cell(object):
+    
+    
+    def __init__(self, x,y,z, psi):
+        self.psi = psi
+        self.x = x
+        self.y = y
+        self.z = z
+        self.dz = self.x[1]-self.x[0]
+        self.dz = self.y[1]-self.y[0]
+        self.dz = self.z[1]-self.z[0]
+        
+    
+    
+
+
+

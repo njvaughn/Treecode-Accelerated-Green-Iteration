@@ -1,49 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pydev-testrun version="1.0"?><pydev-testsuite>
-<summary errors="4" failures="1" finished="true" name="Test Run: 118" tests="5" total_time="Finished in: 0.07 secs."/>
-<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="fail" test="TestHamiltonian.testHydrogenGroundStateEnergy" time="">
+<summary errors="1" failures="0" finished="true" name="Test Run: 35" tests="3" total_time="Finished in: 0.03 secs."/>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/tests/testCell.py" status="ok" test="TestCell.testDxDyDz" time="0.00">
+<stdout/>
+<stderr/>
+</test>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/tests/testCell.py" status="error" test="TestCell.testGradientPsi" time="">
 <stdout/>
 <stderr><![CDATA[Traceback (most recent call last):
-  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 55, in testHydrogenGroundStateEnergy
-    self.assertAlmostEqual(computed_energy, true_energy,2, "Hamiltonian not giving correct energy from analytic psi")
-AssertionError: -2.8976164282839854 != -0.5 within 2 places : Hamiltonian not giving correct energy from analytic psi
+  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/tests/testCell.py", line 37, in testGradientPsi
+    grad = self.Cell.gradient_psi()
+  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/methods/cell_data_structure.py", line 18, in gradient_psi
+    self.grad = np.gradient(self.psi,self.dx,self.dy.self.dz)
+AttributeError: 'numpy.float64' object has no attribute 'self'
 ]]></stderr>
 </test>
-<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="error" test="TestHamiltonian.testKineticEnergy" time="">
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/tests/testCell.py" status="ok" test="TestCell.testPsiEvaluation" time="0.00">
 <stdout/>
-<stderr><![CDATA[Traceback (most recent call last):
-  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 83, in testKineticEnergy
-    psi = normalize_wavefunction(psi, dx, dy, dz)
-TypeError: normalize_wavefunction() missing 1 required positional argument: 'W'
-]]></stderr>
-</test>
-<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="error" test="TestHamiltonian.testPotentialEnergy" time="">
-<stdout/>
-<stderr><![CDATA[Traceback (most recent call last):
-  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 66, in testPotentialEnergy
-    psi = normalize_wavefunction(psi, dx, dy, dz)
-TypeError: normalize_wavefunction() missing 1 required positional argument: 'W'
-]]></stderr>
-</test>
-<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="error" test="TestHamiltonian.testRichardsonExtrapolationKE" time="">
-<stdout/>
-<stderr><![CDATA[Traceback (most recent call last):
-  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 142, in testRichardsonExtrapolationKE
-    psi = normalize_wavefunction(psi, dxc, dyc, dzc)
-TypeError: normalize_wavefunction() missing 1 required positional argument: 'W'
-]]></stderr>
-</test>
-<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="error" test="TestHamiltonian.testRichardsonExtrapolationPE" time="">
-<stdout/>
-<stderr><![CDATA[Traceback (most recent call last):
-  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 103, in testRichardsonExtrapolationPE
-    psi = normalize_wavefunction(psi, dxc, dyc, dzc)
-TypeError: normalize_wavefunction() missing 1 required positional argument: 'W'
-]]></stderr>
+<stderr/>
 </test>
 <launch mode="run">
 <launch_memento><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<launchConfiguration local="true" path="3D-GreenIterations test_Hamiltonian.py [pyunit run]"/>
+<launchConfiguration local="true" path="cell-AMR testCell.py"/>
 ]]></launch_memento>
 </launch>
 </pydev-testsuite>

@@ -1,15 +1,29 @@
 -- VERSION_4
 -- START DISKCACHE_2
 /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/.metadata/.plugins/org.eclipse.core.resources/.projects/cell-AMR/com.python.pydev.analysis/v2_indexcache
-cell_data_structure|1517750959000000000|/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/methods/cell_data_structure.py
+cell_data_structure|1517755263000000000|/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/methods/cell_data_structure.py
 main|1517750619000000000|/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/main.py
 -- END DISKCACHE
 -- START DICTIONARY
-0
+4
+4=cell.gradient_psi
+1=cell_data_structure
+2=cell
+3=cell.__init__
 -- END DICTIONARY
 -- START TREE 1
-0
+1
+cel|1|cell!9@
 -- END TREE
 -- START TREE 2
-0
+9
+__i|1|__init__!2&10@
+dx|1|dx!3&11@
+dy|1|dy!3&11@
+dz|1|dz!3&11@
+gra|2|gradient_psi!2&10@grad!4&11@
+psi|1|psi!3&11@
+x|1|x!3&11@
+y|1|y!3&11@
+z|1|z!3&11@
 -- END TREE

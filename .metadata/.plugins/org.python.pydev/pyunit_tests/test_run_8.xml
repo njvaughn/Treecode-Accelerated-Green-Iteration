@@ -1,42 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pydev-testrun version="1.0"?><pydev-testsuite>
-<summary errors="3" failures="1" finished="true" name="Test Run: 126" tests="4" total_time="Finished in: 0.12 secs."/>
-<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="error" test="TestHamiltonian.testKineticEnergy" time="">
+<summary errors="0" failures="1" finished="true" name="Test Run: 43" tests="1" total_time="Finished in: 0.03 secs."/>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/tests/testCell.py" status="fail" test="TestCell.testGradientPsi" time="">
 <stdout/>
 <stderr><![CDATA[Traceback (most recent call last):
-  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 84, in testKineticEnergy
-    psi = normalize_wavefunction(psi, dx, dy, dz)
-TypeError: normalize_wavefunction() missing 1 required positional argument: 'W'
-]]></stderr>
-</test>
-<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="fail" test="TestHamiltonian.testPotentialEnergy" time="">
-<stdout><![CDATA[PE error:  -0.0227500552504
-]]></stdout>
-<stderr><![CDATA[Traceback (most recent call last):
-  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 73, in testPotentialEnergy
-    self.assertAlmostEqual(computed_PE, true_PE, 4, "potential energy not accurate enough")
-AssertionError: -0.97724994474956839 != -1.0 within 4 places : potential energy not accurate enough
-]]></stderr>
-</test>
-<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="error" test="TestHamiltonian.testRichardsonExtrapolationKE" time="">
-<stdout/>
-<stderr><![CDATA[Traceback (most recent call last):
-  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 143, in testRichardsonExtrapolationKE
-    psi = normalize_wavefunction(psi, dxc, dyc, dzc)
-TypeError: normalize_wavefunction() missing 1 required positional argument: 'W'
-]]></stderr>
-</test>
-<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="error" test="TestHamiltonian.testRichardsonExtrapolationPE" time="">
-<stdout/>
-<stderr><![CDATA[Traceback (most recent call last):
-  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 104, in testRichardsonExtrapolationPE
-    psi = normalize_wavefunction(psi, dxc, dyc, dzc)
-TypeError: normalize_wavefunction() missing 1 required positional argument: 'W'
+  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/tests/testCell.py", line 40, in testGradientPsi
+    self.assertEqual(self.Cell.grad[0][1,0,0], -np.exp(-np.sqrt(1/4)), "gradient not as expected along x axis")
+AssertionError: -0.63212055882855767 != -0.60653065971263342 : gradient not as expected along x axis
 ]]></stderr>
 </test>
 <launch mode="run">
 <launch_memento><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<launchConfiguration local="true" path="3D-GreenIterations test_Hamiltonian.py [pyunit run]"/>
+<launchConfiguration local="true" path="cell-AMR testCell.py [pyunit run]"/>
 ]]></launch_memento>
 </launch>
 </pydev-testsuite>

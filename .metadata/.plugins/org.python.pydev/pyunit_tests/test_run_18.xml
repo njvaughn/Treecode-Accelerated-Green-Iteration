@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pydev-testrun version="1.0"?><pydev-testsuite>
-<summary errors="0" failures="1" finished="true" name="Test Run: 136" tests="1" total_time="Finished in: 0.02 secs."/>
-<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py" status="fail" test="TestHamiltonian.testRichardsonExtrapolationKE" time="">
-<stdout><![CDATA[coarse grid KE error:  0.163153285764
-fine grid KE error:  0.0605679484182
-extrapolated KE error:  0.0263728359696
-]]></stdout>
-<stderr><![CDATA[Traceback (most recent call last):
-  File "/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/tests/test_Hamiltonian.py", line 176, in testRichardsonExtrapolationKE
-    self.assertEqual(0, 1, "0 not equal to 1")
-AssertionError: 0 != 1 : 0 not equal to 1
-]]></stderr>
+<summary errors="0" failures="0" finished="true" name="Test Run: 53" tests="1" total_time="Finished in: 0.01 secs."/>
+<test location="/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/tests/testCell.py" status="ok" test="TestCell.testGradientPsi" time="0.00">
+<stdout/>
+<stderr/>
 </test>
 <launch mode="run">
 <launch_memento><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<launchConfiguration local="true" path="3D-GreenIterations test_Hamiltonian.py [pyunit run]"/>
+<launchConfiguration local="true" path="cell-AMR testCell.py [pyunit run]"/>
 ]]></launch_memento>
 </launch>
 </pydev-testsuite>
