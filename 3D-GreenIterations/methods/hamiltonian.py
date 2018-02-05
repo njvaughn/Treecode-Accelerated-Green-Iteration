@@ -43,9 +43,9 @@ def Delta(psi,x,y,z):
     
     return psi_xx+psi_yy+psi_zz
 
-def EnergyUpdate(V,psi,x,y,z):
+def EnergyUpdate(V,psi,x,y,z,W):
     dx = x[1,0,0] - x[0,0,0]
     dy = y[0,1,0] - y[0,0,0]
     dz = z[0,0,1] - z[0,0,0]
     H = Hamiltonian(V,psi,x,y,z)
-    return np.sum(psi*H)*dx*dy*dz  # the data is stored in 3D arrays, but this is just the 1D dot product that I want.  Sum of pointwise multiplications
+    return np.sum(W*psi*H)*dx*dy*dz  # the data is stored in 3D arrays, but this is just the 1D dot product that I want.  Sum of pointwise multiplications

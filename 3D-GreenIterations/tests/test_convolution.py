@@ -7,7 +7,7 @@ import unittest
 import numpy as np
 
 from mesh3D import generate_grid
-from convolution import conv, Green
+from convolution import conv
 from hydrogen_potential import potential
 
 
@@ -43,12 +43,12 @@ class TestConvolution(unittest.TestCase):
         self.assertAlmostEqual(testConv[0,0,0], expectedValue,10, 
                     "convolution didn't produce expected value for the checked grid point")
         
-    def testGreenFunction(self):
-        x = 5; y = -1; z = 2; E = 0;
-        self.assertEqual(Green(x,y,z,E), -np.exp(np.sqrt(-2*E)*np.sqrt(x*x+y*y+z*z))/(4*np.pi*np.sqrt(x*x+y*y+z*z)), 
-                         "Green Function not giving expected result.")
-#         self.assertEqual(Green(x, y, E, 1), "ValueError: this Green function is valid for E<=0.", 
-#                          "Didn't catch E>0 correctly.")
+#     def testGreenFunction(self):
+#         x = 5; y = -1; z = 2; E = 0;
+#         self.assertEqual(Green(x,y,z,E), -np.exp(np.sqrt(-2*E)*np.sqrt(x*x+y*y+z*z))/(4*np.pi*np.sqrt(x*x+y*y+z*z)), 
+#                          "Green Function not giving expected result.")
+# #         self.assertEqual(Green(x, y, E, 1), "ValueError: this Green function is valid for E<=0.", 
+# #                          "Didn't catch E>0 correctly.")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,13 @@
+class cell(object):
+    
+    
+    def __init__(self, Lx, Ly, Lz, coordinate_grid):
+        self.Lx = Lx
+        self.Ly = Ly
+        self.Lz = Lz
+        self.coordinate_grid = coordinate_grid
+    
+    
+
+
+

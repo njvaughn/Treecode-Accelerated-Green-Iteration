@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.python.pydev.debug.unittestLaunchConfigurationType">
+<stringAttribute key="LAUNCH_CONFIG_OVERRIDE_PYUNIT_RUN_PARAMS" value="--verbosity 1"/>
+<booleanAttribute key="LAUNCH_CONFIG_OVERRIDE_PYUNIT_RUN_PARAMS_CHOICE" value="true"/>
+<intAttribute key="LAUNCH_CONFIG_OVERRIDE_TEST_RUNNER" value="0"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/3D-GreenIterations/tests/test_Hamiltonian.py"/>
+<listEntry value="/3D-GreenIterations/tests/test_convolution.py"/>
+<listEntry value="/3D-GreenIterations/tests/test_hydrogen_potential.py"/>
+<listEntry value="/3D-GreenIterations/tests/test_mesh.py"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+<listEntry value="1"/>
+<listEntry value="1"/>
+<listEntry value="1"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:3D-GreenIterations/tests/test_Hamiltonian.py}|${workspace_loc:3D-GreenIterations/tests/test_convolution.py}|${workspace_loc:3D-GreenIterations/tests/test_hydrogen_potential.py}|${workspace_loc:3D-GreenIterations/tests/test_mesh.py}"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_OTHER_WORKING_DIRECTORY" value=""/>
+<stringAttribute key="org.python.pydev.debug.ATTR_INTERPRETER" value="python"/>
+<stringAttribute key="org.python.pydev.debug.ATTR_PROJECT" value="3D-GreenIterations"/>
+<stringAttribute key="process_factory_id" value="org.python.pydev.debug.processfactory.PyProcessFactory"/>
+</launchConfiguration>

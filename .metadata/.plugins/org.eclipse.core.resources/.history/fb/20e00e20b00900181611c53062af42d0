@@ -1,0 +1,10 @@
+class cell(object):
+    
+    
+    def __init__(self, coordinate_grid):
+        self.coordinate_grid = coordinate_grid
+    
+    
+
+
+

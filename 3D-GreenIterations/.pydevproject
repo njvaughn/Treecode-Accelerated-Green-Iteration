@@ -7,4 +7,5 @@
 <path>/${PROJECT_DIR_NAME}/tests</path>
 <path>/${PROJECT_DIR_NAME}/methods</path>
 </pydev_pathproperty>
+<pydev_property name="org.python.pydev.PYTHON_ADDITIONAL_GRAMMAR_VALIDATION">3.6</pydev_property>
 </pydev_project>
