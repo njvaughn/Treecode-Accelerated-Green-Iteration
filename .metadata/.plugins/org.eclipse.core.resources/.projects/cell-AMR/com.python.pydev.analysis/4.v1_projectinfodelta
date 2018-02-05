@@ -1,0 +1,11 @@
+INSTUPtests.testCell
+/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/cell-AMR/tests/testCell.py
+INFOS:&&1|1|2|0&&2|3|2|1&&3|4|2|5&&2|6|2|1&&2|7|2|1&&2|8|2|1
+TestCell.setUp=5
+tests.testCell=2
+testDxDyDz=7
+setUp=3
+TestCell=1
+testGradientPsi=8
+Cell=4
+testPsiEvaluation=6
