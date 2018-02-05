@@ -1,0 +1,5 @@
+*.metadata*
+*.plugin*
+.DS_Store*
+.project*
+.pydevproject*
