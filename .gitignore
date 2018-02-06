@@ -1,4 +1,4 @@
-.cached*
+.cache*
 *.metadata*
 *.plugin*
 .DS_Store*
