@@ -5,9 +5,11 @@ Created on Feb 4, 2018
 '''
 import unittest
 import numpy as np
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
-from cell_data_structure import cell
+from cellDataStructure import cell
 
 class TestCell(unittest.TestCase):
 
@@ -185,7 +187,7 @@ class TestCell(unittest.TestCase):
     def testPotential(self):
         self.Cell.evaluatePotential()
         r = np.sqrt(self.Cell.x[1]**2 + self.Cell.y[1]**2 + self.Cell.z[1]**2)
-        self.assertEqual(self.Cell.Potential, -np.exp(-r))
+        self.assertEqual(self.Cell.Potential, -1/r)
         
         
         

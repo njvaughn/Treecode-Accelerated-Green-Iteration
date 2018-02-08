@@ -28,7 +28,7 @@ class cell(object):
         yf = np.linspace(self.y[0],self.y[2],5)
         zf = np.linspace(self.z[0],self.z[2],5)
         
-        xm,ym,zm = np.meshgrid(xf,yf,zf)
+        xm,ym,zm = np.meshgrid(xf,yf,zf, indexing='ij')
         psi_fine = self.interpolator((xm,ym,zm))
         
         # generate 8 children
