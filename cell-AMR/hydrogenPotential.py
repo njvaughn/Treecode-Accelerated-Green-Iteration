@@ -1,6 +1,7 @@
 import numpy as np
 
-def potential(r):
+def potential(x,y,z):
+    r = np.sqrt(x*x+y*y+z*z)
     if r.any()==0:
         return 'ValueError: Dividing by zero when evaluating the -1/r potential.'
     return -1/r
