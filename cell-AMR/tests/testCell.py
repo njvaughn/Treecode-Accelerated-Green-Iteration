@@ -39,6 +39,7 @@ class TestCell(unittest.TestCase):
         self.assertEqual(self.Cell.dx, 0.5, "dx not correct")
         self.assertEqual(self.Cell.dy, 0.5, "dy not correct")
         self.assertEqual(self.Cell.dz, 0.5, "dz not correct")
+        self.assertEqual(self.Cell.volume, 1, "volume not correct, [0,1]^3 has volume 1")
 
     def testGradientPsi(self):
         # test that the gradient_psi operator returned the expected result, with second order finite difference
@@ -178,16 +179,16 @@ class TestCell(unittest.TestCase):
                 for k in range(3):
                     self.Cell.psi[i,j,k] = (i*i+j*j+k*k)/4 # r^2 on [0,1]^3 box
         
-        self.Cell.computeLaplacian()
+        self.Cell.computeLaplacian_MidpointMethod()
 #         self.assertEqual(np.array_equal(np.ones((3,3,3))*6,self.Cell.Laplacian), True, 
 #                          "Computed Laplacian not correct for quadratic function")
-        self.assertEqual(6,self.Cell.Laplacian, 
+        self.assertEqual(6*self.Cell.volume,self.Cell.Laplacian, 
                          "Computed Laplacian not correct for quadratic function")
         
     def testPotential(self):
-        self.Cell.evaluatePotential()
+        self.Cell.evaluatePotential_MidpointMethod()
         r = np.sqrt(self.Cell.x[1]**2 + self.Cell.y[1]**2 + self.Cell.z[1]**2)
-        self.assertEqual(self.Cell.Potential, -1/r)
+        self.assertEqual(self.Cell.Potential, -1/r*self.Cell.volume)
         
         
         
