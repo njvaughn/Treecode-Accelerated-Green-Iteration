@@ -52,7 +52,9 @@ class cell(object):
 #             self.NeedsDividing = True
 #         else:
 #             self.NeedsDividing = False
-        variation = -potential(self.x[1],self.y[1],self.z[1])*(np.max(self.psi)**2 - np.min(self.psi)**2)*self.volume
+#         variation = -potential(self.x[1],self.y[1],self.z[1])*(np.max(self.psi)**2 - np.min(self.psi)**2)*self.volume
+        variation = (np.max(self.psi) - np.min(self.psi))
+#         variation = (np.max(self.psi) - np.min(self.psi))/np.max(self.psi)
         if variation > variationThreshold:
 #         if ( np.max(self.psi) - np.min(self.psi)) > variationThreshold:
 #         if ( np.max(self.psi) - np.min(self.psi))/np.max(self.psi) > variationThreshold:

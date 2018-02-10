@@ -108,14 +108,14 @@ class TestGrid(unittest.TestCase):
 #         """ uncomment to show plots of the refined grid """
 # #         makescatter(xOriginalSlice,yOriginalSlice,psiOriginalSlice,xRefinedSlice,yRefinedSlice,psiRefinedSlice)
         
-    def testPotentialCalculation(self):
-        self.xmin = self.ymin = self.zmin = -40
-        self.xmax = self.ymax = self.zmax =  40
-        self.nx = self.ny = self.nz = 12
+    def pass_testPotentialCalculation(self):
+        self.xmin = self.ymin = self.zmin = -8
+        self.xmax = self.ymax = self.zmax =  8
+        self.nx = self.ny = self.nz = 26
         self.grid = Grid(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz)
 #         W3 = self.grid.cells[0].simpson_weight_matrix(3,3,3)
-        psiVariationThreshold = 0.05
-        levels = 9
+        psiVariationThreshold = 0.2
+        levels = 7
         for level in range(levels):
             if level > 0:
                 self.grid.GridRefinement(psiVariationThreshold)
@@ -145,14 +145,14 @@ class TestGrid(unittest.TestCase):
                 self.assertEqual(self.grid.cells[idx].psi[2,0,1], trueWavefunction(1, x, y, z), 
                                  "wavefunction not expected value on boundary after divisions")
                 
-    def pass_testKineticCalculation(self):
-        self.xmin = self.ymin = self.zmin = -16
-        self.xmax = self.ymax = self.zmax =  16
-        self.nx = self.ny = self.nz = 12
+    def testKineticCalculation(self):
+        self.xmin = self.ymin = self.zmin = -8
+        self.xmax = self.ymax = self.zmax =  8
+        self.nx = self.ny = self.nz = 26
         self.grid = Grid(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz)
 #         W3 = self.grid.cells[0].simpson_weight_matrix(3,3,3)
-        psiVariationThreshold = 0.25
-        levels = 5
+        psiVariationThreshold = 0.2
+        levels = 7
         for level in range(levels):
             if level > 0:
                 self.grid.GridRefinement(psiVariationThreshold)
