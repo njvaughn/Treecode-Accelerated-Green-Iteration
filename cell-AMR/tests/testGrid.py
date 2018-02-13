@@ -134,12 +134,13 @@ class TestGrid(unittest.TestCase):
         
     def testSimpsonWeightMatrix(self): 
         W = self.grid.SimpsonWeightMatrix()
-        print(W*27)
-        self.assertEqual(np.max(W), 64/27, "max not as expected")
+#         print(W*27*8)
+        self.assertEqual(np.max(W), 64/27/8, "max not as expected")
         self.assertEqual(np.argmax(W), 13, "max value of W not in center")   
         self.assertEqual(W[0,0,0], W[2,2,2], "corners not equal") 
+        self.assertEqual(np.sum(W), 1, "simpson weights dont sum to 1")
         
-    def passtestSimpsonIntegration(self):
+    def testSimpsonIntegration(self):
         def setFakeWavefunction(self):
             '''
             Generate fake wavefunctions used to test the integrators
@@ -157,35 +158,35 @@ class TestGrid(unittest.TestCase):
             
         self.xmin = self.ymin = self.zmin = -2
         self.xmax = self.ymax = self.zmax =  2
-        self.nx = self.ny = self.nz = 10
+        self.nx = self.ny = self.nz = 8
         self.grid = Grid(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz)
         
         setFakeWavefunction(self)
 #         W = self.grid.MidpointWeightMatrix()
         W = self.grid.SimpsonWeightMatrix()
         Integral = evaluateIntegral(self,W)
-        print('Integral = ', Integral)
+#         print('Integral = ', Integral)
         self.assertEqual(Integral, 256, "Simpson not integrating quadratic exactly")
         
         
         
     def passtestKineticCalculation(self):
-        self.xmin = self.ymin = self.zmin = -12
-        self.xmax = self.ymax = self.zmax =  12
+        self.xmin = self.ymin = self.zmin = -8
+        self.xmax = self.ymax = self.zmax =  8
         self.nx = self.ny = self.nz = 14
         self.grid = Grid(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz)
-        W = self.grid.MidpointWeightMatrix()
-#         W = self.grid.SimpsonWeightMatrix()
+#         W = self.grid.MidpointWeightMatrix()
+        W = self.grid.SimpsonWeightMatrix()
 
-        psiVariationThreshold = 0.1
-        levels = 5
+        psiVariationThreshold = 0.05
+        levels = 6
         for level in range(levels):
             if level > 0:
                 self.grid.GridRefinement(psiVariationThreshold)
                 self.grid.setExactWavefunction()
             self.grid.normalizePsi(W)
             self.grid.computeKinetic(W)
-            print('Pass ',level,': ', len(self.grid.cells),' cells. Computed Kinetic: ', self.grid.Kinetic)
+            print('Pass ',level,': ', len(self.grid.cells),' cells. Kinetic error: ', 0.5-self.grid.Kinetic)
             
             
     def passtestPotentialCalculation(self):
@@ -195,8 +196,8 @@ class TestGrid(unittest.TestCase):
         self.grid = Grid(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz)
         W = self.grid.MidpointWeightMatrix()
 #         W = self.grid.SimpsonWeightMatrix()
-        psiVariationThreshold = 0.1
-        epsilon = 0.05
+        psiVariationThreshold = 0.05
+        epsilon = 0.0000000001
         levels = 6
         for level in range(levels):
             if level > 0:
@@ -205,10 +206,30 @@ class TestGrid(unittest.TestCase):
             self.grid.normalizePsi(W)
             self.grid.computePotential(W,epsilon)
             
-            print('Pass ',level,': ', len(self.grid.cells),' cells. Computed Potential: ', self.grid.Potential)
+            print('Pass ',level,': ', len(self.grid.cells),' cells. Potential error: ', -1.0-self.grid.Potential)
 
 
-            
+    def passtestKineticAndPotential(self):  
+        print()
+        self.xmin = self.ymin = self.zmin = -8
+        self.xmax = self.ymax = self.zmax =  8
+        self.nx = self.ny = self.nz = 16
+        self.grid = Grid(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz)
+#         W = self.grid.MidpointWeightMatrix()
+        W = self.grid.SimpsonWeightMatrix()
+        psiVariationThreshold = 0.025
+        epsilon = 0.025
+        levels = 6
+        for level in range(levels):
+            if level > 0:
+                self.grid.GridRefinement(psiVariationThreshold)
+                self.grid.setExactWavefunction()
+            self.grid.normalizePsi(W)
+            self.grid.computePotential(W,epsilon)
+            self.grid.computeKinetic(W)
+            print('Pass ',level,': ', len(self.grid.cells),' cells.')
+            print('Kinetic error: ', 0.5-self.grid.Kinetic)
+            print('Potential error: ', -1.0-self.grid.Potential,'\n')
    
 
 
