@@ -6,6 +6,12 @@ def potential(x,y,z):
         return 'ValueError: Dividing by zero when evaluating the -1/r potential.'
     return -1/r
 
+def smoothedPotential(x,y,z,epsilon):
+    r = np.sqrt(x*x+y*y+z*z+ epsilon*epsilon)
+    if r.any()==0:
+        return 'ValueError: Dividing by zero when evaluating the -1/r potential.'
+    return -1/r
+
 def trueEnergy(n):
     return -1/(2*n*n)
 

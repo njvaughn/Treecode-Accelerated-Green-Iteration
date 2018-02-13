@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
-from hydrogenPotential import potential
+from hydrogenPotential import potential, smoothedPotential
 
 
 
@@ -42,26 +42,31 @@ class cell(object):
         return children
 
     def checkDivide(self,variationThreshold):
-#         try:
-#             self.grad
-#         except AttributeError:
-#             self.gradient_psi()
-        
-#         if np.max(np.abs(self.grad)) > gradientThreshold:
-#         if np.max( [np.abs(self.grad[0][1,1,1]),np.abs(self.grad[1][1,1,1]),np.abs(self.grad[2][1,1,1])] ) > gradientThreshold:
-#             self.NeedsDividing = True
-#         else:
 #             self.NeedsDividing = False
 #         variation = -potential(self.x[1],self.y[1],self.z[1])*(np.max(self.psi)**2 - np.min(self.psi)**2)*self.volume
         variation = (np.max(self.psi) - np.min(self.psi))
 #         variation = (np.max(self.psi) - np.min(self.psi))/np.max(self.psi)
         if variation > variationThreshold:
-#         if ( np.max(self.psi) - np.min(self.psi)) > variationThreshold:
-#         if ( np.max(self.psi) - np.min(self.psi))/np.max(self.psi) > variationThreshold:
             self.NeedsDividing = True
         else:
             self.NeedsDividing = False
 
+    def evaluateKinetic(self,W):
+#         try:
+#             self.grad
+#         except AttributeError:
+#             self.gradient_psi()
+        self.gradient_psi()
+        Dxx = np.gradient(self.grad[0],self.dx,edge_order=2,axis=0)
+        Dyy = np.gradient(self.grad[1],self.dy,edge_order=2,axis=1)
+        Dzz = np.gradient(self.grad[2],self.dz,edge_order=2,axis=2)
+        self.Laplacian = (Dxx + Dyy + Dzz)  # only use the Laplacian at the midpoint, for now at least
+        self.Kinetic = -1/2*np.sum( W*self.psi*self.Laplacian*self.volume )
+        
+    def evaluatePotential(self,W,epsilon):
+        self.Kinetic = np.sum(W*self.psi*smoothedPotential(self.x,self.y,self.z,epsilon)*self.psi)*self.volume
+        
+    
     def evaluateKinetic_MidpointMethod(self):
 #         try:
 #             self.grad

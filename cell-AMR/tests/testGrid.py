@@ -32,7 +32,6 @@ class TestGrid(unittest.TestCase):
     def tearDown(self):
         self.grid = None
 
-
     def testGridShape(self):
         self.assertEqual(np.shape(self.grid.cells), (self.nx*self.ny*self.nz,), "Grid wasn't the expected shape")
     
@@ -108,70 +107,107 @@ class TestGrid(unittest.TestCase):
 #         """ uncomment to show plots of the refined grid """
 # #         makescatter(xOriginalSlice,yOriginalSlice,psiOriginalSlice,xRefinedSlice,yRefinedSlice,psiRefinedSlice)
         
-    def pass_testPotentialCalculation(self):
-        self.xmin = self.ymin = self.zmin = -8
-        self.xmax = self.ymax = self.zmax =  8
-        self.nx = self.ny = self.nz = 26
-        self.grid = Grid(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz)
-#         W3 = self.grid.cells[0].simpson_weight_matrix(3,3,3)
-        psiVariationThreshold = 0.2
-        levels = 7
-        for level in range(levels):
-            if level > 0:
-                self.grid.GridRefinement(psiVariationThreshold)
-#                 psiGradientThreshold += 0.1
-            computedPotential = 0.0
-            sumPsiSquaredDxDyDz = 0.0
-            for index in range(len(self.grid.cells)):
-                sumPsiSquaredDxDyDz += self.grid.cells[index].psi[1,1,1]**2*self.grid.cells[index].volume
-#                 sumPsiSquaredDxDyDz += np.sum(W3*self.grid.cells[index].psi**2)*self.grid.cells[index].volume
-            
-            for index in range(len(self.grid.cells)):
-                xm,ym,zm = np.meshgrid(self.grid.cells[index].x,self.grid.cells[index].y,
-                            self.grid.cells[index].z,indexing='ij')
-                self.grid.cells[index].psi = trueWavefunction(1, xm, ym, zm)
-                self.grid.cells[index].evaluatePotential_MidpointMethod()
-#                 self.grid.cells[index].evaluatePotential_SimpsonMethod()
-                computedPotential += self.grid.cells[index].Potential
-            computedPotential = computedPotential/sumPsiSquaredDxDyDz
-            print('Pass ',level,': ', len(self.grid.cells),' cells. Computed Potential: ', computedPotential)
-            # check psi at some random point that is one of the children
-            if level > 0:
-                idx = np.random.randint(self.nx*self.nz*self.nz,len(self.grid.cells))
-                x = self.grid.cells[idx].x[1]; y = self.grid.cells[idx].y[1]; z = self.grid.cells[idx].z[1]
-                self.assertEqual(self.grid.cells[idx].psi[1,1,1], trueWavefunction(1, x, y, z), 
-                                 "wavefunction not expected value at midpoint after divisions")
-                x = self.grid.cells[idx].x[2]; y = self.grid.cells[idx].y[0]; z = self.grid.cells[idx].z[1]
-                self.assertEqual(self.grid.cells[idx].psi[2,0,1], trueWavefunction(1, x, y, z), 
-                                 "wavefunction not expected value on boundary after divisions")
                 
-    def testKineticCalculation(self):
-        self.xmin = self.ymin = self.zmin = -8
-        self.xmax = self.ymax = self.zmax =  8
-        self.nx = self.ny = self.nz = 26
+    def testNormalization(self):
+        W = self.grid.MidpointWeightMatrix()
+#         preNormalizationSum = 0.0
+#         for index in range(len(self.grid.cells)):
+#             preNormalizationSum += self.grid.cells[index].psi[1,1,1]**2*self.grid.cells[index].volume
+        postNormalizationSum = 0.0
+        self.grid.normalizePsi(W)
+        for index in range(len(self.grid.cells)):
+            postNormalizationSum += np.sum(W*self.grid.cells[index].psi**2*self.grid.cells[index].volume)
+        self.assertAlmostEqual(1.0, postNormalizationSum,14, "wavefunction normalization error for midpoint.")
+        
+        postNormalizationSum = 0.0
+        W = self.grid.SimpsonWeightMatrix()
+        self.grid.normalizePsi(W)
+        for index in range(len(self.grid.cells)):
+            postNormalizationSum += np.sum(W*self.grid.cells[index].psi**2*self.grid.cells[index].volume)
+        self.assertAlmostEqual(1.0, postNormalizationSum,14, "wavefunction normalization error for simpson.")
+       
+    def testMidpointWeightMatrix(self): 
+        W = self.grid.MidpointWeightMatrix()
+        self.assertEqual(np.sum(W), 1.0, "midpoint weights don't sum to 1")    
+        self.assertEqual(np.max(W),1.0,"max value not 1.")    
+        self.assertEqual(np.min(W),0.0,"max value not 1.")  
+        
+    def testSimpsonWeightMatrix(self): 
+        W = self.grid.SimpsonWeightMatrix()
+        print(W*27)
+        self.assertEqual(np.max(W), 64/27, "max not as expected")
+        self.assertEqual(np.argmax(W), 13, "max value of W not in center")   
+        self.assertEqual(W[0,0,0], W[2,2,2], "corners not equal") 
+        
+    def passtestSimpsonIntegration(self):
+        def setFakeWavefunction(self):
+            '''
+            Generate fake wavefunctions used to test the integrators
+            '''
+            for index in range(len(self.grid.cells)): 
+                    xm,ym,zm = np.meshgrid(self.grid.cells[index].x,self.grid.cells[index].y,
+                                self.grid.cells[index].z,indexing='ij')
+                    self.grid.cells[index].psi = xm**2 + ym**2 + zm**2  # quadratic
+                
+        def evaluateIntegral(self,W):
+            I = 0.0
+            for index in range(len(self.grid.cells)):
+                I += np.sum( W*self.grid.cells[index].psi*self.grid.cells[index].volume )
+            return I
+            
+        self.xmin = self.ymin = self.zmin = -2
+        self.xmax = self.ymax = self.zmax =  2
+        self.nx = self.ny = self.nz = 10
         self.grid = Grid(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz)
-#         W3 = self.grid.cells[0].simpson_weight_matrix(3,3,3)
-        psiVariationThreshold = 0.2
-        levels = 7
+        
+        setFakeWavefunction(self)
+#         W = self.grid.MidpointWeightMatrix()
+        W = self.grid.SimpsonWeightMatrix()
+        Integral = evaluateIntegral(self,W)
+        print('Integral = ', Integral)
+        self.assertEqual(Integral, 256, "Simpson not integrating quadratic exactly")
+        
+        
+        
+    def passtestKineticCalculation(self):
+        self.xmin = self.ymin = self.zmin = -12
+        self.xmax = self.ymax = self.zmax =  12
+        self.nx = self.ny = self.nz = 14
+        self.grid = Grid(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz)
+        W = self.grid.MidpointWeightMatrix()
+#         W = self.grid.SimpsonWeightMatrix()
+
+        psiVariationThreshold = 0.1
+        levels = 5
         for level in range(levels):
             if level > 0:
                 self.grid.GridRefinement(psiVariationThreshold)
-#                 psiGradientThreshold += 0.1
-            computedKinetic = 0.0
-            sumPsiSquaredDxDyDz = 0.0
-            for index in range(len(self.grid.cells)):
-                sumPsiSquaredDxDyDz += self.grid.cells[index].psi[1,1,1]**2*self.grid.cells[index].volume
-#                 sumPsiSquaredDxDyDz += np.sum(W3*self.grid.cells[index].psi**2)*self.grid.cells[index].volume
+                self.grid.setExactWavefunction()
+            self.grid.normalizePsi(W)
+            self.grid.computeKinetic(W)
+            print('Pass ',level,': ', len(self.grid.cells),' cells. Computed Kinetic: ', self.grid.Kinetic)
             
-            for index in range(len(self.grid.cells)):
-                xm,ym,zm = np.meshgrid(self.grid.cells[index].x,self.grid.cells[index].y,
-                            self.grid.cells[index].z,indexing='ij')
-                self.grid.cells[index].psi = trueWavefunction(1, xm, ym, zm)
-                self.grid.cells[index].evaluateKinetic_MidpointMethod()
+            
+    def passtestPotentialCalculation(self):
+        self.xmin = self.ymin = self.zmin = -12
+        self.xmax = self.ymax = self.zmax =  12
+        self.nx = self.ny = self.nz = 14
+        self.grid = Grid(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz)
+        W = self.grid.MidpointWeightMatrix()
+#         W = self.grid.SimpsonWeightMatrix()
+        psiVariationThreshold = 0.1
+        epsilon = 0.05
+        levels = 6
+        for level in range(levels):
+            if level > 0:
+                self.grid.GridRefinement(psiVariationThreshold)
+                self.grid.setExactWavefunction()
+            self.grid.normalizePsi(W)
+            self.grid.computePotential(W,epsilon)
+            
+            print('Pass ',level,': ', len(self.grid.cells),' cells. Computed Potential: ', self.grid.Potential)
 
-                computedKinetic += self.grid.cells[index].Kinetic
-            computedKinetic = computedKinetic/sumPsiSquaredDxDyDz
-            print('Pass ',level,': ', len(self.grid.cells),' cells. Computed Kinetic: ', computedKinetic)
+
             
    
 
