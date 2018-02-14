@@ -35,7 +35,7 @@ class TestCell(unittest.TestCase):
         self.assertEqual(self.Cell.psi[0,1,1], np.exp(-np.sqrt(2/4)), "psi not as expected at (0,0.5,0.5)")
         
     def testDxDyDz(self):
-        # test that grid spacing was extracted from x, y, and z correctly
+        # test that mesh spacing was extracted from x, y, and z correctly
         self.assertEqual(self.Cell.dx, 0.5, "dx not correct")
         self.assertEqual(self.Cell.dy, 0.5, "dy not correct")
         self.assertEqual(self.Cell.dz, 0.5, "dz not correct")
@@ -51,7 +51,6 @@ class TestCell(unittest.TestCase):
         self.assertEqual(self.Cell.grad[0][0,2,1], (-3/2*self.Cell.psi[0,2,1]+2*self.Cell.psi[1,2,1]-1/2*self.Cell.psi[2,2,1])/(self.Cell.dx), 
                          "gradient not using expected 2nd order forward/backward finite differences along the boundary")
 
-
     def testLinearInterpolatorOnLinear(self):
         '''
         set psi to be a linear function, then verify the interpolator performs exactly
@@ -66,7 +65,7 @@ class TestCell(unittest.TestCase):
         self.Cell.interpolate_for_division()
         self.assertEqual(self.Cell.interpolator((self.Cell.x[i],self.Cell.y[j],self.Cell.z[k])), 
                          self.Cell.psi[i,j,k], 
-                         "interpolator didn/'t get one of the original gridpoints correct")
+                         "interpolator didn/'t get one of the original meshpoints correct")
         
         rand3 = np.random.rand(3)
         self.assertAlmostEqual(self.Cell.interpolator(rand3)[0], np.sum(rand3), 15, "interpolator wasn/'t accurate")
@@ -85,7 +84,7 @@ class TestCell(unittest.TestCase):
         self.Cell.interpolate_for_division()
         self.assertEqual(self.Cell.interpolator((self.Cell.x[i],self.Cell.y[j],self.Cell.z[k])), 
                          self.Cell.psi[i,j,k], 
-                         "interpolator didn/'t get one of the original gridpoints correct")
+                         "interpolator didn/'t get one of the original meshpoints correct")
          
 #         rand3 = np.random.rand(3)
         rand3 = np.array([0.3,0.55,0.73])
@@ -101,7 +100,7 @@ class TestCell(unittest.TestCase):
             plt.figure()
             plt.imshow(coarse_data[:,:,coarse_zslice],interpolation='nearest')
             plt.colorbar()
-            plt.title('True Psi on Fine Grid')
+            plt.title('True Psi on Fine Mesh')
             
             plt.figure()
             plt.imshow(fine_data[:,:,fine_zslice],interpolation='nearest')
@@ -160,8 +159,7 @@ class TestCell(unittest.TestCase):
         self.assertEqual(children[1,0,1].z[2], self.Cell.z[2], "child 101 isn\'t in the correct corner")
         self.assertEqual(np.array_equal(children[1,0,1].psi[::2,::2,::2],self.Cell.psi[1:3,0:2,1:3]), True, 
                          "psi not mapped to 101 correctly")
-        
-        
+            
     def testDivideCondition(self):
         gradientThreshold = 0.5
         self.Cell.checkDivide(gradientThreshold)
@@ -171,26 +169,7 @@ class TestCell(unittest.TestCase):
         self.Cell.checkDivide(gradientThreshold)
         self.assertEqual(self.Cell.NeedsDividing, False, "divide condition not met, but check_divide returned True")
         
-    
-    def testLaplacian(self):
-        self.Cell.psi = np.zeros((3,3,3))
-        for i in range(3):
-            for j in range(3):
-                for k in range(3):
-                    self.Cell.psi[i,j,k] = (i*i+j*j+k*k)/4 # r^2 on [0,1]^3 box
-        
-        self.Cell.computeLaplacian_MidpointMethod()
-#         self.assertEqual(np.array_equal(np.ones((3,3,3))*6,self.Cell.Laplacian), True, 
-#                          "Computed Laplacian not correct for quadratic function")
-        self.assertEqual(6*self.Cell.volume,self.Cell.Laplacian, 
-                         "Computed Laplacian not correct for quadratic function")
-        
-    def testPotential(self):
-        self.Cell.evaluatePotential_MidpointMethod()
-        r = np.sqrt(self.Cell.x[1]**2 + self.Cell.y[1]**2 + self.Cell.z[1]**2)
-        self.assertEqual(self.Cell.Potential, -1/r*self.Cell.volume)
-        
-        
+
         
       
         
