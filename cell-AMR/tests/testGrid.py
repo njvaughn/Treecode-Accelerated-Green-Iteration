@@ -134,7 +134,6 @@ class TestGrid(unittest.TestCase):
         
     def testSimpsonWeightMatrix(self): 
         W = self.grid.SimpsonWeightMatrix()
-#         print(W*27*8)
         self.assertEqual(np.max(W), 64/27/8, "max not as expected")
         self.assertEqual(np.argmax(W), 13, "max value of W not in center")   
         self.assertEqual(W[0,0,0], W[2,2,2], "corners not equal") 
