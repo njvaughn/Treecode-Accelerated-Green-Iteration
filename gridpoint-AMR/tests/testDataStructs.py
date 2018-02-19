@@ -1,6 +1,7 @@
 import unittest
-from dataStructs import Mesh
+import numpy as np
 
+from dataStructs import Mesh, Tree
 
 class TestDataStructures(unittest.TestCase):
 
@@ -14,7 +15,8 @@ class TestDataStructures(unittest.TestCase):
         self.xmax = self.ymax = self.zmax = 1
         self.nx = self.ny = self.nz = 2
         self.mesh = Mesh(self.xmin,self.xmax,self.nx,self.ymin,self.ymax,self.ny,self.zmin,self.zmax,self.nz)
-
+        
+        
 
     def testNeighborsPointToSameObject(self):
         '''
@@ -61,7 +63,17 @@ class TestDataStructures(unittest.TestCase):
         self.assertEqual(parent.children[0,0,0].gridpoints[1,1,2], parent.children[0,0,1].gridpoints[1,1,0], 
                          "Neighboring children aren't pointing to same gridpoint object on their shared face")
         
-
-
+    def testTreeRootConstruction(self):
+        self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
+        self.assertEqual(np.shape(self.tree.cells), (1,1,1), "Error forming root of tree")
+        self.assertEqual(self.tree.cells[0,0,0].gridpoints[0,0,0].x, self.xmin, "Error forming root of tree")
+    
+    def testTreeBuild(self):
+        self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
+        self.tree.buildTree()
+        
+        print('Root: ', self.tree.cells[0,0,0],'\n')
+        print('Children: ', self.tree.cells[0,0,0].children, '\n')
+        
 if __name__ == "__main__":
     unittest.main()

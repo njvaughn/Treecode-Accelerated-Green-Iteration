@@ -28,6 +28,39 @@ class Mesh(object):
             for j in range(ny):
                 for k in range(nz):
                     self.cells[i,j,k] = Cell( gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3] )
+                    
+
+class Tree(object):
+    '''
+    Tree object. Constructed of cells, which are composed of gridpoint objects.
+    '''
+    def __init__(self, xmin,xmax,ymin,ymax,zmin,zmax):
+        '''
+        Tree constructor:  
+        First construct the gridpoints for cell consisting of entire domain.  
+        Then construct the cell that are composed of gridpoints. 
+        Then construct the root of the tree.
+        '''
+        # generate gridpoint objects.  
+        xvec = np.linspace(xmin,xmax,3)
+        yvec = np.linspace(ymin,ymax,3)
+        zvec = np.linspace(zmin,zmax,3)
+        gridpoints = np.empty((3,3,3),dtype=object)
+        for i in range(3):
+            for j in range(3):
+                for k in range(3):
+                    gridpoints[i,j,k] = GridPt(xvec[i],yvec[j],zvec[k])
+        
+        # generate root cell from the gridpoint objects  
+        self.cells = np.empty((1,1,1),dtype=object)
+        self.cells[0,0,0] = Cell( gridpoints )
+        print("Root of tree constructed.")
+    
+        
+        
+    def buildTree(self):
+#         for cell in self.cells:
+        self.cells[0,0,0].recursiveDivide()
 
 
 class Cell(object):
@@ -70,6 +103,12 @@ class Cell(object):
                     
         self.children = children
 
+    def recursiveDivide(self):
+        self.getCellBounds()
+        if self.xmax - self.xmin > 0.1:
+            self.divide()
+            for child in self.children:
+                child.recursiveDivide()
 
         
 class GridPt(object):
