@@ -6,11 +6,12 @@ Created on Feb 7, 2018
 import unittest
 import numpy as np
 import matplotlib
+from cellDataStructure import cell
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 from meshUtilities import Mesh
-from hydrogenPotential import trueWavefunction, potential
+from hydrogenPotential import trueWavefunction, potential, trueEnergy
 
 
 
@@ -53,7 +54,7 @@ class TestMesh(unittest.TestCase):
                           (1,3,5), "expect the 456 cell's midpoint to be at (1,3,5)")
         self.assertEqual(self.mesh.cells[index(0,0,0)].dx, 1, "Cell dx not equal to 1, as expected from dividing [-8,8] into 8 cells of width 2dx")
 #     
-    def testCellPsiValues(self):
+    def passtestCellPsiValues(self):
         '''
         Verify that the wavefunction is getting mapped to the mesh as expected when the initial wavefunction is set to analytic. 
         Verify that the random wavefunction option works. 
@@ -217,7 +218,7 @@ class TestMesh(unittest.TestCase):
             print('Kinetic error: ', 0.5-self.mesh.Kinetic)
             print('Potential error: ', -1.0-self.mesh.Potential,'\n')
             
-    def testKineticAndPotentialImproveWithRefinement(self):  
+    def passtestKineticAndPotentialImproveWithRefinement(self):  
         '''
         Verify that the potential and kinetic energy calculations get more accurate as mesh is refined.  
         Should hold for reasonable meshes (not too coarse where gradient is meaningless, not too fine that we have midpoints very close to the singular origin)
@@ -230,7 +231,7 @@ class TestMesh(unittest.TestCase):
 #         W = self.mesh.SimpsonWeightMatrix()
         psiVariationThreshold = 0.1
         epsilon = 0.025
-        levels = 3
+        levels = 2
         coarseKineticError = 0.0
         coarsePotentialError = 0.0
         fineKineticError = 0.0
@@ -257,9 +258,50 @@ class TestMesh(unittest.TestCase):
         '''
         def index(i,j,k):
             return self.ny*self.nz*i + self.nz*j + k
-        targetCell = self.mesh.cells[index(2,2,2)]
-        self.mesh.convolution(targetCell)
-
+#         targetCell = self.mesh.cells[index(2,2,2)]
+        self.xmin = self.ymin = self.zmin = -8
+        self.xmax = self.ymax = self.zmax =  8
+        self.nx = self.ny = self.nz = 26
+        self.mesh = Mesh(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.nx,self.ny,self.nz,"analytic")
+#         self.mesh.setExactWavefunction()
+        
+        low = 2.5
+        mid = 2.75
+        high = 3.0
+        x = y = z = np.array([low,mid,high])
+        xm,ym,zm = np.meshgrid(x,y,z,indexing='ij')
+        psi = trueWavefunction(1, xm,ym,zm)
+        
+        E = trueEnergy(1)
+        psiVariationThreshold = 0.1
+        W = self.mesh.MidpointWeightMatrix()
+#         W = self.mesh.SimpsonWeightMatrix()
+        
+        targetCell = cell(x,y,z,psi)
+        
+        self.assertEqual(targetCell.x[0], low, "targetCell not setup properly")
+        self.assertEqual(targetCell.x[1], mid, "targetCell not setup properly")
+        self.assertEqual(targetCell.x[2], high, "targetCell not setup properly")
+        self.assertEqual(targetCell.psi[1,1,1], trueWavefunction(1, mid, mid, mid), "psi not setup properly")
+        self.assertEqual(targetCell.psi[2,1,0], trueWavefunction(1, high, mid, low), "psi not setup properly")
+        
+        # perform convolution
+#         print('Original psi:\n', targetCell.psi,'\n')
+        psiNew = self.mesh.convolution(targetCell,W,E)
+#         print('computed psi:\n', psiNew,'\n')
+        
+        print('unrefined psi errors:\n', (psiNew[1,1,1]-targetCell.psi[1,1,1])/targetCell.psi[1,1,1])
+        
+        # verify that the newly computed psi values are close to analytic.  
+#         self.assertEqual(psiNew[1,1,1], trueWavefunction(1,2.25, 2.25, 2.25), "psi not computed accurately")
+#         self.assertEqual(psiNew[2,1,0], trueWavefunction(1, 2.5, 2.25, 2.0), "psi not computed accurately")
+        
+#         self.mesh.MeshRefinement(psiVariationThreshold)
+#         self.mesh.setExactWavefunction()
+#         self.mesh.normalizePsi(W)
+#         
+#         psiNew = self.mesh.convolution(targetCell,W,E)
+#         print('refined psi errors:\n', (psiNew-targetCell.psi)/targetCell.psi)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
