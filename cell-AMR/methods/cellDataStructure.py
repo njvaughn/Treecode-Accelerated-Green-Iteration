@@ -23,14 +23,14 @@ class cell(object):
         self.interpolator = RegularGridInterpolator((self.x, self.y, self.z), self.psi)
   
     def divide(self):
-        children = np.empty((2,2,2), dtype=object)
-        self.interpolate_for_division()
-        xf = np.linspace(self.x[0],self.x[2],5)
+        children = np.empty((2,2,2), dtype=object) # create array to hold children
+        self.interpolate_for_division() # generate the local interpolator
+        xf = np.linspace(self.x[0],self.x[2],5) # generate the fine mesh
         yf = np.linspace(self.y[0],self.y[2],5)
         zf = np.linspace(self.z[0],self.z[2],5)
         
         xm,ym,zm = np.meshgrid(xf,yf,zf, indexing='ij')
-        psi_fine = self.interpolator((xm,ym,zm))
+        psi_fine = self.interpolator((xm,ym,zm)) # interpolate psi onto the fine mesh
         
         # generate 8 children
         for ichild in range(2):
@@ -42,80 +42,28 @@ class cell(object):
         return children
 
     def checkDivide(self,variationThreshold):
-#             self.NeedsDividing = False
-#         variation = -potential(self.x[1],self.y[1],self.z[1])*(np.max(self.psi)**2 - np.min(self.psi)**2)*self.volume
         variation = (np.max(self.psi) - np.min(self.psi))
-#         variation = (np.max(self.psi) - np.min(self.psi))/np.max(self.psi)
+
         if variation > variationThreshold:
             self.NeedsDividing = True
         else:
             self.NeedsDividing = False
 
     def evaluateKinetic(self,W):
-#         try:
-#             self.grad
-#         except AttributeError:
-#             self.gradient_psi()
-        self.gradient_psi()
+        try:
+            self.grad
+        except AttributeError:
+            self.gradient_psi()
         Dxx = np.gradient(self.grad[0],self.dx,edge_order=2,axis=0)
         Dyy = np.gradient(self.grad[1],self.dy,edge_order=2,axis=1)
         Dzz = np.gradient(self.grad[2],self.dz,edge_order=2,axis=2)
-        self.Laplacian = (Dxx + Dyy + Dzz)  # only use the Laplacian at the midpoint, for now at least
-        self.Kinetic = -1/2*np.sum( W*self.psi*self.Laplacian*self.volume )
+        Laplacian = (Dxx + Dyy + Dzz)  # only use the Laplacian at the midpoint, for now at least
+        self.Kinetic = -1/2*np.sum( W*self.psi*Laplacian*self.volume )
         
     def evaluatePotential(self,W,epsilon):
-        self.Kinetic = np.sum(W*self.psi*smoothedPotential(self.x,self.y,self.z,epsilon)*self.psi)*self.volume
+        self.Potential = np.sum(W*self.psi*smoothedPotential(self.x,self.y,self.z,epsilon)*self.psi)*self.volume
         
-    
-    def evaluateKinetic_MidpointMethod(self):
-#         try:
-#             self.grad
-#         except AttributeError:
-#             self.gradient_psi()
-        self.gradient_psi()
-        
-        Dxx = np.gradient(self.grad[0],self.dx,edge_order=2,axis=0)
-        Dyy = np.gradient(self.grad[1],self.dy,edge_order=2,axis=1)
-        Dzz = np.gradient(self.grad[2],self.dz,edge_order=2,axis=2)
-        self.Laplacian = (Dxx + Dyy + Dzz)  # only use the Laplacian at the midpoint, for now at least
-        self.Kinetic = -1/2*self.psi[1,1,1]*self.Laplacian[1,1,1]*self.volume
-    
-    def evaluatePotential_MidpointMethod(self):
-#         r = np.sqrt(self.x[1]**2 + self.y[1]**2 + self.z[1]**2)
-        self.Potential = self.psi[1,1,1]*potential(self.x[1],self.y[1],self.z[1])*self.psi[1,1,1]*self.volume
-        
-    def SimpsonWeights1D(self,nx): # Simpson weights, N needs to be odd
-        if nx%2 == 0:
-            print('error, even number of nodes')
-            return
-        wvec = np.zeros(nx)
-        for i in range(nx):
-            if i == 0:
-                wvec[i] = 1
-            elif i == nx-1:
-                wvec[i] = 1
-            elif i%2 != 0:
-                wvec[i] = 4
-            elif i%2 == 0:
-                wvec[i] = 2
-        return wvec
-    
-    def simpson_weight_matrix(self,nx, ny, nz):
-        if ( (nx != ny) or (nx != nz) ):
-            print('warning: simpson weights meant for uniform grid') 
-        W1 = self.SimpsonWeights1D(nx)/3
-        W2 = np.multiply.outer(W1,W1)
-        W3 = np.multiply.outer(W2,W1) 
-        return W3
-        
-    def evaluatePotential_SimpsonMethod(self):
-#         r = np.sqrt(self.x**2 + self.y**2 + self.z**2)
-        W3 = self.simpson_weight_matrix(3,3,3)
-        self.Potential = np.sum(W3*self.psi*potential(self.x,self.y,self.z)*self.psi)*self.volume
-        
-    
-    
-    
+
     
     
             
