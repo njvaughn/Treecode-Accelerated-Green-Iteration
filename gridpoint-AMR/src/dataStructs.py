@@ -1,34 +1,7 @@
 import numpy as np
 import itertools
 
-class Mesh(object):
-    '''
-    Mesh object.  Will be constructed out of many cells, which will be constructed out of gridpoints
-    '''
-    def __init__(self, xmin,xmax,nx,ymin,ymax,ny,zmin,zmax,nz):
-        '''
-        Mesh constructor:  
-        First construct the gridpoints.  
-        Then construct the cells that are composed of gridpoints. 
-        Then construct the mesh as a 2D or 3D array of cells.
-        '''
-        # generate gridpoint objects.  2n+1 gridpoints if there are n cells in a given dimension.  
-        # These will sit together in memory, and Cell objects will point to 9 of them (for 2D).
-        xvec = np.linspace(xmin,xmax,2*nx+1)
-        yvec = np.linspace(ymin,ymax,2*ny+1)
-        zvec = np.linspace(zmin,zmax,2*nz+1)
-        gridpoints = np.empty((2*nx+1,2*ny+1, 2*nz+1),dtype=object)
-        for i in range(2*nx+1):
-            for j in range(2*ny+1):
-                for k in range(2*nz+1):
-                    gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
-        
-        # generate cells from the gridpoint objects  
-        self.cells = np.empty((nx,ny,nz),dtype=object)
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    self.cells[i,j,k] = Cell( gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3] )
+
                     
 
 class Tree(object):
@@ -60,6 +33,10 @@ class Tree(object):
     def buildTree(self):
         # call the recursive divison on the root of the tree
         self.maxDepth = self.cells[0,0,0].recursiveDivide(maxDepth=0,currentLevel=0)
+        
+    def walkTree(self):
+        self.cells[0,0,0].recursiveWalkMidpoint()
+        
 
 
 class Cell(object):
@@ -103,7 +80,7 @@ class Cell(object):
     def recursiveDivide(self, currentLevel, maxDepth):
 
         self.getCellBounds()
-        if self.xmax - self.xmin > 0.13:
+        if self.xmax - self.xmin > 0.256:
             self.divide()
             for i,j,k in itertools.product(range(2),range(2),range(2)):
                 maxDepth = self.children[i,j,k].recursiveDivide(currentLevel+1, maxDepth)
@@ -111,6 +88,12 @@ class Cell(object):
         maxDepth = max(maxDepth, currentLevel)
                 
         return maxDepth
+    
+    def recursiveWalkMidpoint(self):
+        print('Level: ', self.level,', midpoint: (', self.gridpoints[1,1,1].x,', ',self.gridpoints[1,1,1].y,', ',self.gridpoints[1,1,1].z,')')
+        if hasattr(self,'children'):
+            for i,j,k in itertools.product(range(2),range(2),range(2)):
+                self.children[i,j,k].recursiveWalkMidpoint()
 
         
 class GridPoint(object):
@@ -129,3 +112,31 @@ class GridPoint(object):
     def setPsi(self, psi):
         self.psi = psi
         
+class Mesh(object):
+    '''
+    Mesh object.  Will be constructed out of many cells, which will be constructed out of gridpoints
+    '''
+    def __init__(self, xmin,xmax,nx,ymin,ymax,ny,zmin,zmax,nz):
+        '''
+        Mesh constructor:  
+        First construct the gridpoints.  
+        Then construct the cells that are composed of gridpoints. 
+        Then construct the mesh as a 2D or 3D array of cells.
+        '''
+        # generate gridpoint objects.  2n+1 gridpoints if there are n cells in a given dimension.  
+        # These will sit together in memory, and Cell objects will point to 9 of them (for 2D).
+        xvec = np.linspace(xmin,xmax,2*nx+1)
+        yvec = np.linspace(ymin,ymax,2*ny+1)
+        zvec = np.linspace(zmin,zmax,2*nz+1)
+        gridpoints = np.empty((2*nx+1,2*ny+1, 2*nz+1),dtype=object)
+        for i in range(2*nx+1):
+            for j in range(2*ny+1):
+                for k in range(2*nz+1):
+                    gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
+        
+        # generate cells from the gridpoint objects  
+        self.cells = np.empty((nx,ny,nz),dtype=object)
+        for i in range(nx):
+            for j in range(ny):
+                for k in range(nz):
+                    self.cells[i,j,k] = Cell( gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3] )

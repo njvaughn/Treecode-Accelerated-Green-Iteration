@@ -5,17 +5,18 @@ from dataStructs import Mesh, Tree
 
 class TestDataStructures(unittest.TestCase):
 
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         '''
-        Generate a mesh on [0,1]x[0,1] containing 8 total cells for testing.  
+        Generate a mesh on [0,1]x[0,1]x[0,1] containing 8 total cells for testing.  
         setUp() gets called before every test below.
         '''
         self.xmin = self.ymin = self.zmin = 0
         self.xmax = self.ymax = self.zmax = 1
         self.nx = self.ny = self.nz = 2
         self.mesh = Mesh(self.xmin,self.xmax,self.nx,self.ymin,self.ymax,self.ny,self.zmin,self.zmax,self.nz)
-        
+        self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
+        self.tree.buildTree()
         
 
     def testNeighborsPointToSameObject(self):
@@ -64,20 +65,19 @@ class TestDataStructures(unittest.TestCase):
                          "Neighboring children aren't pointing to same gridpoint object on their shared face")
         
     def testTreeRootConstruction(self):
-        self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
         self.assertEqual(np.shape(self.tree.cells), (1,1,1), "Error forming root of tree")
         self.assertEqual(self.tree.cells[0,0,0].gridpoints[0,0,0].x, self.xmin, "Error forming root of tree")
     
     def testTreeBuild(self):
-        self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree()
-         
-#         print('\nRoot: ', self.tree.cells[0,0,0],'\n')
-#         print('Children: ', self.tree.cells[0,0,0].children, '\n')
-        
+
+
         self.assertEqual(self.tree.cells[0,0,0].level, 0, "Root level wasn't equal to 0.")
         self.assertEqual(self.tree.cells[0,0,0].children[1,0,1].level, 1, "Root's children level wasn't equal to 1.")
-        self.assertEqual(self.tree.maxDepth, 3, "depth wasn't 3 like expected.  This test depends on domain size and division rule.  Not very general.")
+        self.assertEqual(self.tree.maxDepth, 2, "depth wasn't 2 like expected.  This test depends on domain size and division rule.  Not very general.")
+        
+#     def testMidpointWalk(self):
+#         self.tree.walkTree()
+        
         
 if __name__ == "__main__":
     unittest.main()
