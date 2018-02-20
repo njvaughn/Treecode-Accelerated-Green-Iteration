@@ -8,7 +8,7 @@ class TestDataStructures(unittest.TestCase):
 
     def setUp(self):
         '''
-        Generate a mesh on [0,1]x[0,1] containing 4 total cells for testing.  
+        Generate a mesh on [0,1]x[0,1] containing 8 total cells for testing.  
         setUp() gets called before every test below.
         '''
         self.xmin = self.ymin = self.zmin = 0
@@ -71,9 +71,13 @@ class TestDataStructures(unittest.TestCase):
     def testTreeBuild(self):
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
         self.tree.buildTree()
+         
+#         print('\nRoot: ', self.tree.cells[0,0,0],'\n')
+#         print('Children: ', self.tree.cells[0,0,0].children, '\n')
         
-        print('Root: ', self.tree.cells[0,0,0],'\n')
-        print('Children: ', self.tree.cells[0,0,0].children, '\n')
+        self.assertEqual(self.tree.cells[0,0,0].level, 0, "Root level wasn't equal to 0.")
+        self.assertEqual(self.tree.cells[0,0,0].children[1,0,1].level, 1, "Root's children level wasn't equal to 1.")
+        self.assertEqual(self.tree.maxDepth, 3, "depth wasn't 3 like expected.  This test depends on domain size and division rule.  Not very general.")
         
 if __name__ == "__main__":
     unittest.main()

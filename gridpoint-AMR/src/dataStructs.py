@@ -1,4 +1,5 @@
 import numpy as np
+import itertools
 
 class Mesh(object):
     '''
@@ -20,7 +21,7 @@ class Mesh(object):
         for i in range(2*nx+1):
             for j in range(2*ny+1):
                 for k in range(2*nz+1):
-                    gridpoints[i,j,k] = GridPt(xvec[i],yvec[j],zvec[k])
+                    gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
         
         # generate cells from the gridpoint objects  
         self.cells = np.empty((nx,ny,nz),dtype=object)
@@ -46,21 +47,19 @@ class Tree(object):
         yvec = np.linspace(ymin,ymax,3)
         zvec = np.linspace(zmin,zmax,3)
         gridpoints = np.empty((3,3,3),dtype=object)
-        for i in range(3):
-            for j in range(3):
-                for k in range(3):
-                    gridpoints[i,j,k] = GridPt(xvec[i],yvec[j],zvec[k])
+
+        for i, j, k in itertools.product(range(3),range(3),range(3)):
+            gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
         
         # generate root cell from the gridpoint objects  
         self.cells = np.empty((1,1,1),dtype=object)
         self.cells[0,0,0] = Cell( gridpoints )
+        self.cells[0,0,0].level = 0
         print("Root of tree constructed.")
-    
-        
-        
+            
     def buildTree(self):
-#         for cell in self.cells:
-        self.cells[0,0,0].recursiveDivide()
+        # call the recursive divison on the root of the tree
+        self.maxDepth = self.cells[0,0,0].recursiveDivide(maxDepth=0,currentLevel=0)
 
 
 class Cell(object):
@@ -90,28 +89,31 @@ class Cell(object):
         z = np.linspace(self.zmin,self.zmax,5)
         gridpoints = np.empty((5,5,5),dtype=object)
         gridpoints[::2,::2,::2] = self.gridpoints  # the 5x5x5 array of gridpoints should have the original 3x3x3 objects within
-        for i in range(5):
-            for j in range(5):
-                for k in range(5):
-                    if gridpoints[i,j,k] == None:
-                        gridpoints[i,j,k] = GridPt(x[i],y[j],z[k])
-
-        for i in range(2):
-            for j in range(2):
-                for k in range(2):
-                    children[i,j,k] = Cell(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
-                    
+        for i, j, k in itertools.product(range(5),range(5),range(5)):
+            if gridpoints[i,j,k] == None:
+                gridpoints[i,j,k] = GridPoint(x[i],y[j],z[k])
+                
+        for i, j, k in itertools.product(range(2),range(2),range(2)):
+            children[i,j,k] = Cell(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
+            if hasattr(self,'level'):
+                children[i,j,k].level = self.level+1
+        
         self.children = children
 
-    def recursiveDivide(self):
+    def recursiveDivide(self, currentLevel, maxDepth):
+
         self.getCellBounds()
-        if self.xmax - self.xmin > 0.1:
+        if self.xmax - self.xmin > 0.13:
             self.divide()
-            for child in self.children:
-                child.recursiveDivide()
+            for i,j,k in itertools.product(range(2),range(2),range(2)):
+                maxDepth = self.children[i,j,k].recursiveDivide(currentLevel+1, maxDepth)
+            
+        maxDepth = max(maxDepth, currentLevel)
+                
+        return maxDepth
 
         
-class GridPt(object):
+class GridPoint(object):
     '''
     The gridpoint object.  Will contain the coordinates, wavefunction value, and any other metadata such as
     whether or not the wavefunction has been updated, which cells the gridpoint belongs to, etc.
