@@ -2,6 +2,7 @@ import numpy as np
 from scipy.interpolate import RegularGridInterpolator
 import itertools
 from hydrogenPotential import potential, trueWavefunction
+from timer import Timer
 
                     
 
@@ -26,16 +27,15 @@ class Tree(object):
             gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
         
         # generate root cell from the gridpoint objects  
-#         self.cells = np.empty((1,1,1),dtype=object)
-#         self.cells[0,0,0] = Cell( gridpoints )
         self.root = Cell( gridpoints )
         self.root.level = 0
-        print("Root of tree constructed.")
             
     def buildTree(self,minLevels,maxLevels,divideTolerance): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
-        def recursiveDivide_fromTree(Cell, minLevels, maxLevels, divideTolerance, maxDepthAchieved=0, currentLevel=0):
+        timer = Timer()
+        def recursiveDivide(Cell, minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved=0, currentLevel=0):
+            counter += 1
             if currentLevel < maxLevels:
                 
                 if currentLevel < minLevels:
@@ -46,29 +46,61 @@ class Tree(object):
                 if Cell.divideFlag == True:   
                     Cell.divide()
                     for i,j,k in itertools.product(range(2),range(2),range(2)):
-                        maxDepthAchieved = recursiveDivide_fromTree(Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, maxDepthAchieved, currentLevel+1)
+                        maxDepthAchieved, counter = recursiveDivide(Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved, currentLevel+1)
                     
             maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
-            return maxDepthAchieved
+            return maxDepthAchieved, counter
+        timer.start()
+        self.maxDepthAchieved, self.treeSize = recursiveDivide(self.root, minLevels, maxLevels, divideTolerance, counter=0, maxDepthAchieved=0, currentLevel=0 )
+        timer.stop()
+        print('Tree build completed. \nUsing a tolerance of %.3g, this generated a total of %i cells with maximum depth of %i levels, taking %.3g seconds.' %(divideTolerance,self.treeSize, self.maxDepthAchieved,timer.elapsedTime()))
         
-        self.maxDepthAchieved = recursiveDivide_fromTree(self.root, minLevels, maxLevels, divideTolerance, maxDepthAchieved=0, currentLevel=0 )
+    def walkTree(self, attribute='', storeOutput = False):  # walk through the tree, printing out specified data (in this case, the midpoints)
+        '''
+        Walk through the tree and either print or store the midpoint coordinates as well as the desired cell or midpoint attribute.
+        Eventually, this should be modified to output either all grid points or just midpoints.
+        Midpoints have the additional simplicity that they do not repeat.  When going to gridpoints in general,
+        could add an adition attribute to the gridpoint class that indicates whether or not it has been walked over yet. 
         
-    def walkTree(self, attribute=''):  # walk through the tree, printing out specified data (in this case, the midpoints)
-        def recursiveWalkMidpoint(Cell, attribute):  
+        :param attribute:  the attribute you want printed or stored (in addition to coordinates)
+        :param storeOutput: boolean, indicates if output should be stored or printed to screen
+        '''
+        
+        def recursiveWalkMidpoint(Cell, attribute, storeOutput, outputArray):  
             midpoint = Cell.gridpoints[1,1,1]
-            if hasattr(Cell,attribute):
-                print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,'), ', attribute,': ', getattr(Cell,attribute))
-            elif hasattr(midpoint,attribute):
-                print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,'), ', attribute,': ', getattr(midpoint,attribute))
-            else:
-                print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,')')
+            
+            # if not storing output, then print to screen
+            if storeOutput == False:
+                if hasattr(Cell,attribute):
+                    print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,'), ', attribute,': ', getattr(Cell,attribute))
+                elif hasattr(midpoint,attribute):
+                    print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,'), ', attribute,': ', getattr(midpoint,attribute))
+                else:
+                    print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,')')
+            
+            # if storing output in outputArray.  This will be a Nx4 dimension array containing the midpoint (x,y,z,attribute)
+            elif storeOutput == True:
+                if hasattr(Cell,attribute):
+                    outputArray.append([midpoint.x,midpoint.y,midpoint.z,getattr(Cell,attribute)])
+                if hasattr(midpoint,attribute):
+                    outputArray.append([midpoint.x,midpoint.y,midpoint.z,getattr(midpoint,attribute)])
+            
+            # if cell has children, recursively walk through them
             if hasattr(Cell,'children'):
-                print()
+                if storeOutput == False: print()
                 for i,j,k in itertools.product(range(2),range(2),range(2)):
-                    recursiveWalkMidpoint(Cell.children[i,j,k],attribute)
-                print()
-                
-        recursiveWalkMidpoint(self.root, attribute)
+                    recursiveWalkMidpoint(Cell.children[i,j,k],attribute, storeOutput, outputArray)
+                if storeOutput == False: print()
+            
+            
+        # initialize empty array for output.  Shape not known apriori
+        outputArray = [] 
+        # call the recursive walk on the root            
+        recursiveWalkMidpoint(self.root, attribute, storeOutput, outputArray)
+        
+        if storeOutput == True: # else the output waas printed to screen
+            return np.array(outputArray)
+            
         
 
 
@@ -132,20 +164,13 @@ class Cell(object):
         y = np.linspace(self.ymin,self.ymax,5)
         z = np.linspace(self.zmin,self.zmax,5)
         gridpoints = np.empty((5,5,5),dtype=object)
-        gridpoints[::2,::2,::2] = self.gridpoints  # the 5x5x5 array of gridpoints should have the original 3x3x3 objects within
-        
-        """ 
-        Will need interpolator when refining and have a psi estimate on the coarse mesh.
-        Don't really need it yet.
-        """
-#         xm,ym,zm = np.meshgrid(x,y,z, indexing='ij')
-#         self.interpolate_for_division() # generate the local interpolator
-#         psi_fine = self.interpolator((xm,ym,zm)) # interpolate psi onto the fine mesh
+        gridpoints[::2,::2,::2] = self.gridpoints  # AVOIDS DUPLICATION OF GRIDPOINTS.  The 5x5x5 array of gridpoints should have the original 3x3x3 objects within
         
         for i, j, k in itertools.product(range(5),range(5),range(5)):
             if gridpoints[i,j,k] == None:
                 gridpoints[i,j,k] = GridPoint(x[i],y[j],z[k])
-                
+        
+        # generate the 8 children cells        
         for i, j, k in itertools.product(range(2),range(2),range(2)):
             children[i,j,k] = Cell(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
             children[i,j,k].parent = self # children should point to their parent

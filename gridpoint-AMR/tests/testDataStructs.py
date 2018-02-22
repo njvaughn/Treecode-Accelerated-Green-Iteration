@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 
+
 from dataStructs import Mesh, Tree, Cell, GridPoint
 from hydrogenPotential import potential, trueWavefunction
 
@@ -17,7 +18,7 @@ class TestDataStructures(unittest.TestCase):
         self.nx = self.ny = self.nz = 2
         self.mesh = Mesh(self.xmin,self.xmax,self.nx,self.ymin,self.ymax,self.ny,self.zmin,self.zmax,self.nz)
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=0, maxLevels=3, divideTolerance=0.1)
+        self.tree.buildTree( minLevels=0, maxLevels=5, divideTolerance=0.0025)
 
     def testNeighborsPointToSameObject(self):
         '''
@@ -81,8 +82,7 @@ class TestDataStructures(unittest.TestCase):
         self.assertEqual(self.tree.root.gridpoints[0,0,0].x, self.xmin, "Root's 000 corner point doesn't have correct x value")
         self.assertEqual(self.tree.root.children[1,0,1].level, 1, "Root's children level wasn't equal to 1.")
 #         self.assertEqual(self.tree.maxDepth, 3, "depth wasn't 2 like expected.  This test depends on domain size and division rule.  Not very general.")
-
-        
+       
     def testTreePointers(self):
         # identify 3 generations, doesn't matter which child in each generation
         grandparent = self.tree.root
@@ -93,14 +93,23 @@ class TestDataStructures(unittest.TestCase):
         self.assertEqual(parent.parent, grandparent, "Parent's parent isn't the grandparent")
         self.assertEqual(child.parent, parent, "Child's parent isn't the parent")
     
- 
     def testAnalyticPsiSetting(self):
         self.assertEqual(self.tree.root.gridpoints[1,1,1].psi, trueWavefunction(1, 0, 0, 0), "root midpoint (the origin) doesn't have correct wavefunction.")
 
-    def testMidpointWalk(self):
-        self.tree.walkTree(attribute='divideFlag')
-        self.tree.walkTree(attribute='psi')
-        self.tree.walkTree()
-    
+    def testTreeWalk(self):
+#         self.tree.walkTree(attribute='divideFlag')
+#         self.tree.walkTree()
+        outputData = self.tree.walkTree(attribute='psi', storeOutput = True)
+        self.assertEqual(np.shape(outputData), (self.tree.treeSize, 4), "Walk output array not expected shape.")
+        x = outputData[:,0]
+        y = outputData[:,1]
+        z = outputData[:,2]
+        psi = outputData[:,3]
+        self.assertIsInstance(psi, np.ndarray, "output array not a numpy array")
+        self.assertEqual(np.shape(y), np.shape(psi), "midpoint y values not same shape as psi")
+        self.assertEqual(x[0], (self.xmax+self.xmin)/2, "first x value not the center of domain")
+        self.assertEqual(z[1], (self.zmax+3*self.zmin)/4, "second z value not the center of domain lower z octant")
+        self.assertEqual(psi[44], trueWavefunction(1, x[44], y[44], z[44]), "psi value doesn't match analytic")
+            
 if __name__ == "__main__":
     unittest.main()
