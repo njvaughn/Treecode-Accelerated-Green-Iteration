@@ -4,6 +4,9 @@ import itertools
 from hydrogenPotential import potential, trueWavefunction
 from timer import Timer
 
+ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
+TwoByTwoByTwo = [element for element in itertools.product(range(2),range(2),range(2))]
+FiveByFiveByFive = [element for element in itertools.product(range(5),range(5),range(5))]
                     
 
 class Tree(object):
@@ -23,7 +26,7 @@ class Tree(object):
         zvec = np.linspace(zmin,zmax,3)
         gridpoints = np.empty((3,3,3),dtype=object)
 
-        for i, j, k in itertools.product(range(3),range(3),range(3)):
+        for i, j, k in ThreeByThreeByThree:
             gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
         
         # generate root cell from the gridpoint objects  
@@ -45,7 +48,7 @@ class Tree(object):
                     
                 if Cell.divideFlag == True:   
                     Cell.divide()
-                    for i,j,k in itertools.product(range(2),range(2),range(2)):
+                    for i,j,k in TwoByTwoByTwo:
                         maxDepthAchieved, counter = recursiveDivide(Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved, currentLevel+1)
                     
             maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
@@ -88,7 +91,7 @@ class Tree(object):
             # if cell has children, recursively walk through them
             if hasattr(Cell,'children'):
                 if storeOutput == False: print()
-                for i,j,k in itertools.product(range(2),range(2),range(2)):
+                for i,j,k in TwoByTwoByTwo:
                     recursiveWalkMidpoint(Cell.children[i,j,k],attribute, storeOutput, outputArray)
                 if storeOutput == False: print()
             
@@ -100,10 +103,40 @@ class Tree(object):
         
         if storeOutput == True: # else the output waas printed to screen
             return np.array(outputArray)
+
+    
+    def computePotentialOnTree(self, epsilon=0):    
+        self.totalPotential = 0
+        def recursiveComputePotential(Cell, epsilon=0):
+            if hasattr(Cell,'children'):
+                for i,j,k in TwoByTwoByTwo:
+                    recursiveComputePotential(Cell.children[i,j,k])
             
-        
+            else: # this cell has no children
+                Cell.computePotential(epsilon)
+                self.totalPotential += Cell.PE
+                
+        recursiveComputePotential(self.root, epsilon=0)
 
-
+    
+    def computeKineticOnTree(self):
+        self.totalKinetic = 0
+        def recursiveComputeKinetic(Cell):
+            if hasattr(Cell,'children'):
+                for i,j,k in TwoByTwoByTwo:
+                    recursiveComputeKinetic(Cell.children[i,j,k])
+            
+            else: # this cell has no children
+                Cell.computeKinetic()
+                self.totalKinetic += Cell.KE
+                
+        recursiveComputeKinetic(self.root)
+    
+    
+    
+    
+    
+            
 class Cell(object):
     '''
     Cell object.  Cells are composed of gridpoint objects.
@@ -122,6 +155,9 @@ class Cell(object):
         self.ymax = self.gridpoints[2,2,2].y
         self.zmin = self.gridpoints[0,0,0].z
         self.zmax = self.gridpoints[2,2,2].z
+        self.dx = self.gridpoints[1,0,0].x - self.xmin
+        self.dy = self.gridpoints[0,1,0].y - self.ymin
+        self.dz = self.gridpoints[0,0,1].z - self.zmin
         self.volume = (self.xmax-self.xmin)*(self.ymax-self.ymin)*(self.zmax-self.zmin)
         
     def interpolate_for_division(self):
@@ -130,7 +166,7 @@ class Cell(object):
             xvec = np.array(self.gridpoints[0,0,0].x,self.gridpoints[1,0,0].x,self.gridpoints[2,0,0].x)
             yvec = np.array(self.gridpoints[0,0,0].y,self.gridpoints[0,1,0].y,self.gridpoints[0,2,0].y)
             zvec = np.array(self.gridpoints[0,0,0].z,self.gridpoints[0,0,1].z,self.gridpoints[0,0,2].z)
-            for i,j,k in itertools.product(range(3),range(3),range(3)):
+            for i,j,k in ThreeByThreeByThree:
                 psiCoarse[i,j,k] = self.gridpoints[i,j,k].psi
         
             self.interpolator = RegularGridInterpolator((xvec, yvec, zvec), psiCoarse) 
@@ -148,7 +184,7 @@ class Cell(object):
         xmids = np.array([(3*self.xmin+self.xmax)/4, (self.xmin+3*self.xmax)/4])
         ymids = np.array([(3*self.ymin+self.ymax)/4, (self.ymin+3*self.ymax)/4])
         zmids = np.array([(3*self.zmin+self.zmax)/4, (self.zmin+3*self.zmax)/4])
-        for i,j,k in itertools.product(range(2),range(2),range(2)):
+        for i,j,k in TwoByTwoByTwo:
             tempChild = GridPoint(xmids[i],ymids[j],zmids[k])
             tempChild.setTestFunctionValue()
             childrenIntegral += tempChild.testFunctionValue*(self.volume/8)
@@ -166,12 +202,12 @@ class Cell(object):
         gridpoints = np.empty((5,5,5),dtype=object)
         gridpoints[::2,::2,::2] = self.gridpoints  # AVOIDS DUPLICATION OF GRIDPOINTS.  The 5x5x5 array of gridpoints should have the original 3x3x3 objects within
         
-        for i, j, k in itertools.product(range(5),range(5),range(5)):
+        for i, j, k in FiveByFiveByFive:
             if gridpoints[i,j,k] == None:
                 gridpoints[i,j,k] = GridPoint(x[i],y[j],z[k])
         
         # generate the 8 children cells        
-        for i, j, k in itertools.product(range(2),range(2),range(2)):
+        for i, j, k in TwoByTwoByTwo:
             children[i,j,k] = Cell(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
             children[i,j,k].parent = self # children should point to their parent
             if hasattr(self,'level'):
@@ -180,10 +216,30 @@ class Cell(object):
         self.children = children
 
     
-            
+    def computePotential(self, epsilon=0):
+        midpoint = self.gridpoints[1,1,1]
+        self.PE = self.volume*midpoint.psi*midpoint.psi*potential(midpoint.x,midpoint.y,midpoint.z, epsilon)
 
-
-        
+    def computeKinetic(self):
+        midpoint = self.gridpoints[1,1,1]
+        def computeLaplacian(Cell):
+            # get the psi values on a grid
+            psi = np.empty((3,3,3))
+            for i,j,k in ThreeByThreeByThree:
+                psi[i,j,k] = Cell.gridpoints[i,j,k].psi
+            gradient = np.gradient(psi, Cell.dx, Cell.dy, Cell.dz, edge_order=2)
+            Dxx = np.gradient(gradient[0],self.dx,edge_order=2,axis=0)
+            Dyy = np.gradient(gradient[1],self.dy,edge_order=2,axis=1)
+            Dzz = np.gradient(gradient[2],self.dz,edge_order=2,axis=2)
+            Laplacian = (Dxx + Dyy + Dzz)  # only use the Laplacian at the midpoint, for now at least
+            return Laplacian
+    
+        Laplacian = computeLaplacian(self)
+        self.KE = -1/2*self.volume*midpoint.psi*Laplacian[1,1,1]
+    
+    
+    
+          
 class GridPoint(object):
     '''
     The gridpoint object.  Will contain the coordinates, wavefunction value, and any other metadata such as
