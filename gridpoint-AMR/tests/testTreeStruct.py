@@ -14,10 +14,10 @@ class TestTreeStructure(unittest.TestCase):
         Generate a mesh on [-1,1]x[-1,1]x[-1,1] containing 8 total cells for testing.  
         setUp() gets called before every test below.
         '''
-        self.xmin = self.ymin = self.zmin = -8
-        self.xmax = self.ymax = self.zmax = 8
+        self.xmin = self.ymin = self.zmin = -12
+        self.xmax = self.ymax = self.zmax = 12
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=0, maxLevels=10, divideTolerance=0.000125)
+        self.tree.buildTree( minLevels=0, maxLevels=3, divideTolerance=0.0125)
 
     def testNeighborsPointToSameObject(self):
         '''
@@ -75,7 +75,7 @@ class TestTreeStructure(unittest.TestCase):
 
     def testTreeWalk(self):
 #         self.tree.walkTree(attribute='divideFlag')
-#         self.tree.walkTree()
+        self.tree.walkTree(leavesOnly=True)
         outputData = self.tree.walkTree(attribute='psi', storeOutput = True)
         self.assertEqual(np.shape(outputData), (self.tree.treeSize, 4), "Walk output array not expected shape.")
         x = outputData[:,0]
@@ -90,11 +90,11 @@ class TestTreeStructure(unittest.TestCase):
     
     def testPotentialComputation(self):
         self.tree.computePotentialOnTree(epsilon=0)
-        print('\nComputed potential: ', self.tree.totalPotential)
+        print('\nPotential Error:        %.3g mHartree' %float((-1.0-self.tree.totalPotential)*1000.0))
         
     def testKineticComputation(self):
         self.tree.computeKineticOnTree()
-        print('\nComputed kinetic:    ', self.tree.totalKinetic)
+        print('\nKinetic Error:           %.3g mHartree' %float((0.5-self.tree.totalKinetic)*1000.0))
             
 if __name__ == "__main__":
     unittest.main()

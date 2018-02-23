@@ -3,11 +3,17 @@ from scipy.interpolate import RegularGridInterpolator
 import itertools
 from hydrogenPotential import potential, trueWavefunction
 from timer import Timer
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
+# plt.ion()
+from mpl_toolkits.mplot3d import Axes3D
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 TwoByTwoByTwo = [element for element in itertools.product(range(2),range(2),range(2))]
 FiveByFiveByFive = [element for element in itertools.product(range(5),range(5),range(5))]
-                    
+ 
+                 
 
 class Tree(object):
     '''
@@ -37,7 +43,7 @@ class Tree(object):
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         timer = Timer()
-        def recursiveDivide(Cell, minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved=0, currentLevel=0):
+        def recursiveDivide(Cell, minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
             counter += 1
             if currentLevel < maxLevels:
                 
@@ -49,16 +55,20 @@ class Tree(object):
                 if Cell.divideFlag == True:   
                     Cell.divide()
                     for i,j,k in TwoByTwoByTwo:
-                        maxDepthAchieved, counter = recursiveDivide(Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved, currentLevel+1)
+                        maxDepthAchieved, minDepthAchieved, counter = recursiveDivide(Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved, minDepthAchieved, currentLevel+1)
+                else:
+                    minDepthAchieved = min(minDepthAchieved, currentLevel)
+                    
                     
             maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
-            return maxDepthAchieved, counter
-        timer.start()
-        self.maxDepthAchieved, self.treeSize = recursiveDivide(self.root, minLevels, maxLevels, divideTolerance, counter=0, maxDepthAchieved=0, currentLevel=0 )
-        timer.stop()
-        print('Tree build completed. \nUsing a tolerance of %.3g, this generated a total of %i cells with maximum depth of %i levels, taking %.3g seconds.' %(divideTolerance,self.treeSize, self.maxDepthAchieved,timer.elapsedTime()))
+            return maxDepthAchieved, minDepthAchieved, counter
         
-    def walkTree(self, attribute='', storeOutput = False):  # walk through the tree, printing out specified data (in this case, the midpoints)
+        timer.start()
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self.root, minLevels, maxLevels, divideTolerance, counter=0, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
+        timer.stop()
+        print('Tree build completed. \nTolerance:               %1.2e \nTotal Number of Cells:   %i \nMinimum Depth            %i levels \nMaximum Depth:           %i levels \nConstruction time:       %.3g seconds.' %(divideTolerance,self.treeSize, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime()))
+        
+    def walkTree(self, attribute='', storeOutput = False, leavesOnly=False):  # walk through the tree, printing out specified data (in this case, the midpoints)
         '''
         Walk through the tree and either print or store the midpoint coordinates as well as the desired cell or midpoint attribute.
         Eventually, this should be modified to output either all grid points or just midpoints.
@@ -69,42 +79,67 @@ class Tree(object):
         :param storeOutput: boolean, indicates if output should be stored or printed to screen
         '''
         
-        def recursiveWalkMidpoint(Cell, attribute, storeOutput, outputArray):  
+        def recursiveWalkMidpoint(Cell, attribute, storeOutput, outputArray, leavesOnly):  
             midpoint = Cell.gridpoints[1,1,1]
             
             # if not storing output, then print to screen
             if storeOutput == False:
-                if hasattr(Cell,attribute):
-                    print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,'), ', attribute,': ', getattr(Cell,attribute))
-                elif hasattr(midpoint,attribute):
-                    print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,'), ', attribute,': ', getattr(midpoint,attribute))
-                else:
-                    print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,')')
+                if (leavesOnly==False or not hasattr(Cell,'children')):
+                    if hasattr(Cell,attribute):
+                        print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,'), ', attribute,': ', getattr(Cell,attribute))
+                    elif hasattr(midpoint,attribute):
+                        print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,'), ', attribute,': ', getattr(midpoint,attribute))
+                    else:
+                        print('Level: ', Cell.level,', midpoint: (', midpoint.x,', ',midpoint.y,', ',midpoint.z,')')
             
             # if storing output in outputArray.  This will be a Nx4 dimension array containing the midpoint (x,y,z,attribute)
             elif storeOutput == True:
-                if hasattr(Cell,attribute):
-                    outputArray.append([midpoint.x,midpoint.y,midpoint.z,getattr(Cell,attribute)])
-                if hasattr(midpoint,attribute):
-                    outputArray.append([midpoint.x,midpoint.y,midpoint.z,getattr(midpoint,attribute)])
+                if (leavesOnly==False or not hasattr(Cell,'children')):
+                    if hasattr(Cell,attribute):
+                        outputArray.append([midpoint.x,midpoint.y,midpoint.z,getattr(Cell,attribute)])
+                    if hasattr(midpoint,attribute):
+                        outputArray.append([midpoint.x,midpoint.y,midpoint.z,getattr(midpoint,attribute)])
             
             # if cell has children, recursively walk through them
             if hasattr(Cell,'children'):
                 if storeOutput == False: print()
                 for i,j,k in TwoByTwoByTwo:
-                    recursiveWalkMidpoint(Cell.children[i,j,k],attribute, storeOutput, outputArray)
+                    recursiveWalkMidpoint(Cell.children[i,j,k],attribute, storeOutput, outputArray,leavesOnly)
                 if storeOutput == False: print()
             
             
         # initialize empty array for output.  Shape not known apriori
         outputArray = [] 
         # call the recursive walk on the root            
-        recursiveWalkMidpoint(self.root, attribute, storeOutput, outputArray)
+        recursiveWalkMidpoint(self.root, attribute, storeOutput, outputArray, leavesOnly)
         
         if storeOutput == True: # else the output waas printed to screen
             return np.array(outputArray)
-
-    
+        
+    def visualizeMesh(self,attributeForColoring):
+        '''
+        Tasks-- modify the walk so I only get the final mesh, not the entire tree.
+                figure out how to title and add colorbar.
+        :param attributeForColoring:
+        '''
+        
+#         outputData = self.walkTree(attribute='psi', storeOutput = True)        
+        outputData = self.walkTree(attributeForColoring, storeOutput = True, leavesOnly=True)        
+        x = outputData[:,0]
+        y = outputData[:,1]
+        z = outputData[:,2]
+        psi = outputData[:,3]
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        scatter = ax.scatter(x, y, zs=z, c=np.log(psi), s=2, depthshade=False)
+#         plt.colorbar()
+#         ax.set_title('Adaptive Mesh Colored by ', attributeForColoring)
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
+        fig.colorbar(scatter, ax=ax)
+        plt.show()
+     
     def computePotentialOnTree(self, epsilon=0):    
         self.totalPotential = 0
         def recursiveComputePotential(Cell, epsilon=0):
@@ -117,7 +152,6 @@ class Tree(object):
                 self.totalPotential += Cell.PE
                 
         recursiveComputePotential(self.root, epsilon=0)
-
     
     def computeKineticOnTree(self):
         self.totalKinetic = 0
@@ -131,10 +165,6 @@ class Tree(object):
                 self.totalKinetic += Cell.KE
                 
         recursiveComputeKinetic(self.root)
-    
-    
-    
-    
     
             
 class Cell(object):
@@ -160,7 +190,7 @@ class Cell(object):
         self.dz = self.gridpoints[0,0,1].z - self.zmin
         self.volume = (self.xmax-self.xmin)*(self.ymax-self.ymin)*(self.zmax-self.zmin)
         
-    def interpolate_for_division(self):
+    def interpolatForDivision(self):
         if hasattr(self, 'psi'):
             psiCoarse = np.empty((3,3,3))
             xvec = np.array(self.gridpoints[0,0,0].x,self.gridpoints[1,0,0].x,self.gridpoints[2,0,0].x)
@@ -236,9 +266,7 @@ class Cell(object):
     
         Laplacian = computeLaplacian(self)
         self.KE = -1/2*self.volume*midpoint.psi*Laplacian[1,1,1]
-    
-    
-    
+        
           
 class GridPoint(object):
     '''
@@ -299,3 +327,24 @@ class Mesh(object):
             for j in range(ny):
                 for k in range(nz):
                     self.cells[i,j,k] = Cell( gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3] )
+                    
+                    
+                    
+if __name__ == "__main__":
+#     print('hi')
+    xmin = ymin = zmin = -10
+    xmax = ymax = zmax = -xmin
+    tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
+    tree.buildTree( minLevels=1, maxLevels=6, divideTolerance=0.00125)
+         
+    tree.computePotentialOnTree(epsilon=0)
+    print('\nPotential Error:        %.3g mHartree' %float((-1.0-tree.totalPotential)*1000.0))
+         
+    tree.computeKineticOnTree()
+    print('Kinetic Error:           %.3g mHartree' %float((0.5-tree.totalKinetic)*1000.0))
+             
+    tree.visualizeMesh(attributeForColoring='psi')
+    print('Visualization Complete.')
+        
+        
+        
