@@ -131,7 +131,7 @@ class Tree(object):
         psi = outputData[:,3]
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        scatter = ax.scatter(x, y, zs=z, c=np.log(psi), s=2, depthshade=False)
+        scatter = ax.scatter(x, y, zs=z, c=psi, s=2, cmap=plt.get_cmap('brg'),depthshade=False)
 #         plt.colorbar()
 #         ax.set_title('Adaptive Mesh Colored by ', attributeForColoring)
         ax.set_xlabel('X')
