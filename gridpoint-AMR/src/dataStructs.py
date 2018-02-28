@@ -209,9 +209,9 @@ class Cell(object):
     def setNeighborList(self):
         def getNeighbors3D(self):
 #             print('Self Identifier: ', "".join(list(self.uniqueID)))
-            topBottomID = list(self.uniqueID)[::3]
-            leftRightID = list(self.uniqueID)[1::3]
-            inOutID = list(self.uniqueID)[2::3]
+            zhighZLowID = list(self.uniqueID)[::3]
+            xLowXHighID = list(self.uniqueID)[1::3]
+            yLowYHighID = list(self.uniqueID)[2::3]
             
             
             def recursiveDigitFlipForGreaterNeighbor(identifierList, targetIndex, noNeighborFlag):
@@ -253,66 +253,66 @@ class Cell(object):
                 
             
             
-            rightID, rightIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(leftRightID, len(leftRightID)-1, noNeighborFlag=False)
-            leftID, leftIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(leftRightID, len(leftRightID)-1, noNeighborFlag=False)
-            topID, topIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(topBottomID, len(topBottomID)-1, noNeighborFlag=False)
-            bottomID, bottomIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(topBottomID, len(topBottomID)-1, noNeighborFlag=False)
-            outID, outIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(inOutID, len(inOutID)-1, noNeighborFlag=False)
-            inID, inIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(inOutID, len(inOutID)-1, noNeighborFlag=False)
+            xHighID, xHighIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(xLowXHighID, len(xLowXHighID)-1, noNeighborFlag=False)
+            xLowID, xLowIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(xLowXHighID, len(xLowXHighID)-1, noNeighborFlag=False)
+            zhighID, zhighIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(zhighZLowID, len(zhighZLowID)-1, noNeighborFlag=False)
+            zLowID, zLowIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(zhighZLowID, len(zhighZLowID)-1, noNeighborFlag=False)
+            yHighID, yHighIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(yLowYHighID, len(yLowYHighID)-1, noNeighborFlag=False)
+            yLowID, yLowIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(yLowYHighID, len(yLowYHighID)-1, noNeighborFlag=False)
         
         
-            rightNeighbor = []
-            leftNeighbor = []
-            topNeighbor = []
-            bottomNeighbor = []
-            outNeighbor=[]
-            inNeighbor=[]
+            xHighNeighbor = []
+            xLowNeighbor = []
+            zhighNeighbor = []
+            zLowNeighbor = []
+            yHighNeighbor=[]
+            yLowNeighbor=[]
         
             for i in range(int(len(list(self.uniqueID))/3)):
-#                 print(topID[i])
-                topNeighbor.append(topID[i])
-                topNeighbor.append(leftRightID[i])
-                topNeighbor.append(inOutID[i])
-                bottomNeighbor.append(bottomID[i])
-                bottomNeighbor.append(leftRightID[i])
-                bottomNeighbor.append(inOutID[i])
+#                 print(zhighID[i])
+                zhighNeighbor.append(zhighID[i])
+                zhighNeighbor.append(xLowXHighID[i])
+                zhighNeighbor.append(yLowYHighID[i])
+                zLowNeighbor.append(zLowID[i])
+                zLowNeighbor.append(xLowXHighID[i])
+                zLowNeighbor.append(yLowYHighID[i])
                 
                 
-                rightNeighbor.append(topBottomID[i])
-                rightNeighbor.append(rightID[i])
-                rightNeighbor.append(inOutID[i])
-                leftNeighbor.append(topBottomID[i])
-                leftNeighbor.append(leftID[i])
-                leftNeighbor.append(inOutID[i])
+                xHighNeighbor.append(zhighZLowID[i])
+                xHighNeighbor.append(xHighID[i])
+                xHighNeighbor.append(yLowYHighID[i])
+                xLowNeighbor.append(zhighZLowID[i])
+                xLowNeighbor.append(xLowID[i])
+                xLowNeighbor.append(yLowYHighID[i])
                 
         
-                outNeighbor.append(topBottomID[i])
-                outNeighbor.append(leftRightID[i])
-                outNeighbor.append(outID[i])
-                inNeighbor.append(topBottomID[i])
-                inNeighbor.append(leftRightID[i])
-                inNeighbor.append(inID[i])
+                yHighNeighbor.append(zhighZLowID[i])
+                yHighNeighbor.append(xLowXHighID[i])
+                yHighNeighbor.append(yHighID[i])
+                yLowNeighbor.append(zhighZLowID[i])
+                yLowNeighbor.append(xLowXHighID[i])
+                yLowNeighbor.append(yLowID[i])
             
 #             print('\nTarget Cell ID: ', "".join(list(self.uniqueID)),'\n')
-        #     print('\nleftID: ', leftID)
-        #     print('\nrightID: ', rightID)
-        #     print('\nrightNoNeighborFlag ', rightIDNoNeighborFlag)
-        #     print('\ntopID: ', topID)
-        #     print('\nbottomID: ', bottomID)
-        #     print('\nrightNeighbor: ',rightNeighbor)
+        #     print('\nxLowID: ', xLowID)
+        #     print('\nxHighID: ', xHighID)
+        #     print('\nxHighNoNeighborFlag ', xHighIDNoNeighborFlag)
+        #     print('\nzhighID: ', zhighID)
+        #     print('\nzLowID: ', zLowID)
+        #     print('\nxHighNeighbor: ',xHighNeighbor)
             neighborList = []
-            if leftIDNoNeighborFlag == True: pass
-            else: neighborList.append(['left', "".join(leftNeighbor)])
-            if rightIDNoNeighborFlag == True: pass 
-            else: neighborList.append(['right',"".join(rightNeighbor)])
-            if bottomIDNoNeighborFlag == True: pass
-            else: neighborList.append(['bottom',"".join(bottomNeighbor)])
-            if topIDNoNeighborFlag == True: pass 
-            else: neighborList.append(['top',"".join(topNeighbor)])
-            if inIDNoNeighborFlag == True: pass 
-            else: neighborList.append(['in',"".join(inNeighbor)])
-            if outIDNoNeighborFlag == True: pass
-            else: neighborList.append(['out',"".join(outNeighbor)])
+            if xLowIDNoNeighborFlag == True: pass
+            else: neighborList.append(['xLow', "".join(xLowNeighbor)])
+            if xHighIDNoNeighborFlag == True: pass 
+            else: neighborList.append(['xHigh',"".join(xHighNeighbor)])
+            if zLowIDNoNeighborFlag == True: pass
+            else: neighborList.append(['zLow',"".join(zLowNeighbor)])
+            if zhighIDNoNeighborFlag == True: pass 
+            else: neighborList.append(['zhigh',"".join(zhighNeighbor)])
+            if yLowIDNoNeighborFlag == True: pass 
+            else: neighborList.append(['yLow',"".join(yLowNeighbor)])
+            if yHighIDNoNeighborFlag == True: pass
+            else: neighborList.append(['yHigh',"".join(yHighNeighbor)])
         
  
             return neighborList
@@ -355,52 +355,63 @@ class Cell(object):
             self.divideFlag = False
      
     def fillInNeighbors(self, gridpoints): 
-        print('\nTarget Cell ID      ', self.uniqueID)
+#         for i,j,k in TwoByTwoByTwo:
+#             if gridpoints[i,j,k] != None: print('original: ',gridpoints[i,j,k])
+        printNeighborResults = False
+        if printNeighborResults == True: print('\nTarget Cell ID      ', self.uniqueID)
         try: 
-            topID = [element[1] for element in self.neighbors if element[0] == 'top'][0]
-            topCell = [element[1] for element in self.tree.masterList if str(element[0]) == topID][0]
-            print('found topCell:    ', topCell, 'whose ID is ', topCell.uniqueID)
-        except: print('No topID, so not searching for cell')
+            zhighID = [element[1] for element in self.neighbors if element[0] == 'zhigh'][0]
+            zhighCell = [element[1] for element in self.tree.masterList if str(element[0]) == zhighID][0]
+            if hasattr(zhighCell, 'gridpoints'): gridpoints[:,:,2] = zhighCell.gridpoints[:,:,0] # this is failing
+            if printNeighborResults == True: print('found zhighCell:    ', zhighCell, 'whose ID is ', zhighCell.uniqueID)
+        except: pass#print('No zhighID, so not searching for cell')  
         try: 
-            bottomID = [element[1] for element in self.neighbors if element[0] == 'bottom'][0]
-            bottomCell = [element[1] for element in self.tree.masterList if str(element[0]) == bottomID][0]
-            print('found bottomCell: ', bottomCell, 'whose ID is ', bottomCell.uniqueID)
-        except: print('No bottomID, so not searching for cell')
+            zLowID = [element[1] for element in self.neighbors if element[0] == 'zLow'][0]
+            zLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == zLowID][0]
+            if hasattr(zLowCell, 'gridpoints'): gridpoints[:,:,0] = zLowCell.gridpoints[:,:,2] # this is failing
+            if printNeighborResults == True: print('found zLowCell: ', zLowCell, 'whose ID is ', zLowCell.uniqueID)
+        except: pass #print('No zLowID, so not searching for cell')
         try: 
-            leftID =   [element[1] for element in self.neighbors if element[0] == 'left'][0]
-            leftCell = [element[1] for element in self.tree.masterList if str(element[0]) == leftID][0]
-            print('found leftCell:   ', leftCell, 'whose ID is ', leftCell.uniqueID)
-        except: print('No leftID, so not searching for cell')
+            xLowID =   [element[1] for element in self.neighbors if element[0] == 'xLow'][0]
+            xLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == xLowID][0]
+            if hasattr(xLowCell, 'gridpoints'): gridpoints[0,:,:] = xLowCell.gridpoints[2,:,:] # this is failing
+            if printNeighborResults == True: print('found xLowCell:   ', xLowCell, 'whose ID is ', xLowCell.uniqueID)
+        except: pass#print('No xLowID, so not searching for cell')
         try: 
-            rightID =  [element[1] for element in self.neighbors if element[0] == 'right'][0]
-            rightCell = [element[1] for element in self.tree.masterList if str(element[0]) == rightID][0]
-            print('found rightCell:  ', rightCell, 'whose ID is ', rightCell.uniqueID)
-        except: print('No rightID, so not searching for cell')
+            xHighID =  [element[1] for element in self.neighbors if element[0] == 'xHigh'][0]
+            xHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == xHighID][0]
+            if hasattr(xHighCell, 'gridpoints'): gridpoints[2,:,:] = xHighCell.gridpoints[0,:,:] # this is failing
+            if printNeighborResults == True: print('found xHighCell:  ', xHighCell, 'whose ID is ', xHighCell.uniqueID)
+        except: pass#print('No xHighID, so not searching for cell')
         try: 
-            inID =     [element[1] for element in self.neighbors if element[0] == 'in'][0]
-            inCell = [element[1] for element in self.tree.masterList if str(element[0]) == inID][0]
-            print('found inCell:     ', inCell, 'whose ID is ', inCell.uniqueID)
-        except: print('No inID, so not searching for cell')
+            yLowID =     [element[1] for element in self.neighbors if element[0] == 'in'][0]
+            yLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == yLowID][0]
+            if hasattr(yLowCell, 'gridpoints'): gridpoints[:,0,:] = yLowCell.gridpoints[:,2,:] # this is failing
+            if printNeighborResults == True: print('found inCell:     ', yLowCell, 'whose ID is ', yLowCell.uniqueID)
+        except: pass#print('No yLowID, so not searching for cell')
         try: 
-            outID =    [element[1] for element in self.neighbors if element[0] == 'out'][0]
-            outCell = [element[1] for element in self.tree.masterList if str(element[0]) == outID][0]
-            print('found outCell:    ', outCell, 'whose ID is ', outCell.uniqueID)
-        except: print('No outID, so not searching for cell')
+            yHighID =    [element[1] for element in self.neighbors if element[0] == 'yHigh'][0]
+            yHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == yHighID][0]
+            if hasattr(yHighCell, 'gridpoints'): gridpoints[:,2,:] = yHighCell.gridpoints[:,0,:] # this is failing
+            if printNeighborResults == True: print('found yHighCell:    ', yHighCell, 'whose ID is ', yHighCell.uniqueID)
+        except: pass#print('No yHighID, so not searching for cell')
         
+        
+#         for i,j,k in TwoByTwoByTwo:
+#             if gridpoints[i,j,k] != None: print('filled in: ',gridpoints[i,j,k])
+        return gridpoints
 
-   
-        
-        """ Verbose section for debugging """
+#         """ Verbose section for debugging """
 #         print('\nTarget Cell ID      ', self.uniqueID)
 # #         try:
-# #             print('Searching for topID ', topID)
-# #             topCell = [element[1] for element in self.tree.masterList if str(element[0]) == topID][0]
+# #             print('Searching for zhighID ', zhighID)
+# #             zhighCell = [element[1] for element in self.tree.masterList if str(element[0]) == zhighID][0]
 # #         except: 
-# #             topCell = None
-# #             print('No topID, so not searching for cell')
+# #             zhighCell = None
+# #             print('No zhighID, so not searching for cell')
 #         try:
-#             print('found topCell: ', topCell, 'whose ID is ', topCell.uniqueID, '\n')
-#             print('found bottomCell: ', bottomCell, 'whose ID is ', bottomCell.uniqueID, '\n')
+#             print('found zhighCell: ', zhighCell, 'whose ID is ', zhighCell.uniqueID, '\n')
+#             print('found zLowCell: ', zLowCell, 'whose ID is ', zLowCell.uniqueID, '\n')
 #         except:
 #             pass
         
@@ -432,13 +443,15 @@ class Cell(object):
 #             self.masterList.append([Cell.children[i,j,k].uniqueID, Cell.children[i,j,k]])
             
         for i, j, k in TwoByTwoByTwo:    
-            children[i,j,k].fillInNeighbors(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
+            gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3] = children[i,j,k].fillInNeighbors(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
             
-        
+        newGridpointCount=0
         for i, j, k in FiveByFiveByFive:
             if gridpoints[i,j,k] == None:
+                newGridpointCount += 1
                 gridpoints[i,j,k] = GridPoint(x[i],y[j],z[k])
         
+#         print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, self.uniqueID))
         # generate the 8 children cells        
         for i, j, k in TwoByTwoByTwo:
             children[i,j,k].setGridpoints(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
@@ -538,7 +551,14 @@ if __name__ == "__main__":
     xmin = ymin = zmin = -10
     xmax = ymax = zmax = -xmin
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
-    tree.buildTree( minLevels=1, maxLevels=2, divideTolerance=0.0)
+    tree.buildTree( minLevels=3, maxLevels=3, divideTolerance=0.0)
+    
+#     print(tree.root.children[0,1,1].children[1,1,0].gridpoints)
+#     print()
+#     cellFromListAccessedByAnotherCell = tree.root.children[0,1,1].children[1,1,0].tree.masterList[50][1]
+# #     print(tree.root.children[0,1,1].children[1,1,0].tree.masterList[50])
+#     print('cellFromListAccessedByAnotherCell', cellFromListAccessedByAnotherCell)
+#     print("that cell's gridpoints ", cellFromListAccessedByAnotherCell.gridpoints)
     
 #     tree.walkTree('uniqueID', storeOutput=False, leavesOnly=False)
 #     tree.walkTree('neighbors', storeOutput=False, leavesOnly=False)
@@ -547,7 +567,7 @@ if __name__ == "__main__":
 #         print(element)
 #     print(tree.masterList)
     
-    print(tree.root.children[0,1,1].tree.masterList[0])
+#     print(tree.root.children[0,1,1].tree.masterList[0])
 # 
 #     for element in tree.masterList:
 #         if element[0] == '222212':

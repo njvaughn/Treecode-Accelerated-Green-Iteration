@@ -18,7 +18,8 @@ class TestTreeStructure(unittest.TestCase):
         self.xmax = self.ymax = self.zmax = 12
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
         self.tree.buildTree( minLevels=0, maxLevels=3, divideTolerance=0.0125)
-    @unittest.skip("Cousins don't share gridpoints yet")
+        
+#     @unittest.skip("Cousins don't share gridpoints yet")
     def testNeighborsPointToSameObject(self):
         '''
         Test 1:  Assert that different cells point to the same grid point object in memory.
@@ -30,6 +31,9 @@ class TestTreeStructure(unittest.TestCase):
         # test that cousins share the same gridpoints 
         cousin1 = self.tree.root.children[0,0,0].children[1,1,1]
         cousin2 = self.tree.root.children[0,0,1].children[1,1,0]
+        
+        print('cousin 1: \n',cousin1.gridpoints)
+        print('cousin 2: \n',cousin2.gridpoints)
         # cousin1 and cousin2 have different parents but share a face.  
         # the top face of cousin 1 is the bottom face of cousin 2
         self.assertEqual(cousin1.gridpoints[1,1,2], cousin2.gridpoints[1,1,0], "cousins are not sharing same gridpoint as they should.")
@@ -59,7 +63,8 @@ class TestTreeStructure(unittest.TestCase):
         The third case forces the neighbor finder to go back up to the root.
         '''
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=0, maxLevels=3, divideTolerance=0.0)
+        self.tree.buildTree( minLevels=3, maxLevels=3, divideTolerance=0.0)
+        print('length of master list: ', len(self.tree.masterList))
         targetID = '111222111'
         expectedNeighbors = [['out',    '111222112'], 
                              ['in',     '111221112'],
@@ -76,8 +81,10 @@ class TestTreeStructure(unittest.TestCase):
 #         print('neighbors = ',targetCell.neighbors)
         for neighbor in expectedNeighbors:
             self.assertTrue(neighbor in targetCell.neighbors, "expected neighbor %s not in list." %neighbor)
-        
+#             print('finding neighbors for first test case')
         targetID = '121122211' 
+        targetCell = None
+        
 #         expectedNeighbors = ['121122212', '121121212', '121122221', '121112221', '121222111', '121122111']
         expectedNeighbors = [['out',    '121122212'], 
                              ['in',     '121121212'],
@@ -86,8 +93,10 @@ class TestTreeStructure(unittest.TestCase):
                              ['top',    '121222111'],
                              ['bottom', '121122111']]
         for element in self.tree.masterList:
+#             print(element)
             if element[0] == targetID:
                 targetCell = element[1]
+        
 #         print('\ntarget Cell: ',targetCell.uniqueID)
 #         print('neighbors = ',targetCell.neighbors)
         for neighbor in expectedNeighbors:
