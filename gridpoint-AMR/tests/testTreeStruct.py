@@ -31,13 +31,16 @@ class TestTreeStructure(unittest.TestCase):
         # test that cousins share the same gridpoints 
         cousin1 = self.tree.root.children[0,0,0].children[1,1,1]
         cousin2 = self.tree.root.children[0,0,1].children[1,1,0]
-        
-        print('cousin 1: \n',cousin1.gridpoints)
-        print('cousin 2: \n',cousin2.gridpoints)
+        self.assertEqual(cousin2.uniqueID, [element[1] for element in cousin1.neighbors if element[0] == 'zHigh'][0], "cousin 2 isn't zHigh neighbor of cousin 1")
         # cousin1 and cousin2 have different parents but share a face.  
         # the top face of cousin 1 is the bottom face of cousin 2
         self.assertEqual(cousin1.gridpoints[1,1,2], cousin2.gridpoints[1,1,0], "cousins are not sharing same gridpoint as they should.")
-
+        
+        cousin3 = self.tree.root.children[0,0,0].children[1,1,1]
+        cousin4 = self.tree.root.children[1,0,0].children[0,1,1]
+#         print('cousin 3: \n',cousin3.gridpoints)
+#         print('cousin 4: \n',cousin4.gridpoints)
+        self.assertEqual(np.array_equal(cousin3.gridpoints[2,:,:], cousin4.gridpoints[0,:,:]),True, "cousins 3 and 4 don't share a whole face")
         
     def testNeighborsFeelModifications(self):
         '''
@@ -66,12 +69,12 @@ class TestTreeStructure(unittest.TestCase):
         self.tree.buildTree( minLevels=3, maxLevels=3, divideTolerance=0.0)
         print('length of master list: ', len(self.tree.masterList))
         targetID = '111222111'
-        expectedNeighbors = [['out',    '111222112'], 
-                             ['in',     '111221112'],
-                             ['right',  '111222121'],
-                             ['left',   '111212121'],
-                             ['top',    '111222211'],
-                             ['bottom', '111122211']]
+        expectedNeighbors = [['zHigh',    '111222112'], 
+                             ['zLow',     '111221112'],
+                             ['yHigh',  '111222121'],
+                             ['yLow',   '111212121'],
+                             ['xHigh',    '111222211'],
+                             ['xLow', '111122211']]
 
         for element in self.tree.masterList:
             if element[0] == targetID:
@@ -86,12 +89,12 @@ class TestTreeStructure(unittest.TestCase):
         targetCell = None
         
 #         expectedNeighbors = ['121122212', '121121212', '121122221', '121112221', '121222111', '121122111']
-        expectedNeighbors = [['out',    '121122212'], 
-                             ['in',     '121121212'],
-                             ['right',  '121122221'],
-                             ['left',   '121112221'],
-                             ['top',    '121222111'],
-                             ['bottom', '121122111']]
+        expectedNeighbors = [['zHigh',    '121122212'], 
+                             ['zLow',     '121121212'],
+                             ['yHigh',  '121122221'],
+                             ['yLow',   '121112221'],
+                             ['xHigh',    '121222111'],
+                             ['xLow', '121122111']]
         for element in self.tree.masterList:
 #             print(element)
             if element[0] == targetID:
@@ -104,12 +107,12 @@ class TestTreeStructure(unittest.TestCase):
         
         targetID = '111122212'  # test case designed so that the neighbor finder must go up to root to find top neighbor
 #         expectedNeighbors = ['112121211', '111122211', '111122222', '111112222', '111222112', '111122112']
-        expectedNeighbors = [['out',    '112121211'], 
-                             ['in',     '111122211'],
-                             ['right',  '111122222'],
-                             ['left',   '111112222'],
-                             ['top',    '111222112'],
-                             ['bottom', '111122112']]
+        expectedNeighbors = [['zHigh',    '112121211'], 
+                             ['zLow',     '111122211'],
+                             ['yHigh',  '111122222'],
+                             ['yLow',   '111112222'],
+                             ['xHigh',    '111222112'],
+                             ['xLow', '111122112']]
         for element in self.tree.masterList:
             if element[0] == targetID:
                 targetCell = element[1]

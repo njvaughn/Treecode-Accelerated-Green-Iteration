@@ -209,9 +209,9 @@ class Cell(object):
     def setNeighborList(self):
         def getNeighbors3D(self):
 #             print('Self Identifier: ', "".join(list(self.uniqueID)))
-            zhighZLowID = list(self.uniqueID)[::3]
-            xLowXHighID = list(self.uniqueID)[1::3]
-            yLowYHighID = list(self.uniqueID)[2::3]
+            xLowXHighID = list(self.uniqueID)[::3]
+            yLowYHighID = list(self.uniqueID)[1::3]
+            zHighZLowID = list(self.uniqueID)[2::3]
             
             
             def recursiveDigitFlipForGreaterNeighbor(identifierList, targetIndex, noNeighborFlag):
@@ -255,49 +255,47 @@ class Cell(object):
             
             xHighID, xHighIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(xLowXHighID, len(xLowXHighID)-1, noNeighborFlag=False)
             xLowID, xLowIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(xLowXHighID, len(xLowXHighID)-1, noNeighborFlag=False)
-            zhighID, zhighIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(zhighZLowID, len(zhighZLowID)-1, noNeighborFlag=False)
-            zLowID, zLowIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(zhighZLowID, len(zhighZLowID)-1, noNeighborFlag=False)
+            zHighID, zHighIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(zHighZLowID, len(zHighZLowID)-1, noNeighborFlag=False)
+            zLowID, zLowIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(zHighZLowID, len(zHighZLowID)-1, noNeighborFlag=False)
             yHighID, yHighIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(yLowYHighID, len(yLowYHighID)-1, noNeighborFlag=False)
             yLowID, yLowIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(yLowYHighID, len(yLowYHighID)-1, noNeighborFlag=False)
         
         
             xHighNeighbor = []
             xLowNeighbor = []
-            zhighNeighbor = []
+            zHighNeighbor = []
             zLowNeighbor = []
             yHighNeighbor=[]
             yLowNeighbor=[]
         
             for i in range(int(len(list(self.uniqueID))/3)):
-#                 print(zhighID[i])
-                zhighNeighbor.append(zhighID[i])
-                zhighNeighbor.append(xLowXHighID[i])
-                zhighNeighbor.append(yLowYHighID[i])
-                zLowNeighbor.append(zLowID[i])
+                
+                zHighNeighbor.append(xLowXHighID[i])
+                zHighNeighbor.append(yLowYHighID[i])
+                zHighNeighbor.append(zHighID[i])
                 zLowNeighbor.append(xLowXHighID[i])
                 zLowNeighbor.append(yLowYHighID[i])
+                zLowNeighbor.append(zLowID[i])
                 
-                
-                xHighNeighbor.append(zhighZLowID[i])
                 xHighNeighbor.append(xHighID[i])
                 xHighNeighbor.append(yLowYHighID[i])
-                xLowNeighbor.append(zhighZLowID[i])
+                xHighNeighbor.append(zHighZLowID[i])
                 xLowNeighbor.append(xLowID[i])
                 xLowNeighbor.append(yLowYHighID[i])
+                xLowNeighbor.append(zHighZLowID[i])
                 
-        
-                yHighNeighbor.append(zhighZLowID[i])
                 yHighNeighbor.append(xLowXHighID[i])
                 yHighNeighbor.append(yHighID[i])
-                yLowNeighbor.append(zhighZLowID[i])
+                yHighNeighbor.append(zHighZLowID[i])
                 yLowNeighbor.append(xLowXHighID[i])
                 yLowNeighbor.append(yLowID[i])
+                yLowNeighbor.append(zHighZLowID[i])
             
 #             print('\nTarget Cell ID: ', "".join(list(self.uniqueID)),'\n')
         #     print('\nxLowID: ', xLowID)
         #     print('\nxHighID: ', xHighID)
         #     print('\nxHighNoNeighborFlag ', xHighIDNoNeighborFlag)
-        #     print('\nzhighID: ', zhighID)
+        #     print('\nzHighID: ', zHighID)
         #     print('\nzLowID: ', zLowID)
         #     print('\nxHighNeighbor: ',xHighNeighbor)
             neighborList = []
@@ -305,14 +303,14 @@ class Cell(object):
             else: neighborList.append(['xLow', "".join(xLowNeighbor)])
             if xHighIDNoNeighborFlag == True: pass 
             else: neighborList.append(['xHigh',"".join(xHighNeighbor)])
-            if zLowIDNoNeighborFlag == True: pass
-            else: neighborList.append(['zLow',"".join(zLowNeighbor)])
-            if zhighIDNoNeighborFlag == True: pass 
-            else: neighborList.append(['zhigh',"".join(zhighNeighbor)])
             if yLowIDNoNeighborFlag == True: pass 
             else: neighborList.append(['yLow',"".join(yLowNeighbor)])
             if yHighIDNoNeighborFlag == True: pass
             else: neighborList.append(['yHigh',"".join(yHighNeighbor)])
+            if zLowIDNoNeighborFlag == True: pass
+            else: neighborList.append(['zLow',"".join(zLowNeighbor)])
+            if zHighIDNoNeighborFlag == True: pass 
+            else: neighborList.append(['zHigh',"".join(zHighNeighbor)])
         
  
             return neighborList
@@ -359,18 +357,7 @@ class Cell(object):
 #             if gridpoints[i,j,k] != None: print('original: ',gridpoints[i,j,k])
         printNeighborResults = False
         if printNeighborResults == True: print('\nTarget Cell ID      ', self.uniqueID)
-        try: 
-            zhighID = [element[1] for element in self.neighbors if element[0] == 'zhigh'][0]
-            zhighCell = [element[1] for element in self.tree.masterList if str(element[0]) == zhighID][0]
-            if hasattr(zhighCell, 'gridpoints'): gridpoints[:,:,2] = zhighCell.gridpoints[:,:,0] # this is failing
-            if printNeighborResults == True: print('found zhighCell:    ', zhighCell, 'whose ID is ', zhighCell.uniqueID)
-        except: pass#print('No zhighID, so not searching for cell')  
-        try: 
-            zLowID = [element[1] for element in self.neighbors if element[0] == 'zLow'][0]
-            zLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == zLowID][0]
-            if hasattr(zLowCell, 'gridpoints'): gridpoints[:,:,0] = zLowCell.gridpoints[:,:,2] # this is failing
-            if printNeighborResults == True: print('found zLowCell: ', zLowCell, 'whose ID is ', zLowCell.uniqueID)
-        except: pass #print('No zLowID, so not searching for cell')
+    
         try: 
             xLowID =   [element[1] for element in self.neighbors if element[0] == 'xLow'][0]
             xLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == xLowID][0]
@@ -383,11 +370,12 @@ class Cell(object):
             if hasattr(xHighCell, 'gridpoints'): gridpoints[2,:,:] = xHighCell.gridpoints[0,:,:] # this is failing
             if printNeighborResults == True: print('found xHighCell:  ', xHighCell, 'whose ID is ', xHighCell.uniqueID)
         except: pass#print('No xHighID, so not searching for cell')
+        
         try: 
-            yLowID =     [element[1] for element in self.neighbors if element[0] == 'in'][0]
+            yLowID =     [element[1] for element in self.neighbors if element[0] == 'yLow'][0]
             yLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == yLowID][0]
             if hasattr(yLowCell, 'gridpoints'): gridpoints[:,0,:] = yLowCell.gridpoints[:,2,:] # this is failing
-            if printNeighborResults == True: print('found inCell:     ', yLowCell, 'whose ID is ', yLowCell.uniqueID)
+            if printNeighborResults == True: print('found yLowCell:     ', yLowCell, 'whose ID is ', yLowCell.uniqueID)
         except: pass#print('No yLowID, so not searching for cell')
         try: 
             yHighID =    [element[1] for element in self.neighbors if element[0] == 'yHigh'][0]
@@ -395,6 +383,19 @@ class Cell(object):
             if hasattr(yHighCell, 'gridpoints'): gridpoints[:,2,:] = yHighCell.gridpoints[:,0,:] # this is failing
             if printNeighborResults == True: print('found yHighCell:    ', yHighCell, 'whose ID is ', yHighCell.uniqueID)
         except: pass#print('No yHighID, so not searching for cell')
+        
+        try: 
+            zLowID = [element[1] for element in self.neighbors if element[0] == 'zLow'][0]
+            zLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == zLowID][0]
+            if hasattr(zLowCell, 'gridpoints'): gridpoints[:,:,0] = zLowCell.gridpoints[:,:,2] # this is failing
+            if printNeighborResults == True: print('found zLowCell: ', zLowCell, 'whose ID is ', zLowCell.uniqueID)
+        except: pass #print('No zLowID, so not searching for cell')
+        try: 
+            zHighID = [element[1] for element in self.neighbors if element[0] == 'zHigh'][0]
+            zHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == zHighID][0]
+            if hasattr(zHighCell, 'gridpoints'): gridpoints[:,:,2] = zHighCell.gridpoints[:,:,0] # this is failing
+            if printNeighborResults == True: print('found zHighCell:    ', zHighCell, 'whose ID is ', zHighCell.uniqueID)
+        except: pass#print('No zHighID, so not searching for cell')  
         
         
 #         for i,j,k in TwoByTwoByTwo:
@@ -404,13 +405,13 @@ class Cell(object):
 #         """ Verbose section for debugging """
 #         print('\nTarget Cell ID      ', self.uniqueID)
 # #         try:
-# #             print('Searching for zhighID ', zhighID)
-# #             zhighCell = [element[1] for element in self.tree.masterList if str(element[0]) == zhighID][0]
+# #             print('Searching for zHighID ', zHighID)
+# #             zHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == zHighID][0]
 # #         except: 
-# #             zhighCell = None
-# #             print('No zhighID, so not searching for cell')
+# #             zHighCell = None
+# #             print('No zHighID, so not searching for cell')
 #         try:
-#             print('found zhighCell: ', zhighCell, 'whose ID is ', zhighCell.uniqueID, '\n')
+#             print('found zHighCell: ', zHighCell, 'whose ID is ', zHighCell.uniqueID, '\n')
 #             print('found zLowCell: ', zLowCell, 'whose ID is ', zLowCell.uniqueID, '\n')
 #         except:
 #             pass
@@ -551,7 +552,7 @@ if __name__ == "__main__":
     xmin = ymin = zmin = -10
     xmax = ymax = zmax = -xmin
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
-    tree.buildTree( minLevels=3, maxLevels=3, divideTolerance=0.0)
+    tree.buildTree( minLevels=2, maxLevels=8, divideTolerance=0.0001)
     
 #     print(tree.root.children[0,1,1].children[1,1,0].gridpoints)
 #     print()
