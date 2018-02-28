@@ -38,12 +38,14 @@ class Tree(object):
         # generate root cell from the gridpoint objects  
         self.root = Cell( gridpoints )
         self.root.level = 0
+        self.root.uniqueID = ''
+        self.masterList = [[self.root.uniqueID, self.root]]
             
     def buildTree(self,minLevels,maxLevels,divideTolerance): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         timer = Timer()
-        def recursiveDivide(Cell, minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
+        def recursiveDivide(self, Cell, minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
             counter += 1
             if currentLevel < maxLevels:
                 
@@ -54,8 +56,10 @@ class Tree(object):
                     
                 if Cell.divideFlag == True:   
                     Cell.divide()
+                    for i,j,k in TwoByTwoByTwo: # update the list of cells
+                        self.masterList.append([Cell.children[i,j,k].uniqueID, Cell.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
-                        maxDepthAchieved, minDepthAchieved, counter = recursiveDivide(Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved, minDepthAchieved, currentLevel+1)
+                        maxDepthAchieved, minDepthAchieved, counter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved, minDepthAchieved, currentLevel+1)
                 else:
                     minDepthAchieved = min(minDepthAchieved, currentLevel)
                     
@@ -64,7 +68,7 @@ class Tree(object):
             return maxDepthAchieved, minDepthAchieved, counter
         
         timer.start()
-        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self.root, minLevels, maxLevels, divideTolerance, counter=0, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideTolerance, counter=0, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
         timer.stop()
         print('Tree build completed. \nTolerance:               %1.2e \nTotal Number of Cells:   %i \nMinimum Depth            %i levels \nMaximum Depth:           %i levels \nConstruction time:       %.3g seconds.' %(divideTolerance,self.treeSize, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime()))
         
@@ -171,10 +175,16 @@ class Cell(object):
     '''
     Cell object.  Cells are composed of gridpoint objects.
     '''
-    def __init__(self, gridpoints):
+    def __init__(self, gridpoints=None):
         '''
         Cell Constructor.  Cell composed of gridpoint objects
         '''
+        if np.shape(gridpoints) == (3,3,3):
+            self.setGridpoints(gridpoints)
+
+            
+    
+    def setGridpoints(self,gridpoints):
         self.gridpoints = gridpoints
         self.getCellBoundsAndVolume()
         
@@ -189,6 +199,127 @@ class Cell(object):
         self.dy = self.gridpoints[0,1,0].y - self.ymin
         self.dz = self.gridpoints[0,0,1].z - self.zmin
         self.volume = (self.xmax-self.xmin)*(self.ymax-self.ymin)*(self.zmax-self.zmin)
+     
+    def setUniqueID(self,i,j,k):
+#         print('parent ID: ', list(self.parent.uniqueID))
+#         print('child extension: ', list([str(i+1),str(j+1),str(k+1)]))
+        self.uniqueID = "".join( list(self.parent.uniqueID) + list([str(i+1),str(j+1),str(k+1)]) )
+        
+    def setNeighborList(self):
+        def getNeighbors3D(self):
+#             print('Self Identifier: ', "".join(list(self.uniqueID)))
+            topBottomID = list(self.uniqueID)[::3]
+            leftRightID = list(self.uniqueID)[1::3]
+            inOutID = list(self.uniqueID)[2::3]
+            
+            
+            def recursiveDigitFlipForGreaterNeighbor(identifierList, targetIndex, noNeighborFlag):
+                neighborID = np.copy(identifierList)
+                if (targetIndex == 0 and neighborID[targetIndex]) == '2':
+                    noNeighborFlag = True
+                    return (list('This cell has no greater neighbor'), noNeighborFlag)
+                if neighborID[targetIndex] == '0':
+                    neighborID, noNeighborFlag = recursiveDigitFlipForGreaterNeighbor(neighborID, targetIndex-1, noNeighborFlag)
+                    return (neighborID, noNeighborFlag)
+                
+                if neighborID[targetIndex] == '1':
+                    neighborID[targetIndex] = '2'
+                    return (neighborID, noNeighborFlag)
+                
+                if neighborID[targetIndex] == '2':
+                    neighborID[targetIndex] = '1'
+                    neighborID, noNeighborFlag = recursiveDigitFlipForGreaterNeighbor(neighborID, targetIndex-1, noNeighborFlag)
+                    return (neighborID, noNeighborFlag)
+                
+            def recursiveDigitFlipForLesserNeighbor(identifierList, targetIndex, noNeighborFlag):
+                neighborID = np.copy(identifierList)
+                if (targetIndex == 0 and neighborID[targetIndex]) == '1':
+                    noNeighborFlag = True
+                    return (list('This cell has no lesser neighbor'), noNeighborFlag)
+                if neighborID[targetIndex] == '0':
+                    neighborID, noNeighborFlag = recursiveDigitFlipForLesserNeighbor(neighborID, targetIndex-1, noNeighborFlag)
+                    return (neighborID, noNeighborFlag)
+                
+                if neighborID[targetIndex] == '2':
+                    neighborID[targetIndex] = '1'
+                    return (neighborID, noNeighborFlag)
+                
+                if neighborID[targetIndex] == '1':
+                    neighborID[targetIndex] = '2'
+                    neighborID, noNeighborFlag = recursiveDigitFlipForLesserNeighbor(neighborID, targetIndex-1, noNeighborFlag)
+                    return (neighborID, noNeighborFlag)
+        
+                
+            
+            
+            rightID, rightIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(leftRightID, len(leftRightID)-1, noNeighborFlag=False)
+            leftID, leftIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(leftRightID, len(leftRightID)-1, noNeighborFlag=False)
+            topID, topIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(topBottomID, len(topBottomID)-1, noNeighborFlag=False)
+            bottomID, bottomIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(topBottomID, len(topBottomID)-1, noNeighborFlag=False)
+            outID, outIDNoNeighborFlag = recursiveDigitFlipForGreaterNeighbor(inOutID, len(inOutID)-1, noNeighborFlag=False)
+            inID, inIDNoNeighborFlag = recursiveDigitFlipForLesserNeighbor(inOutID, len(inOutID)-1, noNeighborFlag=False)
+        
+        
+            rightNeighbor = []
+            leftNeighbor = []
+            topNeighbor = []
+            bottomNeighbor = []
+            outNeighbor=[]
+            inNeighbor=[]
+        
+            for i in range(int(len(list(self.uniqueID))/3)):
+#                 print(topID[i])
+                topNeighbor.append(topID[i])
+                topNeighbor.append(leftRightID[i])
+                topNeighbor.append(inOutID[i])
+                bottomNeighbor.append(bottomID[i])
+                bottomNeighbor.append(leftRightID[i])
+                bottomNeighbor.append(inOutID[i])
+                
+                
+                rightNeighbor.append(topBottomID[i])
+                rightNeighbor.append(rightID[i])
+                rightNeighbor.append(inOutID[i])
+                leftNeighbor.append(topBottomID[i])
+                leftNeighbor.append(leftID[i])
+                leftNeighbor.append(inOutID[i])
+                
+        
+                outNeighbor.append(topBottomID[i])
+                outNeighbor.append(leftRightID[i])
+                outNeighbor.append(outID[i])
+                inNeighbor.append(topBottomID[i])
+                inNeighbor.append(leftRightID[i])
+                inNeighbor.append(inID[i])
+            
+#             print('\nTarget Cell ID: ', "".join(list(self.uniqueID)),'\n')
+        #     print('\nleftID: ', leftID)
+        #     print('\nrightID: ', rightID)
+        #     print('\nrightNoNeighborFlag ', rightIDNoNeighborFlag)
+        #     print('\ntopID: ', topID)
+        #     print('\nbottomID: ', bottomID)
+        #     print('\nrightNeighbor: ',rightNeighbor)
+            neighborList = []
+            if leftIDNoNeighborFlag == True: pass
+            else: neighborList.append("".join(leftNeighbor))
+            if rightIDNoNeighborFlag == True: pass 
+            else: neighborList.append("".join(rightNeighbor))
+            if bottomIDNoNeighborFlag == True: pass
+            else: neighborList.append("".join(bottomNeighbor))
+            if topIDNoNeighborFlag == True: pass 
+            else: neighborList.append("".join(topNeighbor))
+            if inIDNoNeighborFlag == True: pass 
+            else: neighborList.append("".join(inNeighbor))
+            if outIDNoNeighborFlag == True: pass
+            else: neighborList.append("".join(outNeighbor))
+        
+ 
+            return neighborList
+
+        self.neighbors = getNeighbors3D(self)
+        
+#         self.neighbors = [leftNeighbor, rightNeighbor, topNeighbor, bottomNeighbor, inNeighbor, outNeighbor]
+#         print('neighbor list attribute: ', self.neighbors)
         
     def interpolatForDivision(self):
         if hasattr(self, 'psi'):
@@ -223,6 +354,17 @@ class Cell(object):
             self.divideFlag = True
         else:
             self.divideFlag = False
+     
+    def fillInNeighbors(self, gridpoints): 
+        
+        def findNeighborIDs(self):
+            return
+        
+        def checkIfNeighborsAlreadyExist(self):
+            return
+        
+        def fillInAppropriateGridpoints():
+            return
         
     def divide(self):
         children = np.empty((2,2,2), dtype=object)
@@ -232,14 +374,22 @@ class Cell(object):
         gridpoints = np.empty((5,5,5),dtype=object)
         gridpoints[::2,::2,::2] = self.gridpoints  # AVOIDS DUPLICATION OF GRIDPOINTS.  The 5x5x5 array of gridpoints should have the original 3x3x3 objects within
         
+        for i, j, k in TwoByTwoByTwo:
+            children[i,j,k] = Cell()
+            children[i,j,k].parent = self # children should point to their parent
+            children[i,j,k].setUniqueID(i,j,k)
+            children[i,j,k].setNeighborList()
+#             children[i,j,k].fillInNeighbors(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
+            
+        
         for i, j, k in FiveByFiveByFive:
             if gridpoints[i,j,k] == None:
                 gridpoints[i,j,k] = GridPoint(x[i],y[j],z[k])
         
         # generate the 8 children cells        
         for i, j, k in TwoByTwoByTwo:
-            children[i,j,k] = Cell(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
-            children[i,j,k].parent = self # children should point to their parent
+            children[i,j,k].setGridpoints(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
+            
             if hasattr(self,'level'):
                 children[i,j,k].level = self.level+1
         
@@ -331,20 +481,30 @@ class Mesh(object):
                     
                     
 if __name__ == "__main__":
-#     print('hi')
+
     xmin = ymin = zmin = -10
     xmax = ymax = zmax = -xmin
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
-    tree.buildTree( minLevels=1, maxLevels=6, divideTolerance=0.00125)
+    tree.buildTree( minLevels=1, maxLevels=2, divideTolerance=0.1)
+    
+#     tree.walkTree('uniqueID', storeOutput=False, leavesOnly=False)
          
-    tree.computePotentialOnTree(epsilon=0)
-    print('\nPotential Error:        %.3g mHartree' %float((-1.0-tree.totalPotential)*1000.0))
-         
-    tree.computeKineticOnTree()
-    print('Kinetic Error:           %.3g mHartree' %float((0.5-tree.totalKinetic)*1000.0))
-             
-    tree.visualizeMesh(attributeForColoring='psi')
-    print('Visualization Complete.')
+#     for element in tree.masterList:
+#         print(element)
+#     print(tree.masterList)
+
+    for element in tree.masterList:
+        if element[0] == '222212':
+            print(element)
         
+#     tree.computePotentialOnTree(epsilon=0)
+#     print('\nPotential Error:        %.3g mHartree' %float((-1.0-tree.totalPotential)*1000.0))
+#          
+#     tree.computeKineticOnTree()
+#     print('Kinetic Error:           %.3g mHartree' %float((0.5-tree.totalKinetic)*1000.0))
+#              
+#     tree.visualizeMesh(attributeForColoring='psi')
+#     print('Visualization Complete.')
+#         
         
         
