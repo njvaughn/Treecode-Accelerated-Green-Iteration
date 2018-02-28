@@ -353,80 +353,67 @@ class Cell(object):
             self.divideFlag = False
      
     def fillInNeighbors(self, gridpoints): 
-#         for i,j,k in TwoByTwoByTwo:
-#             if gridpoints[i,j,k] != None: print('original: ',gridpoints[i,j,k])
+        '''
+        For all 6 possible neighbors, check if they occur in the cell's neighbor list, meaning that neighbor *could* exist.  Cells along boundaries will not have all 6.
+        If the cell could exist, check if it does already exist.  This depends on whether other regions of the domain have divided this far or not.  
+        If the neighbor *DOES* exist, and IF the neighbor has already been fully created, meaning its gridpoints are defined, then copy the appropriate face
+        of gridpoints.  Notice, sibling cells from the same parent will exist, but won't yet have gridpoints set up.  
+        :param gridpoints: input the sub-array of gridpoints that will be used to construct the child.
+        Modify this sub-array of gridpoints (if neighbors exist), then output the sub-array. 
+        '''
+
         printNeighborResults = False
         if printNeighborResults == True: print('\nTarget Cell ID      ', self.uniqueID)
     
+        '''fill in any gridpoints coming from X neighbors'''
         try: 
             xLowID =   [element[1] for element in self.neighbors if element[0] == 'xLow'][0]
             xLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == xLowID][0]
             if hasattr(xLowCell, 'gridpoints'): gridpoints[0,:,:] = xLowCell.gridpoints[2,:,:] # this is failing
             if printNeighborResults == True: print('found xLowCell:   ', xLowCell, 'whose ID is ', xLowCell.uniqueID)
-        except: pass#print('No xLowID, so not searching for cell')
+        except Exception as e: print(e, 'xlow')
         try: 
             xHighID =  [element[1] for element in self.neighbors if element[0] == 'xHigh'][0]
             xHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == xHighID][0]
             if hasattr(xHighCell, 'gridpoints'): gridpoints[2,:,:] = xHighCell.gridpoints[0,:,:] # this is failing
             if printNeighborResults == True: print('found xHighCell:  ', xHighCell, 'whose ID is ', xHighCell.uniqueID)
-        except: pass#print('No xHighID, so not searching for cell')
+        except Exception as e: print(e, 'xhigh')
         
+        '''fill in any gridpoints coming from Y neighbors'''
         try: 
             yLowID =     [element[1] for element in self.neighbors if element[0] == 'yLow'][0]
             yLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == yLowID][0]
             if hasattr(yLowCell, 'gridpoints'): gridpoints[:,0,:] = yLowCell.gridpoints[:,2,:] # this is failing
             if printNeighborResults == True: print('found yLowCell:     ', yLowCell, 'whose ID is ', yLowCell.uniqueID)
-        except: pass#print('No yLowID, so not searching for cell')
+        except Exception as e: print(e)
         try: 
             yHighID =    [element[1] for element in self.neighbors if element[0] == 'yHigh'][0]
             yHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == yHighID][0]
             if hasattr(yHighCell, 'gridpoints'): gridpoints[:,2,:] = yHighCell.gridpoints[:,0,:] # this is failing
             if printNeighborResults == True: print('found yHighCell:    ', yHighCell, 'whose ID is ', yHighCell.uniqueID)
-        except: pass#print('No yHighID, so not searching for cell')
+        except Exception as e: print(e)
         
+        '''fill in any gridpoints coming from Z neighbors'''
         try: 
             zLowID = [element[1] for element in self.neighbors if element[0] == 'zLow'][0]
             zLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == zLowID][0]
             if hasattr(zLowCell, 'gridpoints'): gridpoints[:,:,0] = zLowCell.gridpoints[:,:,2] # this is failing
             if printNeighborResults == True: print('found zLowCell: ', zLowCell, 'whose ID is ', zLowCell.uniqueID)
-        except: pass #print('No zLowID, so not searching for cell')
+        except Exception as e: print(e) 
         try: 
             zHighID = [element[1] for element in self.neighbors if element[0] == 'zHigh'][0]
             zHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == zHighID][0]
             if hasattr(zHighCell, 'gridpoints'): gridpoints[:,:,2] = zHighCell.gridpoints[:,:,0] # this is failing
             if printNeighborResults == True: print('found zHighCell:    ', zHighCell, 'whose ID is ', zHighCell.uniqueID)
-        except: pass#print('No zHighID, so not searching for cell')  
+        except Exception as e: print(e)  
         
-        
-#         for i,j,k in TwoByTwoByTwo:
-#             if gridpoints[i,j,k] != None: print('filled in: ',gridpoints[i,j,k])
+        ''' return the (potentially) modified sub-array of gridpoints'''
         return gridpoints
 
-#         """ Verbose section for debugging """
-#         print('\nTarget Cell ID      ', self.uniqueID)
-# #         try:
-# #             print('Searching for zHighID ', zHighID)
-# #             zHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == zHighID][0]
-# #         except: 
-# #             zHighCell = None
-# #             print('No zHighID, so not searching for cell')
-#         try:
-#             print('found zHighCell: ', zHighCell, 'whose ID is ', zHighCell.uniqueID, '\n')
-#             print('found zLowCell: ', zLowCell, 'whose ID is ', zLowCell.uniqueID, '\n')
-#         except:
-#             pass
-        
-        
-#         def findNeighborIDs(self):
-#             return
-#         
-#         def checkIfNeighborsAlreadyExist(self):
-#             return
-#         
-#         def fillInAppropriateGridpoints():
-#             return
+
         
     def divide(self):
+        '''setup 5x5x5 array of gridpoint objects.  These will be used to construct the 8 children cells'''
         children = np.empty((2,2,2), dtype=object)
         x = np.linspace(self.xmin,self.xmax,5)
         y = np.linspace(self.ymin,self.ymax,5)
@@ -434,32 +421,33 @@ class Cell(object):
         gridpoints = np.empty((5,5,5),dtype=object)
         gridpoints[::2,::2,::2] = self.gridpoints  # AVOIDS DUPLICATION OF GRIDPOINTS.  The 5x5x5 array of gridpoints should have the original 3x3x3 objects within
         
+        '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
         for i, j, k in TwoByTwoByTwo:
             children[i,j,k] = Cell(tree = self.tree)
             children[i,j,k].parent = self # children should point to their parent
             children[i,j,k].setUniqueID(i,j,k)
             children[i,j,k].setNeighborList()
             self.tree.masterList.append([children[i,j,k].uniqueID,children[i,j,k]])  # add cell to the master list
-#             print(self.tree.masterList)
-#             self.masterList.append([Cell.children[i,j,k].uniqueID, Cell.children[i,j,k]])
-            
+
+        '''fill in any already existing gridpoints from neighboring cells that have already divided'''
         for i, j, k in TwoByTwoByTwo:    
             gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3] = children[i,j,k].fillInNeighbors(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
             
-        newGridpointCount=0
+        '''create new gridpoints wherever necessary'''
+#         newGridpointCount=0
         for i, j, k in FiveByFiveByFive:
             if gridpoints[i,j,k] == None:
-                newGridpointCount += 1
+#                 newGridpointCount += 1
                 gridpoints[i,j,k] = GridPoint(x[i],y[j],z[k])
         
 #         print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, self.uniqueID))
-        # generate the 8 children cells        
+        '''set up the children gridpoints from the 5x5x5 array of gridpoints'''
         for i, j, k in TwoByTwoByTwo:
             children[i,j,k].setGridpoints(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
-            
+            '''if this cell is part of a tree, maintain its level'''
             if hasattr(self,'level'):
                 children[i,j,k].level = self.level+1
-        
+        '''set the parent cell's 'children' attribute to the array of children'''
         self.children = children
 
     
@@ -552,7 +540,7 @@ if __name__ == "__main__":
     xmin = ymin = zmin = -10
     xmax = ymax = zmax = -xmin
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
-    tree.buildTree( minLevels=2, maxLevels=8, divideTolerance=0.0001)
+    tree.buildTree( minLevels=3, maxLevels=3, divideTolerance=0.001)
     
 #     print(tree.root.children[0,1,1].children[1,1,0].gridpoints)
 #     print()
