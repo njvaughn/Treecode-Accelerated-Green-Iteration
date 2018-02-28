@@ -36,7 +36,7 @@ class Tree(object):
             gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
         
         # generate root cell from the gridpoint objects  
-        self.root = Cell( gridpoints )
+        self.root = Cell( gridpoints, self )
         self.root.level = 0
         self.root.uniqueID = ''
         self.masterList = [[self.root.uniqueID, self.root]]
@@ -56,8 +56,8 @@ class Tree(object):
                     
                 if Cell.divideFlag == True:   
                     Cell.divide()
-                    for i,j,k in TwoByTwoByTwo: # update the list of cells
-                        self.masterList.append([Cell.children[i,j,k].uniqueID, Cell.children[i,j,k]])
+#                     for i,j,k in TwoByTwoByTwo: # update the list of cells
+#                         self.masterList.append([Cell.children[i,j,k].uniqueID, Cell.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
                         maxDepthAchieved, minDepthAchieved, counter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved, minDepthAchieved, currentLevel+1)
                 else:
@@ -175,10 +175,11 @@ class Cell(object):
     '''
     Cell object.  Cells are composed of gridpoint objects.
     '''
-    def __init__(self, gridpoints=None):
+    def __init__(self, gridpoints=None, tree=None):
         '''
         Cell Constructor.  Cell composed of gridpoint objects
         '''
+        self.tree = tree
         if np.shape(gridpoints) == (3,3,3):
             self.setGridpoints(gridpoints)
 
@@ -301,25 +302,23 @@ class Cell(object):
         #     print('\nrightNeighbor: ',rightNeighbor)
             neighborList = []
             if leftIDNoNeighborFlag == True: pass
-            else: neighborList.append("".join(leftNeighbor))
+            else: neighborList.append(['left', "".join(leftNeighbor)])
             if rightIDNoNeighborFlag == True: pass 
-            else: neighborList.append("".join(rightNeighbor))
+            else: neighborList.append(['right',"".join(rightNeighbor)])
             if bottomIDNoNeighborFlag == True: pass
-            else: neighborList.append("".join(bottomNeighbor))
+            else: neighborList.append(['bottom',"".join(bottomNeighbor)])
             if topIDNoNeighborFlag == True: pass 
-            else: neighborList.append("".join(topNeighbor))
+            else: neighborList.append(['top',"".join(topNeighbor)])
             if inIDNoNeighborFlag == True: pass 
-            else: neighborList.append("".join(inNeighbor))
+            else: neighborList.append(['in',"".join(inNeighbor)])
             if outIDNoNeighborFlag == True: pass
-            else: neighborList.append("".join(outNeighbor))
+            else: neighborList.append(['out',"".join(outNeighbor)])
         
  
             return neighborList
 
         self.neighbors = getNeighbors3D(self)
         
-#         self.neighbors = [leftNeighbor, rightNeighbor, topNeighbor, bottomNeighbor, inNeighbor, outNeighbor]
-#         print('neighbor list attribute: ', self.neighbors)
         
     def interpolatForDivision(self):
         if hasattr(self, 'psi'):
@@ -356,15 +355,64 @@ class Cell(object):
             self.divideFlag = False
      
     def fillInNeighbors(self, gridpoints): 
+        print('\nTarget Cell ID      ', self.uniqueID)
+        try: 
+            topID = [element[1] for element in self.neighbors if element[0] == 'top'][0]
+            topCell = [element[1] for element in self.tree.masterList if str(element[0]) == topID][0]
+            print('found topCell:    ', topCell, 'whose ID is ', topCell.uniqueID)
+        except: print('No topID, so not searching for cell')
+        try: 
+            bottomID = [element[1] for element in self.neighbors if element[0] == 'bottom'][0]
+            bottomCell = [element[1] for element in self.tree.masterList if str(element[0]) == bottomID][0]
+            print('found bottomCell: ', bottomCell, 'whose ID is ', bottomCell.uniqueID)
+        except: print('No bottomID, so not searching for cell')
+        try: 
+            leftID =   [element[1] for element in self.neighbors if element[0] == 'left'][0]
+            leftCell = [element[1] for element in self.tree.masterList if str(element[0]) == leftID][0]
+            print('found leftCell:   ', leftCell, 'whose ID is ', leftCell.uniqueID)
+        except: print('No leftID, so not searching for cell')
+        try: 
+            rightID =  [element[1] for element in self.neighbors if element[0] == 'right'][0]
+            rightCell = [element[1] for element in self.tree.masterList if str(element[0]) == rightID][0]
+            print('found rightCell:  ', rightCell, 'whose ID is ', rightCell.uniqueID)
+        except: print('No rightID, so not searching for cell')
+        try: 
+            inID =     [element[1] for element in self.neighbors if element[0] == 'in'][0]
+            inCell = [element[1] for element in self.tree.masterList if str(element[0]) == inID][0]
+            print('found inCell:     ', inCell, 'whose ID is ', inCell.uniqueID)
+        except: print('No inID, so not searching for cell')
+        try: 
+            outID =    [element[1] for element in self.neighbors if element[0] == 'out'][0]
+            outCell = [element[1] for element in self.tree.masterList if str(element[0]) == outID][0]
+            print('found outCell:    ', outCell, 'whose ID is ', outCell.uniqueID)
+        except: print('No outID, so not searching for cell')
         
-        def findNeighborIDs(self):
-            return
+
+   
         
-        def checkIfNeighborsAlreadyExist(self):
-            return
+        """ Verbose section for debugging """
+#         print('\nTarget Cell ID      ', self.uniqueID)
+# #         try:
+# #             print('Searching for topID ', topID)
+# #             topCell = [element[1] for element in self.tree.masterList if str(element[0]) == topID][0]
+# #         except: 
+# #             topCell = None
+# #             print('No topID, so not searching for cell')
+#         try:
+#             print('found topCell: ', topCell, 'whose ID is ', topCell.uniqueID, '\n')
+#             print('found bottomCell: ', bottomCell, 'whose ID is ', bottomCell.uniqueID, '\n')
+#         except:
+#             pass
         
-        def fillInAppropriateGridpoints():
-            return
+        
+#         def findNeighborIDs(self):
+#             return
+#         
+#         def checkIfNeighborsAlreadyExist(self):
+#             return
+#         
+#         def fillInAppropriateGridpoints():
+#             return
         
     def divide(self):
         children = np.empty((2,2,2), dtype=object)
@@ -375,11 +423,16 @@ class Cell(object):
         gridpoints[::2,::2,::2] = self.gridpoints  # AVOIDS DUPLICATION OF GRIDPOINTS.  The 5x5x5 array of gridpoints should have the original 3x3x3 objects within
         
         for i, j, k in TwoByTwoByTwo:
-            children[i,j,k] = Cell()
+            children[i,j,k] = Cell(tree = self.tree)
             children[i,j,k].parent = self # children should point to their parent
             children[i,j,k].setUniqueID(i,j,k)
             children[i,j,k].setNeighborList()
-#             children[i,j,k].fillInNeighbors(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
+            self.tree.masterList.append([children[i,j,k].uniqueID,children[i,j,k]])  # add cell to the master list
+#             print(self.tree.masterList)
+#             self.masterList.append([Cell.children[i,j,k].uniqueID, Cell.children[i,j,k]])
+            
+        for i, j, k in TwoByTwoByTwo:    
+            children[i,j,k].fillInNeighbors(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
             
         
         for i, j, k in FiveByFiveByFive:
@@ -485,17 +538,20 @@ if __name__ == "__main__":
     xmin = ymin = zmin = -10
     xmax = ymax = zmax = -xmin
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
-    tree.buildTree( minLevels=1, maxLevels=2, divideTolerance=0.1)
+    tree.buildTree( minLevels=1, maxLevels=2, divideTolerance=0.0)
     
 #     tree.walkTree('uniqueID', storeOutput=False, leavesOnly=False)
+#     tree.walkTree('neighbors', storeOutput=False, leavesOnly=False)
          
 #     for element in tree.masterList:
 #         print(element)
 #     print(tree.masterList)
-
-    for element in tree.masterList:
-        if element[0] == '222212':
-            print(element)
+    
+    print(tree.root.children[0,1,1].tree.masterList[0])
+# 
+#     for element in tree.masterList:
+#         if element[0] == '222212':
+#             print(element)
         
 #     tree.computePotentialOnTree(epsilon=0)
 #     print('\nPotential Error:        %.3g mHartree' %float((-1.0-tree.totalPotential)*1000.0))
