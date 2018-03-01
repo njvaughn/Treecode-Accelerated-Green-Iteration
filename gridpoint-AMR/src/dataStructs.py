@@ -41,12 +41,12 @@ class Tree(object):
         self.root.uniqueID = ''
         self.masterList = [[self.root.uniqueID, self.root]]
             
-    def buildTree(self,minLevels,maxLevels,divideTolerance): # call the recursive divison on the root of the tree
+    def buildTree(self,minLevels,maxLevels,divideTolerance,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         timer = Timer()
-        def recursiveDivide(self, Cell, minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
-            counter += 1
+        def recursiveDivide(self, Cell, minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
+            levelCounter += 1
             if currentLevel < maxLevels:
                 
                 if currentLevel < minLevels:
@@ -55,22 +55,30 @@ class Tree(object):
                     Cell.checkIfCellShouldDivide(divideTolerance)
                     
                 if Cell.divideFlag == True:   
-                    Cell.divide()
+                    Cell.divide(printNumberOfCells)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([Cell.children[i,j,k].uniqueID, Cell.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
-                        maxDepthAchieved, minDepthAchieved, counter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, counter, maxDepthAchieved, minDepthAchieved, currentLevel+1)
+                        maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
                 else:
                     minDepthAchieved = min(minDepthAchieved, currentLevel)
                     
                     
             maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
-            return maxDepthAchieved, minDepthAchieved, counter
+            return maxDepthAchieved, minDepthAchieved, levelCounter
         
         timer.start()
-        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideTolerance, counter=0, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
+        levelCounter=0
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
         timer.stop()
-        print('Tree build completed. \nTolerance:               %1.2e \nTotal Number of Cells:   %i \nMinimum Depth            %i levels \nMaximum Depth:           %i levels \nConstruction time:       %.3g seconds.' %(divideTolerance,self.treeSize, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime()))
+        if printTreeProperties == True: 
+            print("Tree build completed. \n"
+                  "Tolerance:               %1.2e \n"
+                  "Total Number of Cells:   %i \n"
+                  "Minimum Depth            %i levels \n"
+                  "Maximum Depth:           %i levels \n"
+                  "Construction time:       %.3g seconds." 
+                  %(divideTolerance,self.treeSize, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime()))
         
     def walkTree(self, attribute='', storeOutput = False, leavesOnly=False):  # walk through the tree, printing out specified data (in this case, the midpoints)
         '''
@@ -367,52 +375,52 @@ class Cell(object):
     
         '''fill in any gridpoints coming from X neighbors'''
         try: 
-            xLowID =   [element[1] for element in self.neighbors if element[0] == 'xLow'][0]
-            xLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == xLowID][0]
+#             xLowID =   [element[1] for element in self.neighbors if element[0] == 'xLow'][0]
+            xLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'xLow'][0]][0]
             if hasattr(xLowCell, 'gridpoints'): gridpoints[0,:,:] = xLowCell.gridpoints[2,:,:] # this is failing
             if printNeighborResults == True: print('found xLowCell:   ', xLowCell, 'whose ID is ', xLowCell.uniqueID)
-        except Exception as e: print(e, 'xlow')
+        except: pass
         try: 
-            xHighID =  [element[1] for element in self.neighbors if element[0] == 'xHigh'][0]
-            xHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == xHighID][0]
+#             xHighID =  [element[1] for element in self.neighbors if element[0] == 'xHigh'][0]
+            xHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'xHigh'][0]][0]
             if hasattr(xHighCell, 'gridpoints'): gridpoints[2,:,:] = xHighCell.gridpoints[0,:,:] # this is failing
             if printNeighborResults == True: print('found xHighCell:  ', xHighCell, 'whose ID is ', xHighCell.uniqueID)
-        except Exception as e: print(e, 'xhigh')
+        except: pass
         
         '''fill in any gridpoints coming from Y neighbors'''
         try: 
-            yLowID =     [element[1] for element in self.neighbors if element[0] == 'yLow'][0]
-            yLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == yLowID][0]
+#             yLowID =     [element[1] for element in self.neighbors if element[0] == 'yLow'][0]
+            yLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'yLow'][0]][0]
             if hasattr(yLowCell, 'gridpoints'): gridpoints[:,0,:] = yLowCell.gridpoints[:,2,:] # this is failing
             if printNeighborResults == True: print('found yLowCell:     ', yLowCell, 'whose ID is ', yLowCell.uniqueID)
-        except Exception as e: print(e)
+        except: pass
         try: 
-            yHighID =    [element[1] for element in self.neighbors if element[0] == 'yHigh'][0]
-            yHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == yHighID][0]
+#             yHighID =    [element[1] for element in self.neighbors if element[0] == 'yHigh'][0]
+            yHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'yHigh'][0]][0]
             if hasattr(yHighCell, 'gridpoints'): gridpoints[:,2,:] = yHighCell.gridpoints[:,0,:] # this is failing
             if printNeighborResults == True: print('found yHighCell:    ', yHighCell, 'whose ID is ', yHighCell.uniqueID)
-        except Exception as e: print(e)
+        except: pass
         
         '''fill in any gridpoints coming from Z neighbors'''
         try: 
-            zLowID = [element[1] for element in self.neighbors if element[0] == 'zLow'][0]
-            zLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == zLowID][0]
+#             zLowID = [element[1] for element in self.neighbors if element[0] == 'zLow'][0]
+            zLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'zLow'][0]][0]
             if hasattr(zLowCell, 'gridpoints'): gridpoints[:,:,0] = zLowCell.gridpoints[:,:,2] # this is failing
             if printNeighborResults == True: print('found zLowCell: ', zLowCell, 'whose ID is ', zLowCell.uniqueID)
-        except Exception as e: print(e) 
+        except: pass 
         try: 
-            zHighID = [element[1] for element in self.neighbors if element[0] == 'zHigh'][0]
-            zHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == zHighID][0]
+#             zHighID = [element[1] for element in self.neighbors if element[0] == 'zHigh'][0]
+            zHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'zHigh'][0]][0]
             if hasattr(zHighCell, 'gridpoints'): gridpoints[:,:,2] = zHighCell.gridpoints[:,:,0] # this is failing
             if printNeighborResults == True: print('found zHighCell:    ', zHighCell, 'whose ID is ', zHighCell.uniqueID)
-        except Exception as e: print(e)  
+        except: pass  
         
         ''' return the (potentially) modified sub-array of gridpoints'''
         return gridpoints
 
 
         
-    def divide(self):
+    def divide(self, printNumberOfCells=False):
         '''setup 5x5x5 array of gridpoint objects.  These will be used to construct the 8 children cells'''
         children = np.empty((2,2,2), dtype=object)
         x = np.linspace(self.xmin,self.xmax,5)
@@ -434,13 +442,13 @@ class Cell(object):
             gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3] = children[i,j,k].fillInNeighbors(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
             
         '''create new gridpoints wherever necessary'''
-#         newGridpointCount=0
+        newGridpointCount=0
         for i, j, k in FiveByFiveByFive:
             if gridpoints[i,j,k] == None:
-#                 newGridpointCount += 1
+                newGridpointCount += 1
                 gridpoints[i,j,k] = GridPoint(x[i],y[j],z[k])
         
-#         print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, self.uniqueID))
+        if printNumberOfCells == True: print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, self.uniqueID))
         '''set up the children gridpoints from the 5x5x5 array of gridpoints'''
         for i, j, k in TwoByTwoByTwo:
             children[i,j,k].setGridpoints(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
@@ -540,8 +548,11 @@ if __name__ == "__main__":
     xmin = ymin = zmin = -10
     xmax = ymax = zmax = -xmin
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
-    tree.buildTree( minLevels=3, maxLevels=3, divideTolerance=0.001)
+    tree.buildTree( minLevels=2, maxLevels=2, divideTolerance=0.001)
     
+    
+    
+
 #     print(tree.root.children[0,1,1].children[1,1,0].gridpoints)
 #     print()
 #     cellFromListAccessedByAnotherCell = tree.root.children[0,1,1].children[1,1,0].tree.masterList[50][1]

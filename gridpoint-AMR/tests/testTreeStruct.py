@@ -1,12 +1,22 @@
 import unittest
 import numpy as np
+import io
+from contextlib import redirect_stdout
 
 
 from dataStructs import Tree, Cell, GridPoint
 from hydrogenPotential import trueWavefunction
-from timer import Timer
+# from timer import Timer
 
 class TestTreeStructure(unittest.TestCase):
+    '''
+    Series of tests that probe the tree structure.  They verify the relationships between 
+    cells, such as parent/child, as well as the fact that neighboring cells have the same
+    gridpoint object, not duplicates.  Verifies that one cell modifying gridpoints is felt
+    by any other cell that also owns that gridpoint.  Verifies that the neighbor lists are
+    generated correctly for a few hand-determined cases.  Lastly, performs the treeWalk, 
+    which can be manually inspected to verify the walk does what it is expected.
+    '''
 
     @classmethod
     def setUpClass(self):
@@ -14,10 +24,11 @@ class TestTreeStructure(unittest.TestCase):
         Generate a mesh on [-1,1]x[-1,1]x[-1,1] containing 8 total cells for testing.  
         setUp() gets called before every test below.
         '''
+        print("Default tree used for all tests except where a new test-specific tree is built")
         self.xmin = self.ymin = self.zmin = -12
         self.xmax = self.ymax = self.zmax = 12
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=0, maxLevels=3, divideTolerance=0.0125)
+        self.tree.buildTree( minLevels=0, maxLevels=3, divideTolerance=0.0125, printTreeProperties=True)
         
 #     @unittest.skip("Cousins don't share gridpoints yet")
     def testNeighborsPointToSameObject(self):
@@ -66,8 +77,8 @@ class TestTreeStructure(unittest.TestCase):
         The third case forces the neighbor finder to go back up to the root.
         '''
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=3, maxLevels=3, divideTolerance=0.0)
-        print('length of master list: ', len(self.tree.masterList))
+        self.tree.buildTree( minLevels=3, maxLevels=3, divideTolerance=0.0, printTreeProperties=False)
+#         print('length of master list: ', len(self.tree.masterList))
         targetID = '111222111'
         expectedNeighbors = [['zHigh',    '111222112'], 
                              ['zLow',     '111221112'],
@@ -148,11 +159,23 @@ class TestTreeStructure(unittest.TestCase):
         self.assertEqual(np.shape(parent.children), (2,2,2), "Shape of array of children pointers not (2,2,2)")
         self.assertEqual(parent.parent, grandparent, "Parent's parent isn't the grandparent")
         self.assertEqual(child.parent, parent, "Child's parent isn't the parent")
+        self.assertEqual(parent.gridpoints[2,0,2], child.gridpoints[2,0,2], "parent and child don't have same corner point.")
     
     def testAnalyticPsiSetting(self):
         self.assertEqual(self.tree.root.gridpoints[1,1,1].psi, trueWavefunction(1, 0, 0, 0), "root midpoint (the origin) doesn't have correct wavefunction.")
     
-    @unittest.skip("skip walk")
+
+#     @unittest.skip("Skip energy computations.")
+    def testPotentialComputation(self):
+        self.tree.computePotentialOnTree(epsilon=0)
+        print('\nPotential Error:        %.3g mHartree' %float((-1.0-self.tree.totalPotential)*1000.0))
+#     @unittest.skip("Skip energy computations.")    
+    def testKineticComputation(self):
+        self.tree.computeKineticOnTree()
+        print('\nKinetic Error:           %.3g mHartree' %float((0.5-self.tree.totalKinetic)*1000.0))
+            
+
+    @unittest.skip("skip manual eye-tests")
     def testTreeWalk(self):
 #         self.tree.walkTree(attribute='divideFlag')
         self.tree.walkTree(leavesOnly=True)
@@ -168,14 +191,32 @@ class TestTreeStructure(unittest.TestCase):
         self.assertEqual(z[1], (self.zmax+3*self.zmin)/4, "second z value not the center of domain lower z octant")
         self.assertEqual(psi[44], trueWavefunction(1, x[44], y[44], z[44]), "output psi value doesn't match analytic")
     
-    @unittest.skip("Skip energy computations.")
-    def testPotentialComputation(self):
-        self.tree.computePotentialOnTree(epsilon=0)
-        print('\nPotential Error:        %.3g mHartree' %float((-1.0-self.tree.totalPotential)*1000.0))
-    @unittest.skip("Skip energy computations.")    
-    def testKineticComputation(self):
-        self.tree.computeKineticOnTree()
-        print('\nKinetic Error:           %.3g mHartree' %float((0.5-self.tree.totalKinetic)*1000.0))
-            
+    def testNumberOfNewlyGeneratedCells(self):
+        '''
+        verify that if all neighbors have already divided, 
+        only 26 new gridpoints generatred.  Manually divide the 6 neighbors,
+        then divide the center cell and output the number of new gridpoints 
+        generated.  
+        '''
+        self.tree = None
+        self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
+        self.tree.buildTree( minLevels=2, maxLevels=2, divideTolerance=0.0, printTreeProperties = False)
+        testCell = self.tree.root.children[0,0,0].children[1,1,1]
+        self.tree.root.children[0,0,0].children[1,1,0].divide()
+        self.tree.root.children[0,0,0].children[1,0,1].divide()
+        self.tree.root.children[0,0,0].children[0,1,1].divide()
+        self.tree.root.children[0,0,1].children[1,1,0].divide()
+        self.tree.root.children[0,1,0].children[1,0,1].divide()
+        self.tree.root.children[1,0,0].children[0,1,1].divide()
+        
+        ''' captures the 'prints' from divide() as output, which can then be tested. '''
+        f = io.StringIO()
+        with redirect_stdout(f):
+            testCell.divide(printNumberOfCells=True)
+        cellDivisionPrint = f.getvalue()
+
+        self.assertEqual(cellDivisionPrint, "generated 26 new gridpoints for parent cell 111222\n", 
+                "Cell did not generate exactly 26 new gridpoints as it should have.")
+    
 if __name__ == "__main__":
     unittest.main()
