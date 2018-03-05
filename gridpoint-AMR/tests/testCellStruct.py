@@ -7,7 +7,8 @@ import unittest
 import numpy as np
 import itertools
 
-from dataStructs import Cell, GridPoint
+from Cell import Cell
+from Gridpoint import GridPoint
 from hydrogenPotential import potential, trueWavefunction
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -42,6 +43,7 @@ class TestCellStructure(unittest.TestCase):
         gets mapped properly (children are in fact the 8 octants).
         '''
         parent = self.testCell
+        parent.uniqueID = '000'
         parent.divide()
         # check that previously existing object are now also owned by the children
         self.assertEqual(parent.gridpoints[2,2,2], parent.children[1,1,1].gridpoints[2,2,2],
@@ -67,7 +69,8 @@ class TestCellStructure(unittest.TestCase):
         expectedPotential = volume*psi*psi*V
         self.testCell.computePotential()
         self.assertEqual(expectedPotential, self.testCell.PE, "computed potential energy doesn't match expected")
-
+        
+    @unittest.skip("Laplacian computation is burried within the kinetic energy computation, not its own method.")
     def testGradientComputation(self):
         def laplacianQuadraticTestFunction(x,y,z):
             return x*x + y*y + z*z  # analytic laplacian = 6
