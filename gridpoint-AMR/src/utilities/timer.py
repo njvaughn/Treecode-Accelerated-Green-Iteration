@@ -23,10 +23,13 @@ class Timer(object):
     
     def stop(self):
         self.stopTime = time.time()
+        self.elapsedTime = self.stopTime - self.startTime
     
     def runningTime(self):
         return time.time() - self.startTime
     
-    def elapsedTime(self):
-        self.elapsedTime = self.stopTime - self.startTime
+    def getElapsedTime(self):
         return self.elapsedTime
+    
+    
+    

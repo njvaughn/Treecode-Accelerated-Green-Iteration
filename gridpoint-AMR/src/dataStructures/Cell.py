@@ -163,6 +163,27 @@ class Cell(object):
         else:
             print("Can't generate interpolator because psi hasn't been set yet.")
     
+
+    def getPsiVariation(self):
+        minPsi = self.gridpoints[0,0,0].psi
+        maxPsi = self.gridpoints[0,0,0].psi
+        for i,j,k in ThreeByThreeByThree:
+            if self.gridpoints[i,j,k].psi < minPsi: minPsi = self.gridpoints[i,j,k].psi
+            if self.gridpoints[i,j,k].psi > maxPsi: maxPsi = self.gridpoints[i,j,k].psi
+        
+        self.psiVariation = maxPsi - minPsi
+        
+#     def getPsiVPsiVariation(self):
+#         minPsiVPsi = self.gridpoints[0,0,0].psi**2*
+#         maxPsiVPsi = self.gridpoints[0,0,0].psi**2
+#         for i,j,k in ThreeByThreeByThree:
+#             if self.gridpoints[i,j,k].psi < minPsi: minPsi = self.gridpoints[i,j,k].psi
+#             if self.gridpoints[i,j,k].psi > maxPsi: maxPsi = self.gridpoints[i,j,k].psi
+#         
+#         self.psiVariation = maxPsi - minPsi
+            
+    
+    
     def checkIfCellShouldDivide(self, divideTolerance):
         '''
         Perform midpoint method for integral(testFunction) for parent cell
@@ -171,19 +192,24 @@ class Cell(object):
         :param divideTolerance:
         '''
 
-        self.gridpoints[1,1,1].setTestFunctionValue()
-        parentIntegral = self.gridpoints[1,1,1].testFunctionValue*self.volume
-        
-        childrenIntegral = 0.0
-        xmids = np.array([(3*self.xmin+self.xmax)/4, (self.xmin+3*self.xmax)/4])
-        ymids = np.array([(3*self.ymin+self.ymax)/4, (self.ymin+3*self.ymax)/4])
-        zmids = np.array([(3*self.zmin+self.zmax)/4, (self.zmin+3*self.zmax)/4])
-        for i,j,k in TwoByTwoByTwo:
-            tempChild = GridPoint(xmids[i],ymids[j],zmids[k])
-            tempChild.setTestFunctionValue()
-            childrenIntegral += tempChild.testFunctionValue*(self.volume/8)
-        
-        if abs(parentIntegral-childrenIntegral) > divideTolerance:
+#         self.gridpoints[1,1,1].setTestFunctionValue()
+#         parentIntegral = self.gridpoints[1,1,1].testFunctionValue*self.volume
+#         
+#         childrenIntegral = 0.0
+#         xmids = np.array([(3*self.xmin+self.xmax)/4, (self.xmin+3*self.xmax)/4])
+#         ymids = np.array([(3*self.ymin+self.ymax)/4, (self.ymin+3*self.ymax)/4])
+#         zmids = np.array([(3*self.zmin+self.zmax)/4, (self.zmin+3*self.zmax)/4])
+#         for i,j,k in TwoByTwoByTwo:
+#             tempChild = GridPoint(xmids[i],ymids[j],zmids[k])
+#             tempChild.setTestFunctionValue()
+#             childrenIntegral += tempChild.testFunctionValue*(self.volume/8)
+#         
+#         if abs(parentIntegral-childrenIntegral) > divideTolerance:
+#             self.divideFlag = True
+#         else:
+#             self.divideFlag = False
+        self.getPsiVariation()
+        if self.psiVariation > divideTolerance:
             self.divideFlag = True
         else:
             self.divideFlag = False
