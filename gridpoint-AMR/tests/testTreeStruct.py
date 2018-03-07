@@ -4,9 +4,9 @@ import io
 from contextlib import redirect_stdout
 
 
-from Tree import Tree
-from Cell import Cell
-from Gridpoint import GridPoint
+from TreeStruct import Tree
+from CellStruct import Cell
+from GridpointStruct import GridPoint
 from hydrogenPotential import trueWavefunction
 # from timer import Timer
 
@@ -39,7 +39,7 @@ class TestTreeStructure(unittest.TestCase):
         '''
         # check that the bottom left cell and top left cell both point to same gridpoint at their boundary
         self.assertEqual(self.tree.root.children[0,0,1].gridpoints[0,2,1], self.tree.root.children[0,1,1].gridpoints[0,0,1], 
-                         "Failed Test: 00 Cell's top left gridpoint object should be the top left cell's bottom left gridpoint object")
+                         "Failed Test: 00 CellStruct's top left gridpoint object should be the top left cell's bottom left gridpoint object")
         
         # test that cousins share the same gridpoints 
         cousin1 = self.tree.root.children[0,0,0].children[1,1,1]
@@ -92,7 +92,7 @@ class TestTreeStructure(unittest.TestCase):
             if element[0] == targetID:
                 targetCell = element[1]
         
-#         print('\ntarget Cell: ',targetCell.uniqueID)
+#         print('\ntarget CellStruct: ',targetCell.uniqueID)
 #         print('neighbors = ',targetCell.neighbors)
         for neighbor in expectedNeighbors:
             self.assertTrue(neighbor in targetCell.neighbors, "expected neighbor %s not in list." %neighbor)
@@ -112,7 +112,7 @@ class TestTreeStructure(unittest.TestCase):
             if element[0] == targetID:
                 targetCell = element[1]
         
-#         print('\ntarget Cell: ',targetCell.uniqueID)
+#         print('\ntarget CellStruct: ',targetCell.uniqueID)
 #         print('neighbors = ',targetCell.neighbors)
         for neighbor in expectedNeighbors:
             self.assertTrue(neighbor in targetCell.neighbors, "expected neighbor %s not in list." %neighbor)
@@ -128,19 +128,19 @@ class TestTreeStructure(unittest.TestCase):
         for element in self.tree.masterList:
             if element[0] == targetID:
                 targetCell = element[1]
-#         print('\ntarget Cell: ',targetCell.uniqueID)
+#         print('\ntarget CellStruct: ',targetCell.uniqueID)
 #         print('neighbors = ',targetCell.neighbors)
         for neighbor in expectedNeighbors:
             self.assertTrue(neighbor in targetCell.neighbors, "expected neighbor %s not in list." %neighbor)
         
                   
     def testObjectTypesAfterTreeConstruction(self):
-        self.assertIsInstance(self.tree, Tree, "self is not a Tree object.")
+        self.assertIsInstance(self.tree, Tree, "self is not a TreeStruct object.")
         self.assertIsInstance(self.tree.root, Cell, "Root of tree is not a cell object.")
         self.assertIsInstance(self.tree.root.gridpoints[0,0,2], GridPoint, "Gridpoints of root are not GridPoint objects.")
         self.assertIsInstance(self.tree.root.children[0,1,0], Cell, "Children of root are not cell objects.")
         self.assertIsInstance(self.tree.root.children[0,1,0].gridpoints[2,1,2], GridPoint, "Children's gridpoints are not GridPoint objects.")
-        self.assertIsInstance(self.tree.root.children[0,1,0].gridpoints[2,1,2].x, np.float, "Gridpoint data not numpy floats.")
+        self.assertIsInstance(self.tree.root.children[0,1,0].gridpoints[2,1,2].x, np.float, "GridpointStruct data not numpy floats.")
         
     def testTreeBuildLevels(self):
         root = self.tree.root
@@ -191,7 +191,7 @@ class TestTreeStructure(unittest.TestCase):
         '''
         self.tree = None
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=2, maxLevels=2, divideTolerance=0.0, printTreeProperties = False)
+        self.tree.buildTree( minLevels=2, maxLevels=3, divideTolerance=0.0, printTreeProperties = False)
         testCell = self.tree.root.children[0,0,0].children[1,1,1]
         self.tree.root.children[0,0,0].children[1,1,0].divide()
         self.tree.root.children[0,0,0].children[1,0,1].divide()
@@ -207,7 +207,7 @@ class TestTreeStructure(unittest.TestCase):
         cellDivisionPrint = f.getvalue()
 
         self.assertEqual(cellDivisionPrint, "generated 26 new gridpoints for parent cell 111222\n", 
-                "Cell did not generate exactly 26 new gridpoints as it should have.")
+                "CellStruct did not generate exactly 26 new gridpoints as it should have.")
     
 if __name__ == "__main__":
     unittest.main()
