@@ -4,7 +4,9 @@ import io
 from contextlib import redirect_stdout
 
 
-from dataStructs import Tree, Cell, GridPoint
+from Tree import Tree
+from Cell import Cell
+from Gridpoint import GridPoint
 from hydrogenPotential import trueWavefunction
 # from timer import Timer
 
@@ -25,10 +27,10 @@ class TestTreeStructure(unittest.TestCase):
         setUp() gets called before every test below.
         '''
         print("Default tree used for all tests except where a new test-specific tree is built")
-        self.xmin = self.ymin = self.zmin = -12
-        self.xmax = self.ymax = self.zmax = 12
+        self.xmin = self.ymin = self.zmin = -10
+        self.xmax = self.ymax = self.zmax = 10
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=0, maxLevels=3, divideTolerance=0.0125, printTreeProperties=True)
+        self.tree.buildTree( minLevels=0, maxLevels=3, divideTolerance=0.00125, printTreeProperties=True)
         
 #     @unittest.skip("Cousins don't share gridpoints yet")
     def testNeighborsPointToSameObject(self):
@@ -69,8 +71,7 @@ class TestTreeStructure(unittest.TestCase):
         self.assertEqual(self.tree.root.children[0,1,0].gridpoints[0,0,0].psi, 0.55, 
                          "Failed Test:  Psi set from neighboring cell not noticed")
         
-    
-        
+            
     def testNeighborLists(self):
         '''
         Test the neighbor list generator.  Built a full tree of depth 3.  Find neighbors of the leaves.
@@ -164,16 +165,6 @@ class TestTreeStructure(unittest.TestCase):
     def testAnalyticPsiSetting(self):
         self.assertEqual(self.tree.root.gridpoints[1,1,1].psi, trueWavefunction(1, 0, 0, 0), "root midpoint (the origin) doesn't have correct wavefunction.")
     
-
-#     @unittest.skip("Skip energy computations.")
-    def testPotentialComputation(self):
-        self.tree.computePotentialOnTree(epsilon=0)
-        print('\nPotential Error:        %.3g mHartree' %float((-1.0-self.tree.totalPotential)*1000.0))
-#     @unittest.skip("Skip energy computations.")    
-    def testKineticComputation(self):
-        self.tree.computeKineticOnTree()
-        print('\nKinetic Error:           %.3g mHartree' %float((0.5-self.tree.totalKinetic)*1000.0))
-            
 
     @unittest.skip("skip manual eye-tests")
     def testTreeWalk(self):
