@@ -7,8 +7,8 @@ import unittest
 import numpy as np
 import itertools
 
-from Cell import Cell
-from Gridpoint import GridPoint
+from CellStruct import Cell
+from GridpointStruct import GridPoint
 from hydrogenPotential import potential, trueWavefunction
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]

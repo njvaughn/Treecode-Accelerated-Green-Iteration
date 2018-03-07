@@ -139,7 +139,7 @@ def getNeighbors2D(identifier):
         bottomNeighbor.append(bottomID[i])
         bottomNeighbor.append(leftRightID[i])
     
-    print('\nTarget Cell ID: ', "".join(identifier),'\n')
+    print('\nTarget CellStruct ID: ', "".join(identifier),'\n')
 #     print('\nleftID: ', leftID)
 #     print('\nrightID: ', rightID)
 #     print('\nrightNoNeighborFlag ', rightIDNoNeighborFlag)
@@ -255,7 +255,7 @@ def getNeighbors3D(identifier):
         inNeighbor.append(leftRightID[i])
         inNeighbor.append(inID[i])
     
-    print('\nTarget Cell ID: ', "".join(identifier),'\n')
+    print('\nTarget CellStruct ID: ', "".join(identifier),'\n')
 #     print('\nleftID: ', leftID)
 #     print('\nrightID: ', rightID)
 #     print('\nrightNoNeighborFlag ', rightIDNoNeighborFlag)

@@ -6,8 +6,10 @@ Created on Mar 5, 2018
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
 import itertools
+import bisect
+
 from hydrogenPotential import potential
-from Gridpoint import GridPoint
+from GridpointStruct import GridPoint
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 TwoByTwoByTwo = [element for element in itertools.product(range(2),range(2),range(2))]
@@ -224,47 +226,63 @@ class Cell(object):
         Modify this sub-array of gridpoints (if neighbors exist), then output the sub-array. 
         '''
 
+
+        def find(a, x):
+            'Locate the leftmost value exactly equal to x'
+            i = bisect.bisect_left(a, [x,])
+            if i != len(a) and a[i][0] == x:
+                return i
+            raise ValueError
+        
+        
         printNeighborResults = False
         if printNeighborResults == True: print('\nTarget Cell ID      ', self.uniqueID)
     
         '''fill in any gridpoints coming from X neighbors'''
         try: 
+            xLowID =   [element[1] for element in self.neighbors if element[0] == 'xLow'][0]
+            xLowCell = self.tree.masterList[ find(self.tree.masterList, xLowID) ][1]
 #             xLowID =   [element[1] for element in self.neighbors if element[0] == 'xLow'][0]
-            xLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'xLow'][0]][0]
+#             xLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'xLow'][0]][0]
             if hasattr(xLowCell, 'gridpoints'): gridpoints[0,:,:] = xLowCell.gridpoints[2,:,:] # this is failing
             if printNeighborResults == True: print('found xLowCell:   ', xLowCell, 'whose ID is ', xLowCell.uniqueID)
         except: pass
         try: 
-#             xHighID =  [element[1] for element in self.neighbors if element[0] == 'xHigh'][0]
-            xHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'xHigh'][0]][0]
+            xHighID =  [element[1] for element in self.neighbors if element[0] == 'xHigh'][0]
+            xHighCell = self.tree.masterList[ find(self.tree.masterList, xHighID) ][1]
+#             xHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'xHigh'][0]][0]
             if hasattr(xHighCell, 'gridpoints'): gridpoints[2,:,:] = xHighCell.gridpoints[0,:,:] # this is failing
             if printNeighborResults == True: print('found xHighCell:  ', xHighCell, 'whose ID is ', xHighCell.uniqueID)
         except: pass
         
         '''fill in any gridpoints coming from Y neighbors'''
         try: 
-#             yLowID =     [element[1] for element in self.neighbors if element[0] == 'yLow'][0]
-            yLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'yLow'][0]][0]
+            yLowID =     [element[1] for element in self.neighbors if element[0] == 'yLow'][0]
+            yLowCell = self.tree.masterList[ find(self.tree.masterList, yLowID) ][1]
+#             yLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'yLow'][0]][0]
             if hasattr(yLowCell, 'gridpoints'): gridpoints[:,0,:] = yLowCell.gridpoints[:,2,:] # this is failing
             if printNeighborResults == True: print('found yLowCell:     ', yLowCell, 'whose ID is ', yLowCell.uniqueID)
         except: pass
         try: 
-#             yHighID =    [element[1] for element in self.neighbors if element[0] == 'yHigh'][0]
-            yHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'yHigh'][0]][0]
+            yHighID =    [element[1] for element in self.neighbors if element[0] == 'yHigh'][0]
+            yHighCell = self.tree.masterList[ find(self.tree.masterList, yHighID) ][1]
+#             yHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'yHigh'][0]][0]
             if hasattr(yHighCell, 'gridpoints'): gridpoints[:,2,:] = yHighCell.gridpoints[:,0,:] # this is failing
             if printNeighborResults == True: print('found yHighCell:    ', yHighCell, 'whose ID is ', yHighCell.uniqueID)
         except: pass
         
         '''fill in any gridpoints coming from Z neighbors'''
         try: 
-#             zLowID = [element[1] for element in self.neighbors if element[0] == 'zLow'][0]
-            zLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'zLow'][0]][0]
+            zLowID = [element[1] for element in self.neighbors if element[0] == 'zLow'][0]
+            zLowCell = self.tree.masterList[ find(self.tree.masterList, zLowID) ][1]
+#             zLowCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'zLow'][0]][0]
             if hasattr(zLowCell, 'gridpoints'): gridpoints[:,:,0] = zLowCell.gridpoints[:,:,2] # this is failing
             if printNeighborResults == True: print('found zLowCell: ', zLowCell, 'whose ID is ', zLowCell.uniqueID)
         except: pass 
         try: 
-#             zHighID = [element[1] for element in self.neighbors if element[0] == 'zHigh'][0]
-            zHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'zHigh'][0]][0]
+            zHighID = [element[1] for element in self.neighbors if element[0] == 'zHigh'][0]
+            zHighCell = self.tree.masterList[ find(self.tree.masterList, zHighID) ][1]
+#             zHighCell = [element[1] for element in self.tree.masterList if str(element[0]) == [element[1] for element in self.neighbors if element[0] == 'zHigh'][0]][0]
             if hasattr(zHighCell, 'gridpoints'): gridpoints[:,:,2] = zHighCell.gridpoints[:,:,0] # this is failing
             if printNeighborResults == True: print('found zHighCell:    ', zHighCell, 'whose ID is ', zHighCell.uniqueID)
         except: pass  
@@ -289,8 +307,9 @@ class Cell(object):
             children[i,j,k].parent = self # children should point to their parent
             children[i,j,k].setUniqueID(i,j,k)
             children[i,j,k].setNeighborList()
-            self.tree.masterList.append([children[i,j,k].uniqueID,children[i,j,k]])  # add cell to the master list
-
+#             self.tree.masterList.append([children[i,j,k].uniqueID,children[i,j,k]])  # add cell to the master list
+            self.tree.masterList.insert(bisect.bisect_left(self.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
+#             bisect.insort(self.tree.masterList, [children[i,j,k].uniqueID,children[i,j,k]])
         '''fill in any already existing gridpoints from neighboring cells that have already divided'''
         for i, j, k in TwoByTwoByTwo:    
             gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3] = children[i,j,k].fillInNeighbors(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])

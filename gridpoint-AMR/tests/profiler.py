@@ -8,10 +8,9 @@ import cProfile
 import pstats
 import socket
 import sys
-# sys.path.append('methods/')
 
-import Tree
+import TreeStruct
 # cProfile.run('re.compile("foo|bar")')
-cProfile.run('Tree.TestTreeForProfiling()','profilestats')
+cProfile.run('TreeStruct.TestTreeForProfiling()','profilestats')
 p = pstats.Stats('profilestats')
 p.strip_dirs().sort_stats('time').print_stats(20)

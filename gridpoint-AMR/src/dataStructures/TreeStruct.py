@@ -5,8 +5,8 @@ Created on Mar 5, 2018
 '''
 import numpy as np
 import itertools
-from Gridpoint import GridPoint
-from Cell import Cell
+from GridpointStruct import GridPoint
+from CellStruct import Cell
 from timer import Timer
 import matplotlib
 matplotlib.use('TkAgg')
@@ -61,7 +61,7 @@ class Tree(object):
                 if Cell.divideFlag == True:   
                     Cell.divide(printNumberOfCells)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
-#                         self.masterList.append([Cell.children[i,j,k].uniqueID, Cell.children[i,j,k]])
+#                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
                         maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
                 else:
@@ -203,7 +203,7 @@ def TestTreeForProfiling():
     xmin = ymin = zmin = -12
     xmax = ymax = zmax = -xmin
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
-    tree.buildTree( minLevels=0, maxLevels=9, divideTolerance=0.08,printTreeProperties=True)
+    tree.buildTree( minLevels=4, maxLevels=4, divideTolerance=0.07,printTreeProperties=True)
 
             
         
