@@ -58,7 +58,7 @@ class Cell(object):
             
             def recursiveDigitFlipForGreaterNeighbor(identifierList, targetIndex, noNeighborFlag):
                 neighborID = np.copy(identifierList)
-                if (targetIndex == 0 and neighborID[targetIndex]) == '2':
+                if ( (targetIndex == 0) and (neighborID[targetIndex] == '2') ):
                     noNeighborFlag = True
                     return (list('This cell has no greater neighbor'), noNeighborFlag)
                 if neighborID[targetIndex] == '0':
@@ -76,7 +76,7 @@ class Cell(object):
                 
             def recursiveDigitFlipForLesserNeighbor(identifierList, targetIndex, noNeighborFlag):
                 neighborID = np.copy(identifierList)
-                if (targetIndex == 0 and neighborID[targetIndex]) == '1':
+                if ( (targetIndex == 0) and (neighborID[targetIndex]) ) == '1':
                     noNeighborFlag = True
                     return (list('This cell has no lesser neighbor'), noNeighborFlag)
                 if neighborID[targetIndex] == '0':

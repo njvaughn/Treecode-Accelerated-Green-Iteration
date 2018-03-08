@@ -52,8 +52,6 @@ def getNeighbors1D(identifier):
             return neighborID
 
         
-    
-    
     rightNeighbor = recursiveDigitFlipForGreaterNeighbor(identifier, len(identifier)-1)
     leftNeighbor = recursiveDigitFlipForLesserNeighbor(identifier, len(identifier)-1)
     print('Left:   ', "".join(leftNeighbor))
@@ -63,9 +61,6 @@ def getNeighbors1D(identifier):
 
 
         
-    
-#     for digit in identifier:
-#         print(digit)
 
 def getNeighbors2D(identifier):
     print('Self Identifier: ', "".join(identifier))

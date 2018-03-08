@@ -6,7 +6,7 @@ Created on Mar 5, 2018
 import unittest
 
 
-from Tree import Tree
+from TreeStruct import Tree
 
 class TestEnergyComputation(unittest.TestCase):
 
@@ -15,7 +15,7 @@ class TestEnergyComputation(unittest.TestCase):
         self.xmin = self.ymin = self.zmin = -12
         self.xmax = self.ymax = self.zmax = -self.xmin
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=4, maxLevels=9, divideTolerance=0.06, printTreeProperties=True)
+        self.tree.buildTree( minLevels=4, maxLevels=9, divideTolerance=0.045, printTreeProperties=True)
 
 
 
