@@ -170,7 +170,7 @@ class Tree(object):
                 Cell.computePotential(epsilon)
                 self.totalPotential += Cell.PE
         timer.start()        
-        recursiveComputePotential(self.root, epsilon=0)
+        recursiveComputePotential(self.root, epsilon)
         timer.stop() 
         if timePotential == True:
             self.PotentialTime = timer.elapsedTime
