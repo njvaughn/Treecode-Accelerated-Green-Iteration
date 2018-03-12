@@ -213,11 +213,18 @@ class Cell(object):
 #             self.divideFlag = True
 #         else:
 #             self.divideFlag = False
+
         self.getPsiVariation()
         if self.psiVariation > divideTolerance:
             self.divideFlag = True
         else:
             self.divideFlag = False
+            
+#         self.divideFlag=False
+#         for i,j,k in ThreeByThreeByThree:
+#             if ( (self.gridpoints[i,j,k].x==0) and (self.gridpoints[i,j,k].y==0) and (self.gridpoints[i,j,k].z==0) and (self.dx > divideTolerance) ):
+#                 self.divideFlag = True
+#                 return
      
     def fillInNeighbors(self, gridpoints): 
         '''
@@ -353,9 +360,19 @@ class Cell(object):
             Dzz = np.gradient(gradient[2],self.dz,edge_order=2,axis=2)
             Laplacian = (Dxx + Dyy + Dzz)  # only use the Laplacian at the midpoint, for now at least
             return Laplacian
-    
         Laplacian = computeLaplacian(self)
-        self.KE = -1/2*self.volume*midpoint.psi*Laplacian[1,1,1]   
+        self.KE = -1/2*self.volume*midpoint.psi*Laplacian[1,1,1]
+            
+#         psi = np.empty((3,3,3))
+#         for i,j,k in ThreeByThreeByThree:
+#             psi[i,j,k] = self.gridpoints[i,j,k].psi
+#         gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
+#         grad = gradient[0]+gradient[1]+gradient[2]
+#         gradPsiSquared = -grad*grad
+#         self.KE = -1/2*self.volume*gradPsiSquared[1,1,1]
+         
+        
+   
         
         
         

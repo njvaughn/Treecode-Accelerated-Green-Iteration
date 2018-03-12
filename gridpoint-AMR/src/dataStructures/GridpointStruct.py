@@ -34,4 +34,8 @@ class GridPoint(object):
         refined mesh.  Bikash uses single atom densities, or a sum of single atom densities to give an 
         indication of where he should refine before actually computing the many-atom electron density.
         '''
-        self.testFunctionValue = trueWavefunction(1, self.x,self.y,self.z)  
+        self.testFunctionValue = trueWavefunction(1, self.x,self.y,self.z)
+        
+        
+        
+          
