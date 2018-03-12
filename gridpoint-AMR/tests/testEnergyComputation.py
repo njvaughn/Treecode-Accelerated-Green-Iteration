@@ -12,10 +12,10 @@ class TestEnergyComputation(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.xmin = self.ymin = self.zmin = -12
+        self.xmin = self.ymin = self.zmin = -10
         self.xmax = self.ymax = self.zmax = -self.xmin
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=4, maxLevels=9, divideTolerance=0.045, printTreeProperties=True)
+        self.tree.buildTree( minLevels=4, maxLevels=9, divideTolerance=0.1, printTreeProperties=True)
 
 
 

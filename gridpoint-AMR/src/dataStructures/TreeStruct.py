@@ -7,6 +7,7 @@ import numpy as np
 import itertools
 from GridpointStruct import GridPoint
 from CellStruct import Cell
+from hydrogenPotential import potential
 from timer import Timer
 import matplotlib
 matplotlib.use('TkAgg')
@@ -192,6 +193,78 @@ class Tree(object):
         if timeKinetic == True:
             self.KineticTime = timer.elapsedTime
             
+            
+    def GreenFunctionConvolution(self, timeConvolution = True):
+        
+        def GreenFunction(r,E):
+            return np.exp(-np.sqrt(-2*E)*r)/(4*np.pi*r)
+        
+        def singleTargetConvolve(self,GridPoint):
+            
+            def recursivelyInteractWithSources(SourceCell,TargetGridpoint):
+                psiNew = 0.0
+                xt = TargetGridpoint.x
+                yt = TargetGridpoint.y
+                zt = TargetGridpoint.z
+                if hasattr(SourceCell,'children'):
+                    for i,j,k in TwoByTwoByTwo:
+                        recursivelyInteractWithSources(SourceCell.children[i,j,k],TargetGridpoint)
+                else:
+                    xs = SourceCell.gridpoints[1,1,1].x
+                    ys = SourceCell.gridpoints[1,1,1].y
+                    zs = SourceCell.gridpoints[1,1,1].z
+                    
+                    
+                    
+                    dist = np.sqrt( (xs-xt)**2 + (ys-yt)**2 + (zs-zt)**2 )
+                    if dist > 0:
+                        psiNew += -2*SourceCell.volume * potential(xs,ys,zs) * GreenFunction(dist, self.E) * SourceCell.gridpoints[1,1,1].psi
+                    
+                return psiNew
+                    
+            
+            GridPoint.psiNew = recursivelyInteractWithSources(self.root, GridPoint)
+            
+        
+        def recursiveConvolutionForEachTarget(Cell):
+            '''
+            Performs the convolution for all the gridpoints.  This works by recursively walking the tree to 
+            the leaves, then performing the convolution for all their gridpoints.  The gridpoints have an 
+            attribute signaling whether or not they have been updated
+            :param Cell:
+            '''
+            if hasattr(Cell,'children'):
+                for i,j,k in TwoByTwoByTwo:
+                    recursiveConvolutionForEachTarget(Cell.children[i,j,k])
+            
+            else: # this cell has no children
+                for l,m,n in ThreeByThreeByThree:
+                    if not hasattr(Cell.gridpoints[l,m,n],'psiNew'):
+                        target = Cell.gridpoints[l,m,n]
+                        singleTargetConvolve(self,target)
+                
+        def applyUpdate(Cell):
+            '''
+            All gridpoints store their new value in attribute psiNew, but don't update until the entire convolution 
+            is complete.  Upon updating, psiNew attribute is set to None.  
+            :param Cell:
+            '''
+            if hasattr(Cell,'children'):
+                for i,j,k in TwoByTwoByTwo:
+                    applyUpdate(Cell.children[i,j,k])
+            else:
+                for i,j,k in ThreeByThreeByThree:
+                    Cell.gridpoints[i,j,k].psi = Cell.gridpoints[i,j,k].psiNew
+                    Cell.gridpoints[i,j,k].psiNew = None
+                    
+        timer = Timer()
+        timer.start()
+        recursiveConvolutionForEachTarget(self.root)
+        applyUpdate(self.root)
+        timer.stop()
+        if timeConvolution == True:
+            self.ConvolutionTime = timer.elapsedTime
+             
             
             
             
