@@ -7,7 +7,7 @@ import numpy as np
 import itertools
 from GridpointStruct import GridPoint
 from CellStruct import Cell
-from hydrogenPotential import potential
+from hydrogenPotential import potential, trueWavefunction
 from timer import Timer
 import matplotlib
 matplotlib.use('TkAgg')
@@ -99,6 +99,7 @@ class Tree(object):
         
         def recursiveWalkMidpoint(Cell, attribute, storeOutput, outputArray, leavesOnly):  
             midpoint = Cell.gridpoints[1,1,1]
+            truePsi = trueWavefunction(1, midpoint.x, midpoint.y, midpoint.z)
             
             # if not storing output, then print to screen
             if storeOutput == False:
@@ -116,7 +117,7 @@ class Tree(object):
                     if hasattr(Cell,attribute):
                         outputArray.append([midpoint.x,midpoint.y,midpoint.z,getattr(Cell,attribute)])
                     if hasattr(midpoint,attribute):
-                        outputArray.append([midpoint.x,midpoint.y,midpoint.z,getattr(midpoint,attribute)])
+                        outputArray.append([midpoint.x,midpoint.y,midpoint.z,np.log(abs(getattr(midpoint,attribute)-truePsi))])
             
             # if cell has children, recursively walk through them
             if hasattr(Cell,'children'):
@@ -175,6 +176,22 @@ class Tree(object):
         timer.stop() 
         if timePotential == True:
             self.PotentialTime = timer.elapsedTime
+            
+    def computePotentialOnList(self, epsilon=0, timePotential = False): 
+        timer = Timer() 
+ 
+        self.totalPotential = 0
+        
+        timer.start() 
+        for element in self.masterList:
+            Cell = element[1]
+            if Cell.leaf == True:
+                Cell.computePotential(epsilon)
+                self.totalPotential += Cell.PE
+                       
+        timer.stop() 
+        if timePotential == True:
+            self.PotentialTime = timer.elapsedTime
     
     def computeKineticOnTree(self, timeKinetic = False):
         self.totalKinetic = 0
@@ -193,8 +210,21 @@ class Tree(object):
         if timeKinetic == True:
             self.KineticTime = timer.elapsedTime
             
+    def computeKineticOnList(self, timeKinetic = False):
+        self.totalKinetic = 0
+        timer = Timer()
+        timer.start()
+        for element in self.masterList:
+            Cell = element[1]
+            if Cell.leaf == True:
+                Cell.computeKinetic()
+                self.totalKinetic += Cell.KE
+        timer.stop()
+        if timeKinetic == True:
+            self.KineticTime = timer.elapsedTime
             
-    def GreenFunctionConvolution(self, timeConvolution = True):
+            
+    def GreenFunctionConvolutionRecursive(self, timeConvolution = True):
         
         def GreenFunction(r,E):
             return np.exp(-np.sqrt(-2*E)*r)/(4*np.pi*r)
@@ -265,8 +295,85 @@ class Tree(object):
         if timeConvolution == True:
             self.ConvolutionTime = timer.elapsedTime
              
+    
+    def GreenFunctionConvolutionList(self,timeConvolution=True):
+            
+        def GreenFunction(r,E):
+            return np.exp(-np.sqrt(-2*E)*r)/(4*np.pi*r)
+        
+        timer = Timer()
+        timer.start()
+        for targetElement in self.masterList:
+            if targetElement[1].leaf == True:
+                targetCell = targetElement[1]
+                
+                targetPoint = targetCell.gridpoints[1,1,1]
+                targetPoint.psiNew = 0.0
+                xt = targetPoint.x
+                yt = targetPoint.y
+                zt = targetPoint.z
+                
+                for sourceElement in self.masterList:
+                    if sourceElement[1].leaf==True:
+                        sourceCell = sourceElement[1]
+                        sourceMidpoint = sourceCell.gridpoints[1,1,1]
+                        xs = sourceMidpoint.x
+                        ys = sourceMidpoint.y
+                        zs = sourceMidpoint.z
+                        
+                        
+#                         for i,j,k in ThreeByThreeByThree:
+#                             targetPoint = targetCell.gridpoints[i,j,k]
+#                             targetPoint.psiNew = 0.0
+#                             xt = targetPoint.x
+#                             yt = targetPoint.y
+#                             zt = targetPoint.z
+#                             
+#                             r = np.sqrt( (xt-xs)**2 + (yt-ys)**2 + (zt-zs)**2 )
+#                             if r > 0:
+#                                 targetPoint.psiNew += -2*sourceCell.volume * sourceCell.hydrogenV * np.exp(-np.sqrt(-2*self.E)*r)/(4*np.pi*r) * sourceMidpoint.psi
+                                
+                        
+                        
+                        r = np.sqrt( (xt-xs)**2 + (yt-ys)**2 + (zt-zs)**2 )
+                        if r > 0:
+                            targetPoint.psiNew += -2*sourceCell.volume * sourceCell.hydrogenV * np.exp(-np.sqrt(-2*self.E)*r)/(4*np.pi*r) * sourceMidpoint.psi
+        
+        
+        for element in self.masterList:
+            if element[1].leaf == True:
+                element[1].gridpoints[1,1,1].psi = element[1].gridpoints[1,1,1].psiNew
+                element[1].gridpoints[1,1,1].psiNew = None
+                
+        self.normalizeWavefunction()
+#                 for i,j,k in ThreeByThreeByThree:
+#                     element[1].gridpoints[i,j,k].psi = element[1].gridpoints[i,j,k].psiNew
+#                     element[1].gridpoints[i,j,k].psiNew = None
+            
+        timer.stop()
+        if timeConvolution == True:
+            self.ConvolutionTime = timer.elapsedTime
             
             
+    def computeWaveErrors(self):
+        errors = []
+        for element in self.masterList:
+            if element[1].leaf == True:
+                midpoint = element[1].gridpoints[1,1,1]
+                errors.append( (midpoint.psi - trueWavefunction(1,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
+                
+        self.L2NormError = np.sum(errors)
+        self.maxCellError = np.max(errors)
+        
+    def normalizeWavefunction(self):
+        A = 0.0
+        for element in self.masterList:
+            if element[1].leaf == True:
+                A += element[1].gridpoints[1,1,1].psi**2*element[1].volume
+        
+        for element in self.masterList:
+            if element[1].leaf==True:
+                element[1].gridpoints[1,1,1].psi /= np.sqrt(A)
             
             
             
@@ -278,7 +385,19 @@ def TestTreeForProfiling():
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
     tree.buildTree( minLevels=4, maxLevels=4, divideTolerance=0.07,printTreeProperties=True)
 
-            
+def TestConvolutionForProfiling():
+    xmin = ymin = zmin = -12
+    xmax = ymax = zmax = -xmin
+    tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
+    tree.buildTree( minLevels=3, maxLevels=3, divideTolerance=0.07,printTreeProperties=True) 
+    tree.E = -0.5
+#     print('\nUsing Tree')
+#     tree.GreenFunctionConvolutionRecursive(timeConvolution=True)
+#     print('Convolution took         %.4f seconds. ' %tree.ConvolutionTime)    
+    
+    print('\nUsing List')
+    tree.GreenFunctionConvolutionList(timeConvolution=True)
+    print('Convolution took         %.4f seconds. ' %tree.ConvolutionTime)       
         
 if __name__ == "__main__":
     TestTreeForProfiling()

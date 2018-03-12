@@ -25,6 +25,7 @@ class Cell(object):
         Cell Constructor.  Cell composed of gridpoint objects
         '''
         self.tree = tree
+        self.leaf = True
         if np.shape(gridpoints) == (3,3,3):
             self.setGridpoints(gridpoints)
 
@@ -45,6 +46,8 @@ class Cell(object):
         self.dy = self.gridpoints[0,1,0].y - self.ymin
         self.dz = self.gridpoints[0,0,1].z - self.zmin
         self.volume = (self.xmax-self.xmin)*(self.ymax-self.ymin)*(self.zmax-self.zmin)
+        midpoint = self.gridpoints[1,1,1]
+        self.hydrogenV = potential(midpoint.x, midpoint.y, midpoint.z, epsilon=0)
      
     def setUniqueID(self,i,j,k):
         self.uniqueID = "".join( list(self.parent.uniqueID) + list([str(i+1),str(j+1),str(k+1)]) )
@@ -295,6 +298,7 @@ class Cell(object):
     def divide(self, printNumberOfCells=False):
         '''setup 5x5x5 array of gridpoint objects.  These will be used to construct the 8 children cells'''
         children = np.empty((2,2,2), dtype=object)
+        self.leaf = False
         x = np.linspace(self.xmin,self.xmax,5)
         y = np.linspace(self.ymin,self.ymax,5)
         z = np.linspace(self.zmin,self.zmax,5)
