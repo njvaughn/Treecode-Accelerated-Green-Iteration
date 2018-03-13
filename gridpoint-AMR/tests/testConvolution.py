@@ -45,9 +45,8 @@ class Test(unittest.TestCase):
 #         self.tree.visualizeMesh('psi')
         
         for i in range(10):
-#             print('Performing Convolution using masterList')
             self.tree.GreenFunctionConvolutionList(timeConvolution=True)
-#             print('Convolution took         %.4f seconds. ' %self.tree.ConvolutionTime)
+            print('Convolution took         %.4f seconds. ' %self.tree.ConvolutionTime)
             self.tree.computeWaveErrors()
             print('Convolution wavefunction errors: %.3e L2,  %.3e max' %(self.tree.L2NormError, self.tree.maxCellError))
         self.tree.visualizeMesh('psi')

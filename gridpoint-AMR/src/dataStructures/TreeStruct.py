@@ -223,6 +223,11 @@ class Tree(object):
         if timeKinetic == True:
             self.KineticTime = timer.elapsedTime
             
+    def updateEnergy(self):
+        self.computeKineticOnList()
+        self.computePotentialOnList(epsilon=0)
+        self.E = self.totalKinetic + self.totalPotential
+            
             
     def GreenFunctionConvolutionRecursive(self, timeConvolution = True):
         
@@ -303,41 +308,37 @@ class Tree(object):
         
         timer = Timer()
         timer.start()
+        
+        # initialize convolution flag to false.  This gets flipped to true when the convolution is performed for the gridpoint
+        for element in self.masterList:
+            if element[1].leaf == True:
+                for i,j,k in ThreeByThreeByThree:
+                    element[1].gridpoints[i,j,k].convolutionComplete = False
+        
         for targetElement in self.masterList:
             if targetElement[1].leaf == True:
                 targetCell = targetElement[1]
                 
-                targetPoint = targetCell.gridpoints[1,1,1]
-                targetPoint.psiNew = 0.0
-                xt = targetPoint.x
-                yt = targetPoint.y
-                zt = targetPoint.z
-                
-                for sourceElement in self.masterList:
-                    if sourceElement[1].leaf==True:
-                        sourceCell = sourceElement[1]
-                        sourceMidpoint = sourceCell.gridpoints[1,1,1]
-                        xs = sourceMidpoint.x
-                        ys = sourceMidpoint.y
-                        zs = sourceMidpoint.z
+                for i,j,k in ThreeByThreeByThree:
+                    targetPoint = targetCell.gridpoints[i,j,k] 
+                    if targetPoint.convolutionComplete == False:
+                        targetPoint.convolutionComplete = True
+                        targetPoint.psiNew = 0.0
+                        xt = targetPoint.x
+                        yt = targetPoint.y
+                        zt = targetPoint.z
                         
-                        
-#                         for i,j,k in ThreeByThreeByThree:
-#                             targetPoint = targetCell.gridpoints[i,j,k]
-#                             targetPoint.psiNew = 0.0
-#                             xt = targetPoint.x
-#                             yt = targetPoint.y
-#                             zt = targetPoint.z
-#                             
-#                             r = np.sqrt( (xt-xs)**2 + (yt-ys)**2 + (zt-zs)**2 )
-#                             if r > 0:
-#                                 targetPoint.psiNew += -2*sourceCell.volume * sourceCell.hydrogenV * np.exp(-np.sqrt(-2*self.E)*r)/(4*np.pi*r) * sourceMidpoint.psi
-                                
-                        
-                        
-                        r = np.sqrt( (xt-xs)**2 + (yt-ys)**2 + (zt-zs)**2 )
-                        if r > 0:
-                            targetPoint.psiNew += -2*sourceCell.volume * sourceCell.hydrogenV * np.exp(-np.sqrt(-2*self.E)*r)/(4*np.pi*r) * sourceMidpoint.psi
+                        for sourceElement in self.masterList:
+                            if sourceElement[1].leaf==True:
+                                sourceCell = sourceElement[1]
+                                sourceMidpoint = sourceCell.gridpoints[1,1,1]
+                                xs = sourceMidpoint.x
+                                ys = sourceMidpoint.y
+                                zs = sourceMidpoint.z
+                            
+                                r = np.sqrt( (xt-xs)**2 + (yt-ys)**2 + (zt-zs)**2 )
+                                if r > 0:
+                                    targetPoint.psiNew += -2*sourceCell.volume * sourceCell.hydrogenV * np.exp(-np.sqrt(-2*self.E)*r)/(4*np.pi*r) * sourceMidpoint.psi
         
         
         for element in self.masterList:
