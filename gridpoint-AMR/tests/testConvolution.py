@@ -6,9 +6,7 @@ Created on Mar 10, 2018
 import unittest
 import numpy as np
 from TreeStruct import Tree
-from CellStruct import Cell
-from GridpointStruct import GridPoint
-from hydrogenPotential import trueWavefunction
+
 
 
 class Test(unittest.TestCase):
@@ -22,7 +20,7 @@ class Test(unittest.TestCase):
         self.xmin = self.ymin = self.zmin = -10
         self.xmax = self.ymax = self.zmax = 10
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=3, maxLevels=7, divideTolerance=0.1, printTreeProperties=True)
+        self.tree.buildTree( minLevels=3, maxLevels=7, divideTolerance=0.04, printTreeProperties=True)
         for element in self.tree.masterList:
             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
         self.tree.E = -0.5

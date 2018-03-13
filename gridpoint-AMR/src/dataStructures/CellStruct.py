@@ -348,7 +348,7 @@ class Cell(object):
         self.PE = self.volume*midpoint.psi*midpoint.psi*potential(midpoint.x,midpoint.y,midpoint.z, epsilon)
 
     def computeKinetic(self):
-        midpoint = self.gridpoints[1,1,1]
+#         midpoint = self.gridpoints[1,1,1]
         def computeLaplacian(Cell):
             # get the psi values on a grid
             psi = np.empty((3,3,3))
@@ -360,16 +360,16 @@ class Cell(object):
             Dzz = np.gradient(gradient[2],self.dz,edge_order=2,axis=2)
             Laplacian = (Dxx + Dyy + Dzz)  # only use the Laplacian at the midpoint, for now at least
             return Laplacian
-        Laplacian = computeLaplacian(self)
-        self.KE = -1/2*self.volume*midpoint.psi*Laplacian[1,1,1]
+#         Laplacian = computeLaplacian(self)
+#         self.KE = -1/2*self.volume*midpoint.psi*Laplacian[1,1,1]
             
-#         psi = np.empty((3,3,3))
-#         for i,j,k in ThreeByThreeByThree:
-#             psi[i,j,k] = self.gridpoints[i,j,k].psi
-#         gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
-#         grad = gradient[0]+gradient[1]+gradient[2]
-#         gradPsiSquared = -grad*grad
-#         self.KE = -1/2*self.volume*gradPsiSquared[1,1,1]
+        psi = np.empty((3,3,3))
+        for i,j,k in ThreeByThreeByThree:
+            psi[i,j,k] = self.gridpoints[i,j,k].psi
+        gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
+        grad = gradient[0]+gradient[1]+gradient[2]
+        gradPsiSquared = -grad*grad
+        self.KE = -1/2*self.volume*gradPsiSquared[1,1,1]
          
         
    

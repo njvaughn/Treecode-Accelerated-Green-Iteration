@@ -15,7 +15,7 @@ class TestEnergyComputation(unittest.TestCase):
         self.xmin = self.ymin = self.zmin = -10
         self.xmax = self.ymax = self.zmax = -self.xmin
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=4, maxLevels=9, divideTolerance=0.045, printTreeProperties=True )
+        self.tree.buildTree( minLevels=3, maxLevels=7, divideTolerance=0.04, printTreeProperties=True )
         self.tree.normalizeWavefunction()
 
 

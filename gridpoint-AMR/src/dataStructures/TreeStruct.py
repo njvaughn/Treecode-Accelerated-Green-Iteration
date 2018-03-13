@@ -366,16 +366,33 @@ class Tree(object):
         self.maxCellError = np.max(errors)
         
     def normalizeWavefunction(self):
+        """ Compute integral psi*2 dxdydz """
         A = 0.0
         for element in self.masterList:
             if element[1].leaf == True:
                 A += element[1].gridpoints[1,1,1].psi**2*element[1].volume
-        
+                
+        """ Initialize the normalization flag for each gridpoint """        
         for element in self.masterList:
             if element[1].leaf==True:
-                element[1].gridpoints[1,1,1].psi /= np.sqrt(A)
+                for i,j,k in ThreeByThreeByThree:
+                    element[1].gridpoints[i,j,k].normalized = False
+        
+        """ Rescale wavefunction values, flip the flag """
+        for element in self.masterList:
+            if element[1].leaf==True:
+                for i,j,k in ThreeByThreeByThree:
+                    if element[1].gridpoints[i,j,k].normalized == False:
+                        element[1].gridpoints[i,j,k].psi /= np.sqrt(A)
+                        element[1].gridpoints[i,j,k].normalized = True
+        
+        """  Delete the flag, if desired               
+        for element in self.masterList:
+            if element[1].leaf==True:
+                for i,j,k in ThreeByThreeByThree:
+                    element[1].gridpoints[i,j,k].normalized = None
             
-            
+        """    
             
             
             
