@@ -3,11 +3,15 @@ Created on Mar 10, 2018
 
 @author: nathanvaughn
 '''
+import os
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+print(ROOT_DIR)
 import unittest
 import numpy as np
+import sys
+sys.path.append('../src/dataStructures')
+sys.path.append('../src/utilities')
 from TreeStruct import Tree
-
-
 
 class Test(unittest.TestCase):
 
