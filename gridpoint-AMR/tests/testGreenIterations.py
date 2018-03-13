@@ -40,7 +40,7 @@ class TestGreenIterations(unittest.TestCase):
             self.tree.computeWaveErrors()
             print('Convolution wavefunction errors: %.3e L2,  %.3e max' %(self.tree.L2NormError, self.tree.maxCellError))
             self.tree.updateEnergy()
-            print('Updated Energy Value:            %.3f Hartree, %.3e error' %(self.tree.E, -0.5-self.tree.E))
+            print('Updated Energy Value:            %.3f Hartree, %.3e error' %(self.tree.E, self.tree.E+0.5))
             
 
 

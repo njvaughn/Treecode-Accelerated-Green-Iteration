@@ -76,15 +76,35 @@ class Tree(object):
         levelCounter=0
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
         timer.stop()
+        
+        """ Count the number of unique gridpoints """
+        self.numberOfGridpoints = 0
+        for element in self.masterList:
+            if element[1].leaf==True:
+                for i,j,k in ThreeByThreeByThree:
+                    if not hasattr(element[1].gridpoints[i,j,k], "counted"):
+                        self.numberOfGridpoints += 1
+                        element[1].gridpoints[i,j,k].counted = True
+        
+                        
+        for element in self.masterList:
+            for i,j,k in ThreeByThreeByThree:
+                if hasattr(element[1].gridpoints[i,j,k], "counted"):
+                    element[1].gridpoints[i,j,k].counted = None
+                    
         if printTreeProperties == True: 
             print("Tree build completed. \n"
-                  "Domain Size:             [%.1f, %.1f] \n"
-                  "Tolerance:               %1.2e \n"
-                  "Total Number of Cells:   %i \n"
-                  "Minimum Depth            %i levels \n"
-                  "Maximum Depth:           %i levels \n"
-                  "Construction time:       %.3g seconds." 
-                  %(self.xmin, self.xmax, divideTolerance, self.treeSize, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
+                  "Domain Size:                 [%.1f, %.1f] \n"
+                  "Tolerance:                   %1.2e \n"
+                  "Total Number of Cells:       %i \n"
+                  "Total Number of Gridpoints:  %i \n"
+                  "Minimum Depth                %i levels \n"
+                  "Maximum Depth:               %i levels \n"
+                  "Construction time:           %.3g seconds." 
+                  %(self.xmin, self.xmax, divideTolerance, self.treeSize, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
+        
+        
+                    
         
     def walkTree(self, attribute='', storeOutput = False, leavesOnly=False):  # walk through the tree, printing out specified data (in this case, the midpoints)
         '''
