@@ -33,7 +33,7 @@ class TestEnergyComputation(unittest.TestCase):
 #         print('\nPotential Error:         %.3g mHartree' %float((-1.0-self.tree.totalPotential)*1000.0))
 #         print('Computation took:          %.3g seconds.' %self.tree.PotentialTime)
         
-        self.tree.computePotentialOnList(epsilon=0, timePotential=True)
+        self.tree.computePotentialOnList(epsilon=0.0, timePotential=True)
 #         print('From the master list:')
         print('\nPotential Error:         %.3g mHartree' %float((-1.0-self.tree.totalPotential)*1000.0))
         print('Computation took:          %.3g seconds.' %self.tree.PotentialTime)

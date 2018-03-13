@@ -180,6 +180,7 @@ class Tree(object):
         plt.show()
      
     def computePotentialOnTree(self, epsilon=0, timePotential = False): 
+    
         timer = Timer() 
  
         self.totalPotential = 0
@@ -198,6 +199,21 @@ class Tree(object):
             self.PotentialTime = timer.elapsedTime
             
     def computePotentialOnList(self, epsilon=0, timePotential = False): 
+        
+#         def SimpsonWeightMatrix():
+#             w1 = np.array([1, 4, 1])/3/2
+#             w2 = np.multiply.outer(w1,w1)
+#             w3 = np.multiply.outer(w2,w1)
+#             return w3
+#         
+#         def MidpointWeightMatrix():
+#             w3 = np.zeros((3,3,3))
+#             w3[1,1,1] = 1
+#             return w3
+#         
+#         weightMatrix = MidpointWeightMatrix()
+        
+        
         timer = Timer() 
  
         self.totalPotential = 0
@@ -231,6 +247,19 @@ class Tree(object):
             self.KineticTime = timer.elapsedTime
             
     def computeKineticOnList(self, timeKinetic = False):
+#         def SimpsonWeightMatrix():
+#             w1 = np.array([1, 4, 1])/3/2
+#             w2 = np.multiply.outer(w1,w1)
+#             w3 = np.multiply.outer(w2,w1)
+#             return w3
+#         
+#         def MidpointWeightMatrix():
+#             w3 = np.zeros((3,3,3))
+#             w3[1,1,1] = 1
+#             return w3
+#         
+#         weightMatrix = MidpointWeightMatrix()
+        
         self.totalKinetic = 0
         timer = Timer()
         timer.start()

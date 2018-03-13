@@ -346,6 +346,15 @@ class Cell(object):
     def computePotential(self, epsilon=0):
         midpoint = self.gridpoints[1,1,1]
         self.PE = self.volume*midpoint.psi*midpoint.psi*potential(midpoint.x,midpoint.y,midpoint.z, epsilon)
+#         self.PE = self.volume*np.sum( self.gridpoints )
+
+#         psi = np.empty((3,3,3))
+#         V = np.empty((3,3,3))
+#         for i,j,k in ThreeByThreeByThree:
+#             psi[i,j,k] = self.gridpoints[i,j,k].psi
+#             V[i,j,k] = potential(self.gridpoints[i,j,k].x,self.gridpoints[i,j,k].y,self.gridpoints[i,j,k].z,epsilon)
+#         
+#         self.PE = self.volume*np.sum(weightMatrix*psi*psi*V)
 
     def computeKinetic(self):
 #         midpoint = self.gridpoints[1,1,1]
@@ -370,6 +379,7 @@ class Cell(object):
         grad = gradient[0]+gradient[1]+gradient[2]
         gradPsiSquared = -grad*grad
         self.KE = -1/2*self.volume*gradPsiSquared[1,1,1]
+#         self.KE = -1/2*self.volume*np.sum( gradPsiSquared*weightMatrix )
          
         
    
