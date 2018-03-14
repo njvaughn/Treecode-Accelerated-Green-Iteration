@@ -3,7 +3,8 @@ import numpy as np
 def potential(x,y,z,epsilon=0):
     r = np.sqrt(x*x+y*y+z*z + epsilon*epsilon)
     if r.any()==0:
-        return 'ValueError: Dividing by zero when evaluating the -1/r potential.'
+        return 0
+#         return 'ValueError: Dividing by zero when evaluating the -1/r potential.'
     return -1/r
 
 

@@ -25,6 +25,7 @@ class Cell(object):
         Cell Constructor.  Cell composed of gridpoint objects
         '''
         self.tree = tree
+        self.leaf = True
         if np.shape(gridpoints) == (3,3,3):
             self.setGridpoints(gridpoints)
 
@@ -45,6 +46,8 @@ class Cell(object):
         self.dy = self.gridpoints[0,1,0].y - self.ymin
         self.dz = self.gridpoints[0,0,1].z - self.zmin
         self.volume = (self.xmax-self.xmin)*(self.ymax-self.ymin)*(self.zmax-self.zmin)
+        midpoint = self.gridpoints[1,1,1]
+        self.hydrogenV = potential(midpoint.x, midpoint.y, midpoint.z, epsilon=0)
      
     def setUniqueID(self,i,j,k):
         self.uniqueID = "".join( list(self.parent.uniqueID) + list([str(i+1),str(j+1),str(k+1)]) )
@@ -210,11 +213,18 @@ class Cell(object):
 #             self.divideFlag = True
 #         else:
 #             self.divideFlag = False
+
         self.getPsiVariation()
         if self.psiVariation > divideTolerance:
             self.divideFlag = True
         else:
             self.divideFlag = False
+            
+#         self.divideFlag=False
+#         for i,j,k in ThreeByThreeByThree:
+#             if ( (self.gridpoints[i,j,k].x==0) and (self.gridpoints[i,j,k].y==0) and (self.gridpoints[i,j,k].z==0) and (self.dx > divideTolerance) ):
+#                 self.divideFlag = True
+#                 return
      
     def fillInNeighbors(self, gridpoints): 
         '''
@@ -295,6 +305,7 @@ class Cell(object):
     def divide(self, printNumberOfCells=False):
         '''setup 5x5x5 array of gridpoint objects.  These will be used to construct the 8 children cells'''
         children = np.empty((2,2,2), dtype=object)
+        self.leaf = False
         x = np.linspace(self.xmin,self.xmax,5)
         y = np.linspace(self.ymin,self.ymax,5)
         z = np.linspace(self.zmin,self.zmax,5)
@@ -335,9 +346,18 @@ class Cell(object):
     def computePotential(self, epsilon=0):
         midpoint = self.gridpoints[1,1,1]
         self.PE = self.volume*midpoint.psi*midpoint.psi*potential(midpoint.x,midpoint.y,midpoint.z, epsilon)
+#         self.PE = self.volume*np.sum( self.gridpoints )
+
+#         psi = np.empty((3,3,3))
+#         V = np.empty((3,3,3))
+#         for i,j,k in ThreeByThreeByThree:
+#             psi[i,j,k] = self.gridpoints[i,j,k].psi
+#             V[i,j,k] = potential(self.gridpoints[i,j,k].x,self.gridpoints[i,j,k].y,self.gridpoints[i,j,k].z,epsilon)
+#         
+#         self.PE = self.volume*np.sum(weightMatrix*psi*psi*V)
 
     def computeKinetic(self):
-        midpoint = self.gridpoints[1,1,1]
+#         midpoint = self.gridpoints[1,1,1]
         def computeLaplacian(Cell):
             # get the psi values on a grid
             psi = np.empty((3,3,3))
@@ -349,9 +369,20 @@ class Cell(object):
             Dzz = np.gradient(gradient[2],self.dz,edge_order=2,axis=2)
             Laplacian = (Dxx + Dyy + Dzz)  # only use the Laplacian at the midpoint, for now at least
             return Laplacian
-    
-        Laplacian = computeLaplacian(self)
-        self.KE = -1/2*self.volume*midpoint.psi*Laplacian[1,1,1]   
+#         Laplacian = computeLaplacian(self)
+#         self.KE = -1/2*self.volume*midpoint.psi*Laplacian[1,1,1]
+            
+        psi = np.empty((3,3,3))
+        for i,j,k in ThreeByThreeByThree:
+            psi[i,j,k] = self.gridpoints[i,j,k].psi
+        gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
+        grad = gradient[0]+gradient[1]+gradient[2]
+        gradPsiSquared = -grad*grad
+        self.KE = -1/2*self.volume*gradPsiSquared[1,1,1]
+#         self.KE = -1/2*self.volume*np.sum( gradPsiSquared*weightMatrix )
+         
+        
+   
         
         
         

@@ -11,6 +11,7 @@ import sys
 
 import TreeStruct
 # cProfile.run('re.compile("foo|bar")')
-cProfile.run('TreeStruct.TestTreeForProfiling()','profilestats')
+# cProfile.run('TreeStruct.TestTreeForProfiling()','profilestats')
+cProfile.run('TreeStruct.TestConvolutionForProfiling()','profilestats')
 p = pstats.Stats('profilestats')
 p.strip_dirs().sort_stats('time').print_stats(20)

@@ -4,7 +4,7 @@ Created on Mar 5, 2018
 @author: nathanvaughn
 '''
 from hydrogenPotential import trueWavefunction
-
+import numpy as np
 
 class GridPoint(object):
     '''
@@ -19,6 +19,7 @@ class GridPoint(object):
         self.y = y
         self.z = z
         self.setAnalyticPsi()  # for now, set the analytic psi value.  Eventually, need to use interpolator
+#         self.setPsi(np.random.rand(1))  # for now, set the analytic psi value.  Eventually, need to use interpolator
     
     def setPsi(self, psi):
         self.psi = psi
@@ -33,4 +34,8 @@ class GridPoint(object):
         refined mesh.  Bikash uses single atom densities, or a sum of single atom densities to give an 
         indication of where he should refine before actually computing the many-atom electron density.
         '''
-        self.testFunctionValue = trueWavefunction(1, self.x,self.y,self.z)  
+        self.testFunctionValue = trueWavefunction(1, self.x,self.y,self.z)
+        
+        
+        
+          
