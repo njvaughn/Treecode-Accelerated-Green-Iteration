@@ -56,7 +56,7 @@ class TestGreenIterations(unittest.TestCase):
             ExtractionTime = timer() - startExtractionTime
             psiNew = np.zeros((len(targets)))
             startConvolutionTime = timer()
-            gpuConvolution(targets,sources,psiNew)
+            gpuConvolution(targets,sources,psiNew,self.tree.E)
             ConvolutionTime = timer() - startConvolutionTime
             print('Extraction took:             %.4f seconds. ' %ExtractionTime)
             print('Convolution took:            %.4f seconds. ' %ConvolutionTime)
