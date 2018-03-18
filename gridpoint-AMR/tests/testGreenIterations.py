@@ -23,7 +23,7 @@ class TestGreenIterations(unittest.TestCase):
         self.xmin = self.ymin = self.zmin = -10
         self.xmax = self.ymax = self.zmax = 10
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=3, maxLevels=3, divideTolerance=0.04, printTreeProperties=True)
+        self.tree.buildTree( minLevels=3, maxLevels=4, divideTolerance=0.04, printTreeProperties=True)
         for element in self.tree.masterList:
             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
         
@@ -66,6 +66,9 @@ class TestGreenIterations(unittest.TestCase):
             print('Convolution wavefunction errors: %.3e L2,  %.3e max' %(self.tree.L2NormError, self.tree.maxCellError))
             startEnergyTime = timer()
             self.tree.updateEnergy()
+            if self.tree.E > 0.0:
+                print('Warning, Energy is positive')
+                self.tree.E = -2
             energyUpdateTime = timer() - startEnergyTime
             print('Energy Update took:          %.4f seconds. ' %energyUpdateTime)
 
