@@ -6,9 +6,11 @@ Created on Mar 13, 2018
 import unittest
 import numpy as np
 import sys
+from timeit import default_timer as timer
 sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
 from TreeStruct import Tree
+from convolution import gpuConvolution
 
 class TestGreenIterations(unittest.TestCase):
 
@@ -29,17 +31,44 @@ class TestGreenIterations(unittest.TestCase):
 
     
 
+#     def testGreenIterations(self):
+#         self.tree.E = -1.0 # initial guess
+#         
+#         for i in range(10):
+#             print()
+#             self.tree.GreenFunctionConvolutionList(timeConvolution=True)
+# #             print('Convolution took:                %.4f seconds. ' %self.tree.ConvolutionTime)
+#             self.tree.computeWaveErrors()
+#             print('Convolution wavefunction errors: %.3e L2,  %.3e max' %(self.tree.L2NormError, self.tree.maxCellError))
+#             self.tree.updateEnergy()
+#             print('Kinetic Energy:                  %.3f ' %self.tree.totalKinetic)
+#             print('Potential Energy:               %.3f ' %self.tree.totalPotential)
+#             print('Updated Energy Value:            %.3f Hartree, %.3e error' %(self.tree.E, self.tree.E+0.5))
 
-    def testGreenIterations(self):
+    def testGreenIterationsGPU(self):
         self.tree.E = -1.0 # initial guess
         
         for i in range(10):
             print()
-            self.tree.GreenFunctionConvolutionList(timeConvolution=True)
-#             print('Convolution took:                %.4f seconds. ' %self.tree.ConvolutionTime)
+            startExtractionTime = timer()
+            sources = self.tree.extractLeavesMidpointsOnly()
+            targets = self.tree.extractLeavesAllGridpoints()
+            ExtractionTime = timer() - startExtractionTime
+            psiNew = np.zeros((len(targets)))
+            startConvolutionTime = timer()
+            gpuConvolution(targets,sources,psiNew)
+            ConvolutionTime = timer() - startConvolutionTime
+            print('Extraction took:             %.4f seconds. ' %ExtractionTime)
+            print('Convolution took:            %.4f seconds. ' %ConvolutionTime)
+
+            self.tree.importPsiOnLeaves(psiNew)
             self.tree.computeWaveErrors()
             print('Convolution wavefunction errors: %.3e L2,  %.3e max' %(self.tree.L2NormError, self.tree.maxCellError))
+            startEnergyTime = timer()
             self.tree.updateEnergy()
+            energyUpdateTime = timer() - startEnergyTime
+            print('Energy Update took:          %.4f seconds. ' %energyUpdateTime)
+
             print('Kinetic Energy:                  %.3f ' %self.tree.totalKinetic)
             print('Potential Energy:               %.3f ' %self.tree.totalPotential)
             print('Updated Energy Value:            %.3f Hartree, %.3e error' %(self.tree.E, self.tree.E+0.5))

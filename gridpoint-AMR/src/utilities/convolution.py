@@ -2,7 +2,7 @@ from numba import cuda
 from cmath import sqrt,exp
         
 @cuda.jit
-def interact(targets,sources,psiNew,E):
+def gpuConvolution(targets,sources,psiNew,E):
     globalID = cuda.grid(1)
 #     x_t, y_t, z_t, psi_t, V_t, volume_t = targets[globalID]
     x_t, y_t, z_t = targets[globalID][0:3]
@@ -13,3 +13,4 @@ def interact(targets,sources,psiNew,E):
             psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-sqrt(-2*E)*r)/r
             
             
+# testing push
