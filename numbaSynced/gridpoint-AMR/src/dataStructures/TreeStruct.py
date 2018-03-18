@@ -276,7 +276,9 @@ class Tree(object):
         self.computeKineticOnList()
         self.computePotentialOnList(epsilon=0)
         self.E = self.totalKinetic + self.totalPotential
-            
+        if self.E > 0:
+            print('Energy went positive, reseting to -1.0')
+            self.E = -1.0    
             
     def GreenFunctionConvolutionRecursive(self, timeConvolution = True):
         
@@ -443,35 +445,7 @@ class Tree(object):
                     element[1].gridpoints[i,j,k].normalized = None
             
         """    
-    def extractLeavesMidpointsOnly(self):
-        '''
-        Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
-        '''
-        leaves = np.empty((self.numberOfGridpoints,4))
-        counter=0
-        for element in self.masterList:
-            if element[1].leaf == True:
-                midpoint =  element[1].gridpoints[1,1,1]
-                leaves.append( [midpoint.x, midpoint.y, midpoint.z, midpoint.psi, element[1].volume ] )
-                counter+=1 
-                
-        return leaves
-    
-    def extractLeavesAllGridpoints(self):
-        '''
-        Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
-        '''
-        leaves = []
-#         leaves = np.empty((self.numberOfGridpoints,4))
-#         counter=0
-#         for element in self.masterList:
-#             if element[1].leaf == True:
-#                 midpoint =  element[1].gridpoints[1,1,1]
-#                 leaves.append( [midpoint.x, midpoint.y, midpoint.z, midpoint.psi, element[1].volume ] )
-#                 counter+=1 
-                
-        return leaves
-                
+            
             
             
 def TestTreeForProfiling():
