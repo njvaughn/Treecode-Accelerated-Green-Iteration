@@ -447,7 +447,8 @@ class Tree(object):
         '''
         Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
         '''
-        leaves = np.empty((self.numberOfGridpoints,4))
+#         leaves = np.empty((self.numberOfGridpoints,4))
+        leaves = []
         counter=0
         for element in self.masterList:
             if element[1].leaf == True:
@@ -455,7 +456,7 @@ class Tree(object):
                 leaves.append( [midpoint.x, midpoint.y, midpoint.z, midpoint.psi, potential(midpoint.x, midpoint.y, midpoint.z), element[1].volume ] )
                 counter+=1 
                 
-        return leaves
+        return np.array(leaves)
     
     def extractLeavesAllGridpoints(self):
         '''
@@ -478,7 +479,7 @@ class Tree(object):
             for i,j,k in ThreeByThreeByThree:
                 element[1].gridpoints[i,j,k].extracted = None
                 
-        return leaves
+        return np.array(leaves)
                 
     
     def importPsiOnLeaves(self,psiNew):
