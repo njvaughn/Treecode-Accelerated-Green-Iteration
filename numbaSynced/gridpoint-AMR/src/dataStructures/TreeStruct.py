@@ -276,7 +276,9 @@ class Tree(object):
         self.computeKineticOnList()
         self.computePotentialOnList(epsilon=0)
         self.E = self.totalKinetic + self.totalPotential
-            
+        if self.E > 0:
+            print('Energy went positive, reseting to -1.0')
+            self.E = -1.0    
             
     def GreenFunctionConvolutionRecursive(self, timeConvolution = True):
         
@@ -443,65 +445,8 @@ class Tree(object):
                     element[1].gridpoints[i,j,k].normalized = None
             
         """    
-    def extractLeavesMidpointsOnly(self):
-        '''
-        Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
-        '''
-#         leaves = np.empty((self.numberOfGridpoints,4))
-        leaves = []
-        counter=0
-        for element in self.masterList:
-            if element[1].leaf == True:
-                midpoint =  element[1].gridpoints[1,1,1]
-                leaves.append( [midpoint.x, midpoint.y, midpoint.z, midpoint.psi, potential(midpoint.x, midpoint.y, midpoint.z), element[1].volume ] )
-                counter+=1 
-                
-        return np.array(leaves)
-    
-    def extractLeavesAllGridpoints(self):
-        '''
-        Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
-        '''
-        leaves = []
-        for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
-                element[1].gridpoints[i,j,k].extracted = False
-                
-        for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
-                gridpt = element[1].gridpoints[i,j,k]
-                if gridpt.extracted == False:
-                    leaves.append( [gridpt.x, gridpt.y, gridpt.z ] )
-                    gridpt.extracted = True
-                    
-
-        for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
-                element[1].gridpoints[i,j,k].extracted = None
-                
-        return np.array(leaves)
-                
-    
-    def importPsiOnLeaves(self,psiNew):
-        '''
-        Import psi values, apply to leaves
-        '''
-        for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
-                element[1].gridpoints[i,j,k].psiImported = False
-        importIndex = 0        
-        for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
-                gridpt = element[1].gridpoints[i,j,k]
-                if gridpt.psiImported == False:
-                    gridpt.psi = psiNew[importIndex]
-                    gridpt.psiImported = True
-                    importIndex += 1
-                    
-        for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
-                element[1].gridpoints[i,j,k].psiImported = None
-                
+            
+            
             
 def TestTreeForProfiling():
     xmin = ymin = zmin = -12
