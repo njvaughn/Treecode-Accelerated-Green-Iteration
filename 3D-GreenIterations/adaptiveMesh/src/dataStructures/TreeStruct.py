@@ -7,8 +7,10 @@ dictate whether or not it divides.
 Cells can perform recursive functions on the tree.  The tree can also extract all gridpoints or
 all midpoints as arrays which can be fed in to the GPU kernels, or other tree-external functions.
 -- 03/20/2018 NV
+
 @author: nathanvaughn
 '''
+
 import numpy as np
 import itertools
 import matplotlib
