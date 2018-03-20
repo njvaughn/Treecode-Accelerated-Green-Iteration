@@ -1,18 +1,25 @@
 '''
-Created on Mar 5, 2018
+The main Tree data structure.  The root of the tree is a Cell object that is comprised of the 
+entire domain.  The tree gets built by dividing the root cell, recursively, based on the set 
+divide condition.  The current implementation uses the variation of psi within a cell to 
+dictate whether or not it divides.  
 
+Cells can perform recursive functions on the tree.  The tree can also extract all gridpoints or
+all midpoints as arrays which can be fed in to the GPU kernels, or other tree-external functions.
+-- 03/20/2018 NV
 @author: nathanvaughn
 '''
 import numpy as np
 import itertools
-from GridpointStruct import GridPoint
-from CellStruct import Cell
-from hydrogenPotential import potential, trueWavefunction
-from timer import Timer
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+
+from GridpointStruct import GridPoint
+from CellStruct import Cell
+from hydrogenPotential import potential, trueWavefunction
+from timer import Timer
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 TwoByTwoByTwo = [element for element in itertools.product(range(2),range(2),range(2))]
@@ -20,7 +27,8 @@ FiveByFiveByFive = [element for element in itertools.product(range(5),range(5),r
 
 class Tree(object):
     '''
-    Tree object. Constructed of cells, which are composed of gridpoint objects.
+    Tree object. Constructed of cells, which are composed of gridpoint objects.  
+    Trees contain their root, as well as their masterList.
     '''
     def __init__(self, xmin,xmax,ymin,ymax,zmin,zmax):
         '''

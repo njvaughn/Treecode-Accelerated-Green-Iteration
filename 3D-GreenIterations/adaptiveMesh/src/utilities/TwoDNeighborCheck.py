@@ -1,5 +1,7 @@
 '''
-Created on Feb 24, 2018
+The neighbor finding algorithm uses a unique ID scheme.  A cell can compute the IDs of
+its neighbors from its own ID with the recursive functions in this program.  This is 
+implemented in the cell division method of the Cell class. -- 03/20/2018 NV
 
 @author: nathanvaughn
 '''

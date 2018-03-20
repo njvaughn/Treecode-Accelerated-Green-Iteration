@@ -1,5 +1,6 @@
 '''
-Created on Feb 24, 2018
+This is a 1d example of the nieghbor finding scheme written as a demonstation for Ling 
+in early March 2018. -- 03/20/2018 NV
 @author: nathanvaughn
 '''
 import numpy as np
