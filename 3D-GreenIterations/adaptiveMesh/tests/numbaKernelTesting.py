@@ -1,3 +1,9 @@
+"""
+Module for testing the numba compiler.  It performs the O(N^2) direct sum interactions 
+serially on the CPU, as well as with a compiled CUDA kernel on the GPU.  A shared memory
+version is under development, which should improve the speed further. -- 03/20/2018 NV
+"""
+
 import numpy as np
 from numba import cuda, float64
 from timeit import default_timer as timer

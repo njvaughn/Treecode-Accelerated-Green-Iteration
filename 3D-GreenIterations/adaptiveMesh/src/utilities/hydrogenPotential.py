@@ -1,3 +1,9 @@
+"""
+Utility functions for the hydrogen atom.  The potential is given analytically, as opposed to 
+tabulated.  The analytic energy values and wavefunctions are known for the single electron 
+Schrodinger equation.  -- 03/20/2018 NV
+"""
+
 import numpy as np
 
 def potential(x,y,z,epsilon=0):

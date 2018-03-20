@@ -1,7 +1,5 @@
 '''
-Created on Feb 21, 2018
-
-@author: nathanvaughn
+A simple timer class.  -- 03/20/2018 NV
 '''
 import time
 
