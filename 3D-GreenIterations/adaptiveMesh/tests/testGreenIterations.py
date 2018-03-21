@@ -15,9 +15,12 @@ sys.path.append('../src/utilities')
 import unittest
 import numpy as np
 from timeit import default_timer as timer
+import itertools
 
 from TreeStruct import Tree
 from convolution import gpuConvolution
+
+ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 
 class TestGreenIterations(unittest.TestCase):
 
@@ -29,10 +32,12 @@ class TestGreenIterations(unittest.TestCase):
         self.xmin = self.ymin = self.zmin = -8
         self.xmax = self.ymax = self.zmax = 8
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=4, maxLevels=9, divideTolerance=0.05, printTreeProperties=True)
+        self.tree.buildTree( minLevels=3, maxLevels=7, divideTolerance=0.05, printTreeProperties=True)
         for element in self.tree.masterList:
             
-            element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
+#             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
+            for i,j,k in ThreeByThreeByThree:
+                element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
         
 
 
