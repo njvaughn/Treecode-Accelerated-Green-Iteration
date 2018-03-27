@@ -18,14 +18,15 @@ class GridPoint(object):
         self.x = x
         self.y = y
         self.z = z
-        self.setAnalyticPsi()  # for now, set the analytic psi value.  Eventually, need to use interpolator
+        self.setAnalyticPsi(0)  # for now, set the analytic psi value.  Eventually, need to use interpolator
 #         self.setPsi(np.random.rand(1))  # for now, set the analytic psi value.  Eventually, need to use interpolator
-    
+        self.finalWavefunction = []
+        
     def setPsi(self, psi):
         self.psi = psi
     
-    def setAnalyticPsi(self):
-        self.psi = trueWavefunction(1, self.x,self.y,self.z)
+    def setAnalyticPsi(self,n):
+        self.psi = trueWavefunction(n, self.x,self.y,self.z)
         
     def setTestFunctionValue(self):
         '''
@@ -34,8 +35,4 @@ class GridPoint(object):
         refined mesh.  Bikash uses single atom densities, or a sum of single atom densities to give an 
         indication of where he should refine before actually computing the many-atom electron density.
         '''
-        self.testFunctionValue = trueWavefunction(1, self.x,self.y,self.z)
-        
-        
-        
-          
+        self.testFunctionValue = trueWavefunction(0, self.x,self.y,self.z)    

@@ -15,11 +15,16 @@ def potential(x,y,z,epsilon=0):
 
 
 def trueEnergy(n):
-    return -1/(2*n*n)
+    m = n+1  # ground state is n=0.  
+    return -1/(2*m*m)
 
 def trueWavefunction(n, x,y,z):
-    if n!=1:
+    m = n+1 # ground state is n=0.
+    if m>2:
         print('warning, don\'t have higher energy wavefunctions yet.  Only n=1')
-    return np.exp(- np.sqrt(x*x + y*y + z*z ))/np.sqrt(np.pi)
+    
+    r = np.sqrt(x*x + y*y + z*z )
+    if m == 1: return np.exp(- r)/np.sqrt(np.pi)
+    if m == 2: return (2-r) * np.exp(-r/2)/(4*np.sqrt(2*np.pi))
 
 

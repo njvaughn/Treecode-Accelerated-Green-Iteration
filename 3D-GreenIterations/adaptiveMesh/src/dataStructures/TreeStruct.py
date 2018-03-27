@@ -24,6 +24,7 @@ from hydrogenPotential import potential, trueWavefunction
 from timer import Timer
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
+ThreeByThree = [element for element in itertools.product(range(3),range(3))]
 TwoByTwoByTwo = [element for element in itertools.product(range(2),range(2),range(2))]
 FiveByFiveByFive = [element for element in itertools.product(range(5),range(5),range(5))]
 
@@ -147,7 +148,8 @@ class Tree(object):
                     if hasattr(Cell,attribute):
                         outputArray.append([midpoint.x,midpoint.y,midpoint.z,getattr(Cell,attribute)])
                     if hasattr(midpoint,attribute):
-                        outputArray.append([midpoint.x,midpoint.y,midpoint.z,np.log(abs(getattr(midpoint,attribute)-truePsi))])
+#                         outputArray.append([midpoint.x,midpoint.y,midpoint.z,np.log(abs(getattr(midpoint,attribute)-truePsi))])
+                        outputArray.append([midpoint.x,midpoint.y,midpoint.z, getattr(midpoint,attribute)])
             
             # if cell has children, recursively walk through them
             if hasattr(Cell,'children'):
@@ -171,7 +173,8 @@ class Tree(object):
                 figure out how to title and add colorbar.
         :param attributeForColoring:
         '''
-        
+    
+                
 #         outputData = self.walkTree(attribute='psi', storeOutput = True)        
         outputData = self.walkTree(attributeForColoring, storeOutput = True, leavesOnly=True)        
         x = outputData[:,0]
@@ -187,6 +190,90 @@ class Tree(object):
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
         fig.colorbar(scatter, ax=ax)
+        plt.show()
+        
+    def wavefunctionSlice(self,zSlizeLocation,n=-1,scalingFactor=1,saveID=False):
+        '''
+        Tasks-- modify the walk so I only get the final mesh, not the entire tree.
+                figure out how to title and add colorbar.
+        :param attributeForColoring:
+        '''
+        
+        x=[]
+        y=[]
+        psi=[]
+        psiTrue = []
+        for element in self.masterList:
+            for i,j in ThreeByThree:
+                if element[1].gridpoints[i,j,2].z == zSlizeLocation:
+                    x.append(element[1].gridpoints[i,j,2].x)
+                    y.append(element[1].gridpoints[i,j,2].y)
+                    psi.append(element[1].gridpoints[i,j,2].psi)
+                    if n>= 0:
+                        psiTrue.append(trueWavefunction(n, scalingFactor*element[1].gridpoints[i,j,2].x, element[1].gridpoints[i,j,2].y, element[1].gridpoints[i,j,2].z))
+
+        print('Extracted %i gridpoints for the scatter plot.' %len(x))
+        print()
+        
+        
+        
+        if n>=0:
+            
+            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(figsize=(8, 6), ncols=2, nrows=2)
+
+            analyticWave =  ax1.scatter(x, y, s=10, c=psiTrue, cmap=plt.get_cmap('Blues'))
+            computedWave =  ax2.scatter(x, y, s=10, c=psi, cmap=plt.get_cmap('Blues'))
+            absErr =        ax3.scatter(x, y, s=10, c=abs(np.array(psiTrue)-np.array(psi)), cmap=plt.get_cmap('Reds'))
+            relErr =        ax4.scatter(x, y, s=10, c=abs(np.array(psiTrue)-np.array(psi))/np.array(psiTrue), cmap=plt.get_cmap('Reds'))
+
+            fig.colorbar(analyticWave, ax=ax1)
+            fig.colorbar(computedWave, ax=ax2)
+            fig.colorbar(absErr, ax=ax3)
+            fig.colorbar(relErr, ax=ax4)
+            
+            ax1.set_title('Analytic Wavefunction')
+            ax2.set_title('Computed Wavefunction')
+            ax3.set_title('Absolute Error')
+            ax4.set_title('Relative Error')
+
+            
+            if saveID!=False:
+                plt.savefig(saveID, bbox_inches='tight',format='pdf')
+                plt.close(fig) 
+            else: plt.show()
+#             fig1 = plt.figure()
+#             ax1 = fig1.add_subplot(111)
+#             scatter = ax1.scatter(x, y, s=20, c=abs(np.array(psiTrue)-np.array(psi)), cmap=plt.get_cmap('brg'))
+#             plt.title('Absolute Errors')
+#             ax1.set_xlabel('X')
+#             ax1.set_ylabel('Y')
+#             fig1.colorbar(scatter, ax=ax1)
+#             
+#             fig2 = plt.figure()
+#             ax2 = fig2.add_subplot(111)
+#             scatter = ax2.scatter(x, y, s=20, c=abs(np.array(psiTrue)-np.array(psi))/np.array(psiTrue), cmap=plt.get_cmap('brg'))
+#             plt.title('Relative Errors')
+#             ax2.set_xlabel('X')
+#             ax2.set_ylabel('Y')
+#             fig1.colorbar(scatter, ax=ax2)
+#             
+#             fig3 = plt.figure()
+#             ax3 = fig3.add_subplot(111)
+#             scatter = ax3.scatter(x, y, s=20, c=psi, cmap=plt.get_cmap('brg'))
+#             plt.title('Wavefunction')
+#             ax1.set_xlabel('X')
+#             ax1.set_ylabel('Y')
+#             fig3.colorbar(scatter, ax=ax3)
+            
+            
+        else:
+            fig1 = plt.figure()
+            ax1 = fig1.add_subplot(111)
+            scatter = ax1.scatter(x, y, s=20, c=psi, cmap=plt.get_cmap('brg'))
+            plt.title('Wavefunction')
+            ax1.set_xlabel('X')
+            ax1.set_ylabel('Y')
+            fig1.colorbar(scatter, ax=ax1)
         plt.show()
      
     def computePotentialOnTree(self, epsilon=0, timePotential = False): 
@@ -209,21 +296,7 @@ class Tree(object):
             self.PotentialTime = timer.elapsedTime
             
     def computePotentialOnList(self, epsilon=0, timePotential = False): 
-        
-#         def SimpsonWeightMatrix():
-#             w1 = np.array([1, 4, 1])/3/2
-#             w2 = np.multiply.outer(w1,w1)
-#             w3 = np.multiply.outer(w2,w1)
-#             return w3
-#         
-#         def MidpointWeightMatrix():
-#             w3 = np.zeros((3,3,3))
-#             w3[1,1,1] = 1
-#             return w3
-#         
-#         weightMatrix = MidpointWeightMatrix()
-        
-        
+       
         timer = Timer() 
  
         self.totalPotential = 0
@@ -257,18 +330,7 @@ class Tree(object):
             self.KineticTime = timer.elapsedTime
             
     def computeKineticOnList(self, timeKinetic = False):
-#         def SimpsonWeightMatrix():
-#             w1 = np.array([1, 4, 1])/3/2
-#             w2 = np.multiply.outer(w1,w1)
-#             w3 = np.multiply.outer(w2,w1)
-#             return w3
-#         
-#         def MidpointWeightMatrix():
-#             w3 = np.zeros((3,3,3))
-#             w3[1,1,1] = 1
-#             return w3
-#         
-#         weightMatrix = MidpointWeightMatrix()
+
         
         self.totalKinetic = 0
         timer = Timer()
@@ -415,13 +477,22 @@ class Tree(object):
             self.ConvolutionTime = timer.elapsedTime
             
             
-    def computeWaveErrors(self):
-        errors = []
+    def computeWaveErrors(self,energyLevel,normalizationFactor):
+        
+        # need normalizationFactor because the analytic wavefunctions aren't normalized for this finite domain.
+        errorsIfSameSign = []
+        errorsIfDifferentSign = []
         for element in self.masterList:
             if element[1].leaf == True:
                 midpoint = element[1].gridpoints[1,1,1]
-                errors.append( (midpoint.psi - trueWavefunction(1,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
-                
+                errorsIfSameSign.append( (midpoint.psi - normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
+                errorsIfDifferentSign.append( (midpoint.psi + normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
+        
+        if np.sum(errorsIfSameSign) < np.sum(errorsIfDifferentSign):
+            errors = errorsIfSameSign
+        else:
+            errors = errorsIfDifferentSign
+                   
         self.L2NormError = np.sum(errors)
         self.maxCellError = np.max(errors)
         
@@ -453,6 +524,31 @@ class Tree(object):
                     element[1].gridpoints[i,j,k].normalized = None
             
         """    
+        
+    def orthogonalizeWavefunction(self,n):
+        """ Orthgononalizes psi against wavefunction n """
+        B = 0.0
+        for element in self.masterList:
+            if element[1].leaf == True:
+                midpoint = element[1].gridpoints[1,1,1]
+                B += midpoint.psi*midpoint.finalWavefunction[n]*element[1].volume
+                
+        """ Initialize the orthogonalization flag for each gridpoint """        
+        for element in self.masterList:
+            if element[1].leaf==True:
+                for i,j,k in ThreeByThreeByThree:
+                    element[1].gridpoints[i,j,k].orthogonalized = False
+        
+        """ Subtract the projection, flip the flag """
+        for element in self.masterList:
+            if element[1].leaf==True:
+                for i,j,k in ThreeByThreeByThree:
+                    gridpoint = element[1].gridpoints[i,j,k]
+                    if gridpoint.orthogonalized == False:
+                        gridpoint.psi -= B*gridpoint.finalWavefunction[n]
+                        gridpoint.orthogonalized = True
+                        
+                        
     def extractLeavesMidpointsOnly(self):
         '''
         Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
@@ -512,6 +608,20 @@ class Tree(object):
             for i,j,k in ThreeByThreeByThree:
                 element[1].gridpoints[i,j,k].psiImported = None
                 
+    def copyPsiToFinalWavefunction(self, n):
+        for element in self.masterList:
+            for i,j,k in ThreeByThreeByThree:
+                gridpt = element[1].gridpoints[i,j,k]
+                if len(gridpt.finalWavefunction) == n:
+                    gridpt.finalWavefunction.append(gridpt.psi)
+                    
+    def populatePsiWithAnalytic(self,n):
+        for element in self.masterList:
+            for i,j,k in ThreeByThreeByThree:
+                element[1].gridpoints[i,j,k].setAnalyticPsi(n)
+        self.normalizeWavefunction()
+
+                            
             
 def TestTreeForProfiling():
     xmin = ymin = zmin = -12
@@ -531,10 +641,22 @@ def TestConvolutionForProfiling():
     
     print('\nUsing List')
     tree.GreenFunctionConvolutionList(timeConvolution=True)
-    print('Convolution took         %.4f seconds. ' %tree.ConvolutionTime)       
+    print('Convolution took         %.4f seconds. ' %tree.ConvolutionTime)
+    
+def visualizeWavefunction():
+    xmin = ymin = zmin = -8
+    xmax = ymax = zmax = -xmin
+    tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
+    tree.buildTree( minLevels=5, maxLevels=6, divideTolerance=0.012,printTreeProperties=True)
+    
+#     tree.visualizeMesh('psi')
+    tree.wavefunctionSlice(0.25)
+           
         
 if __name__ == "__main__":
-    TestTreeForProfiling()
+#     TestTreeForProfiling()
+    visualizeWavefunction()
+    
 
     
     

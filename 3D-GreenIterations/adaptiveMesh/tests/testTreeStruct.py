@@ -1,14 +1,21 @@
 import unittest
 import numpy as np
 import io
+import itertools
 from contextlib import redirect_stdout
 
+import sys
+sys.path.append('../src/dataStructures')
+sys.path.append('../src/utilities')
 
 from TreeStruct import Tree
 from CellStruct import Cell
 from GridpointStruct import GridPoint
 from hydrogenPotential import trueWavefunction
 # from timer import Timer
+
+ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
+
 
 class TestTreeStructure(unittest.TestCase):
     '''
@@ -30,7 +37,7 @@ class TestTreeStructure(unittest.TestCase):
         self.xmin = self.ymin = self.zmin = -10
         self.xmax = self.ymax = self.zmax = 10
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=0, maxLevels=3, divideTolerance=0.00125, printTreeProperties=True)
+        self.tree.buildTree( minLevels=4, maxLevels=7, divideTolerance=0.05, printTreeProperties=True)
         
 #     @unittest.skip("Cousins don't share gridpoints yet")
     def testNeighborsPointToSameObject(self):
@@ -163,7 +170,7 @@ class TestTreeStructure(unittest.TestCase):
         self.assertEqual(parent.gridpoints[2,0,2], child.gridpoints[2,0,2], "parent and child don't have same corner point.")
     
     def testAnalyticPsiSetting(self):
-        self.assertEqual(self.tree.root.gridpoints[1,1,1].psi, trueWavefunction(1, 0, 0, 0), "root midpoint (the origin) doesn't have correct wavefunction.")
+        self.assertEqual(self.tree.root.gridpoints[1,1,1].psi, trueWavefunction(0, 0, 0, 0), "root midpoint (the origin) doesn't have correct wavefunction.")
     
 
     @unittest.skip("skip manual eye-tests")
@@ -208,6 +215,54 @@ class TestTreeStructure(unittest.TestCase):
 
         self.assertEqual(cellDivisionPrint, "generated 26 new gridpoints for parent cell 111222\n", 
                 "CellStruct did not generate exactly 26 new gridpoints as it should have.")
+        
+    def testNormalization(self):
+        self.tree.populatePsiWithAnalytic(0)
+        testPoint = self.tree.root.children[1,1,1].gridpoints[1,1,1]
+        multiplicativeFactor = testPoint.psi / trueWavefunction(0, testPoint.x, testPoint.y, testPoint.z)   
+        print('ground state multiplicative factor: ', multiplicativeFactor)
+        
+        self.tree.populatePsiWithAnalytic(1)
+        testPoint = self.tree.root.children[1,1,1].gridpoints[1,1,1]
+        multiplicativeFactor = testPoint.psi / trueWavefunction(1, testPoint.x, testPoint.y, testPoint.z)
+        print('excited state multiplicative factor: ', multiplicativeFactor)
+        
+        
+    def testOrthogonalization(self):
+#         xmin = -10
+#         xmax =  10
+#         self.tree = None
+#         self.tree = Tree(xmin,xmax,xmin,xmax,xmin,xmax)
+#         self.tree.buildTree( minLevels=4, maxLevels=7, divideTolerance=0.03, printTreeProperties = True)
+        
+        # set psi to ground state
+        self.tree.populatePsiWithAnalytic(0)
+        self.tree.copyPsiToFinalWavefunction(0)
+        self.tree.populatePsiWithAnalytic(1)
+        
+        B = 0.0
+        for element in self.tree.masterList:
+            if element[1].leaf == True:
+                midpoint = element[1].gridpoints[1,1,1]
+                B += midpoint.psi*midpoint.finalWavefunction[0]*element[1].volume
+                
+        self.assertAlmostEqual(B, 0.0, 5, "Ground state and first excited state not originally orthogonal")
+        
+        self.tree.orthogonalizeWavefunction(0)
+        C = 0.0
+        for element in self.tree.masterList:
+            if element[1].leaf == True:
+                midpoint = element[1].gridpoints[1,1,1]
+                C += midpoint.psi*midpoint.finalWavefunction[0]*element[1].volume
+                
+        self.assertLess(abs(C), 1e-15, "Ground state and psi not orthogonal after calling orthogonalization routine")
+        
+        
     
 if __name__ == "__main__":
     unittest.main()
+    
+    
+    
+    
+    

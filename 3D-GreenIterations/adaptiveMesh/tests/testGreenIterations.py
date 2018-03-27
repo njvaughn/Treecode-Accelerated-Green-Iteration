@@ -18,7 +18,8 @@ from timeit import default_timer as timer
 import itertools
 
 from TreeStruct import Tree
-from convolution import gpuConvolution
+from convolution import gpuConvolution, greenIterations
+from hydrogenPotential import trueWavefunction
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 
@@ -29,10 +30,10 @@ class TestGreenIterations(unittest.TestCase):
         '''
         setUp() gets called before every test below.
         '''
-        self.xmin = self.ymin = self.zmin = -8
-        self.xmax = self.ymax = self.zmax = 8
+        self.xmin = self.ymin = self.zmin = -10
+        self.xmax = self.ymax = self.zmax = 10
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=3, maxLevels=7, divideTolerance=0.05, printTreeProperties=True)
+        self.tree.buildTree( minLevels=4, maxLevels=8, divideTolerance=0.05, printTreeProperties=True)
         for element in self.tree.masterList:
             
 #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
@@ -44,6 +45,16 @@ class TestGreenIterations(unittest.TestCase):
     
     @unittest.skip('Skipped CPU convolution')    
     def testGreenIterations(self):
+        # get normalization factors for finite domain analytic waves
+        self.tree.populatePsiWithAnalytic(0)
+        testPoint = self.tree.root.children[1,1,1].gridpoints[1,1,1]
+        groundStateMultiplicativeFactor = testPoint.psi / trueWavefunction(0, testPoint.x, testPoint.y, testPoint.z)   
+        
+        self.tree.populatePsiWithAnalytic(1)
+        testPoint = self.tree.root.children[1,1,1].gridpoints[1,1,1]
+        excitedStateMultiplicativeFactor = testPoint.psi / trueWavefunction(1, testPoint.x, testPoint.y, testPoint.z)
+        
+        
         self.tree.E = -1.0 # initial guess
           
         for i in range(1):
@@ -56,63 +67,56 @@ class TestGreenIterations(unittest.TestCase):
             print('Kinetic Energy:                  %.3f ' %self.tree.totalKinetic)
             print('Potential Energy:               %.3f ' %self.tree.totalPotential)
             print('Updated Energy Value:            %.3f Hartree, %.3e error' %(self.tree.E, self.tree.E+0.5))
-
+    
     def testGreenIterationsGPU(self):
+        
+        
+        # get normalization factors for finite domain analytic waves
+        self.tree.populatePsiWithAnalytic(0)
+        testPoint = self.tree.root.children[1,1,1].gridpoints[1,1,1]
+        groundStateMultiplicativeFactor = testPoint.psi / trueWavefunction(0, testPoint.x, testPoint.y, testPoint.z)  
+        print('Ground state normalization factor ', groundStateMultiplicativeFactor) 
+        
+        self.tree.populatePsiWithAnalytic(1)
+        testPoint = self.tree.root.children[1,1,1].gridpoints[1,1,1]
+        excitedStateMultiplicativeFactor = testPoint.psi / trueWavefunction(1, testPoint.x, testPoint.y, testPoint.z)
+        print('Excited state normalization factor ', excitedStateMultiplicativeFactor) 
+        
         self.tree.E = -1.0 # set initial energy guess
         
-        N = self.tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-        threadsPerBlock = 512                           # set the number of threads per block.  512 seems to perform well, but can also try larger or smaller.  Should be a multiple of 32 since that is the warp size.
-        blocksPerGrid = (N + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
-        print('Threads per block: ', threadsPerBlock)
-        print('Blocks per grid:   ', blocksPerGrid)
-        
-        
-        GIcounter=1                                     # initialize the counter to counter the number of iterations required for convergence
-        residual = 1                                    # initialize the residual to something that fails the convergence tolerance
-        residualTolerance = 0.000005                      # set the residual tolerance
-        Eold = -10.0
-#         Pold = -10.0                                    # set initial values of potential and kinetic energy, these will be overwritten once the iterations begin.
-#         Kold = -10.0
-        while residual > residualTolerance:
-            print()
-            print('Green Iteration Count ', GIcounter)
-            GIcounter+=1
-            startExtractionTime = timer()
-            sources = self.tree.extractLeavesMidpointsOnly()  # extract the source point locations.  Currently, these are just all the leaf midpoints
-            targets = self.tree.extractLeavesAllGridpoints()  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
-            self.assertEqual(self.tree.numberOfGridpoints, len(targets), "targets not equal to number of gridpoints") # verify that the number of targets equals the number of total gridpoints of the tree
-            ExtractionTime = timer() - startExtractionTime
-            psiNew = np.zeros((len(targets)))
-            startConvolutionTime = timer()
-            k = np.sqrt(-2*self.tree.E)                 # set the k value coming from the current guess for the energy
-#             k = 1
-            gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution
-            ConvolutionTime = timer() - startConvolutionTime
-            print('Extraction took:             %.4f seconds. ' %ExtractionTime)
-            print('Convolution took:            %.4f seconds. ' %ConvolutionTime)
+        # reset initial guesses
+        for element in self.tree.masterList:            
+            for i,j,k in ThreeByThreeByThree:
+                element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
 
-            self.tree.importPsiOnLeaves(psiNew)         # import the new wavefunction values into the tree.
-            self.tree.normalizeWavefunction()           # Normalize the new wavefunction 
-            self.tree.computeWaveErrors()               # Compute the wavefunction errors compared to the analytic ground state 
-            print('Convolution wavefunction errors: %.3e L2,  %.3e max' %(self.tree.L2NormError, self.tree.maxCellError))
-            startEnergyTime = timer()
-            self.tree.updateEnergy()                    # Compute the new energy values
-            if self.tree.E > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
-                print('Warning, Energy is positive')
-                self.tree.E = -2
-            energyUpdateTime = timer() - startEnergyTime
-            print('Energy Update took:              %.4f seconds. ' %energyUpdateTime)
-#             residual = max( abs(Pold - self.tree.totalPotential),abs(Kold - self.tree.totalKinetic) )  # Compute the residual for determining convergence
-            residual = abs(Eold - self.tree.E)  # Compute the residual for determining convergence
-            print('Energy Residual:                 %.3e' %residual)
-#             Pold = self.tree.totalPotential             # Update the old Potential and Kinetic 
-#             Kold = self.tree.totalKinetic
-            Eold = self.tree.E
-            print('Kinetic Energy Error:            %.5f ' %(self.tree.totalKinetic-0.5))
-            print('Potential Energy Error:          %.5f ' %(self.tree.totalPotential+1))
-            print('Updated Energy Value:            %.5f Hartree, %.6f error' %(self.tree.E, self.tree.E+0.5))
-        print('\nConvergence to a tolerance of %f took %i iterations' %(residualTolerance, GIcounter))
-             
+        N = self.tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
+        residualTolerance = 0.000005
+        greenIterations(self.tree, 0, residualTolerance, N,normalizationFactor=groundStateMultiplicativeFactor,visualize=True)
+        
+#         # set grpund state to analytic wavefunction to isolate errors in excited state
+#         for element in self.tree.masterList:
+#             for i,j,k in ThreeByThreeByThree:
+#                 element[1].gridpoints[i,j,k].setAnalyticPsi(0)
+#                 element[1].gridpoints[i,j,k].psi *= groundStateMultiplicativeFactor
+#         self.tree.copyPsiToFinalWavefunction(0)
+#         
+#         testGridPoint = self.tree.masterList[356][1].gridpoints[0,1,2]
+# #         print(testGridPoint.finalWavefunction)
+#         self.assertEqual(testGridPoint.psi, testGridPoint.finalWavefunction[0], "Psi did not get copied to first element of finalWavefunction")
+#         print('='*70,'\n')
+#         
+#         # reset initial guesses
+#         self.tree.E = -0.25 # set initial energy guess
+#         for element in self.tree.masterList:            
+#             for i,j,k in ThreeByThreeByThree:
+# #                 element[1].gridpoints[i,j,k].setAnalyticPsi(2)
+#                 element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
+#                 
+#                 
+#         greenIterations(self.tree, 1, residualTolerance, N, normalizationFactor=excitedStateMultiplicativeFactor, visualize=False)
+#         self.tree.copyPsiToFinalWavefunction(1)
+#         
+
 
 
 if __name__ == "__main__":
