@@ -214,17 +214,24 @@ class Tree(object):
 
         print('Extracted %i gridpoints for the scatter plot.' %len(x))
         print()
+        psi = np.array(psi)
+        psiTrue = np.array(psiTrue)
+        
+#         if np.sum(psi-psiTrue) > np.sum(psi+psiTrue):
+#             psi = -psi
+        if np.sum(psi)*np.sum(psiTrue) < 0:
+            psi = -psi
         
         
         
         if n>=0:
             
             fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(figsize=(8, 6), ncols=2, nrows=2)
-
-            analyticWave =  ax1.scatter(x, y, s=10, c=psiTrue, cmap=plt.get_cmap('Blues'))
-            computedWave =  ax2.scatter(x, y, s=10, c=psi, cmap=plt.get_cmap('Blues'))
-            absErr =        ax3.scatter(x, y, s=10, c=abs(np.array(psiTrue)-np.array(psi)), cmap=plt.get_cmap('Reds'))
-            relErr =        ax4.scatter(x, y, s=10, c=abs(np.array(psiTrue)-np.array(psi))/np.array(psiTrue), cmap=plt.get_cmap('Reds'))
+            if saveID!=False: plt.suptitle('Iteration %s' %saveID[-4:] )
+            analyticWave =  ax1.scatter(x, y, s=3, c=psiTrue, cmap=plt.get_cmap('Blues'))
+            computedWave =  ax2.scatter(x, y, s=3, c=psi, cmap=plt.get_cmap('Blues'))
+            absErr =        ax3.scatter(x, y, s=3, c=abs(psiTrue-psi), cmap=plt.get_cmap('Reds'))
+            relErr =        ax4.scatter(x, y, s=3, c=abs((psiTrue-psi)/psiTrue), cmap=plt.get_cmap('Reds'))
 
             fig.colorbar(analyticWave, ax=ax1)
             fig.colorbar(computedWave, ax=ax2)
@@ -238,7 +245,8 @@ class Tree(object):
 
             
             if saveID!=False:
-                plt.savefig(saveID, bbox_inches='tight',format='pdf')
+#                 plt.savefig(saveID, bbox_inches='tight',format='pdf')
+                plt.savefig(saveID, bbox_inches='tight')
                 plt.close(fig) 
             else: plt.show()
 #             fig1 = plt.figure()
