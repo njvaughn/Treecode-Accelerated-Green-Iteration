@@ -26,7 +26,7 @@ def gpuConvolution(targets,sources,psiNew,k):
                 psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-k*r)/r # increment the new wavefunction value
             
             
-def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, normalizationFactor=1, threadsPerBlock=512, visualize=False):  # @DontTrace
+def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, normalizationFactor=1, threadsPerBlock=512, visualize=False, outputErrors=False):  # @DontTrace
     '''
     :param residualTolerance: exit condition for Green Iterations, residual on the total energy
     :param energyLevel: energy level trying to compute
@@ -42,6 +42,7 @@ def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, norma
         except OSError:
             print(OSError)
         os.mkdir(currentDirectory+'/plots')
+        tree.wavefunctionSlice(0.0,n=energyLevel,scalingFactor=normalizationFactor,saveID = currentDirectory+'/plots/%04i'%0)
     
     GIcounter=1                                     # initialize the counter to counter the number of iterations required for convergence
     residual = 1                                    # initialize the residual to something that fails the convergence tolerance
@@ -90,5 +91,11 @@ def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, norma
             tree.E = -1.0
         if visualize == True:
 #             tree.visualizeMesh('psi')
-            tree.wavefunctionSlice(0.0,n=0,scalingFactor=normalizationFactor,saveID = currentDirectory+'/plots/%04i.pdf'%(GIcounter-1))
+            tree.wavefunctionSlice(0.0,n=energyLevel,scalingFactor=normalizationFactor,saveID = currentDirectory+'/plots/%04i'%(GIcounter-1))
     print('\nConvergence to a tolerance of %f took %i iterations' %(residualTolerance, GIcounter))
+    
+    if outputErrors == True:
+        energyError  = tree.E, tree.E-Etrue
+        psiL2Error   = tree.L2NormError
+        psiLinfError = tree.maxCellError
+        return energyError, psiL2, psiLinf
