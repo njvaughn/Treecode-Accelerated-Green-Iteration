@@ -5,4 +5,6 @@
 .DS_Store*
 .project*
 .pydevproject*
+*.ptp*
+*.png
 __pycache__*
