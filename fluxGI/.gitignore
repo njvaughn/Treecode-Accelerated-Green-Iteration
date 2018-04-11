@@ -1,9 +1,0 @@
-*doxygen*
-.cache*
-*.metadata*
-*.plugin*
-.DS_Store*
-.project*
-.pydevproject*
-__pycache__*
-/.ptp-sync/

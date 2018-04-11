@@ -1,9 +1,0 @@
-<<<<<<< HEAD
-/.ptp-sync/
-=======
-src/*.o
-src/*.exe
-data/*
-bin/*
-.DS_store
->>>>>>> refs/remotes/eclipse_auto/master
