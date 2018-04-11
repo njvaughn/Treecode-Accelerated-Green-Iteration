@@ -1,0 +1,117 @@
+'''
+Created on Mar 29, 2018
+
+@author: nathanvaughn
+'''
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+import numpy as np
+
+resultsDir = '/home/njvaughn/results'
+# currentDir = os.getcwd()
+plotsDir = resultsDir+'/plots/'
+## accuracyResults_psiGSonly
+## accuracyResults_psiVpsi
+df = pd.read_csv(resultsDir+'/accuracyResults.csv', 
+                 names=['domainSize', 'minDepth', 'maxDepth', 
+                        'N', 'testFunction1', 'refinementTol1',
+                        'testFunction2', 'refinementTol2', 'residualTolerance',
+                        'energyErrorGS','psiL2ErrorGS','psiLinfErrorGS',
+                        'energyErrorFES','psiL2ErrorFES','psiLinfErrorFES'])
+
+##df = pd.read_csv('accuracyResults_psiGSonly.csv', 
+##                 names=['domainSize', 'minDepth', 'maxDepth', 
+##                        'numberOfGridpoints', 'refinementTolerance', 'residualTolerance',
+##                        'energyErrorGS','psiL2ErrorGS','psiLinfErrorGS',
+##                        'energyErrorFES','psiL2ErrorFES','psiLinfErrorFES'])
+
+df.astype({'domainSize':float})
+df.astype({'minDepth':int})
+df.astype({'N':int})
+df.astype({'testFunction1':str})
+df.astype({'refinementTol1':float})
+df.astype({'testFunction2':str})
+df.astype({'refinementTol2':float})
+df.astype({'residualTolerance':float})
+df.astype({'energyErrorGS':float})
+df.astype({'psiL2ErrorGS':float})
+df.astype({'psiLinfErrorGS':float})
+df.astype({'energyErrorFES':float})
+df.astype({'psiL2ErrorFES':float})
+df.astype({'psiLinfErrorFES':float})
+
+##df.sort_values(by='numberOfGridpoints')
+##print(df.sort_values(by='numberOfGridpoints'))
+
+
+
+def AversusB(df,A,B,save=False):
+    fig, ax = plt.subplots(figsize=(8,6))
+    fig.suptitle('%s versus %s' %(A,B))
+    df.plot(x=B, y=A, style='o',ax=ax)
+    if save == True:
+        saveID = A+'Vs'+B
+        plt.savefig(plotsDir+saveID+'.pdf', bbox_inches='tight',format='pdf')
+    plt.show()
+
+def AversusBcolorbyC(df,A,B,C,save=False):
+    fig, ax = plt.subplots(figsize=(8,6))
+    fig.suptitle('%s versus %s colored by %s' %(A,B,C))
+    grouped = df.groupby(C)
+    for name,group in grouped:
+##        group.plot(x=B, y=A, style='o', ax=ax, label='%s = %.2f'%(C,name))
+        group.plot(x=B, y=A, style='o', ax=ax, label='%s = %s'%(C,name))
+    plt.legend(loc = 'best')
+
+    if save == True:
+        saveID = A+'Vs'+B+'ColoredBy'+C
+        plt.savefig(plotsDir+saveID+'.pdf', bbox_inches='tight',format='pdf')
+    plt.show()
+
+def logAversusBcolorbyC(df,A,B,C,save=False):
+    fig, ax = plt.subplots(figsize=(8,6))
+    fig.suptitle('Log %s versus %s colored by %s' %(A,B,C))
+    grouped = df.groupby(C)
+    for name,group in grouped:
+        group['logA'] = np.log10(np.abs(group[A]))
+        group.plot(x=B, y='logA', style='o', ax=ax, label='%s = %.2f'%(C,name))
+##        group.plot(x=B, y='logA', style='o', ax=ax, label='%s = %s'%(C,name))
+    plt.legend(loc = 'best')
+
+    if save == True:
+        saveID = 'log'+A+'Vs'+B+'ColoredBy'+C
+        plt.savefig(plotsDir+saveID+'.pdf', bbox_inches='tight',format='pdf')
+    plt.show()
+
+
+    
+##def AversusBwithCequalD(df,A,B,C,D):
+    
+
+##print('\nBest ground state energy: ')
+##print(df.loc[df.energyErrorGS.abs().idxmin()])
+##
+##
+##print('\nBest excited state energy: ')
+##print(df.loc[df.energyErrorFES.abs().idxmin()])
+
+##groupedByMinDepth = df.groupby('minDepth')
+##print()
+##for name,group in groupedByMinDepth:
+##    print('='*70)
+##    print('minDepth = ', name)
+##    print(group)
+##    print('='*70)
+##    print()
+
+##groupedByRefinementTolerance = df.groupby('refinementTolerance')
+##print()
+##for name,group in groupedByRefinementTolerance:
+##    print('='*70)
+##    print('RefinementTolerance = ', name)
+##    print(group.sort_values(by='numberOfGridpoints'))
+##    print('='*70)
+##    print()
+##    # noteworthy -- row 14 is much better than row 5 despite using many fewer gridpoints

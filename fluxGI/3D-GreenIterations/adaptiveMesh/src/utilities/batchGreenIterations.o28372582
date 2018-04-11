@@ -1,0 +1,2843 @@
+Running on
+      1 nyx7507
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       4745 
+Total Number of Gridpoints:  36541 
+Minimum Depth                4 levels 
+Maximum Depth:               5 levels 
+Construction time:           1.27 seconds.
+
+Number of targets:    36541
+Threads per block:    512
+Blocks per grid:      72
+
+Green Iteration Count  1
+Extraction took:             0.2733 seconds. 
+Convolution took:            0.6573 seconds. 
+Convolution wavefunction errors: 8.292e-01 L2,  8.843e-03 max
+Energy Update took:              0.5268 seconds. 
+Energy Residual:                 9.832e+00
+Updated Energy Value:            -0.16789 Hartree, 0.332106 error
+
+Green Iteration Count  2
+Extraction took:             0.1970 seconds. 
+Convolution took:            0.0258 seconds. 
+Convolution wavefunction errors: 4.877e-01 L2,  7.148e-03 max
+Energy Update took:              0.5092 seconds. 
+Energy Residual:                 1.394e-01
+Updated Energy Value:            -0.30729 Hartree, 0.192713 error
+
+Green Iteration Count  3
+Extraction took:             0.2479 seconds. 
+Convolution took:            0.0259 seconds. 
+Convolution wavefunction errors: 2.446e-01 L2,  4.507e-03 max
+Energy Update took:              0.5209 seconds. 
+Energy Residual:                 3.698e-02
+Updated Energy Value:            -0.34427 Hartree, 0.155734 error
+
+Green Iteration Count  4
+Extraction took:             0.1941 seconds. 
+Convolution took:            0.0279 seconds. 
+Convolution wavefunction errors: 1.346e-01 L2,  3.020e-03 max
+Energy Update took:              0.5247 seconds. 
+Energy Residual:                 1.128e-02
+Updated Energy Value:            -0.35555 Hartree, 0.144453 error
+
+Green Iteration Count  5
+Extraction took:             0.2550 seconds. 
+Convolution took:            0.0283 seconds. 
+Convolution wavefunction errors: 8.888e-02 L2,  2.312e-03 max
+Energy Update took:              0.5165 seconds. 
+Energy Residual:                 6.839e-04
+Updated Energy Value:            -0.35623 Hartree, 0.143769 error
+
+Green Iteration Count  6
+Extraction took:             0.1948 seconds. 
+Convolution took:            0.0259 seconds. 
+Convolution wavefunction errors: 7.037e-02 L2,  2.003e-03 max
+Energy Update took:              0.5201 seconds. 
+Energy Residual:                 1.033e-03
+Updated Energy Value:            -0.35520 Hartree, 0.144802 error
+
+Green Iteration Count  7
+Extraction took:             0.2685 seconds. 
+Convolution took:            0.0262 seconds. 
+Convolution wavefunction errors: 6.280e-02 L2,  1.871e-03 max
+Energy Update took:              0.5201 seconds. 
+Energy Residual:                 7.410e-04
+Updated Energy Value:            -0.35446 Hartree, 0.145543 error
+
+Green Iteration Count  8
+Extraction took:             0.1940 seconds. 
+Convolution took:            0.0273 seconds. 
+Convolution wavefunction errors: 5.965e-02 L2,  1.816e-03 max
+Energy Update took:              0.5217 seconds. 
+Energy Residual:                 3.725e-04
+Updated Energy Value:            -0.35408 Hartree, 0.145916 error
+
+Green Iteration Count  9
+Extraction took:             0.1951 seconds. 
+Convolution took:            0.0262 seconds. 
+Convolution wavefunction errors: 5.834e-02 L2,  1.793e-03 max
+Energy Update took:              0.5131 seconds. 
+Energy Residual:                 1.683e-04
+Updated Energy Value:            -0.35392 Hartree, 0.146084 error
+
+Green Iteration Count  10
+Extraction took:             0.2419 seconds. 
+Convolution took:            0.0259 seconds. 
+Convolution wavefunction errors: 5.778e-02 L2,  1.783e-03 max
+Energy Update took:              0.5099 seconds. 
+Energy Residual:                 7.300e-05
+Updated Energy Value:            -0.35384 Hartree, 0.146157 error
+
+Green Iteration Count  11
+Extraction took:             0.1943 seconds. 
+Convolution took:            0.0281 seconds. 
+Convolution wavefunction errors: 5.755e-02 L2,  1.779e-03 max
+Energy Update took:              0.5138 seconds. 
+Energy Residual:                 3.117e-05
+Updated Energy Value:            -0.35381 Hartree, 0.146188 error
+
+Green Iteration Count  12
+Extraction took:             0.2431 seconds. 
+Convolution took:            0.0265 seconds. 
+Convolution wavefunction errors: 5.745e-02 L2,  1.777e-03 max
+Energy Update took:              0.5177 seconds. 
+Energy Residual:                 1.322e-05
+Updated Energy Value:            -0.35380 Hartree, 0.146202 error
+
+Green Iteration Count  13
+Extraction took:             0.1928 seconds. 
+Convolution took:            0.0259 seconds. 
+Convolution wavefunction errors: 5.741e-02 L2,  1.776e-03 max
+Energy Update took:              0.5236 seconds. 
+Energy Residual:                 5.596e-06
+Updated Energy Value:            -0.35379 Hartree, 0.146207 error
+
+Green Iteration Count  14
+Extraction took:             0.2719 seconds. 
+Convolution took:            0.0261 seconds. 
+Convolution wavefunction errors: 5.739e-02 L2,  1.776e-03 max
+Energy Update took:              0.5211 seconds. 
+Energy Residual:                 2.365e-06
+Updated Energy Value:            -0.35379 Hartree, 0.146210 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    36541
+Threads per block:    512
+Blocks per grid:      72
+
+Green Iteration Count  1
+Extraction took:             0.1965 seconds. 
+Convolution took:            0.0279 seconds. 
+Convolution wavefunction errors: 3.000e-02 L2,  6.382e-05 max
+Energy Update took:              0.5137 seconds. 
+Energy Residual:                 9.879e+00
+Updated Energy Value:            -0.12096 Hartree, 0.004037 error
+
+Green Iteration Count  2
+Extraction took:             0.1965 seconds. 
+Convolution took:            0.0262 seconds. 
+Convolution wavefunction errors: 5.337e-03 L2,  4.145e-05 max
+Energy Update took:              0.5138 seconds. 
+Energy Residual:                 2.865e-02
+Updated Energy Value:            -0.09231 Hartree, 0.032689 error
+
+Green Iteration Count  3
+Extraction took:             0.2429 seconds. 
+Convolution took:            0.0259 seconds. 
+Convolution wavefunction errors: 5.134e-03 L2,  6.534e-05 max
+Energy Update took:              0.5227 seconds. 
+Energy Residual:                 1.175e-02
+Updated Energy Value:            -0.10406 Hartree, 0.020939 error
+
+Green Iteration Count  4
+Extraction took:             0.1921 seconds. 
+Convolution took:            0.0262 seconds. 
+Convolution wavefunction errors: 4.762e-03 L2,  7.285e-05 max
+Energy Update took:              0.5211 seconds. 
+Energy Residual:                 2.364e-03
+Updated Energy Value:            -0.10170 Hartree, 0.023304 error
+
+Green Iteration Count  5
+Extraction took:             0.2431 seconds. 
+Convolution took:            0.0273 seconds. 
+Convolution wavefunction errors: 4.715e-03 L2,  7.328e-05 max
+Energy Update took:              0.5184 seconds. 
+Energy Residual:                 5.200e-04
+Updated Energy Value:            -0.10222 Hartree, 0.022784 error
+
+Green Iteration Count  6
+Extraction took:             0.1938 seconds. 
+Convolution took:            0.0262 seconds. 
+Convolution wavefunction errors: 4.653e-03 L2,  7.324e-05 max
+Energy Update took:              0.5228 seconds. 
+Energy Residual:                 1.534e-04
+Updated Energy Value:            -0.10206 Hartree, 0.022937 error
+
+Green Iteration Count  7
+Extraction took:             0.2450 seconds. 
+Convolution took:            0.0259 seconds. 
+Convolution wavefunction errors: 4.612e-03 L2,  7.300e-05 max
+Energy Update took:              0.5194 seconds. 
+Energy Residual:                 1.227e-05
+Updated Energy Value:            -0.10208 Hartree, 0.022925 error
+
+Green Iteration Count  8
+Extraction took:             0.1942 seconds. 
+Convolution took:            0.0281 seconds. 
+Convolution wavefunction errors: 4.579e-03 L2,  7.283e-05 max
+Energy Update took:              0.5256 seconds. 
+Energy Residual:                 1.501e-05
+Updated Energy Value:            -0.10206 Hartree, 0.022940 error
+
+Green Iteration Count  9
+Extraction took:             0.1934 seconds. 
+Convolution took:            0.0265 seconds. 
+Convolution wavefunction errors: 4.551e-03 L2,  7.269e-05 max
+Energy Update took:              0.5146 seconds. 
+Energy Residual:                 2.880e-06
+Updated Energy Value:            -0.10206 Hartree, 0.022943 error
+
+Convergence to a tolerance of 0.000005 took 10 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                4 levels 
+Maximum Depth:               5 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 30.445519 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       5257 
+Total Number of Gridpoints:  40725 
+Minimum Depth                4 levels 
+Maximum Depth:               6 levels 
+Construction time:           1.46 seconds.
+
+Number of targets:    40725
+Threads per block:    512
+Blocks per grid:      80
+
+Green Iteration Count  1
+Extraction took:             0.2922 seconds. 
+Convolution took:            0.8434 seconds. 
+Convolution wavefunction errors: 8.053e-01 L2,  4.687e-03 max
+Energy Update took:              0.5935 seconds. 
+Energy Residual:                 9.812e+00
+Updated Energy Value:            -0.18807 Hartree, 0.311930 error
+
+Green Iteration Count  2
+Extraction took:             0.2780 seconds. 
+Convolution took:            0.0285 seconds. 
+Convolution wavefunction errors: 4.113e-01 L2,  1.321e-03 max
+Energy Update took:              0.5874 seconds. 
+Energy Residual:                 1.505e-01
+Updated Energy Value:            -0.33860 Hartree, 0.161404 error
+
+Green Iteration Count  3
+Extraction took:             0.2211 seconds. 
+Convolution took:            0.0286 seconds. 
+Convolution wavefunction errors: 1.623e-01 L2,  6.158e-04 max
+Energy Update took:              0.5876 seconds. 
+Energy Residual:                 5.748e-02
+Updated Energy Value:            -0.39607 Hartree, 0.103926 error
+
+Green Iteration Count  4
+Extraction took:             0.2753 seconds. 
+Convolution took:            0.0306 seconds. 
+Convolution wavefunction errors: 5.979e-02 L2,  2.840e-04 max
+Energy Update took:              0.5903 seconds. 
+Energy Residual:                 2.482e-02
+Updated Energy Value:            -0.42089 Hartree, 0.079106 error
+
+Green Iteration Count  5
+Extraction took:             0.2258 seconds. 
+Convolution took:            0.0304 seconds. 
+Convolution wavefunction errors: 2.402e-02 L2,  1.372e-04 max
+Energy Update took:              0.5856 seconds. 
+Energy Residual:                 6.175e-03
+Updated Energy Value:            -0.42707 Hartree, 0.072931 error
+
+Green Iteration Count  6
+Extraction took:             0.2983 seconds. 
+Convolution took:            0.0286 seconds. 
+Convolution wavefunction errors: 1.256e-02 L2,  9.412e-05 max
+Energy Update took:              0.5870 seconds. 
+Energy Residual:                 1.839e-04
+Updated Energy Value:            -0.42725 Hartree, 0.072747 error
+
+Green Iteration Count  7
+Extraction took:             0.2199 seconds. 
+Convolution took:            0.0289 seconds. 
+Convolution wavefunction errors: 8.797e-03 L2,  8.837e-05 max
+Energy Update took:              0.5860 seconds. 
+Energy Residual:                 6.956e-04
+Updated Energy Value:            -0.42656 Hartree, 0.073443 error
+
+Green Iteration Count  8
+Extraction took:             0.2753 seconds. 
+Convolution took:            0.0300 seconds. 
+Convolution wavefunction errors: 7.456e-03 L2,  8.611e-05 max
+Energy Update took:              0.5897 seconds. 
+Energy Residual:                 4.751e-04
+Updated Energy Value:            -0.42608 Hartree, 0.073918 error
+
+Green Iteration Count  9
+Extraction took:             0.2212 seconds. 
+Convolution took:            0.0289 seconds. 
+Convolution wavefunction errors: 6.939e-03 L2,  8.516e-05 max
+Energy Update took:              0.5839 seconds. 
+Energy Residual:                 2.367e-04
+Updated Energy Value:            -0.42585 Hartree, 0.074155 error
+
+Green Iteration Count  10
+Extraction took:             0.2213 seconds. 
+Convolution took:            0.0286 seconds. 
+Convolution wavefunction errors: 6.731e-03 L2,  8.474e-05 max
+Energy Update took:              0.5892 seconds. 
+Energy Residual:                 1.064e-04
+Updated Energy Value:            -0.42574 Hartree, 0.074261 error
+
+Green Iteration Count  11
+Extraction took:             0.2737 seconds. 
+Convolution took:            0.0308 seconds. 
+Convolution wavefunction errors: 6.644e-03 L2,  8.456e-05 max
+Energy Update took:              0.6114 seconds. 
+Energy Residual:                 4.591e-05
+Updated Energy Value:            -0.42569 Hartree, 0.074307 error
+
+Green Iteration Count  12
+Extraction took:             0.2230 seconds. 
+Convolution took:            0.0308 seconds. 
+Convolution wavefunction errors: 6.609e-03 L2,  8.448e-05 max
+Energy Update took:              0.5853 seconds. 
+Energy Residual:                 1.949e-05
+Updated Energy Value:            -0.42567 Hartree, 0.074326 error
+
+Green Iteration Count  13
+Extraction took:             0.2991 seconds. 
+Convolution took:            0.0286 seconds. 
+Convolution wavefunction errors: 6.593e-03 L2,  8.445e-05 max
+Energy Update took:              0.5765 seconds. 
+Energy Residual:                 8.214e-06
+Updated Energy Value:            -0.42567 Hartree, 0.074335 error
+
+Green Iteration Count  14
+Extraction took:             0.2197 seconds. 
+Convolution took:            0.0285 seconds. 
+Convolution wavefunction errors: 6.587e-03 L2,  8.443e-05 max
+Energy Update took:              0.5821 seconds. 
+Energy Residual:                 3.452e-06
+Updated Energy Value:            -0.42566 Hartree, 0.074338 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    40725
+Threads per block:    512
+Blocks per grid:      80
+
+Green Iteration Count  1
+Extraction took:             0.2824 seconds. 
+Convolution took:            0.0306 seconds. 
+Convolution wavefunction errors: 2.909e-02 L2,  5.251e-05 max
+Energy Update took:              0.5857 seconds. 
+Energy Residual:                 9.882e+00
+Updated Energy Value:            -0.11812 Hartree, 0.006878 error
+
+Green Iteration Count  2
+Extraction took:             0.2200 seconds. 
+Convolution took:            0.0289 seconds. 
+Convolution wavefunction errors: 4.837e-03 L2,  1.715e-05 max
+Energy Update took:              0.5772 seconds. 
+Energy Residual:                 5.703e-03
+Updated Energy Value:            -0.11242 Hartree, 0.012580 error
+
+Green Iteration Count  3
+Extraction took:             0.2738 seconds. 
+Convolution took:            0.0285 seconds. 
+Convolution wavefunction errors: 2.267e-03 L2,  9.871e-06 max
+Energy Update took:              0.5851 seconds. 
+Energy Residual:                 6.835e-04
+Updated Energy Value:            -0.11310 Hartree, 0.011897 error
+
+Green Iteration Count  4
+Extraction took:             0.2200 seconds. 
+Convolution took:            0.0289 seconds. 
+Convolution wavefunction errors: 1.952e-03 L2,  8.971e-06 max
+Energy Update took:              0.5882 seconds. 
+Energy Residual:                 8.265e-04
+Updated Energy Value:            -0.11228 Hartree, 0.012723 error
+
+Green Iteration Count  5
+Extraction took:             0.2752 seconds. 
+Convolution took:            0.0300 seconds. 
+Convolution wavefunction errors: 1.908e-03 L2,  8.400e-06 max
+Energy Update took:              0.5876 seconds. 
+Energy Residual:                 2.436e-04
+Updated Energy Value:            -0.11203 Hartree, 0.012967 error
+
+Green Iteration Count  6
+Extraction took:             0.2197 seconds. 
+Convolution took:            0.0290 seconds. 
+Convolution wavefunction errors: 1.896e-03 L2,  8.079e-06 max
+Energy Update took:              0.5884 seconds. 
+Energy Residual:                 1.247e-04
+Updated Energy Value:            -0.11191 Hartree, 0.013092 error
+
+Green Iteration Count  7
+Extraction took:             0.2749 seconds. 
+Convolution took:            0.0286 seconds. 
+Convolution wavefunction errors: 1.889e-03 L2,  7.882e-06 max
+Energy Update took:              0.5876 seconds. 
+Energy Residual:                 5.338e-05
+Updated Energy Value:            -0.11185 Hartree, 0.013145 error
+
+Green Iteration Count  8
+Extraction took:             0.2205 seconds. 
+Convolution took:            0.0308 seconds. 
+Convolution wavefunction errors: 1.883e-03 L2,  7.742e-06 max
+Energy Update took:              0.5852 seconds. 
+Energy Residual:                 2.529e-05
+Updated Energy Value:            -0.11183 Hartree, 0.013171 error
+
+Green Iteration Count  9
+Extraction took:             0.3044 seconds. 
+Convolution took:            0.0295 seconds. 
+Convolution wavefunction errors: 1.878e-03 L2,  7.634e-06 max
+Energy Update took:              0.5909 seconds. 
+Energy Residual:                 1.231e-05
+Updated Energy Value:            -0.11182 Hartree, 0.013183 error
+
+Green Iteration Count  10
+Extraction took:             0.2219 seconds. 
+Convolution took:            0.0286 seconds. 
+Convolution wavefunction errors: 1.874e-03 L2,  7.542e-06 max
+Energy Update took:              0.5845 seconds. 
+Energy Residual:                 6.323e-06
+Updated Energy Value:            -0.11181 Hartree, 0.013189 error
+
+Green Iteration Count  11
+Extraction took:             0.2760 seconds. 
+Convolution took:            0.0286 seconds. 
+Convolution wavefunction errors: 1.870e-03 L2,  7.461e-06 max
+Energy Update took:              0.5860 seconds. 
+Energy Residual:                 3.400e-06
+Updated Energy Value:            -0.11181 Hartree, 0.013193 error
+
+Convergence to a tolerance of 0.000005 took 12 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                4 levels 
+Maximum Depth:               6 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 37.266103 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       6537 
+Total Number of Gridpoints:  50897 
+Minimum Depth                4 levels 
+Maximum Depth:               7 levels 
+Construction time:           1.84 seconds.
+
+Number of targets:    50897
+Threads per block:    512
+Blocks per grid:      100
+
+Green Iteration Count  1
+Extraction took:             0.2797 seconds. 
+Convolution took:            0.7583 seconds. 
+Convolution wavefunction errors: 7.904e-01 L2,  4.183e-03 max
+Energy Update took:              0.7131 seconds. 
+Energy Residual:                 9.808e+00
+Updated Energy Value:            -0.19166 Hartree, 0.308339 error
+
+Green Iteration Count  2
+Extraction took:             0.2835 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 3.923e-01 L2,  1.171e-03 max
+Energy Update took:              0.7059 seconds. 
+Energy Residual:                 1.591e-01
+Updated Energy Value:            -0.35078 Hartree, 0.149222 error
+
+Green Iteration Count  3
+Extraction took:             0.3975 seconds. 
+Convolution took:            0.0514 seconds. 
+Convolution wavefunction errors: 1.422e-01 L2,  3.567e-04 max
+Energy Update took:              0.7174 seconds. 
+Energy Residual:                 6.695e-02
+Updated Energy Value:            -0.41773 Hartree, 0.082270 error
+
+Green Iteration Count  4
+Extraction took:             0.3434 seconds. 
+Convolution took:            0.0528 seconds. 
+Convolution wavefunction errors: 4.337e-02 L2,  1.682e-04 max
+Energy Update took:              0.7106 seconds. 
+Energy Residual:                 3.345e-02
+Updated Energy Value:            -0.45118 Hartree, 0.048821 error
+
+Green Iteration Count  5
+Extraction took:             0.2834 seconds. 
+Convolution took:            0.0510 seconds. 
+Convolution wavefunction errors: 1.350e-02 L2,  1.341e-04 max
+Energy Update took:              0.7071 seconds. 
+Energy Residual:                 1.104e-02
+Updated Energy Value:            -0.46222 Hartree, 0.037781 error
+
+Green Iteration Count  6
+Extraction took:             0.3392 seconds. 
+Convolution took:            0.0510 seconds. 
+Convolution wavefunction errors: 6.977e-03 L2,  1.327e-04 max
+Energy Update took:              0.6915 seconds. 
+Energy Residual:                 1.903e-03
+Updated Energy Value:            -0.46412 Hartree, 0.035878 error
+
+Green Iteration Count  7
+Extraction took:             0.2798 seconds. 
+Convolution took:            0.0510 seconds. 
+Convolution wavefunction errors: 6.197e-03 L2,  1.357e-04 max
+Energy Update took:              0.7030 seconds. 
+Energy Residual:                 3.081e-04
+Updated Energy Value:            -0.46381 Hartree, 0.036186 error
+
+Green Iteration Count  8
+Extraction took:             0.3410 seconds. 
+Convolution took:            0.0528 seconds. 
+Convolution wavefunction errors: 6.353e-03 L2,  1.378e-04 max
+Energy Update took:              0.7346 seconds. 
+Energy Residual:                 4.391e-04
+Updated Energy Value:            -0.46337 Hartree, 0.036625 error
+
+Green Iteration Count  9
+Extraction took:             0.2871 seconds. 
+Convolution took:            0.0525 seconds. 
+Convolution wavefunction errors: 6.522e-03 L2,  1.388e-04 max
+Energy Update took:              0.7011 seconds. 
+Energy Residual:                 2.568e-04
+Updated Energy Value:            -0.46312 Hartree, 0.036882 error
+
+Green Iteration Count  10
+Extraction took:             0.3605 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 6.614e-03 L2,  1.393e-04 max
+Energy Update took:              0.7021 seconds. 
+Energy Residual:                 1.236e-04
+Updated Energy Value:            -0.46299 Hartree, 0.037006 error
+
+Green Iteration Count  11
+Extraction took:             0.2800 seconds. 
+Convolution took:            0.0532 seconds. 
+Convolution wavefunction errors: 6.656e-03 L2,  1.395e-04 max
+Energy Update took:              0.7029 seconds. 
+Energy Residual:                 5.543e-05
+Updated Energy Value:            -0.46294 Hartree, 0.037061 error
+
+Green Iteration Count  12
+Extraction took:             0.3364 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 6.675e-03 L2,  1.396e-04 max
+Energy Update took:              0.7076 seconds. 
+Energy Residual:                 2.413e-05
+Updated Energy Value:            -0.46291 Hartree, 0.037085 error
+
+Green Iteration Count  13
+Extraction took:             0.3432 seconds. 
+Convolution took:            0.0510 seconds. 
+Convolution wavefunction errors: 6.683e-03 L2,  1.396e-04 max
+Energy Update took:              0.7071 seconds. 
+Energy Residual:                 1.037e-05
+Updated Energy Value:            -0.46290 Hartree, 0.037096 error
+
+Green Iteration Count  14
+Extraction took:             0.2816 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 6.687e-03 L2,  1.396e-04 max
+Energy Update took:              0.7044 seconds. 
+Energy Residual:                 4.433e-06
+Updated Energy Value:            -0.46290 Hartree, 0.037100 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    50897
+Threads per block:    512
+Blocks per grid:      100
+
+Green Iteration Count  1
+Extraction took:             0.3515 seconds. 
+Convolution took:            0.0528 seconds. 
+Convolution wavefunction errors: 2.989e-02 L2,  6.147e-05 max
+Energy Update took:              0.7050 seconds. 
+Energy Residual:                 9.890e+00
+Updated Energy Value:            -0.11043 Hartree, 0.014573 error
+
+Green Iteration Count  2
+Extraction took:             0.2806 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 6.645e-03 L2,  3.270e-05 max
+Energy Update took:              0.7077 seconds. 
+Energy Residual:                 8.128e-03
+Updated Energy Value:            -0.11856 Hartree, 0.006445 error
+
+Green Iteration Count  3
+Extraction took:             0.3368 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 3.494e-03 L2,  2.242e-05 max
+Energy Update took:              0.7353 seconds. 
+Energy Residual:                 8.208e-04
+Updated Energy Value:            -0.11773 Hartree, 0.007266 error
+
+Green Iteration Count  4
+Extraction took:             0.2838 seconds. 
+Convolution took:            0.0525 seconds. 
+Convolution wavefunction errors: 3.205e-03 L2,  1.842e-05 max
+Energy Update took:              0.7058 seconds. 
+Energy Residual:                 4.711e-04
+Updated Energy Value:            -0.11726 Hartree, 0.007737 error
+
+Green Iteration Count  5
+Extraction took:             0.3594 seconds. 
+Convolution took:            0.0528 seconds. 
+Convolution wavefunction errors: 3.223e-03 L2,  1.671e-05 max
+Energy Update took:              0.7043 seconds. 
+Energy Residual:                 2.624e-04
+Updated Energy Value:            -0.11700 Hartree, 0.007999 error
+
+Green Iteration Count  6
+Extraction took:             0.3390 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 3.232e-03 L2,  1.578e-05 max
+Energy Update took:              0.6972 seconds. 
+Energy Residual:                 1.320e-04
+Updated Energy Value:            -0.11687 Hartree, 0.008131 error
+
+Green Iteration Count  7
+Extraction took:             0.2770 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 3.213e-03 L2,  1.517e-05 max
+Energy Update took:              0.7024 seconds. 
+Energy Residual:                 6.569e-05
+Updated Energy Value:            -0.11680 Hartree, 0.008197 error
+
+Green Iteration Count  8
+Extraction took:             0.3373 seconds. 
+Convolution took:            0.0531 seconds. 
+Convolution wavefunction errors: 3.178e-03 L2,  1.470e-05 max
+Energy Update took:              0.7035 seconds. 
+Energy Residual:                 3.252e-05
+Updated Energy Value:            -0.11677 Hartree, 0.008230 error
+
+Green Iteration Count  9
+Extraction took:             0.2781 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 3.136e-03 L2,  1.430e-05 max
+Energy Update took:              0.7227 seconds. 
+Energy Residual:                 1.600e-05
+Updated Energy Value:            -0.11675 Hartree, 0.008246 error
+
+Green Iteration Count  10
+Extraction took:             0.3394 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 3.091e-03 L2,  1.394e-05 max
+Energy Update took:              0.7034 seconds. 
+Energy Residual:                 7.713e-06
+Updated Energy Value:            -0.11675 Hartree, 0.008253 error
+
+Green Iteration Count  11
+Extraction took:             0.2775 seconds. 
+Convolution took:            0.0509 seconds. 
+Convolution wavefunction errors: 3.047e-03 L2,  1.361e-05 max
+Energy Update took:              0.7081 seconds. 
+Energy Residual:                 3.517e-06
+Updated Energy Value:            -0.11674 Hartree, 0.008257 error
+
+Convergence to a tolerance of 0.000005 took 12 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                4 levels 
+Maximum Depth:               7 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 46.057633 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       8457 
+Total Number of Gridpoints:  66341 
+Minimum Depth                4 levels 
+Maximum Depth:               8 levels 
+Construction time:           2.44 seconds.
+
+Number of targets:    66341
+Threads per block:    512
+Blocks per grid:      130
+
+Green Iteration Count  1
+Extraction took:             0.3663 seconds. 
+Convolution took:            0.8213 seconds. 
+Convolution wavefunction errors: 7.518e-01 L2,  4.137e-03 max
+Energy Update took:              0.9853 seconds. 
+Energy Residual:                 9.801e+00
+Updated Energy Value:            -0.19926 Hartree, 0.300741 error
+
+Green Iteration Count  2
+Extraction took:             0.3744 seconds. 
+Convolution took:            0.0671 seconds. 
+Convolution wavefunction errors: 3.683e-01 L2,  1.075e-03 max
+Energy Update took:              0.9766 seconds. 
+Energy Residual:                 1.582e-01
+Updated Energy Value:            -0.35746 Hartree, 0.142536 error
+
+Green Iteration Count  3
+Extraction took:             0.4420 seconds. 
+Convolution took:            0.0668 seconds. 
+Convolution wavefunction errors: 1.304e-01 L2,  3.348e-04 max
+Energy Update took:              0.9815 seconds. 
+Energy Residual:                 6.738e-02
+Updated Energy Value:            -0.42484 Hartree, 0.075161 error
+
+Green Iteration Count  4
+Extraction took:             0.4413 seconds. 
+Convolution took:            0.0687 seconds. 
+Convolution wavefunction errors: 3.802e-02 L2,  1.683e-04 max
+Energy Update took:              1.0300 seconds. 
+Energy Residual:                 3.488e-02
+Updated Energy Value:            -0.45972 Hartree, 0.040282 error
+
+Green Iteration Count  5
+Extraction took:             0.3790 seconds. 
+Convolution took:            0.0686 seconds. 
+Convolution wavefunction errors: 1.158e-02 L2,  1.418e-04 max
+Energy Update took:              0.9950 seconds. 
+Energy Residual:                 1.225e-02
+Updated Energy Value:            -0.47196 Hartree, 0.028037 error
+
+Green Iteration Count  6
+Extraction took:             0.4641 seconds. 
+Convolution took:            0.0670 seconds. 
+Convolution wavefunction errors: 6.972e-03 L2,  1.452e-04 max
+Energy Update took:              0.9775 seconds. 
+Energy Residual:                 2.519e-03
+Updated Energy Value:            -0.47448 Hartree, 0.025519 error
+
+Green Iteration Count  7
+Extraction took:             0.3689 seconds. 
+Convolution took:            0.0670 seconds. 
+Convolution wavefunction errors: 7.226e-03 L2,  1.510e-04 max
+Energy Update took:              0.9894 seconds. 
+Energy Residual:                 8.110e-05
+Updated Energy Value:            -0.47440 Hartree, 0.025600 error
+
+Green Iteration Count  8
+Extraction took:             0.4358 seconds. 
+Convolution took:            0.0690 seconds. 
+Convolution wavefunction errors: 7.900e-03 L2,  1.547e-04 max
+Energy Update took:              0.9672 seconds. 
+Energy Residual:                 3.713e-04
+Updated Energy Value:            -0.47403 Hartree, 0.025971 error
+
+Green Iteration Count  9
+Extraction took:             0.4382 seconds. 
+Convolution took:            0.0670 seconds. 
+Convolution wavefunction errors: 8.312e-03 L2,  1.564e-04 max
+Energy Update took:              0.9730 seconds. 
+Energy Residual:                 2.393e-04
+Updated Energy Value:            -0.47379 Hartree, 0.026210 error
+
+Green Iteration Count  10
+Extraction took:             0.3702 seconds. 
+Convolution took:            0.0676 seconds. 
+Convolution wavefunction errors: 8.514e-03 L2,  1.573e-04 max
+Energy Update took:              0.9760 seconds. 
+Energy Residual:                 1.201e-04
+Updated Energy Value:            -0.47367 Hartree, 0.026330 error
+
+Green Iteration Count  11
+Extraction took:             0.4397 seconds. 
+Convolution took:            0.0689 seconds. 
+Convolution wavefunction errors: 8.606e-03 L2,  1.576e-04 max
+Energy Update took:              1.0206 seconds. 
+Energy Residual:                 5.519e-05
+Updated Energy Value:            -0.47361 Hartree, 0.026385 error
+
+Green Iteration Count  12
+Extraction took:             0.4732 seconds. 
+Convolution took:            0.0674 seconds. 
+Convolution wavefunction errors: 8.646e-03 L2,  1.578e-04 max
+Energy Update took:              0.9752 seconds. 
+Energy Residual:                 2.448e-05
+Updated Energy Value:            -0.47359 Hartree, 0.026410 error
+
+Green Iteration Count  13
+Extraction took:             0.3732 seconds. 
+Convolution took:            0.0670 seconds. 
+Convolution wavefunction errors: 8.664e-03 L2,  1.578e-04 max
+Energy Update took:              0.9836 seconds. 
+Energy Residual:                 1.069e-05
+Updated Energy Value:            -0.47358 Hartree, 0.026421 error
+
+Green Iteration Count  14
+Extraction took:             0.4398 seconds. 
+Convolution took:            0.0668 seconds. 
+Convolution wavefunction errors: 8.672e-03 L2,  1.579e-04 max
+Energy Update took:              0.9867 seconds. 
+Energy Residual:                 4.639e-06
+Updated Energy Value:            -0.47357 Hartree, 0.026425 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    66341
+Threads per block:    512
+Blocks per grid:      130
+
+Green Iteration Count  1
+Extraction took:             0.3787 seconds. 
+Convolution took:            0.0690 seconds. 
+Convolution wavefunction errors: 2.294e-02 L2,  5.873e-05 max
+Energy Update took:              0.9842 seconds. 
+Energy Residual:                 9.890e+00
+Updated Energy Value:            -0.10963 Hartree, 0.015373 error
+
+Green Iteration Count  2
+Extraction took:             0.4333 seconds. 
+Convolution took:            0.0671 seconds. 
+Convolution wavefunction errors: 4.593e-03 L2,  1.975e-05 max
+Energy Update took:              0.9808 seconds. 
+Energy Residual:                 1.046e-02
+Updated Energy Value:            -0.12008 Hartree, 0.004917 error
+
+Green Iteration Count  3
+Extraction took:             0.4352 seconds. 
+Convolution took:            0.0671 seconds. 
+Convolution wavefunction errors: 2.442e-03 L2,  1.322e-05 max
+Energy Update took:              0.9795 seconds. 
+Energy Residual:                 1.161e-03
+Updated Energy Value:            -0.11892 Hartree, 0.006077 error
+
+Green Iteration Count  4
+Extraction took:             0.3649 seconds. 
+Convolution took:            0.0668 seconds. 
+Convolution wavefunction errors: 2.399e-03 L2,  1.115e-05 max
+Energy Update took:              0.9855 seconds. 
+Energy Residual:                 3.945e-04
+Updated Energy Value:            -0.11853 Hartree, 0.006472 error
+
+Green Iteration Count  5
+Extraction took:             0.4337 seconds. 
+Convolution took:            0.0689 seconds. 
+Convolution wavefunction errors: 2.507e-03 L2,  1.038e-05 max
+Energy Update took:              0.9788 seconds. 
+Energy Residual:                 2.131e-04
+Updated Energy Value:            -0.11831 Hartree, 0.006685 error
+
+Green Iteration Count  6
+Extraction took:             0.4395 seconds. 
+Convolution took:            0.0670 seconds. 
+Convolution wavefunction errors: 2.572e-03 L2,  1.000e-05 max
+Energy Update took:              0.9821 seconds. 
+Energy Residual:                 9.883e-05
+Updated Energy Value:            -0.11822 Hartree, 0.006784 error
+
+Green Iteration Count  7
+Extraction took:             0.3660 seconds. 
+Convolution took:            0.0670 seconds. 
+Convolution wavefunction errors: 2.600e-03 L2,  9.773e-06 max
+Energy Update took:              1.0171 seconds. 
+Energy Residual:                 4.653e-05
+Updated Energy Value:            -0.11817 Hartree, 0.006830 error
+
+Green Iteration Count  8
+Extraction took:             0.4673 seconds. 
+Convolution took:            0.0695 seconds. 
+Convolution wavefunction errors: 2.607e-03 L2,  9.600e-06 max
+Energy Update took:              0.9828 seconds. 
+Energy Residual:                 2.172e-05
+Updated Energy Value:            -0.11815 Hartree, 0.006852 error
+
+Green Iteration Count  9
+Extraction took:             0.3660 seconds. 
+Convolution took:            0.0668 seconds. 
+Convolution wavefunction errors: 2.604e-03 L2,  9.451e-06 max
+Energy Update took:              0.9722 seconds. 
+Energy Residual:                 9.969e-06
+Updated Energy Value:            -0.11814 Hartree, 0.006862 error
+
+Green Iteration Count  10
+Extraction took:             0.4329 seconds. 
+Convolution took:            0.0671 seconds. 
+Convolution wavefunction errors: 2.596e-03 L2,  9.314e-06 max
+Energy Update took:              0.9880 seconds. 
+Energy Residual:                 4.342e-06
+Updated Energy Value:            -0.11813 Hartree, 0.006866 error
+
+Convergence to a tolerance of 0.000005 took 11 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                4 levels 
+Maximum Depth:               8 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 59.479056 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       9161 
+Total Number of Gridpoints:  72529 
+Minimum Depth                4 levels 
+Maximum Depth:               9 levels 
+Construction time:           2.72 seconds.
+
+Number of targets:    72529
+Threads per block:    512
+Blocks per grid:      142
+
+Green Iteration Count  1
+Extraction took:             0.4978 seconds. 
+Convolution took:            0.7636 seconds. 
+Convolution wavefunction errors: 8.008e-01 L2,  4.580e-03 max
+Energy Update took:              1.1670 seconds. 
+Energy Residual:                 9.802e+00
+Updated Energy Value:            -0.19785 Hartree, 0.302149 error
+
+Green Iteration Count  2
+Extraction took:             0.4868 seconds. 
+Convolution took:            0.0930 seconds. 
+Convolution wavefunction errors: 3.929e-01 L2,  1.267e-03 max
+Energy Update took:              1.1443 seconds. 
+Energy Residual:                 1.557e-01
+Updated Energy Value:            -0.35356 Hartree, 0.146439 error
+
+Green Iteration Count  3
+Extraction took:             0.4074 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 1.399e-01 L2,  3.835e-04 max
+Energy Update took:              1.1671 seconds. 
+Energy Residual:                 6.994e-02
+Updated Energy Value:            -0.42350 Hartree, 0.076498 error
+
+Green Iteration Count  4
+Extraction took:             0.4779 seconds. 
+Convolution took:            0.0948 seconds. 
+Convolution wavefunction errors: 4.058e-02 L2,  1.801e-04 max
+Energy Update took:              1.1746 seconds. 
+Energy Residual:                 3.653e-02
+Updated Energy Value:            -0.46003 Hartree, 0.039972 error
+
+Green Iteration Count  5
+Extraction took:             0.4103 seconds. 
+Convolution took:            0.0943 seconds. 
+Convolution wavefunction errors: 1.203e-02 L2,  1.459e-04 max
+Energy Update took:              1.1704 seconds. 
+Energy Residual:                 1.310e-02
+Updated Energy Value:            -0.47313 Hartree, 0.026868 error
+
+Green Iteration Count  6
+Extraction took:             0.5009 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 7.062e-03 L2,  1.476e-04 max
+Energy Update took:              1.1770 seconds. 
+Energy Residual:                 2.823e-03
+Updated Energy Value:            -0.47595 Hartree, 0.024045 error
+
+Green Iteration Count  7
+Extraction took:             0.4759 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 7.367e-03 L2,  1.533e-04 max
+Energy Update took:              1.1916 seconds. 
+Energy Residual:                 1.221e-05
+Updated Energy Value:            -0.47594 Hartree, 0.024058 error
+
+Green Iteration Count  8
+Extraction took:             0.4043 seconds. 
+Convolution took:            0.0948 seconds. 
+Convolution wavefunction errors: 8.122e-03 L2,  1.570e-04 max
+Energy Update took:              1.1487 seconds. 
+Energy Residual:                 3.659e-04
+Updated Energy Value:            -0.47558 Hartree, 0.024424 error
+
+Green Iteration Count  9
+Extraction took:             0.4741 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 8.585e-03 L2,  1.588e-04 max
+Energy Update took:              1.1586 seconds. 
+Energy Residual:                 2.439e-04
+Updated Energy Value:            -0.47533 Hartree, 0.024668 error
+
+Green Iteration Count  10
+Extraction took:             0.4748 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 8.812e-03 L2,  1.597e-04 max
+Energy Update took:              1.2007 seconds. 
+Energy Residual:                 1.238e-04
+Updated Energy Value:            -0.47521 Hartree, 0.024791 error
+
+Green Iteration Count  11
+Extraction took:             0.4071 seconds. 
+Convolution took:            0.0967 seconds. 
+Convolution wavefunction errors: 8.915e-03 L2,  1.601e-04 max
+Energy Update took:              1.1487 seconds. 
+Energy Residual:                 5.725e-05
+Updated Energy Value:            -0.47515 Hartree, 0.024849 error
+
+Green Iteration Count  12
+Extraction took:             0.5006 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 8.961e-03 L2,  1.602e-04 max
+Energy Update took:              1.1782 seconds. 
+Energy Residual:                 2.550e-05
+Updated Energy Value:            -0.47513 Hartree, 0.024874 error
+
+Green Iteration Count  13
+Extraction took:             0.4767 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 8.981e-03 L2,  1.603e-04 max
+Energy Update took:              1.1390 seconds. 
+Energy Residual:                 1.118e-05
+Updated Energy Value:            -0.47511 Hartree, 0.024885 error
+
+Green Iteration Count  14
+Extraction took:             0.4013 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 8.990e-03 L2,  1.603e-04 max
+Energy Update took:              1.1521 seconds. 
+Energy Residual:                 4.865e-06
+Updated Energy Value:            -0.47511 Hartree, 0.024890 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    72529
+Threads per block:    512
+Blocks per grid:      142
+
+Green Iteration Count  1
+Extraction took:             0.4891 seconds. 
+Convolution took:            0.0948 seconds. 
+Convolution wavefunction errors: 2.607e-02 L2,  4.902e-05 max
+Energy Update took:              1.1487 seconds. 
+Energy Residual:                 9.881e+00
+Updated Energy Value:            -0.11941 Hartree, 0.005589 error
+
+Green Iteration Count  2
+Extraction took:             0.4712 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 4.828e-03 L2,  2.272e-05 max
+Energy Update took:              1.1558 seconds. 
+Energy Residual:                 2.268e-03
+Updated Energy Value:            -0.12168 Hartree, 0.003321 error
+
+Green Iteration Count  3
+Extraction took:             0.3978 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.680e-03 L2,  1.646e-05 max
+Energy Update took:              1.1606 seconds. 
+Energy Residual:                 1.893e-03
+Updated Energy Value:            -0.11979 Hartree, 0.005214 error
+
+Green Iteration Count  4
+Extraction took:             0.4711 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.649e-03 L2,  1.307e-05 max
+Energy Update took:              1.1685 seconds. 
+Energy Residual:                 8.189e-04
+Updated Energy Value:            -0.11897 Hartree, 0.006033 error
+
+Green Iteration Count  5
+Extraction took:             0.4770 seconds. 
+Convolution took:            0.0948 seconds. 
+Convolution wavefunction errors: 2.737e-03 L2,  1.175e-05 max
+Energy Update took:              1.1645 seconds. 
+Energy Residual:                 3.394e-04
+Updated Energy Value:            -0.11863 Hartree, 0.006372 error
+
+Green Iteration Count  6
+Extraction took:             0.4005 seconds. 
+Convolution took:            0.0953 seconds. 
+Convolution wavefunction errors: 2.779e-03 L2,  1.137e-05 max
+Energy Update took:              1.1775 seconds. 
+Energy Residual:                 1.488e-04
+Updated Energy Value:            -0.11848 Hartree, 0.006521 error
+
+Green Iteration Count  7
+Extraction took:             0.5040 seconds. 
+Convolution took:            0.0931 seconds. 
+Convolution wavefunction errors: 2.789e-03 L2,  1.111e-05 max
+Energy Update took:              1.1698 seconds. 
+Energy Residual:                 6.758e-05
+Updated Energy Value:            -0.11841 Hartree, 0.006589 error
+
+Green Iteration Count  8
+Extraction took:             0.3984 seconds. 
+Convolution took:            0.0951 seconds. 
+Convolution wavefunction errors: 2.783e-03 L2,  1.090e-05 max
+Energy Update took:              1.1683 seconds. 
+Energy Residual:                 3.220e-05
+Updated Energy Value:            -0.11838 Hartree, 0.006621 error
+
+Green Iteration Count  9
+Extraction took:             0.4724 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.770e-03 L2,  1.072e-05 max
+Energy Update took:              1.1689 seconds. 
+Energy Residual:                 1.601e-05
+Updated Energy Value:            -0.11836 Hartree, 0.006637 error
+
+Green Iteration Count  10
+Extraction took:             0.4797 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.754e-03 L2,  1.054e-05 max
+Energy Update took:              1.1732 seconds. 
+Energy Residual:                 8.274e-06
+Updated Energy Value:            -0.11835 Hartree, 0.006645 error
+
+Green Iteration Count  11
+Extraction took:             0.3985 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.738e-03 L2,  1.038e-05 max
+Energy Update took:              1.1793 seconds. 
+Energy Residual:                 4.430e-06
+Updated Energy Value:            -0.11835 Hartree, 0.006650 error
+
+Convergence to a tolerance of 0.000005 took 12 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                4 levels 
+Maximum Depth:               9 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 70.388095 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       9161 
+Total Number of Gridpoints:  72529 
+Minimum Depth                4 levels 
+Maximum Depth:               9 levels 
+Construction time:           2.72 seconds.
+
+Number of targets:    72529
+Threads per block:    512
+Blocks per grid:      142
+
+Green Iteration Count  1
+Extraction took:             0.5016 seconds. 
+Convolution took:            0.9969 seconds. 
+Convolution wavefunction errors: 7.803e-01 L2,  3.956e-03 max
+Energy Update took:              1.0608 seconds. 
+Energy Residual:                 9.804e+00
+Updated Energy Value:            -0.19630 Hartree, 0.303704 error
+
+Green Iteration Count  2
+Extraction took:             0.4869 seconds. 
+Convolution took:            0.0930 seconds. 
+Convolution wavefunction errors: 3.837e-01 L2,  1.146e-03 max
+Energy Update took:              1.0384 seconds. 
+Energy Residual:                 1.569e-01
+Updated Energy Value:            -0.35318 Hartree, 0.146822 error
+
+Green Iteration Count  3
+Extraction took:             0.4102 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 1.372e-01 L2,  3.515e-04 max
+Energy Update took:              1.0514 seconds. 
+Energy Residual:                 6.963e-02
+Updated Energy Value:            -0.42281 Hartree, 0.077191 error
+
+Green Iteration Count  4
+Extraction took:             0.4805 seconds. 
+Convolution took:            0.0949 seconds. 
+Convolution wavefunction errors: 4.010e-02 L2,  1.710e-04 max
+Energy Update took:              1.0693 seconds. 
+Energy Residual:                 3.680e-02
+Updated Energy Value:            -0.45961 Hartree, 0.040388 error
+
+Green Iteration Count  5
+Extraction took:             0.4085 seconds. 
+Convolution took:            0.0943 seconds. 
+Convolution wavefunction errors: 1.197e-02 L2,  1.425e-04 max
+Energy Update took:              1.0506 seconds. 
+Energy Residual:                 1.335e-02
+Updated Energy Value:            -0.47296 Hartree, 0.027036 error
+
+Green Iteration Count  6
+Extraction took:             0.5000 seconds. 
+Convolution took:            0.0930 seconds. 
+Convolution wavefunction errors: 7.051e-03 L2,  1.461e-04 max
+Energy Update took:              1.0345 seconds. 
+Energy Residual:                 2.940e-03
+Updated Energy Value:            -0.47590 Hartree, 0.024096 error
+
+Green Iteration Count  7
+Extraction took:             0.4785 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 7.360e-03 L2,  1.526e-04 max
+Energy Update took:              1.0430 seconds. 
+Energy Residual:                 2.655e-05
+Updated Energy Value:            -0.47593 Hartree, 0.024069 error
+
+Green Iteration Count  8
+Extraction took:             0.4033 seconds. 
+Convolution took:            0.0949 seconds. 
+Convolution wavefunction errors: 8.118e-03 L2,  1.567e-04 max
+Energy Update took:              1.0264 seconds. 
+Energy Residual:                 3.560e-04
+Updated Energy Value:            -0.47557 Hartree, 0.024425 error
+
+Green Iteration Count  9
+Extraction took:             0.4766 seconds. 
+Convolution took:            0.0930 seconds. 
+Convolution wavefunction errors: 8.582e-03 L2,  1.587e-04 max
+Energy Update took:              1.0282 seconds. 
+Energy Residual:                 2.420e-04
+Updated Energy Value:            -0.47533 Hartree, 0.024667 error
+
+Green Iteration Count  10
+Extraction took:             0.4770 seconds. 
+Convolution took:            0.0930 seconds. 
+Convolution wavefunction errors: 8.810e-03 L2,  1.596e-04 max
+Energy Update took:              1.0377 seconds. 
+Energy Residual:                 1.236e-04
+Updated Energy Value:            -0.47521 Hartree, 0.024791 error
+
+Green Iteration Count  11
+Extraction took:             0.4040 seconds. 
+Convolution took:            0.0980 seconds. 
+Convolution wavefunction errors: 8.915e-03 L2,  1.600e-04 max
+Energy Update took:              1.0414 seconds. 
+Energy Residual:                 5.735e-05
+Updated Energy Value:            -0.47515 Hartree, 0.024848 error
+
+Green Iteration Count  12
+Extraction took:             0.5029 seconds. 
+Convolution took:            0.0930 seconds. 
+Convolution wavefunction errors: 8.961e-03 L2,  1.602e-04 max
+Energy Update took:              1.0334 seconds. 
+Energy Residual:                 2.559e-05
+Updated Energy Value:            -0.47513 Hartree, 0.024874 error
+
+Green Iteration Count  13
+Extraction took:             0.4780 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 8.981e-03 L2,  1.603e-04 max
+Energy Update took:              1.0414 seconds. 
+Energy Residual:                 1.123e-05
+Updated Energy Value:            -0.47511 Hartree, 0.024885 error
+
+Green Iteration Count  14
+Extraction took:             0.4033 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 8.989e-03 L2,  1.603e-04 max
+Energy Update took:              1.0382 seconds. 
+Energy Residual:                 4.891e-06
+Updated Energy Value:            -0.47511 Hartree, 0.024890 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    72529
+Threads per block:    512
+Blocks per grid:      142
+
+Green Iteration Count  1
+Extraction took:             0.4903 seconds. 
+Convolution took:            0.0949 seconds. 
+Convolution wavefunction errors: 2.661e-02 L2,  5.343e-05 max
+Energy Update took:              1.0276 seconds. 
+Energy Residual:                 9.884e+00
+Updated Energy Value:            -0.11594 Hartree, 0.009062 error
+
+Green Iteration Count  2
+Extraction took:             0.4740 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 4.737e-03 L2,  2.124e-05 max
+Energy Update took:              1.0358 seconds. 
+Energy Residual:                 5.195e-03
+Updated Energy Value:            -0.12113 Hartree, 0.003867 error
+
+Green Iteration Count  3
+Extraction took:             0.3995 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.458e-03 L2,  1.351e-05 max
+Energy Update took:              1.0367 seconds. 
+Energy Residual:                 1.581e-03
+Updated Energy Value:            -0.11955 Hartree, 0.005449 error
+
+Green Iteration Count  4
+Extraction took:             0.4728 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.410e-03 L2,  1.058e-05 max
+Energy Update took:              1.0271 seconds. 
+Energy Residual:                 6.698e-04
+Updated Energy Value:            -0.11888 Hartree, 0.006119 error
+
+Green Iteration Count  5
+Extraction took:             0.4781 seconds. 
+Convolution took:            0.0948 seconds. 
+Convolution wavefunction errors: 2.500e-03 L2,  9.566e-06 max
+Energy Update took:              1.0383 seconds. 
+Energy Residual:                 2.888e-04
+Updated Energy Value:            -0.11859 Hartree, 0.006407 error
+
+Green Iteration Count  6
+Extraction took:             0.3999 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.549e-03 L2,  9.225e-06 max
+Energy Update took:              1.0871 seconds. 
+Energy Residual:                 1.282e-04
+Updated Energy Value:            -0.11846 Hartree, 0.006536 error
+
+Green Iteration Count  7
+Extraction took:             0.5072 seconds. 
+Convolution took:            0.0930 seconds. 
+Convolution wavefunction errors: 2.566e-03 L2,  9.034e-06 max
+Energy Update took:              1.0310 seconds. 
+Energy Residual:                 5.913e-05
+Updated Energy Value:            -0.11841 Hartree, 0.006595 error
+
+Green Iteration Count  8
+Extraction took:             0.3990 seconds. 
+Convolution took:            0.0950 seconds. 
+Convolution wavefunction errors: 2.569e-03 L2,  8.895e-06 max
+Energy Update took:              1.0355 seconds. 
+Energy Residual:                 2.853e-05
+Updated Energy Value:            -0.11838 Hartree, 0.006623 error
+
+Green Iteration Count  9
+Extraction took:             0.4742 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.565e-03 L2,  8.776e-06 max
+Energy Update took:              1.0362 seconds. 
+Energy Residual:                 1.434e-05
+Updated Energy Value:            -0.11836 Hartree, 0.006638 error
+
+Green Iteration Count  10
+Extraction took:             0.4749 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.558e-03 L2,  8.665e-06 max
+Energy Update took:              1.0360 seconds. 
+Energy Residual:                 7.484e-06
+Updated Energy Value:            -0.11835 Hartree, 0.006645 error
+
+Green Iteration Count  11
+Extraction took:             0.3979 seconds. 
+Convolution took:            0.0929 seconds. 
+Convolution wavefunction errors: 2.550e-03 L2,  8.560e-06 max
+Energy Update took:              1.0417 seconds. 
+Energy Residual:                 4.043e-06
+Updated Energy Value:            -0.11835 Hartree, 0.006649 error
+
+Convergence to a tolerance of 0.000005 took 12 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                4 levels 
+Maximum Depth:               10 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 67.130761 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       37449 
+Total Number of Gridpoints:  274625 
+Minimum Depth                5 levels 
+Maximum Depth:               5 levels 
+Construction time:           10.2 seconds.
+
+Number of targets:    274625
+Threads per block:    512
+Blocks per grid:      537
+
+Green Iteration Count  1
+Extraction took:             1.9515 seconds. 
+Convolution took:            1.7856 seconds. 
+Convolution wavefunction errors: 8.598e-01 L2,  9.970e-03 max
+Energy Update took:              4.3893 seconds. 
+Energy Residual:                 9.788e+00
+Updated Energy Value:            -0.21163 Hartree, 0.288371 error
+
+Green Iteration Count  2
+Extraction took:             1.9198 seconds. 
+Convolution took:            1.1430 seconds. 
+Convolution wavefunction errors: 4.577e-01 L2,  7.051e-03 max
+Energy Update took:              4.2729 seconds. 
+Energy Residual:                 1.114e-01
+Updated Energy Value:            -0.32303 Hartree, 0.176969 error
+
+Green Iteration Count  3
+Extraction took:             1.9055 seconds. 
+Convolution took:            1.1432 seconds. 
+Convolution wavefunction errors: 2.278e-01 L2,  4.693e-03 max
+Energy Update took:              4.3164 seconds. 
+Energy Residual:                 4.290e-02
+Updated Energy Value:            -0.36594 Hartree, 0.134064 error
+
+Green Iteration Count  4
+Extraction took:             1.9061 seconds. 
+Convolution took:            1.1460 seconds. 
+Convolution wavefunction errors: 1.272e-01 L2,  3.386e-03 max
+Energy Update took:              4.3924 seconds. 
+Energy Residual:                 1.307e-02
+Updated Energy Value:            -0.37901 Hartree, 0.120990 error
+
+Green Iteration Count  5
+Extraction took:             1.7849 seconds. 
+Convolution took:            1.1446 seconds. 
+Convolution wavefunction errors: 8.589e-02 L2,  2.743e-03 max
+Energy Update took:              4.2780 seconds. 
+Energy Residual:                 1.793e-03
+Updated Energy Value:            -0.38080 Hartree, 0.119196 error
+
+Green Iteration Count  6
+Extraction took:             1.8990 seconds. 
+Convolution took:            1.1430 seconds. 
+Convolution wavefunction errors: 6.891e-02 L2,  2.445e-03 max
+Energy Update took:              4.2778 seconds. 
+Energy Residual:                 5.445e-04
+Updated Energy Value:            -0.38026 Hartree, 0.119741 error
+
+Green Iteration Count  7
+Extraction took:             1.8738 seconds. 
+Convolution took:            1.1432 seconds. 
+Convolution wavefunction errors: 6.172e-02 L2,  2.310e-03 max
+Energy Update took:              4.4131 seconds. 
+Energy Residual:                 5.778e-04
+Updated Energy Value:            -0.37968 Hartree, 0.120319 error
+
+Green Iteration Count  8
+Extraction took:             1.8874 seconds. 
+Convolution took:            1.1461 seconds. 
+Convolution wavefunction errors: 5.861e-02 L2,  2.249e-03 max
+Energy Update took:              4.3311 seconds. 
+Energy Residual:                 3.311e-04
+Updated Energy Value:            -0.37935 Hartree, 0.120650 error
+
+Green Iteration Count  9
+Extraction took:             1.8940 seconds. 
+Convolution took:            1.1430 seconds. 
+Convolution wavefunction errors: 5.724e-02 L2,  2.222e-03 max
+Energy Update took:              4.3264 seconds. 
+Energy Residual:                 1.629e-04
+Updated Energy Value:            -0.37919 Hartree, 0.120813 error
+
+Green Iteration Count  10
+Extraction took:             1.8972 seconds. 
+Convolution took:            1.1431 seconds. 
+Convolution wavefunction errors: 5.663e-02 L2,  2.210e-03 max
+Energy Update took:              4.4696 seconds. 
+Energy Residual:                 7.571e-05
+Updated Energy Value:            -0.37911 Hartree, 0.120888 error
+
+Green Iteration Count  11
+Extraction took:             1.9339 seconds. 
+Convolution took:            1.1461 seconds. 
+Convolution wavefunction errors: 5.636e-02 L2,  2.205e-03 max
+Energy Update took:              4.3328 seconds. 
+Energy Residual:                 3.436e-05
+Updated Energy Value:            -0.37908 Hartree, 0.120923 error
+
+Green Iteration Count  12
+Extraction took:             1.6833 seconds. 
+Convolution took:            1.1430 seconds. 
+Convolution wavefunction errors: 5.624e-02 L2,  2.202e-03 max
+Energy Update took:              4.3871 seconds. 
+Energy Residual:                 1.544e-05
+Updated Energy Value:            -0.37906 Hartree, 0.120938 error
+
+Green Iteration Count  13
+Extraction took:             1.8828 seconds. 
+Convolution took:            1.1432 seconds. 
+Convolution wavefunction errors: 5.619e-02 L2,  2.201e-03 max
+Energy Update took:              4.3709 seconds. 
+Energy Residual:                 6.901e-06
+Updated Energy Value:            -0.37906 Hartree, 0.120945 error
+
+Green Iteration Count  14
+Extraction took:             1.8980 seconds. 
+Convolution took:            1.1432 seconds. 
+Convolution wavefunction errors: 5.616e-02 L2,  2.201e-03 max
+Energy Update took:              4.3020 seconds. 
+Energy Residual:                 3.079e-06
+Updated Energy Value:            -0.37905 Hartree, 0.120948 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    274625
+Threads per block:    512
+Blocks per grid:      537
+
+Green Iteration Count  1
+Extraction took:             1.9090 seconds. 
+Convolution took:            1.1455 seconds. 
+Convolution wavefunction errors: 2.526e-02 L2,  3.825e-05 max
+Energy Update took:              4.4267 seconds. 
+Energy Residual:                 9.872e+00
+Updated Energy Value:            -0.12814 Hartree, -0.003139 error
+
+Green Iteration Count  2
+Extraction took:             1.9074 seconds. 
+Convolution took:            1.1431 seconds. 
+Convolution wavefunction errors: 2.825e-03 L2,  6.491e-05 max
+Energy Update took:              4.2668 seconds. 
+Energy Residual:                 2.969e-02
+Updated Energy Value:            -0.09845 Hartree, 0.026551 error
+
+Green Iteration Count  3
+Extraction took:             1.8758 seconds. 
+Convolution took:            1.1431 seconds. 
+Convolution wavefunction errors: 2.650e-03 L2,  9.896e-05 max
+Energy Update took:              4.3053 seconds. 
+Energy Residual:                 1.062e-02
+Updated Energy Value:            -0.10907 Hartree, 0.015931 error
+
+Green Iteration Count  4
+Extraction took:             1.8728 seconds. 
+Convolution took:            1.1429 seconds. 
+Convolution wavefunction errors: 3.067e-03 L2,  1.117e-04 max
+Energy Update took:              4.2728 seconds. 
+Energy Residual:                 1.254e-03
+Updated Energy Value:            -0.10781 Hartree, 0.017185 error
+
+Green Iteration Count  5
+Extraction took:             1.6676 seconds. 
+Convolution took:            1.1494 seconds. 
+Convolution wavefunction errors: 3.244e-03 L2,  1.132e-04 max
+Energy Update took:              4.2987 seconds. 
+Energy Residual:                 2.169e-04
+Updated Energy Value:            -0.10803 Hartree, 0.016968 error
+
+Green Iteration Count  6
+Extraction took:             1.8562 seconds. 
+Convolution took:            1.1430 seconds. 
+Convolution wavefunction errors: 3.308e-03 L2,  1.134e-04 max
+Energy Update took:              4.3181 seconds. 
+Energy Residual:                 7.224e-05
+Updated Energy Value:            -0.10796 Hartree, 0.017041 error
+
+Green Iteration Count  7
+Extraction took:             1.8714 seconds. 
+Convolution took:            1.1430 seconds. 
+Convolution wavefunction errors: 3.323e-03 L2,  1.132e-04 max
+Energy Update took:              4.3134 seconds. 
+Energy Residual:                 1.171e-05
+Updated Energy Value:            -0.10795 Hartree, 0.017052 error
+
+Green Iteration Count  8
+Extraction took:             1.8959 seconds. 
+Convolution took:            1.1461 seconds. 
+Convolution wavefunction errors: 3.325e-03 L2,  1.130e-04 max
+Energy Update took:              4.3086 seconds. 
+Energy Residual:                 9.369e-06
+Updated Energy Value:            -0.10794 Hartree, 0.017062 error
+
+Green Iteration Count  9
+Extraction took:             1.8657 seconds. 
+Convolution took:            1.1462 seconds. 
+Convolution wavefunction errors: 3.323e-03 L2,  1.129e-04 max
+Energy Update took:              4.3260 seconds. 
+Energy Residual:                 3.004e-06
+Updated Energy Value:            -0.10794 Hartree, 0.017065 error
+
+Convergence to a tolerance of 0.000005 took 10 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                5 levels 
+Maximum Depth:               5 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 272.567569 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       37961 
+Total Number of Gridpoints:  278809 
+Minimum Depth                5 levels 
+Maximum Depth:               6 levels 
+Construction time:           11.1 seconds.
+
+Number of targets:    278809
+Threads per block:    512
+Blocks per grid:      545
+
+Green Iteration Count  1
+Extraction took:             2.0338 seconds. 
+Convolution took:            1.8512 seconds. 
+Convolution wavefunction errors: 8.289e-01 L2,  1.842e-03 max
+Energy Update took:              4.5144 seconds. 
+Energy Residual:                 9.775e+00
+Updated Energy Value:            -0.22488 Hartree, 0.275118 error
+
+Green Iteration Count  2
+Extraction took:             2.0442 seconds. 
+Convolution took:            1.2183 seconds. 
+Convolution wavefunction errors: 3.984e-01 L2,  1.251e-03 max
+Energy Update took:              4.5152 seconds. 
+Energy Residual:                 1.244e-01
+Updated Energy Value:            -0.34929 Hartree, 0.150706 error
+
+Green Iteration Count  3
+Extraction took:             2.0576 seconds. 
+Convolution took:            1.2183 seconds. 
+Convolution wavefunction errors: 1.624e-01 L2,  7.233e-04 max
+Energy Update took:              4.3817 seconds. 
+Energy Residual:                 6.014e-02
+Updated Energy Value:            -0.40944 Hartree, 0.090562 error
+
+Green Iteration Count  4
+Extraction took:             2.0343 seconds. 
+Convolution took:            1.2210 seconds. 
+Convolution wavefunction errors: 6.503e-02 L2,  4.124e-04 max
+Energy Update took:              4.3491 seconds. 
+Energy Residual:                 2.469e-02
+Updated Energy Value:            -0.43413 Hartree, 0.065871 error
+
+Green Iteration Count  5
+Extraction took:             2.1064 seconds. 
+Convolution took:            1.2182 seconds. 
+Convolution wavefunction errors: 2.901e-02 L2,  2.588e-04 max
+Energy Update took:              4.3270 seconds. 
+Energy Residual:                 7.020e-03
+Updated Energy Value:            -0.44115 Hartree, 0.058851 error
+
+Green Iteration Count  6
+Extraction took:             1.8076 seconds. 
+Convolution took:            1.2182 seconds. 
+Convolution wavefunction errors: 1.594e-02 L2,  1.886e-04 max
+Energy Update took:              4.3466 seconds. 
+Energy Residual:                 1.130e-03
+Updated Energy Value:            -0.44228 Hartree, 0.057721 error
+
+Green Iteration Count  7
+Extraction took:             2.0073 seconds. 
+Convolution took:            1.2183 seconds. 
+Convolution wavefunction errors: 1.096e-02 L2,  1.570e-04 max
+Energy Update took:              4.5080 seconds. 
+Energy Residual:                 1.641e-04
+Updated Energy Value:            -0.44211 Hartree, 0.057885 error
+
+Green Iteration Count  8
+Extraction took:             2.0411 seconds. 
+Convolution took:            1.2210 seconds. 
+Convolution wavefunction errors: 8.937e-03 L2,  1.427e-04 max
+Energy Update took:              4.3970 seconds. 
+Energy Residual:                 2.557e-04
+Updated Energy Value:            -0.44186 Hartree, 0.058141 error
+
+Green Iteration Count  9
+Extraction took:             2.0275 seconds. 
+Convolution took:            1.2180 seconds. 
+Convolution wavefunction errors: 8.067e-03 L2,  1.362e-04 max
+Energy Update took:              4.4337 seconds. 
+Energy Residual:                 1.602e-04
+Updated Energy Value:            -0.44170 Hartree, 0.058301 error
+
+Green Iteration Count  10
+Extraction took:             2.0295 seconds. 
+Convolution took:            1.2179 seconds. 
+Convolution wavefunction errors: 7.680e-03 L2,  1.332e-04 max
+Energy Update took:              4.3907 seconds. 
+Energy Residual:                 8.328e-05
+Updated Energy Value:            -0.44162 Hartree, 0.058384 error
+
+Green Iteration Count  11
+Extraction took:             2.0357 seconds. 
+Convolution took:            1.2218 seconds. 
+Convolution wavefunction errors: 7.505e-03 L2,  1.319e-04 max
+Energy Update took:              4.4034 seconds. 
+Energy Residual:                 4.041e-05
+Updated Energy Value:            -0.44158 Hartree, 0.058425 error
+
+Green Iteration Count  12
+Extraction took:             2.0489 seconds. 
+Convolution took:            1.2183 seconds. 
+Convolution wavefunction errors: 7.426e-03 L2,  1.312e-04 max
+Energy Update took:              4.4123 seconds. 
+Energy Residual:                 1.905e-05
+Updated Energy Value:            -0.44156 Hartree, 0.058444 error
+
+Green Iteration Count  13
+Extraction took:             1.8088 seconds. 
+Convolution took:            1.2186 seconds. 
+Convolution wavefunction errors: 7.389e-03 L2,  1.309e-04 max
+Energy Update took:              4.5526 seconds. 
+Energy Residual:                 8.862e-06
+Updated Energy Value:            -0.44155 Hartree, 0.058453 error
+
+Green Iteration Count  14
+Extraction took:             2.0451 seconds. 
+Convolution took:            1.2181 seconds. 
+Convolution wavefunction errors: 7.372e-03 L2,  1.308e-04 max
+Energy Update took:              4.4107 seconds. 
+Energy Residual:                 4.098e-06
+Updated Energy Value:            -0.44154 Hartree, 0.058457 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    278809
+Threads per block:    512
+Blocks per grid:      545
+
+Green Iteration Count  1
+Extraction took:             2.0476 seconds. 
+Convolution took:            1.2207 seconds. 
+Convolution wavefunction errors: 2.580e-02 L2,  1.153e-05 max
+Energy Update took:              4.3960 seconds. 
+Energy Residual:                 9.877e+00
+Updated Energy Value:            -0.12282 Hartree, 0.002180 error
+
+Green Iteration Count  2
+Extraction took:             2.0080 seconds. 
+Convolution took:            1.2181 seconds. 
+Convolution wavefunction errors: 2.579e-03 L2,  2.534e-06 max
+Energy Update took:              4.3371 seconds. 
+Energy Residual:                 6.452e-03
+Updated Energy Value:            -0.11637 Hartree, 0.008631 error
+
+Green Iteration Count  3
+Extraction took:             2.0063 seconds. 
+Convolution took:            1.2183 seconds. 
+Convolution wavefunction errors: 1.364e-03 L2,  5.069e-06 max
+Energy Update took:              4.3578 seconds. 
+Energy Residual:                 1.639e-03
+Updated Energy Value:            -0.11801 Hartree, 0.006993 error
+
+Green Iteration Count  4
+Extraction took:             2.0026 seconds. 
+Convolution took:            1.2180 seconds. 
+Convolution wavefunction errors: 1.967e-03 L2,  5.818e-06 max
+Energy Update took:              4.3656 seconds. 
+Energy Residual:                 2.662e-04
+Updated Energy Value:            -0.11774 Hartree, 0.007259 error
+
+Green Iteration Count  5
+Extraction took:             2.0517 seconds. 
+Convolution took:            1.2241 seconds. 
+Convolution wavefunction errors: 2.380e-03 L2,  5.852e-06 max
+Energy Update took:              4.3620 seconds. 
+Energy Residual:                 1.190e-04
+Updated Energy Value:            -0.11762 Hartree, 0.007378 error
+
+Green Iteration Count  6
+Extraction took:             1.7757 seconds. 
+Convolution took:            1.2185 seconds. 
+Convolution wavefunction errors: 2.579e-03 L2,  5.760e-06 max
+Energy Update took:              4.3632 seconds. 
+Energy Residual:                 6.934e-05
+Updated Energy Value:            -0.11755 Hartree, 0.007447 error
+
+Green Iteration Count  7
+Extraction took:             2.0516 seconds. 
+Convolution took:            1.2191 seconds. 
+Convolution wavefunction errors: 2.668e-03 L2,  5.677e-06 max
+Energy Update took:              4.3690 seconds. 
+Energy Residual:                 3.474e-05
+Updated Energy Value:            -0.11752 Hartree, 0.007482 error
+
+Green Iteration Count  8
+Extraction took:             1.9989 seconds. 
+Convolution took:            1.2210 seconds. 
+Convolution wavefunction errors: 2.709e-03 L2,  5.622e-06 max
+Energy Update took:              4.3668 seconds. 
+Energy Residual:                 1.708e-05
+Updated Energy Value:            -0.11750 Hartree, 0.007499 error
+
+Green Iteration Count  9
+Extraction took:             2.0080 seconds. 
+Convolution took:            1.2217 seconds. 
+Convolution wavefunction errors: 2.727e-03 L2,  5.590e-06 max
+Energy Update took:              4.5696 seconds. 
+Energy Residual:                 8.166e-06
+Updated Energy Value:            -0.11749 Hartree, 0.007507 error
+
+Green Iteration Count  10
+Extraction took:             2.0541 seconds. 
+Convolution took:            1.2181 seconds. 
+Convolution wavefunction errors: 2.736e-03 L2,  5.572e-06 max
+Energy Update took:              4.3711 seconds. 
+Energy Residual:                 3.780e-06
+Updated Energy Value:            -0.11749 Hartree, 0.007511 error
+
+Convergence to a tolerance of 0.000005 took 11 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                5 levels 
+Maximum Depth:               6 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 297.189069 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       39241 
+Total Number of Gridpoints:  288981 
+Minimum Depth                5 levels 
+Maximum Depth:               7 levels 
+Construction time:           11.7 seconds.
+
+Number of targets:    288981
+Threads per block:    512
+Blocks per grid:      565
+
+Green Iteration Count  1
+Extraction took:             1.9944 seconds. 
+Convolution took:            1.9157 seconds. 
+Convolution wavefunction errors: 8.035e-01 L2,  1.116e-03 max
+Energy Update took:              4.7296 seconds. 
+Energy Residual:                 9.769e+00
+Updated Energy Value:            -0.23065 Hartree, 0.269351 error
+
+Green Iteration Count  2
+Extraction took:             2.0309 seconds. 
+Convolution took:            1.2818 seconds. 
+Convolution wavefunction errors: 3.731e-01 L2,  3.992e-04 max
+Energy Update took:              4.6481 seconds. 
+Energy Residual:                 1.297e-01
+Updated Energy Value:            -0.36036 Hartree, 0.139641 error
+
+Green Iteration Count  3
+Extraction took:             2.0222 seconds. 
+Convolution took:            1.2807 seconds. 
+Convolution wavefunction errors: 1.415e-01 L2,  1.272e-04 max
+Energy Update took:              4.6813 seconds. 
+Energy Residual:                 6.660e-02
+Updated Energy Value:            -0.42696 Hartree, 0.073040 error
+
+Green Iteration Count  4
+Extraction took:             2.0273 seconds. 
+Convolution took:            1.2838 seconds. 
+Convolution wavefunction errors: 4.865e-02 L2,  4.378e-05 max
+Energy Update took:              4.6390 seconds. 
+Energy Residual:                 3.072e-02
+Updated Energy Value:            -0.45768 Hartree, 0.042320 error
+
+Green Iteration Count  5
+Extraction took:             2.0399 seconds. 
+Convolution took:            1.2809 seconds. 
+Convolution wavefunction errors: 1.645e-02 L2,  1.968e-05 max
+Energy Update took:              4.6317 seconds. 
+Energy Residual:                 1.081e-02
+Updated Energy Value:            -0.46849 Hartree, 0.031513 error
+
+Green Iteration Count  6
+Extraction took:             2.0340 seconds. 
+Convolution took:            1.2808 seconds. 
+Convolution wavefunction errors: 6.134e-03 L2,  1.034e-05 max
+Energy Update took:              4.6767 seconds. 
+Energy Residual:                 2.867e-03
+Updated Energy Value:            -0.47135 Hartree, 0.028646 error
+
+Green Iteration Count  7
+Extraction took:             2.0423 seconds. 
+Convolution took:            1.2808 seconds. 
+Convolution wavefunction errors: 2.845e-03 L2,  7.476e-06 max
+Energy Update took:              4.6434 seconds. 
+Energy Residual:                 4.949e-04
+Updated Energy Value:            -0.47185 Hartree, 0.028151 error
+
+Green Iteration Count  8
+Extraction took:             1.7946 seconds. 
+Convolution took:            1.2837 seconds. 
+Convolution wavefunction errors: 1.725e-03 L2,  6.309e-06 max
+Energy Update took:              4.6060 seconds. 
+Energy Residual:                 2.489e-05
+Updated Energy Value:            -0.47182 Hartree, 0.028176 error
+
+Green Iteration Count  9
+Extraction took:             2.0068 seconds. 
+Convolution took:            1.2792 seconds. 
+Convolution wavefunction errors: 1.304e-03 L2,  5.800e-06 max
+Energy Update took:              4.7458 seconds. 
+Energy Residual:                 7.996e-05
+Updated Energy Value:            -0.47174 Hartree, 0.028256 error
+
+Green Iteration Count  10
+Extraction took:             2.0439 seconds. 
+Convolution took:            1.2809 seconds. 
+Convolution wavefunction errors: 1.130e-03 L2,  5.568e-06 max
+Energy Update took:              4.6355 seconds. 
+Energy Residual:                 5.464e-05
+Updated Energy Value:            -0.47169 Hartree, 0.028310 error
+
+Green Iteration Count  11
+Extraction took:             2.0180 seconds. 
+Convolution took:            1.2823 seconds. 
+Convolution wavefunction errors: 1.054e-03 L2,  5.461e-06 max
+Energy Update took:              4.6719 seconds. 
+Energy Residual:                 2.990e-05
+Updated Energy Value:            -0.47166 Hartree, 0.028340 error
+
+Green Iteration Count  12
+Extraction took:             2.0272 seconds. 
+Convolution took:            1.2806 seconds. 
+Convolution wavefunction errors: 1.019e-03 L2,  5.411e-06 max
+Energy Update took:              4.6826 seconds. 
+Energy Residual:                 1.513e-05
+Updated Energy Value:            -0.47164 Hartree, 0.028356 error
+
+Green Iteration Count  13
+Extraction took:             2.0424 seconds. 
+Convolution took:            1.2809 seconds. 
+Convolution wavefunction errors: 1.003e-03 L2,  5.387e-06 max
+Energy Update took:              4.6349 seconds. 
+Energy Residual:                 7.404e-06
+Updated Energy Value:            -0.47164 Hartree, 0.028363 error
+
+Green Iteration Count  14
+Extraction took:             1.8076 seconds. 
+Convolution took:            1.2808 seconds. 
+Convolution wavefunction errors: 9.951e-04 L2,  5.376e-06 max
+Energy Update took:              4.6783 seconds. 
+Energy Residual:                 3.570e-06
+Updated Energy Value:            -0.47163 Hartree, 0.028366 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    288981
+Threads per block:    512
+Blocks per grid:      565
+
+Green Iteration Count  1
+Extraction took:             2.0691 seconds. 
+Convolution took:            1.2833 seconds. 
+Convolution wavefunction errors: 2.443e-02 L2,  5.191e-06 max
+Energy Update took:              4.6063 seconds. 
+Energy Residual:                 9.877e+00
+Updated Energy Value:            -0.12320 Hartree, 0.001803 error
+
+Green Iteration Count  2
+Extraction took:             1.9860 seconds. 
+Convolution took:            1.2809 seconds. 
+Convolution wavefunction errors: 2.314e-03 L2,  1.701e-06 max
+Energy Update took:              4.5900 seconds. 
+Energy Residual:                 5.215e-04
+Updated Energy Value:            -0.12372 Hartree, 0.001282 error
+
+Green Iteration Count  3
+Extraction took:             1.9923 seconds. 
+Convolution took:            1.2886 seconds. 
+Convolution wavefunction errors: 1.574e-03 L2,  5.739e-07 max
+Energy Update took:              4.5960 seconds. 
+Energy Residual:                 6.392e-04
+Updated Energy Value:            -0.12308 Hartree, 0.001921 error
+
+Green Iteration Count  4
+Extraction took:             1.9992 seconds. 
+Convolution took:            1.2842 seconds. 
+Convolution wavefunction errors: 2.540e-03 L2,  5.420e-07 max
+Energy Update took:              4.6246 seconds. 
+Energy Residual:                 5.589e-04
+Updated Energy Value:            -0.12252 Hartree, 0.002480 error
+
+Green Iteration Count  5
+Extraction took:             1.9986 seconds. 
+Convolution took:            1.2839 seconds. 
+Convolution wavefunction errors: 3.138e-03 L2,  5.586e-07 max
+Energy Update took:              4.7237 seconds. 
+Energy Residual:                 2.783e-04
+Updated Energy Value:            -0.12224 Hartree, 0.002758 error
+
+Green Iteration Count  6
+Extraction took:             2.0480 seconds. 
+Convolution took:            1.2810 seconds. 
+Convolution wavefunction errors: 3.422e-03 L2,  5.665e-07 max
+Energy Update took:              4.5966 seconds. 
+Energy Residual:                 1.345e-04
+Updated Energy Value:            -0.12211 Hartree, 0.002892 error
+
+Green Iteration Count  7
+Extraction took:             1.7742 seconds. 
+Convolution took:            1.2808 seconds. 
+Convolution wavefunction errors: 3.550e-03 L2,  5.707e-07 max
+Energy Update took:              4.6256 seconds. 
+Energy Residual:                 6.605e-05
+Updated Energy Value:            -0.12204 Hartree, 0.002959 error
+
+Green Iteration Count  8
+Extraction took:             1.9776 seconds. 
+Convolution took:            1.2842 seconds. 
+Convolution wavefunction errors: 3.607e-03 L2,  5.730e-07 max
+Energy Update took:              4.5973 seconds. 
+Energy Residual:                 3.342e-05
+Updated Energy Value:            -0.12201 Hartree, 0.002992 error
+
+Green Iteration Count  9
+Extraction took:             2.0012 seconds. 
+Convolution took:            1.2811 seconds. 
+Convolution wavefunction errors: 3.633e-03 L2,  5.745e-07 max
+Energy Update took:              4.7218 seconds. 
+Energy Residual:                 1.744e-05
+Updated Energy Value:            -0.12199 Hartree, 0.003009 error
+
+Green Iteration Count  10
+Extraction took:             1.9893 seconds. 
+Convolution took:            1.2809 seconds. 
+Convolution wavefunction errors: 3.646e-03 L2,  5.754e-07 max
+Energy Update took:              4.6372 seconds. 
+Energy Residual:                 9.360e-06
+Updated Energy Value:            -0.12198 Hartree, 0.003019 error
+
+Green Iteration Count  11
+Extraction took:             2.1227 seconds. 
+Convolution took:            1.2810 seconds. 
+Convolution wavefunction errors: 3.652e-03 L2,  5.761e-07 max
+Energy Update took:              4.6249 seconds. 
+Energy Residual:                 5.144e-06
+Updated Energy Value:            -0.12198 Hartree, 0.003024 error
+
+Green Iteration Count  12
+Extraction took:             1.9890 seconds. 
+Convolution took:            1.2823 seconds. 
+Convolution wavefunction errors: 3.656e-03 L2,  5.766e-07 max
+Energy Update took:              4.6485 seconds. 
+Energy Residual:                 2.881e-06
+Updated Energy Value:            -0.12197 Hartree, 0.003027 error
+
+Convergence to a tolerance of 0.000005 took 13 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                5 levels 
+Maximum Depth:               7 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 326.539550 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       41161 
+Total Number of Gridpoints:  304425 
+Minimum Depth                5 levels 
+Maximum Depth:               8 levels 
+Construction time:           11.7 seconds.
+
+Number of targets:    304425
+Threads per block:    512
+Blocks per grid:      595
+
+Green Iteration Count  1
+Extraction took:             2.0273 seconds. 
+Convolution took:            2.0545 seconds. 
+Convolution wavefunction errors: 8.153e-01 L2,  1.107e-03 max
+Energy Update took:              4.5414 seconds. 
+Energy Residual:                 9.769e+00
+Updated Energy Value:            -0.23078 Hartree, 0.269225 error
+
+Green Iteration Count  2
+Extraction took:             1.9006 seconds. 
+Convolution took:            1.4252 seconds. 
+Convolution wavefunction errors: 3.767e-01 L2,  4.166e-04 max
+Energy Update took:              4.4798 seconds. 
+Energy Residual:                 1.304e-01
+Updated Energy Value:            -0.36118 Hartree, 0.138821 error
+
+Green Iteration Count  3
+Extraction took:             2.0797 seconds. 
+Convolution took:            1.4240 seconds. 
+Convolution wavefunction errors: 1.408e-01 L2,  1.324e-04 max
+Energy Update took:              4.5101 seconds. 
+Energy Residual:                 6.920e-02
+Updated Energy Value:            -0.43038 Hartree, 0.069623 error
+
+Green Iteration Count  4
+Extraction took:             2.0709 seconds. 
+Convolution took:            1.4269 seconds. 
+Convolution wavefunction errors: 4.664e-02 L2,  4.414e-05 max
+Energy Update took:              4.5517 seconds. 
+Energy Residual:                 3.300e-02
+Updated Energy Value:            -0.46337 Hartree, 0.036626 error
+
+Green Iteration Count  5
+Extraction took:             2.1047 seconds. 
+Convolution took:            1.4241 seconds. 
+Convolution wavefunction errors: 1.457e-02 L2,  1.846e-05 max
+Energy Update took:              4.5057 seconds. 
+Energy Residual:                 1.231e-02
+Updated Energy Value:            -0.47569 Hartree, 0.024315 error
+
+Green Iteration Count  6
+Extraction took:             2.0816 seconds. 
+Convolution took:            1.4240 seconds. 
+Convolution wavefunction errors: 4.759e-03 L2,  1.037e-05 max
+Energy Update took:              4.6079 seconds. 
+Energy Residual:                 3.638e-03
+Updated Energy Value:            -0.47932 Hartree, 0.020677 error
+
+Green Iteration Count  7
+Extraction took:             2.0948 seconds. 
+Convolution took:            1.4241 seconds. 
+Convolution wavefunction errors: 1.900e-03 L2,  7.450e-06 max
+Energy Update took:              4.5402 seconds. 
+Energy Residual:                 8.290e-04
+Updated Energy Value:            -0.48015 Hartree, 0.019848 error
+
+Green Iteration Count  8
+Extraction took:             2.0984 seconds. 
+Convolution took:            1.4271 seconds. 
+Convolution wavefunction errors: 1.052e-03 L2,  6.267e-06 max
+Energy Update took:              4.5456 seconds. 
+Energy Residual:                 1.098e-04
+Updated Energy Value:            -0.48026 Hartree, 0.019738 error
+
+Green Iteration Count  9
+Extraction took:             1.8409 seconds. 
+Convolution took:            1.4240 seconds. 
+Convolution wavefunction errors: 7.801e-04 L2,  5.750e-06 max
+Energy Update took:              4.5279 seconds. 
+Energy Residual:                 2.593e-05
+Updated Energy Value:            -0.48024 Hartree, 0.019764 error
+
+Green Iteration Count  10
+Extraction took:             2.0972 seconds. 
+Convolution took:            1.4242 seconds. 
+Convolution wavefunction errors: 6.827e-04 L2,  5.513e-06 max
+Energy Update took:              4.5192 seconds. 
+Energy Residual:                 3.239e-05
+Updated Energy Value:            -0.48020 Hartree, 0.019796 error
+
+Green Iteration Count  11
+Extraction took:             2.0668 seconds. 
+Convolution took:            1.4269 seconds. 
+Convolution wavefunction errors: 6.439e-04 L2,  5.403e-06 max
+Energy Update took:              4.4990 seconds. 
+Energy Residual:                 2.044e-05
+Updated Energy Value:            -0.48018 Hartree, 0.019817 error
+
+Green Iteration Count  12
+Extraction took:             2.0751 seconds. 
+Convolution took:            1.4297 seconds. 
+Convolution wavefunction errors: 6.271e-04 L2,  5.350e-06 max
+Energy Update took:              4.4086 seconds. 
+Energy Residual:                 1.101e-05
+Updated Energy Value:            -0.48017 Hartree, 0.019828 error
+
+Green Iteration Count  13
+Extraction took:             2.0804 seconds. 
+Convolution took:            1.4240 seconds. 
+Convolution wavefunction errors: 6.195e-04 L2,  5.325e-06 max
+Energy Update took:              4.4370 seconds. 
+Energy Residual:                 5.583e-06
+Updated Energy Value:            -0.48017 Hartree, 0.019834 error
+
+Green Iteration Count  14
+Extraction took:             2.0815 seconds. 
+Convolution took:            1.4240 seconds. 
+Convolution wavefunction errors: 6.159e-04 L2,  5.313e-06 max
+Energy Update took:              4.4386 seconds. 
+Energy Residual:                 2.759e-06
+Updated Energy Value:            -0.48016 Hartree, 0.019836 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    304425
+Threads per block:    512
+Blocks per grid:      595
+
+Green Iteration Count  1
+Extraction took:             2.1436 seconds. 
+Convolution took:            1.4264 seconds. 
+Convolution wavefunction errors: 2.537e-02 L2,  6.610e-06 max
+Energy Update took:              4.4526 seconds. 
+Energy Residual:                 9.877e+00
+Updated Energy Value:            -0.12307 Hartree, 0.001933 error
+
+Green Iteration Count  2
+Extraction took:             1.8102 seconds. 
+Convolution took:            1.4242 seconds. 
+Convolution wavefunction errors: 2.537e-03 L2,  1.889e-06 max
+Energy Update took:              4.4789 seconds. 
+Energy Residual:                 2.221e-03
+Updated Energy Value:            -0.12529 Hartree, -0.000288 error
+
+Green Iteration Count  3
+Extraction took:             2.0483 seconds. 
+Convolution took:            1.4275 seconds. 
+Convolution wavefunction errors: 1.662e-03 L2,  7.147e-07 max
+Energy Update took:              4.4465 seconds. 
+Energy Residual:                 9.990e-04
+Updated Energy Value:            -0.12429 Hartree, 0.000711 error
+
+Green Iteration Count  4
+Extraction took:             2.0450 seconds. 
+Convolution took:            1.4274 seconds. 
+Convolution wavefunction errors: 2.720e-03 L2,  5.666e-07 max
+Energy Update took:              4.3988 seconds. 
+Energy Residual:                 5.821e-04
+Updated Energy Value:            -0.12371 Hartree, 0.001294 error
+
+Green Iteration Count  5
+Extraction took:             2.0370 seconds. 
+Convolution took:            1.4272 seconds. 
+Convolution wavefunction errors: 3.409e-03 L2,  5.907e-07 max
+Energy Update took:              4.4822 seconds. 
+Energy Residual:                 2.765e-04
+Updated Energy Value:            -0.12343 Hartree, 0.001570 error
+
+Green Iteration Count  6
+Extraction took:             2.0926 seconds. 
+Convolution took:            1.4242 seconds. 
+Convolution wavefunction errors: 3.754e-03 L2,  6.029e-07 max
+Energy Update took:              4.4259 seconds. 
+Energy Residual:                 1.272e-04
+Updated Energy Value:            -0.12330 Hartree, 0.001697 error
+
+Green Iteration Count  7
+Extraction took:             2.0520 seconds. 
+Convolution took:            1.4242 seconds. 
+Convolution wavefunction errors: 3.917e-03 L2,  6.096e-07 max
+Energy Update took:              4.4280 seconds. 
+Energy Residual:                 5.925e-05
+Updated Energy Value:            -0.12324 Hartree, 0.001757 error
+
+Green Iteration Count  8
+Extraction took:             1.8678 seconds. 
+Convolution took:            1.4281 seconds. 
+Convolution wavefunction errors: 3.995e-03 L2,  6.136e-07 max
+Energy Update took:              4.4218 seconds. 
+Energy Residual:                 2.827e-05
+Updated Energy Value:            -0.12322 Hartree, 0.001785 error
+
+Green Iteration Count  9
+Extraction took:             2.0292 seconds. 
+Convolution took:            1.4242 seconds. 
+Convolution wavefunction errors: 4.033e-03 L2,  6.161e-07 max
+Energy Update took:              4.5283 seconds. 
+Energy Residual:                 1.382e-05
+Updated Energy Value:            -0.12320 Hartree, 0.001799 error
+
+Green Iteration Count  10
+Extraction took:             2.0312 seconds. 
+Convolution took:            1.4241 seconds. 
+Convolution wavefunction errors: 4.053e-03 L2,  6.178e-07 max
+Energy Update took:              4.6543 seconds. 
+Energy Residual:                 6.924e-06
+Updated Energy Value:            -0.12319 Hartree, 0.001806 error
+
+Green Iteration Count  11
+Extraction took:             2.0781 seconds. 
+Convolution took:            1.4242 seconds. 
+Convolution wavefunction errors: 4.064e-03 L2,  6.190e-07 max
+Energy Update took:              4.4727 seconds. 
+Energy Residual:                 3.556e-06
+Updated Energy Value:            -0.12319 Hartree, 0.001809 error
+
+Convergence to a tolerance of 0.000005 took 12 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                5 levels 
+Maximum Depth:               8 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 320.531560 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       41865 
+Total Number of Gridpoints:  310613 
+Minimum Depth                5 levels 
+Maximum Depth:               9 levels 
+Construction time:           12.2 seconds.
+
+Number of targets:    310613
+Threads per block:    512
+Blocks per grid:      607
+
+Green Iteration Count  1
+Extraction took:             2.0973 seconds. 
+Convolution took:            2.3366 seconds. 
+Convolution wavefunction errors: 8.275e-01 L2,  1.145e-03 max
+Energy Update took:              4.7991 seconds. 
+Energy Residual:                 9.772e+00
+Updated Energy Value:            -0.22771 Hartree, 0.272287 error
+
+Green Iteration Count  2
+Extraction took:             1.9149 seconds. 
+Convolution took:            1.4693 seconds. 
+Convolution wavefunction errors: 3.866e-01 L2,  4.272e-04 max
+Energy Update took:              4.5750 seconds. 
+Energy Residual:                 1.313e-01
+Updated Energy Value:            -0.35898 Hartree, 0.141017 error
+
+Green Iteration Count  3
+Extraction took:             2.1390 seconds. 
+Convolution took:            1.4691 seconds. 
+Convolution wavefunction errors: 1.454e-01 L2,  1.348e-04 max
+Energy Update took:              4.6503 seconds. 
+Energy Residual:                 7.046e-02
+Updated Energy Value:            -0.42945 Hartree, 0.070555 error
+
+Green Iteration Count  4
+Extraction took:             2.1278 seconds. 
+Convolution took:            1.4731 seconds. 
+Convolution wavefunction errors: 4.815e-02 L2,  4.471e-05 max
+Energy Update took:              4.6732 seconds. 
+Energy Residual:                 3.412e-02
+Updated Energy Value:            -0.46356 Hartree, 0.036436 error
+
+Green Iteration Count  5
+Extraction took:             2.1538 seconds. 
+Convolution took:            1.4692 seconds. 
+Convolution wavefunction errors: 1.490e-02 L2,  1.857e-05 max
+Energy Update took:              4.5075 seconds. 
+Energy Residual:                 1.293e-02
+Updated Energy Value:            -0.47649 Hartree, 0.023506 error
+
+Green Iteration Count  6
+Extraction took:             2.1246 seconds. 
+Convolution took:            1.4691 seconds. 
+Convolution wavefunction errors: 4.764e-03 L2,  1.038e-05 max
+Energy Update took:              4.5530 seconds. 
+Energy Residual:                 3.902e-03
+Updated Energy Value:            -0.48040 Hartree, 0.019604 error
+
+Green Iteration Count  7
+Extraction took:             2.1373 seconds. 
+Convolution took:            1.4692 seconds. 
+Convolution wavefunction errors: 1.849e-03 L2,  7.435e-06 max
+Energy Update took:              4.6065 seconds. 
+Energy Residual:                 9.253e-04
+Updated Energy Value:            -0.48132 Hartree, 0.018678 error
+
+Green Iteration Count  8
+Extraction took:             2.1429 seconds. 
+Convolution took:            1.4721 seconds. 
+Convolution wavefunction errors: 1.007e-03 L2,  6.246e-06 max
+Energy Update took:              4.5634 seconds. 
+Energy Residual:                 1.427e-04
+Updated Energy Value:            -0.48146 Hartree, 0.018536 error
+
+Green Iteration Count  9
+Extraction took:             2.1462 seconds. 
+Convolution took:            1.4698 seconds. 
+Convolution wavefunction errors: 7.478e-04 L2,  5.727e-06 max
+Energy Update took:              4.6322 seconds. 
+Energy Residual:                 1.456e-05
+Updated Energy Value:            -0.48145 Hartree, 0.018550 error
+
+Green Iteration Count  10
+Extraction took:             1.8979 seconds. 
+Convolution took:            1.4699 seconds. 
+Convolution wavefunction errors: 6.590e-04 L2,  5.489e-06 max
+Energy Update took:              4.6538 seconds. 
+Energy Residual:                 2.820e-05
+Updated Energy Value:            -0.48142 Hartree, 0.018578 error
+
+Green Iteration Count  11
+Extraction took:             2.1402 seconds. 
+Convolution took:            1.4721 seconds. 
+Convolution wavefunction errors: 6.249e-04 L2,  5.378e-06 max
+Energy Update took:              4.6693 seconds. 
+Energy Residual:                 1.878e-05
+Updated Energy Value:            -0.48140 Hartree, 0.018597 error
+
+Green Iteration Count  12
+Extraction took:             2.1357 seconds. 
+Convolution took:            1.4692 seconds. 
+Convolution wavefunction errors: 6.106e-04 L2,  5.325e-06 max
+Energy Update took:              4.6221 seconds. 
+Energy Residual:                 1.031e-05
+Updated Energy Value:            -0.48139 Hartree, 0.018607 error
+
+Green Iteration Count  13
+Extraction took:             2.1367 seconds. 
+Convolution took:            1.4690 seconds. 
+Convolution wavefunction errors: 6.042e-04 L2,  5.300e-06 max
+Energy Update took:              4.6907 seconds. 
+Energy Residual:                 5.278e-06
+Updated Energy Value:            -0.48139 Hartree, 0.018613 error
+
+Green Iteration Count  14
+Extraction took:             2.1352 seconds. 
+Convolution took:            1.4691 seconds. 
+Convolution wavefunction errors: 6.012e-04 L2,  5.288e-06 max
+Energy Update took:              4.7456 seconds. 
+Energy Residual:                 2.623e-06
+Updated Energy Value:            -0.48138 Hartree, 0.018615 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    310613
+Threads per block:    512
+Blocks per grid:      607
+
+Green Iteration Count  1
+Extraction took:             2.1903 seconds. 
+Convolution took:            1.4716 seconds. 
+Convolution wavefunction errors: 2.475e-02 L2,  5.999e-06 max
+Energy Update took:              4.5514 seconds. 
+Energy Residual:                 9.878e+00
+Updated Energy Value:            -0.12178 Hartree, 0.003221 error
+
+Green Iteration Count  2
+Extraction took:             2.1156 seconds. 
+Convolution took:            1.4693 seconds. 
+Convolution wavefunction errors: 2.422e-03 L2,  1.862e-06 max
+Energy Update took:              4.5366 seconds. 
+Energy Residual:                 3.305e-03
+Updated Energy Value:            -0.12508 Hartree, -0.000084 error
+
+Green Iteration Count  3
+Extraction took:             2.1363 seconds. 
+Convolution took:            1.4728 seconds. 
+Convolution wavefunction errors: 1.570e-03 L2,  6.026e-07 max
+Energy Update took:              4.5499 seconds. 
+Energy Residual:                 7.938e-04
+Updated Energy Value:            -0.12429 Hartree, 0.000710 error
+
+Green Iteration Count  4
+Extraction took:             1.8695 seconds. 
+Convolution took:            1.4727 seconds. 
+Convolution wavefunction errors: 2.631e-03 L2,  5.411e-07 max
+Energy Update took:              4.6316 seconds. 
+Energy Residual:                 4.866e-04
+Updated Energy Value:            -0.12380 Hartree, 0.001196 error
+
+Green Iteration Count  5
+Extraction took:             2.2398 seconds. 
+Convolution took:            1.4724 seconds. 
+Convolution wavefunction errors: 3.329e-03 L2,  5.610e-07 max
+Energy Update took:              4.6046 seconds. 
+Energy Residual:                 2.361e-04
+Updated Energy Value:            -0.12357 Hartree, 0.001432 error
+
+Green Iteration Count  6
+Extraction took:             2.0941 seconds. 
+Convolution took:            1.4693 seconds. 
+Convolution wavefunction errors: 3.682e-03 L2,  5.709e-07 max
+Energy Update took:              4.5630 seconds. 
+Energy Residual:                 1.089e-04
+Updated Energy Value:            -0.12346 Hartree, 0.001541 error
+
+Green Iteration Count  7
+Extraction took:             2.1037 seconds. 
+Convolution took:            1.4693 seconds. 
+Convolution wavefunction errors: 3.852e-03 L2,  5.763e-07 max
+Energy Update took:              4.5887 seconds. 
+Energy Residual:                 5.046e-05
+Updated Energy Value:            -0.12341 Hartree, 0.001592 error
+
+Green Iteration Count  8
+Extraction took:             2.1184 seconds. 
+Convolution took:            1.4724 seconds. 
+Convolution wavefunction errors: 3.933e-03 L2,  5.795e-07 max
+Energy Update took:              4.5719 seconds. 
+Energy Residual:                 2.372e-05
+Updated Energy Value:            -0.12338 Hartree, 0.001615 error
+
+Green Iteration Count  9
+Extraction took:             2.1140 seconds. 
+Convolution took:            1.4694 seconds. 
+Convolution wavefunction errors: 3.974e-03 L2,  5.813e-07 max
+Energy Update took:              4.5804 seconds. 
+Energy Residual:                 1.131e-05
+Updated Energy Value:            -0.12337 Hartree, 0.001627 error
+
+Green Iteration Count  10
+Extraction took:             2.1231 seconds. 
+Convolution took:            1.4693 seconds. 
+Convolution wavefunction errors: 3.994e-03 L2,  5.826e-07 max
+Energy Update took:              4.6804 seconds. 
+Energy Residual:                 5.446e-06
+Updated Energy Value:            -0.12337 Hartree, 0.001632 error
+
+Green Iteration Count  11
+Extraction took:             2.1663 seconds. 
+Convolution took:            1.4695 seconds. 
+Convolution wavefunction errors: 4.005e-03 L2,  5.834e-07 max
+Energy Update took:              4.6211 seconds. 
+Energy Residual:                 2.638e-06
+Updated Energy Value:            -0.12337 Hartree, 0.001635 error
+
+Convergence to a tolerance of 0.000005 took 12 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                5 levels 
+Maximum Depth:               9 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 327.132432 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
+======================================================================
+======================================================================
+====================================================================== 
+
+Tree build completed. 
+Domain Size:                 [-8.0, 8.0] 
+Tolerance:                   5.00e-02 
+Total Number of Cells:       41865 
+Total Number of Gridpoints:  310613 
+Minimum Depth                5 levels 
+Maximum Depth:               9 levels 
+Construction time:           12.3 seconds.
+
+Number of targets:    310613
+Threads per block:    512
+Blocks per grid:      607
+
+Green Iteration Count  1
+Extraction took:             2.0576 seconds. 
+Convolution took:            2.7917 seconds. 
+Convolution wavefunction errors: 8.202e-01 L2,  1.141e-03 max
+Energy Update took:              4.9776 seconds. 
+Energy Residual:                 9.771e+00
+Updated Energy Value:            -0.22917 Hartree, 0.270830 error
+
+Green Iteration Count  2
+Extraction took:             1.8669 seconds. 
+Convolution took:            1.4691 seconds. 
+Convolution wavefunction errors: 3.835e-01 L2,  4.223e-04 max
+Energy Update took:              4.8272 seconds. 
+Energy Residual:                 1.290e-01
+Updated Energy Value:            -0.35812 Hartree, 0.141875 error
+
+Green Iteration Count  3
+Extraction took:             2.1142 seconds. 
+Convolution took:            1.4691 seconds. 
+Convolution wavefunction errors: 1.451e-01 L2,  1.346e-04 max
+Energy Update took:              4.8256 seconds. 
+Energy Residual:                 7.038e-02
+Updated Energy Value:            -0.42850 Hartree, 0.071497 error
+
+Green Iteration Count  4
+Extraction took:             2.1352 seconds. 
+Convolution took:            1.4736 seconds. 
+Convolution wavefunction errors: 4.836e-02 L2,  4.482e-05 max
+Energy Update took:              4.8869 seconds. 
+Energy Residual:                 3.452e-02
+Updated Energy Value:            -0.46303 Hartree, 0.036973 error
+
+Green Iteration Count  5
+Extraction took:             2.1182 seconds. 
+Convolution took:            1.4693 seconds. 
+Convolution wavefunction errors: 1.504e-02 L2,  1.864e-05 max
+Energy Update took:              4.8166 seconds. 
+Energy Residual:                 1.324e-02
+Updated Energy Value:            -0.47627 Hartree, 0.023729 error
+
+Green Iteration Count  6
+Extraction took:             2.0961 seconds. 
+Convolution took:            1.4689 seconds. 
+Convolution wavefunction errors: 4.817e-03 L2,  1.041e-05 max
+Energy Update took:              4.8144 seconds. 
+Energy Residual:                 4.049e-03
+Updated Energy Value:            -0.48032 Hartree, 0.019680 error
+
+Green Iteration Count  7
+Extraction took:             2.1144 seconds. 
+Convolution took:            1.4694 seconds. 
+Convolution wavefunction errors: 1.866e-03 L2,  7.449e-06 max
+Energy Update took:              4.8231 seconds. 
+Energy Residual:                 9.789e-04
+Updated Energy Value:            -0.48130 Hartree, 0.018701 error
+
+Green Iteration Count  8
+Extraction took:             2.1107 seconds. 
+Convolution took:            1.4720 seconds. 
+Convolution wavefunction errors: 1.013e-03 L2,  6.253e-06 max
+Energy Update took:              4.7511 seconds. 
+Energy Residual:                 1.595e-04
+Updated Energy Value:            -0.48146 Hartree, 0.018542 error
+
+Green Iteration Count  9
+Extraction took:             2.2530 seconds. 
+Convolution took:            1.4694 seconds. 
+Convolution wavefunction errors: 7.497e-04 L2,  5.730e-06 max
+Energy Update took:              4.8075 seconds. 
+Energy Residual:                 9.766e-06
+Updated Energy Value:            -0.48145 Hartree, 0.018552 error
+
+Green Iteration Count  10
+Extraction took:             1.8567 seconds. 
+Convolution took:            1.4691 seconds. 
+Convolution wavefunction errors: 6.597e-04 L2,  5.491e-06 max
+Energy Update took:              4.8480 seconds. 
+Energy Residual:                 2.697e-05
+Updated Energy Value:            -0.48142 Hartree, 0.018579 error
+
+Green Iteration Count  11
+Extraction took:             2.0847 seconds. 
+Convolution took:            1.4725 seconds. 
+Convolution wavefunction errors: 6.252e-04 L2,  5.379e-06 max
+Energy Update took:              4.8894 seconds. 
+Energy Residual:                 1.852e-05
+Updated Energy Value:            -0.48140 Hartree, 0.018597 error
+
+Green Iteration Count  12
+Extraction took:             2.1091 seconds. 
+Convolution took:            1.4696 seconds. 
+Convolution wavefunction errors: 6.107e-04 L2,  5.326e-06 max
+Energy Update took:              4.8179 seconds. 
+Energy Residual:                 1.028e-05
+Updated Energy Value:            -0.48139 Hartree, 0.018607 error
+
+Green Iteration Count  13
+Extraction took:             2.1167 seconds. 
+Convolution took:            1.4691 seconds. 
+Convolution wavefunction errors: 6.042e-04 L2,  5.300e-06 max
+Energy Update took:              4.8728 seconds. 
+Energy Residual:                 5.294e-06
+Updated Energy Value:            -0.48139 Hartree, 0.018613 error
+
+Green Iteration Count  14
+Extraction took:             2.1076 seconds. 
+Convolution took:            1.4690 seconds. 
+Convolution wavefunction errors: 6.012e-04 L2,  5.288e-06 max
+Energy Update took:              4.8086 seconds. 
+Energy Residual:                 2.639e-06
+Updated Energy Value:            -0.48138 Hartree, 0.018615 error
+
+Convergence to a tolerance of 0.000005 took 15 iterations
+====================================================================== 
+
+
+Number of targets:    310613
+Threads per block:    512
+Blocks per grid:      607
+
+Green Iteration Count  1
+Extraction took:             2.1556 seconds. 
+Convolution took:            1.4714 seconds. 
+Convolution wavefunction errors: 2.580e-02 L2,  6.290e-06 max
+Energy Update took:              4.8094 seconds. 
+Energy Residual:                 9.874e+00
+Updated Energy Value:            -0.12582 Hartree, -0.000815 error
+
+Green Iteration Count  2
+Extraction took:             2.0737 seconds. 
+Convolution took:            1.4753 seconds. 
+Convolution wavefunction errors: 2.346e-03 L2,  1.667e-06 max
+Energy Update took:              4.8090 seconds. 
+Energy Residual:                 6.221e-04
+Updated Energy Value:            -0.12644 Hartree, -0.001437 error
+
+Green Iteration Count  3
+Extraction took:             2.0930 seconds. 
+Convolution took:            1.4727 seconds. 
+Convolution wavefunction errors: 1.645e-03 L2,  4.944e-07 max
+Energy Update took:              4.8006 seconds. 
+Energy Residual:                 1.590e-03
+Updated Energy Value:            -0.12485 Hartree, 0.000153 error
+
+Green Iteration Count  4
+Extraction took:             1.8200 seconds. 
+Convolution took:            1.4727 seconds. 
+Convolution wavefunction errors: 2.742e-03 L2,  5.298e-07 max
+Energy Update took:              4.9240 seconds. 
+Energy Residual:                 8.046e-04
+Updated Energy Value:            -0.12404 Hartree, 0.000957 error
+
+Green Iteration Count  5
+Extraction took:             2.0961 seconds. 
+Convolution took:            1.4723 seconds. 
+Convolution wavefunction errors: 3.411e-03 L2,  5.470e-07 max
+Energy Update took:              4.8007 seconds. 
+Energy Residual:                 3.638e-04
+Updated Energy Value:            -0.12368 Hartree, 0.001321 error
+
+Green Iteration Count  6
+Extraction took:             2.0685 seconds. 
+Convolution took:            1.4694 seconds. 
+Convolution wavefunction errors: 3.727e-03 L2,  5.544e-07 max
+Energy Update took:              4.8006 seconds. 
+Energy Residual:                 1.629e-04
+Updated Energy Value:            -0.12352 Hartree, 0.001484 error
+
+Green Iteration Count  7
+Extraction took:             2.0891 seconds. 
+Convolution took:            1.4719 seconds. 
+Convolution wavefunction errors: 3.869e-03 L2,  5.579e-07 max
+Energy Update took:              4.7485 seconds. 
+Energy Residual:                 7.457e-05
+Updated Energy Value:            -0.12344 Hartree, 0.001558 error
+
+Green Iteration Count  8
+Extraction took:             2.0694 seconds. 
+Convolution took:            1.4723 seconds. 
+Convolution wavefunction errors: 3.933e-03 L2,  5.608e-07 max
+Energy Update took:              4.7876 seconds. 
+Energy Residual:                 3.527e-05
+Updated Energy Value:            -0.12341 Hartree, 0.001594 error
+
+Green Iteration Count  9
+Extraction took:             2.0706 seconds. 
+Convolution took:            1.4697 seconds. 
+Convolution wavefunction errors: 3.962e-03 L2,  5.626e-07 max
+Energy Update took:              4.7365 seconds. 
+Energy Residual:                 1.727e-05
+Updated Energy Value:            -0.12339 Hartree, 0.001611 error
+
+Green Iteration Count  10
+Extraction took:             2.0703 seconds. 
+Convolution took:            1.4694 seconds. 
+Convolution wavefunction errors: 3.975e-03 L2,  5.637e-07 max
+Energy Update took:              4.8398 seconds. 
+Energy Residual:                 8.746e-06
+Updated Energy Value:            -0.12338 Hartree, 0.001620 error
+
+Green Iteration Count  11
+Extraction took:             2.1208 seconds. 
+Convolution took:            1.4697 seconds. 
+Convolution wavefunction errors: 3.981e-03 L2,  5.645e-07 max
+Energy Update took:              4.8349 seconds. 
+Energy Residual:                 4.573e-06
+Updated Energy Value:            -0.12338 Hartree, 0.001624 error
+
+Convergence to a tolerance of 0.000005 took 12 iterations
+
+
+Run Parameters: 
+Domain Size:                 8.0 
+Divide Tolerance:            5.00e-02 
+Minimum Depth                5 levels 
+Maximum Depth:               10 levels 
+Energy Residual:             5e-06 seconds.
+
+Total Time: 332.753366 seconds
+======================================================================
+======================================================================
+====================================================================== 
+
