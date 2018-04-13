@@ -30,10 +30,10 @@ class TestGreenIterations(unittest.TestCase):
         '''
         setUp() gets called before every test below.
         '''
-        self.xmin = self.ymin = self.zmin = -14
-        self.xmax = self.ymax = self.zmax = 14
+        self.xmin = self.ymin = self.zmin = -10
+        self.xmax = self.ymax = self.zmax = 10
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=4, maxLevels=20, divideTolerance1=0.05, divideTolerance2=8e-3, printTreeProperties=True)
+        self.tree.buildTree( minLevels=4, maxLevels=15, divideTolerance1=0.05, divideTolerance2=100e-1, printTreeProperties=True)
         for element in self.tree.masterList:
         
         
@@ -92,7 +92,7 @@ class TestGreenIterations(unittest.TestCase):
 
         N = self.tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
         residualTolerance = 0.000005
-        greenIterations(self.tree, 0, residualTolerance, N,normalizationFactor=groundStateMultiplicativeFactor,visualize=False)
+        greenIterations(self.tree, 0, residualTolerance, N,normalizationFactor=groundStateMultiplicativeFactor,visualize=True)
         
         # set grpund state to analytic wavefunction to isolate errors in excited state
         for element in self.tree.masterList:

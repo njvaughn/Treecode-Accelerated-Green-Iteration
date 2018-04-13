@@ -27,12 +27,14 @@ fi
 
 #  Put your job commands after this line
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/tests
-python testBatchGreenIterations.py 7 4 5 0.025 5e-6
-python testBatchGreenIterations.py 7 4 6 0.025 5e-6
-python testBatchGreenIterations.py 7 4 7 0.025 5e-6
-python testBatchGreenIterations.py 7 4 8 0.025 5e-6
-python testBatchGreenIterations.py 7 4 9 0.025 5e-6
-python testBatchGreenIterations.py 7 4 10 0.025 5e-6
+#python testGreenIterations.py
+
+python testBatchGreenIterations.py 10 4 15 0.03 1e-5 5e-6
+#python testBatchGreenIterations.py 7 4 6 0.025 5e-6
+#python testBatchGreenIterations.py 7 4 7 0.025 5e-6
+#python testBatchGreenIterations.py 7 4 8 0.025 5e-6
+#python testBatchGreenIterations.py 7 4 9 0.025 5e-6
+#python testBatchGreenIterations.py 7 4 10 0.025 5e-6
 #python testBatchGreenIterations.py 7 4 11 0.03 0.000005
 #python testBatchGreenIterations.py 7 5 11 0.03 0.000005
 #python testBatchGreenIterations.py 7 5 5 0.03 0.000005

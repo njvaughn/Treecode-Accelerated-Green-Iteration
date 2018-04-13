@@ -16,26 +16,35 @@ class TestEnergyComputation(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.xmin = self.ymin = self.zmin = -9
+        print('Building tree...')
+        self.xmin = self.ymin = self.zmin = -14
         self.xmax = self.ymax = self.zmax = -self.xmin
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=5, maxLevels=30, divideTolerance1=0.03, divideTolerance2=0.012, printTreeProperties=True )
+        self.tree.buildTree( minLevels=5, maxLevels=12, divideTolerance1=0.05, divideTolerance2=2e-5, printTreeProperties=True )
 #         self.tree.buildTree( minLevels=3, maxLevels=7, divideTolerance=0.04, printTreeProperties=True )
         self.tree.normalizeWavefunction()
         
 
     def testEnergy(self):
+        print('\nComputing Ground State energy...')
+        # set wavefunction to FES, repeat energy calculation
+        for element in self.tree.masterList:
+            for i,j,k in ThreeByThreeByThree:
+                element[1].gridpoints[i,j,k].setAnalyticPsi(0)
+        self.tree.normalizeWavefunction()
+         
         self.tree.computeKineticOnList()
         self.tree.computePotentialOnList(epsilon=0.0)
         print('\nGround State Energy:            %.6g Hartree' %float((self.tree.totalKinetic+self.tree.totalPotential)))
         print(  'Ground State Error:             %.6g mHartree' %float((-0.5-self.tree.totalKinetic-self.tree.totalPotential)*1000.0))
-
+ 
+        print('\nComputing First Excited State energy...')
         # set wavefunction to FES, repeat energy calculation
         for element in self.tree.masterList:
             for i,j,k in ThreeByThreeByThree:
                 element[1].gridpoints[i,j,k].setAnalyticPsi(1)
         self.tree.normalizeWavefunction()
-        
+         
         self.tree.computeKineticOnList()
         self.tree.computePotentialOnList(epsilon=0.0)       
         print('\nExcited State Energy:           %.6g Hartree' %float((self.tree.totalKinetic+self.tree.totalPotential)))
@@ -55,7 +64,7 @@ class TestEnergyComputation(unittest.TestCase):
 # #         print('Recursively on tree:')
 # #         print('\nPotential Error:         %.3g mHartree' %float((-1.0-self.tree.totalPotential)*1000.0))
 # #         print('Computation took:          %.3g seconds.' %self.tree.PotentialTime)
-#         
+#          
 #         self.tree.computePotentialOnList(epsilon=0.0, timePotential=True)
 # #         print('From the master list:')
 #         print('\nPotential Error:         %.3g mHartree' %float((-1.0-self.tree.totalPotential)*1000.0))
@@ -66,7 +75,7 @@ class TestEnergyComputation(unittest.TestCase):
 # #         print('From tree')
 # #         print('\nKinetic Error:           %.3g mHartree' %float((0.5-self.tree.totalKinetic)*1000.0))
 # #         print('Computation took:          %.3g seconds.' %self.tree.KineticTime)
-#         
+#          
 #         self.tree.computeKineticOnList( timeKinetic=True)
 # #         print("from master list:")
 #         print('\nKinetic Error:           %.3g mHartree' %float((0.5-self.tree.totalKinetic)*1000.0))

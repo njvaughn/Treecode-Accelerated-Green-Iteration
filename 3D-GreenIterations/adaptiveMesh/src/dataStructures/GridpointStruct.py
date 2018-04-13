@@ -18,7 +18,7 @@ class GridPoint(object):
         self.x = x
         self.y = y
         self.z = z
-        self.setAnalyticPsi(0)  # for now, set the analytic psi value.  Eventually, need to use interpolator
+        self.setAnalyticPsi(1)  # for now, set the analytic psi value.  Eventually, need to use interpolator
 #         self.setPsi(np.random.rand(1))  # for now, set the analytic psi value.  Eventually, need to use interpolator
         self.setTestFunctionValue()
         self.finalWavefunction = []
@@ -37,12 +37,12 @@ class GridPoint(object):
         indication of where he should refine before actually computing the many-atom electron density.
         '''
 #         self.testFunctionValue = trueWavefunction(0, self.x,self.y,self.z)
-#         self.testFunctionValue = trueWavefunction(0, self.x,self.y,self.z)**2 +  trueWavefunction(1, self.x,self.y,self.z)**2
+        self.testFunctionValue = trueWavefunction(0, self.x,self.y,self.z)**2 +  trueWavefunction(1, self.x,self.y,self.z)**2
 #         self.testFunctionValue = trueWavefunction(0, self.x,self.y,self.z)**4 +  trueWavefunction(1, self.x,self.y,self.z)**4
 
-        epsq = 1e-8
-        r = np.sqrt(self.x**2 + self.y**2 + self.z**2 + epsq)
-        self.testFunctionValue = 1/r**2
+#         epsq = 1e-8
+#         r = np.sqrt(self.x**2 + self.y**2 + self.z**2 + epsq)
+#         self.testFunctionValue = 1/r**2
 #         
 #         self.testFunctionValue = trueWavefunction(0, self.x,self.y,self.z)**2 * potential(self.x,self.y,self.z,1e-6)
         

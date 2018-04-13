@@ -197,6 +197,25 @@ class Cell(object):
             if self.gridpoints[i,j,k].psi > maxPsi: maxPsi = self.gridpoints[i,j,k].psi
          
         self.psiVariation = maxPsi - minPsi
+        
+    def getPsiGradVariation(self):
+        
+        
+        
+        psi = np.empty((3,3,3))
+        for i,j,k in ThreeByThreeByThree:
+            psi[i,j,k] = self.gridpoints[i,j,k].psi
+        gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
+        
+        maxXgrad = np.max(gradient[0])
+        maxYgrad = np.max(gradient[1])
+        maxZgrad = np.max(gradient[2])
+        
+        minXgrad = np.min(gradient[0])
+        minYgrad = np.min(gradient[1])
+        minZgrad = np.min(gradient[2])
+         
+        self.psiGradVariation = max( (maxXgrad-minXgrad), max( (maxYgrad-minYgrad), (maxZgrad-minZgrad)) )
             
     
     
@@ -264,41 +283,46 @@ class Cell(object):
         self.divideFlag = False # initialize
 
         # check variation in psi
-        self.getPsiVariation()
-        if self.psiVariation > divideTolerance1:
-            self.divideFlag = True
+#         self.getPsiVariation()
+#         if self.psiVariation > divideTolerance1:
+#             self.divideFlag = True
             
-        mid = self.gridpoints[1,1,1]
-        r = np.sqrt(mid.x**2 + mid.y**2 + mid.z**2)
-        VolumeDivR3 = self.volume/r**3
-        if VolumeDivR3 > divideTolerance2:
+        # check variation in gradient of psi
+        self.getPsiGradVariation()
+        if self.psiGradVariation > divideTolerance1:
             self.divideFlag = True
             
 #         mid = self.gridpoints[1,1,1]
-#         Rsq = mid.x**2 + mid.y**2 + mid.z**2
-#         VolumeDivRsq = self.volume/Rsq
-#         if VolumeDivRsq > divideTolerance2:
+#         r = np.sqrt(mid.x**2 + mid.y**2 + mid.z**2)
+#         VolumeDivR3 = self.volume/r**3
+#         if VolumeDivR3 > divideTolerance2:
 #             self.divideFlag = True
-#         PsiTimesDx = mid.psi*self.dx
-#         if PsiTimesDx > divideTolerance2:
+            
+#         mid = self.gridpoints[1,1,1]
+# #         Rsq = mid.x**2 + mid.y**2 + mid.z**2
+# #         VolumeDivRsq = self.volume/Rsq
+# #         if VolumeDivRsq > divideTolerance2:
+# #             self.divideFlag = True
+#         PsiSqTimesVolume = mid.psi**2*self.volume
+#         if PsiSqTimesVolume > divideTolerance2:
 #             self.divideFlag = True
         
-        
+    
                 
-#         self.gridpoints[1,1,1].setTestFunctionValue()
-#         parentIntegral = self.gridpoints[1,1,1].testFunctionValue*self.volume
+        self.gridpoints[1,1,1].setTestFunctionValue()
+        parentIntegral = self.gridpoints[1,1,1].testFunctionValue*self.volume
 #          
-#         childrenIntegral = 0.0
-#         xmids = np.array([(3*self.xmin+self.xmax)/4, (self.xmin+3*self.xmax)/4])
-#         ymids = np.array([(3*self.ymin+self.ymax)/4, (self.ymin+3*self.ymax)/4])
-#         zmids = np.array([(3*self.zmin+self.zmax)/4, (self.zmin+3*self.zmax)/4])
-#         for i,j,k in TwoByTwoByTwo:
-#             tempChild = GridPoint(xmids[i],ymids[j],zmids[k])
-#             tempChild.setTestFunctionValue()
-#             childrenIntegral += tempChild.testFunctionValue*(self.volume/8)
-#          
-#         if abs(parentIntegral-childrenIntegral) > divideTolerance2:
-#             self.divideFlag = True
+        childrenIntegral = 0.0
+        xmids = np.array([(3*self.xmin+self.xmax)/4, (self.xmin+3*self.xmax)/4])
+        ymids = np.array([(3*self.ymin+self.ymax)/4, (self.ymin+3*self.ymax)/4])
+        zmids = np.array([(3*self.zmin+self.zmax)/4, (self.zmin+3*self.zmax)/4])
+        for i,j,k in TwoByTwoByTwo:
+            tempChild = GridPoint(xmids[i],ymids[j],zmids[k])
+            tempChild.setTestFunctionValue()
+            childrenIntegral += tempChild.testFunctionValue*(self.volume/8)
+          
+        if abs(parentIntegral-childrenIntegral) > divideTolerance2:
+            self.divideFlag = True
         
      
     def fillInNeighbors(self, gridpoints): 
@@ -419,9 +443,19 @@ class Cell(object):
 
     
     def computePotential(self, epsilon=0):
+        ''' midpoint only '''
         midpoint = self.gridpoints[1,1,1]
         self.PE = self.volume*midpoint.psi*midpoint.psi*potential(midpoint.x,midpoint.y,midpoint.z, epsilon)
-#         self.PE = self.volume*np.sum( self.gridpoints )
+        
+        ''' averaged over cell '''
+        psiVpsi = np.empty((3,3,3))
+        for i,j,k in ThreeByThreeByThree:
+            point = self.gridpoints[i,j,k]
+            if (point.x**2+point.y**2+point.z**2)>0:
+                psiVpsi[i,j,k] = point.psi**2 * potential(point.x,point.y,point.z,epsilon)
+            else: 
+                psiVpsi[i,j,k] = 0
+        self.PE = self.volume*np.average( psiVpsi )
 
 #         psi = np.empty((3,3,3))
 #         V = np.empty((3,3,3))
@@ -447,14 +481,31 @@ class Cell(object):
 #         Laplacian = computeLaplacian(self)
 #         self.KE = -1/2*self.volume*midpoint.psi*Laplacian[1,1,1]
             
+#         psi = np.empty((3,3,3))
+#         for i,j,k in ThreeByThreeByThree:
+#             psi[i,j,k] = self.gridpoints[i,j,k].psi
+#         gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
+#         grad = gradient[0]+gradient[1]+gradient[2]
+#         gradPsiSquared = grad*grad
+#         self.KE = 1/2*self.volume*gradPsiSquared[1,1,1]
+
+
+        ''' midpoint only '''
+#         psi = np.empty((3,3,3))
+#         for i,j,k in ThreeByThreeByThree:
+#             psi[i,j,k] = self.gridpoints[i,j,k].psi
+#         gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
+#         gradPsiSquared = gradient[0]**2+gradient[1]**2+gradient[2]**2
+#         self.KE = 1/2*self.volume*gradPsiSquared[1,1,1]
+         
+         
+        ''' average over all cell values '''
         psi = np.empty((3,3,3))
         for i,j,k in ThreeByThreeByThree:
             psi[i,j,k] = self.gridpoints[i,j,k].psi
         gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
-        grad = gradient[0]+gradient[1]+gradient[2]
-        gradPsiSquared = grad*grad
-        self.KE = 1/2*self.volume*gradPsiSquared[1,1,1]
-         
+        gradPsiSquared = gradient[0]**2+gradient[1]**2+gradient[2]**2
+        self.KE = 1/2*self.volume*np.average(gradPsiSquared)
         
    
         
