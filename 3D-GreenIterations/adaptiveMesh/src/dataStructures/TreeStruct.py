@@ -115,16 +115,17 @@ class Tree(object):
                   %(self.xmin, self.xmax, divideTolerance, self.treeSize, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
         
      
-    def buildTree(self,minLevels,maxLevels,divideTolerance1, divideTolerance2,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
+    def buildTree(self,minLevels,maxLevels, maxDx, divideTolerance1, divideTolerance2,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         timer = Timer()
-        def recursiveDivide(self, Cell, minLevels, maxLevels, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
+        def recursiveDivide(self, Cell, minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
             levelCounter += 1
             if currentLevel < maxLevels:
                 
-                if currentLevel < minLevels:
+                if ( (currentLevel < minLevels) or (Cell.dx > maxDx)):
                     Cell.divideFlag = True 
+                    
                 else:                             
                     Cell.checkIfCellShouldDivideTwoConditions(divideTolerance1, divideTolerance2)
                     
@@ -133,7 +134,7 @@ class Tree(object):
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
-                        maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
+                        maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
                 else:
                     minDepthAchieved = min(minDepthAchieved, currentLevel)
                     
@@ -143,7 +144,7 @@ class Tree(object):
         
         timer.start()
         levelCounter=0
-        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
         timer.stop()
         
         """ Count the number of unique gridpoints """

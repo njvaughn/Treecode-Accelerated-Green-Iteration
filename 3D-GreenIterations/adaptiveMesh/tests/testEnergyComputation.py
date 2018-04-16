@@ -17,10 +17,10 @@ class TestEnergyComputation(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         print('Building tree...')
-        self.xmin = self.ymin = self.zmin = -14
+        self.xmin = self.ymin = self.zmin = -12
         self.xmax = self.ymax = self.zmax = -self.xmin
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=5, maxLevels=12, divideTolerance1=0.05, divideTolerance2=2e-5, printTreeProperties=True )
+        self.tree.buildTree( minLevels=1, maxLevels=12, maxDx=0.75, divideTolerance1=0.05, divideTolerance2=5e-6, printTreeProperties=True )
 #         self.tree.buildTree( minLevels=3, maxLevels=7, divideTolerance=0.04, printTreeProperties=True )
         self.tree.normalizeWavefunction()
         

@@ -448,14 +448,14 @@ class Cell(object):
         self.PE = self.volume*midpoint.psi*midpoint.psi*potential(midpoint.x,midpoint.y,midpoint.z, epsilon)
         
         ''' averaged over cell '''
-        psiVpsi = np.empty((3,3,3))
-        for i,j,k in ThreeByThreeByThree:
-            point = self.gridpoints[i,j,k]
-            if (point.x**2+point.y**2+point.z**2)>0:
-                psiVpsi[i,j,k] = point.psi**2 * potential(point.x,point.y,point.z,epsilon)
-            else: 
-                psiVpsi[i,j,k] = 0
-        self.PE = self.volume*np.average( psiVpsi )
+#         psiVpsi = np.empty((3,3,3))
+#         for i,j,k in ThreeByThreeByThree:
+#             point = self.gridpoints[i,j,k]
+#             if (point.x**2+point.y**2+point.z**2)>0:
+#                 psiVpsi[i,j,k] = point.psi**2 * potential(point.x,point.y,point.z,epsilon)
+#             else: 
+#                 psiVpsi[i,j,k] = 0
+#         self.PE = self.volume*np.average( psiVpsi )
 
 #         psi = np.empty((3,3,3))
 #         V = np.empty((3,3,3))
@@ -491,22 +491,22 @@ class Cell(object):
 
 
         ''' midpoint only '''
-#         psi = np.empty((3,3,3))
-#         for i,j,k in ThreeByThreeByThree:
-#             psi[i,j,k] = self.gridpoints[i,j,k].psi
-#         gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
-#         gradPsiSquared = gradient[0]**2+gradient[1]**2+gradient[2]**2
-#         self.KE = 1/2*self.volume*gradPsiSquared[1,1,1]
-         
-         
-        ''' average over all cell values '''
         psi = np.empty((3,3,3))
         for i,j,k in ThreeByThreeByThree:
             psi[i,j,k] = self.gridpoints[i,j,k].psi
         gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
         gradPsiSquared = gradient[0]**2+gradient[1]**2+gradient[2]**2
-        self.KE = 1/2*self.volume*np.average(gradPsiSquared)
-        
+        self.KE = 1/2*self.volume*gradPsiSquared[1,1,1]
+         
+         
+        ''' average over all cell values '''
+#         psi = np.empty((3,3,3))
+#         for i,j,k in ThreeByThreeByThree:
+#             psi[i,j,k] = self.gridpoints[i,j,k].psi
+#         gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
+#         gradPsiSquared = gradient[0]**2+gradient[1]**2+gradient[2]**2
+#         self.KE = 1/2*self.volume*np.average(gradPsiSquared)
+#         
    
         
         
