@@ -1,8 +1,7 @@
 #!/bin/bash
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/tests
-python testBatchGreenIterations.py 12 5 12 0.05 1e-5 5e-6
-#python testBatchGreenIterations.py 8 4 15 0.05 5e-5 5e-6
-#python testBatchGreenIterations.py 8 4 15 0.05 1e-5 5e-6
-
-
+python testBatchGreenIterations.py 10 4 20 10000 5e-6
+python testBatchGreenIterations.py 10 4 20 15000 5e-6
+python testBatchGreenIterations.py 10 4 20 20000 5e-6
+python testBatchGreenIterations.py 10 4 20 25000 5e-6

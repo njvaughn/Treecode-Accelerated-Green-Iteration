@@ -56,6 +56,69 @@ class Tree(object):
         self.masterList = [[self.root.uniqueID, self.root]]
         self.xmin = xmin
         self.xmax = xmax
+        
+    def buildTree(self,minLevels,maxLevels,N,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
+        # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
+        # regardless of division criteria
+        # N is roughly the number of grid points.  It is used to generate the density function.
+        timer = Timer()
+        def recursiveDivide(self, Cell, minLevels, maxLevels, N, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
+            levelCounter += 1
+            if currentLevel < maxLevels:
+                
+                if currentLevel < minLevels:
+                    Cell.divideFlag = True 
+                else:  
+                    Cell.checkIfAboveMeshDensity(N)                          
+#                     Cell.checkIfCellShouldDivide(N)
+                    
+                if Cell.divideFlag == True:   
+                    Cell.divide(printNumberOfCells)
+#                     for i,j,k in TwoByTwoByTwo: # update the list of cells
+#                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
+                    for i,j,k in TwoByTwoByTwo:
+                        maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, N, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
+                else:
+                    minDepthAchieved = min(minDepthAchieved, currentLevel)
+                    
+                    
+            maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
+            return maxDepthAchieved, minDepthAchieved, levelCounter
+        
+        timer.start()
+        levelCounter=0
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, N, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
+        timer.stop()
+        
+        """ Count the number of unique leaf cells and gridpoints """
+        self.numberOfGridpoints = 0
+        self.numberOfCells = 0
+        for element in self.masterList:
+            if element[1].leaf==True:
+                self.numberOfCells += 1
+                for i,j,k in ThreeByThreeByThree:
+                    if not hasattr(element[1].gridpoints[i,j,k], "counted"):
+                        self.numberOfGridpoints += 1
+                        element[1].gridpoints[i,j,k].counted = True
+        
+                        
+        for element in self.masterList:
+            for i,j,k in ThreeByThreeByThree:
+                if hasattr(element[1].gridpoints[i,j,k], "counted"):
+                    element[1].gridpoints[i,j,k].counted = None
+                    
+        if printTreeProperties == True: 
+            print("Tree build completed. \n"
+                  "Domain Size:                 [%.1f, %.1f] \n"
+                  "N for optimal density:       %1.2e \n"
+                  "Total Number of Cells:       %i \n"
+                  "Total Number of Leaf Cells:  %i \n"
+                  "Total Number of Gridpoints:  %i \n"
+                  "Minimum Depth                %i levels \n"
+                  "Maximum Depth:               %i levels \n"
+                  "Construction time:           %.3g seconds." 
+                  %(self.xmin, self.xmax, N, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
+        
             
     def buildTreeOneCondition(self,minLevels,maxLevels,divideTolerance,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
@@ -115,7 +178,7 @@ class Tree(object):
                   %(self.xmin, self.xmax, divideTolerance, self.treeSize, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
         
      
-    def buildTree(self,minLevels,maxLevels, maxDx, divideTolerance1, divideTolerance2,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
+    def buildTreeTwoConditions(self,minLevels,maxLevels, maxDx, divideTolerance1, divideTolerance2,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         timer = Timer()

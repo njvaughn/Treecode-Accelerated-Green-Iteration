@@ -17,11 +17,12 @@ class TestEnergyComputation(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         print('Building tree...')
-        self.xmin = self.ymin = self.zmin = -12
+        self.xmin = self.ymin = self.zmin = -15
         self.xmax = self.ymax = self.zmax = -self.xmin
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=1, maxLevels=12, maxDx=0.75, divideTolerance1=0.05, divideTolerance2=5e-6, printTreeProperties=True )
-#         self.tree.buildTree( minLevels=3, maxLevels=7, divideTolerance=0.04, printTreeProperties=True )
+        self.tree.buildTree( minLevels=5, maxLevels=20, N=1000, printTreeProperties=True )
+#         self.tree.buildTree( minLevels=1, maxLevels=12, maxDx=0.75, divideTolerance1=0.05, divideTolerance2=5e-6, printTreeProperties=True )
+#         self.tree.buildTreeOneCondition( minLevels=4, maxLevels=12, divideTolerance=0.04, printTreeProperties=True )
         self.tree.normalizeWavefunction()
         
 
@@ -36,6 +37,8 @@ class TestEnergyComputation(unittest.TestCase):
         self.tree.computeKineticOnList()
         self.tree.computePotentialOnList(epsilon=0.0)
         print('\nGround State Energy:            %.6g Hartree' %float((self.tree.totalKinetic+self.tree.totalPotential)))
+        print(  'Potential Energy Error:         %.6g mHartree' %float((-1.0-self.tree.totalPotential)*1000.0))
+        print(  'Kinetic Energy Error:           %.6g mHartree' %float((0.5-self.tree.totalKinetic)*1000.0))
         print(  'Ground State Error:             %.6g mHartree' %float((-0.5-self.tree.totalKinetic-self.tree.totalPotential)*1000.0))
  
         print('\nComputing First Excited State energy...')
@@ -44,10 +47,12 @@ class TestEnergyComputation(unittest.TestCase):
             for i,j,k in ThreeByThreeByThree:
                 element[1].gridpoints[i,j,k].setAnalyticPsi(1)
         self.tree.normalizeWavefunction()
-         
+          
         self.tree.computeKineticOnList()
         self.tree.computePotentialOnList(epsilon=0.0)       
         print('\nExcited State Energy:           %.6g Hartree' %float((self.tree.totalKinetic+self.tree.totalPotential)))
+        print(  'Potential Energy Error:         %.6g mHartree' %float((-0.25-self.tree.totalPotential)*1000.0))
+        print(  'Kinetic Energy Error:           %.6g mHartree' %float((0.125-self.tree.totalKinetic)*1000.0))
         print(  'Excited State Error:            %.6g mHartree' %float((-0.125-self.tree.totalKinetic-self.tree.totalPotential)*1000.0))
 
 

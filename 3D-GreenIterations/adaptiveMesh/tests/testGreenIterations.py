@@ -33,7 +33,8 @@ class TestGreenIterations(unittest.TestCase):
         self.xmin = self.ymin = self.zmin = -10
         self.xmax = self.ymax = self.zmax = 10
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=4, maxLevels=15, divideTolerance1=0.05, divideTolerance2=100e-1, printTreeProperties=True)
+#         self.tree.buildTree( minLevels=4, maxLevels=15, divideTolerance1=0.05, divideTolerance2=100e-1, printTreeProperties=True)
+        self.tree.buildTree( minLevels=4, maxLevels=15, N=12000, printTreeProperties=True )
         for element in self.tree.masterList:
         
         

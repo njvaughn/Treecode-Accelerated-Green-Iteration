@@ -9,6 +9,7 @@ import itertools
 import bisect
 
 from hydrogenPotential import potential
+from meshUtilities import meshDensity
 from GridpointStruct import GridPoint
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -251,22 +252,23 @@ class Cell(object):
 #                 self.divideFlag = True
 #                 return
 
-#         self.getTestFunctionVariation()
-#         if self.testFunctionVariation > divideTolerance:
-#             self.divideFlag = True
-#         else:
-#             self.divideFlag = False
+        self.getPsiVariation()
+        if self.psiVariation > divideTolerance:
+            self.divideFlag = True
+        else:
+            self.divideFlag = False
             
             
 #         psiTimesVolume = abs(self.gridpoints[1,1,1].psi**2)*self.volume
 #         if psiTimesVolume > divideTolerance:
 #             self.divideFlag = True
-        self.divideFlag = False
-        mid = self.gridpoints[1,1,1]
-        Rsq = mid.x**2 + mid.y**2 + mid.z**2
-        VolumeDivRsq = self.volume/Rsq
-        if VolumeDivRsq > divideTolerance:
-            self.divideFlag = True
+
+#         self.divideFlag = False
+#         mid = self.gridpoints[1,1,1]
+#         Rsq = mid.x**2 + mid.y**2 + mid.z**2
+#         VolumeDivRsq = self.volume/Rsq
+#         if VolumeDivRsq > divideTolerance:
+#             self.divideFlag = True
 
 #         mid = self.gridpoints[1,1,1]
 #         V = potential(mid.x,mid.y,mid.z)
@@ -274,6 +276,12 @@ class Cell(object):
 #         if PotentialSQTimesVolume > divideTolerance:
 #             self.divideFlag = True
 
+    def checkIfAboveMeshDensity(self,N):
+        self.divideFlag = False
+        r = np.sqrt( self.gridpoints[1,1,1].x**2 + self.gridpoints[1,1,1].y**2 + self.gridpoints[1,1,1].z**2 )
+        if 1/self.volume < meshDensity(N,r):
+            self.divideFlag=True
+            
 
     def checkIfCellShouldDivideTwoConditions(self, divideTolerance1, divideTolerance2):
         '''
