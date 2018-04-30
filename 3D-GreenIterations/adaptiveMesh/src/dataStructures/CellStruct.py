@@ -194,10 +194,10 @@ class Cell(object):
         minPsiVPsi = self.gridpoints[0,0,0].psi
         maxPsiVPsi = self.gridpoints[0,0,0].psi
         for i,j,k in ThreeByThreeByThree:
-            if self.gridpoints[i,j,k].psi < minPsi: minPsi = self.gridpoints[i,j,k].psi
-            if self.gridpoints[i,j,k].psi > maxPsi: maxPsi = self.gridpoints[i,j,k].psi
+            if self.gridpoints[i,j,k].psi < minPsiVPsi: minPsiVPsi = self.gridpoints[i,j,k].psi
+            if self.gridpoints[i,j,k].psi > maxPsiVPsi: maxPsiVPsi = self.gridpoints[i,j,k].psi
          
-        self.psiVariation = maxPsi - minPsi
+        self.psiVariation = maxPsiVPsi - minPsiVPsi
         
     def getPsiGradVariation(self):
         
@@ -276,10 +276,10 @@ class Cell(object):
 #         if PotentialSQTimesVolume > divideTolerance:
 #             self.divideFlag = True
 
-    def checkIfAboveMeshDensity(self,N):
+    def checkIfAboveMeshDensity(self,divideParameter,divideCriterion):
         self.divideFlag = False
         r = np.sqrt( self.gridpoints[1,1,1].x**2 + self.gridpoints[1,1,1].y**2 + self.gridpoints[1,1,1].z**2 )
-        if 1/self.volume < meshDensity(N,r):
+        if 1/self.volume < meshDensity(r,divideParameter,divideCriterion):
             self.divideFlag=True
             
 
@@ -488,6 +488,14 @@ class Cell(object):
 #         midpoint = self.gridpoints[1,1,1]
 #         Laplacian = computeLaplacian(self)
 #         self.KE = -1/2*self.volume*midpoint.psi*Laplacian[1,1,1]
+        
+        ''' midpoint only '''
+        psi = np.empty((3,3,3))
+        for i,j,k in ThreeByThreeByThree:
+            psi[i,j,k] = self.gridpoints[i,j,k].psi
+        gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
+        gradPsiSquared = gradient[0]**2+gradient[1]**2+gradient[2]**2
+        self.KE = 1/2*self.volume*gradPsiSquared[1,1,1]
             
 #         psi = np.empty((3,3,3))
 #         for i,j,k in ThreeByThreeByThree:
@@ -498,13 +506,9 @@ class Cell(object):
 #         self.KE = 1/2*self.volume*gradPsiSquared[1,1,1]
 
 
-        ''' midpoint only '''
-        psi = np.empty((3,3,3))
-        for i,j,k in ThreeByThreeByThree:
-            psi[i,j,k] = self.gridpoints[i,j,k].psi
-        gradient = np.gradient(psi, self.dx, self.dy, self.dz, edge_order=2)
-        gradPsiSquared = gradient[0]**2+gradient[1]**2+gradient[2]**2
-        self.KE = 1/2*self.volume*gradPsiSquared[1,1,1]
+
+        
+#         self.KE = 1/2*self.volume*np.average(gradPsiSquared)
          
          
         ''' average over all cell values '''
@@ -515,6 +519,16 @@ class Cell(object):
 #         gradPsiSquared = gradient[0]**2+gradient[1]**2+gradient[2]**2
 #         self.KE = 1/2*self.volume*np.average(gradPsiSquared)
 #         
+
+    def computeKinetic_AlternativeThatFails(self,epsilon=0.0):
+        ''' 
+        Compute the kinetic energy term as the difference between the potential and the
+        previous energy term
+         '''
+        midpoint = self.gridpoints[1,1,1]
+        self.KE = self.volume*midpoint.psi*midpoint.psi*( self.tree.E - potential(midpoint.x,midpoint.y,midpoint.z, epsilon) )
+        
+         
    
         
         

@@ -27,15 +27,20 @@ fi
 
 #  Put your job commands after this line
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/tests
-#python testGreenIterations.py
 
-python testBatchGreenIterations.py 20 5 25 1000 5e-6
-python testBatchGreenIterations.py 20 5 25 4000 5e-6
-python testBatchGreenIterations.py 20 4 25 16000 5e-6
-python testBatchGreenIterations.py 20 4 25 64000 5e-6
-#python testBatchGreenIterations.py 15 5 5 2000 5e-6
-#python testBatchGreenIterations.py 15 6 6 4000 5e-6
-#python testBatchGreenIterations.py 15 7 7 8000 5e-6
-#python testBatchGreenIterations.py 15 5 20 16000 5e-6
-#python testBatchGreenIterations.py 15 5 20 32000 5e-6
+
+######################
+### BASELINE TESTS ###
+python testBatchGreenIterations.py 15 5 20 LW1 2000 5e-6 /home/njvaughn/results_4_27/varyingMinDepth.csv
+python testBatchGreenIterations.py 15 5 20 LW2 2000 5e-6 /home/njvaughn/results_4_27/varyingMinDepth.csv
+######################
+
+#python testBatchGreenIterations.py 9 5 20 LW1 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
+#python testBatchGreenIterations.py 9 5 20 LW2 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
+
+#python testBatchGreenIterations.py 12 5 20 LW1 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
+#python testBatchGreenIterations.py 12 5 20 LW2 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
+
+#python testBatchGreenIterations.py 18 5 20 LW1 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
+#python testBatchGreenIterations.py 18 5 20 LW2 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
 

@@ -1,7 +1,23 @@
 #!/bin/bash
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/tests
-python testBatchGreenIterations.py 10 4 20 10000 5e-6
-python testBatchGreenIterations.py 10 4 20 15000 5e-6
-python testBatchGreenIterations.py 10 4 20 20000 5e-6
-python testBatchGreenIterations.py 10 4 20 25000 5e-6
+
+
+######################
+### BASELINE TESTS ###
+#python testBatchGreenIterations.py 15 5 20 LW1 2000 1e-7 /home/njvaughn/results_4_27/varyingMinDepth.csv
+#python testBatchGreenIterations.py 15 5 20 LW2 2000 1e-7 /home/njvaughn/results_4_27/varyingMinDepth.csv
+######################
+
+python testBatchGreenIterations.py 15 4 20 LW1 2000 1e-7 /home/njvaughn/results_4_28/accuracyResults.csv
+#python testBatchGreenIterations.py 15 4 20 LW2 2000 1e-7 /home/njvaughn/results_4_28/accuracyResults.csv
+
+#python testBatchGreenIterations.py 18 5 20 LW1 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
+#python testBatchGreenIterations.py 18 5 20 LW2 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
+
+#python testBatchGreenIterations.py 15 6 20 LW1 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
+#python testBatchGreenIterations.py 15 6 20 LW2 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
+
+
+#Ground state normalization factor: 1.00272676296
+
