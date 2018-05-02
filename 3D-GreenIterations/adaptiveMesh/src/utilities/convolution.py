@@ -6,7 +6,8 @@ Note: the current implementation does not use shared memory, which would provide
 speedup.  -- 03/19/2018 NV 
 """
 from numba import cuda
-from math import sqrt,exp
+from math import sqrt,exp,factorial
+import math
 import numpy as np
 import os
 import shutil
@@ -29,6 +30,31 @@ def gpuConvolution(targets,sources,psiNew,k):
 #                 r = sqrt( 0.5*volume_s**(1/3))
                 r = 0.5*volume_s**(1/3)
                 psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-k*r)/r # increment the new wavefunction value
+                
+@cuda.jit
+def gpuConvolutionSmoothing(targets,sources,psiNew,k,n,epsilon,skipSingular=False):
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t = targets[globalID][0:3]  # set the x, y, and z values of the target
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, psi_s, V_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            scaledEpsilon = epsilon * volume_s**(1/3)
+#             scaledEpsilon = epsilon
+            if ( (skipSingular==False) or (x_t!=x_s) or (y_t!=y_s) or (z_t!=z_s) ):
+                
+                ## COMPUTE CHRISTLIEB KERNEL APPROXIMATION ##
+                Gvalue = 0.0
+                for ii in range(n+1):
+                    coefficient = 1.0
+                    for jj in range(ii):
+                        coefficient /= (jj+1) # this is replacing the 1/factorial(i)
+                        coefficient *= ((-1/2)-jj)
+                    
+#                     Gvalue += coefficient* (-epsilon**2)**ii * (r**2 + epsilon**2)**(-1/2-ii)
+                    Gvalue += coefficient* (-scaledEpsilon**2)**ii * (r**2 + scaledEpsilon**2)**(-1/2-ii)
+    #             return -np.exp(-r)*Gvalue
+                psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-k*r)*Gvalue # increment the new wavefunction value
 
 # def dummyConvolutionToTestImportExport(targets,sources,psiNew,k):
 #     for i in range(targets):
@@ -44,7 +70,7 @@ def gpuConvolution(targets,sources,psiNew,k):
 #                 psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-k*r)/r # increment the new wavefunction value
                         
             
-def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, normalizationFactor=1, threadsPerBlock=512, visualize=False, outputErrors=False):  # @DontTrace
+def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, smoothingN, smoothingEps, normalizationFactor=1, threadsPerBlock=512, visualize=False, outputErrors=False):  # @DontTrace
     '''
     :param residualTolerance: exit condition for Green Iterations, residual on the total energy
     :param energyLevel: energy level trying to compute
@@ -68,7 +94,7 @@ def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, norma
     
     Etrue = trueEnergy(energyLevel)
     
-    while residual > residualTolerance:
+    while ( (residual > residualTolerance) and (GIcounter<50) ):
 #     while GIcounter < 15:
         print()
         print('Green Iteration Count ', GIcounter)
@@ -82,7 +108,11 @@ def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, norma
         startConvolutionTime = timer()
         k = np.sqrt(-2*tree.E)                 # set the k value coming from the current guess for the energy
 #             k = 1
-        gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution
+#         gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution
+
+
+        skipSingular=False  # set this to TRUE to reproduce results when I was skipping singularity.
+        gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k,smoothingN,smoothingEps,skipSingular)
         ConvolutionTime = timer() - startConvolutionTime
         print('Extraction took:             %.4f seconds. ' %ExtractionTime)
         print('Convolution took:            %.4f seconds. ' %ConvolutionTime)
