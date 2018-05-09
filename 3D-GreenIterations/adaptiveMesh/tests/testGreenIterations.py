@@ -33,7 +33,8 @@ class TestGreenIterations(unittest.TestCase):
         self.xmin = self.ymin = self.zmin = -10
         self.xmax = self.ymax = self.zmax = 10
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
-        self.tree.buildTree( minLevels=4, maxLevels=15, divideTolerance1=0.05, divideTolerance2=100e-1, printTreeProperties=True)
+#         self.tree.buildTree( minLevels=4, maxLevels=15, divideTolerance1=0.05, divideTolerance2=100e-1, printTreeProperties=True)
+        self.tree.buildTree( minLevels=4, maxLevels=15, N=12000, printTreeProperties=True )
         for element in self.tree.masterList:
         
         
@@ -95,28 +96,28 @@ class TestGreenIterations(unittest.TestCase):
         greenIterations(self.tree, 0, residualTolerance, N,normalizationFactor=groundStateMultiplicativeFactor,visualize=True)
         
         # set grpund state to analytic wavefunction to isolate errors in excited state
-        for element in self.tree.masterList:
-            for i,j,k in ThreeByThreeByThree:
-                element[1].gridpoints[i,j,k].setAnalyticPsi(0)
-                element[1].gridpoints[i,j,k].psi *= groundStateMultiplicativeFactor
-        self.tree.copyPsiToFinalWavefunction(0)
-         
-        testGridPoint = self.tree.masterList[356][1].gridpoints[0,1,2]
-#         print(testGridPoint.finalWavefunction)
-        self.assertEqual(testGridPoint.psi, testGridPoint.finalWavefunction[0], "Psi did not get copied to first element of finalWavefunction")
-        print('='*70,'\n')
-          
-        # reset initial guesses
-        self.tree.E = -0.25 # set initial energy guess
-        for element in self.tree.masterList:            
-            for i,j,k in ThreeByThreeByThree:
-#                 element[1].gridpoints[i,j,k].setAnalyticPsi(2)
-                element[1].gridpoints[i,j,k].setPsi(np.random.rand(1)[0])
-                   
-                   
-        greenIterations(self.tree, 1, residualTolerance, N, normalizationFactor=excitedStateMultiplicativeFactor, visualize=False)
-        self.tree.copyPsiToFinalWavefunction(1)
-#         
+#         for element in self.tree.masterList:
+#             for i,j,k in ThreeByThreeByThree:
+#                 element[1].gridpoints[i,j,k].setAnalyticPsi(0)
+#                 element[1].gridpoints[i,j,k].psi *= groundStateMultiplicativeFactor
+#         self.tree.copyPsiToFinalWavefunction(0)
+#          
+#         testGridPoint = self.tree.masterList[356][1].gridpoints[0,1,2]
+# #         print(testGridPoint.finalWavefunction)
+#         self.assertEqual(testGridPoint.psi, testGridPoint.finalWavefunction[0], "Psi did not get copied to first element of finalWavefunction")
+#         print('='*70,'\n')
+#           
+#         # reset initial guesses
+#         self.tree.E = -0.25 # set initial energy guess
+#         for element in self.tree.masterList:            
+#             for i,j,k in ThreeByThreeByThree:
+# #                 element[1].gridpoints[i,j,k].setAnalyticPsi(2)
+#                 element[1].gridpoints[i,j,k].setPsi(np.random.rand(1)[0])
+#                    
+#                    
+#         greenIterations(self.tree, 1, residualTolerance, N, normalizationFactor=excitedStateMultiplicativeFactor, visualize=False)
+#         self.tree.copyPsiToFinalWavefunction(1)
+# #         
 
 
 

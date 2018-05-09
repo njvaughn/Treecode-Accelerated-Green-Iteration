@@ -14,7 +14,8 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 import numpy as np
 import itertools
 import matplotlib
-matplotlib.use('TkAgg')
+# matplotlib.use('TkAgg')
+matplotlib.use('Agg')  # to not display
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -56,6 +57,72 @@ class Tree(object):
         self.masterList = [[self.root.uniqueID, self.root]]
         self.xmin = xmin
         self.xmax = xmax
+        
+    def buildTree(self,minLevels,maxLevels, divideCriterion, divideParameter, printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
+        # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
+        # regardless of division criteria
+        # N is roughly the number of grid points.  It is used to generate the density function.
+        timer = Timer()
+        def recursiveDivide(self, Cell, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
+            levelCounter += 1
+            if currentLevel < maxLevels:
+                
+                if currentLevel < minLevels:
+                    Cell.divideFlag = True 
+                else:  
+                    if (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3'):
+                        Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
+                    else:                        
+                        Cell.checkIfCellShouldDivide(N)
+                    
+                if Cell.divideFlag == True:   
+                    Cell.divide(printNumberOfCells)
+#                     for i,j,k in TwoByTwoByTwo: # update the list of cells
+#                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
+                    for i,j,k in TwoByTwoByTwo:
+                        maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
+                else:
+                    minDepthAchieved = min(minDepthAchieved, currentLevel)
+                    
+                    
+            maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
+            return maxDepthAchieved, minDepthAchieved, levelCounter
+        
+        timer.start()
+        levelCounter=0
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
+        timer.stop()
+        
+        """ Count the number of unique leaf cells and gridpoints """
+        self.numberOfGridpoints = 0
+        self.numberOfCells = 0
+        for element in self.masterList:
+            if element[1].leaf==True:
+                self.numberOfCells += 1
+                for i,j,k in ThreeByThreeByThree:
+                    if not hasattr(element[1].gridpoints[i,j,k], "counted"):
+                        self.numberOfGridpoints += 1
+                        element[1].gridpoints[i,j,k].counted = True
+        
+                        
+        for element in self.masterList:
+            for i,j,k in ThreeByThreeByThree:
+                if hasattr(element[1].gridpoints[i,j,k], "counted"):
+                    element[1].gridpoints[i,j,k].counted = None
+                    
+        if printTreeProperties == True: 
+            print("Tree build completed. \n"
+                  "Domain Size:                 [%.1f, %.1f] \n"
+                  "Divide Ciretion:             %s \n"
+                  "Divide Parameter:            %1.2e \n"
+                  "Total Number of Cells:       %i \n"
+                  "Total Number of Leaf Cells:  %i \n"
+                  "Total Number of Gridpoints:  %i \n"
+                  "Minimum Depth                %i levels \n"
+                  "Maximum Depth:               %i levels \n"
+                  "Construction time:           %.3g seconds." 
+                  %(self.xmin, self.xmax, divideCriterion,divideParameter, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
+        
             
     def buildTreeOneCondition(self,minLevels,maxLevels,divideTolerance,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
@@ -115,7 +182,7 @@ class Tree(object):
                   %(self.xmin, self.xmax, divideTolerance, self.treeSize, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
         
      
-    def buildTree(self,minLevels,maxLevels, maxDx, divideTolerance1, divideTolerance2,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
+    def buildTreeTwoConditions(self,minLevels,maxLevels, maxDx, divideTolerance1, divideTolerance2,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         timer = Timer()
@@ -289,10 +356,16 @@ class Tree(object):
             
             fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(figsize=(8, 6), ncols=2, nrows=2)
             if saveID!=False: plt.suptitle('Iteration %s, Energy Error %.2e' %(saveID[-2:],(Etrue-self.E)) )
+#             logAbsErr = np.log(abs(psiTrue-psi))
+#             logRelErr = np.log(abs((psiTrue-psi)/psiTrue))
             analyticWave =  ax1.scatter(x, y, s=3, c=psiTrue, cmap=plt.get_cmap('Blues'))
             computedWave =  ax2.scatter(x, y, s=3, c=psi, cmap=plt.get_cmap('Blues'))
-            absErr =        ax3.scatter(x, y, s=3, c=abs(psiTrue-psi), cmap=plt.get_cmap('Reds'))
-            relErr =        ax4.scatter(x, y, s=3, c=abs((psiTrue-psi)/psiTrue), cmap=plt.get_cmap('Reds'))
+            absErr =        ax3.scatter(x, y, s=3, c=abs(psiTrue-psi), cmap=plt.get_cmap('Reds'),norm=matplotlib.colors.LogNorm())
+#             absErr =        ax3.scatter(x, y, s=3, c=abs(psiTrue-psi), cmap=plt.get_cmap('Reds'))
+#             absErr =        ax3.scatter(x, y, s=3, c=logAbsErr)
+            relErr =        ax4.scatter(x, y, s=3, c=abs((psiTrue-psi)/psiTrue), cmap=plt.get_cmap('Reds'),norm=matplotlib.colors.LogNorm())
+#             relErr =        ax4.scatter(x, y, s=3, c=abs((psiTrue-psi)/psiTrue), cmap=plt.get_cmap('Reds'))
+#             relErr =        ax4.scatter(x, y, s=3, c=logRelErr)
 
             fig.colorbar(analyticWave, ax=ax1)
             fig.colorbar(computedWave, ax=ax2)
@@ -301,8 +374,8 @@ class Tree(object):
             
             ax1.set_title('Analytic Wavefunction')
             ax2.set_title('Computed Wavefunction')
-            ax3.set_title('Absolute Error')
-            ax4.set_title('Relative Error')
+            ax3.set_title('Log Absolute Error')
+            ax4.set_title('Log Relative Error')
 
             
             if saveID!=False:
@@ -651,7 +724,7 @@ class Tree(object):
             for i,j,k in ThreeByThreeByThree:
                 gridpt = element[1].gridpoints[i,j,k]
                 if gridpt.extracted == False:
-                    leaves.append( [gridpt.x, gridpt.y, gridpt.z ] )
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.psi, potential(gridpt.x, gridpt.y, gridpt.z), element[1].volume ] )
                     gridpt.extracted = True
                     
 
