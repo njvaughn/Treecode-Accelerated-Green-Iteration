@@ -168,7 +168,7 @@ def testGreenIterationsGPU(tree,plotting=False):
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.numberOfCells,tree.numberOfGridpoints,
               smoothingN, smoothingEps,
               divideCriterion,divideParameter,energyResidual,
-              energyErrorGS_analyticPsi,energyErrorGS,psiL2ErrorGS,psiLinfErrorGS,'volume**(1/3)']
+              energyErrorGS_analyticPsi,energyErrorGS,psiL2ErrorGS,psiLinfErrorGS,'none']
     
 
 #     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.numberOfGridpoints,testFunction1,divideTol1,testFunction2,divideTol2,energyResidual,

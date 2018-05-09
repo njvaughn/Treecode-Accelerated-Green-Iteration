@@ -26,10 +26,10 @@ def gpuConvolution(targets,sources,psiNew,k):
                 r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
 #                 r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 + (0.5*volume_s)**(2/3) ) # compute the distance between target and source
                 psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-k*r)/r # increment the new wavefunction value
-            else:
+#             else:
 #                 r = sqrt( 0.5*volume_s**(1/3))
-                r = 0.5*volume_s**(1/3)
-                psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-k*r)/r # increment the new wavefunction value
+#                 r = 0.5*volume_s**(1/3)
+#                 psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-k*r)/r # increment the new wavefunction value
                 
 @cuda.jit
 def gpuConvolutionSmoothing(targets,sources,psiNew,k,n,epsilon,skipSingular=False):
@@ -108,11 +108,11 @@ def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, smoot
         startConvolutionTime = timer()
         k = np.sqrt(-2*tree.E)                 # set the k value coming from the current guess for the energy
 #             k = 1
-#         gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution
+        gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution
 
 
         skipSingular=False  # set this to TRUE to reproduce results when I was skipping singularity.
-        gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k,smoothingN,smoothingEps,skipSingular)
+#         gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k,smoothingN,smoothingEps,skipSingular)
         ConvolutionTime = timer() - startConvolutionTime
         print('Extraction took:             %.4f seconds. ' %ExtractionTime)
         print('Convolution took:            %.4f seconds. ' %ConvolutionTime)

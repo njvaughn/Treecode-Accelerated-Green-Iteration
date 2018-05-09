@@ -474,6 +474,22 @@ class Cell(object):
 #         self.PE = self.volume*np.sum(weightMatrix*psi*psi*V)
 
     def computeKinetic(self):
+#     def computeKinetic_noMid(self):
+        '''
+        Explicitly compute finite differences, not using the midpoint.  
+        '''
+        
+        gradMidpt = np.array([0.0,0.0,0.0])
+        
+        gradMidpt[0] = (self.gridpoints[2,1,1].psi - self.gridpoints[0,1,1].psi) / (self.dx*2)
+        gradMidpt[1] = (self.gridpoints[1,2,1].psi - self.gridpoints[1,0,1].psi) / (self.dy*2)
+        gradMidpt[2] = (self.gridpoints[1,1,2].psi - self.gridpoints[1,1,0].psi) / (self.dz*2)
+        
+        gradPsiSq = gradMidpt[0]**2 + gradMidpt[1]**2 + gradMidpt[2]**2
+        self.KE = 1/2*self.volume*gradPsiSq
+    
+    def computeKinetic_numpyGrad(self):
+#     def computeKinetic(self):
 #         def computeLaplacian(Cell):
 #             # get the psi values on a grid
 #             psi = np.empty((3,3,3))

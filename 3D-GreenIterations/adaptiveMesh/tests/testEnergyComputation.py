@@ -17,11 +17,11 @@ class TestEnergyComputation(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         print('Building tree...')
-        self.xmin = self.ymin = self.zmin = -10
+        self.xmin = self.ymin = self.zmin = -15
         self.xmax = self.ymax = self.zmax = -self.xmin
         self.tree = Tree(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax)
 #         self.tree.buildTree( minLevels=5, maxLevels=20, N=1000, printTreeProperties=True )
-        self.tree.buildTree( minLevels=3, maxLevels=20, divideCriterion='LW1', divideParameter=4000, printTreeProperties=True)
+        self.tree.buildTree( minLevels=4, maxLevels=20, divideCriterion='LW1', divideParameter=2000, printTreeProperties=True)
 
 #         self.tree.buildTree( minLevels=1, maxLevels=12, maxDx=0.75, divideTolerance1=0.05, divideTolerance2=5e-6, printTreeProperties=True )
 #         self.tree.buildTreeOneCondition( minLevels=4, maxLevels=12, divideTolerance=0.04, printTreeProperties=True )
@@ -34,7 +34,7 @@ class TestEnergyComputation(unittest.TestCase):
         for element in self.tree.masterList:
             for i,j,k in ThreeByThreeByThree:
                 element[1].gridpoints[i,j,k].setAnalyticPsi(0)
-#         self.tree.normalizeWavefunction()
+        self.tree.normalizeWavefunction()
          
         self.tree.computeKineticOnList()
         self.tree.computePotentialOnList(epsilon=0.0)

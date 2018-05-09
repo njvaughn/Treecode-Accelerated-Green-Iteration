@@ -9,8 +9,10 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 #python testBatchGreenIterations.py 15 5 20 LW2 2000 1e-7 /home/njvaughn/results_smoothing/varyingMinDepth.csv
 ######################
 
-python testBatchGreenIterations.py 15 4 20 0 1.0    LW1 500 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
-python testBatchGreenIterations.py 15 4 20 0 1.0    LW2 500 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
+python testBatchGreenIterations.py 15 4 20 0 1.0    LW1 2000 1e-6 /home/njvaughn/results_5_5/endptOnlyGrad.csv
+
+#python testBatchGreenIterations.py 15 4 20 0 1.0    LW1 500 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
+#python testBatchGreenIterations.py 15 4 20 0 1.0    LW2 500 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
 #python testBatchGreenIterations.py 15 4 20 0 0.005    LW3 1000 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
 
 #python testBatchGreenIterations.py 15 4 20 0 0.005    LW1 2000 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
@@ -22,10 +24,10 @@ python testBatchGreenIterations.py 15 4 20 0 1.0    LW2 500 1e-6 /home/njvaughn/
 #python testBatchGreenIterations.py 15 4 20 0 0.005    LW3 4000 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
 
 #python testBatchGreenIterations.py 15 4 20 0 0.005    LW1 8000 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
-python testBatchGreenIterations.py 15 4 20 0 1.0    LW2 8000 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
-python testBatchGreenIterations.py 15 4 20 0 1.0    LW3 8000 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
+#python testBatchGreenIterations.py 15 4 20 0 1.0    LW2 8000 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
+#python testBatchGreenIterations.py 15 4 20 0 1.0    LW3 8000 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
 
-python testBatchGreenIterations.py 15 4 20 0 1.0    LW3 16000 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
+#python testBatchGreenIterations.py 15 4 20 0 1.0    LW3 16000 1e-6 /home/njvaughn/results_smoothing/LW12withSmoothing.csv
 
 
 #Ground state normalization factor: 1.00272676296
