@@ -6,7 +6,7 @@ Note: the current implementation does not use shared memory, which would provide
 speedup.  -- 03/19/2018 NV 
 """
 from numba import cuda
-from math import sqrt,exp,factorial
+from math import sqrt,exp,factorial,pi
 import math
 import numpy as np
 import os
@@ -25,12 +25,30 @@ def gpuConvolution(targets,sources,psiNew,k):
             if not ( (x_s==x_t) and (y_s==y_t) and (z_s==z_t) ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
                 r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
 #                 r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 + (0.5*volume_s)**(2/3) ) # compute the distance between target and source
-                psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-k*r)/r # increment the new wavefunction value
+                psiNew[globalID] += 2*V_s*volume_s*psi_s*exp(-k*r)/r # increment the new wavefunction value
 #             else:
 #                 r = sqrt( 0.5*volume_s**(1/3))
 #                 r = 0.5*volume_s**(1/3)
 #                 psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-k*r)/r # increment the new wavefunction value
-                
+     
+
+@cuda.jit
+def gpuConvolutionSubractSingularity(targets,sources,psiNew,k):
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t, psi_t, V_t, volume_t = targets[globalID]  # set the x, y, and z values of the target
+        f_t = 2*psi_t*V_t
+#         psiNew[globalID] = f_t*4*pi/k**2
+        psiNew[globalID] = f_t/k**2
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, psi_s, V_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            if not ( (x_s==x_t) and (y_s==y_t) and (z_s==z_t) ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+                r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+                f_s = 2*V_s*psi_s
+                psiNew[globalID] += volume_s*(f_s-f_t)*exp(-k*r)/(4*pi*r) # increment the new wavefunction value
+
+
+               
 @cuda.jit
 def gpuConvolutionSmoothing(targets,sources,psiNew,k,n,epsilon,skipSingular=False):
     globalID = cuda.grid(1)  # identify the global ID of the thread
@@ -70,7 +88,7 @@ def gpuConvolutionSmoothing(targets,sources,psiNew,k,n,epsilon,skipSingular=Fals
 #                 psiNew[globalID] += -2*V_s*volume_s*psi_s*exp(-k*r)/r # increment the new wavefunction value
                         
             
-def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, smoothingN, smoothingEps, normalizationFactor=1, threadsPerBlock=512, visualize=False, outputErrors=False):  # @DontTrace
+def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1, threadsPerBlock=512, visualize=False, outputErrors=False):  # @DontTrace
     '''
     :param residualTolerance: exit condition for Green Iterations, residual on the total energy
     :param energyLevel: energy level trying to compute
@@ -108,10 +126,13 @@ def greenIterations(tree, energyLevel, residualTolerance, numberOfTargets, smoot
         startConvolutionTime = timer()
         k = np.sqrt(-2*tree.E)                 # set the k value coming from the current guess for the energy
 #             k = 1
-        gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution
+        if subtractSingularity==0:
+            gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution
+        elif subtractSingularity==1:
+            gpuConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution
 
 
-        skipSingular=False  # set this to TRUE to reproduce results when I was skipping singularity.
+#         skipSingular=False  # set this to TRUE to reproduce results when I was skipping singularity.
 #         gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k,smoothingN,smoothingEps,skipSingular)
         ConvolutionTime = timer() - startConvolutionTime
         print('Extraction took:             %.4f seconds. ' %ExtractionTime)

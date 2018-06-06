@@ -31,8 +31,8 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 ######################
 ### BASELINE TESTS ###
-python testBatchGreenIterations.py 15 5 20 LW1 2000 5e-6 /home/njvaughn/results_4_27/varyingMinDepth.csv
-python testBatchGreenIterations.py 15 5 20 LW2 2000 5e-6 /home/njvaughn/results_4_27/varyingMinDepth.csv
+python testBatchGreenIterations.py 15 5 20 LW1 2000 5e-6 /home/njvaughn/results_4_27/singularitySubtractionTests.csv
+python testBatchGreenIterations.py 15 5 20 LW2 2000 5e-6 /home/njvaughn/results_4_27/singularitySubtractionTests.csv
 ######################
 
 #python testBatchGreenIterations.py 9 5 20 LW1 2000 5e-6 /home/njvaughn/results_4_27/varyingDomain.csv
