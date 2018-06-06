@@ -24,17 +24,16 @@ from hydrogenPotential import trueWavefunction
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 
-domainSize      = int(sys.argv[1])
-minDepth        = int(sys.argv[2])
-maxDepth        = int(sys.argv[3])
-smoothingN      = int(sys.argv[4])
-smoothingEps    = float(sys.argv[5])
-divideCriterion = str(sys.argv[6])
-divideParameter = float(sys.argv[7])
-# divideTol1      = float(sys.argv[4])
-# divideTol2      = float(sys.argv[5]) ### set energyResidual argv to 6
-energyResidual  = float(sys.argv[8])
-outFile         = str(sys.argv[9])
+domainSize          = int(sys.argv[1])
+minDepth            = int(sys.argv[2])
+maxDepth            = int(sys.argv[3])
+subtractSingularity = int(sys.argv[4])
+smoothingN          = int(sys.argv[5])
+smoothingEps        = float(sys.argv[6])
+divideCriterion     = str(sys.argv[7])
+divideParameter     = float(sys.argv[8])
+energyResidual      = float(sys.argv[9])
+outFile             = str(sys.argv[10])
 
 
 def setUpTree():
@@ -108,7 +107,7 @@ def testGreenIterationsGPU(tree,plotting=False):
     
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations(tree, 0, energyResidual, numberOfTargets, smoothingN, smoothingEps, normalizationFactor=groundStateMultiplicativeFactor,visualize=plotting)
+    greenIterations(tree, 0, energyResidual, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=groundStateMultiplicativeFactor,visualize=plotting)
     Etrue = -0.5
     energyErrorGS  = tree.E-Etrue
     psiL2ErrorGS   = tree.L2NormError
@@ -160,15 +159,25 @@ def testGreenIterationsGPU(tree,plotting=False):
 #               energyErrorGS_analyticPsi,energyErrorGS,psiL2ErrorGS,psiLinfErrorGS,
 #               energyErrorFES_analyticPsi,energyErrorFES,psiL2ErrorFES,psiLinfErrorFES]
 
-    header = ['domainSize','minDepth','maxDepth','numberOfCells','numberOfGridpoints',
+#     header = ['domainSize','minDepth','maxDepth','numberOfCells','numberOfGridpoints',
+#               'smoothingN', 'smoothingEps',
+#               'divideCriterion','divideParameter','energyResidual',
+#               'energyErrorGS_analyticPsi','energyErrorGS','psiL2ErrorGS','psiLinfErrorGS','GreenReg']
+#     
+#     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.numberOfCells,tree.numberOfGridpoints,
+#               smoothingN, smoothingEps,
+#               divideCriterion,divideParameter,energyResidual,
+#               energyErrorGS_analyticPsi,energyErrorGS,psiL2ErrorGS,psiLinfErrorGS,'none']
+
+    header = ['domainSize','minDepth','maxDepth','numberOfCells',
               'smoothingN', 'smoothingEps',
               'divideCriterion','divideParameter','energyResidual',
-              'energyErrorGS_analyticPsi','energyErrorGS','psiL2ErrorGS','psiLinfErrorGS','GreenReg']
+              'energyErrorGS_analyticPsi','energyErrorGS','psiL2ErrorGS','psiLinfErrorGS','GreenSingSubtracted']
     
-    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.numberOfCells,tree.numberOfGridpoints,
+    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.numberOfCells,
               smoothingN, smoothingEps,
               divideCriterion,divideParameter,energyResidual,
-              energyErrorGS_analyticPsi,energyErrorGS,psiL2ErrorGS,psiLinfErrorGS,'none']
+              energyErrorGS_analyticPsi,energyErrorGS,psiL2ErrorGS,psiLinfErrorGS,subtractSingularity]
     
 
 #     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.numberOfGridpoints,testFunction1,divideTol1,testFunction2,divideTol2,energyResidual,
@@ -201,7 +210,7 @@ if __name__ == "__main__":
     print('='*70,'\n')
     startTime = timer()
     tree = setUpTree()
-    testGreenIterationsGPU(tree,plotting=False)
+    testGreenIterationsGPU(tree,plotting=True)
     
     
     
