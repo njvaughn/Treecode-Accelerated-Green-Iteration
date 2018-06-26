@@ -1,0 +1,13 @@
+# vtk DataFile Version 3.0
+vtk output
+ASCII
+DATASET STRUCTURED_GRID
+DIMENSIONS 2 3 1
+POINTS 6 float
+0 0 0
+1 0 0
+0 1 0
+1 1 0
+0 2 1
+1 2 1
+POINT_DATA 6

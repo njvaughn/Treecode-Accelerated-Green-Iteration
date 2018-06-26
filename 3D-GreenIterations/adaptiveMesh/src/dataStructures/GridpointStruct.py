@@ -37,7 +37,7 @@ class GridPoint(object):
         indication of where he should refine before actually computing the many-atom electron density.
         '''
 #         self.testFunctionValue = trueWavefunction(0, self.x,self.y,self.z)
-        self.testFunctionValue = trueWavefunction(0, self.x,self.y,self.z)**2 +  trueWavefunction(1, self.x,self.y,self.z)**2
+        self.testFunctionValue = trueWavefunction(0, self.x,self.y,self.z)**2
 #         self.testFunctionValue = trueWavefunction(0, self.x,self.y,self.z)**4 +  trueWavefunction(1, self.x,self.y,self.z)**4
 
 #         epsq = 1e-8

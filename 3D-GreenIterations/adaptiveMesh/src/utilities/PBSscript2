@@ -1,0 +1,39 @@
+####  PBS preamble
+
+#PBS -N batchGreenIterations
+#PBS -M njvaughn@umich.edu
+#PBS -m a
+
+#PBS -A krasny_fluxg
+#PBS -l qos=flux
+#PBS -q fluxg
+
+#PBS -l nodes=1:gpus=1,mem=4gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+#PBS -V
+
+####  End PBS preamble
+
+if [ -s "$PBS_NODEFILE" ] ; then
+    echo "Running on"
+    uniq -c $PBS_NODEFILE
+fi
+
+if [ -d "$PBS_O_WORKDIR" ] ; then
+    cd $PBS_O_WORKDIR
+    echo "Running from $PBS_O_WORKDIR"
+fi
+
+#  Put your job commands after this line
+
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/tests
+
+python testBatchGreenIterations.py 12 3 14 0 1 1.0 LW1 150 1e-7 /home/njvaughn/results_CC_6_19/PBStest.csv
+
+
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/CC_tests
+
+
+python testBatchGreenIterations_CC.py 12 2 14 5 1 0 0.0 LW1   75 1e-8 /home/njvaughn/results_CC_6_19/PBStest.csv
+

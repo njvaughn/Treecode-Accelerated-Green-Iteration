@@ -18,22 +18,23 @@ from timeit import default_timer as timer
 import itertools
 import csv
 
-from TreeStruct import Tree
-from convolution import greenIterations
+from TreeStruct_CC import Tree
+from convolution import greenIterations_CC
 from hydrogenPotential import trueWavefunction
 
-ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
+# ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 
 domainSize          = int(sys.argv[1])
 minDepth            = int(sys.argv[2])
 maxDepth            = int(sys.argv[3])
-subtractSingularity = int(sys.argv[4])
-smoothingN          = int(sys.argv[5])
-smoothingEps        = float(sys.argv[6])
-divideCriterion     = str(sys.argv[7])
-divideParameter     = float(sys.argv[8])
-energyResidual      = float(sys.argv[9])
-outFile             = str(sys.argv[10])
+order               = int(sys.argv[4])
+subtractSingularity = int(sys.argv[5])
+smoothingN          = int(sys.argv[6])
+smoothingEps        = float(sys.argv[7])
+divideCriterion     = str(sys.argv[8])
+divideParameter     = float(sys.argv[9])
+energyResidual      = float(sys.argv[10])
+outFile             = str(sys.argv[11])
 
 
 def setUpTree():
@@ -42,14 +43,14 @@ def setUpTree():
     '''
     xmin = ymin = zmin = -domainSize
     xmax = ymax = zmax = domainSize
-    tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order)
 #     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, divideTolerance1=divideTol1, divideTolerance2=divideTol2, printTreeProperties=True)
     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
-    for element in tree.masterList:
-        
-#             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
-        for i,j,k in ThreeByThreeByThree:
-            element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
+#     for element in tree.masterList:
+#         
+# #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
+#         for i,j,k in tree.PxByPyByPz:
+#             element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
             
     return tree
     
@@ -103,11 +104,11 @@ def testGreenIterationsGPU(tree,plotting=False):
 #     for element in tree.masterList:            
 #         for i,j,k in ThreeByThreeByThree:
 #             element[1].gridpoints[i,j,k].psi += 0.1*np.random.rand(1)[0]
-    tree.normalizeWavefunction()
+#     tree.normalizeWavefunction()
     
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations(tree, 0, energyResidual, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=groundStateMultiplicativeFactor,visualize=plotting)
+    greenIterations_CC(tree, 0, energyResidual, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=groundStateMultiplicativeFactor,visualize=plotting)
     Etrue = -0.5
     energyErrorGS  = tree.E-Etrue
     psiL2ErrorGS   = tree.L2NormError
@@ -178,14 +179,19 @@ def testGreenIterationsGPU(tree,plotting=False):
 #               smoothingN, smoothingEps,
 #               divideCriterion,divideParameter,energyResidual,
 #               energyErrorGS_analyticPsi,energyErrorGS,psiL2ErrorGS,psiLinfErrorGS,subtractSingularity]
-    
+
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
               'divideCriterion','divideParameter','energyResidual',
               'energyErrorGS_analyticPsi','energyErrorGS','psiL2ErrorGS','psiLinfErrorGS','GreenSingSubtracted']
     
-    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,0,tree.numberOfCells,tree.numberOfGridpoints,
+    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,
               divideCriterion,divideParameter,energyResidual,
               energyErrorGS_analyticPsi,energyErrorGS,psiL2ErrorGS,psiLinfErrorGS,subtractSingularity]
+    
+
+#     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.numberOfGridpoints,testFunction1,divideTol1,testFunction2,divideTol2,energyResidual,
+#               energyErrorGS,psiL2ErrorGS,psiLinfErrorGS,
+#               energyErrorFES,psiL2ErrorFES,psiLinfErrorFES]
  
     
     if not os.path.isfile(outFile):
