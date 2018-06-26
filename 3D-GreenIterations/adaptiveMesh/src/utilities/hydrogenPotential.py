@@ -6,7 +6,9 @@ Schrodinger equation.  -- 03/20/2018 NV
 
 import numpy as np
 
-def potential(x,y,z,epsilon=0):
+def potential(x,y,z,epsilon=0.0):
+    if epsilon != 0.0:
+        print('Vepsilon != 0.0')
     r = np.sqrt(x*x+y*y+z*z + epsilon*epsilon)
     if r.any()==0:
         return 0

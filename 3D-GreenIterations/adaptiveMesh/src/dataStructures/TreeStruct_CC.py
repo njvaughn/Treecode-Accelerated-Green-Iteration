@@ -13,6 +13,9 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 
 import numpy as np
 import itertools
+import os
+import csv
+import vtk
 import matplotlib
 # matplotlib.use('TkAgg')
 matplotlib.use('Agg')  # to not display
@@ -20,8 +23,9 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 from GridpointStruct import GridPoint
-from CellStruct import Cell
+from CellStruct_CC import Cell
 from hydrogenPotential import potential, trueWavefunction, trueEnergy
+from meshUtilities import *
 from timer import Timer
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -34,29 +38,44 @@ class Tree(object):
     Tree object. Constructed of cells, which are composed of gridpoint objects.  
     Trees contain their root, as well as their masterList.
     '''
-    def __init__(self, xmin,xmax,ymin,ymax,zmin,zmax):
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz):
         '''
         Tree constructor:  
         First construct the gridpoints for cell consisting of entire domain.  
         Then construct the cell that are composed of gridpoints. 
         Then construct the root of the tree.
         '''
-        # generate gridpoint objects.  
-        xvec = np.linspace(xmin,xmax,3)
-        yvec = np.linspace(ymin,ymax,3)
-        zvec = np.linspace(zmin,zmax,3)
-        gridpoints = np.empty((3,3,3),dtype=object)
+        self.xmin = xmin
+        self.xmax = xmax
+        self.px = px
+        self.ymin = ymin
+        self.ymax = ymax
+        self.py = py
+        self.zmin = zmin
+        self.zmax = zmax
+        self.pz = pz
+        self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
 
-        for i, j, k in ThreeByThreeByThree:
+        
+        # generate gridpoint objects.  
+        xvec = ChebyshevPoints(self.xmin,self.xmax,self.px)
+        yvec = ChebyshevPoints(self.ymin,self.ymax,self.py)
+        zvec = ChebyshevPoints(self.zmin,self.zmax,self.pz)
+        gridpoints = np.empty((px,py,pz),dtype=object)
+
+        for i, j, k in self.PxByPyByPz:
             gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
         
         # generate root cell from the gridpoint objects  
-        self.root = Cell( gridpoints, self )
+        self.root = Cell( self.xmin, self.xmax, self.px, 
+                          self.ymin, self.ymax, self.py, 
+                          self.zmin, self.zmax, self.pz, 
+                          gridpoints, self )
         self.root.level = 0
         self.root.uniqueID = ''
         self.masterList = [[self.root.uniqueID, self.root]]
-        self.xmin = xmin
-        self.xmax = xmax
+
+        
         
     def buildTree(self,minLevels,maxLevels, divideCriterion, divideParameter, printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
@@ -99,14 +118,14 @@ class Tree(object):
         for element in self.masterList:
             if element[1].leaf==True:
                 self.numberOfCells += 1
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     if not hasattr(element[1].gridpoints[i,j,k], "counted"):
                         self.numberOfGridpoints += 1
                         element[1].gridpoints[i,j,k].counted = True
         
                         
         for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
+            for i,j,k in self.PxByPyByPz:
                 if hasattr(element[1].gridpoints[i,j,k], "counted"):
                     element[1].gridpoints[i,j,k].counted = None
                     
@@ -120,8 +139,10 @@ class Tree(object):
                   "Total Number of Gridpoints:  %i \n"
                   "Minimum Depth                %i levels \n"
                   "Maximum Depth:               %i levels \n"
-                  "Construction time:           %.3g seconds." 
-                  %(self.xmin, self.xmax, divideCriterion,divideParameter, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
+                  "Cell Order:                  %i \n"
+                  "Construction time:           %.3g seconds."
+                   
+                  %(self.xmin, self.xmax, divideCriterion,divideParameter, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved, self.px, timer.elapsedTime))
         
             
     def buildTreeOneCondition(self,minLevels,maxLevels,divideTolerance,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
@@ -159,14 +180,14 @@ class Tree(object):
         self.numberOfGridpoints = 0
         for element in self.masterList:
             if element[1].leaf==True:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     if not hasattr(element[1].gridpoints[i,j,k], "counted"):
                         self.numberOfGridpoints += 1
                         element[1].gridpoints[i,j,k].counted = True
         
                         
         for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
+            for i,j,k in self.PxByPyByPz:
                 if hasattr(element[1].gridpoints[i,j,k], "counted"):
                     element[1].gridpoints[i,j,k].counted = None
                     
@@ -218,14 +239,14 @@ class Tree(object):
         self.numberOfGridpoints = 0
         for element in self.masterList:
             if element[1].leaf==True:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     if not hasattr(element[1].gridpoints[i,j,k], "counted"):
                         self.numberOfGridpoints += 1
                         element[1].gridpoints[i,j,k].counted = True
         
                         
         for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
+            for i,j,k in self.PxByPyByPz:
                 if hasattr(element[1].gridpoints[i,j,k], "counted"):
                     element[1].gridpoints[i,j,k].counted = None
                     
@@ -536,7 +557,7 @@ class Tree(object):
                     recursiveConvolutionForEachTarget(Cell.children[i,j,k])
             
             else: # this cell has no children
-                for l,m,n in ThreeByThreeByThree:
+                for l,m,n in self.PxByPyByPz:
                     if not hasattr(Cell.gridpoints[l,m,n],'psiNew'):
                         target = Cell.gridpoints[l,m,n]
                         singleTargetConvolve(self,target)
@@ -551,7 +572,7 @@ class Tree(object):
                 for i,j,k in TwoByTwoByTwo:
                     applyUpdate(Cell.children[i,j,k])
             else:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     Cell.gridpoints[i,j,k].psi = Cell.gridpoints[i,j,k].psiNew
                     Cell.gridpoints[i,j,k].psiNew = None
                     
@@ -575,14 +596,14 @@ class Tree(object):
         # initialize convolution flag to false.  This gets flipped to true when the convolution is performed for the gridpoint
         for element in self.masterList:
             if element[1].leaf == True:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     element[1].gridpoints[i,j,k].convolutionComplete = False
         
         for targetElement in self.masterList:
             if targetElement[1].leaf == True:
                 targetCell = targetElement[1]
                 
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     targetPoint = targetCell.gridpoints[i,j,k] 
                     if targetPoint.convolutionComplete == False:
                         targetPoint.convolutionComplete = True
@@ -610,7 +631,7 @@ class Tree(object):
                 element[1].gridpoints[1,1,1].psiNew = None
                 
         self.normalizeWavefunction()
-#                 for i,j,k in ThreeByThreeByThree:
+#                 for i,j,k in self.PxByPyByPz:
 #                     element[1].gridpoints[i,j,k].psi = element[1].gridpoints[i,j,k].psiNew
 #                     element[1].gridpoints[i,j,k].psiNew = None
             
@@ -625,13 +646,20 @@ class Tree(object):
         maxErr = 0.0
         errorsIfSameSign = []
         errorsIfDifferentSign = []
+        psiComputed = np.zeros((self.px,self.py,self.pz))
+        psiAnalytic = np.zeros((self.px,self.py,self.pz))
         for element in self.masterList:
             if element[1].leaf == True:
-                midpoint = element[1].gridpoints[1,1,1]
-                errorsIfSameSign.append( (midpoint.psi - normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
-                errorsIfDifferentSign.append( (midpoint.psi + normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
-        
-                absErr = abs(midpoint.psi - normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))
+                for i,j,k in self.PxByPyByPz:
+                    gridpt = element[1].gridpoints[i,j,k]
+                    psiComputed[i,j,k] = gridpt.psi
+                    psiAnalytic[i,j,k] = normalizationFactor*trueWavefunction(energyLevel,gridpt.x,gridpt.y,gridpt.z)
+                errorsIfSameSign.append( np.sum( (psiAnalytic-psiComputed)**2*element[1].w ))
+                errorsIfDifferentSign.append( np.sum( (psiAnalytic+psiComputed)**2*element[1].w ))
+#                 errorsIfSameSign.append( (midpoint.psi - normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
+#                 errorsIfDifferentSign.append( (midpoint.psi + normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
+                absErr = np.max(np.abs( psiAnalytic-psiComputed ))
+#                 absErr = abs(midpoint.psi - normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))
                 if absErr > maxErr:
                     maxErr = absErr
         if np.sum(errorsIfSameSign) < np.sum(errorsIfDifferentSign):
@@ -646,29 +674,49 @@ class Tree(object):
     def normalizeWavefunction(self):
         """ Compute integral psi*2 dxdydz """
         A = 0.0
+        maxPsi = 0.0
+        maxLoc = [1,2,3]
+        depth = 0
+        cellCenter = [0,0,0]
         for element in self.masterList:
             if element[1].leaf == True:
-                A += element[1].gridpoints[1,1,1].psi**2*element[1].volume
-        
-        print('A = ', A)        
+                for i,j,k in self.PxByPyByPz:
+                    if abs(element[1].gridpoints[i,j,k].psi) > maxPsi:
+                        maxPsi = abs(element[1].gridpoints[i,j,k].psi)
+                        maxLoc = [element[1].gridpoints[i,j,k].x,element[1].gridpoints[i,j,k].y,element[1].gridpoints[i,j,k].z]
+                        cellCenter = [element[1].xmid,element[1].ymid,element[1].zmid]
+                        depth = element[1].level
+                    maxPsi = max( maxPsi, abs(element[1].gridpoints[i,j,k].psi))
+                    A += element[1].gridpoints[i,j,k].psi**2*element[1].w[i,j,k]
+        if A<0.0:
+            print('Warning: normalization value A is less than zero...')
+        if A==0.0:
+            print('Warning: normalization value A is zero...')
+#         print('A = %f'%A)
+#         print('max Psi = ',maxPsi)
+#         print('Located at (x,y,z): ', maxLoc)
+#         print('Cell centered at at (x,y,z): ', cellCenter)
+#         print('At tree depth of ', depth)
+        maxPsi=0.0        
         """ Initialize the normalization flag for each gridpoint """        
         for element in self.masterList:
             if element[1].leaf==True:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     element[1].gridpoints[i,j,k].normalized = False
         
         """ Rescale wavefunction values, flip the flag """
         for element in self.masterList:
             if element[1].leaf==True:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     if element[1].gridpoints[i,j,k].normalized == False:
                         element[1].gridpoints[i,j,k].psi /= np.sqrt(A)
                         element[1].gridpoints[i,j,k].normalized = True
-        
+                        maxPsi = max(maxPsi,abs(element[1].gridpoints[i,j,k].psi))
+#         print('maxPsi after normalization = ', maxPsi)
         """  Delete the flag, if desired               
         for element in self.masterList:
             if element[1].leaf==True:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     element[1].gridpoints[i,j,k].normalized = None
             
         """    
@@ -684,13 +732,13 @@ class Tree(object):
         """ Initialize the orthogonalization flag for each gridpoint """        
         for element in self.masterList:
             if element[1].leaf==True:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     element[1].gridpoints[i,j,k].orthogonalized = False
         
         """ Subtract the projection, flip the flag """
         for element in self.masterList:
             if element[1].leaf==True:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     gridpoint = element[1].gridpoints[i,j,k]
                     if gridpoint.orthogonalized == False:
                         gridpoint.psi -= B*gridpoint.finalWavefunction[n]
@@ -710,31 +758,34 @@ class Tree(object):
                 leaves.append( [midpoint.x, midpoint.y, midpoint.z, midpoint.psi, potential(midpoint.x, midpoint.y, midpoint.z), element[1].volume ] )
                 counter+=1 
                 
+        print('Warning: extracting midpoints even tho this is a non-uniform mesh.')
         return np.array(leaves)
     
     def extractLeavesAllGridpoints(self):
         '''
         Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
         '''
+#         print('Extracting the gridpoints from all leaves...')
         leaves = []
         for element in self.masterList:
-            
-            for i,j,k in ThreeByThreeByThree:
+            for i,j,k in self.PxByPyByPz:
                 element[1].gridpoints[i,j,k].extracted = False
                 
         for element in self.masterList:
             if element[1].leaf == True:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     gridpt = element[1].gridpoints[i,j,k]
                     if gridpt.extracted == False:
-                        leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.psi, potential(gridpt.x, gridpt.y, gridpt.z), element[1].volume ] )
+                        leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.psi, potential(gridpt.x, gridpt.y, gridpt.z), element[1].w[i,j,k] ] )
                         gridpt.extracted = True
                     
 
         for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
-                element[1].gridpoints[i,j,k].extracted = None
+            for i,j,k in self.PxByPyByPz:
+                element[1].gridpoints[i,j,k].extracted = False
                 
+#         print( max( abs( np.array( leaves[:][0]))))
+#         print( max( abs( np.array(leaves[:][4]))))
         return np.array(leaves)
                 
     
@@ -743,12 +794,12 @@ class Tree(object):
         Import psi values, apply to leaves
         '''
         for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
+            for i,j,k in self.PxByPyByPz:
                 element[1].gridpoints[i,j,k].psiImported = False
         importIndex = 0        
         for element in self.masterList:
             if element[1].leaf == True:
-                for i,j,k in ThreeByThreeByThree:
+                for i,j,k in self.PxByPyByPz:
                     gridpt = element[1].gridpoints[i,j,k]
                     if gridpt.psiImported == False:
                         gridpt.psi = psiNew[importIndex]
@@ -756,21 +807,219 @@ class Tree(object):
                         importIndex += 1
                     
         for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
+            for i,j,k in self.PxByPyByPz:
                 element[1].gridpoints[i,j,k].psiImported = None
+        if importIndex != len(psiNew):
+            print('Warning: import index not equal to len(psiNew)')
+            print(importIndex)
+            print(len(psiNew))
                 
     def copyPsiToFinalWavefunction(self, n):
         for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
+            for i,j,k in self.PxByPyByPz:
                 gridpt = element[1].gridpoints[i,j,k]
                 if len(gridpt.finalWavefunction) == n:
                     gridpt.finalWavefunction.append(gridpt.psi)
                     
     def populatePsiWithAnalytic(self,n):
         for element in self.masterList:
-            for i,j,k in ThreeByThreeByThree:
+            for i,j,k in self.PxByPyByPz:
                 element[1].gridpoints[i,j,k].setAnalyticPsi(n)
         self.normalizeWavefunction()
+
+    
+    def exportMeshMidpointsForParaview(self,outFile):
+        header = ['x','y','z','psi']
+        data = []
+                
+
+        for element in self.masterList:
+            cell = element[1]
+            if cell.leaf == True:
+                x=cell.xmid
+                y=cell.ymid
+                z=cell.zmid
+                psi = trueWavefunction(0,x,y,z)
+                data.append( [x, y, z, psi]  )
+        print(np.shape(data))
+             
+             
+        try:
+            os.remove(outFile)
+        except OSError:
+            pass 
+              
+        if not os.path.isfile(outFile):
+            myFile = open(outFile, 'a')
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(header) 
+             
+         
+        myFile = open(outFile, 'a')
+        with myFile:
+            writer = csv.writer(myFile)
+            for line in data:
+                writer.writerow(line)
+        
+        return
+    
+    def exportMeshQuadpointsForParaview(self,outFile):
+        header = ['x','y','z','psi']
+        data = []
+                
+
+        for element in self.masterList:
+            cell = element[1]
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    x=cell.gridpoints[i,j,k].x
+                    y=cell.gridpoints[i,j,k].y
+                    z=cell.gridpoints[i,j,k].z
+                    psi = trueWavefunction(0,x,y,z)
+                    data.append( [x, y, z, psi]  )
+        print(np.shape(data))
+             
+             
+        try:
+            os.remove(outFile)
+        except OSError:
+            pass 
+              
+        if not os.path.isfile(outFile):
+            myFile = open(outFile, 'a')
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(header) 
+             
+         
+        myFile = open(outFile, 'a')
+        with myFile:
+            writer = csv.writer(myFile)
+            for line in data:
+                writer.writerow(line)
+        
+        return 
+    
+    
+    
+    def exportMeshVerticesForParaview(self,outFile):
+        header = ['x','y','z','psi']
+        data = []
+                
+
+        for element in self.masterList:
+            cell = element[1]
+            if cell.leaf == True:
+                data.append( [cell.xmin, cell.ymin, cell.zmin, trueWavefunction(0,cell.xmin, cell.ymin, cell.zmin)]  )
+                data.append( [cell.xmax, cell.ymin, cell.zmin, trueWavefunction(0,cell.xmax, cell.ymin, cell.zmin)]  )
+                data.append( [cell.xmin, cell.ymax, cell.zmin, trueWavefunction(0,cell.xmin, cell.ymax, cell.zmin)]  )
+                data.append( [cell.xmax, cell.ymax, cell.zmin, trueWavefunction(0,cell.xmax, cell.ymax, cell.zmin)]  )
+                data.append( [cell.xmin, cell.ymin, cell.zmax, trueWavefunction(0,cell.xmin, cell.ymin, cell.zmax)]  )
+                data.append( [cell.xmax, cell.ymin, cell.zmax, trueWavefunction(0,cell.xmax, cell.ymin, cell.zmax)]  )
+                data.append( [cell.xmin, cell.ymax, cell.zmax, trueWavefunction(0,cell.xmin, cell.ymax, cell.zmax)]  )
+                data.append( [cell.xmax, cell.ymax, cell.zmax, trueWavefunction(0,cell.xmax, cell.ymax, cell.zmax)]  )
+
+        print(np.shape(data))
+              
+        try:
+            os.remove(outFile)
+        except OSError:
+            pass   
+          
+        if not os.path.isfile(outFile):
+            myFile = open(outFile, 'a')
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(header) 
+             
+         
+        myFile = open(outFile, 'a')
+        with myFile:
+            writer = csv.writer(myFile)
+            for line in data:
+                writer.writerow(line)
+        
+        return 
+    
+    def exportMeshForParaview_VTK(self):
+        
+        
+        pd = vtk.vtkPolyData()
+        points = vtk.vtkPoints()
+        cells = vtk.vtkCellArray()
+#         connectivity = vtk.vtkIntArray()
+#         connectivity.SetName('Connectivity')
+        psi = vtk.vtkFloatArray()
+        psi.SetName('Psi')
+        
+        for element in self.masterList:
+            cell = element[1]
+            if cell.leaf == True:
+                # 000
+                points.InsertNextPoint(cell.xmin, cell.ymin, cell.zmin)
+                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmin, cell.ymin, cell.zmin)))
+                # 100
+                points.InsertNextPoint(cell.xmax, cell.ymin, cell.zmin)
+                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmax, cell.ymin, cell.zmin)))
+                # 010
+                points.InsertNextPoint(cell.xmin, cell.ymax, cell.zmin)
+                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmin, cell.ymax, cell.zmin)))
+                # 110
+                points.InsertNextPoint(cell.xmax, cell.ymax, cell.zmin)
+                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmax, cell.ymax, cell.zmin)))
+                # 001
+                points.InsertNextPoint(cell.xmin, cell.ymin, cell.zmax)
+                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmin, cell.ymin, cell.zmax)))
+                # 101
+                points.InsertNextPoint(cell.xmax, cell.ymin, cell.zmax)
+                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmax, cell.ymin, cell.zmax)))
+                # 011 
+                points.InsertNextPoint(cell.xmin, cell.ymax, cell.zmax)
+                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmin, cell.ymax, cell.zmax)))
+                # 111
+                points.InsertNextPoint(cell.xmax, cell.ymax, cell.zmax)
+                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmax, cell.ymax, cell.zmax)))
+        
+#         line = f.readline()
+#         for line in iter(lambda: f.readline(), ""):
+#             if 'Faces' in line:
+#                 break
+#             v = line.split(',')
+#             points.InsertNextPoint(float(v[1]),
+#                                    float(v[2]),
+#                                    float(v[3]))
+#             stress.InsertNextTuple1(float(v[5]))
+#             connectivity.InsertNextTuple1(float(v[4]))
+
+        for element in self.masterList:
+            if element[1].leaf == True:
+                cell = vtk.vtkTriangle()
+                Ids = cell.GetPointIds()
+                for kId in range(len(v)):
+#                 for i,j,k in element[1].PxByPyByPz:
+                    Ids.SetId(kId,int(v[kId]))
+                cells.InsertNextCell(cell)
+                
+#         for line in iter(lambda: f.readline(), ""):
+#             v = line.split(',')
+#             cell = vtk.vtkTriangle()
+#             Ids = cell.GetPointIds()
+#             for kId in range(len(v)):
+#                 Ids.SetId(kId,int(v[kId]))
+#             cells.InsertNextCell(cell)
+#         f.close()
+        
+        pd.SetPoints(points)
+        pd.SetPolys(cells)
+        pd.GetPointData().AddArray(psi)
+#         pd.GetPointData().AddArray(connectivity)
+        
+        writer = vtk.vtkXMLPolyDataWriter()
+        writer.SetFileName('cells.vtp')
+        writer.SetInputData(pd)
+        
+        writer.Write()
 
                             
             

@@ -10,7 +10,7 @@ from cycler import cycler
 import os
 import numpy as np
 
-resultsDir = '/Users/nathanvaughn/Desktop/LevineWilkins'
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations'
 ##df = pd.read_csv(resultsDir+'/accuracyResults_GI_and_energyComp.csv', 
 ##                 names=['domainSize', 'minDepth', 'maxDepth', 
 ##                        'numCells', 'numGridpoints', 'LW-Order', 'N_elements',
@@ -36,7 +36,7 @@ resultsDir = '/Users/nathanvaughn/Desktop/LevineWilkins'
 
 ##resultsDir = '/home/njvaughn/results'
 ##currentDir = os.getcwd()
-plotsDir = resultsDir+'/plots/'
+##plotsDir = resultsDir+'/plots/'
 ## accuracyResults_psiGSonly
 ## accuracyResults_psiVpsi
 ##df = pd.read_csv(resultsDir+'/accuracyResults_variety.csv', 
@@ -52,11 +52,9 @@ plotsDir = resultsDir+'/plots/'
 ##                        'energyErrorGS','psiL2ErrorGS','psiLinfErrorGS',
 ##                        'energyErrorFES','psiL2ErrorFES','psiLinfErrorFES'])
 
-df = pd.read_csv(resultsDir+'/LW12withSmoothing.csv', 
-                 header=0)
 
-df = df.drop(12) # 12th entry is redudant, with an error in one value, so drop it.
-df.set_value(11,'energyErrorGS_analyticPsi',-0.000445341) # energyErrorGS_analyticPsi is incorect for entry 11 due to typo.  It should be -0.000445341
+##df = df.drop(12) # 12th entry is redudant, with an error in one value, so drop it.
+##df.set_value(11,'energyErrorGS_analyticPsi',-0.000445341) # energyErrorGS_analyticPsi is incorect for entry 11 due to typo.  It should be -0.000445341
 
 
 ##df.astype({'domainSize':float})
@@ -76,6 +74,21 @@ df.set_value(11,'energyErrorGS_analyticPsi',-0.000445341) # energyErrorGS_analyt
 
 ##df.sort_values(by='numberOfGridpoints')
 ##print(df.sort_values(by='numberOfGridpoints'))
+
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/results_CC_6_19'
+plotsDir = resultsDir+'/plots/'
+df = pd.read_csv(resultsDir+'/parent_child_relPE.csv', 
+                 header=0)
+df = df.loc[df.divideParameter != 10.0]
+
+##df1 = df.loc[df.divideCriterion == 'LW1']
+##df3 = df.loc[df.divideCriterion == 'LW3']
+##df = df.loc[df.energyErrorGS != -0.5]  # some bad data has error -0.5 exactly
+##
+##df = df.loc[df.minDepth==3]
+##
+##df_noskip = df.loc[df.GreenSingSubtracted==0]
+##df_skip = df.loc[df.GreenSingSubtracted==1]
 
 
 
@@ -144,6 +157,45 @@ def logAversusLogBcolorbyC(df,A,B,C,trendline=False,save=False):
         plt.savefig(plotsDir+saveID+'.pdf', bbox_inches='tight',format='pdf')
     plt.show()
 
+def loglogEversusNcolorbyOrder(df,A,B,C,title=None,save=False):
+    fig, ax = plt.subplots(figsize=(8,6))
+##    fig.suptitle('Log %s versus Log %s colored by %s' %(A,B,C))
+    if title==None:
+        fig.suptitle('Ground State Energy Errors: Clenshaw-Curtis vs. Midpoint')
+    else:
+        fig.suptitle(title)
+    
+##    fig.suptitle('Ground State Energy Errors: Levine-Wilkins-1 refinement')
+    grouped = df.groupby(C)
+    for name,group in grouped:
+##        group['logA'] = np.log10(np.abs(group[A]))
+##        group['logB'] = np.log10(np.abs(group[B]))
+        group['absA'] = np.abs(group[A])
+        group['absB'] = np.abs(group[B])
+    
+        if isinstance(name,str):
+##            group.plot(x='logB', y='logA', style='o', ax=ax, label='%s = %s'%(C,name))
+            group.plot(x=B, y=A, style='o', ax=ax, loglog=True,label='%s = %s'%(C,name))
+        elif isinstance(name,float):
+            group.plot(x='absB', y='absA', style='o', loglog=True, ax=ax, label='%s = %f'%(C,name))
+        elif isinstance(name,int):
+            if name==0:
+                group.plot(x='absB', y='absA', style='o', loglog=True, ax=ax, label='Midpoint')
+            else:
+               group.plot(x='absB', y='absA', style='o', loglog=True, ax=ax, label='CC %s %i'%(C,name))
+        
+    plt.legend(loc = 'best')
+    plt.xlabel('Number of Cells')
+    plt.ylabel('Energy Error (Hartree)')
+##    plt.yticks([1e-6,1e-5,1e-4,1e-3,1e-2],['1e-6','1e-5','1e-4','1e-3','1e-2'])
+##    plt.xticks([2e4, 1e5,2e5, 3e6],['2e4', '1e5','2e5', '3e6'])
+
+    if save != False:
+##        saveID = A+'Vs'+B+'ColoredBy'+C
+        saveID = save
+        plt.savefig(plotsDir+saveID+'.pdf', bbox_inches='tight',format='pdf')
+    plt.show()
+
 def logAandBversusLogCcolorbyD(df,A,B,C,D,save=False):
 
     ## EXAMPLE ##
@@ -151,8 +203,8 @@ def logAandBversusLogCcolorbyD(df,A,B,C,D,save=False):
     logAandBversusLogCcolorbyD(df,'energyErrorGS','energyErrorGS_analyticPsi','numberOfGridpoints','divideCriterion')
     '''
     fig, ax = plt.subplots(figsize=(8,6))
-##    fig.suptitle('Log %s and Log %s versus Log %s colored by %s' %(A,B,C,D))
-    fig.suptitle('Ground State Energy Errors: epsilon = 1.0*volume**(1/3)')
+    fig.suptitle('Log %s and Log %s versus Log %s colored by %s' %(A,B,C,D))
+##    fig.suptitle('Ground State Energy Errors: epsilon = 1.0*volume**(1/3)')
     grouped = df.groupby(D)
     counter=0
     for name,group in grouped:
@@ -170,6 +222,9 @@ def logAandBversusLogCcolorbyD(df,A,B,C,D,save=False):
         elif counter == 2:
             sty1 = 'ro'
             sty2 = 'r^'
+        elif counter == 3:
+            sty1 = 'mo'
+            sty2 = 'm^'
         if isinstance(name,str):
 ##            group.plot(x='logC', y='logA', style=sty1, ax=ax, label='%s: %s = %s'%(A,D,name))
 ##            group.plot(x='logC', y='logB', style=sty2, ax=ax, label='%s: %s = %s'%(B,D,name))
@@ -186,10 +241,10 @@ def logAandBversusLogCcolorbyD(df,A,B,C,D,save=False):
         counter+=1
         
     plt.legend(loc = 'best')
-    plt.xlabel('number of gridpoints')
-    plt.ylabel('energy error (H)')
-    plt.yticks([1e-4,5e-4,1e-3,5e-3,1e-2],['1e-4','5e-4','1e-3','5e-3','1e-2'])
-    plt.xticks([5e4, 1e5,2e5, 5e5],['5e4', '1e5','2e5', '5e5'])
+##    plt.xlabel('number of gridpoints')
+##    plt.ylabel('energy error (H)')
+##    plt.yticks([1e-4,5e-4,1e-3,5e-3,1e-2],['1e-4','5e-4','1e-3','5e-3','1e-2'])
+##    plt.xticks([5e4, 1e5,2e5, 5e5],['5e4', '1e5','2e5', '5e5'])
 
     if save == True:
         saveID = 'log'+A+'andLog'+B+'VsLog'+C+'ColoredBy'+C
