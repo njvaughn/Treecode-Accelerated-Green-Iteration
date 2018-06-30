@@ -1,7 +1,7 @@
 '''
 The main Tree data structure.  The root of the tree is a Cell object that is comprised of the 
 entire domain.  The tree gets built by dividing the root cell, recursively, based on the set 
-divide condition.  The current implementation uses the variation of psi within a cell to 
+divideInto8 condition.  The current implementation uses the variation of psi within a cell to 
 dictate whether or not it divides.  
 
 Cells can perform recursive functions on the tree.  The tree can also extract all gridpoints or
@@ -24,6 +24,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 from GridpointStruct import GridPoint
 from CellStruct_CC import Cell
+from AtomStruct import Atom
 from hydrogenPotential import potential, trueWavefunction, trueEnergy
 from meshUtilities import *
 from timer import Timer
@@ -38,7 +39,10 @@ class Tree(object):
     Tree object. Constructed of cells, which are composed of gridpoint objects.  
     Trees contain their root, as well as their masterList.
     '''
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz):
+        
+    
+    
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coordinateFile):
         '''
         Tree constructor:  
         First construct the gridpoints for cell consisting of entire domain.  
@@ -74,8 +78,78 @@ class Tree(object):
         self.root.level = 0
         self.root.uniqueID = ''
         self.masterList = [[self.root.uniqueID, self.root]]
-
         
+        self.initialDivideBasedOnNuclei(coordinateFile)
+        print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+        print('~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~')
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+        for i in range(len(self.atoms)):
+            print('Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+                  %(self.atoms[i].atomicNumber, self.atoms[i].x,self.atoms[i].y,self.atoms[i].z))
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
+        
+    def initialDivideBasedOnNuclei(self, coordinateFile):
+            
+        
+        def recursiveDivideByAtom(self,Atom,Cell):
+            # Atom is in this cell.  Check if this cell has children.  If so, find the child that contains
+            # the atom.  If not, divideInto8 the cell.
+            if hasattr(Cell, "children"):
+#                 x = Cell.children[0,0,0].xmax
+#                 y = Cell.children[0,0,0].ymax
+#                 z = Cell.children[0,0,0].zmax
+                (ii,jj,kk) = np.shape(Cell.children)
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+#                 for i,j,k in TwoByTwoByTwo: # this should catch cases where atom is on the boundary of a previous cut
+                            if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
+                                if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
+                                    if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ):
+                                        recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
+
+
+  
+            else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
+                xdiv = Atom.x
+                ydiv = Atom.y
+                zdiv = Atom.z
+                if ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) ):
+                    xdiv = None
+                if ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ):
+                    ydiv = None
+                if ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ):
+                    zdiv = None
+                    
+                Cell.divide(xdiv, ydiv, zdiv)
+
+        atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=None)
+#         print(np.shape(atomData))
+#         print(len(atomData))
+        if np.shape(atomData)==(4,):
+            self.atoms = np.empty((1,),dtype=object)
+            atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3])
+            self.atoms[0] = atom
+        else:
+            self.atoms = np.empty((len(atomData),),dtype=object)
+            for i in range(len(atomData)):
+                atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3])
+                self.atoms[i] = atom
+                self.atoms[i] = atom
+        
+        for atom in self.atoms:
+            recursiveDivideByAtom(self,atom,self.root)
+        
+#         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
+        for cell in self.masterList:
+            if cell[1].leaf==True:
+                cell[1].divideIfAspectRatioExceeds(1.5)
+#         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioAfter2.vtk')
+#                 print(cell[0])
+                
+            
         
     def buildTree(self,minLevels,maxLevels, divideCriterion, divideParameter, printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
@@ -84,18 +158,40 @@ class Tree(object):
         timer = Timer()
         def recursiveDivide(self, Cell, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
             levelCounter += 1
-            if currentLevel < maxLevels:
+            
+            if hasattr(Cell, "children"):
+#                 print('Cell already has children')
+                (ii,jj,kk) = np.shape(Cell.children)
+
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+#                     print('Calling recursive divideInto8 on child:')
+#                     print('xmin, xmax: ',Cell.children[i,j,k].xmin,Cell.children[i,j,k].xmax)
+#                     print('ymin, ymax: ',Cell.children[i,j,k].ymin,Cell.children[i,j,k].ymax)
+#                     print('zmin, zmax: ',Cell.children[i,j,k].zmin,Cell.children[i,j,k].zmax)
+                            maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], 
+                                                                                minLevels, maxLevels, divideCriterion, divideParameter, 
+                                                                                levelCounter, printNumberOfCells, maxDepthAchieved, 
+                                                                                minDepthAchieved, currentLevel+1)
+            
+            elif currentLevel < maxLevels:
                 
                 if currentLevel < minLevels:
                     Cell.divideFlag = True 
+#                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
                 else:  
                     if (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3'):
+#                         print('checking divide criterion for cell ', Cell.uniqueID)
                         Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
                     
-                if Cell.divideFlag == True:   
-                    Cell.divide(printNumberOfCells)
+                if Cell.divideFlag == True:
+                    xdiv = (Cell.xmax + Cell.xmin)/2   
+                    ydiv = (Cell.ymax + Cell.ymin)/2   
+                    zdiv = (Cell.zmax + Cell.zmin)/2   
+                    Cell.divideInto8(xdiv, ydiv, zdiv, printNumberOfCells)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
@@ -159,7 +255,7 @@ class Tree(object):
                     Cell.checkIfCellShouldDivide(divideTolerance)
                     
                 if Cell.divideFlag == True:   
-                    Cell.divide(printNumberOfCells)
+                    Cell.divideInto8(printNumberOfCells)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
@@ -218,7 +314,7 @@ class Tree(object):
                     Cell.checkIfCellShouldDivideTwoConditions(divideTolerance1, divideTolerance2)
                     
                 if Cell.divideFlag == True:   
-                    Cell.divide(printNumberOfCells)
+                    Cell.divideInto8(printNumberOfCells)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
@@ -841,7 +937,7 @@ class Tree(object):
                 z=cell.zmid
                 psi = trueWavefunction(0,x,y,z)
                 data.append( [x, y, z, psi]  )
-        print(np.shape(data))
+        print('Exported data shape: ', np.shape(data))
              
              
         try:
@@ -878,7 +974,7 @@ class Tree(object):
                     z=cell.gridpoints[i,j,k].z
                     psi = trueWavefunction(0,x,y,z)
                     data.append( [x, y, z, psi]  )
-        print(np.shape(data))
+        print('Exported data shape: ', np.shape(data))
              
              
         try:
@@ -902,25 +998,118 @@ class Tree(object):
         return 
     
     
+    def exportMeshVTK(self,filename):
+        def mkVtkIdList(it): # helper function
+            vil = vtk.vtkIdList()
+            for i in it:
+                vil.InsertNextId(int(i))
+            return vil
+        
+        mesh    = vtk.vtkPolyData()
+        points  = vtk.vtkPoints()
+        polys   = vtk.vtkCellArray()
+        scalars = vtk.vtkFloatArray()
+        
+        coords = []
+        faces = []
+        pointcounter=0
+        for element in self.masterList:
+            cell = element[1]
+            if cell.leaf == True:
+                coords.append( (cell.xmin, cell.ymin, cell.zmin))
+                coords.append( (cell.xmax, cell.ymin, cell.zmin))
+                coords.append( (cell.xmax, cell.ymax, cell.zmin))
+                coords.append( (cell.xmin, cell.ymax, cell.zmin))
+                coords.append( (cell.xmin, cell.ymin, cell.zmax))
+                coords.append( (cell.xmax, cell.ymin, cell.zmax))
+                coords.append( (cell.xmax, cell.ymax, cell.zmax))
+                coords.append( (cell.xmin, cell.ymax, cell.zmax))
+                
+#                 scalars.append(cell.level)
+                for i in range(8):
+                    scalars.InsertTuple1(pointcounter+i,cell.level)
+#                 scalars.InsertTuple1(pointcounter+1,1)
+#                 scalars.InsertTuple1(pointcounter+2,1)
+#                 scalars.InsertTuple1(pointcounter+3,1)
+#                 scalars.InsertTuple1(pointcounter+4,1)
+#                 scalars.InsertTuple1(pointcounter+5,1)
+#                 scalars.InsertTuple1(pointcounter+6,1)
+#                 scalars.InsertTuple1(pointcounter+7,1)
+                
+                faces.append((pointcounter+0,pointcounter+1,pointcounter+2,pointcounter+3))
+                faces.append((pointcounter+4,pointcounter+5,pointcounter+6,pointcounter+7))
+                faces.append((pointcounter+0,pointcounter+1,pointcounter+5,pointcounter+4))
+                faces.append((pointcounter+1,pointcounter+2,pointcounter+6,pointcounter+5))
+                faces.append((pointcounter+2,pointcounter+3,pointcounter+7,pointcounter+6))
+                faces.append((pointcounter+3,pointcounter+0,pointcounter+4,pointcounter+7))
+
+                pointcounter+=8
+        
+#         atomcounter=0
+#         for atom in self.atoms:
+#             coords.append( (atom.x, atom.y, atom.z) )
+# #             scalars.InsertTuple1(pointcounter+atomcounter,-1)
+#             atomcounter+=1
+                
+        for i in range(len(coords)):
+            points.InsertPoint(i, coords[i])
+        for i in range(len(faces)):
+            polys.InsertNextCell( mkVtkIdList(faces[i]) )
+            
+        mesh.SetPoints(points)
+        mesh.SetPolys(polys)
+        mesh.GetPointData().SetScalars(scalars)
+
+        writer = vtk.vtkPolyDataWriter()
+        writer.SetFileName(filename)
+      
+        writer.SetInputData(mesh)
+
+        writer.Write()
+        print('Done writing ', filename)
     
     def exportMeshVerticesForParaview(self,outFile):
-        header = ['x','y','z','psi']
+        header = ['x','y','z','psi', 'V']
         data = []
                 
 
         for element in self.masterList:
             cell = element[1]
             if cell.leaf == True:
-                data.append( [cell.xmin, cell.ymin, cell.zmin, trueWavefunction(0,cell.xmin, cell.ymin, cell.zmin)]  )
-                data.append( [cell.xmax, cell.ymin, cell.zmin, trueWavefunction(0,cell.xmax, cell.ymin, cell.zmin)]  )
-                data.append( [cell.xmin, cell.ymax, cell.zmin, trueWavefunction(0,cell.xmin, cell.ymax, cell.zmin)]  )
-                data.append( [cell.xmax, cell.ymax, cell.zmin, trueWavefunction(0,cell.xmax, cell.ymax, cell.zmin)]  )
-                data.append( [cell.xmin, cell.ymin, cell.zmax, trueWavefunction(0,cell.xmin, cell.ymin, cell.zmax)]  )
-                data.append( [cell.xmax, cell.ymin, cell.zmax, trueWavefunction(0,cell.xmax, cell.ymin, cell.zmax)]  )
-                data.append( [cell.xmin, cell.ymax, cell.zmax, trueWavefunction(0,cell.xmin, cell.ymax, cell.zmax)]  )
-                data.append( [cell.xmax, cell.ymax, cell.zmax, trueWavefunction(0,cell.xmax, cell.ymax, cell.zmax)]  )
+                V = 0.0
+                for atom in self.atoms:
+                    V += atom.V(cell.xmin, cell.ymin, cell.zmin)
+                data.append( [cell.xmin, cell.ymin, cell.zmin, trueWavefunction(0,cell.xmin, cell.ymin, cell.zmin), V]  )
+                V = 0.0
+                for atom in self.atoms:
+                    V += atom.V(cell.xmax, cell.ymin, cell.zmin)
+                data.append( [cell.xmax, cell.ymin, cell.zmin, trueWavefunction(0,cell.xmax, cell.ymin, cell.zmin), V]  )
+                V = 0.0
+                for atom in self.atoms:
+                    V += atom.V(cell.xmin, cell.ymax, cell.zmin)
+                data.append( [cell.xmin, cell.ymax, cell.zmin, trueWavefunction(0,cell.xmin, cell.ymax, cell.zmin), V]  )
+                V = 0.0
+                for atom in self.atoms:
+                    V += atom.V(cell.xmax, cell.ymax, cell.zmin)
+                data.append( [cell.xmax, cell.ymax, cell.zmin, trueWavefunction(0,cell.xmax, cell.ymax, cell.zmin), V]  )
+                V = 0.0
+                for atom in self.atoms:
+                    V += atom.V(cell.xmin, cell.ymin, cell.zmax)
+                data.append( [cell.xmin, cell.ymin, cell.zmax, trueWavefunction(0,cell.xmin, cell.ymin, cell.zmax), V]  )
+                V = 0.0
+                for atom in self.atoms:
+                    V += atom.V(cell.xmax, cell.ymin, cell.zmax)
+                data.append( [cell.xmax, cell.ymin, cell.zmax, trueWavefunction(0,cell.xmax, cell.ymin, cell.zmax), V]  )
+                V = 0.0
+                for atom in self.atoms:
+                    V += atom.V(cell.xmin, cell.ymax, cell.zmax)
+                data.append( [cell.xmin, cell.ymax, cell.zmax, trueWavefunction(0,cell.xmin, cell.ymax, cell.zmax), V]  )
+                V = 0.0
+                for atom in self.atoms:
+                    V += atom.V(cell.xmax, cell.ymax, cell.zmax)
+                data.append( [cell.xmax, cell.ymax, cell.zmax, trueWavefunction(0,cell.xmax, cell.ymax, cell.zmax), V]  )
 
-        print(np.shape(data))
+        print('Exported data shape: ', np.shape(data))
               
         try:
             os.remove(outFile)
@@ -941,88 +1130,7 @@ class Tree(object):
                 writer.writerow(line)
         
         return 
-    
-    def exportMeshForParaview_VTK(self):
-        
-        
-        pd = vtk.vtkPolyData()
-        points = vtk.vtkPoints()
-        cells = vtk.vtkCellArray()
-#         connectivity = vtk.vtkIntArray()
-#         connectivity.SetName('Connectivity')
-        psi = vtk.vtkFloatArray()
-        psi.SetName('Psi')
-        
-        for element in self.masterList:
-            cell = element[1]
-            if cell.leaf == True:
-                # 000
-                points.InsertNextPoint(cell.xmin, cell.ymin, cell.zmin)
-                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmin, cell.ymin, cell.zmin)))
-                # 100
-                points.InsertNextPoint(cell.xmax, cell.ymin, cell.zmin)
-                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmax, cell.ymin, cell.zmin)))
-                # 010
-                points.InsertNextPoint(cell.xmin, cell.ymax, cell.zmin)
-                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmin, cell.ymax, cell.zmin)))
-                # 110
-                points.InsertNextPoint(cell.xmax, cell.ymax, cell.zmin)
-                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmax, cell.ymax, cell.zmin)))
-                # 001
-                points.InsertNextPoint(cell.xmin, cell.ymin, cell.zmax)
-                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmin, cell.ymin, cell.zmax)))
-                # 101
-                points.InsertNextPoint(cell.xmax, cell.ymin, cell.zmax)
-                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmax, cell.ymin, cell.zmax)))
-                # 011 
-                points.InsertNextPoint(cell.xmin, cell.ymax, cell.zmax)
-                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmin, cell.ymax, cell.zmax)))
-                # 111
-                points.InsertNextPoint(cell.xmax, cell.ymax, cell.zmax)
-                psi.InsertNextTuple1(float(trueWavefunction(0,cell.xmax, cell.ymax, cell.zmax)))
-        
-#         line = f.readline()
-#         for line in iter(lambda: f.readline(), ""):
-#             if 'Faces' in line:
-#                 break
-#             v = line.split(',')
-#             points.InsertNextPoint(float(v[1]),
-#                                    float(v[2]),
-#                                    float(v[3]))
-#             stress.InsertNextTuple1(float(v[5]))
-#             connectivity.InsertNextTuple1(float(v[4]))
-
-        for element in self.masterList:
-            if element[1].leaf == True:
-                cell = vtk.vtkTriangle()
-                Ids = cell.GetPointIds()
-                for kId in range(len(v)):
-#                 for i,j,k in element[1].PxByPyByPz:
-                    Ids.SetId(kId,int(v[kId]))
-                cells.InsertNextCell(cell)
-                
-#         for line in iter(lambda: f.readline(), ""):
-#             v = line.split(',')
-#             cell = vtk.vtkTriangle()
-#             Ids = cell.GetPointIds()
-#             for kId in range(len(v)):
-#                 Ids.SetId(kId,int(v[kId]))
-#             cells.InsertNextCell(cell)
-#         f.close()
-        
-        pd.SetPoints(points)
-        pd.SetPolys(cells)
-        pd.GetPointData().AddArray(psi)
-#         pd.GetPointData().AddArray(connectivity)
-        
-        writer = vtk.vtkXMLPolyDataWriter()
-        writer.SetFileName('cells.vtp')
-        writer.SetInputData(pd)
-        
-        writer.Write()
-
-                            
-            
+                                    
 def TestTreeForProfiling():
     xmin = ymin = zmin = -12
     xmax = ymax = zmax = -xmin
@@ -1054,8 +1162,8 @@ def visualizeWavefunction():
            
         
 if __name__ == "__main__":
-#     TestTreeForProfiling()
-    visualizeWavefunction()
+    TestTreeForProfiling()
+#     visualizeWavefunction()
     
 
     
