@@ -245,7 +245,7 @@ class Cell(object):
 #         else:
 #             self.divideFlag = False
 
-#         ''' If the cell contains the nucleus, divide it to max levels regardless of condition '''
+#         ''' If the cell contains the nucleus, divideInto8 it to max levels regardless of condition '''
 #         self.divideFlag=False
 #         for i,j,k in ThreeByThreeByThree:
 #             if ( (self.gridpoints[i,j,k].x==0) and (self.gridpoints[i,j,k].y==0) and (self.gridpoints[i,j,k].z==0) and (self.dx > divideTolerance) ):
@@ -285,7 +285,7 @@ class Cell(object):
 
     def checkIfCellShouldDivideTwoConditions(self, divideTolerance1, divideTolerance2):
         '''
-        Check two divide conditions.
+        Check two divideInto8 conditions.
         '''
 
         self.divideFlag = False # initialize
@@ -409,7 +409,7 @@ class Cell(object):
 
 
         
-    def divide(self, printNumberOfCells=False):
+    def divideInto8(self, printNumberOfCells=False):
         '''setup 5x5x5 array of gridpoint objects.  These will be used to construct the 8 children cells'''
         children = np.empty((2,2,2), dtype=object)
         self.leaf = False

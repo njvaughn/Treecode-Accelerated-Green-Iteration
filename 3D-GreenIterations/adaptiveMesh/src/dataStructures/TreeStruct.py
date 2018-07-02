@@ -1,7 +1,7 @@
 '''
 The main Tree data structure.  The root of the tree is a Cell object that is comprised of the 
 entire domain.  The tree gets built by dividing the root cell, recursively, based on the set 
-divide condition.  The current implementation uses the variation of psi within a cell to 
+divideInto8 condition.  The current implementation uses the variation of psi within a cell to 
 dictate whether or not it divides.  
 
 Cells can perform recursive functions on the tree.  The tree can also extract all gridpoints or
@@ -76,7 +76,7 @@ class Tree(object):
                         Cell.checkIfCellShouldDivide(divideParameter)
                     
                 if Cell.divideFlag == True:   
-                    Cell.divide(printNumberOfCells)
+                    Cell.divideInto8(printNumberOfCells)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
@@ -138,7 +138,7 @@ class Tree(object):
                     Cell.checkIfCellShouldDivide(divideTolerance)
                     
                 if Cell.divideFlag == True:   
-                    Cell.divide(printNumberOfCells)
+                    Cell.divideInto8(printNumberOfCells)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
@@ -197,7 +197,7 @@ class Tree(object):
                     Cell.checkIfCellShouldDivideTwoConditions(divideTolerance1, divideTolerance2)
                     
                 if Cell.divideFlag == True:   
-                    Cell.divide(printNumberOfCells)
+                    Cell.divideInto8(printNumberOfCells)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:

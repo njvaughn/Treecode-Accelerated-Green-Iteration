@@ -21,7 +21,7 @@ class TestCellStructure(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.xmin = self.ymin = self.zmin = -2
-        self.xmax = self.ymax = self.zmax = -1.5
+        self.xmax = self.ymax = self.zmax = 1.5
         self.order = 5
         
         self.px = self.order
@@ -55,7 +55,7 @@ class TestCellStructure(unittest.TestCase):
         '''
         parent = self.testCell
         parent.uniqueID = '000'
-        parent.divide()
+        parent.divide(xdiv=parent.xmid, ydiv=parent.ymid, zdiv=parent.zmid)
         
         self.assertEqual(parent.xmid,parent.children[0,randint(2),randint(2)].xmax, 
                          "Parent's x midpoint should be right end of left children")
@@ -69,24 +69,68 @@ class TestCellStructure(unittest.TestCase):
                          "Parent's z midpoint should be right end of left children")
         self.assertEqual(parent.zmid,parent.children[randint(2),randint(2),1].zmin, 
                          "Parent's z midpoint should be left end of right children")
+    
+    def testCellDivideInto4(self):
+        '''
+        Test cell division.  The original 3x3x3 GridPoint objects should be pointed to by the children
+        in addition to the new GridPoint objects created at the refined level.  Check that the gridpoint data 
+        gets mapped properly (children are in fact the 8 octants).
+        '''
+        parent = self.testCell
+        parent.uniqueID = '000'
+        parent.divideInto4(xdiv=0.2, ydiv=0.2, zdiv=None )
+        for i in range(2):
+            for j in range(2):
+                print('Child (%i, %i)'%(i,j))
+                print('UniqueID ', parent.children[i,j,0].uniqueID)
         
-        # check that previously existing object are now also owned by the children
-#         self.assertEqual(parent.gridpoints[2,2,2], parent.children[1,1,1].gridpoints[2,2,2],
-#                           "corner point not mapped to expected child")
-#         self.assertEqual(parent.gridpoints[1,1,1], parent.children[1,1,1].gridpoints[0,0,0],
-#                           "middle point not mapped to expected child")
-#         self.assertEqual(parent.gridpoints[2,0,1], parent.children[1,0,1].gridpoints[2,0,0],
-#                           "corner point not mapped to expected child")
+        self.assertEqual(np.shape(parent.children), (2,2,1), "Children not right shape")
         
-        # check that children's new cells have the correct new gridpoints
-#         self.assertEqual(parent.children[0,0,0].gridpoints[1,1,1].x, 
-#                          (parent.gridpoints[0,0,0].x + parent.gridpoints[1,0,0].x )/2, 
-#                          "midpoint of child cell not expected value.")
-#         
-        # check that children own same objects on their boundaries
-#         self.assertEqual(parent.children[0,0,0].gridpoints[1,1,2], parent.children[0,0,1].gridpoints[1,1,0], 
-#                          "Neighboring children aren't pointing to same gridpoint object on their shared face")
-
+        # test z axis
+        self.assertEqual(parent.zmin,parent.children[randint(2),randint(2),0].zmin, 
+                         "Children have same zmin as parent")
+        self.assertEqual(parent.zmid,parent.children[randint(2),randint(2),0].zmid, 
+                         "Children have same zmid as parent")
+        self.assertEqual(parent.zmax,parent.children[randint(2),randint(2),0].zmax, 
+                         "Children have same zmax as parent")
+        
+        parent.children=None
+        parent.divideInto4(xdiv=0.2, ydiv=None, zdiv=0.1 )
+        for i in range(2):
+            for k in range(2):
+                print('Child (%i, %i)'%(i,j))
+                print('UniqueID ', parent.children[i,0,k].uniqueID)
+        
+        self.assertEqual(np.shape(parent.children), (2,1,2), "Children not right shape")
+        
+        # test y axis
+        self.assertEqual(parent.ymin,parent.children[randint(2),0,randint(2)].ymin, 
+                         "Children don't have same ymin as parent")
+        self.assertEqual(parent.ymid,parent.children[randint(2),0,randint(2)].ymid, 
+                         "Children don't have same ymid as parent")
+        self.assertEqual(parent.ymax,parent.children[randint(2),0,randint(2)].ymax, 
+                         "Children don't have same ymax as parent")
+        
+        parent.children=None
+        parent.divideInto4(xdiv=None, ydiv=0.22, zdiv=0.1 )
+        for j in range(2):
+            for k in range(2):
+                print('Child (%i, %i)'%(i,j))
+                print('UniqueID ', parent.children[0,j,k].uniqueID)
+        
+        self.assertEqual(np.shape(parent.children), (1,2,2), "Children not right shape")
+        
+        # test x axis
+        self.assertEqual(parent.xmin,parent.children[0,randint(2),randint(2)].xmin, 
+                         "Children don't have same ymin as parent")
+        self.assertEqual(parent.xmid,parent.children[0,randint(2),randint(2)].xmid, 
+                         "Children don't have same ymid as parent")
+        self.assertEqual(parent.xmax,parent.children[0,randint(2),randint(2)].xmax, 
+                         "Children don't have same ymax as parent")
+        
+        parent.divideInto4(xdiv=None, ydiv=None, zdiv=0.1 )
+        
+ 
     def testCellOrder(self):
         self.assertEqual(self.order, self.testCell.px, "Cell order doesn't match input order.")
         self.assertEqual(np.shape(self.testCell.gridpoints), (self.order,self.order,self.order), 

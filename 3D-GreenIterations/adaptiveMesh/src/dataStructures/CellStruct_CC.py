@@ -14,6 +14,7 @@ from GridpointStruct import GridPoint
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 TwoByTwoByTwo = [element for element in itertools.product(range(2),range(2),range(2))]
+TwoByTwo = [element for element in itertools.product(range(2),range(2))]
 FiveByFiveByFive = [element for element in itertools.product(range(5),range(5),range(5))]
  
  
@@ -41,27 +42,47 @@ class Cell(object):
         W = unscaledWeights(px)  # assumed px=py=pz
         self.w = weights3D(xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, W)
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
-        self.getCellMidpointAndVolume()
+        self.setCellMidpointAndVolume()
 
-#         print(self.w)
-#         print(self.xmin)
-#         print(self.xmax)
+
             
     
     def setGridpoints(self,gridpoints):
         self.gridpoints = gridpoints
         
         
-    def getCellMidpointAndVolume(self):
+    def setCellMidpointAndVolume(self):
 
         self.volume = (self.xmax-self.xmin)*(self.ymax-self.ymin)*(self.zmax-self.zmin)
+        if self.volume==0.0:
+            print('warning: cell has zero volume')
+            print('Dx = ', self.xmax-self.xmin)
+            print('xmin = ', self.xmin)
+            print('xmax = ', self.xmax)
+            print('Dy = ', self.ymax-self.ymin)
+            print('ymin = ', self.ymin)
+            print('ymax = ', self.ymax)
+            print('Dz = ', self.zmax-self.zmin)
+            print('zmin = ', self.zmin)
+            print('zmax = ', self.zmax)
+            print()
         self.xmid = 1/2*(self.xmin + self.xmax)
         self.ymid = 1/2*(self.ymin + self.ymax)
         self.zmid = 1/2*(self.zmin + self.zmax)
         if abs(np.sum(self.w) - self.volume) > 1e-10:
             print('warning, cell weights dont sum to cell volume.')
-#         print(np.sum(self.w))
-#         print(self.volume)
+
+    
+    def getAspectRatio(self):
+        dx = (self.xmax-self.xmin)
+        dy = (self.ymax-self.ymin)
+        dz = (self.zmax-self.zmin)
+        L = max(dx, max(dy,dz))
+        l = min(dx, min(dy,dz))
+        
+        aspectRatio = L/l
+        return aspectRatio
+    
     
      
     def setUniqueID(self,i,j,k):
@@ -237,7 +258,7 @@ class Cell(object):
 #         self.computePotential()
 #         parentIntegral = self.PE
 #         childrenIntegral = 0.0
-#         self.divide()
+#         self.divideInto8()
 #         for i,j,k in TwoByTwoByTwo:
 #             self.children[i,j,k].computePotential()
 #             childrenIntegral += self.children[i,j,k].PE
@@ -269,37 +290,20 @@ class Cell(object):
             self.divideFlag = True
         else:
             self.divideFlag = False
-            
-        
-
-#         ''' If the cell contains the nucleus, divide it to max levels regardless of condition '''
-#         self.divideFlag=False
-#         for i,j,k in self.PxByPyByPz:
-#             if ( (self.gridpoints[i,j,k].x==0) and (self.gridpoints[i,j,k].y==0) and (self.gridpoints[i,j,k].z==0) and (self.dx > divideTolerance) ):
-#                 self.divideFlag = True
-#                 return
-
-# #         self.getPsiVariation()
-#         self.getTestFunctionVariation()
-# #         if self.psiVariation > divideTolerance:
-#         if self.testFunctionVariation > divideTolerance:
-#             self.divideFlag = True
-#         else:
-#             self.divideFlag = False
-            
-            
-
 
     def checkIfAboveMeshDensity(self,divideParameter,divideCriterion):
         self.divideFlag = False
-        r = np.sqrt( self.xmid**2 + self.ymid**2 + self.zmid**2 )
-        if 1/self.volume < meshDensity(r,divideParameter,divideCriterion):
-            self.divideFlag=True
+        for atom in self.tree.atoms:
+            
+            r = np.sqrt( (self.xmid-atom.x)**2 + (self.ymid-atom.y)**2 + (self.zmid-atom.z)**2 )
+            if 1/self.volume < meshDensity(r,divideParameter,divideCriterion):
+                self.divideFlag=True
+                
             
 
     def checkIfCellShouldDivideTwoConditions(self, divideTolerance1, divideTolerance2):
         '''
-        Check two divide conditions.
+        Check two divideInto8 conditions.
         '''
 
         self.divideFlag = False # initialize
@@ -429,27 +433,49 @@ class Cell(object):
         self.PxByPyByPz = None
     
     
-    def divide(self, printNumberOfCells=False):
+    
+    def divide(self, xdiv, ydiv, zdiv, printNumberOfCells=False):
+        
+        noneCount = 0
+        if xdiv == None: noneCount += 1
+        if ydiv == None: noneCount += 1
+        if zdiv == None: noneCount += 1
+        
+        if noneCount == 0:
+#             print('divide into 8 called by cell ', self.uniqueID)
+#             print('xdiv, ydiv, zdiv: ', xdiv, ydiv, zdiv)
+            self.divideInto8(xdiv, ydiv, zdiv, printNumberOfCells)
+        elif noneCount == 1:
+#             print('divide into 4 called by cell ', self.uniqueID)
+#             print('xdiv, ydiv, zdiv: ', xdiv, ydiv, zdiv)
+            self.divideInto4(xdiv, ydiv, zdiv, printNumberOfCells) 
+        elif noneCount == 2:
+#             print('divide into 2 called by cell ', self.uniqueID)
+#             print('xdiv, ydiv, zdiv: ', xdiv, ydiv, zdiv)
+            self.divideInto2(xdiv, ydiv, zdiv, printNumberOfCells)   
+        
+        
+    def divideInto8(self, xdiv, ydiv, zdiv, printNumberOfCells=False):
         '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
+    
+        
         children = np.empty((2,2,2), dtype=object)
         self.leaf = False
-#         x = [np.linspace(self.xmin,self.xmid,self.px), np.linspace(self.xmid,self.xmax,self.px)]
-#         y = [np.linspace(self.ymin,self.ymid,self.py), np.linspace(self.ymid,self.ymax,self.py)]
-#         z = [np.linspace(self.zmin,self.zmid,self.pz), np.linspace(self.zmid,self.zmax,self.pz)]
-        
-        x = [ChebyshevPoints(self.xmin,self.xmid,self.px), ChebyshevPoints(self.xmid,self.xmax,self.px)]
-        y = [ChebyshevPoints(self.ymin,self.ymid,self.py), ChebyshevPoints(self.ymid,self.ymax,self.py)]
-        z = [ChebyshevPoints(self.zmin,self.zmid,self.pz), ChebyshevPoints(self.zmid,self.zmax,self.pz)]
-        
-#         x = [ChebyshevPoints(xlow, xhigh, N), ]
-        
-        xbounds = [self.xmin, self.xmid, self.xmax]
-        ybounds = [self.ymin, self.ymid, self.ymax]
-        zbounds = [self.zmin, self.zmid, self.zmax]
+
+    
+        x = [ChebyshevPoints(self.xmin,float(xdiv),self.px), ChebyshevPoints(float(xdiv),self.xmax,self.px)]
+        y = [ChebyshevPoints(self.ymin,float(ydiv),self.py), ChebyshevPoints(float(ydiv),self.ymax,self.py)]
+        z = [ChebyshevPoints(self.zmin,float(zdiv),self.pz), ChebyshevPoints(float(zdiv),self.zmax,self.pz)]
         
         
+        xbounds = np.array([self.xmin, float(xdiv), self.xmax])
+        ybounds = np.array([self.ymin, float(ydiv), self.ymax])
+        zbounds = np.array([self.zmin, float(zdiv), self.zmax])
+
+#         
         '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
         for i, j, k in TwoByTwoByTwo:
+            
             children[i,j,k] = Cell(xbounds[i], xbounds[i+1], self.px, 
                                    ybounds[j], ybounds[j+1], self.py,
                                    zbounds[k], zbounds[k+1], self.pz, tree = self.tree)
@@ -460,10 +486,7 @@ class Cell(object):
             if hasattr(self.tree, 'masterList'):
                 self.tree.masterList.insert(bisect.bisect_left(self.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
 
-#         '''fill in any already existing gridpoints from neighboring cells that have already divided'''
-#         for i, j, k in TwoByTwoByTwo:    
-#             gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3] = children[i,j,k].fillInNeighbors(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
-            
+
         '''create new gridpoints wherever necessary'''
         newGridpointCount=0
         for ii,jj,kk in TwoByTwoByTwo:
@@ -479,16 +502,321 @@ class Cell(object):
                 children[ii,jj,kk].level = self.level+1
         
         if printNumberOfCells == True: print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, self.uniqueID))
-        '''set up the children gridpoints from the 5x5x5 array of gridpoints'''
-#         for i, j, k in TwoByTwoByTwo:
-#             children[i,j,k].setGridpoints(gridpoints[2*i:2*i+3, 2*j:2*j+3, 2*k:2*k+3])
-#             '''if this cell is part of a tree, maintain its level'''
-#             if hasattr(self,'level'):
-#                 children[i,j,k].level = self.level+1
+
         '''set the parent cell's 'children' attribute to the array of children'''
         self.children = children
-#         self.cleanupAfterDivide()
+        
+    def divideInto4(self, xdiv, ydiv, zdiv, printNumberOfCells=False):
+        '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
+        if zdiv == None:
+            children = np.empty((2,2,1), dtype=object)
+            self.leaf = False
+    
+        
+            x = [ChebyshevPoints(self.xmin,float(xdiv),self.px), ChebyshevPoints(float(xdiv),self.xmax,self.px)]
+            y = [ChebyshevPoints(self.ymin,float(ydiv),self.py), ChebyshevPoints(float(ydiv),self.ymax,self.py)]
+            z = [ChebyshevPoints(self.zmin,self.zmax,self.pz)]
+            
+            
+            xbounds = np.array([self.xmin, float(xdiv), self.xmax])
+            ybounds = np.array([self.ymin, float(ydiv), self.ymax])
+#             zbounds = np.array([self.zmin, float(zdiv), self.zmax])
+    
+    #         
+            '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
+            for i, j in TwoByTwo:
+                
+                children[i,j,0] = Cell(xbounds[i], xbounds[i+1], self.px, 
+                                       ybounds[j], ybounds[j+1], self.py,
+                                       self.zmin, self.zmax, self.pz, tree = self.tree)
+                children[i,j,0].parent = self # children should point to their parent
+                children[i,j,0].setUniqueID(i,j,0)  # neighbor lists going to be ruined once no longer dividing into 8
+                children[i,j,0].setNeighborList()
+    
+                if hasattr(self.tree, 'masterList'):
+                    self.tree.masterList.insert(bisect.bisect_left(self.tree.masterList, [children[i,j,0].uniqueID,]), [children[i,j,0].uniqueID,children[i,j,0]])
+    
+    
+            '''create new gridpoints wherever necessary'''
+            newGridpointCount=0
+            for ii,jj in TwoByTwo:
+                xOct = x[ii]
+                yOct = y[jj]
+                zOct = z[0]
+                gridpoints = np.empty((self.px,self.py,self.pz),dtype=object)
+                for i, j, k in self.PxByPyByPz:
+                    newGridpointCount += 1
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                children[ii,jj,0].setGridpoints(gridpoints)
+                if hasattr(self,'level'):
+                    children[ii,jj,0].level = self.level+1
+                    
+                    
+        elif ydiv == None:  # divideInto8 along the x and z axes, but not the y
+            children = np.empty((2,1,2), dtype=object)
+            self.leaf = False
+    
+        
+            x = [ChebyshevPoints(self.xmin,float(xdiv),self.px), ChebyshevPoints(float(xdiv),self.xmax,self.px)]
+            y = [ChebyshevPoints(self.ymin,self.ymax,self.py)]
+            z = [ChebyshevPoints(self.zmin,float(zdiv),self.pz), ChebyshevPoints(float(zdiv),self.zmax,self.pz)]
+            
+            
+            xbounds = np.array([self.xmin, float(xdiv), self.xmax])
+#             ybounds = np.array([self.ymin, float(ydiv), self.ymax])
+            zbounds = np.array([self.zmin, float(zdiv), self.zmax])
+    
+    #         
+            '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
+            for i, k in TwoByTwo:
+                
+                children[i,0,k] = Cell(xbounds[i], xbounds[i+1], self.px, 
+                                       self.ymin, self.ymax, self.py,
+                                       zbounds[k], zbounds[k+1], self.pz, tree = self.tree)
+                children[i,0,k].parent = self # children should point to their parent
+                children[i,0,k].setUniqueID(i,0,k)  # neighbor lists going to be ruined once no longer dividing into 8
+                children[i,0,k].setNeighborList()
+    
+                if hasattr(self.tree, 'masterList'):
+                    self.tree.masterList.insert(bisect.bisect_left(self.tree.masterList, [children[i,0,k].uniqueID,]), [children[i,0,k].uniqueID,children[i,0,k]])
+    
+    
+            '''create new gridpoints wherever necessary'''
+            newGridpointCount=0
+            for ii,kk in TwoByTwo:
+                xOct = x[ii]
+                yOct = y[0]
+                zOct = z[kk]
+                gridpoints = np.empty((self.px,self.py,self.pz),dtype=object)
+                for i, j, k in self.PxByPyByPz:
+                    newGridpointCount += 1
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                children[ii,0,kk].setGridpoints(gridpoints)
+                if hasattr(self,'level'):
+                    children[ii,0,kk].level = self.level+1
+                    
+        elif xdiv == None:  # divideInto8 along the x and z axes, but not the y
+            children = np.empty((1,2,2), dtype=object)
+            self.leaf = False
+    
+        
+            x = [ChebyshevPoints(self.xmin,self.xmax,self.px)]
+            y = [ChebyshevPoints(self.ymin,float(ydiv),self.py), ChebyshevPoints(float(ydiv),self.ymax,self.py)]
+            z = [ChebyshevPoints(self.zmin,float(zdiv),self.pz), ChebyshevPoints(float(zdiv),self.zmax,self.pz)]
+            
+            
+#             xbounds = np.array([self.xmin, float(xdiv), self.xmax])
+            ybounds = np.array([self.ymin, float(ydiv), self.ymax])
+            zbounds = np.array([self.zmin, float(zdiv), self.zmax])
+    
+    #         
+            '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
+            for j, k in TwoByTwo:
+                
+                children[0,j,k] = Cell(self.xmin, self.xmax, self.px, 
+                                       ybounds[j], ybounds[j+1], self.py,
+                                       zbounds[k], zbounds[k+1], self.pz, tree = self.tree)
+                children[0,j,k].parent = self # children should point to their parent
+                children[0,j,k].setUniqueID(0,j,k)  # neighbor lists going to be ruined once no longer dividing into 8
+                children[0,j,k].setNeighborList()
+    
+                if hasattr(self.tree, 'masterList'):
+                    self.tree.masterList.insert(bisect.bisect_left(self.tree.masterList, [children[0,j,k].uniqueID,]), [children[0,j,k].uniqueID,children[0,j,k]])
+    
+    
+            '''create new gridpoints wherever necessary'''
+            newGridpointCount=0
+            for jj,kk in TwoByTwo:
+                xOct = x[0]
+                yOct = y[jj]
+                zOct = z[kk]
+                gridpoints = np.empty((self.px,self.py,self.pz),dtype=object)
+                for i, j, k in self.PxByPyByPz:
+                    newGridpointCount += 1
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                children[0,jj,kk].setGridpoints(gridpoints)
+                if hasattr(self,'level'):
+                    children[0,jj,kk].level = self.level+1
+            
+        if printNumberOfCells == True: print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, self.uniqueID))
+    
+        '''set the parent cell's 'children' attribute to the array of children'''
+        self.children = children
+        
+    def divideInto2(self, xdiv, ydiv, zdiv, printNumberOfCells=False):
+        '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
+        if ( (zdiv == None) and (ydiv==None) ):
+            children = np.empty((2,1,1), dtype=object)
+            self.leaf = False
+    
+        
+            x = [ChebyshevPoints(self.xmin,float(xdiv),self.px), ChebyshevPoints(float(xdiv),self.xmax,self.px)]
+            y = [ChebyshevPoints(self.ymin,self.ymax,self.py)]
+            z = [ChebyshevPoints(self.zmin,self.zmax,self.pz)]
+            
+            
+            xbounds = np.array([self.xmin, float(xdiv), self.xmax])
+    
+    #         
+            '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
+            for i in range(2):
+                
+                children[i,0,0] = Cell(xbounds[i], xbounds[i+1], self.px, 
+                                       self.ymin, self.ymax, self.py,
+                                       self.zmin, self.zmax, self.pz, tree = self.tree)
+                children[i,0,0].parent = self # children should point to their parent
+                children[i,0,0].setUniqueID(i,0,0)  # neighbor lists going to be ruined once no longer dividing into 8
+                children[i,0,0].setNeighborList()
+    
+                if hasattr(self.tree, 'masterList'):
+                    self.tree.masterList.insert(bisect.bisect_left(self.tree.masterList, [children[i,0,0].uniqueID,]), [children[i,0,0].uniqueID,children[i,0,0]])
+    
+    
+            '''create new gridpoints wherever necessary'''
+            newGridpointCount=0
+            for ii in range(2):
+                xOct = x[ii]
+                yOct = y[0]
+                zOct = z[0]
+                gridpoints = np.empty((self.px,self.py,self.pz),dtype=object)
+                for i, j, k in self.PxByPyByPz:
+                    newGridpointCount += 1
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                children[ii,0,0].setGridpoints(gridpoints)
+                if hasattr(self,'level'):
+                    children[ii,0,0].level = self.level+1
+                    
+                    
+        elif ( (zdiv == None) and (xdiv==None) ):  # divide along y axis only
+            children = np.empty((1,2,1), dtype=object)
+            self.leaf = False
+    
+        
+            x = [ChebyshevPoints(self.xmin,self.xmax,self.px)]
+            y = [ChebyshevPoints(self.ymin,float(ydiv),self.py), ChebyshevPoints(float(ydiv),self.ymax,self.py)]
+            z = [ChebyshevPoints(self.zmin,self.zmax,self.pz)]
+            
+            
+            ybounds = np.array([self.ymin, float(ydiv), self.ymax])
+    
+    #         
+            '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
+            for j in range(2):
+                
+                children[0,j,0] = Cell(self.xmin, self.xmax, self.px, 
+                                       ybounds[j], ybounds[j+1], self.py,
+                                       self.zmin, self.zmax, self.pz, tree = self.tree)
+                children[0,j,0].parent = self # children should point to their parent
+                children[0,j,0].setUniqueID(0,j,0)  # neighbor lists going to be ruined once no longer dividing into 8
+                children[0,j,0].setNeighborList()
+    
+                if hasattr(self.tree, 'masterList'):
+                    self.tree.masterList.insert(bisect.bisect_left(self.tree.masterList, [children[0,j,0].uniqueID,]), [children[0,j,0].uniqueID,children[0,j,0]])
+    
+    
+            '''create new gridpoints wherever necessary'''
+            newGridpointCount=0
+            for jj in range(2):
+                xOct = x[0]
+                yOct = y[jj]
+                zOct = z[0]
+                gridpoints = np.empty((self.px,self.py,self.pz),dtype=object)
+                for i, j, k in self.PxByPyByPz:
+                    newGridpointCount += 1
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                children[0,jj,0].setGridpoints(gridpoints)
+                if hasattr(self,'level'):
+                    children[0,jj,0].level = self.level+1
+                    
+        elif ( (xdiv == None) and (ydiv==None) ):  # divide along z axis only
+            children = np.empty((1,1,2), dtype=object)
+            self.leaf = False
+    
+        
+            x = [ChebyshevPoints(self.xmin,self.xmax,self.px)]
+            y = [ChebyshevPoints(self.ymin,self.ymax,self.py)]
+            z = [ChebyshevPoints(self.zmin,float(zdiv),self.pz), ChebyshevPoints(float(zdiv),self.zmax,self.pz)]
+            
+            
+            zbounds = np.array([self.zmin, float(zdiv), self.zmax])
+#             print('zbounds ', zbounds)
+    #         
+            '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
+            for k in range(2):
+#                 print('k ', k)
+#                 print('zbounds[k] ', zbounds[k])
+#                 print('zbounds[k+1] ', zbounds[k+1])
+                children[0,0,k] = Cell(self.xmin, self.xmax, self.px, 
+                                       self.ymin, self.ymax, self.py,
+                                       zbounds[k], zbounds[k+1], self.pz, tree = self.tree)
+                children[0,0,k].parent = self # children should point to their parent
+                children[0,0,k].setUniqueID(0,0,k)  # neighbor lists going to be ruined once no longer dividing into 8
+                children[0,0,k].setNeighborList()
+    
+                if hasattr(self.tree, 'masterList'):
+                    self.tree.masterList.insert(bisect.bisect_left(self.tree.masterList, [children[0,0,k].uniqueID,]), [children[0,0,k].uniqueID,children[0,0,k]])
+    
+    
+            '''create new gridpoints wherever necessary'''
+            newGridpointCount=0
+            for kk in range(2):
+                xOct = x[0]
+                yOct = y[0]
+                zOct = z[kk]
+                gridpoints = np.empty((self.px,self.py,self.pz),dtype=object)
+                for i, j, k in self.PxByPyByPz:
+                    newGridpointCount += 1
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                children[0,0,kk].setGridpoints(gridpoints)
+                if hasattr(self,'level'):
+                    children[0,0,kk].level = self.level+1
+                    
+        if printNumberOfCells == True: print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, self.uniqueID))
+    
+        '''set the parent cell's 'children' attribute to the array of children'''
+        self.children = children
 
+    def divideIfAspectRatioExceeds(self, tolerance):
+        aspectRatio = self.getAspectRatio()
+        if aspectRatio > tolerance:  # fix tolerance to 1.5 for now
+            print('Cell ', self.uniqueID,' has apsect ratio of ', aspectRatio,'.  Dividing')
+            # find longest edge:
+            dx = self.xmax-self.xmin
+            dy = self.ymax-self.ymin
+            dz = self.zmax-self.zmin
+            print('dx = ', dx)
+            print('dy = ', dy)
+            print('dz = ', dz)
+            
+            # locate shortest dimension.  Divide, then check aspect ratio of children.  
+#             if (dx <= min(dy,dz)): # x is shortest dimension.
+#                 self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
+#             elif (dy <= min(dx,dz)): # y is shortest dimension
+#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
+#             elif (dz <= max(dx,dy)): # z is shortest dimension
+#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
+#             
+#             if hasattr(self, "children"):
+#                 (ii,jj,kk) = np.shape(self.children)
+#                 for i in range(ii):
+#                     for j in range(jj):
+#                         for k in range(kk):
+#                             self.children[i,j,k].divideIfAspectRatioExceeds(tolerance)
+                
+            # locate longest dimension.  Divide, then check aspect ratio of children.  
+            if (dx >= max(dy,dz)): # x is longest dimension.
+                self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
+                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+                self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
+            elif (dy >= max(dx,dz)): # y is longest dimension
+                self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
+                self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
+                self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
+            elif (dz >= max(dx,dy)): # z is longest dimension
+                self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
+                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+                self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
+            
 
     def divideButJustReturnChildren(self, printNumberOfCells=False):
         '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
