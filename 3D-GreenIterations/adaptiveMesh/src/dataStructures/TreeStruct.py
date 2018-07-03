@@ -1,7 +1,7 @@
 '''
 The main Tree data structure.  The root of the tree is a Cell object that is comprised of the 
 entire domain.  The tree gets built by dividing the root cell, recursively, based on the set 
-divideInto8 condition.  The current implementation uses the variation of psi within a cell to 
+divideInto8 condition.  The current implementation uses the variation of phi within a cell to 
 dictate whether or not it divides.  
 
 Cells can perform recursive functions on the tree.  The tree can also extract all gridpoints or
@@ -302,7 +302,7 @@ class Tree(object):
         '''
     
                 
-#         outputData = self.walkTree(attribute='psi', storeOutput = True)        
+#         outputData = self.walkTree(attribute='phi', storeOutput = True)        
         outputData = self.walkTree(attributeForColoring, storeOutput = True, leavesOnly=True)        
         x = outputData[:,0]
         y = outputData[:,1]
@@ -337,7 +337,7 @@ class Tree(object):
                 if element[1].gridpoints[i,j,2].z == zSlizeLocation:
                     x.append(element[1].gridpoints[i,j,2].x)
                     y.append(element[1].gridpoints[i,j,2].y)
-                    psi.append(element[1].gridpoints[i,j,2].psi)
+                    psi.append(element[1].gridpoints[i,j,2].phi)
                     if n>= 0:
                         psiTrue.append(scalingFactor*trueWavefunction(n, element[1].gridpoints[i,j,2].x, element[1].gridpoints[i,j,2].y, element[1].gridpoints[i,j,2].z))
 
@@ -345,8 +345,8 @@ class Tree(object):
         psi = np.array(psi)
         psiTrue = np.array(psiTrue)
         
-#         if np.sum(psi-psiTrue) > np.sum(psi+psiTrue):
-#             psi = -psi
+#         if np.sum(phi-psiTrue) > np.sum(phi+psiTrue):
+#             phi = -phi
 
         if np.sum(psi)*np.sum(psiTrue) < 0:
             psi = -psi
@@ -356,15 +356,15 @@ class Tree(object):
             
             fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(figsize=(8, 6), ncols=2, nrows=2)
             if saveID!=False: plt.suptitle('Iteration %s, Energy Error %.2e' %(saveID[-2:],(Etrue-self.E)) )
-#             logAbsErr = np.log(abs(psiTrue-psi))
-#             logRelErr = np.log(abs((psiTrue-psi)/psiTrue))
+#             logAbsErr = np.log(abs(psiTrue-phi))
+#             logRelErr = np.log(abs((psiTrue-phi)/psiTrue))
             analyticWave =  ax1.scatter(x, y, s=3, c=psiTrue, cmap=plt.get_cmap('Blues'))
             computedWave =  ax2.scatter(x, y, s=3, c=psi, cmap=plt.get_cmap('Blues'))
             absErr =        ax3.scatter(x, y, s=3, c=abs(psiTrue-psi), cmap=plt.get_cmap('Reds'),norm=matplotlib.colors.LogNorm())
-#             absErr =        ax3.scatter(x, y, s=3, c=abs(psiTrue-psi), cmap=plt.get_cmap('Reds'))
+#             absErr =        ax3.scatter(x, y, s=3, c=abs(psiTrue-phi), cmap=plt.get_cmap('Reds'))
 #             absErr =        ax3.scatter(x, y, s=3, c=logAbsErr)
             relErr =        ax4.scatter(x, y, s=3, c=abs((psiTrue-psi)/psiTrue), cmap=plt.get_cmap('Reds'),norm=matplotlib.colors.LogNorm())
-#             relErr =        ax4.scatter(x, y, s=3, c=abs((psiTrue-psi)/psiTrue), cmap=plt.get_cmap('Reds'))
+#             relErr =        ax4.scatter(x, y, s=3, c=abs((psiTrue-phi)/psiTrue), cmap=plt.get_cmap('Reds'))
 #             relErr =        ax4.scatter(x, y, s=3, c=logRelErr)
 
             fig.colorbar(analyticWave, ax=ax1)
@@ -385,7 +385,7 @@ class Tree(object):
             else: plt.show()
 #             fig1 = plt.figure()
 #             ax1 = fig1.add_subplot(111)
-#             scatter = ax1.scatter(x, y, s=20, c=abs(np.array(psiTrue)-np.array(psi)), cmap=plt.get_cmap('brg'))
+#             scatter = ax1.scatter(x, y, s=20, c=abs(np.array(psiTrue)-np.array(phi)), cmap=plt.get_cmap('brg'))
 #             plt.title('Absolute Errors')
 #             ax1.set_xlabel('X')
 #             ax1.set_ylabel('Y')
@@ -393,7 +393,7 @@ class Tree(object):
 #             
 #             fig2 = plt.figure()
 #             ax2 = fig2.add_subplot(111)
-#             scatter = ax2.scatter(x, y, s=20, c=abs(np.array(psiTrue)-np.array(psi))/np.array(psiTrue), cmap=plt.get_cmap('brg'))
+#             scatter = ax2.scatter(x, y, s=20, c=abs(np.array(psiTrue)-np.array(phi))/np.array(psiTrue), cmap=plt.get_cmap('brg'))
 #             plt.title('Relative Errors')
 #             ax2.set_xlabel('X')
 #             ax2.set_ylabel('Y')
@@ -401,7 +401,7 @@ class Tree(object):
 #             
 #             fig3 = plt.figure()
 #             ax3 = fig3.add_subplot(111)
-#             scatter = ax3.scatter(x, y, s=20, c=psi, cmap=plt.get_cmap('brg'))
+#             scatter = ax3.scatter(x, y, s=20, c=phi, cmap=plt.get_cmap('brg'))
 #             plt.title('Wavefunction')
 #             ax1.set_xlabel('X')
 #             ax1.set_ylabel('Y')
@@ -437,7 +437,7 @@ class Tree(object):
         if timePotential == True:
             self.PotentialTime = timer.elapsedTime
             
-    def computePotentialOnList(self, epsilon=0, timePotential = False): 
+    def computeExternalPotential(self, epsilon=0, timePotential = False): 
        
         timer = Timer() 
  
@@ -471,7 +471,7 @@ class Tree(object):
         if timeKinetic == True:
             self.KineticTime = timer.elapsedTime
             
-    def computeKineticOnList(self, timeKinetic = False):
+    def computeKinetic(self, timeKinetic = False):
 
         
         self.totalKinetic = 0
@@ -487,8 +487,8 @@ class Tree(object):
             self.KineticTime = timer.elapsedTime
             
     def updateEnergy(self,epsilon=0.0):
-        self.computeKineticOnList()
-        self.computePotentialOnList(epsilon)
+        self.computeKinetic()
+        self.computeExternalPotential(epsilon)
         self.E = self.totalKinetic + self.totalPotential
             
             
@@ -516,7 +516,7 @@ class Tree(object):
                     
                     dist = np.sqrt( (xs-xt)**2 + (ys-yt)**2 + (zs-zt)**2 )
                     if dist > 0:
-                        psiNew += -2*SourceCell.volume * potential(xs,ys,zs) * GreenFunction(dist, self.E) * SourceCell.gridpoints[1,1,1].psi
+                        psiNew += -2*SourceCell.volume * potential(xs,ys,zs) * GreenFunction(dist, self.E) * SourceCell.gridpoints[1,1,1].phi
                     
                 return psiNew
                     
@@ -552,7 +552,7 @@ class Tree(object):
                     applyUpdate(Cell.children[i,j,k])
             else:
                 for i,j,k in ThreeByThreeByThree:
-                    Cell.gridpoints[i,j,k].psi = Cell.gridpoints[i,j,k].psiNew
+                    Cell.gridpoints[i,j,k].phi = Cell.gridpoints[i,j,k].psiNew
                     Cell.gridpoints[i,j,k].psiNew = None
                     
         timer = Timer()
@@ -601,17 +601,17 @@ class Tree(object):
                             
                                 r = np.sqrt( (xt-xs)**2 + (yt-ys)**2 + (zt-zs)**2 )
                                 if r > 0:
-                                    targetPoint.psiNew += -2*sourceCell.volume * sourceCell.hydrogenV * np.exp(-np.sqrt(-2*self.E)*r)/(4*np.pi*r) * sourceMidpoint.psi
+                                    targetPoint.psiNew += -2*sourceCell.volume * sourceCell.hydrogenV * np.exp(-np.sqrt(-2*self.E)*r)/(4*np.pi*r) * sourceMidpoint.phi
         
         
         for element in self.masterList:
             if element[1].leaf == True:
-                element[1].gridpoints[1,1,1].psi = element[1].gridpoints[1,1,1].psiNew
+                element[1].gridpoints[1,1,1].phi = element[1].gridpoints[1,1,1].psiNew
                 element[1].gridpoints[1,1,1].psiNew = None
                 
         self.normalizeWavefunction()
 #                 for i,j,k in ThreeByThreeByThree:
-#                     element[1].gridpoints[i,j,k].psi = element[1].gridpoints[i,j,k].psiNew
+#                     element[1].gridpoints[i,j,k].phi = element[1].gridpoints[i,j,k].psiNew
 #                     element[1].gridpoints[i,j,k].psiNew = None
             
         timer.stop()
@@ -628,10 +628,10 @@ class Tree(object):
         for element in self.masterList:
             if element[1].leaf == True:
                 midpoint = element[1].gridpoints[1,1,1]
-                errorsIfSameSign.append( (midpoint.psi - normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
-                errorsIfDifferentSign.append( (midpoint.psi + normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
+                errorsIfSameSign.append( (midpoint.phi - normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
+                errorsIfDifferentSign.append( (midpoint.phi + normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
         
-                absErr = abs(midpoint.psi - normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))
+                absErr = abs(midpoint.phi - normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))
                 if absErr > maxErr:
                     maxErr = absErr
         if np.sum(errorsIfSameSign) < np.sum(errorsIfDifferentSign):
@@ -644,11 +644,11 @@ class Tree(object):
         self.maxPointwiseError = maxErr
         
     def normalizeWavefunction(self):
-        """ Compute integral psi*2 dxdydz """
+        """ Compute integral phi*2 dxdydz """
         A = 0.0
         for element in self.masterList:
             if element[1].leaf == True:
-                A += element[1].gridpoints[1,1,1].psi**2*element[1].volume
+                A += element[1].gridpoints[1,1,1].phi**2*element[1].volume
         
         print('A = ', A)        
         """ Initialize the normalization flag for each gridpoint """        
@@ -662,7 +662,7 @@ class Tree(object):
             if element[1].leaf==True:
                 for i,j,k in ThreeByThreeByThree:
                     if element[1].gridpoints[i,j,k].normalized == False:
-                        element[1].gridpoints[i,j,k].psi /= np.sqrt(A)
+                        element[1].gridpoints[i,j,k].phi /= np.sqrt(A)
                         element[1].gridpoints[i,j,k].normalized = True
         
         """  Delete the flag, if desired               
@@ -674,12 +674,12 @@ class Tree(object):
         """    
         
     def orthogonalizeWavefunction(self,n):
-        """ Orthgononalizes psi against wavefunction n """
+        """ Orthgononalizes phi against wavefunction n """
         B = 0.0
         for element in self.masterList:
             if element[1].leaf == True:
                 midpoint = element[1].gridpoints[1,1,1]
-                B += midpoint.psi*midpoint.finalWavefunction[n]*element[1].volume
+                B += midpoint.phi*midpoint.finalWavefunction[n]*element[1].volume
                 
         """ Initialize the orthogonalization flag for each gridpoint """        
         for element in self.masterList:
@@ -693,7 +693,7 @@ class Tree(object):
                 for i,j,k in ThreeByThreeByThree:
                     gridpoint = element[1].gridpoints[i,j,k]
                     if gridpoint.orthogonalized == False:
-                        gridpoint.psi -= B*gridpoint.finalWavefunction[n]
+                        gridpoint.phi -= B*gridpoint.finalWavefunction[n]
                         gridpoint.orthogonalized = True
                         
                         
@@ -707,7 +707,7 @@ class Tree(object):
         for element in self.masterList:
             if element[1].leaf == True:
                 midpoint =  element[1].gridpoints[1,1,1]
-                leaves.append( [midpoint.x, midpoint.y, midpoint.z, midpoint.psi, potential(midpoint.x, midpoint.y, midpoint.z), element[1].volume ] )
+                leaves.append( [midpoint.x, midpoint.y, midpoint.z, midpoint.phi, potential(midpoint.x, midpoint.y, midpoint.z), element[1].volume ] )
                 counter+=1 
                 
         return np.array(leaves)
@@ -727,7 +727,7 @@ class Tree(object):
                 for i,j,k in ThreeByThreeByThree:
                     gridpt = element[1].gridpoints[i,j,k]
                     if gridpt.extracted == False:
-                        leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.psi, potential(gridpt.x, gridpt.y, gridpt.z), element[1].volume ] )
+                        leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi, potential(gridpt.x, gridpt.y, gridpt.z), element[1].volume ] )
                         gridpt.extracted = True
                     
 
@@ -738,38 +738,38 @@ class Tree(object):
         return np.array(leaves)
                 
     
-    def importPsiOnLeaves(self,psiNew):
+    def importPhiOnLeaves(self,phiNew):
         '''
-        Import psi values, apply to leaves
+        Import phi values, apply to leaves
         '''
         for element in self.masterList:
             for i,j,k in ThreeByThreeByThree:
-                element[1].gridpoints[i,j,k].psiImported = False
+                element[1].gridpoints[i,j,k].phiImported = False
         importIndex = 0        
         for element in self.masterList:
             if element[1].leaf == True:
                 for i,j,k in ThreeByThreeByThree:
                     gridpt = element[1].gridpoints[i,j,k]
-                    if gridpt.psiImported == False:
-                        gridpt.psi = psiNew[importIndex]
-                        gridpt.psiImported = True
+                    if gridpt.phiImported == False:
+                        gridpt.phi = phiNew[importIndex]
+                        gridpt.phiImported = True
                         importIndex += 1
                     
         for element in self.masterList:
             for i,j,k in ThreeByThreeByThree:
-                element[1].gridpoints[i,j,k].psiImported = None
+                element[1].gridpoints[i,j,k].phiImported = None
                 
-    def copyPsiToFinalWavefunction(self, n):
+    def copyPhiToFinalOrbital(self, n):
         for element in self.masterList:
             for i,j,k in ThreeByThreeByThree:
                 gridpt = element[1].gridpoints[i,j,k]
                 if len(gridpt.finalWavefunction) == n:
-                    gridpt.finalWavefunction.append(gridpt.psi)
+                    gridpt.finalWavefunction.append(gridpt.phi)
                     
-    def populatePsiWithAnalytic(self,n):
+    def populatePhiWithAnalytic(self,n):
         for element in self.masterList:
             for i,j,k in ThreeByThreeByThree:
-                element[1].gridpoints[i,j,k].setAnalyticPsi(n)
+                element[1].gridpoints[i,j,k].setAnalyticPhi(n)
         self.normalizeWavefunction()
 
                             
@@ -800,7 +800,7 @@ def visualizeWavefunction():
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
     tree.buildTree( minLevels=5, maxLevels=6, divideTolerance=0.012,printTreeProperties=True)
     
-#     tree.visualizeMesh('psi')
+#     tree.visualizeMesh('phi')
     tree.wavefunctionSlice(0.25)
            
         
