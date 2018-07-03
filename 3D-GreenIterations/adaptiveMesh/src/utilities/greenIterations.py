@@ -35,42 +35,64 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
     Etrue = trueEnergy(energyLevel)
     
     while ( residual > residualTolerance ):
+        
         print('\nGreen Iteration Count ', greenIterationCounter)
         greenIterationCounter+=1
         
+        
+        """ 
+        Extract leaves and perform the Helmholtz solve 
+        """
         startExtractionTime = timer()
         sources = tree.extractLeavesAllGridpoints()  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = tree.extractLeavesAllGridpoints()  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
         ExtractionTime = timer() - startExtractionTime
         
         phiNew = np.zeros((len(targets)))
-        k = np.sqrt(-2*tree.E)                 # set the k value coming from the current guess for the energy
+        k = np.sqrt(-2*tree.orbitalEnergies[0]) 
         
-        startConvolutionTime = timer()
-        if subtractSingularity==0:
-            gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution
-        elif subtractSingularity==1:
-            gpuConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
+        startConvolutionTime = timer()    
+        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
         ConvolutionTime = timer() - startConvolutionTime
         
-        print('Extraction took:             %.4f seconds. ' %ExtractionTime)
-        print('Convolution took:            %.4f seconds. ' %ConvolutionTime)
+        print('Extraction took:                %.4f seconds. ' %ExtractionTime)
+        print('Helmholtz Convolution took:     %.4f seconds. ' %ConvolutionTime)
 
+
+        """ 
+        Import new orbital values, update pointwise densities
+        """
         tree.importPhiOnLeaves(phiNew)         # import the new wavefunction values into the tree.
-#         tree.normalizeWavefunction()           # Normalize the new wavefunction 
-#         tree.computeWaveErrors(energyLevel,normalizationFactor)    # Compute the wavefunction errors compared to the analytic ground state 
-#         print('Convolution wavefunction errors: %.10e L2,  %.10e max' %(tree.L2NormError, tree.maxPointwiseError))
+        sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
+        tree.normalizeOrbital(i=0)
+        tree.updateDensityAtQuadpoints()
+        
+        
+        """ 
+        Compute new electron-electron potential and update pointwise potential values 
+        """
+        V_coulombNew = np.zeros((len(targets)))
+        gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,k)  # call the GPU convolution 
+        tree.importVcoulombOnLeaves(V_coulombNew)
+        tree.updateVxcAndVeffAtQuadpoints()
 
+
+        """ 
+        Compute the new orbital and total energies 
+        """
         startEnergyTime = timer()
-#         tree.updateEnergy()  
         tree.updateOrbitalEnergies() 
         tree.updateTotalEnergy() 
         energyUpdateTime = timer() - startEnergyTime
         print('Energy Update took:              %.4f seconds. ' %energyUpdateTime)
         residual = abs(Eold - tree.E)  # Compute the residual for determining convergence
         print('Energy Residual:                 %.3e\n' %residual)
-
         Eold = tree.E
+        
+        
+        """
+        Print results from current iteration
+        """
         print('Updated Coulomb Energy:                 %.10f Hartree' %tree.totalCoulomb)
         print('Updated Exchange-Correlation Energy:    %.10f Hartree' %tree.totalXC)
         print('Updated External Potential Energy:      %.10f Hartree' %tree.totalExtPotentialE)
@@ -116,7 +138,7 @@ def greenIterations_Schrodinger_CC(tree, energyLevel, residualTolerance, numberO
         if subtractSingularity==0:
             gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution
         elif subtractSingularity==1:
-            gpuConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution 
+            gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,psiNew,k)  # call the GPU convolution 
         ConvolutionTime = timer() - startConvolutionTime
         
         print('Extraction took:             %.4f seconds. ' %ExtractionTime)
@@ -128,7 +150,7 @@ def greenIterations_Schrodinger_CC(tree, energyLevel, residualTolerance, numberO
         print('Convolution wavefunction errors: %.10e L2,  %.10e max' %(tree.L2NormError, tree.maxPointwiseError))
 
         startEnergyTime = timer()
-        tree.updateEnergy()  
+        tree.updateTotalEnergy()  
         energyUpdateTime = timer() - startEnergyTime
         print('Energy Update took:              %.4f seconds. ' %energyUpdateTime)
         residual = abs(Eold - tree.E)  # Compute the residual for determining convergence
@@ -190,7 +212,7 @@ def greenIterations_Schrodinger_midpt(tree, energyLevel, residualTolerance, numb
         print('Convolution wavefunction errors: %.10e L2,  %.10e max' %(tree.L2NormError, tree.maxPointwiseError))
 
         startEnergyTime = timer()
-        tree.updateEnergy()  
+        tree.updateTotalEnergy()  
         energyUpdateTime = timer() - startEnergyTime
         print('Energy Update took:              %.4f seconds. ' %energyUpdateTime)
         residual = abs(Eold - tree.E)  # Compute the residual for determining convergence

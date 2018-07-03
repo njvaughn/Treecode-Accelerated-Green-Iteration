@@ -33,11 +33,11 @@ def exportMeshForParaview(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,minLevels, maxL
             
 
 if __name__ == "__main__":
-    exportMeshForParaview(xmin=10, xmax=10,px=3,
+    exportMeshForParaview(xmin=-10, xmax=10,px=3,
                           ymin=-10, ymax=10,py=3,
                           zmin=-10, zmax=10,pz=3,
                           minLevels=2, maxLevels=20, divideCriterion='LW1', 
-                          divideParameter=500,inputFile='../meshTests/diatomic_example.csv')
+                          divideParameter=500,inputFile='../src/utilities/molecularConfigurations/diatomic_example.csv')
     
     
     

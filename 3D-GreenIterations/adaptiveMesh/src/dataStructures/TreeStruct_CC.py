@@ -1,7 +1,7 @@
 '''
 The main Tree data structure.  The root of the tree is a Cell object that is comprised of the 
 entire domain.  The tree gets built by dividing the root cell, recursively, based on the set 
-divideInto8 condition.  The current implementation uses the variation of phi within a cell to 
+divide condition.  The current implementation uses the variation of phi within a cell to 
 dictate whether or not it divides.  
 
 Cells can perform recursive functions on the tree.  The tree can also extract all gridpoints or
@@ -17,11 +17,6 @@ import itertools
 import os
 import csv
 import vtk
-import matplotlib
-# matplotlib.use('TkAgg')
-matplotlib.use('Agg')  # to not display
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 from GridpointStruct import GridPoint
 from CellStruct_CC import Cell
@@ -44,7 +39,7 @@ class Tree(object):
     """
     INTIALIZATION FUNCTIONS
     """
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coordinateFile,xcFunctional="LDA_XC_LP_A",polarization="unpolarized"):
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coordinateFile,numberOfStates=1,xcFunctional="LDA_XC_LP_A",polarization="unpolarized"):
         '''
         Tree constructor:  
         First construct the gridpoints for cell consisting of entire domain.  
@@ -63,6 +58,7 @@ class Tree(object):
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         
         self.XCfunc = pylibxc.LibXCFunctional(xcFunctional, polarization)
+        self.orbitalEnergies = -np.ones(numberOfStates)
         
         # generate gridpoint objects.  
         xvec = ChebyshevPoints(self.xmin,self.xmax,self.px)
@@ -363,12 +359,8 @@ class Tree(object):
 
     
     """
-    UPDATE  DENSITY AND EFFECTIVE POTENTIAL AT GRIDPOINTS
+    UPDATE DENSITY AND EFFECTIVE POTENTIAL AT GRIDPOINTS
     """
-    def updateCoulombPotentialAtQuadpoints(self):
-        # call the convolution 
-        pass
-    
     def updateVxcAndVeffAtQuadpoints(self):
         
         def CellupdateVxcAndVeff(Cell,xcFunc):
@@ -411,42 +403,42 @@ class Tree(object):
     """
     ENERGY COMPUTATION FUNCTIONS
     """       
-    def computeExternalPotential(self, epsilon=0, timePotential = False): 
+    def computeTotalPotential(self, epsilon=0, timePotential = False): 
+        # compute the potential energy functionals of the density
+        pass
        
-        timer = Timer() 
- 
-        self.totalPotential = 0
-        
-        timer.start() 
-        for element in self.masterList:
-            Cell = element[1]
-            if Cell.leaf == True:
-                Cell.computePotential(epsilon)
-                self.totalPotential += Cell.PE
-                       
-        timer.stop() 
-        if timePotential == True:
-            self.PotentialTime = timer.elapsedTime        
-
-    def computeKinetic(self, timeKinetic = False):
-
-        
-        self.totalKinetic = 0
-        timer = Timer()
-        timer.start()
-        for element in self.masterList:
-            Cell = element[1]
-            if Cell.leaf == True:
-                Cell.computeKinetic()
-                self.totalKinetic += Cell.KE
-        timer.stop()
-        if timeKinetic == True:
-            self.KineticTime = timer.elapsedTime
-            
-    def updateEnergy(self,epsilon=0.0):
-        self.computeKinetic()
-        self.computeExternalPotential(epsilon)
+    def computeTotalKinetic(self):
+        # sum over the kinetic energies of all orbitals
+        # for i in range(numberOfStates):
+        #     totalKE += tree.orbitalEnergies[i]
+        pass
+    
+    def updateTotalEnergy(self):
+        self.computeTotalKinetic()
+        self.computeTotalPotential()
         self.E = self.totalKinetic + self.totalPotential
+    
+    def computeOrbitalPotential(self): 
+        
+        self.orbitalPotential = 0  
+        for id,cell in self.masterList:
+            if cell.leaf == True:
+                cell.computeOrbitalPotential()
+                self.orbitalPotential += cell.orbitalPE
+                       
+    def computeOrbitalKinetic(self):
+
+        self.orbitalKinetic = 0
+        for id,cell in self.masterList:
+            if cell.leaf == True:
+                cell.computeOrbitalKinetic()
+                self.orbitalKinetic += Cell.orbitalKE
+            
+        
+    def updateOrbitalEnergies(self):
+        self.computeOrbitalKinetic()
+        self.computeOrbitalPotential()
+        self.orbitalEnergies[0] = self.orbitalKinetic + self.orbitalPotential
             
                     
     """
@@ -574,7 +566,7 @@ class Tree(object):
                 for i,j,k in self.PxByPyByPz:
                     gridpt = element[1].gridpoints[i,j,k]
                     if gridpt.extracted == False:
-                        leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi, potential(gridpt.x, gridpt.y, gridpt.z), element[1].w[i,j,k] ] )
+                        leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi, gridpt.V_eff, element[1].w[i,j,k] ] )
                         gridpt.extracted = True
                     
 
@@ -582,8 +574,21 @@ class Tree(object):
             for i,j,k in self.PxByPyByPz:
                 element[1].gridpoints[i,j,k].extracted = False
                 
-#         print( max( abs( np.array( leaves[:][0]))))
-#         print( max( abs( np.array(leaves[:][4]))))
+        return np.array(leaves)
+    
+    def extractLeavesDensity(self):
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        leaves = []
+                
+        for element in self.masterList:
+            if element[1].leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    gridpt = element[1].gridpoints[i,j,k]
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.rho, element[1].w[i,j,k] ] )
+                            
         return np.array(leaves)
                 
     def importPhiOnLeaves(self,phiNew):
@@ -610,6 +615,26 @@ class Tree(object):
             print('Warning: import index not equal to len(phiNew)')
             print(importIndex)
             print(len(phiNew))
+            
+    def importVcoulombOnLeaves(self,V_coulombNew):
+        '''
+        Import V_coulomng values, apply to leaves
+        '''
+
+        importIndex = 0        
+        for element in self.masterList:
+            if element[1].leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    gridpt = element[1].gridpoints[i,j,k]
+                    gridpt.V_coulomb = V_coulombNew[importIndex]
+                    importIndex += 1
+
+        if importIndex != len(V_coulombNew):
+            print('Warning: import index not equal to len(V_coulombNew)')
+            print(importIndex)
+            print(len(V_coulombNew))
+            
+    
                 
     def copyPhiToFinalOrbital(self, n):
         for element in self.masterList:

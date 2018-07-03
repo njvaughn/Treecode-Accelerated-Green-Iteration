@@ -462,7 +462,7 @@ class Tree(object):
                     recursiveComputeKinetic(Cell.children[i,j,k])
             
             else: # this cell has no children
-                Cell.computeKinetic()
+                Cell.computeOrbitalKinetic()
                 self.totalKinetic += Cell.KE
         timer = Timer()
         timer.start()
@@ -471,7 +471,7 @@ class Tree(object):
         if timeKinetic == True:
             self.KineticTime = timer.elapsedTime
             
-    def computeKinetic(self, timeKinetic = False):
+    def computeOrbitalKinetic(self, timeKinetic = False):
 
         
         self.totalKinetic = 0
@@ -480,14 +480,14 @@ class Tree(object):
         for element in self.masterList:
             Cell = element[1]
             if Cell.leaf == True:
-                Cell.computeKinetic()
+                Cell.computeOrbitalKinetic()
                 self.totalKinetic += Cell.KE
         timer.stop()
         if timeKinetic == True:
             self.KineticTime = timer.elapsedTime
             
-    def updateEnergy(self,epsilon=0.0):
-        self.computeKinetic()
+    def updateTotalEnergy(self,epsilon=0.0):
+        self.computeOrbitalKinetic()
         self.computeExternalPotential(epsilon)
         self.E = self.totalKinetic + self.totalPotential
             

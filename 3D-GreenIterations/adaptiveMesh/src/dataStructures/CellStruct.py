@@ -473,7 +473,7 @@ class Cell(object):
 #         
 #         self.PE = self.volume*np.sum(weightMatrix*phi*phi*V)
 
-    def computeKinetic(self):
+    def computeOrbitalKinetic(self):
 #     def computeKinetic_noMid(self):
         '''
         Explicitly compute finite differences, not using the midpoint.  
@@ -489,7 +489,7 @@ class Cell(object):
         self.KE = 1/2*self.volume*gradPsiSq
     
     def computeKinetic_numpyGrad(self):
-#     def computeKinetic(self):
+#     def computeOrbitalKinetic(self):
 #         def computeLaplacian(Cell):
 #             # get the phi values on a grid
 #             phi = np.empty((3,3,3))

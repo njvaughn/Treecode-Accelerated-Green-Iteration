@@ -23,6 +23,7 @@ class GridPoint(object):
         self.V_coulomb = None
         self.V_xc = None
         self.V_ext = None
+        self.V_eff = None
 
     def setExternalPotential(self, atoms):
         self.V_ext = 0.0
@@ -30,7 +31,7 @@ class GridPoint(object):
             self.V_ext += atom.V(self.x,self.y,self.z)
             
     def updateVeff(self):
-            self.Veff = self.V_coulomb + self.V_xc + self.V_ext 
+            self.V_eff = self.V_coulomb + self.V_xc + self.V_ext 
            
     def setPhi(self, phi):
         self.phi = phi

@@ -50,7 +50,7 @@ def cpuConvolution(targets,sources,psiNew,k):
     return psiNew
 
 @cuda.jit
-def gpuConvolutionSubractSingularity(targets,sources,psiNew,k):
+def gpuHelmholtzConvolutionSubractSingularity(targets,sources,psiNew,k):
     globalID = cuda.grid(1)  # identify the global ID of the thread
     if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
         x_t, y_t, z_t, psi_t, V_t, weight_t = targets[globalID]  # set the x, y, and z values of the target
@@ -64,6 +64,19 @@ def gpuConvolutionSubractSingularity(targets,sources,psiNew,k):
                 r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
                 f_s = 2*V_s*psi_s
                 psiNew[globalID] += weight_s*(f_s-f_t)*exp(-k*r)/(4*pi*r) # increment the new wavefunction value
+
+@cuda.jit
+def gpuPoissonConvolution(targets,sources,V_coulomb_new):
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t = targets[globalID][0:3] # set the x, y, and z values of the target
+        V_coulomb_new[globalID] = 0.0
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, rho_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+#             if not ( abs(x_s-x_t) and (y_s==y_t) and (z_s==z_t) ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            if r > 1e-12:
+                V_coulomb_new[globalID] += weight_s*rho_s/r # increment the new wavefunction value
 
 
                
