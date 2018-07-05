@@ -56,8 +56,9 @@ class Tree(object):
         self.zmax = zmax
         self.pz = pz
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
+        self.numberOfStates = numberOfStates
         
-        self.XCfunc = pylibxc.LibXCFunctional(xcFunctional, polarization)
+        self.xcFunc = pylibxc.LibXCFunctional(xcFunctional, polarization)
         self.orbitalEnergies = -np.ones(numberOfStates)
         
         # generate gridpoint objects.  
@@ -124,7 +125,7 @@ class Tree(object):
                     
                 Cell.divide(xdiv, ydiv, zdiv)
 
-        atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=None)
+        atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
 #         print(np.shape(atomData))
 #         print(len(atomData))
         if np.shape(atomData)==(4,):
@@ -186,7 +187,7 @@ class Tree(object):
                     xdiv = (Cell.xmax + Cell.xmin)/2   
                     ydiv = (Cell.ymax + Cell.ymin)/2   
                     zdiv = (Cell.zmax + Cell.zmin)/2   
-                    Cell.divideInto8(xdiv, ydiv, zdiv, printNumberOfCells)
+                    Cell.divide(xdiv, ydiv, zdiv, printNumberOfCells)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
@@ -203,7 +204,7 @@ class Tree(object):
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
         timer.stop()
         
-        """ Count the number of unique leaf cells and gridpoints """
+        """ Count the number of unique leaf cells and gridpoints and set initial external potential """
         self.numberOfGridpoints = 0
         self.numberOfCells = 0
         for element in self.masterList:
@@ -213,6 +214,7 @@ class Tree(object):
                     if not hasattr(element[1].gridpoints[i,j,k], "counted"):
                         self.numberOfGridpoints += 1
                         element[1].gridpoints[i,j,k].counted = True
+                        element[1].gridpoints[i,j,k].setExternalPotential(self.atoms)
         
                         
         for element in self.masterList:
@@ -355,7 +357,14 @@ class Tree(object):
         for element in self.masterList:
             for i,j,k in self.PxByPyByPz:
                 element[1].gridpoints[i,j,k].setAnalyticPhi(n)
-        self.normalizeWavefunction()    
+        self.normalizeWavefunction()   
+    
+    def populatePhi(self):
+        for element in self.masterList:
+            for i,j,k in self.PxByPyByPz:
+                gp=element[1].gridpoints[i,j,k]
+                gp.setPhi(np.exp( - np.sqrt( gp.x**2 + gp.y**2 + gp.z**2 )))
+        self.normalizeWavefunction()  
 
     
     """
@@ -366,7 +375,7 @@ class Tree(object):
         def CellupdateVxcAndVeff(Cell,xcFunc):
             '''
             After density is updated the convolution gets called to update V_coulom.
-            Now I need to update V_xc, then get the new value of V_eff. 
+            Now I need to update v_xc, then get the new value of v_eff. 
             '''
             
             rho = np.empty((Cell.px,Cell.py,Cell.pz))
@@ -380,7 +389,7 @@ class Tree(object):
             
             for i,j,k in self.PxByPyByPz:
                 Cell.gridpoints[i,j,k].epsilon_xc = EXC[i,j,k]
-                Cell.gridpoints[i,j,k].V_xc = VRHO[i,j,k]
+                Cell.gridpoints[i,j,k].v_xc = VRHO[i,j,k]
                 Cell.gridpoints[i,j,k].updateVeff()
             
         for element in self.masterList:
@@ -404,14 +413,42 @@ class Tree(object):
     ENERGY COMPUTATION FUNCTIONS
     """       
     def computeTotalPotential(self, epsilon=0, timePotential = False): 
-        # compute the potential energy functionals of the density
-        pass
+        
+        def integrateCellDensityAgainst__(Cell,integrand):
+            rho = np.empty((Cell.px,Cell.py,Cell.pz))
+            pot = np.empty((Cell.px,Cell.py,Cell.pz))
+            
+            for i,j,k in Cell.PxByPyByPz:
+                gp = Cell.gridpoints[i,j,k]
+                rho[i,j,k] = gp.rho
+                pot[i,j,k] = gp.integrand
+            
+            return np.sum( self.w * rho * pot) 
+        
+        V_xc = 0.0
+        V_coulomb = 0.0
+        E_xc = 0.0
+        
+        for id,cell in self.masterList:
+            if cell.leaf == True:
+                
+                V_xc += integrateCellDensityAgainst__(cell,'v_xc')
+                V_coulomb += integrateCellDensityAgainst__(cell,'v_coulomb')
+                E_xc += integrateCellDensityAgainst__(cell,'epsilon_xc')
+        self.totalVxc = V_xc
+        self.totalVcoulomb = V_coulomb
+        self.totalExc = E_xc
+#         print('Total V_xc : ')
+        
+        self.totalPotential = -1/2*V_coulomb + E_xc - V_xc
+                
+        
        
     def computeTotalKinetic(self):
         # sum over the kinetic energies of all orbitals
-        # for i in range(numberOfStates):
-        #     totalKE += tree.orbitalEnergies[i]
-        pass
+        for i in range(self.numberOfStates):
+            self.totalKE += self.orbitalEnergies[i]
+        
     
     def updateTotalEnergy(self):
         self.computeTotalKinetic()
@@ -566,7 +603,7 @@ class Tree(object):
                 for i,j,k in self.PxByPyByPz:
                     gridpt = element[1].gridpoints[i,j,k]
                     if gridpt.extracted == False:
-                        leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi, gridpt.V_eff, element[1].w[i,j,k] ] )
+                        leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi, gridpt.v_eff, element[1].w[i,j,k] ] )
                         gridpt.extracted = True
                     
 
@@ -626,7 +663,7 @@ class Tree(object):
             if element[1].leaf == True:
                 for i,j,k in self.PxByPyByPz:
                     gridpt = element[1].gridpoints[i,j,k]
-                    gridpt.V_coulomb = V_coulombNew[importIndex]
+                    gridpt.v_coulomb = V_coulombNew[importIndex]
                     importIndex += 1
 
         if importIndex != len(V_coulombNew):

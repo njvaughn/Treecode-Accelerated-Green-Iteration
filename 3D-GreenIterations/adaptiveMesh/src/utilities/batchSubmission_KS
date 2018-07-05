@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
+python testBatchGreenIterations_KS.py 12 2 10 5 1 0 0.0 LW1 10 1e-8 \
+	../src/utilities/molecularConfigurations/hydrogenMolecule.csv \
+	/home/njvaughn/results_CC_07_04/initialKS.csv
+
+

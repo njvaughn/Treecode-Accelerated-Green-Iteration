@@ -753,14 +753,14 @@ class Cell(object):
         aspectRatio = getAspectRatio(self)
         
         if aspectRatio > tolerance:  # fix tolerance to 1.5 for now
-            print('Cell ', self.uniqueID,' has apsect ratio of ', aspectRatio,'.  Dividing')
+#             print('Cell ', self.uniqueID,' has apsect ratio of ', aspectRatio,'.  Dividing')
             # find longest edge:
             dx = self.xmax-self.xmin
             dy = self.ymax-self.ymin
             dz = self.zmax-self.zmin
-            print('dx = ', dx)
-            print('dy = ', dy)
-            print('dz = ', dz)
+#             print('dx = ', dx)
+#             print('dy = ', dy)
+#             print('dz = ', dz)
             
             # locate shortest dimension.  Divide, then check aspect ratio of children.  
 #             if (dx <= min(dy,dz)): # x is shortest dimension.
@@ -836,7 +836,7 @@ class Cell(object):
         for i,j,k in self.PxByPyByPz:
             gp = self.gridpoints[i,j,k]
             phi[i,j,k] = gp.phi
-            pot[i,j,k] = gp.V_eff
+            pot[i,j,k] = gp.v_eff
             
         self.orbitalPE = np.sum( self.w * phi**2 * pot)
 

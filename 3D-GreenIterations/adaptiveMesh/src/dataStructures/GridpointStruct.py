@@ -19,19 +19,20 @@ class GridPoint(object):
         self.setPhi(np.random.rand(1))  # for now, set the analytic phi value.  Eventually, need to use interpolator
         self.finalWavefunction = []
         
-        self.rho = None
-        self.V_coulomb = None
-        self.V_xc = None
-        self.V_ext = None
-        self.V_eff = None
+        self.rho = 0.0
+        self.v_coulomb = 0.0
+        self.v_xc = 0.0
+        self.v_ext = 0.0
+        
+        self.v_eff = 0.0
 
     def setExternalPotential(self, atoms):
-        self.V_ext = 0.0
+        self.v_ext = 0.0
         for atom in atoms:
-            self.V_ext += atom.V(self.x,self.y,self.z)
+            self.v_ext += atom.V(self.x,self.y,self.z)
             
     def updateVeff(self):
-            self.V_eff = self.V_coulomb + self.V_xc + self.V_ext 
+            self.v_eff = self.v_coulomb + self.v_xc + self.v_ext 
            
     def setPhi(self, phi):
         self.phi = phi

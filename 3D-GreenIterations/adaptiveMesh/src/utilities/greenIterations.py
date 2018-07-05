@@ -32,7 +32,8 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
     greenIterationCounter=1                                     # initialize the counter to counter the number of iterations required for convergence
     residual = 1                                    # initialize the residual to something that fails the convergence tolerance
     Eold = -10.0
-    Etrue = trueEnergy(energyLevel)
+#     Etrue = trueEnergy(energyLevel)
+    Etrue = -1.13  # temporary value, should be in the ballpark
     
     while ( residual > residualTolerance ):
         
@@ -47,10 +48,10 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         sources = tree.extractLeavesAllGridpoints()  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = tree.extractLeavesAllGridpoints()  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
         ExtractionTime = timer() - startExtractionTime
-        
+        print(sources[0])
         phiNew = np.zeros((len(targets)))
         k = np.sqrt(-2*tree.orbitalEnergies[0]) 
-        
+        print(k)
         startConvolutionTime = timer()    
         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
         ConvolutionTime = timer() - startConvolutionTime
@@ -64,7 +65,7 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         """
         tree.importPhiOnLeaves(phiNew)         # import the new wavefunction values into the tree.
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
-        tree.normalizeOrbital(i=0)
+#         tree.normalizeOrbital(i=0)
         tree.updateDensityAtQuadpoints()
         
         
@@ -72,7 +73,7 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         Compute new electron-electron potential and update pointwise potential values 
         """
         V_coulombNew = np.zeros((len(targets)))
-        gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,k)  # call the GPU convolution 
+        gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
         tree.importVcoulombOnLeaves(V_coulombNew)
         tree.updateVxcAndVeffAtQuadpoints()
 
@@ -93,9 +94,9 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         """
         Print results from current iteration
         """
-        print('Updated Coulomb Energy:                 %.10f Hartree' %tree.totalCoulomb)
-        print('Updated Exchange-Correlation Energy:    %.10f Hartree' %tree.totalXC)
-        print('Updated External Potential Energy:      %.10f Hartree' %tree.totalExtPotentialE)
+        print('Updated V_coulomb:                      %.10f Hartree' %tree.totalCoulomb)
+        print('Updated V_xc:                           %.10f Hartree' %tree.totalVxc)
+        print('Updated E_xc:                           %.10f Hartree' %tree.totalExc)
         print('Updated Kinetic Energy:                 %.10f Hartree' %tree.totalKinetic)
         print('\nUpdated Total Energy Energy:            %.10f Hartree, %.10e error\n\n' %(tree.E, tree.E-Etrue))
         
