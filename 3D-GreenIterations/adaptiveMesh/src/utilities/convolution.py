@@ -67,6 +67,7 @@ def gpuHelmholtzConvolutionSubractSingularity(targets,sources,psiNew,k):
 
 @cuda.jit
 def gpuPoissonConvolution(targets,sources,V_coulomb_new):
+    
     globalID = cuda.grid(1)  # identify the global ID of the thread
     if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
         x_t, y_t, z_t = targets[globalID][0:3] # set the x, y, and z values of the target
@@ -77,6 +78,34 @@ def gpuPoissonConvolution(targets,sources,V_coulomb_new):
             r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
             if r > 1e-12:
                 V_coulomb_new[globalID] += weight_s*rho_s/r # increment the new wavefunction value
+                
+@cuda.jit
+def gpuPoissonConvolutionSingularitySubtract(targets,sources,V_coulomb_new,k):
+    
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t, rho_t, weight_t = targets[globalID] # set the x, y, and z values of the target
+        V_coulomb_new[globalID] = 4*pi*rho_t/k**2
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, rho_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+#             if not ( abs(x_s-x_t) and (y_s==y_t) and (z_s==z_t) ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            if r > 1e-12:
+                V_coulomb_new[globalID] += weight_s*(rho_s - rho_t*exp(-k*r) )/r # increment the new wavefunction value
+
+@cuda.jit
+def gpuPoissonConvolutionSmoothing(targets,sources,V_coulomb_new,epsilon):
+    
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t = targets[globalID][0:3] # set the x, y, and z values of the target
+        V_coulomb_new[globalID] = 0.0
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, rho_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            scaledEpsilon = epsilon * weight_s
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 + scaledEpsilon**2) # compute the distance between target and source
+#             if r > 1e-12:
+            V_coulomb_new[globalID] += weight_s*rho_s/r # increment the new wavefunction value
 
 
                

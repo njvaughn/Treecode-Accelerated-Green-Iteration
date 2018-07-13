@@ -37,6 +37,7 @@ divideParameter     = float(sys.argv[9])
 energyResidual      = float(sys.argv[10])
 coordinateFile      = str(sys.argv[11])
 outFile             = str(sys.argv[12])
+vtkFile             = str(sys.argv[13])
 
 
 def setUpTree():
@@ -59,12 +60,12 @@ def setUpTree():
     return tree
     
     
-def testGreenIterationsGPU(tree,plotting=False):
+def testGreenIterationsGPU(tree,vtkExport=False):
     
     
     # get normalization factors for finite domain analytic waves
-    tree.populatePhi()
-    tree.updateDensityAtQuadpoints()
+#     tree.populatePhi()
+#     tree.updateDensityAtQuadpoints()
     
 #     groundStateMultiplicativeFactor = testPoint.phi / trueWavefunction(0, testPoint.x, testPoint.y, testPoint.z)  
 
@@ -73,16 +74,18 @@ def testGreenIterationsGPU(tree,plotting=False):
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_H2(tree, 0, energyResidual, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1.0,visualize=plotting)
+    greenIterations_KohnSham_H2(tree, 0, energyResidual, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1.0,vtkExport=vtkExport)
 
 
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
               'divideCriterion','divideParameter','energyResidual',
-              'energyErrorGS_analyticPsi','energyErrorGS','psiL2ErrorGS','psiLinfErrorGS','GreenSingSubtracted']
+              'GreenSingSubtracted', 
+              'computedE', 'computedHOMO', 'errorE','errorHOMO']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,
               divideCriterion,divideParameter,energyResidual,
-              energyErrorGS_analyticPsi,energyErrorGS,psiL2ErrorGS,psiLinfErrorGS,subtractSingularity]
+              subtractSingularity,
+              tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     
 
     if not os.path.isfile(outFile):
@@ -96,7 +99,7 @@ def testGreenIterationsGPU(tree,plotting=False):
     with myFile:
         writer = csv.writer(myFile)
         writer.writerow(myData)    
-        
+    
 
 
     
@@ -110,7 +113,8 @@ if __name__ == "__main__":
     print('='*70,'\n')
     startTime = timer()
     tree = setUpTree()
-    testGreenIterationsGPU(tree,plotting=False)
+#     testGreenIterationsGPU(tree,vtkExport=vtkFile)
+    testGreenIterationsGPU(tree,vtkExport=False)
     
     
 

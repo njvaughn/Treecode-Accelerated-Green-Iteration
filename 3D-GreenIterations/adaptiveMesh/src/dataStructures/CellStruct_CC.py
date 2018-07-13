@@ -726,6 +726,9 @@ class Cell(object):
             '''set the parent cell's 'children' attribute to the array of children'''
             cell.children = children
             
+        if self.leaf == False:
+            print('Why are you dividing a non-leaf cell?')
+        
         noneCount = 0
         if xdiv == None: noneCount += 1
         if ydiv == None: noneCount += 1
@@ -784,7 +787,7 @@ class Cell(object):
                 self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
             elif (dy >= max(dx,dz)): # y is longest dimension
                 self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
-                self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
+                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
                 self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
             elif (dz >= max(dx,dy)): # z is longest dimension
                 self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)

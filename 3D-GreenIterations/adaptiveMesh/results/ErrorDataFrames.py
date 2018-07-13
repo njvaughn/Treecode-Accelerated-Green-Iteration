@@ -75,21 +75,14 @@ import numpy as np
 ##df.sort_values(by='numberOfGridpoints')
 ##print(df.sort_values(by='numberOfGridpoints'))
 
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/results_CC_6_19'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Coulomb'
 plotsDir = resultsDir+'/plots/'
-df = pd.read_csv(resultsDir+'/parent_child_relPE.csv', 
+df = pd.read_csv(resultsDir+'/singularityHandling.csv', 
                  header=0)
-df = df.loc[df.divideParameter != 10.0]
 
-##df1 = df.loc[df.divideCriterion == 'LW1']
-##df3 = df.loc[df.divideCriterion == 'LW3']
-##df = df.loc[df.energyErrorGS != -0.5]  # some bad data has error -0.5 exactly
-##
-##df = df.loc[df.minDepth==3]
-##
-##df_noskip = df.loc[df.GreenSingSubtracted==0]
-##df_skip = df.loc[df.GreenSingSubtracted==1]
-
+df = df.loc[df.singularitySmoothed==False]
+df1 = df.drop(df.loc[df.parameter==0.25].index)
+df2 = df1.drop(df1.loc[df1.parameter==0.1].index)
 
 
 def AversusB(df,A,B,save=False):
@@ -130,27 +123,24 @@ def logAversusBcolorbyC(df,A,B,C,save=False):
         plt.savefig(plotsDir+saveID+'.pdf', bbox_inches='tight',format='pdf')
     plt.show()
 
-def logAversusLogBcolorbyC(df,A,B,C,trendline=False,save=False):
+def logAversusLogBcolorbyC(df,A,B,C,save=False):
     fig, ax = plt.subplots(figsize=(8,6))
     fig.suptitle('Log %s versus Log %s colored by %s' %(A,B,C))
     grouped = df.groupby(C)
     for name,group in grouped:
-        group['logA'] = np.log10(np.abs(group[A]))
-        group['logB'] = np.log10(np.abs(group[B]))
-        if trendline==True:
-            z = np.polyfit(x=group['logB'], y=group['logA'], deg=1)
-            p = np.poly1d(z)
-            group['trendline'] = p(group['logB'])
-            group['trendline'].plot(ax=ax)
+##        group['logA'] = np.log10(np.abs(group[A]))
+##        group['logB'] = np.log10(np.abs(group[B]))
         if isinstance(name,str):
 ##            group.plot(x='logB', y='logA', style='o', ax=ax, label='%s = %s'%(C,name))
             group.plot(x=B, y=A, style='o', ax=ax, loglog=True,label='%s = %s'%(C,name))
         elif isinstance(name,float):
-            group.plot(x='logB', y='logA', style='o', ax=ax, label='%s = %f'%(C,name))
+            group.plot(x=B, y=A, style='o', ax=ax, loglog=True,label='%s = %f'%(C,name))
         elif isinstance(name,int):
-            group.plot(x='logB', y='logA', style='o', ax=ax, label='%s = %i'%(C,name))
+            group.plot(x=B, y=A, style='o', ax=ax, loglog=True,label='%s = %i'%(C,name))
         
     plt.legend(loc = 'best')
+    plt.xlabel(B)
+    plt.ylabel(A)
 
     if save == True:
         saveID = 'log'+A+'VsLog'+B+'ColoredBy'+C

@@ -114,25 +114,7 @@ def ChebGradient3D(xlow, xhigh, ylow, yhigh, zlow, zhigh, N, F):
             DFDZ[i,j,:] = ChebDerivative(zlow,zhigh,N,F[i,j,:])
     return [DFDX,DFDY,DFDZ]
 
-#!/usr/bin/env python
- 
-# This is (almost) a direct C++ to Python transliteration of
-# <VTK-root>/Examples/DataManipulation/Cxx/Cube.cxx from the VTK
-# source distribution, which "shows how to manually create vtkPolyData"
-#
-# A convenience function, mkVtkIdList(), has been added and one if/else
-# so the example also works in version 6 or later.
-#
-# Lines like `obj->Delete()` have been transliterated as `del obj` to,
-# preserve the resemblance to the original C++ example, although I 
-# doubt this achieves anything beyond what Python's garbage collection
-# would do anyway.
- 
- 
-# Makes a vtkIdList from a Python iterable. I'm kinda surprised that
-# this is necessary, since I assumed that this kind of thing would
-# have been built into the wrapper and happen transparently, but it
-# seems not.
+
 def mkVtkIdList(it):
     vil = vtk.vtkIdList()
     for i in it:

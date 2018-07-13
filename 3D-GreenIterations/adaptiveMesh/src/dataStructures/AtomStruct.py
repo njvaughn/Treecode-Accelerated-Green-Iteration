@@ -20,6 +20,7 @@ class Atom(object):
     def V(self,x,y,z):
         r = np.sqrt( (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         if r ==0.0:
+            print('Warning, evaluating potential at singularity!')
             return 0.0
         return -self.atomicNumber/r
         

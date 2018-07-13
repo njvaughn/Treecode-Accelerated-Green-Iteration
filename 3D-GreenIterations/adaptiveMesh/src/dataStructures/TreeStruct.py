@@ -609,7 +609,7 @@ class Tree(object):
                 element[1].gridpoints[1,1,1].phi = element[1].gridpoints[1,1,1].psiNew
                 element[1].gridpoints[1,1,1].psiNew = None
                 
-        self.normalizeWavefunction()
+        self.normalizeOrbital()
 #                 for i,j,k in ThreeByThreeByThree:
 #                     element[1].gridpoints[i,j,k].phi = element[1].gridpoints[i,j,k].psiNew
 #                     element[1].gridpoints[i,j,k].psiNew = None
@@ -643,7 +643,7 @@ class Tree(object):
         self.maxCellError = np.max(errors)
         self.maxPointwiseError = maxErr
         
-    def normalizeWavefunction(self):
+    def normalizeOrbital(self):
         """ Compute integral phi*2 dxdydz """
         A = 0.0
         for element in self.masterList:
@@ -770,7 +770,7 @@ class Tree(object):
         for element in self.masterList:
             for i,j,k in ThreeByThreeByThree:
                 element[1].gridpoints[i,j,k].setAnalyticPhi(n)
-        self.normalizeWavefunction()
+        self.normalizeOrbital()
 
                             
             
