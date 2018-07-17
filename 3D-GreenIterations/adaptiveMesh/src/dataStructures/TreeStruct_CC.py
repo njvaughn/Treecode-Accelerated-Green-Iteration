@@ -39,7 +39,7 @@ class Tree(object):
     """
     INTIALIZATION FUNCTIONS
     """
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coordinateFile,nElectrons=2,nOrbitals=1,xcFunctional="LDA_XC_LP_A",polarization="unpolarized", printTreeProperties = True):
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons=2,nOrbitals=1,coordinateFile='',xcFunctional="LDA_XC_LP_A",polarization="unpolarized", printTreeProperties = True):
         '''
         Tree constructor:  
         First construct the gridpoints for cell consisting of entire domain.  
@@ -463,7 +463,7 @@ class Tree(object):
         for _,cell in self.masterList:
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
-                    cell.gridpoints[i,j,k].rho/=(B/self.Nelectrons)
+                    cell.gridpoints[i,j,k].rho/=(B/self.nElectrons)
 #         B = 0.0
 #         for id,cell in self.masterList:
 #             if cell.leaf == True:
@@ -511,7 +511,7 @@ class Tree(object):
     def computeTotalKinetic(self):
         # sum over the kinetic energies of all orbitals
         self.totalKinetic = 0.0
-        for i in range(self.numberOfStates):
+        for i in range(self.nOrbitals):
             self.totalKinetic += 2*self.orbitalEnergies[i]  # this factor of 2 is in question
         
     

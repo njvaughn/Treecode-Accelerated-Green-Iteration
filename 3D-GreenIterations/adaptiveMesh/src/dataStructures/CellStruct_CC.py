@@ -46,6 +46,9 @@ class Cell(object):
         self.w = weights3D(xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, W)
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         self.setCellMidpointAndVolume()
+        
+        self.orbitalPE = np.zeros(self.tree.nOrbitals)
+        self.orbitalKE = np.zeros(self.tree.nOrbitals)
 
     def setGridpoints(self,gridpoints):
         self.gridpoints = gridpoints
@@ -846,30 +849,32 @@ class Cell(object):
     """
     HAMILTONIAN FUNCTIONS
     """
-    def computeOrbitalPotential(self,epsilon=0):
+    def computeOrbitalPotential(self):
         
         phi = np.empty((self.px,self.py,self.pz))
         pot = np.empty((self.px,self.py,self.pz))
         
-        for i,j,k in self.PxByPyByPz:
-            gp = self.gridpoints[i,j,k]
-            phi[i,j,k] = gp.phi
-            pot[i,j,k] = gp.v_eff
-            
-        self.orbitalPE = np.sum( self.w * phi**2 * pot)
+        for m in range(self.tree.nOrbitals):
+            for i,j,k in self.PxByPyByPz:
+                gp = self.gridpoints[i,j,k]
+                phi[i,j,k] = gp.phi[m]
+                pot[i,j,k] = gp.v_eff
+                
+            self.orbitalPE[m] = np.sum( self.w * phi**2 * pot)
 
     def computeOrbitalKinetic(self):
         
         phi = np.empty((self.px,self.py,self.pz))
         
-        for i,j,k in self.PxByPyByPz:
-            gp = self.gridpoints[i,j,k]
-            phi[i,j,k] = gp.phi
-        
-        gradPhi = ChebGradient3D(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.px,phi) 
-        gradPhiSq = gradPhi[0]**2 + gradPhi[1]**2 + gradPhi[2]**2
-        
-        self.orbitalKE = 1/2*np.sum( self.w * gradPhiSq )
+        for m in range(self.tree.nOrbitals):
+            for i,j,k in self.PxByPyByPz:
+                gp = self.gridpoints[i,j,k]
+                phi[i,j,k] = gp.phi[m]
+            
+            gradPhi = ChebGradient3D(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.px,phi) 
+            gradPhiSq = gradPhi[0]**2 + gradPhi[1]**2 + gradPhi[2]**2
+            
+            self.orbitalKE[m] = 1/2*np.sum( self.w * gradPhiSq )
 
 
 

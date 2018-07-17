@@ -39,9 +39,9 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
     HOMOtrue = -0.378665
     
     
-    tree.normalizeOrbital()
+    tree.orthonormalizeOrbitals()
     tree.updateDensityAtQuadpoints()
-    tree.normalizeDensity(Nelectrons=2)
+    tree.normalizeDensity()
 
     targets = tree.extractLeavesDensity()  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
     sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
@@ -101,7 +101,7 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         tree.updateOrbitalEnergies() 
 
         tree.updateDensityAtQuadpoints()
-        tree.normalizeDensity(Nelectrons=2)
+        tree.normalizeDensity()
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
         importTime = timer() - startImportTime
         print('Import and Desnity Update took:  %.4f seconds. ' %importTime)
@@ -209,7 +209,7 @@ def greenIterations_Schrodinger_CC(tree, energyLevel, residualTolerance, numberO
         print('Convolution took:            %.4f seconds. ' %ConvolutionTime)
 
         tree.importPhiOnLeaves(psiNew)         # import the new wavefunction values into the tree.
-        tree.normalizeOrbital()           # Normalize the new wavefunction 
+        tree.orthonormalizeOrbitals()           # Normalize the new wavefunction 
         tree.computeWaveErrors(energyLevel,normalizationFactor)    # Compute the wavefunction errors compared to the analytic ground state 
         print('Convolution wavefunction errors: %.10e L2,  %.10e max' %(tree.L2NormError, tree.maxPointwiseError))
 
@@ -271,7 +271,7 @@ def greenIterations_Schrodinger_midpt(tree, energyLevel, residualTolerance, numb
         tree.importPhiOnLeaves(psiNew)         # import the new wavefunction values into the tree.
         for i in range(energyLevel):
             tree.orthogonalizeWavefunction(i)
-        tree.normalizeOrbital()           # Normalize the new wavefunction 
+        tree.orthonormalizeOrbitals()           # Normalize the new wavefunction 
         tree.computeWaveErrors(energyLevel,normalizationFactor)    # Compute the wavefunction errors compared to the analytic ground state 
         print('Convolution wavefunction errors: %.10e L2,  %.10e max' %(tree.L2NormError, tree.maxPointwiseError))
 
