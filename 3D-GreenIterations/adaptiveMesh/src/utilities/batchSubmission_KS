@@ -1,9 +1,9 @@
 #!/bin/bash
 
-DOMAIN=10
+DOMAIN=12
 MINDEPTH=3
-MAXDEPTH=14
-ORDER=5
+MAXDEPTH=20
+ORDER=4
 SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0.0
@@ -11,29 +11,18 @@ MESHTYPE='LW3'
 MESHPARAM=50
 RESIDUAL=1e-7
 COORDINATES='../src/utilities/molecularConfigurations/hydrogenMolecule.csv'
-OUTFILE='/home/njvaughn/results_07_04/hydrogen.csv'
-VTKFILE='/home/njvaughn/results_07_04/phiFields.vtk'
+#OUTFILE='/home/njvaughn/onTheFly/results/onTheFlyMeshTests.csv'
+OUTFILE='/home/njvaughn/results_H2/results.csv'
+VTKFILEDIR='/home/njvaughn/onTheFly/meshes'
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
+
+
+MESHTYPE='LW1'
 MESHPARAM=50
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $RESIDUAL \
-	$COORDINATES $OUTFILE $VTKFILE
-	
-MESHPARAM=100
-python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $RESIDUAL \
-	$COORDINATES $OUTFILE $VTKFILE
-	
-MESHPARAM=200
-python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $RESIDUAL \
-	$COORDINATES $OUTFILE $VTKFILE
-	
-MESHPARAM=400
-python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $RESIDUAL \
-	$COORDINATES $OUTFILE $VTKFILE
+	$COORDINATES $OUTFILE $VTKFILEDIR
 
 

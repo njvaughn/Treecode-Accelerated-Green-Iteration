@@ -9,15 +9,17 @@ class GridPoint(object):
     '''
     The gridpoint object for the quadrature points.  Will contain the coordinates, potential values, etc.
     '''
-    def __init__(self, x,y,z):
+    def __init__(self, x,y,z, Norbitals):
         '''
         Gridpoint Constructor.  For minimal example, a gridpoint simply has x and y values.
         '''
         self.x = x
         self.y = y
         self.z = z
-        self.setPhi(np.random.rand(1))  # for now, set the analytic phi value.  Eventually, need to use interpolator
-        self.finalWavefunction = []
+        self.phi = np.empty(Norbitals)
+        for i in range(Norbitals):
+            self.setPhi(np.random.rand(1), i)  # for now, set the analytic phi value.  Eventually, need to use interpolator
+#         self.finalWavefunction = []
         
 #         rands = np.random.rand(5)
         self.rho = 0
@@ -43,8 +45,8 @@ class GridPoint(object):
 #             self.v_xc = 0.0
             self.v_eff = self.v_coulomb + self.v_xc + self.v_ext 
            
-    def setPhi(self, phi):
-        self.phi = phi
+    def setPhi(self, phi, orbitalNumber):
+        self.phi[orbitalNumber] = phi
     
 #     def setAnalyticPhi(self,n):
 #         self.phi = trueWavefunction(n, self.x,self.y,self.z)

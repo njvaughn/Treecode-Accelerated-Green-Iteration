@@ -37,7 +37,7 @@ divideParameter     = float(sys.argv[9])
 energyResidual      = float(sys.argv[10])
 coordinateFile      = str(sys.argv[11])
 outFile             = str(sys.argv[12])
-vtkFile             = str(sys.argv[13])
+vtkFileBase         = str(sys.argv[13])
 
 
 def setUpTree():
@@ -46,10 +46,11 @@ def setUpTree():
     '''
     xmin = ymin = zmin = -domainSize
     xmax = ymax = zmax = domainSize
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,coordinateFile)
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons=2,nOrbitals=1,coordinateFile)
 #         def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coordinateFile,numberOfStates=1,xcFunctional="LDA_XC_LP_A",polarization="unpolarized"):
 
 #     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, divideTolerance1=divideTol1, divideTolerance2=divideTol2, printTreeProperties=True)
+    print('max depth ', maxDepth)
     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
 #     for element in tree.masterList:
 #         
@@ -60,7 +61,7 @@ def setUpTree():
     return tree
     
     
-def testGreenIterationsGPU(tree,vtkExport=False):
+def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
     
     
     # get normalization factors for finite domain analytic waves
@@ -74,7 +75,10 @@ def testGreenIterationsGPU(tree,vtkExport=False):
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_H2(tree, 0, energyResidual, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1.0,vtkExport=vtkExport)
+    greenIterations_KohnSham_H2(tree, 0, energyResidual, numberOfTargets, subtractSingularity, 
+                                smoothingN, smoothingEps, 
+                                normalizationFactor=1.0,
+                                onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
 
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
@@ -114,7 +118,8 @@ if __name__ == "__main__":
     startTime = timer()
     tree = setUpTree()
 #     testGreenIterationsGPU(tree,vtkExport=vtkFile)
-    testGreenIterationsGPU(tree,vtkExport=False)
+#     testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False)
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
     
     
 

@@ -39,7 +39,7 @@ class Tree(object):
     """
     INTIALIZATION FUNCTIONS
     """
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coordinateFile,numberOfStates=1,xcFunctional="LDA_XC_LP_A",polarization="unpolarized", printTreeProperties = True):
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coordinateFile,nElectrons=2,nOrbitals=1,xcFunctional="LDA_XC_LP_A",polarization="unpolarized", printTreeProperties = True):
         '''
         Tree constructor:  
         First construct the gridpoints for cell consisting of entire domain.  
@@ -56,10 +56,12 @@ class Tree(object):
         self.zmax = zmax
         self.pz = pz
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
-        self.numberOfStates = numberOfStates
+        self.nElectrons = nElectrons
+        self.nOrbitals = nOrbitals
+        
         
         self.xcFunc = pylibxc.LibXCFunctional(xcFunctional, polarization)
-        self.orbitalEnergies = -np.ones(numberOfStates)
+        self.orbitalEnergies = -np.ones(nOrbitals)
         
         # generate gridpoint objects.  
         xvec = ChebyshevPoints(self.xmin,self.xmax,self.px)
@@ -68,7 +70,7 @@ class Tree(object):
         gridpoints = np.empty((px,py,pz),dtype=object)
 
         for i, j, k in self.PxByPyByPz:
-            gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
+            gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k],self.nOrbitals)
         
         # generate root cell from the gridpoint objects  
         self.root = Cell( self.xmin, self.xmax, self.px, 
@@ -231,7 +233,9 @@ class Tree(object):
                 gp = cell.gridpoints[i,j,k]
                 r1 = np.sqrt((gp.x-0.7)*(gp.x-0.7) + gp.y*gp.y + gp.z*gp.z)
                 r2 = np.sqrt((gp.x+0.7)*(gp.x+0.7) + gp.y*gp.y + gp.z*gp.z)
-                gp.phi = np.exp(-r1) + np.exp(-r2) #+r1**2 - r2**3
+                
+                for m in range(self.nOrbitals):
+                    gp.phi[m] = np.exp(-r1) + np.exp(-r2) #+r1**2 - r2**3
 
 #                 r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
 #                 gp.phi = np.exp(-r)
@@ -371,6 +375,7 @@ class Tree(object):
                   %(self.xmin, self.xmax, divideTolerance1, divideTolerance2, self.treeSize, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
     
     def populatePhiWithAnalytic(self,n):
+        # outdated to when I had analytic wavaefunction for Hydrogen atom
         for element in self.masterList:
             for i,j,k in self.PxByPyByPz:
                 element[1].gridpoints[i,j,k].setAnalyticPhi(n)
@@ -380,9 +385,21 @@ class Tree(object):
         for element in self.masterList:
             for i,j,k in self.PxByPyByPz:
                 gp=element[1].gridpoints[i,j,k]
-                gp.setPhi(np.exp( - np.sqrt( gp.x**2 + gp.y**2 + gp.z**2 )))
-                print('Populating phi from tree.populatePhi()')
+                for m in range(self.nOrbitals):
+                    gp.setPhi(np.exp( - np.sqrt( gp.x**2 + gp.y**2 + gp.z**2 )), m)
+        print('Populating phi from tree.populatePhi()')
         self.normalizeOrbital()  
+        
+    def refineOnTheFly(self, divideTolerance):
+        counter = 0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                rhoVariation = cell.getRhoVariation()
+                if rhoVariation > divideTolerance:
+                    cell.divide(cell.xmid, cell.ymid, cell.zmid,interpolate=True)
+                    counter+=1
+        print('Refined %i cells.' %counter)
+            
 
     
     """
@@ -419,14 +436,14 @@ class Tree(object):
     def updateDensityAtQuadpoints(self):
         def CellUpdateDensity(cell):
             for i,j,k in self.PxByPyByPz:
-                # for m in range(orbitals)
-                cell.gridpoints[i,j,k].rho = cell.gridpoints[i,j,k].phi**2
+                for m in range(self.nOrbitals):
+                    cell.gridpoints[i,j,k].rho = cell.gridpoints[i,j,k].phi[m]**2
         
         for _,cell in self.masterList:
             if cell.leaf==True:
                 CellUpdateDensity(cell)
      
-    def normalizeDensity(self,Nelectrons=2):            
+    def normalizeDensity(self):            
         def integrateDensity(cell):
             rho = np.empty((cell.px,cell.py,cell.pz))
                         
@@ -446,7 +463,7 @@ class Tree(object):
         for _,cell in self.masterList:
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
-                    cell.gridpoints[i,j,k].rho/=(B/Nelectrons)
+                    cell.gridpoints[i,j,k].rho/=(B/self.Nelectrons)
 #         B = 0.0
 #         for id,cell in self.masterList:
 #             if cell.leaf == True:
@@ -545,7 +562,7 @@ class Tree(object):
     NORMALIZATION, ORTHOGONALIZATION, AND WAVEFUNCTION ERRORS
     """      
     def computeWaveErrors(self,energyLevel,normalizationFactor):
-        
+        # outdated from when I had analytic wavefunctions for hydrogen atom
         # need normalizationFactor because the analytic wavefunctions aren't normalized for this finite domain.
         maxErr = 0.0
         errorsIfSameSign = []
@@ -576,45 +593,39 @@ class Tree(object):
         self.maxPointwiseError = maxErr
         
     def normalizeOrbital(self):
-        """ Compute integral phi*2 dxdydz """
+        """ Enforce integral phi*2 dxdydz == 1 """
         A = 0.0
-        maxPhi = 0.0
+#         maxPhi = 0.0
         
         for element in self.masterList:
             if element[1].leaf == True:
                 for i,j,k in self.PxByPyByPz:
-                    if abs(element[1].gridpoints[i,j,k].phi) > maxPhi:
-                        maxPhi = abs(element[1].gridpoints[i,j,k].phi)
-                    maxPhi = max( maxPhi, abs(element[1].gridpoints[i,j,k].phi))
+#                     if abs(element[1].gridpoints[i,j,k].phi) > maxPhi:
+#                         maxPhi = abs(element[1].gridpoints[i,j,k].phi)
+#                     maxPhi = max( maxPhi, abs(element[1].gridpoints[i,j,k].phi))
                     A += element[1].gridpoints[i,j,k].phi**2*element[1].w[i,j,k]
         if A<0.0:
             print('Warning: normalization value A is less than zero...')
         if A==0.0:
             print('Warning: normalization value A is zero...')
 
-        maxPhi=0.0        
-        """ Initialize the normalization flag for each gridpoint """        
-        for element in self.masterList:
-            if element[1].leaf==True:
-                for i,j,k in self.PxByPyByPz:
-                    element[1].gridpoints[i,j,k].normalized = False
+#         maxPhi=0.0        
+#         """ Initialize the normalization flag for each gridpoint """        
+#         for element in self.masterList:
+#             if element[1].leaf==True:
+#                 for i,j,k in self.PxByPyByPz:
+#                     element[1].gridpoints[i,j,k].normalized = False
         
         """ Rescale wavefunction values, flip the flag """
         for element in self.masterList:
             if element[1].leaf==True:
                 for i,j,k in self.PxByPyByPz:
-                    if element[1].gridpoints[i,j,k].normalized == False:
                         element[1].gridpoints[i,j,k].phi /= np.sqrt(A)
-                        element[1].gridpoints[i,j,k].normalized = True
-                        maxPhi = max(maxPhi,abs(element[1].gridpoints[i,j,k].phi))
-         
-#         T = 0.0                
-#         for id,cell in self.masterList:
-#             if cell.leaf==True:
-#                 for i,j,k in cell.PxByPyByPz:
-#                 
-#                     T += cell.gridpoints[i,j,k].phi**2 * cell.w[i,j,k]
-#         print('Integral phi^2 after normalization: ', T)            
+#                     if element[1].gridpoints[i,j,k].normalized == False:
+#                         element[1].gridpoints[i,j,k].phi /= np.sqrt(A)
+#                         element[1].gridpoints[i,j,k].normalized = True
+#                         maxPhi = max(maxPhi,abs(element[1].gridpoints[i,j,k].phi))
+           
          
     def orthogonalizeWavefunction(self,n):
         """ Orthgononalizes phi against wavefunction n """
@@ -639,6 +650,47 @@ class Tree(object):
                         gridpoint.phi -= B*gridpoint.finalWavefunction[n]
                         gridpoint.orthogonalized = True
                         
+    def orthonormalizeOrbitals(self):
+        
+        def orthogonalizeOrbitals(tree,m,n):
+            print('Orthogonalizing orbital %i against %i' %(m,n))
+            """ Compute the overlap, integral phi_r * phi_s """
+            B = 0.0
+            for _,cell in tree.masterList:
+                if cell.leaf == True:
+                    for i,j,k in self.PxByPyByPz:
+                        phi_m = cell.gridpoints[i,j,k].phi[m]
+                        phi_n = cell.gridpoints[i,j,k].phi[n]
+                        B += phi_m*phi_n*cell.w[i,j,k]
+                    
+            """ Subtract the projection """
+            for _,cell in tree.masterList:
+                if cell.leaf==True:
+                    for i,j,k in self.PxByPyByPz:
+                        gridpoint = cell.gridpoints[i,j,k]
+                        gridpoint.phi[m] -= B*gridpoint.phi[n]
+        
+        def normalizeOrbital(tree,m):
+        
+            """ Enforce integral phi*2 dxdydz == 1 """
+            A = 0.0        
+            for _,cell in tree.masterList:
+                if cell.leaf == True:
+                    for i,j,k in self.PxByPyByPz:
+                        A += cell.gridpoints[i,j,k].phi[m]**2*cell.w[i,j,k]
+    
+            """ Rescale wavefunction values, flip the flag """
+            for _,cell in tree.masterList:
+                if cell.leaf==True:
+                    for i,j,k in self.PxByPyByPz:
+                            cell.gridpoints[i,j,k].phi /= np.sqrt(A)
+        
+        for m in range(self.nOrbitals):
+            for n in range(m):
+                orthogonalizeOrbitals(self,m,n)
+            normalizeOrbital(self,m)
+            
+            
     
     """
     IMPORT/EXPORT FUNCTIONS
@@ -684,6 +736,31 @@ class Tree(object):
                 
         return np.array(leaves)
     
+    def extractPhi(self, orbitalNumber):
+        '''
+        Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        leaves = []
+#         for _,cell in self.masterList:
+#             for i,j,k in self.PxByPyByPz:
+#                 cell.gridpoints[i,j,k].extracted = False
+                
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+#                     if gridpt.extracted == False:
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi[orbitalNumber], gridpt.v_eff, cell.w[i,j,k] ] )
+#                         gridpt.extracted = True
+                    
+
+#         for _,cell in self.masterList:
+#             for i,j,k in self.PxByPyByPz:
+#                 cell.gridpoints[i,j,k].extracted = False
+                
+        return np.array(leaves)
+    
     def extractLeavesDensity(self):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
@@ -699,26 +776,26 @@ class Tree(object):
                             
         return np.array(leaves)
                 
-    def importPhiOnLeaves(self,phiNew):
+    def importPhiOnLeaves(self,phiNew, orbitalNumber):
         '''
         Import phi values, apply to leaves
         '''
-        for _,cell in self.masterList:
-            for i,j,k in self.PxByPyByPz:
-                cell.gridpoints[i,j,k].phiImported = False
+#         for _,cell in self.masterList:
+#             for i,j,k in self.PxByPyByPz:
+#                 cell.gridpoints[i,j,k].phiImported = False
         importIndex = 0        
         for _,cell in self.masterList:
             if cell.leaf == True:
                 for i,j,k in self.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
-                    if gridpt.phiImported == False:
-                        gridpt.phi = phiNew[importIndex]
-                        gridpt.phiImported = True
-                        importIndex += 1
+#                     if gridpt.phiImported == False:
+                    gridpt.phi[orbitalNumber] = phiNew[importIndex]
+#                         gridpt.phiImported = True
+                    importIndex += 1
                     
-        for _,cell in self.masterList:
-            for i,j,k in self.PxByPyByPz:
-                cell.gridpoints[i,j,k].phiImported = None
+#         for _,cell in self.masterList:
+#             for i,j,k in self.PxByPyByPz:
+#                 cell.gridpoints[i,j,k].phiImported = None
         if importIndex != len(phiNew):
             print('Warning: import index not equal to len(phiNew)')
             print(importIndex)
@@ -745,6 +822,7 @@ class Tree(object):
     
                 
     def copyPhiToFinalOrbital(self, n):
+        # outdated
         for element in self.masterList:
             for i,j,k in self.PxByPyByPz:
                 gridpt = element[1].gridpoints[i,j,k]

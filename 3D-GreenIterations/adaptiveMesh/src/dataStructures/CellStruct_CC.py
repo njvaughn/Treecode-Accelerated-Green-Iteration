@@ -279,6 +279,15 @@ class Cell(object):
             if self.gridpoints[i,j,k].phi > maxPhi: maxPhi = self.gridpoints[i,j,k].phi
         
         self.psiVariation = maxPhi - minPhi
+    
+    def getRhoVariation(self):
+        minRho = self.gridpoints[0,0,0].rho
+        maxRho = self.gridpoints[0,0,0].rho
+        for i,j,k in self.PxByPyByPz:
+            if self.gridpoints[i,j,k].rho < minRho: minRho = self.gridpoints[i,j,k].rho
+            if self.gridpoints[i,j,k].rho > maxRho: maxRho = self.gridpoints[i,j,k].rho
+        
+        return maxRho - minRho
         
     def getTestFunctionVariation(self):
         minValue = self.gridpoints[0,0,0].testFunctionValue
@@ -396,7 +405,7 @@ class Cell(object):
         ymids = np.array([(3*self.ymin+self.ymax)/4, (self.ymin+3*self.ymax)/4])
         zmids = np.array([(3*self.zmin+self.zmax)/4, (self.zmin+3*self.zmax)/4])
         for i,j,k in TwoByTwoByTwo:
-            tempChild = GridPoint(xmids[i],ymids[j],zmids[k])
+            tempChild = GridPoint(xmids[i],ymids[j],zmids[k],self.tree.nOrbitals)
             tempChild.setTestFunctionValue()
             childrenIntegral += tempChild.testFunctionValue*(self.volume/8)
           
@@ -421,25 +430,28 @@ class Cell(object):
         self.PxByPyByPz = None
     
     def interpolatForDivision(self):
-        if hasattr(self, 'phi'):
-            psiCoarse = np.empty((3,3,3))
-            xvec = np.array(self.gridpoints[0,0,0].x,self.gridpoints[1,0,0].x,self.gridpoints[2,0,0].x)
-            yvec = np.array(self.gridpoints[0,0,0].y,self.gridpoints[0,1,0].y,self.gridpoints[0,2,0].y)
-            zvec = np.array(self.gridpoints[0,0,0].z,self.gridpoints[0,0,1].z,self.gridpoints[0,0,2].z)
-            for i,j,k in self.PxByPyByPz:
-                psiCoarse[i,j,k] = self.gridpoints[i,j,k].phi
-        
-            self.interpolator = RegularGridInterpolator((xvec, yvec, zvec), psiCoarse) 
-        else:
-            print("Can't generate interpolator because phi hasn't been set yet.")
+        phiCoarse = np.empty((self.px,self.py,self.pz))
+        xvec = np.empty((self.px))
+        yvec = np.empty((self.py))
+        zvec = np.empty((self.pz))
+        for i,j,k in self.PxByPyByPz:
+            xvec[i] = self.gridpoints[i,j,k].x
+            yvec[j] = self.gridpoints[i,j,k].y
+            zvec[k] = self.gridpoints[i,j,k].z
+            phiCoarse[i,j,k] = self.gridpoints[i,j,k].phi
+        print('Interpolator generated')
+        self.interpolator = RegularGridInterpolator((xvec, yvec, zvec), phiCoarse,method='nearest') 
     
-    def divide(self, xdiv, ydiv, zdiv, printNumberOfCells=False):
+    def divide(self, xdiv, ydiv, zdiv, printNumberOfCells=False, interpolate=False):
                   
-        def divideInto8(cell, xdiv, ydiv, zdiv, printNumberOfCells=False):
+        def divideInto8(cell, xdiv, ydiv, zdiv, printNumberOfCells=False, interpolate=False):
             '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
             
             children = np.empty((2,2,2), dtype=object)
             self.leaf = False
+            
+            if interpolate==True:
+                self.interpolatForDivision()
         
             x = [ChebyshevPoints(cell.xmin,float(xdiv),cell.px), ChebyshevPoints(float(xdiv),cell.xmax,cell.px)]
             y = [ChebyshevPoints(cell.ymin,float(ydiv),cell.py), ChebyshevPoints(float(ydiv),cell.ymax,cell.py)]
@@ -471,7 +483,10 @@ class Cell(object):
                 gridpoints = np.empty((cell.px,cell.py,cell.pz),dtype=object)
                 for i, j, k in cell.PxByPyByPz:
                     newGridpointCount += 1
-                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
+                    if interpolate == True:
+                        phi = self.interpolator([xOct[i],yOct[j],zOct[k]])
+                        gridpoints[i,j,k].setPhi(phi)
                     gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
                 children[ii,jj,kk].setGridpoints(gridpoints)
                 if hasattr(cell,'level'):
@@ -517,7 +532,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px,cell.py,cell.pz),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
                     children[ii,jj,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -557,7 +572,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px,cell.py,cell.pz),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
                     children[ii,0,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -596,7 +611,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px,cell.py,cell.pz),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
                     children[0,jj,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
                         children[0,jj,kk].level = cell.level+1
@@ -640,7 +655,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px,cell.py,cell.pz),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
                     children[ii,0,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -678,7 +693,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px,cell.py,cell.pz),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
                     children[0,jj,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -715,7 +730,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px,cell.py,cell.pz),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
                     children[0,0,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -735,7 +750,7 @@ class Cell(object):
         if zdiv == None: noneCount += 1
         
         if noneCount == 0:
-            divideInto8(self, xdiv, ydiv, zdiv, printNumberOfCells)
+            divideInto8(self, xdiv, ydiv, zdiv, printNumberOfCells, interpolate)
         elif noneCount == 1:
             divideInto4(self, xdiv, ydiv, zdiv, printNumberOfCells) 
         elif noneCount == 2:
@@ -766,33 +781,33 @@ class Cell(object):
 #             print('dz = ', dz)
             
             # locate shortest dimension.  Divide, then check aspect ratio of children.  
-#             if (dx <= min(dy,dz)): # x is shortest dimension.
-#                 self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
-#             elif (dy <= min(dx,dz)): # y is shortest dimension
-#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
-#             elif (dz <= max(dx,dy)): # z is shortest dimension
-#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
-#             
-#             if hasattr(self, "children"):
-#                 (ii,jj,kk) = np.shape(self.children)
-#                 for i in range(ii):
-#                     for j in range(jj):
-#                         for k in range(kk):
-#                             self.children[i,j,k].divideIfAspectRatioExceeds(tolerance)
+            if (dx <= min(dy,dz)): # x is shortest dimension.
+                self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
+            elif (dy <= min(dx,dz)): # y is shortest dimension
+                self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
+            elif (dz <= max(dx,dy)): # z is shortest dimension
+                self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
+             
+            if hasattr(self, "children"):
+                (ii,jj,kk) = np.shape(self.children)
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+                            self.children[i,j,k].divideIfAspectRatioExceeds(tolerance)
                 
             # locate longest dimension.  Divide, then check aspect ratio of children.  
-            if (dx >= max(dy,dz)): # x is longest dimension.
-                self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
-            elif (dy >= max(dx,dz)): # y is longest dimension
-                self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
-            elif (dz >= max(dx,dy)): # z is longest dimension
-                self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
+#             if (dx >= max(dy,dz)): # x is longest dimension.
+#                 self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
+#             elif (dy >= max(dx,dz)): # y is longest dimension
+#                 self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
+#             elif (dz >= max(dx,dy)): # z is longest dimension
+#                 self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
             
     def divideButJustReturnChildren(self):
         '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
@@ -822,7 +837,7 @@ class Cell(object):
             zOct = z[kk]
             gridpoints = np.empty((self.px,self.py,self.pz),dtype=object)
             for i, j, k in self.PxByPyByPz:
-                gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k])
+                gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
             children[ii,jj,kk].setGridpoints(gridpoints)
 
         return children

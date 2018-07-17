@@ -77,18 +77,73 @@ import numpy as np
 
 resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Coulomb'
 plotsDir = resultsDir+'/plots/'
+####df = pd.read_csv(resultsDir+'/gaussian_uniform.csv', 
+####                 header=0)
+##df = pd.read_csv(resultsDir+'/gaussian_LWadaptive.csv', 
+##                 header=0)
 df = pd.read_csv(resultsDir+'/singularityHandling.csv', 
                  header=0)
 
-df = df.loc[df.singularitySmoothed==False]
-df1 = df.drop(df.loc[df.parameter==0.25].index)
-df2 = df1.drop(df1.loc[df1.parameter==0.1].index)
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
+##plotsDir = resultsDir+'/plots/'
+##df = pd.read_csv(resultsDir+'/hydrogen_order4.csv', 
+##                 header=0)
 
+df = df.loc[df.singularitySmoothed==False]
+##df1 = df.drop(df.loc[df.parameter==0.25].index)
+##df2 = df1.drop(df1.loc[df1.parameter==0.1].index)
+
+
+def energyAndHOMO():
+    nwchemEnergy  = -1.1372499
+    nwchemHOMO = -0.378649
+
+##    dftfeEnergy   = -1.1376237062839634 # at T=500
+    dftfeEnergy =  -1.1394876804557477 # at T=1e-3
+##    dftfeBandgap  = -0.75485764369701525
+
+    f, (ax1, ax2) = plt.subplots(2, 1, figsize=(8,6))
+
+
+    grouped = df.groupby('divideCriterion')
+    for name,group in grouped:
+##        group.plot(x=B, y=A, style='o', ax=ax, label='%s = %s'%(C,name))
+        group.plot(x='numberOfCells', y='computedE', style='o', ax=ax1,label='%s'%name)
+        group.plot(x='numberOfCells', y='computedHOMO', style='o', ax=ax2,label='%s'%name)
+
+
+##    df.plot(x='numberOfCells', y='computedE', style='o', ax=ax1)
+    ax1.axhline(y=dftfeEnergy,color='r',label='dft-fe')
+    ax1.axhline(y=nwchemEnergy,color='g',label='nwchem')
+    ax1.set_title('Total Energy')
+    ax1.set_ylabel('Energy (H)')
+    ax1.set_ylim([-1.15,-1.135])
+    ax1.legend()
+
+##    df.plot(x='numberOfCells', y='Bandgap', style='o', ax=ax2)
+##    ax2.axhline(y=dftfeBandgap,color='r',label='dft-fe')
+    ax2.axhline(y=nwchemHOMO,color='g',label='nwchem')
+    ax2.set_title('HOMO Energy')
+    ax2.set_ylabel('Energy (H)')
+    ax2.legend()
+
+##    plt.suptitle('Green Iterations results compared to DFT-FE and NWCHEM')
+    plt.tight_layout(pad=1.0)
+    plt.show()
+    
+    
 
 def AversusB(df,A,B,save=False):
     fig, ax = plt.subplots(figsize=(8,6))
     fig.suptitle('%s versus %s' %(A,B))
     df.plot(x=B, y=A, style='o',ax=ax)
+
+    dftfeEnergy = -1.1376237062839634e+00
+    NWchemEnergy = -1.1372499
+    plt.axhline(y=dftfeEnergy,color='r')
+    plt.axhline(y=NWchemEnergy,color='g')
+##    plt.plot(dftfeEnergy*np.ones(100),'r-')
+##    plt.plot(NWchemEnergy*np.ones(100),'g-')
     if save == True:
         saveID = A+'Vs'+B
         plt.savefig(plotsDir+saveID+'.pdf', bbox_inches='tight',format='pdf')

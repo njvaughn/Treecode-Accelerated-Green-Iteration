@@ -19,7 +19,7 @@ from convolution import *
 
 def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTargets, 
                                 subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1, 
-                                threadsPerBlock=512, vtkExport=False, outputErrors=False):  # @DontTrace
+                                threadsPerBlock=512, onTheFlyRefinement = False, vtkExport=False, outputErrors=False):  # @DontTrace
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
@@ -47,8 +47,8 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
     sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
 
     V_coulombNew = np.zeros((len(targets)))
-#     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-    gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,10)  # call the GPU convolution 
+    gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
+#     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,10)  # call the GPU convolution 
     tree.importVcoulombOnLeaves(V_coulombNew)
     tree.updateVxcAndVeffAtQuadpoints()
     
@@ -60,6 +60,9 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
     
     tree.orbitalEnergies[0] = Eold
     
+    if vtkExport != False:
+        filename = vtkExport + '/mesh%03d'%(greenIterationCounter-1) + '.vtk'
+        tree.exportMeshVTK(filename)
         
     
     while ( residual > residualTolerance ):
@@ -72,8 +75,10 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         Extract leaves and perform the Helmholtz solve 
         """
         startExtractionTime = timer()
-        sources = tree.extractLeavesAllGridpoints()  # extract the source point locations.  Currently, these are just all the leaf midpoints
-        targets = tree.extractLeavesAllGridpoints()  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
+#         sources = tree.extractLeavesAllGridpoints()  # extract the source point locations.  Currently, these are just all the leaf midpoints
+#         targets = tree.extractLeavesAllGridpoints()  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
+        sources = tree.extractPhi(0)  # extract the source point locations.  Currently, these are just all the leaf midpoints
+        targets = tree.extractPhi(0)  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
         ExtractionTime = timer() - startExtractionTime
         phiNew = np.zeros((len(targets)))
         k = np.sqrt(-2*tree.orbitalEnergies[0]) 
@@ -90,8 +95,9 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         Import new orbital values, update pointwise densities
         """
         startImportTime = timer()
-        tree.importPhiOnLeaves(phiNew)         # import the new wavefunction values into the tree.
-        tree.normalizeOrbital()
+        tree.importPhiOnLeaves(phiNew, 0)         # import the new wavefunction values into the tree.
+#         tree.normalizeOrbital()
+        tree.orthonormalizeOrbitals()
         tree.updateOrbitalEnergies() 
 
         tree.updateDensityAtQuadpoints()
@@ -144,8 +150,15 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         print('\n\nHOMO Energy                             %.10f H, %.10e H' %(tree.orbitalEnergies[0], tree.orbitalEnergies[0]-HOMOtrue))
         print('Total Energy Energy:                    %.10f H, %.10e H\n\n' %(tree.E, tree.E-Etrue))
         
-        if vtkExport != False:
-            tree.exportGreenIterationOrbital(vtkExport,greenIterationCounter)
+#         if vtkExport != False:
+#             tree.exportGreenIterationOrbital(vtkExport,greenIterationCounter)
+        
+        if greenIterationCounter%2==0:
+            if onTheFlyRefinement==True:
+                tree.refineOnTheFly(divideTolerance=0.05)
+                if vtkExport != False:
+                    filename = vtkExport + '/mesh%03d'%greenIterationCounter + '.vtk'
+                    tree.exportMeshVTK(filename)
         
         if tree.E > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
             print('Warning, Energy is positive')
