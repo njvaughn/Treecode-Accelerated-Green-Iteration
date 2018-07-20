@@ -191,7 +191,7 @@ class Tree(object):
                     xdiv = (Cell.xmax + Cell.xmin)/2   
                     ydiv = (Cell.ymax + Cell.ymin)/2   
                     zdiv = (Cell.zmax + Cell.zmin)/2   
-                    Cell.divide(xdiv, ydiv, zdiv, printNumberOfCells)
+                    Cell.divide(xdiv, ydiv, zdiv, printNumberOfCells,interpolate=True)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:

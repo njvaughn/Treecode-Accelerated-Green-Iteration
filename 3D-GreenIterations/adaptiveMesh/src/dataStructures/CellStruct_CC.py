@@ -30,7 +30,8 @@ class Cell(object):
         '''
         Cell Constructor.  Cell composed of gridpoint objects
         '''
-        self.tree = tree
+        if tree is not None:
+            self.tree = tree
         self.px = px
         self.py = py
         self.pz = pz
@@ -47,8 +48,10 @@ class Cell(object):
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         self.setCellMidpointAndVolume()
         
-        self.orbitalPE = np.zeros(self.tree.nOrbitals)
-        self.orbitalKE = np.zeros(self.tree.nOrbitals)
+        if hasattr(self, "tree"):
+#             print('Cell has attribute tree')
+            self.orbitalPE = np.zeros(self.tree.nOrbitals)
+            self.orbitalKE = np.zeros(self.tree.nOrbitals)
 
     def setGridpoints(self,gridpoints):
         self.gridpoints = gridpoints
@@ -432,18 +435,52 @@ class Cell(object):
         self.gridpoints = None
         self.PxByPyByPz = None
     
-    def interpolatForDivision(self):
-        phiCoarse = np.empty((self.px,self.py,self.pz))
-        xvec = np.empty((self.px))
-        yvec = np.empty((self.py))
-        zvec = np.empty((self.pz))
-        for i,j,k in self.PxByPyByPz:
-            xvec[i] = self.gridpoints[i,j,k].x
-            yvec[j] = self.gridpoints[i,j,k].y
-            zvec[k] = self.gridpoints[i,j,k].z
-            phiCoarse[i,j,k] = self.gridpoints[i,j,k].phi
-        print('Interpolator generated')
-        self.interpolator = RegularGridInterpolator((xvec, yvec, zvec), phiCoarse,method='nearest') 
+    def interpolator(self, x,y,z,f): # generate the interpolating polynomial for function func.  Must be of shape [px,py,pz]
+        
+        wx = np.ones(self.px)
+        for i in range(self.px):
+            wx[i] = (-1)**i * np.sin(  (2*i+1)*np.pi / (2*(self.px-1)+2)  )
+        
+        wy = np.ones(self.py)
+        for j in range(self.py):
+            wy[j] = (-1)**j * np.sin(  (2*j+1)*np.pi / (2*(self.py-1)+2)  )
+            
+        wz = np.ones(self.pz)
+        for k in range(self.pz):
+            wz[k] = (-1)**k * np.sin(  (2*k+1)*np.pi / (2*(self.pz-1)+2)  )
+        
+        def P(xt,yt,zt):  # 2D interpolator.  
+            
+            num = 0
+            for i in range(self.px):
+                numY = 0
+                for j in range(self.py):
+                    numZ = 0
+                    for k in range(self.pz):
+                        numZ += ( wz[k]/(zt-z[k])*f[i,j,k] )
+                    numY += ( wy[j]/(yt-y[j])*numZ )
+                num +=  ( wx[i]/(xt-x[i]) )*numY
+            
+            denX=0
+            for i in range(self.px):
+                denX += wx[i]/(xt-x[i])
+            
+            denY=0
+            for j in range(self.py):
+                denY += wy[j]/(yt-y[j])
+                
+            denZ=0
+            for k in range(self.pz):
+                denZ += wz[k]/(zt-z[k])
+            
+            den = denX*denY*denZ
+                
+            return num/den
+    
+        return np.vectorize(P)
+        
+        
+#         self.interpolator = RegularGridInterpolator((xvec, yvec, zvec), phiCoarse,method='nearest') 
     
     def divide(self, xdiv, ydiv, zdiv, printNumberOfCells=False, interpolate=False):
                   
@@ -452,9 +489,33 @@ class Cell(object):
             
             children = np.empty((2,2,2), dtype=object)
             self.leaf = False
+            self.nOrbitals = len(self.gridpoints[0,0,0].phi)
             
             if interpolate==True:
-                self.interpolatForDivision()
+                # generate the x, y, and z arrays
+                x = np.empty(self.px)
+                y = np.empty(self.py)
+                z = np.empty(self.pz)
+                for i in range(self.px):
+                    x[i] = self.gridpoints[i,0,0].x
+                for j in range(self.py):
+                    y[j] = self.gridpoints[0,j,0].y
+                for k in range(self.pz):
+                    z[k] = self.gridpoints[0,0,k].z
+                    
+                
+                # Generate interpolators for each orbital
+                self.nOrbitals = len(self.gridpoints[0,0,0].phi)
+                interpolators = np.empty(self.nOrbitals,dtype=object)
+                phi = np.zeros((self.px,self.py,self.pz,self.nOrbitals))
+                for i,j,k in self.PxByPyByPz:
+                    for m in range(self.nOrbitals):
+                        phi[i,j,k,m] = self.gridpoints[i,j,k].phi[m]
+                
+                for m in range(self.nOrbitals):
+                    interpolators[m] = self.interpolator(x, y, z, phi[:,:,:,m])
+                    
+                    
         
             x = [ChebyshevPoints(cell.xmin,float(xdiv),cell.px), ChebyshevPoints(float(xdiv),cell.xmax,cell.px)]
             y = [ChebyshevPoints(cell.ymin,float(ydiv),cell.py), ChebyshevPoints(float(ydiv),cell.ymax,cell.py)]
@@ -466,16 +527,22 @@ class Cell(object):
     
             '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
             for i, j, k in TwoByTwoByTwo:
-                
-                children[i,j,k] = Cell(xbounds[i], xbounds[i+1], cell.px, 
-                                       ybounds[j], ybounds[j+1], cell.py,
-                                       zbounds[k], zbounds[k+1], cell.pz, tree = cell.tree)
+                if hasattr(cell, "tree"):
+                    children[i,j,k] = Cell(xbounds[i], xbounds[i+1], cell.px, 
+                                           ybounds[j], ybounds[j+1], cell.py,
+                                           zbounds[k], zbounds[k+1], cell.pz, tree = cell.tree)
+                else:
+                    children[i,j,k] = Cell(xbounds[i], xbounds[i+1], cell.px, 
+                                           ybounds[j], ybounds[j+1], cell.py,
+                                           zbounds[k], zbounds[k+1], cell.pz)
                 children[i,j,k].parent = cell # children should point to their parent
-                children[i,j,k].setUniqueID(i,j,k)
-                children[i,j,k].setNeighborList()
-    
-                if hasattr(cell.tree, 'masterList'):
-                    cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
+                if hasattr(cell, "uniqueID"):
+                    children[i,j,k].setUniqueID(i,j,k)
+                    children[i,j,k].setNeighborList()
+                
+                if hasattr(cell, "tree"):
+                    if hasattr(cell.tree, 'masterList'):
+                        cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
     
             '''create new gridpoints wherever necessary'''
             newGridpointCount=0
@@ -486,11 +553,12 @@ class Cell(object):
                 gridpoints = np.empty((cell.px,cell.py,cell.pz),dtype=object)
                 for i, j, k in cell.PxByPyByPz:
                     newGridpointCount += 1
-                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.nOrbitals)
                     if interpolate == True:
-                        phi = self.interpolator([xOct[i],yOct[j],zOct[k]])
-                        gridpoints[i,j,k].setPhi(phi)
-                    gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
+                        for m in range(self.nOrbitals):
+                            gridpoints[i,j,k].setPhi(interpolators[m](xOct[i],yOct[j],zOct[k]),m)
+                    if hasattr(cell, "tree"):
+                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
                 children[ii,jj,kk].setGridpoints(gridpoints)
                 if hasattr(cell,'level'):
                     children[ii,jj,kk].level = cell.level+1
