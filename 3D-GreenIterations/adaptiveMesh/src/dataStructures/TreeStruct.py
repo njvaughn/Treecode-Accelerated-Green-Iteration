@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 '''
 The main Tree data structure.  The root of the tree is a Cell object that is comprised of the 
 entire domain.  The tree gets built by dividing the root cell, recursively, based on the set 
@@ -1627,6 +1626,4 @@ if __name__ == "__main__":
 
     
     
-       
->>>>>>> refs/remotes/eclipse_auto/master
     

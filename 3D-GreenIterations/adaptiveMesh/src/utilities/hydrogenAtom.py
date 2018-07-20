@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 Utility functions for the hydrogen atom.  The potential is given analytically, as opposed to 
 tabulated.  The analytic energy values and wavefunctions are known for the single electron 
@@ -62,6 +61,3 @@ def trueWavefunction(n, x,y,z):
     r = np.sqrt(x*x + y*y + z*z )
     if m == 1: return np.exp(- r)/np.sqrt(np.pi)
     if m == 2: return (2-r) * np.exp(-r/2)/(4*np.sqrt(2*np.pi))
-
-
->>>>>>> refs/remotes/eclipse_auto/master
