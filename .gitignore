@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *doxygen*
 .cache*
 *.metadata*
@@ -8,3 +9,15 @@
 *.ptp*
 *.png
 __pycache__*
+=======
+*doxygen*
+.cache*
+*.metadata*
+*.plugin*
+.DS_Store*
+.project*
+.pydevproject*
+*.ptp*
+*.png
+__pycache__*
+>>>>>>> refs/remotes/eclipse_auto/master

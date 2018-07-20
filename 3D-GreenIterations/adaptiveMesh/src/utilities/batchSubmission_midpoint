@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #!/bin/bash
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/tests
@@ -10,3 +11,17 @@ python testBatchGreenIterations.py 12 3 14 0 1 1.0 LW1 800 1e-7 /home/njvaughn/r
 python testBatchGreenIterations.py 12 3 14 0 1 1.0 LW1 1600 1e-7 /home/njvaughn/results_CC_6_19/mid_to_cc.csv
 python testBatchGreenIterations.py 12 3 14 0 1 1.0 LW1 3200 1e-7 /home/njvaughn/results_CC_6_19/mid_to_cc.csv
 
+=======
+#!/bin/bash
+
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/tests
+
+
+python testBatchGreenIterations.py 12 3 14 0 1 1.0 LW1 100 1e-7 /home/njvaughn/results_CC_6_19/mid_to_cc.csv
+python testBatchGreenIterations.py 12 3 14 0 1 1.0 LW1 200 1e-7 /home/njvaughn/results_CC_6_19/mid_to_cc.csv
+python testBatchGreenIterations.py 12 3 14 0 1 1.0 LW1 400 1e-7 /home/njvaughn/results_CC_6_19/mid_to_cc.csv
+python testBatchGreenIterations.py 12 3 14 0 1 1.0 LW1 800 1e-7 /home/njvaughn/results_CC_6_19/mid_to_cc.csv
+python testBatchGreenIterations.py 12 3 14 0 1 1.0 LW1 1600 1e-7 /home/njvaughn/results_CC_6_19/mid_to_cc.csv
+python testBatchGreenIterations.py 12 3 14 0 1 1.0 LW1 3200 1e-7 /home/njvaughn/results_CC_6_19/mid_to_cc.csv
+
+>>>>>>> refs/remotes/eclipse_auto/master
