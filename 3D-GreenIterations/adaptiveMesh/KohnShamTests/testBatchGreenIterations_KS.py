@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 '''
 testGreenIterations.py
 This is a unitTest module for testing Green iterations.  It begins by building the tree-based

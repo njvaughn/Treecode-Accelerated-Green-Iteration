@@ -191,7 +191,7 @@ class Tree(object):
                     xdiv = (Cell.xmax + Cell.xmin)/2   
                     ydiv = (Cell.ymax + Cell.ymin)/2   
                     zdiv = (Cell.zmax + Cell.zmin)/2   
-                    Cell.divide(xdiv, ydiv, zdiv, printNumberOfCells,interpolate=True)
+                    Cell.divide(xdiv, ydiv, zdiv, printNumberOfCells)
 #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
 #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
                     for i,j,k in TwoByTwoByTwo:
@@ -226,20 +226,22 @@ class Tree(object):
                 if hasattr(element[1].gridpoints[i,j,k], "counted"):
                     element[1].gridpoints[i,j,k].counted = None
          
-#         print('Initializing phi to hydrogen atom ground state.')            
+        print('Initializing phi to hydrogen atom wavefunctions.')            
         print('Initializing phi to superposition of single atom ground states.')            
         for _,cell in self.masterList:
             for i,j,k in cell.PxByPyByPz:
                 gp = cell.gridpoints[i,j,k]
                 r1 = np.sqrt((gp.x-0.7)*(gp.x-0.7) + gp.y*gp.y + gp.z*gp.z)
                 r2 = np.sqrt((gp.x+0.7)*(gp.x+0.7) + gp.y*gp.y + gp.z*gp.z)
-                
+
+#                 r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
                 for m in range(self.nOrbitals):
-                    gp.phi[m] = np.exp(-r1) + np.exp(-r2) #+r1**2 - r2**3
+                    gp.phi[m] = np.exp(-r1) + np.exp(-r2)
+#                     gp.phi[m] = np.exp(-4*r)*r**m  
 
 #                 r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
 #                 gp.phi = np.exp(-r)
-        self.normalizeOrbital()
+        self.orthonormalizeOrbitals()
         
         
                     
@@ -388,7 +390,7 @@ class Tree(object):
                 for m in range(self.nOrbitals):
                     gp.setPhi(np.exp( - np.sqrt( gp.x**2 + gp.y**2 + gp.z**2 )), m)
         print('Populating phi from tree.populatePhi()')
-        self.normalizeOrbital()  
+        self.orthonormalizeOrbitals()  
         
     def refineOnTheFly(self, divideTolerance):
         counter = 0
@@ -520,32 +522,33 @@ class Tree(object):
         self.computeTotalPotential()
         self.E = self.totalKinetic + self.totalPotential
     
-    def computeOrbitalPotential(self): 
+    def computeOrbitalPotentials(self): 
         
-        self.orbitalPotential = 0  
+        self.orbitalPotential = np.zeros(self.nOrbitals)  
         for _,cell in self.masterList:
             if cell.leaf == True:
-                cell.computeOrbitalPotential()
+                cell.computeOrbitalPotentials()
                 self.orbitalPotential += cell.orbitalPE
                        
-    def computeOrbitalKinetic(self):
+    def computeOrbitalKinetics(self):
 
-        self.orbitalKinetic = 0
+        self.orbitalKinetic = np.zeros(self.nOrbitals)
         for _,cell in self.masterList:
             if cell.leaf == True:
-                cell.computeOrbitalKinetic()
+                cell.computeOrbitalKinetics()
                 self.orbitalKinetic += cell.orbitalKE
             
         
     def updateOrbitalEnergies(self):
-        self.computeOrbitalKinetic()
-        self.computeOrbitalPotential()
+        self.computeOrbitalKinetics()
+        self.computeOrbitalPotentials()
         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
         print('Orbital Potential Energy: ', self.orbitalPotential)
-        self.orbitalEnergies[0] = self.orbitalKinetic + self.orbitalPotential
-        if self.orbitalEnergies[0] > 0:
-            print('Warning, orbital energy is positive.  Resetting to -0.5')
-            self.orbitalEnergies[0] = -0.5
+        self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
+        for m in range(self.nOrbitals):
+            if self.orbitalEnergies[m] > 0:
+                print('Warning, orbital energy is positive.  Resetting to -0.5')
+                self.orbitalEnergies[m] = -0.5
             
     def computeNuclearNuclearEnergy(self):
         self.nuclearNuclear = 0.0
@@ -966,8 +969,4 @@ if __name__ == "__main__":
     
     
        
-    
-
-    
-    
     

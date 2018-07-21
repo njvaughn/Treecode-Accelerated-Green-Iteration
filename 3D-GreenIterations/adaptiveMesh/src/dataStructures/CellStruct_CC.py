@@ -917,7 +917,7 @@ class Cell(object):
     """
     HAMILTONIAN FUNCTIONS
     """
-    def computeOrbitalPotential(self):
+    def computeOrbitalPotentials(self):
         
         phi = np.empty((self.px,self.py,self.pz))
         pot = np.empty((self.px,self.py,self.pz))
@@ -930,7 +930,7 @@ class Cell(object):
                 
             self.orbitalPE[m] = np.sum( self.w * phi**2 * pot)
 
-    def computeOrbitalKinetic(self):
+    def computeOrbitalKinetics(self):
         
         phi = np.empty((self.px,self.py,self.pz))
         
