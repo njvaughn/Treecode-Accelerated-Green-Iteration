@@ -55,7 +55,7 @@ def weights(xlow, xhigh, N, w=None):
     try: 
         return (xhigh - xlow)/2 * w
     except TypeError:
-        print('meshUtilities: Generating weights from scratch')
+#         print('meshUtilities: Generating weights from scratch')
         return (xhigh - xlow)/2 *unscaledWeights(N)
     
 def weights3D(xlow,xhigh,Nx,ylow,yhigh,Ny,zlow,zhigh,Nz,w=None):
