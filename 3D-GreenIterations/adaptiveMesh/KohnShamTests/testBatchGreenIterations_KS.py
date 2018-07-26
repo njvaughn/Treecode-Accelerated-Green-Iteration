@@ -119,6 +119,6 @@ if __name__ == "__main__":
     tree = setUpTree()
 #     testGreenIterationsGPU(tree,vtkExport=vtkFile)
 #     testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False)
-    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=True)
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
     
     

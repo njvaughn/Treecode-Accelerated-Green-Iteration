@@ -12,11 +12,16 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 '''
 
 import numpy as np
+from scipy.interpolate import interp1d
 import pylibxc
 import itertools
 import os
 import csv
 import vtk
+try:
+    from pyevtk.hl import pointsToVTK
+except ImportError:
+    pass
 
 from GridpointStruct import GridPoint
 from CellStruct_CC import Cell
@@ -127,7 +132,8 @@ class Tree(object):
                     zdiv = None
                     
                 Cell.divide(xdiv, ydiv, zdiv)
-
+        
+        print('Searching for atom data in: ', coordinateFile)
         atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
 #         print(np.shape(atomData))
 #         print(len(atomData))
@@ -149,8 +155,112 @@ class Tree(object):
 #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cell.divideIfAspectRatioExceeds(1.5)
+                cell.divideIfAspectRatioExceeds(2.0)
       
+
+    def initializeFromAtomicData(self):
+        # Generalized for any atoms.  Not complete yet.  
+        timer = Timer()
+        timer.start()
+        
+        interpolators = np.empty(self.nOrbitals,dtype=object)
+        count=0
+        for atom in self.atoms:
+            path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(atom.atomicNumber))+'/singleAtomData/'
+#             print('Searching for single atom data in: ',path)
+            for orbital in os.listdir(path): 
+                if orbital[:3]=='psi':
+                    data = np.genfromtxt(path+orbital)
+                    interpolators[count] = interp1d(data[:,0],data[:,1])
+                    count+=1
+            
+            for _,cell in self.masterList:
+                for i,j,k in self.PxByPyByPz:
+                    # compute radius, as well as polar and asimuthal angles when the time comes...
+                    gp = cell.gridpoints[i,j,k]
+                    r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
+                    
+                    # figure out teh mapping between orbitals and interpolators.  For instance, the 
+                    # 2p interpolator needs to be used for three orbitals, each with a different spherical harmonic.  
+                    # maybe keep a counter, and loop over the allowed values of ell, only incrementing the counter
+                    # when all values of ell are exhausted.  But need the mapping from n to s.  The data file name has
+                    # the numbers I need.  'psi32.inp' for example.  
+                    
+                    counter=0
+                    for orbitalNumber in range(self.nOrbitals):
+                        for orbital in os.listdir(path):
+                            if orbital[:3]=='psi':
+                                ell = orbital[4]
+                        
+                        for ii in range(ell):
+                            pass
+
+                        counter+=1
+                            
+                        
+                    
+        timer.stop()
+        print('Initialization from single atom data took %f.3 seconds.' %timer.elapsedTime)
+        
+    def initializeForBerylliumAtom(self):
+        print('Initializing orbitals for beryllium atom exclusively. ')
+
+        # Generalized for any atoms.  Not complete yet.  
+        timer = Timer()
+        timer.start()
+        
+        interpolators = np.empty(self.nOrbitals,dtype=object)
+        count=0
+        BerylliumAtom = self.atoms[0]
+#         path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(BerylliumAtom.atomicNumber)+'/singleAtomData/'
+        path = '/home/njvaughn/AtomicData/allElectron/z'+str(BerylliumAtom.atomicNumber)+'/singleAtomData/'
+        for orbital in os.listdir(path): 
+            if orbital[:5]=='psi10':
+                data = np.genfromtxt(path+orbital)
+                interpolators[0] = interp1d(data[:,0],data[:,1])
+            if orbital[:5]=='psi20':
+                data = np.genfromtxt(path+orbital)
+                interpolators[1] = interp1d(data[:,0],data[:,1])
+            
+        for _,cell in self.masterList:
+            for i,j,k in self.PxByPyByPz:
+                gp = cell.gridpoints[i,j,k]
+                r = np.sqrt( (gp.x-BerylliumAtom.x)**2 + (gp.y-BerylliumAtom.y)**2 + (gp.z-BerylliumAtom.z)**2 )
+                
+                gp.setPhi(interpolators[0](r),0)
+                gp.setPhi(interpolators[1](r),1)
+                   
+        timer.stop()
+        print('Initialization from single Beryllium atom data took %f.3 seconds.' %timer.elapsedTime)
+        
+    def initializeForHydrogenMolecule(self):
+        print('Initializing orbitals for hydrogen molecule exclusively. ')
+        # Generalized for any atoms.  Not complete yet.  
+        timer = Timer()
+        timer.start()
+        
+        for atom in self.atoms:
+            interpolators = np.empty((self.nOrbitals,),dtype=object) 
+            count=0
+#             path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atom.atomicNumber)+'/singleAtomData/'
+            path = '/home/njvaughn/AtomicData/allElectron/z'+str(atom.atomicNumber)+'/singleAtomData/'
+            for orbital in os.listdir(path): 
+                if orbital[:5]=='psi10':
+                    data = np.genfromtxt(path+orbital)
+                    interpolators[count] = interp1d(data[:,0],data[:,1])  # issue: data for multiple orbitals, but I only have 1.  
+                    count+=1
+                
+            for _,cell in self.masterList:
+                for i,j,k in self.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+#                     print(interpolators[0](r))
+                    gp.setPhi(gp.phi[0] + interpolators[0](r),0)
+                   
+        timer.stop()
+        print('Initialization from single atom data took %f.3 seconds.' %timer.elapsedTime)
+        
+        
     def buildTree(self,minLevels,maxLevels, divideCriterion, divideParameter, printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
@@ -211,36 +321,41 @@ class Tree(object):
         """ Count the number of unique leaf cells and gridpoints and set initial external potential """
         self.numberOfGridpoints = 0
         self.numberOfCells = 0
-        for element in self.masterList:
-            if element[1].leaf==True:
+        for _,cell in self.masterList:
+            if cell.leaf==True:
                 self.numberOfCells += 1
                 for i,j,k in self.PxByPyByPz:
-                    if not hasattr(element[1].gridpoints[i,j,k], "counted"):
+                    if not hasattr(cell.gridpoints[i,j,k], "counted"):
                         self.numberOfGridpoints += 1
-                        element[1].gridpoints[i,j,k].counted = True
-                        element[1].gridpoints[i,j,k].setExternalPotential(self.atoms)
+                        cell.gridpoints[i,j,k].counted = True
+                        cell.gridpoints[i,j,k].setExternalPotential(self.atoms)
         
                         
-        for element in self.masterList:
-            for i,j,k in self.PxByPyByPz:
-                if hasattr(element[1].gridpoints[i,j,k], "counted"):
-                    element[1].gridpoints[i,j,k].counted = None
-         
-        print('Initializing phi to hydrogen atom wavefunctions.')            
-        print('Initializing phi to superposition of single atom ground states.')            
         for _,cell in self.masterList:
-            for i,j,k in cell.PxByPyByPz:
-                gp = cell.gridpoints[i,j,k]
-                r1 = np.sqrt((gp.x-0.7)*(gp.x-0.7) + gp.y*gp.y + gp.z*gp.z)
-                r2 = np.sqrt((gp.x+0.7)*(gp.x+0.7) + gp.y*gp.y + gp.z*gp.z)
+            for i,j,k in self.PxByPyByPz:
+                if hasattr(cell.gridpoints[i,j,k], "counted"):
+                    cell.gridpoints[i,j,k].counted = None
+         
+        
+#         print('Initializing phi to hydrogen atom wavefunctions.')            
+#         print('Initializing phi to superposition of single atom ground states.')            
+#         for _,cell in self.masterList:
+#             for i,j,k in cell.PxByPyByPz:
+#                 gp = cell.gridpoints[i,j,k]
+#                 r1 = np.sqrt((gp.x-0.7)*(gp.x-0.7) + gp.y*gp.y + gp.z*gp.z)
+#                 r2 = np.sqrt((gp.x+0.7)*(gp.x+0.7) + gp.y*gp.y + gp.z*gp.z)
+# 
+# #                 r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
+#                 for m in range(self.nOrbitals):
+#                     gp.phi[m] = np.exp(-r1) + np.exp(-r2)
+# #                     gp.phi[m] = np.exp(-4*r)*r**m  
+# 
+# #                 r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
+# #                 gp.phi = np.exp(-r)
 
-#                 r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
-                for m in range(self.nOrbitals):
-                    gp.phi[m] = np.exp(-r1) + np.exp(-r2)
-#                     gp.phi[m] = np.exp(-4*r)*r**m  
-
-#                 r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
-#                 gp.phi = np.exp(-r)
+#         self.initializeFromAtomicData()
+        self.initializeForHydrogenMolecule()
+#         self.initializeForBerylliumAtom()
         self.orthonormalizeOrbitals()
         
         
@@ -859,8 +974,31 @@ class Tree(object):
                 coords.append( (cell.xmax, cell.ymax, cell.zmax))
                 coords.append( (cell.xmin, cell.ymax, cell.zmax))
                 
+#                 x = np.empty(cell.px)
+#                 y = np.empty(cell.py)
+#                 z = np.empty(cell.pz)
+#                 for i in range(cell.px):
+#                     x[i] = cell.gridpoints[i,0,0].x
+#                 for j in range(cell.py):
+#                     y[j] = cell.gridpoints[0,j,0].y
+#                 for k in range(cell.pz):
+#                     z[k] = cell.gridpoints[0,0,k].z
+#                     
+#                 
+#                 # Generate interpolators for each orbital
+#                 interpolators = np.empty(self.nOrbitals,dtype=object)
+#                 phi = np.zeros((cell.px,cell.py,cell.pz,self.nOrbitals))
+#                 for i,j,k in self.PxByPyByPz:
+#                     for m in range(self.nOrbitals):
+#                         phi[i,j,k,m] = cell.gridpoints[i,j,k].phi[m]
+#                 
+#                 for m in range(self.nOrbitals):
+#                     interpolators[m] = cell.interpolator(x, y, z, phi[:,:,:,m])
+                
                 for i in range(8):
-                    scalars.InsertTuple1(pointcounter+i,cell.level)
+#                     scalars.InsertTuple1(pointcounter+i,cell.level)
+#                     scalars.InsertTuple1(pointcounter+i,interpolators[0](cell.xmid, cell.ymid, cell.zmid))
+                    scalars.InsertTuple1(pointcounter+i,cell.gridpoints[1,1,1].phi)
                 
                 faces.append((pointcounter+0,pointcounter+1,pointcounter+2,pointcounter+3))
                 faces.append((pointcounter+4,pointcounter+5,pointcounter+6,pointcounter+7))
@@ -893,6 +1031,28 @@ class Tree(object):
 
         writer.Write()
         print('Done writing ', filename)
+        
+    def exportGridpoints(self,filename):
+        x = []
+        y = []
+        z = []
+        v = []
+        phi10 = []
+        phi20 = []
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in cell.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    x.append(gp.x)
+                    y.append(gp.y)
+                    z.append(gp.z)
+                    v.append(gp.v_eff)
+                    phi10.append(gp.phi[0])
+                    phi20.append(gp.phi[1])
+        
+        pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
+                    {"V" : np.array(v), "Phi10" : np.array(phi10), "Phi20" : np.array(phi20)})
+                
         
     def exportGreenIterationOrbital(self,filename,iterationNumber):
         def mkVtkIdList(it): # helper function

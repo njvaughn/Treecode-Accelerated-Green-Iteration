@@ -16,9 +16,9 @@ class GridPoint(object):
         self.x = x
         self.y = y
         self.z = z
-        self.phi = np.empty(Norbitals)
-        for i in range(Norbitals):
-            self.setPhi(np.random.rand(1), i)  # for now, set the analytic phi value.  Eventually, need to use interpolator
+        self.phi = np.zeros(Norbitals)  # intialize to zero before using the isngle atom data.
+#         for i in range(Norbitals):
+#             self.setPhi(np.random.rand(1), i)  # for now, set the analytic phi value.  Eventually, need to use interpolator
 #         self.finalWavefunction = []
         
 #         rands = np.random.rand(5)

@@ -10,10 +10,7 @@ import itertools
 from CellStruct_CC import Cell
 from GridpointStruct import GridPoint
 from meshUtilities import ChebyshevPoints
-<<<<<<< HEAD
-=======
-from astropy.units import zT
->>>>>>> refs/remotes/eclipse_auto/master
+
 
 def polynomial(x,y,z):
     return x**2 - y**2 + z**3

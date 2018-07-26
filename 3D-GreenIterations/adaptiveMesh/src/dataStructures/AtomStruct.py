@@ -15,7 +15,7 @@ class Atom(object):
         self.x = x
         self.y = y
         self.z = z
-        self.atomicNumber = atomicNumber
+        self.atomicNumber = int(atomicNumber)
        
     def V(self,x,y,z):
         r = np.sqrt( (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)

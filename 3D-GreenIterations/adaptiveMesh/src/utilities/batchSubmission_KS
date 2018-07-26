@@ -12,16 +12,17 @@ MESHPARAM=50
 RESIDUAL=1e-7
 #COORDINATES='../src/utilities/molecularConfigurations/berylliumAtom.csv'
 COORDINATES='../src/utilities/molecularConfigurations/hydrogenMolecule.csv'
-OUTFILE='/home/njvaughn/onTheFly/results/onTheFlyMeshTests.csv'
+#OUTFILE='/home/njvaughn/onTheFly/results/onTheFlyMeshTests.csv'
 #OUTFILE='/home/njvaughn/results_Be/results.csv'
+OUTFILE='/home/njvaughn/results_H2/results.csv'
 VTKFILEDIR='/home/njvaughn/onTheFly/meshes'
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 
 
-MESHTYPE='LW1'
-MESHPARAM=50
+MESHTYPE='LW3'
+MESHPARAM=200
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $RESIDUAL \
 	$COORDINATES $OUTFILE $VTKFILEDIR
