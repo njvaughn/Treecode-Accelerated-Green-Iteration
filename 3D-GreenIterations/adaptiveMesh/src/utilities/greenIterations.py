@@ -35,16 +35,19 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
     residual = 1                                    # initialize the residual to something that fails the convergence tolerance
     Eold = -0.5
 #     Etrue = trueEnergy(energyLevel)
-    Etrue = -1.1373748  # temporary value, should be in the ballpark
-    HOMOtrue = -0.378665
+#     Etrue = -1.1373748  # temporary value, should be in the ballpark
+#     HOMOtrue = -0.378665
+
+    Etrue = -14.573011  # temporary value, should be in the ballpark
+    HOMOtrue = -0.309270
     
     
     tree.orthonormalizeOrbitals()
     tree.updateDensityAtQuadpoints()
     tree.normalizeDensity()
 
-    targets = tree.extractLeavesDensity()  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
-    sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
+    targets = tree.extractLeavesDensity()  
+    sources = tree.extractLeavesDensity() 
 
     V_coulombNew = np.zeros((len(targets)))
     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
@@ -75,36 +78,71 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         Extract leaves and perform the Helmholtz solve 
         """
         startExtractionTime = timer()
-#         sources = tree.extractLeavesAllGridpoints()  # extract the source point locations.  Currently, these are just all the leaf midpoints
-#         targets = tree.extractLeavesAllGridpoints()  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
+#         sources = tree.extractPhi(0)  # extract the source point locations.  Currently, these are just all the leaf midpoints
+#         targets = tree.extractPhi(0)  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
+#         ExtractionTime = timer() - startExtractionTime
+#         phiNew = np.zeros((len(targets)))
+#         k = np.sqrt(-2*tree.orbitalEnergies[0]) 
+# 
+#         startConvolutionTime = timer()    
+#         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
+#         ConvolutionTime = timer() - startConvolutionTime
+#         print('Extraction took:                %.4f seconds. ' %ExtractionTime)
+#         print('Helmholtz Convolution took:     %.4f seconds. ' %ConvolutionTime)
+#         
+#         
+#         
+#         """ 
+#         Import new orbital values, update pointwise densities
+#         """
+#         startImportTime = timer()
+#         tree.importPhiOnLeaves(phiNew, 0)         # import the new wavefunction values into the tree.
+
+
+        """ TWO ORBITAL HELMHOLTZ """
         sources = tree.extractPhi(0)  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = tree.extractPhi(0)  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
-        ExtractionTime = timer() - startExtractionTime
+        print(np.shape(sources[:,3]))
+        print('max and min of phi10: ', np.max(sources[:,3]), np.min(sources[:,3]))
         phiNew = np.zeros((len(targets)))
         k = np.sqrt(-2*tree.orbitalEnergies[0]) 
-
-        startConvolutionTime = timer()    
         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
-        ConvolutionTime = timer() - startConvolutionTime
-        print('Extraction took:                %.4f seconds. ' %ExtractionTime)
-        print('Helmholtz Convolution took:     %.4f seconds. ' %ConvolutionTime)
-        
-        
-        
-        """ 
-        Import new orbital values, update pointwise densities
-        """
-        startImportTime = timer()
         tree.importPhiOnLeaves(phiNew, 0)         # import the new wavefunction values into the tree.
-#         tree.normalizeOrbital()
-        tree.orthonormalizeOrbitals()
-        tree.updateOrbitalEnergies() 
+        print('max and min of phi10: ', max(phiNew), min(phiNew))
+        
+        if greenIterationCounter > 4:
+            
+            sources = tree.extractPhi(1)  
+            targets = tree.extractPhi(1)  
+            print('max and min of phi20: ', max(sources[:,3]), min(sources[:,3]))
+            print('min of abs(phi20): ',min(abs(sources[:,3])))
+            phiNew = np.zeros((len(targets)))
+            k = np.sqrt(-2*tree.orbitalEnergies[1]) 
+            gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
+            tree.importPhiOnLeaves(phiNew, 1)         # import the new wavefunction values into the tree.
+            print('max and min of phi20: ', max(phiNew), min(phiNew))
+            print('min of abs(phi20): ',min(abs(phiNew)))
+            
+            print('Pre-Normalization Energy')
+            tree.updateOrbitalEnergies()
+            tree.normalizeOrbital(0) 
+            tree.normalizeOrbital(1) 
+            print('After normalization:')
+            tree.updateOrbitalEnergies()
+            tree.orthonormalizeOrbitals()
+            print('After orthogonalization and normalization')
+            tree.updateOrbitalEnergies() 
+        else:    
+            tree.updateOrbitalEnergies() 
+            tree.normalizeOrbital(0) 
+            tree.updateOrbitalEnergies() 
+
 
         tree.updateDensityAtQuadpoints()
         tree.normalizeDensity()
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
-        importTime = timer() - startImportTime
-        print('Import and Desnity Update took:  %.4f seconds. ' %importTime)
+#         importTime = timer() - startImportTime
+#         print('Import and Desnity Update took:  %.4f seconds. ' %importTime)
 
         """ 
         Compute new electron-electron potential and update pointwise potential values 
@@ -135,19 +173,20 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         Eold = tree.E
         
         
+        
         """
         Print results from current iteration
         """
 #         print('Orbital Kinetic:   ', tree.orbitalKinetic)
 #         print('Orbital Potential: ', tree.orbitalPotential)
-        print('Orbital Energy:                         %.10f Hartree' %tree.orbitalEnergies[0])
+        print('Orbital Energy:                         %.10f H, %.10e H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
         print('Updated V_coulomb:                       %.10f Hartree' %tree.totalVcoulomb)
         print('Updated V_xc:                           %.10f Hartree' %tree.totalVxc)
         print('Updated E_xc:                           %.10f Hartree' %tree.totalExc)
         print('Updated Kinetic Energy:                 %.10f Hartree' %tree.totalKinetic)
 #         print('HOMO Energy                             %.10f Hartree' %tree.orbitalEnergies[0])
 #         print('Total Energy                            %.10f Hartree' %tree.E)
-        print('\n\nHOMO Energy                             %.10f H, %.10e H' %(tree.orbitalEnergies[0], tree.orbitalEnergies[0]-HOMOtrue))
+        print('\n\nHOMO Energy                             %.10f H, %.10e H' %(tree.orbitalEnergies[-1], tree.orbitalEnergies[-1]-HOMOtrue))
         print('Total Energy Energy:                    %.10f H, %.10e H\n\n' %(tree.E, tree.E-Etrue))
         
 #         if vtkExport != False:

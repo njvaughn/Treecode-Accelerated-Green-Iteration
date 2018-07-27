@@ -46,7 +46,7 @@ def setUpTree():
     '''
     xmin = ymin = zmin = -domainSize
     xmax = ymax = zmax = domainSize
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons=2,nOrbitals=1,coordinateFile=coordinateFile)
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons=4,nOrbitals=2,coordinateFile=coordinateFile)
 #         def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coordinateFile,numberOfStates=1,xcFunctional="LDA_XC_LP_A",polarization="unpolarized"):
 
 #     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, divideTolerance1=divideTol1, divideTolerance2=divideTol2, printTreeProperties=True)

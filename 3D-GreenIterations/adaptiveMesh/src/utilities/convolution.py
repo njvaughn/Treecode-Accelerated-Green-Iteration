@@ -56,14 +56,14 @@ def gpuHelmholtzConvolutionSubractSingularity(targets,sources,psiNew,k):
         x_t, y_t, z_t, psi_t, V_t, weight_t = targets[globalID]  # set the x, y, and z values of the target
         f_t = 2*psi_t*V_t
 #         psiNew[globalID] = f_t*4*pi/k**2
-        psiNew[globalID] = f_t/k**2
+        psiNew[globalID] = -f_t/k**2
         for i in range(len(sources)):  # loop through all source midpoints
             x_s, y_s, z_s, psi_s, V_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
             if not ( (x_s==x_t) and (y_s==y_t) and (z_s==z_t) ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
 #             if  globalID != i:  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
                 r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
                 f_s = 2*V_s*psi_s
-                psiNew[globalID] += weight_s*(f_s-f_t)*exp(-k*r)/(4*pi*r) # increment the new wavefunction value
+                psiNew[globalID] -= weight_s*(f_s-f_t)*exp(-k*r)/(4*pi*r) # increment the new wavefunction value
 
 @cuda.jit
 def gpuPoissonConvolution(targets,sources,V_coulomb_new):

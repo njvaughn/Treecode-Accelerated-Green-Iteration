@@ -22,7 +22,8 @@ class Test(unittest.TestCase):
         plt.figure()
 
         for orbital in os.listdir(AtomicDataPath):
-            if orbital[:5]=='psi32':
+            if orbital[:3]=='psi':
+#             if orbital[:5]=='psi32':
                 print(orbital)
                 data = np.genfromtxt(AtomicDataPath+orbital)
                 plt.plot(data[:,0],data[:,1],label=orbital[:-4])
