@@ -41,7 +41,40 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
     Etrue = -14.573011  # temporary value, should be in the ballpark
     HOMOtrue = -0.309270
     
-    
+#     print('Initial energies before any orthogonalization')
+#     tree.updateOrbitalEnergies()
+#     tree.normalizeOrbital(0) 
+#     tree.normalizeOrbital(1) 
+#     print('Initial energies after normalization:')
+#     tree.updateOrbitalEnergies()
+#     
+#     
+#     """ Update V_eff using the non-orthogonalized orbitals. """
+#     tree.updateDensityAtQuadpoints()
+#     tree.normalizeDensity()
+# 
+#     targets = tree.extractLeavesDensity()  
+#     sources = tree.extractLeavesDensity() 
+# 
+#     V_coulombNew = np.zeros((len(targets)))
+#     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
+# #     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,10)  # call the GPU convolution 
+#     tree.importVcoulombOnLeaves(V_coulombNew)
+#     tree.updateVxcAndVeffAtQuadpoints()
+#     
+#     tree.computeOrbitalKinetics()
+#     tree.computeOrbitalPotentials()
+#     
+#     print('Set initial v_eff using original orbitals...')
+#     print('Initial kinetic:   ', tree.orbitalKinetic)
+#     print('Initial Potential: ', tree.orbitalPotential)
+#     
+#     
+#     
+#     
+#     
+#     
+#     print('Now orthogonalizing and recomputing v_eff...')
     tree.orthonormalizeOrbitals()
     tree.updateDensityAtQuadpoints()
     tree.normalizeDensity()
@@ -57,11 +90,13 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
     
     tree.computeOrbitalKinetics()
     tree.computeOrbitalPotentials()
+    
+    print('Set initial v_eff using orthonormalized orbitals...')
     print('Initial kinetic:   ', tree.orbitalKinetic)
     print('Initial Potential: ', tree.orbitalPotential)
     
     
-    tree.orbitalEnergies[0] = Eold
+#     tree.orbitalEnergies[0] = Eold
     
     if vtkExport != False:
         filename = vtkExport + '/mesh%03d'%(greenIterationCounter-1) + '.vtk'
@@ -102,7 +137,7 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         """ TWO ORBITAL HELMHOLTZ """
         sources = tree.extractPhi(0)  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = tree.extractPhi(0)  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
-        print(np.shape(sources[:,3]))
+#         print(np.shape(sources[:,3]))
         print('max and min of phi10: ', np.max(sources[:,3]), np.min(sources[:,3]))
         phiNew = np.zeros((len(targets)))
         k = np.sqrt(-2*tree.orbitalEnergies[0]) 
@@ -123,18 +158,19 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
             print('max and min of phi20: ', max(phiNew), min(phiNew))
             print('min of abs(phi20): ',min(abs(phiNew)))
             
-            print('Pre-Normalization Energy')
-            tree.updateOrbitalEnergies()
-            tree.normalizeOrbital(0) 
-            tree.normalizeOrbital(1) 
-            print('After normalization:')
-            tree.updateOrbitalEnergies()
+#             print('Pre-Normalization Energy')
+#             tree.updateOrbitalEnergies()
+#             tree.normalizeOrbital(0) 
+#             tree.normalizeOrbital(1) 
+#             print('After normalization:')
+#             tree.updateOrbitalEnergies()
             tree.orthonormalizeOrbitals()
-            print('After orthogonalization and normalization')
+#             print('After orthogonalization and normalization')
             tree.updateOrbitalEnergies() 
         else:    
-            tree.updateOrbitalEnergies() 
-            tree.normalizeOrbital(0) 
+#             tree.updateOrbitalEnergies() 
+#             tree.normalizeOrbital(0) 
+            tree.orthonormalizeOrbitals()
             tree.updateOrbitalEnergies() 
 
 
@@ -167,7 +203,7 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         
         
         energyUpdateTime = timer() - startEnergyTime
-        print('Energy Update took:                     %.4f seconds. ' %energyUpdateTime)
+#         print('Energy Update took:                     %.4f seconds. ' %energyUpdateTime)
         residual = abs(Eold - tree.E)  # Compute the residual for determining convergence
         print('Energy Residual:                        %.3e\n' %residual)
         Eold = tree.E

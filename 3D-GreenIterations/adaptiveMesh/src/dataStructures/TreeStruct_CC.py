@@ -725,6 +725,7 @@ class Tree(object):
 #                         maxPhi = abs(element[1].gridpoints[i,j,k].phi)
 #                     maxPhi = max( maxPhi, abs(element[1].gridpoints[i,j,k].phi))
                     A += cell.gridpoints[i,j,k].phi[n]**2*cell.w[i,j,k]
+        
         if A<0.0:
             print('Warning: normalization value A is less than zero...')
         if A==0.0:
