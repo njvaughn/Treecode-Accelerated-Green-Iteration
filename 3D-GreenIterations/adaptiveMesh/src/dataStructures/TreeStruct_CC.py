@@ -44,7 +44,10 @@ class Tree(object):
     """
     INTIALIZATION FUNCTIONS
     """
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons=2,nOrbitals=1,coordinateFile='',xcFunctional="LDA_XC_LP_A",polarization="unpolarized", printTreeProperties = True):
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons=2,nOrbitals=1,
+                 coordinateFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
+                 polarization="unpolarized", 
+                 printTreeProperties = True):
         '''
         Tree constructor:  
         First construct the gridpoints for cell consisting of entire domain.  
@@ -65,7 +68,9 @@ class Tree(object):
         self.nOrbitals = nOrbitals
         
         
-        self.xcFunc = pylibxc.LibXCFunctional(xcFunctional, polarization)
+        self.exchangeFunctional = pylibxc.LibXCFunctional(exchangeFunctional, polarization)
+        self.correlationFunctional = pylibxc.LibXCFunctional(correlationFunctional, polarization)
+        
         self.orbitalEnergies = -np.ones(nOrbitals)
         
         # generate gridpoint objects.  
@@ -232,8 +237,14 @@ class Tree(object):
                 else:
                     gp.setPhi(interpolators[0](r),0)
                     gp.setPhi(interpolators[1](r),1)
+                    
+                    #  Perturb the initial wavefunction
+                
+                    gp.setPhi( gp.phi[0] + np.sin(r),0)
+                    gp.setPhi( gp.phi[1] + np.sin(2*r),1)
                    
         timer.stop()
+        print('Using perturbed versions of single-atom data, since this is a single atom calculation.')
         print('Initialization from single Beryllium atom data took %f.3 seconds.' %timer.elapsedTime)
         
     def initializeForHydrogenMolecule(self):
@@ -258,7 +269,10 @@ class Tree(object):
                     gp = cell.gridpoints[i,j,k]
                     r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
 #                     print(interpolators[0](r))
-                    gp.setPhi(gp.phi[0] + interpolators[0](r),0)
+                    if r > 29:
+                        gp.setPhi(gp.phi[0] + 0,0)
+                    else:
+                        gp.setPhi(gp.phi[0] + interpolators[0](r),0)
                    
         timer.stop()
         print('Initialization from single atom data took %f.3 seconds.' %timer.elapsedTime)
@@ -357,9 +371,9 @@ class Tree(object):
 # #                 gp.phi = np.exp(-r)
 
 #         self.initializeFromAtomicData()
-#         self.initializeForHydrogenMolecule()
-        self.initializeForBerylliumAtom()
-        self.orthonormalizeOrbitals()
+        self.initializeForHydrogenMolecule()
+#         self.initializeForBerylliumAtom()
+#         self.orthonormalizeOrbitals()
         
         
                     
@@ -528,7 +542,7 @@ class Tree(object):
     def updateVxcAndVeffAtQuadpoints(self):
 #         print('Warning: v_xc is zeroed out')
         
-        def CellupdateVxcAndVeff(cell,xcFunc):
+        def CellupdateVxcAndVeff(cell,exchangeFunctional, correlationFunctional):
             '''
             After density is updated the convolution gets called to update V_coulom.
             Now I need to update v_xc, then get the new value of v_eff. 
@@ -539,19 +553,26 @@ class Tree(object):
             for i,j,k in cell.PxByPyByPz:
                 rho[i,j,k] = cell.gridpoints[i,j,k].rho
                 
-            xcOutput = xcFunc.compute(rho)
-            EXC = np.reshape(xcOutput['zk'],np.shape(rho))
-            VRHO = np.reshape(xcOutput['vrho'],np.shape(rho))
+            exchangeOutput = exchangeFunctional.compute(rho)
+            correlationOutput = correlationFunctional.compute(rho)
+            
+            epsilon_exchange = np.reshape(exchangeOutput['zk'],np.shape(rho))
+            epsilon_correlation = np.reshape(correlationOutput['zk'],np.shape(rho))
+            
+            VRHO_exchange = np.reshape(exchangeOutput['vrho'],np.shape(rho))
+            VRHO_correlation = np.reshape(correlationOutput['vrho'],np.shape(rho))
             
             for i,j,k in self.PxByPyByPz:
-                cell.gridpoints[i,j,k].epsilon_xc = EXC[i,j,k]
-                cell.gridpoints[i,j,k].v_xc = VRHO[i,j,k]
+                cell.gridpoints[i,j,k].epsilon_x = epsilon_exchange[i,j,k]
+                cell.gridpoints[i,j,k].epsilon_c = epsilon_correlation[i,j,k]
+                cell.gridpoints[i,j,k].v_x = VRHO_exchange[i,j,k]
+                cell.gridpoints[i,j,k].v_c = VRHO_correlation[i,j,k]
 #                 cell.gridpoints[i,j,k].v_xc = 0
                 cell.gridpoints[i,j,k].updateVeff()
             
         for _,cell in self.masterList:
             if cell.leaf == True:
-                CellupdateVxcAndVeff(cell,self.xcFunc)
+                CellupdateVxcAndVeff(cell,self.exchangeFunctional, self.correlationFunctional)
 
     def updateDensityAtQuadpoints(self):
         def CellUpdateDensity(cell):
@@ -610,22 +631,29 @@ class Tree(object):
             
             return np.sum( cell.w * rho * pot) 
         
-        V_xc = 0.0
+        V_x = 0.0
+        V_c = 0.0
         V_coulomb = 0.0
-        E_xc = 0.0
+        E_x = 0.0
+        E_c = 0.0
         
         for _,cell in self.masterList:
             if cell.leaf == True:
-                V_xc += integrateCellDensityAgainst__(cell,'v_xc')
+                V_x += integrateCellDensityAgainst__(cell,'v_x')
+                V_c += integrateCellDensityAgainst__(cell,'v_c')
                 V_coulomb += integrateCellDensityAgainst__(cell,'v_coulomb')
-                E_xc += integrateCellDensityAgainst__(cell,'epsilon_xc')
-        self.totalVxc = V_xc
+                E_x += integrateCellDensityAgainst__(cell,'epsilon_x')
+                E_c += integrateCellDensityAgainst__(cell,'epsilon_c')
+        self.totalVx = V_x
+        self.totalVc = V_c
         self.totalVcoulomb = V_coulomb
-        self.totalExc = E_xc
+        self.totalEx = E_x
+        self.totalEc = E_c
 #         print('Total V_xc : ')
+
         
 #         self.totalPotential = -1/2*V_coulomb + E_xc - V_xc 
-        self.totalPotential = -1/2*V_coulomb + E_xc - V_xc + self.nuclearNuclear
+        self.totalPotential = -1/2*V_coulomb + E_x + E_c - V_x - V_c + self.nuclearNuclear
                 
         
        

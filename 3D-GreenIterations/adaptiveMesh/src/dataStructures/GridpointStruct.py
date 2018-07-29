@@ -28,7 +28,8 @@ class GridPoint(object):
 #         self.v_ext = -rands[3]
         
         self.v_coulomb = 0.0
-        self.v_xc = 0.0
+        self.v_x = 0.0
+        self.v_c = 0.0
         self.v_ext = 0.0
         
         self.updateVeff()
@@ -43,7 +44,7 @@ class GridPoint(object):
 #             # zero out v_coulomb and v_xc for testing purposes
 #             self.v_coulomb = 0.0
 #             self.v_xc = 0.0
-            self.v_eff = self.v_coulomb + self.v_xc + self.v_ext 
+            self.v_eff = self.v_coulomb + self.v_x + self.v_c + self.v_ext 
            
     def setPhi(self, phi, orbitalNumber):
         self.phi[orbitalNumber] = phi

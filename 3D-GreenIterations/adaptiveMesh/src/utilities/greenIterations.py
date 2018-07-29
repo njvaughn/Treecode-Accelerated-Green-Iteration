@@ -11,6 +11,7 @@ import math
 import numpy as np
 import os
 import shutil
+import csv
 from timeit import default_timer as timer
 from numpy import float32
 
@@ -35,11 +36,12 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
     residual = 1                                    # initialize the residual to something that fails the convergence tolerance
     Eold = -0.5
 #     Etrue = trueEnergy(energyLevel)
-#     Etrue = -1.1373748  # temporary value, should be in the ballpark
-#     HOMOtrue = -0.378665
+#     Etrue = -1.1373748  # temporary value, from NWChem should be in the ballpark for H2
+    Etrue = -1.1394876  # from DFT-FE,  T=1e-3
+    HOMOtrue = -0.378665
 
-    Etrue = -14.573011  # temporary value, should be in the ballpark
-    HOMOtrue = -0.309270
+#     Etrue = -14.44618  #dft-fe value
+#     HOMOtrue = -0.309270
     
 #     print('Initial energies before any orthogonalization')
 #     tree.updateOrbitalEnergies()
@@ -137,7 +139,7 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         """ TWO ORBITAL HELMHOLTZ """
         sources = tree.extractPhi(0)  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = tree.extractPhi(0)  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
-#         print(np.shape(sources[:,3]))
+        print(np.shape(sources[:,3]))
         print('max and min of phi10: ', np.max(sources[:,3]), np.min(sources[:,3]))
         phiNew = np.zeros((len(targets)))
         k = np.sqrt(-2*tree.orbitalEnergies[0]) 
@@ -145,7 +147,7 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         tree.importPhiOnLeaves(phiNew, 0)         # import the new wavefunction values into the tree.
         print('max and min of phi10: ', max(phiNew), min(phiNew))
         
-        if greenIterationCounter > 4:
+        if greenIterationCounter > 100:
             
             sources = tree.extractPhi(1)  
             targets = tree.extractPhi(1)  
@@ -215,10 +217,13 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         """
 #         print('Orbital Kinetic:   ', tree.orbitalKinetic)
 #         print('Orbital Potential: ', tree.orbitalPotential)
-        print('Orbital Energy:                         %.10f H, %.10e H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
+        print('Orbital Energy:                         %.10f H' %(tree.orbitalEnergies) )
+#         print('Orbital Energy:                         %.10f H, %.10e H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
         print('Updated V_coulomb:                       %.10f Hartree' %tree.totalVcoulomb)
-        print('Updated V_xc:                           %.10f Hartree' %tree.totalVxc)
-        print('Updated E_xc:                           %.10f Hartree' %tree.totalExc)
+        print('Updated V_x:                           %.10f Hartree' %tree.totalVx)
+        print('Updated V_c:                           %.10f Hartree' %tree.totalVc)
+        print('Updated E_x:                           %.10f Hartree' %tree.totalEx)
+        print('Updated E_c:                           %.10f Hartree' %tree.totalEc)
         print('Updated Kinetic Energy:                 %.10f Hartree' %tree.totalKinetic)
 #         print('HOMO Energy                             %.10f Hartree' %tree.orbitalEnergies[0])
 #         print('Total Energy                            %.10f Hartree' %tree.E)
@@ -227,6 +232,31 @@ def greenIterations_KohnSham_H2(tree, energyLevel, residualTolerance, numberOfTa
         
 #         if vtkExport != False:
 #             tree.exportGreenIterationOrbital(vtkExport,greenIterationCounter)
+
+        printEachIteration=True
+        outFile = 'iterationConvergenceH2_LW3_400.csv'
+#         outFile = 'iterationConvergenceBe_LW3_1200_perturbed.csv'
+        if printEachIteration==True:
+            header = ['Iteration', 'orbitalEnergies', 'exchangePotential', 'correlationPotential', 
+                      'exchangeEnergy', 'correlationEnergy', 'totalEnergy']
+        
+            myData = [greenIterationCounter, tree.orbitalEnergies, tree.totalVx, tree.totalVc, 
+                      tree.totalEx, tree.totalEc, tree.E]
+            
+        
+            if not os.path.isfile(outFile):
+                myFile = open(outFile, 'a')
+                with myFile:
+                    writer = csv.writer(myFile)
+                    writer.writerow(header) 
+                
+            
+            myFile = open(outFile, 'a')
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(myData)
+                
+        """ END WRITING INDIVIDUAL ITERATION TO FILE """
         
         if greenIterationCounter%2==0:
             if onTheFlyRefinement==True:
