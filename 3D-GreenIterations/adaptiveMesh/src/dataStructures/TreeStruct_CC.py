@@ -35,6 +35,8 @@ ThreeByThree = [element for element in itertools.product(range(3),range(3))]
 TwoByTwoByTwo = [element for element in itertools.product(range(2),range(2),range(2))]
 FiveByFiveByFive = [element for element in itertools.product(range(5),range(5),range(5))]
 
+psiList = ['psi10', 'psi20', 'psi21', 'psi30', 'psi32']
+
 class Tree(object):
     '''
     Tree object. Constructed of cells, which are composed of gridpoint objects.  
@@ -168,40 +170,46 @@ class Tree(object):
         timer = Timer()
         timer.start()
         
-        interpolators = np.empty(self.nOrbitals,dtype=object)
-        count=0
-        for atom in self.atoms:
-            path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(atom.atomicNumber))+'/singleAtomData/'
-#             print('Searching for single atom data in: ',path)
-            for orbital in os.listdir(path): 
-                if orbital[:3]=='psi':
-                    data = np.genfromtxt(path+orbital)
-                    interpolators[count] = interp1d(data[:,0],data[:,1])
-                    count+=1
-            
-            for _,cell in self.masterList:
-                for i,j,k in self.PxByPyByPz:
-                    # compute radius, as well as polar and asimuthal angles when the time comes...
-                    gp = cell.gridpoints[i,j,k]
-                    r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
+        n = 1 # principal quantum number
+        m = 0 # 
+        ell = 0
+        
+        
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                
+                for atom in self.atoms:
                     
-                    # figure out teh mapping between orbitals and interpolators.  For instance, the 
-                    # 2p interpolator needs to be used for three orbitals, each with a different spherical harmonic.  
-                    # maybe keep a counter, and loop over the allowed values of ell, only incrementing the counter
-                    # when all values of ell are exhausted.  But need the mapping from n to s.  The data file name has
-                    # the numbers I need.  'psi32.inp' for example.  
-                    
-                    counter=0
-                    for orbitalNumber in range(self.nOrbitals):
-                        for orbital in os.listdir(path):
-                            if orbital[:3]=='psi':
-                                ell = orbital[4]
+                    for i,j,k in self.PxByPyByPz:
+                        # reset the counter and the principal quantum number for next gridpoint
+                        orbitalCounter = 0
+                        n=1
                         
-                        for ii in range(ell):
-                            pass
-
-                        counter+=1
-                            
+                        gp = cell.gridpoints[i,j,k]
+                        print('\nPoint at: ', gp.x, gp.y, gp.z)
+                        r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                        if r < 29:  # this cell is within the range of this atom.  
+                            while orbitalCounter < self.nOrbitals:
+#                                 print('n: ',n)
+                                for m in range(n):
+                                    if orbitalCounter < self.nOrbitals:
+#                                         print('m: ', m)
+                                        psiID = 'psi'+str(n)+str(m)
+                                        if m != 0: print('Need to use spherical harmonics: n,m = ', n, m)
+#                                         print('Using orbital ', psiID)
+                                        for ell in range(-m,m+1):
+                                            print('Using orbital ', psiID + str(ell) )
+                                            phiIncrement = atom.interpolators[psiID](r)
+                                                
+                                            gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
+                                            orbitalCounter += 1
+#                                             print('orbital counter: ', orbitalCounter)
+                                n += 1
+#                         for m in range(self.nOrbitals):
+#                             psi = psiList[m]
+#                             gp.setPhi(atom.interpolators[psi](r),m)
+                
+            
                         
                     
         timer.stop()

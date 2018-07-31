@@ -5,9 +5,11 @@ Created on Jul 24, 2018
 '''
 
 import numpy as np
-from scipy.special import erf
+from scipy.special import erf, expi
 import itertools
 import matplotlib.pyplot as plt
+
+e = np.exp(1)
 
 from meshUtilities import ChebyshevPoints, unscaledWeights, weights, ChebDerivative, interpolator1Dchebyshev
 
@@ -15,7 +17,8 @@ def Phi(x):
     return np.exp(-np.abs(x))
 
 def V(x):
-    return -1/np.sqrt(np.abs(x))
+#     return -1/np.sqrt(np.abs(x))
+    return -1/(1+np.abs(x)) 
 
  
 
@@ -63,7 +66,10 @@ class Cell(object):
         if not hasattr(self, 'Potential'):
             self.computePotential()
         
-        truePotential = -np.sqrt(np.pi/2)*abs( ( erf(np.sqrt(2*abs(self.xmax))) - erf(np.sqrt(2*abs(self.xmin))) ) )
+#         truePotential = -np.sqrt(np.pi/2)*abs( ( erf(np.sqrt(2*abs(self.xmax))) - erf(np.sqrt(2*abs(self.xmin))) ) )
+        upper = 1/2*e**2 * ( (2*expi(-2) - expi( -2*(self.xmax+1)))*(np.sign(self.xmax)+1) - expi( 2*(self.xmax-1))*(np.sign(self.xmax)-1)  )
+        lower = 1/2*e**2 * ( (2*expi(-2) - expi( -2*(self.xmin+1)))*(np.sign(self.xmin)+1) - expi( 2*(self.xmin-1))*(np.sign(self.xmin)-1)  )
+        truePotential = upper-lower
 #         print(truePotential)
         self.potentialError = (self.Potential - truePotential)*(self.xmax-self.xmin)
     
@@ -86,6 +92,23 @@ class Cell(object):
     def refine_scheme1(self, depth=4):
         '''
         Refine if you are the closest child to the cusp.  
+        '''
+        if self.depth<depth:
+            xmid = (self.xmax + self.xmin)/2
+            dx = self.xmax-self.xmin
+            if abs(xmid) < dx: # you are touching the cusp
+#                 print('Cell at depth %i centered at %f.4 with width %.4f gets divided.' %(self.depth,xmid,dx))
+                self.divideIntoTwoChildren()
+#                 print('Parent:   ', self)
+#                 print('Parent list: ', self.masterList)
+#                 print('Children: ', self.children[0], self.children[1])
+                 
+                for child in self.children:
+                    child.refine_scheme1(depth)
+                    
+    def refine_scheme2(self, depth=5):
+        '''
+        Refine if your p-1 derivative of psiVpsi is > 100*(p-1 derivative of psi).  
         '''
         if self.depth<depth:
             xmid = (self.xmax + self.xmin)/2
@@ -207,15 +230,15 @@ def computePminus1Derivatives(node, midpoints=[], PhiDerivatives=[], PhiVPhiDeri
             tempPhi = ChebDerivative(node.xmin, node.xmax, node.px, tempPhi) 
             tempPhiVPhi = ChebDerivative(node.xmin, node.xmax, node.px, tempPhiVPhi) 
             tempGradPhiSq = ChebDerivative(node.xmin, node.xmax, node.px, tempGradPhiSq) 
-            if i==node.px-2:
+            if i==node.px-3:
 #                 print('%i derivative' %(i+1))
 #                 print(temp)
 #                 print()
                 midpoints.append(node.xmid)
 
-#                 PhiDerivatives.append(max(abs(tempPhi)) * (node.xmax-node.xmin))
-#                 PhiVPhiDerivatives.append(max(abs(tempPhiVPhi)) * (node.xmax-node.xmin))
-#                 GradPhiSqDerivatives.append(max(abs(tempGradPhiSq)) * (node.xmax-node.xmin))
+#                 PhiDerivatives.append(max(abs(tempPhi)) * (node.xmax-node.xmin)**1)
+#                 PhiVPhiDerivatives.append(max(abs(tempPhiVPhi)) * (node.xmax-node.xmin)**1)
+#                 GradPhiSqDerivatives.append(max(abs(tempGradPhiSq)) * (node.xmax-node.xmin)**1)
 
                 PhiDerivatives.append(max(abs(tempPhi)) )
                 PhiVPhiDerivatives.append(max(abs(tempPhiVPhi)))
@@ -242,8 +265,8 @@ if __name__ == '__main__':
     xmin = -10
     xmid =   0
     xmax =  10
-    order = 8
-    maxDepth=2
+    order = 6
+    maxDepth=7
     masterList = np.empty(0, dtype=object)
 
     root = Cell(xmin,xmax,order,0)
@@ -251,18 +274,20 @@ if __name__ == '__main__':
     print('tree built')
 #     Kinetic, Potential = computeEnergy(root, Kinetic=0.0, Potential=0.0)
 #     print('Kinetic Error:   %e' %(Kinetic + 1.0) )
-#     print('Potential Error: %e' %(Potential+np.sqrt(2*np.pi)) )
+# #     print('Potential Error: %e' %(Potential+np.sqrt(2*np.pi)) )
+#     truePotential = 2*e**2 * expi(-2)
+#     print('Potential Error: %e' %(Potential-truePotential) )
 #     midpoints, kineticErrors, potentialErrors = computeCellErrors(root)
 #     plotCellErrors(midpoints, kineticErrors, potentialErrors, order, maxDepth)
     
-#     ptspercell=200
-#     testpoints, interpolationValuesPhi, interpolationValuesPhiVPhi, interpolationValuesGradPhiSq = interpolateOnEachCell(root, ptspercell=ptspercell)
-#     plotInterpolations(testpoints, interpolationValuesPhi, interpolationValuesPhiVPhi, interpolationValuesGradPhiSq, ptspercell=ptspercell)
+    ptspercell=200
+    testpoints, interpolationValuesPhi, interpolationValuesPhiVPhi, interpolationValuesGradPhiSq = interpolateOnEachCell(root, ptspercell=ptspercell)
+    plotInterpolations(testpoints, interpolationValuesPhi, interpolationValuesPhiVPhi, interpolationValuesGradPhiSq, ptspercell=ptspercell)
     
     
-    midpoints, PhiDerivatives, PhiVPhiDerivatives, GradPhiSqDerivatives = computePminus1Derivatives(root)
-    
-    plotMaxDerivatives(midpoints, PhiDerivatives, PhiVPhiDerivatives, GradPhiSqDerivatives,order)
+#     midpoints, PhiDerivatives, PhiVPhiDerivatives, GradPhiSqDerivatives = computePminus1Derivatives(root)
+#       
+#     plotMaxDerivatives(midpoints, PhiDerivatives, PhiVPhiDerivatives, GradPhiSqDerivatives,order)
 
     
 

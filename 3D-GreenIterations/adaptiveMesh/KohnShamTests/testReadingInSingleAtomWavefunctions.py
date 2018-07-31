@@ -9,10 +9,12 @@ import os
 import sys
 import matplotlib.pyplot as plt
 
+from AtomStruct import Atom
+from TreeStruct_CC import Tree
 
 class Test(unittest.TestCase):
 
-
+    @unittest.skip('Skipping the plotting of radial data')
     def testReadingRadialData(self):
         atomicNumber = 12
         AtomicDataPath = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atomicNumber)+'/singleAtomData/'
@@ -44,6 +46,20 @@ class Test(unittest.TestCase):
         plt.legend()
         plt.xlabel('radius')
         plt.show()
+        
+    @unittest.skip('Skipping the printing of the interpolators')
+    def testSettingUpAtomInterpolators(self):
+        
+        LiAtom = Atom(0,0,0,3)
+        LiAtom.orbitalInterpolators()
+        print(LiAtom.interpolators)
+        print(LiAtom.interpolators['psi10'])
+        
+    def testSettingUpCell(self):
+        tree = Tree(-2,1,1,-2,1,1,-2,1,1,nElectrons=10,nOrbitals=5,
+                 coordinateFile='../src/utilities/molecularConfigurations/berylliumAtom.csv')
+        
+        tree.initializeFromAtomicData()
         
 
 
