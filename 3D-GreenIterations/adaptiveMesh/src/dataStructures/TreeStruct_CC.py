@@ -46,7 +46,9 @@ class Tree(object):
     """
     INTIALIZATION FUNCTIONS
     """
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons=2,nOrbitals=1,
+    
+    
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,
                  coordinateFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
                  printTreeProperties = True):
@@ -68,6 +70,9 @@ class Tree(object):
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         self.nElectrons = nElectrons
         self.nOrbitals = nOrbitals
+        
+        self.occupations = np.ones(nOrbitals)
+        self.initializeOccupations()
         
         
         self.exchangeFunctional = pylibxc.LibXCFunctional(exchangeFunctional, polarization)
@@ -105,6 +110,19 @@ class Tree(object):
             print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
             print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
         
+    
+    def initializeOccupations(self):
+        for i in range(self.nOrbitals):
+            if (i+1)*2 <= self.nElectrons:
+                self.occupations[i] = 2
+            else:
+                self.occupations[i] = 1
+                
+        print('Occupations: ', self.occupations)
+        
+        if np.sum(self.occupations) != self.nElectrons:
+            print('warning: sum of occupations does not equal number of electrons.')
+            
     def initialDivideBasedOnNuclei(self, coordinateFile):
             
         
@@ -140,7 +158,7 @@ class Tree(object):
                     
                 Cell.divide(xdiv, ydiv, zdiv)
         
-        print('Searching for atom data in: ', coordinateFile)
+        print('Reading atomic coordinates from: ', coordinateFile)
         atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
 #         print(np.shape(atomData))
 #         print(len(atomData))
@@ -164,8 +182,16 @@ class Tree(object):
             if cell.leaf==True:
                 cell.divideIfAspectRatioExceeds(2.0)
       
-
-    def initializeFromAtomicData(self):
+    def initializeOrbitalsRandomly(self):
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                    for m in range(self.nOrbitals):
+                        gp = cell.gridpoints[i,j,k]
+                        gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
+        
+          
+    def initializeOrbitalsFromAtomicData(self):
         # Generalized for any atoms.  Not complete yet.  
         timer = Timer()
         timer.start()
@@ -186,25 +212,28 @@ class Tree(object):
                         n=1
                         
                         gp = cell.gridpoints[i,j,k]
-                        print('\nPoint at: ', gp.x, gp.y, gp.z)
+#                         print('\nPoint at: ', gp.x, gp.y, gp.z)
                         r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
-                        if r < 29:  # this cell is within the range of this atom.  
-                            while orbitalCounter < self.nOrbitals:
+                        # this cell is within the range of this atom.  
+                        while orbitalCounter < self.nOrbitals:
 #                                 print('n: ',n)
-                                for m in range(n):
-                                    if orbitalCounter < self.nOrbitals:
+                            for m in range(n):
+                                if orbitalCounter < self.nOrbitals:
 #                                         print('m: ', m)
-                                        psiID = 'psi'+str(n)+str(m)
-                                        if m != 0: print('Need to use spherical harmonics: n,m = ', n, m)
+                                    psiID = 'psi'+str(n)+str(m)
+                                    if m != 0: print('Need to use spherical harmonics: n,m = ', n, m)
 #                                         print('Using orbital ', psiID)
-                                        for ell in range(-m,m+1):
-                                            print('Using orbital ', psiID + str(ell) )
+                                    for ell in range(-m,m+1):
+#                                             print('Using orbital ', psiID + str(ell) )
+                                        if r < 19:
                                             phiIncrement = atom.interpolators[psiID](r)
-                                                
-                                            gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
-                                            orbitalCounter += 1
+                                        else:
+                                            phiIncrement = atom.interpolators[psiID](19)
+                                        gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
+                                        orbitalCounter += 1
 #                                             print('orbital counter: ', orbitalCounter)
-                                n += 1
+
+                            n += 1
 #                         for m in range(self.nOrbitals):
 #                             psi = psiList[m]
 #                             gp.setPhi(atom.interpolators[psi](r),m)
@@ -223,7 +252,7 @@ class Tree(object):
         timer.start()
         
         interpolators = np.empty(self.nOrbitals,dtype=object)
-        count=0
+#         count=0
         BerylliumAtom = self.atoms[0]
 #         path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(BerylliumAtom.atomicNumber)+'/singleAtomData/'
         path = '/home/njvaughn/AtomicData/allElectron/z'+str(BerylliumAtom.atomicNumber)+'/singleAtomData/'
@@ -378,10 +407,12 @@ class Tree(object):
 # #                 r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
 # #                 gp.phi = np.exp(-r)
 
-#         self.initializeFromAtomicData()
-        self.initializeForHydrogenMolecule()
+        self.initializeOrbitalsFromAtomicData()
+#         self.initializeOrbitalsRandomly()
+#         self.initializeForHydrogenMolecule()
 #         self.initializeForBerylliumAtom()
 #         self.orthonormalizeOrbitals()
+        
         
         
                     
@@ -587,7 +618,7 @@ class Tree(object):
             for i,j,k in self.PxByPyByPz:
                 cell.gridpoints[i,j,k].rho = 0
                 for m in range(self.nOrbitals):
-                    cell.gridpoints[i,j,k].rho += cell.gridpoints[i,j,k].phi[m]**2
+                    cell.gridpoints[i,j,k].rho += cell.tree.occupations[m] * cell.gridpoints[i,j,k].phi[m]**2
         
         for _,cell in self.masterList:
             if cell.leaf==True:
@@ -669,7 +700,7 @@ class Tree(object):
         # sum over the kinetic energies of all orbitals
         self.totalKinetic = 0.0
         for i in range(self.nOrbitals):
-            self.totalKinetic += 2*self.orbitalEnergies[i]  # this factor of 2 is in question
+            self.totalKinetic += self.occupations[i]*self.orbitalEnergies[i]  # this factor of 2 is in question
         
     
     def updateTotalEnergy(self):
@@ -702,8 +733,12 @@ class Tree(object):
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
         for m in range(self.nOrbitals):
             if self.orbitalEnergies[m] > 0:
-                print('Warning, orbital energy is positive.  Resetting to -0.5')
-                self.orbitalEnergies[m] = -0.5
+                if m>0:
+#                     print('Warning, orbital energy is positive.  Resetting to 1/2 previous orbital energy')
+                    print('Warning, orbital energy is positive.  Resetting to some fraction of previous orbital energy')
+                    self.orbitalEnergies[m] = np.random.rand(1)*self.orbitalEnergies[m-1]
+                else:
+                    self.orbitalEnergies[m] = -0.5
             
     def computeNuclearNuclearEnergy(self):
         self.nuclearNuclear = 0.0

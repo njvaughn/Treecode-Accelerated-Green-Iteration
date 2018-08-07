@@ -201,18 +201,24 @@ class TestInterpolation(unittest.TestCase):
         
         f2, (ax11, ax22, ax33) = plt.subplots(1, 3,figsize=(16,5))
 #         ax11.scatter(xg.flatten(),yg.flatten(),color=np.log10(abs(interpResultA-testf)).flatten())
-        ax11.scatter(xg.flatten(),yg.flatten(),marker='.',
+        left = ax11.scatter(xg.flatten(),yg.flatten(),marker='.',
                      c=np.log10(abs(interpResultA-testf)).flatten(),cmap="inferno",vmin=-11, vmax=-1)
         ax11.scatter(xChebMeshA.flatten(),yChebMeshA.flatten(),c='k')
         ax11.set_title('Using %i Chebyshev Points'%nChebPtsA)
-        ax22.scatter(xg.flatten(),yg.flatten(),marker='.',
+        middle = ax22.scatter(xg.flatten(),yg.flatten(),marker='.',
                      c=np.log10(abs(interpResultB-testf)).flatten(),cmap="inferno",vmin=-11, vmax=-1)
         ax22.scatter(xChebMeshB.flatten(),yChebMeshB.flatten(),c='k')
         ax22.set_title('Using %i Chebyshev Points'%nChebPtsB)
-        ax33.scatter(xg.flatten(),yg.flatten(),marker='.',
+        right = ax33.scatter(xg.flatten(),yg.flatten(),marker='.',
                      c=np.log10(abs(interpResultC-testf)).flatten(),cmap="inferno",vmin=-11, vmax=-1)
         ax33.scatter(xChebMeshC.flatten(),yChebMeshC.flatten(),c='k')
         ax33.set_title('Using %i Chebyshev Points'%nChebPtsC)
+        
+        plt.colorbar(left,ax=ax11,fraction=0.046, pad=0.04)
+        plt.colorbar(middle,ax=ax22,fraction=0.046, pad=0.04)
+        plt.colorbar(right,ax=ax33,fraction=0.046, pad=0.04)
+        
+        
         f2.suptitle('Chebyshev Meshes')
         f2.tight_layout()
         f2.subplots_adjust(top=0.8)
@@ -223,7 +229,7 @@ class TestInterpolation(unittest.TestCase):
 # #         img1.axis('off')
 #         img1.axes.get_xaxis().set_visible(False)
 #         img1.axes.get_yaxis().set_visible(False)
-#         plt.colorbar(img1,ax=ax1,fraction=0.046, pad=0.04)
+        
 # #         plt.clim(-11,-2,ax=ax1)
 #         ax1.set_title('Using %i Chebyshev Points'%nChebPtsA)
 #         
