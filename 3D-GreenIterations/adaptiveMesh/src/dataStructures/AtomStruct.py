@@ -20,8 +20,8 @@ class Atom(object):
         self.atomicNumber = int(atomicNumber)
         self.orbitalInterpolators()
        
-    def V(self,x,y,z):
-        r = np.sqrt( (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
+    def V(self,x,y,z,epsilon=0.0):
+        r = np.sqrt( epsilon**2 + (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         if r ==0.0:
             print('Warning, evaluating potential at singularity!')
             return 0.0
@@ -37,20 +37,23 @@ class Atom(object):
         elif os.path.isdir('/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
             # working on flux
             path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
+#             print('Warning warning warning: using initial orbitals for Beryllium despite doing lithium calc.')
+#             path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber+1))+'/singleAtomData/'
         else:
             print('Could not find single atom data...')
             print('Checked in: /Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
             print('Checked in: /home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
             
             
-        
+        print('Using single atom data from:')
+        print(path)
         for orbital in os.listdir(path): 
             if orbital[:3]=='psi':
                 data = np.genfromtxt(path+orbital)
                 self.interpolators[orbital[:5]] = interp1d(data[:,0],data[:,1])
         
         
-        
+
         
         
         

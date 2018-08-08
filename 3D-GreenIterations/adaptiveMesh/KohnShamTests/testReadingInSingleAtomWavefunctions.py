@@ -14,9 +14,9 @@ from TreeStruct_CC import Tree
 
 class Test(unittest.TestCase):
 
-    @unittest.skip('Skipping the plotting of radial data')
+#     @unittest.skip('Skipping the plotting of radial data')
     def testReadingRadialData(self):
-        atomicNumber = 12
+        atomicNumber = 3
         AtomicDataPath = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atomicNumber)+'/singleAtomData/'
         print(AtomicDataPath)
         print(os.listdir(AtomicDataPath))
@@ -54,7 +54,8 @@ class Test(unittest.TestCase):
         LiAtom.orbitalInterpolators()
         print(LiAtom.interpolators)
         print(LiAtom.interpolators['psi10'])
-        
+   
+    @unittest.skip('Skipping the plotting of radial data')     
     def testSettingUpCell(self):
         tree = Tree(-2,1,1,-2,1,1,-2,1,1,nElectrons=10,nOrbitals=5,
                  coordinateFile='../src/utilities/molecularConfigurations/berylliumAtom.csv')

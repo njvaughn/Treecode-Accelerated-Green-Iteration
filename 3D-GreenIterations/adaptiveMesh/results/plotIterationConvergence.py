@@ -11,20 +11,34 @@ import os
 import numpy as np
 
 
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations'
+# resultsDir = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests'
 plotsDir = resultsDir+'/plots/'
-df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceH2_LW3_400.csv', header=0)
+# df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceHe_LW3_1200.csv', header=0)
+# df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200.csv', header=0)
 # df_bad = pd.read_csv(resultsDir+'/iterationConvergenceH2_LW3_800_perturbed.csv', header=0)
 # df_good = pd.read_csv(resultsDir+'/iterationConvergenceBe_LW3_1200.csv', header=0)
 # df_bad = pd.read_csv(resultsDir+'/iterationConvergenceBe_LW3_1200_perturbed.csv', header=0)
 
 
+# Lithium
+df_good = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200_ssForPhi0.csv', header=0)
+df_bad = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200.csv', header=0)
+
+
 def plotBeIterationConvergence(system="Beryllium"):
+   
+    if system == "Beryllium": 
+        dftfeTotalEnergy = -1.4446182766680081e+01
+        dftfeExchangeEnergy = -2.2902495359115198e+00
+        dftfeCorrelationEnergy = -2.2341044592808737e-01
+        dftfeBandEnergy = -8.1239182420318166e+00
     
-    dftfeTotalEnergy = -1.4446182766680081e+01
-    dftfeExchangeEnergy = -2.2902495359115198e+00
-    dftfeCorrelationEnergy = -2.2341044592808737e-01
-    dftfeBandEnergy = -8.1239182420318166e+00
+    if system == "Li":
+        dftfeTotalEnergy = -7.3340536782581447
+        dftfeExchangeEnergy = -1.4916149721121696
+        dftfeCorrelationEnergy = -1.5971669832262905e-01
+        dftfeBandEnergy = -3.8616389456972078
 
     # Combined plot
     f0, ax0 = plt.subplots(1, 1, figsize=(8,6))
@@ -97,15 +111,23 @@ def plotH2IterationConvergence(system = 'H2'):
         dftfeCorrelationEnergy = -9.4268448521496129e-02
         dftfeBandEnergy = -7.5499497178953057e-01
     
+    if system == "Li":
+        dftfeTotalEnergy = -7.3340536782581447
+        dftfeExchangeEnergy = -1.4916149721121696
+        dftfeCorrelationEnergy = -1.5971669832262905e-01
+        dftfeBandEnergy = -3.8616389456972078
+    
     # Combined plot
     f0, ax0 = plt.subplots(1, 1, figsize=(8,6))
     df_H2.plot(x='Iteration', y='exchangeEnergy', ax=ax0, style='bo')
     df_H2.plot(x='Iteration', y='correlationEnergy', ax=ax0, style='go')
+#     df_H2.plot(x='Iteration', y='bandEnergy', ax=ax0, style='mo')
     df_H2.plot(x='Iteration', y='totalEnergy', ax=ax0, style='ro')
     
 
     ax0.axhline(y=dftfeExchangeEnergy,color='b',label='dft-fe')
     ax0.axhline(y=dftfeCorrelationEnergy,color='g',label='dft-fe')
+    ax0.axhline(y=dftfeBandEnergy,color='m',label='dft-fe')
     ax0.axhline(y=dftfeTotalEnergy,color='r',label='dft-fe')
     
     ax0.legend()
@@ -154,8 +176,8 @@ def plotH2IterationConvergence(system = 'H2'):
     
 
 if __name__=="__main__":
-#     plotBeIterationConvergence(system = 'Beryllium')    
-    plotH2IterationConvergence()    
+    plotBeIterationConvergence(system = 'Li')    
+#     plotH2IterationConvergence(system="Li")    
 
 
 #     grouped = df_good.groupby('divideCriterion')

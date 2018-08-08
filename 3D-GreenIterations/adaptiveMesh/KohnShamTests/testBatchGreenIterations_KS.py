@@ -36,8 +36,10 @@ divideCriterion     = str(sys.argv[8])
 divideParameter     = float(sys.argv[9])
 energyResidual      = float(sys.argv[10])
 coordinateFile      = str(sys.argv[11])
-outFile             = str(sys.argv[12])
-vtkFileBase         = str(sys.argv[13])
+nElectrons          = int(sys.argv[12])
+nOrbitals          = int(sys.argv[13])
+outFile             = str(sys.argv[14])
+vtkFileBase         = str(sys.argv[15])
 
 
 def setUpTree():
@@ -46,11 +48,8 @@ def setUpTree():
     '''
     xmin = ymin = zmin = -domainSize
     xmax = ymax = zmax = domainSize
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons=2,nOrbitals=1,coordinateFile=coordinateFile)
-#     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons=4,nOrbitals=2,coordinateFile=coordinateFile)
-#         def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coordinateFile,numberOfStates=1,xcFunctional="LDA_XC_LP_A",polarization="unpolarized"):
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,coordinateFile=coordinateFile)
 
-#     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, divideTolerance1=divideTol1, divideTolerance2=divideTol2, printTreeProperties=True)
     print('max depth ', maxDepth)
     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
 #     for element in tree.masterList:
