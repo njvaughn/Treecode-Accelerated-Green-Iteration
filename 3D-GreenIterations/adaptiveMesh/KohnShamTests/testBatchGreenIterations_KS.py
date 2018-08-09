@@ -19,7 +19,7 @@ import itertools
 import csv
 
 from TreeStruct_CC import Tree
-from greenIterations import greenIterations_KohnSham_H2
+from greenIterations import greenIterations_KohnSham_SCF
 
 # from hydrogenPotential import trueWavefunction
 
@@ -34,12 +34,13 @@ smoothingN          = int(sys.argv[6])
 smoothingEps        = float(sys.argv[7])
 divideCriterion     = str(sys.argv[8])
 divideParameter     = float(sys.argv[9])
-energyResidual      = float(sys.argv[10])
-coordinateFile      = str(sys.argv[11])
-nElectrons          = int(sys.argv[12])
-nOrbitals          = int(sys.argv[13])
-outFile             = str(sys.argv[14])
-vtkFileBase         = str(sys.argv[15])
+energyTolerance      = float(sys.argv[10])
+scfTolerance        = float(sys.argv[11])
+coordinateFile      = str(sys.argv[12])
+nElectrons          = int(sys.argv[13])
+nOrbitals          = int(sys.argv[14])
+outFile             = str(sys.argv[15])
+vtkFileBase         = str(sys.argv[16])
 
 
 def setUpTree():
@@ -75,19 +76,19 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_H2(tree, 0, energyResidual, numberOfTargets, subtractSingularity, 
+    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
                                 smoothingN, smoothingEps, 
                                 normalizationFactor=1.0,
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
 
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
-              'divideCriterion','divideParameter','energyResidual',
+              'divideCriterion','divideParameter','energyTolerance',
               'GreenSingSubtracted', 
               'computedE', 'computedHOMO', 'errorE','errorHOMO']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,
-              divideCriterion,divideParameter,energyResidual,
+              divideCriterion,divideParameter,energyTolerance,
               subtractSingularity,
               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     

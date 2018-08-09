@@ -840,7 +840,7 @@ class Tree(object):
     def orthonormalizeOrbitals(self):
         
         def orthogonalizeOrbitals(tree,m,n):
-            print('Orthogonalizing orbital %i against %i' %(m,n))
+#             print('Orthogonalizing orbital %i against %i' %(m,n))
             """ Compute the overlap, integral phi_r * phi_s """
             B = 0.0
             for _,cell in tree.masterList:
@@ -849,7 +849,7 @@ class Tree(object):
                         phi_m = cell.gridpoints[i,j,k].phi[m]
                         phi_n = cell.gridpoints[i,j,k].phi[n]
                         B += phi_m*phi_n*cell.w[i,j,k]
-            print('Overlap before orthogonalization: ', B)
+#             print('Overlap before orthogonalization: ', B)
 
             """ Subtract the projection """
             for _,cell in tree.masterList:
@@ -865,7 +865,7 @@ class Tree(object):
                         phi_m = cell.gridpoints[i,j,k].phi[m]
                         phi_n = cell.gridpoints[i,j,k].phi[n]
                         B += phi_m*phi_n*cell.w[i,j,k]
-            print('Overlap after orthogonalization: ', B)
+#             print('Overlap after orthogonalization: ', B)
         
         def normalizeOrbital(tree,m):
         
@@ -948,7 +948,7 @@ class Tree(object):
                 for i,j,k in self.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
 #                     if gridpt.extracted == False:
-                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi[orbitalNumber], gridpt.v_eff, cell.w[i,j,k] ] )
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi[orbitalNumber], gridpt.v_eff, cell.w[i,j,k], cell.volume ] )
 #                         gridpt.extracted = True
                     
 
