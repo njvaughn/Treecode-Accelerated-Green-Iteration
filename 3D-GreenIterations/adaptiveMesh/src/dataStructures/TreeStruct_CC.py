@@ -375,6 +375,7 @@ class Tree(object):
         """ Count the number of unique leaf cells and gridpoints and set initial external potential """
         self.numberOfGridpoints = 0
         self.numberOfCells = 0
+        closestToOrigin = 10
         for _,cell in self.masterList:
             if cell.leaf==True:
                 self.numberOfCells += 1
@@ -383,6 +384,12 @@ class Tree(object):
                         self.numberOfGridpoints += 1
                         cell.gridpoints[i,j,k].counted = True
                         cell.gridpoints[i,j,k].setExternalPotential(self.atoms)
+                        gp = cell.gridpoints[i,j,k]
+                        r = np.sqrt( gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
+                        if r < closestToOrigin:
+                            closestToOrigin = np.copy(r)
+                            closestCoords = [gp.x, gp.y, gp.z]
+                            closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
         
                         
         for _,cell in self.masterList:
@@ -419,7 +426,7 @@ class Tree(object):
         if printTreeProperties == True: 
             print("Tree build completed. \n"
                   "Domain Size:                 [%.1f, %.1f] \n"
-                  "Divide Ciretion:             %s \n"
+                  "Divide Criterion:             %s \n"
                   "Divide Parameter:            %1.2e \n"
                   "Total Number of Cells:       %i \n"
                   "Total Number of Leaf Cells:  %i \n"
@@ -430,7 +437,10 @@ class Tree(object):
                   "Construction time:           %.3g seconds."
                    
                   %(self.xmin, self.xmax, divideCriterion,divideParameter, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved, self.px, timer.elapsedTime))
-                  
+            print('Closest gridpoint to origin: ', closestCoords)
+            print('For a distance of: ', closestToOrigin)
+            print('Part of a cell centered at: ', closestMidpoint) 
+                 
     def buildTreeOneCondition(self,minLevels,maxLevels,divideTolerance,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
@@ -696,17 +706,17 @@ class Tree(object):
                 
         
        
-    def computeTotalKinetic(self):
+    def computeBandEnergy(self):
         # sum over the kinetic energies of all orbitals
-        self.totalKinetic = 0.0
+        self.totalBandEnergy = 0.0
         for i in range(self.nOrbitals):
-            self.totalKinetic += self.occupations[i]*self.orbitalEnergies[i]  # this factor of 2 is in question
+            self.totalBandEnergy += self.occupations[i]*(self.orbitalEnergies[i]+1)  # +1 due to the gauge potential
         
     
     def updateTotalEnergy(self):
-        self.computeTotalKinetic()
+        self.computeBandEnergy()
         self.computeTotalPotential()
-        self.E = self.totalKinetic + self.totalPotential
+        self.E = self.totalBandEnergy + self.totalPotential
     
     def computeOrbitalPotentials(self): 
         
@@ -1000,7 +1010,7 @@ class Tree(object):
             
     def importVcoulombOnLeaves(self,V_coulombNew):
         '''
-        Import V_coulomng values, apply to leaves
+        Import V_coulomn values, apply to leaves
         '''
 
         importIndex = 0        

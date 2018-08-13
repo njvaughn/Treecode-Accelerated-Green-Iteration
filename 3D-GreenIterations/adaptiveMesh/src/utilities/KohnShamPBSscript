@@ -1,0 +1,60 @@
+####  PBS preamble
+
+#PBS -N batchGreenIterations
+#PBS -M njvaughn@umich.edu
+#PBS -m a
+
+#PBS -A lsa_fluxg
+#PBS -l qos=flux
+#PBS -q fluxg
+
+#PBS -l nodes=1:gpus=1,mem=8gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+#PBS -V
+
+####  End PBS preamble
+
+if [ -s "$PBS_NODEFILE" ] ; then
+    echo "Running on"
+    uniq -c $PBS_NODEFILE
+fi
+
+if [ -d "$PBS_O_WORKDIR" ] ; then
+    cd $PBS_O_WORKDIR
+    echo "Running from $PBS_O_WORKDIR"
+fi
+
+#  Put your job commands after this line
+
+DOMAIN=20
+MINDEPTH=3
+MAXDEPTH=20
+ORDER=4
+SINGSUBT=1
+SMOOTHINGN=0
+SMOOTHINGEPS=0.25
+MESHTYPE='LW1'
+MESHPARAM=50
+SCFRESIDUAL=1e-7
+ENERGYRESIDUAL=1e-7
+#COORDINATES='../src/utilities/molecularConfigurations/lithiumAtom.csv'
+COORDINATES='../src/utilities/molecularConfigurations/berylliumAtom.csv'
+#COORDINATES='../src/utilities/molecularConfigurations/hydrogenMolecule.csv'
+NELECTRONS=4
+NORBITALS=2
+#OUTFILE='/home/njvaughn/onTheFly/results/onTheFlyMeshTests.csv'
+#OUTFILE='/home/njvaughn/results_Be/results.csv'
+OUTFILE='/home/njvaughn/results_H2/results.csv'
+VTKFILEDIR='/home/njvaughn/onTheFly/meshes'
+
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
+
+echo "Epsilon 0.25, MeshParam 1200"
+
+MESHTYPE='LW3'
+MESHPARAM=1200
+python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $ENERGYRESIDUAL $SCFRESIDUAL \
+	$COORDINATES $NELECTRONS $NORBITALS $OUTFILE $VTKFILEDIR

@@ -41,16 +41,16 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #     HOMOtrue = -0.378665
 
     """ Beryllium Atom """
-    Etrue = -1.4446182766680081e+01
-    ExTrue = -2.2902495359115198e+00
-    EcTrue = -2.2341044592808737e-01
-    Eband = -8.1239182420318166e+00
+#     Etrue = -1.4446182766680081e+01
+#     ExTrue = -2.2902495359115198e+00
+#     EcTrue = -2.2341044592808737e-01
+#     Eband = -8.1239182420318166e+00
 
     """ Lithium Atom """
-#     Etrue = -7.3340536782581447
-#     ExTrue = -1.4916149721121696
-#     EcTrue = -0.15971669832262905
-#     Eband = -3.8616389456972078
+    Etrue = -7.3340536782581447
+    ExTrue = -1.4916149721121696
+    EcTrue = -0.15971669832262905
+    Eband = -3.8616389456972078
      
 #     print('Initial energies before any orthogonalization')
 #     tree.updateOrbitalEnergies()
@@ -148,7 +148,7 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
         scfResidual = 10
         oldOrbitalEnergies = 10
         eigensolveCount = 0
-        max_scfCount = 1
+        max_scfCount = 5
         while ( ( abs(scfResidual) > scfTolerance ) and ( eigensolveCount < max_scfCount) ):
 
 #             if greenIterationCounter<999:
@@ -161,7 +161,7 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
             phiNew = np.zeros((len(targets)))
             k = np.sqrt(-2*tree.orbitalEnergies[0]) 
             
-            if k >100.0:
+            if k >0.0:
                 print('k = ',k,', using Singularity Subtraction for phi0.')
                 gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
             else:
@@ -184,18 +184,21 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
                 
                 sources = tree.extractPhi(1)  
                 targets = tree.extractPhi(1)
-#                 minIdx = np.argmin(sources[:,3])  
-#                 maxIdx = np.argmax(sources[:,3])  
-#                 print('max and min of phi20: ', max(sources[:,3]), min(sources[:,3]))
-#                 print('min occured at x,y,z = ', sources[minIdx,0:3])
-#                 print('max occured at x,y,z = ', sources[maxIdx,0:3])
-    #             print('min of abs(phi20): ',min(abs(sources[:,3])))
+                print('max and min of phi20: ', max(sources[:,3]), min(sources[:,3]))
+                minIdx = np.argmin(sources[:,3])  
+                maxIdx = np.argmax(sources[:,3])  
+                print('min occured at x,y,z = ', sources[minIdx,0:3])
+                print('max occured at x,y,z = ', sources[maxIdx,0:3])
+#                 print('min of abs(phi20): ',min(abs(sources[:,3])))
                 phiNew = np.zeros((len(targets)))
                 k = np.sqrt(-2*tree.orbitalEnergies[1]) 
-    
-                if k>100.0:
+#                 k = 0.5 
+#                 print('Resetting k for testing.')
+                if k>0.0:
                     print('k = ',k,', using Singularity Subtraction for phi1.')
                     gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
+#                     print('Using Kahan summation.')
+#                     gpuHelmholtzConvolutionSubractSingularity_Kahan[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
                 else:
                     if greenIterationCounter > 999:
                         print('k = ',k,', would skip, but SCF count high enough.')
@@ -207,12 +210,12 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
                         gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k, smoothingN, smoothingEps)  # call the GPU convolution 
     
                 tree.importPhiOnLeaves(phiNew, 1)         # import the new wavefunction values into the tree.
-#                 print('max and min of phi20: ', max(phiNew), min(phiNew))
-#                 minIdx = np.argmin(phiNew)  
-#                 maxIdx = np.argmax(phiNew) 
-#                 print('min occured at x,y,z = ', sources[minIdx,0:3])
-#                 print('max occured at x,y,z = ', sources[maxIdx,0:3])
-    #             print('min of abs(phi20): ',min(abs(phiNew)))
+                print('max and min of phi20: ', max(phiNew), min(phiNew))
+                minIdx = np.argmin(phiNew)  
+                maxIdx = np.argmax(phiNew) 
+                print('min occured at x,y,z = ', sources[minIdx,0:3])
+                print('max occured at x,y,z = ', sources[maxIdx,0:3])
+                print('min of abs(phi20): ',min(abs(phiNew)))
     #             
     #             print('Pre-Normalization Energy')
     #             tree.updateOrbitalEnergies()
@@ -233,11 +236,11 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
             scfResidual = newOrbitalEnergies - oldOrbitalEnergies
             oldOrbitalEnergies = np.copy(newOrbitalEnergies)
             
-            tree.computeTotalKinetic()
+            tree.computeBandEnergy()
             eigensolveCount += 1
 #             print('Sum of orbital energies after %i iterations in SCF #%i:  %f' %(eigensolveCount,greenIterationCounter,newOrbitalEnergies))
             print('Band energy after %i iterations in SCF #%i:  %f H, %1.2e H' 
-                  %(eigensolveCount,greenIterationCounter,tree.totalKinetic, tree.totalKinetic-Eband))
+                  %(eigensolveCount,greenIterationCounter,tree.totalBandEnergy, tree.totalBandEnergy-Eband))
             print('Residual: ', scfResidual)
             print()
 
@@ -285,14 +288,14 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
             print('Orbital Energy:                        %.10f H' %(tree.orbitalEnergies) )
 #         print('Orbital Energy:                         %.10f H, %.10e H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
         elif tree.nOrbitals==2:
-            print('Orbital Energies:                      %.10f H, %.10e H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
+            print('Orbital Energies:                      %.10f H, %.10f H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
 
         print('Updated V_coulomb:                      %.10f Hartree' %tree.totalVcoulomb)
         print('Updated V_x:                           %.10f Hartree' %tree.totalVx)
         print('Updated V_c:                           %.10f Hartree' %tree.totalVc)
         print('Updated E_x:                           %.10f H, %.10e H' %(tree.totalEx, tree.totalEx-ExTrue) )
         print('Updated E_c:                           %.10f H, %.10e H' %(tree.totalEc, tree.totalEc-EcTrue) )
-        print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Eband) )
+        print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalBandEnergy, tree.totalBandEnergy-Eband) )
 #         print('HOMO Energy                             %.10f Hartree' %tree.orbitalEnergies[0])
 #         print('Total Energy                            %.10f Hartree' %tree.E)
 #         print('\n\nHOMO Energy                             %.10f H, %.10e H' %(tree.orbitalEnergies[-1], tree.orbitalEnergies[-1]-HOMOtrue))
@@ -399,7 +402,7 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 # 
 #         Eold = tree.E
 #         print('Updated Potential Value:         %.10f Hartree, %.10e error' %(tree.totalPotential, -1.0 - tree.totalPotential))
-#         print('Updated Kinetic Value:           %.10f Hartree, %.10e error' %(tree.totalKinetic, 0.5 - tree.totalKinetic))
+#         print('Updated Kinetic Value:           %.10f Hartree, %.10e error' %(tree.totalBandEnergy, 0.5 - tree.totalBandEnergy))
 #         print('Updated Energy Value:            %.10f Hartree, %.10e error' %(tree.E, tree.E-Etrue))
 #         
 #         if tree.E > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
@@ -461,7 +464,7 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 # 
 #         Eold = tree.E
 #         print('Updated Potential Value:         %.10f Hartree, %.10e error' %(tree.totalPotential, -1.0 - tree.totalPotential))
-#         print('Updated Kinetic Value:           %.10f Hartree, %.10e error' %(tree.totalKinetic, 0.5 - tree.totalKinetic))
+#         print('Updated Kinetic Value:           %.10f Hartree, %.10e error' %(tree.totalBandEnergy, 0.5 - tree.totalBandEnergy))
 #         print('Updated Energy Value:            %.10f Hartree, %.10e error' %(tree.E, tree.E-Etrue))
 #         
 #         if tree.E > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
