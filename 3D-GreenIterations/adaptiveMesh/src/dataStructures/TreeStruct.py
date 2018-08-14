@@ -455,7 +455,7 @@ class Tree(object):
             self.PotentialTime = timer.elapsedTime
     
     def computeKineticOnTree(self, timeKinetic = False):
-        self.totalKinetic = 0
+        self.totalBandEnergy = 0
         def recursiveComputeKinetic(Cell):
             if hasattr(Cell,'children'):
                 for i,j,k in TwoByTwoByTwo:
@@ -463,7 +463,7 @@ class Tree(object):
             
             else: # this cell has no children
                 Cell.computeOrbitalKinetic()
-                self.totalKinetic += Cell.KE
+                self.totalBandEnergy += Cell.KE
         timer = Timer()
         timer.start()
         recursiveComputeKinetic(self.root)
@@ -474,14 +474,14 @@ class Tree(object):
     def computeOrbitalKinetic(self, timeKinetic = False):
 
         
-        self.totalKinetic = 0
+        self.totalBandEnergy = 0
         timer = Timer()
         timer.start()
         for element in self.masterList:
             Cell = element[1]
             if Cell.leaf == True:
                 Cell.computeOrbitalKinetic()
-                self.totalKinetic += Cell.KE
+                self.totalBandEnergy += Cell.KE
         timer.stop()
         if timeKinetic == True:
             self.KineticTime = timer.elapsedTime
@@ -489,7 +489,7 @@ class Tree(object):
     def updateTotalEnergy(self,epsilon=0.0):
         self.computeOrbitalKinetic()
         self.computeExternalPotential(epsilon)
-        self.E = self.totalKinetic + self.totalPotential
+        self.E = self.totalBandEnergy + self.totalPotential
             
             
     def GreenFunctionConvolutionRecursive(self, timeConvolution = True):

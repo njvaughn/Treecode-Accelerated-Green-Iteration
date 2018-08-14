@@ -14,19 +14,20 @@ sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
 
 from TreeStruct_CC import Tree
-from convolution import gpuPoissonConvolution, gpuPoissonConvolutionSmoothing, gpuPoissonConvolutionSingularitySubtract
-
-
+# from convolution import gpuPoissonConvolution, gpuPoissonConvolutionSmoothing, gpuPoissonConvolutionSingularitySubtract
+from convolution import gpuHelmholtzConvolution_subtract_generic, gpuHelmholtzConvolution_skip_generic
+               
 
 def setUp():
     xmin = ymin = zmin = -domainSize
     xmax = ymax = zmax =  domainSize
     printTreeProperties=False
     coordinateFile = '../src/utilities/molecularConfigurations/hydrogenAtom.csv'
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,coordinateFile, printTreeProperties=printTreeProperties)
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,1,1,coordinateFile, printTreeProperties=printTreeProperties)
 
     tree.buildTree( minLevels, maxLevels, divideCriterion, divideParameter, printTreeProperties=printTreeProperties)
-
+    if kappa!=0:
+        print('k not equal to zero...')
     alpha = 1
     for _,cell in tree.masterList:
         if cell.leaf==True:
@@ -35,18 +36,18 @@ def setUp():
                 r = sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
                 
                 """ test case 1 """
-#                     gp.rho = exp(-sqrt(4*pi)*r)/r
-#                     gp.trueV = -exp(-sqrt(4*pi)*r)/r
+                gp.rho = 4*pi*exp(-sqrt(4*pi)*r)/r
+                gp.trueV = -exp(-sqrt(4*pi)*r)/r #+ kappa**2*gp.rho
 
                 """ test case 2 """
-#                 gp.rho = sqrt(36*pi)*alpha**2 / ( 4*pi*r**2 + alpha**2 )**(5/2)
-#                 gp.trueV = sqrt(4*pi) / ( 4*pi*r**2 + alpha**2 )**(1/2)
+#                 gp.rho = 4*pi*sqrt(36*pi)*alpha**2 / ( 4*pi*r**2 + alpha**2 )**(5/2)
+#                 gp.trueV = -sqrt(4*pi) / ( 4*pi*r**2 + alpha**2 )**(1/2)
                 
                 
                 """ test case 3 """
-                sigma = 0.05
-                gp.rho = 1/(sigma**3*(2*pi)**(3/2))*exp(-r**2/(2*sigma**2))
-                gp.trueV = (1/r)*erf(r/(sqrt(2)*sigma))
+#                 sigma = 0.05
+#                 gp.rho = 1/(sigma**3*(2*pi)**(3/2))*exp(-r**2/(2*sigma**2))
+#                 gp.trueV = (1/r)*erf(r/(sqrt(2)*sigma))
 
     
     print('Number of Cells:  ', tree.numberOfCells)
@@ -59,7 +60,7 @@ def setUp():
 
 
 
-def testCoulombPotential(tree):
+def testSingularitySubtraction(tree):
     
     def computeErrors(tree):
         L2err   = 0.0
@@ -99,7 +100,7 @@ def testCoulombPotential(tree):
 #                         print('Random Check rho, trueVr, V_coulomb: ', rhor, trueVr, Vr)
 #                         print()
                     if error > LInferr:
-                        LInferr = error
+                        LInferr = np.sqrt(error)
                         x = gp.x
                         y = gp.y
                         z = gp.z
@@ -120,21 +121,25 @@ def testCoulombPotential(tree):
     targets = tree.extractLeavesDensity()  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
     sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
 
+
+    
     threadsPerBlock = 512
     blocksPerGrid = (len(targets) + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
 
 
-    V_coulombNew = np.zeros((len(targets)))
+    rhoNew = np.zeros((len(targets)))
     if type==0:
-        gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-    elif type ==1:
-        gpuPoissonConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,epsilon)
+        print('warning: not set up for skipping')
+        gpuHelmholtzConvolution_skip_generic[blocksPerGrid, threadsPerBlock](targets,sources,rhoNew,kappa)   
+    elif type==1:
+        print('warning: not set up for smoothing')
+#         gpuPoissonConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,rhoNew,kappa)
     elif type==2:
-        gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,epsilon)  # call the GPU convolution 
+        gpuHelmholtzConvolution_subtract_generic[blocksPerGrid, threadsPerBlock](targets,sources,rhoNew,kappa) 
     else:
         print('Type must be either 0 (skipping), 1 (smoothing), or 2 (subtracting)')
-#     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-    tree.importVcoulombOnLeaves(V_coulombNew)
+#     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,rhoNew)  
+    tree.importVcoulombOnLeaves(rhoNew)
 
     L2err, LInferr = computeErrors(tree)
     
@@ -144,12 +149,12 @@ def testCoulombPotential(tree):
     
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
               'divideCriterion','divideParameter',
-              'singularitySmoothed', 'singularitySubtracted','parameter', 
+              'singularitySmoothed', 'singularitySubtracted','kappa', 
               'L2Err', 'LinfErr']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,
               divideCriterion,divideParameter,
-              singularitySmoothed, singularitySubtracted, epsilon,
+              singularitySmoothed, singularitySubtracted, kappa,
               L2err, LInferr]
     
 
@@ -170,7 +175,7 @@ if __name__ == "__main__":
     maxLevels           = int(sys.argv[3])
     order               = int(sys.argv[4])
     type                = int(sys.argv[5])
-    epsilon             = float(sys.argv[6])
+    kappa               = float(sys.argv[6])
     divideCriterion     = str(sys.argv[7])
     divideParameter     = float(sys.argv[8])
     outFile             = str(sys.argv[9])
@@ -186,4 +191,4 @@ if __name__ == "__main__":
 
     
     tree = setUp()
-    testCoulombPotential(tree)
+    testSingularitySubtraction(tree)

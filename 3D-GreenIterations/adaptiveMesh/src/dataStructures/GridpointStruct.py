@@ -44,7 +44,7 @@ class GridPoint(object):
 #             # zero out v_coulomb and v_xc for testing purposes
 #             self.v_coulomb = 0.0
 #             self.v_xc = 0.0
-            self.v_eff = self.v_coulomb + self.v_x + self.v_c + self.v_ext 
+            self.v_eff = self.v_coulomb + self.v_x + self.v_c + self.v_ext - 1 # v_gauge
            
     def setPhi(self, phi, orbitalNumber):
         self.phi[orbitalNumber] = phi
