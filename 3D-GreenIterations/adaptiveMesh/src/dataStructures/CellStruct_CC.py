@@ -558,7 +558,7 @@ class Cell(object):
                         for m in range(self.nOrbitals):
                             gridpoints[i,j,k].setPhi(interpolators[m](xOct[i],yOct[j],zOct[k]),m)
                     if hasattr(cell, "tree"):
-                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
+                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                 children[ii,jj,kk].setGridpoints(gridpoints)
                 if hasattr(cell,'level'):
                     children[ii,jj,kk].level = cell.level+1
@@ -604,7 +604,7 @@ class Cell(object):
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
-                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
+                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[ii,jj,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
                         children[ii,jj,0].level = cell.level+1
@@ -644,7 +644,7 @@ class Cell(object):
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
-                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
+                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[ii,0,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
                         children[ii,0,kk].level = cell.level+1
@@ -727,7 +727,7 @@ class Cell(object):
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
-                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
+                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[ii,0,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
                         children[ii,0,0].level = cell.level+1
@@ -765,7 +765,7 @@ class Cell(object):
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
-                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
+                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,jj,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
                         children[0,jj,0].level = cell.level+1
@@ -802,7 +802,7 @@ class Cell(object):
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals)
-                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
+                        gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,0,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
                         children[0,0,kk].level = cell.level+1

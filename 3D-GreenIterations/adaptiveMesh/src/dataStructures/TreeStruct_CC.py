@@ -49,7 +49,7 @@ class Tree(object):
     
     
     def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,
-                 coordinateFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
+                 coordinateFile='',auxiliaryFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
                  printTreeProperties = True):
         '''
@@ -98,6 +98,7 @@ class Tree(object):
         self.root.uniqueID = ''
         self.masterList = [[self.root.uniqueID, self.root]]
         
+        self.gaugeShift = np.genfromtxt(auxiliaryFile)[-1]
         self.initialDivideBasedOnNuclei(coordinateFile)
         if  printTreeProperties == True:
             print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -183,12 +184,14 @@ class Tree(object):
                 cell.divideIfAspectRatioExceeds(2.0)
       
     def initializeOrbitalsRandomly(self):
+        print('Initializing orbitals randomly...')
         for _,cell in self.masterList:
             if cell.leaf==True:
                 for i,j,k in self.PxByPyByPz:
                     for m in range(self.nOrbitals):
                         gp = cell.gridpoints[i,j,k]
-                        gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
+#                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
+                        gp.phi[m] = np.random.rand(1)
         
           
     def initializeOrbitalsFromAtomicData(self):
@@ -315,7 +318,7 @@ class Tree(object):
         print('Initialization from single atom data took %f.3 seconds.' %timer.elapsedTime)
         
         
-    def buildTree(self,minLevels,maxLevels, divideCriterion, divideParameter, printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
+    def buildTree(self,minLevels,maxLevels, divideCriterion, divideParameter, initializationType='atomic',printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         # N is roughly the number of grid points.  It is used to generate the density function.
@@ -330,10 +333,6 @@ class Tree(object):
                 for i in range(ii):
                     for j in range(jj):
                         for k in range(kk):
-#                     print('Calling recursive divideInto8 on child:')
-#                     print('xmin, xmax: ',Cell.children[i,j,k].xmin,Cell.children[i,j,k].xmax)
-#                     print('ymin, ymax: ',Cell.children[i,j,k].ymin,Cell.children[i,j,k].ymax)
-#                     print('zmin, zmax: ',Cell.children[i,j,k].zmin,Cell.children[i,j,k].zmax)
                             maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], 
                                                                                 minLevels, maxLevels, divideCriterion, divideParameter, 
                                                                                 levelCounter, printNumberOfCells, maxDepthAchieved, 
@@ -356,8 +355,7 @@ class Tree(object):
                     ydiv = (Cell.ymax + Cell.ymin)/2   
                     zdiv = (Cell.zmax + Cell.zmin)/2   
                     Cell.divide(xdiv, ydiv, zdiv, printNumberOfCells)
-#                     for i,j,k in TwoByTwoByTwo: # update the list of cells
-#                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
+
                     for i,j,k in TwoByTwoByTwo:
                         maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
                 else:
@@ -383,7 +381,7 @@ class Tree(object):
                     if not hasattr(cell.gridpoints[i,j,k], "counted"):
                         self.numberOfGridpoints += 1
                         cell.gridpoints[i,j,k].counted = True
-                        cell.gridpoints[i,j,k].setExternalPotential(self.atoms)
+                        cell.gridpoints[i,j,k].setExternalPotential(self.atoms, self.gaugeShift)
                         gp = cell.gridpoints[i,j,k]
                         r = np.sqrt( gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
                         if r < closestToOrigin:
@@ -398,24 +396,11 @@ class Tree(object):
                     cell.gridpoints[i,j,k].counted = None
          
         
-#         print('Initializing phi to hydrogen atom wavefunctions.')            
-#         print('Initializing phi to superposition of single atom ground states.')            
-#         for _,cell in self.masterList:
-#             for i,j,k in cell.PxByPyByPz:
-#                 gp = cell.gridpoints[i,j,k]
-#                 r1 = np.sqrt((gp.x-0.7)*(gp.x-0.7) + gp.y*gp.y + gp.z*gp.z)
-#                 r2 = np.sqrt((gp.x+0.7)*(gp.x+0.7) + gp.y*gp.y + gp.z*gp.z)
-# 
-# #                 r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
-#                 for m in range(self.nOrbitals):
-#                     gp.phi[m] = np.exp(-r1) + np.exp(-r2)
-# #                     gp.phi[m] = np.exp(-4*r)*r**m  
-# 
-# #                 r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
-# #                 gp.phi = np.exp(-r)
 
-        self.initializeOrbitalsFromAtomicData()
-#         self.initializeOrbitalsRandomly()
+        if initializationType=='atomic':
+            self.initializeOrbitalsFromAtomicData()
+        elif initializationType=='random':
+            self.initializeOrbitalsRandomly()
 #         self.initializeForHydrogenMolecule()
 #         self.initializeForBerylliumAtom()
 #         self.orthonormalizeOrbitals()
@@ -548,6 +533,7 @@ class Tree(object):
         if printTreeProperties == True: 
             print("Tree build completed. \n"
                   "Domain Size:                 [%.1f, %.1f] \n"
+                  "Gauge Shift:                 %f \n"
                   "Tolerance1:                  %1.2e \n"
                   "Tolerance2:                  %1.2e \n"
                   "Total Number of Cells:       %i \n"
@@ -555,7 +541,11 @@ class Tree(object):
                   "Minimum Depth                %i levels \n"
                   "Maximum Depth:               %i levels \n"
                   "Construction time:           %.3g seconds." 
-                  %(self.xmin, self.xmax, divideTolerance1, divideTolerance2, self.treeSize, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
+                  %(self.xmin, self.xmax, self.gaugeShift, 
+                    divideTolerance1, divideTolerance2, 
+                    self.treeSize, self.numberOfGridpoints, 
+                    self.minDepthAchieved,self.maxDepthAchieved, 
+                    timer.elapsedTime))
     
 #     def populatePhiWithAnalytic(self,n):
 #         # outdated to when I had analytic wavaefunction for Hydrogen atom
@@ -710,7 +700,7 @@ class Tree(object):
         # sum over the kinetic energies of all orbitals
         self.totalBandEnergy = 0.0
         for i in range(self.nOrbitals):
-            self.totalBandEnergy += self.occupations[i]*(self.orbitalEnergies[i]+1)  # +1 due to the gauge potential
+            self.totalBandEnergy += self.occupations[i]*(self.orbitalEnergies[i] - self.gaugeShift)  # +1 due to the gauge potential
         
     
     def updateTotalEnergy(self):
@@ -746,9 +736,10 @@ class Tree(object):
                 if m>0:
 #                     print('Warning, orbital energy is positive.  Resetting to 1/2 previous orbital energy')
                     print('Warning, orbital energy is positive.  Resetting to some fraction of previous orbital energy')
-                    self.orbitalEnergies[m] = np.random.rand(1)*self.orbitalEnergies[m-1]
+                    self.orbitalEnergies[m] = np.random.rand(1)*(self.orbitalEnergies[m-1]+1) + self.gaugeShift
+#                     self.orbitalEnergies[m] = -5
                 else:
-                    self.orbitalEnergies[m] = -0.5
+                    self.orbitalEnergies[m] = np.random.rand(1) + self.gaugeShift
             
     def computeNuclearNuclearEnergy(self):
         self.nuclearNuclear = 0.0

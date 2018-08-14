@@ -14,6 +14,7 @@ ENERGYRESIDUAL=1e-7
 COORDINATES='../src/utilities/molecularConfigurations/lithiumAtom.csv'
 #COORDINATES='../src/utilities/molecularConfigurations/berylliumAtom.csv'
 #COORDINATES='../src/utilities/molecularConfigurations/hydrogenMolecule.csv'
+AUXILIARYFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 NELECTRONS=3
 NORBITALS=2
 #OUTFILE='/home/njvaughn/onTheFly/results/onTheFlyMeshTests.csv'
@@ -25,10 +26,10 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 
 MESHTYPE='LW3'
-MESHPARAM=1200
+MESHPARAM=800
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $ENERGYRESIDUAL $SCFRESIDUAL \
-	$COORDINATES $NELECTRONS $NORBITALS $OUTFILE $VTKFILEDIR
+	$COORDINATES $AUXILIARYFILE $NELECTRONS $NORBITALS $OUTFILE $VTKFILEDIR
 
 
 

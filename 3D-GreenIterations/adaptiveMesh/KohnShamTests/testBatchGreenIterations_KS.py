@@ -37,10 +37,11 @@ divideParameter     = float(sys.argv[9])
 energyTolerance      = float(sys.argv[10])
 scfTolerance        = float(sys.argv[11])
 coordinateFile      = str(sys.argv[12])
-nElectrons          = int(sys.argv[13])
-nOrbitals          = int(sys.argv[14])
-outFile             = str(sys.argv[15])
-vtkFileBase         = str(sys.argv[16])
+auxiliaryFile      = str(sys.argv[13])
+nElectrons          = int(sys.argv[14])
+nOrbitals          = int(sys.argv[15])
+outFile             = str(sys.argv[16])
+vtkFileBase         = str(sys.argv[17])
 
 
 def setUpTree():
@@ -49,10 +50,11 @@ def setUpTree():
     '''
     xmin = ymin = zmin = -domainSize
     xmax = ymax = zmax = domainSize
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,coordinateFile=coordinateFile)
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,
+                coordinateFile=coordinateFile,auxiliaryFile=auxiliaryFile)
 
     print('max depth ', maxDepth)
-    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
+    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
 #     for element in tree.masterList:
 #         
 # #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
@@ -64,20 +66,12 @@ def setUpTree():
     
 def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
     
-    
-    # get normalization factors for finite domain analytic waves
-#     tree.populatePhi()
-#     tree.updateDensityAtQuadpoints()
-    
-#     groundStateMultiplicativeFactor = testPoint.phi / trueWavefunction(0, testPoint.x, testPoint.y, testPoint.z)  
-
-
     tree.E = -1.0 # set initial energy guess
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
     greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
-                                smoothingN, smoothingEps, 
+                                smoothingN, smoothingEps,auxiliaryFile=auxiliaryFile, 
                                 normalizationFactor=1.0,
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 

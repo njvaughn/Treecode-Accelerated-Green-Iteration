@@ -19,7 +19,7 @@ from hydrogenAtom import trueEnergy, trueWavefunction
 from convolution import *
 
 def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numberOfTargets, 
-                                subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1, 
+                                subtractSingularity, smoothingN, smoothingEps, auxiliaryFile='',normalizationFactor=1, 
                                 threadsPerBlock=512, onTheFlyRefinement = False, vtkExport=False, outputErrors=False):  # @DontTrace
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
@@ -47,45 +47,14 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #     Eband = -8.1239182420318166e+00
 
     """ Lithium Atom """
-    Etrue = -7.3340536782581447
-    ExTrue = -1.4916149721121696
-    EcTrue = -0.15971669832262905
-    Eband = -3.8616389456972078
+#     Etrue = -7.3340536782581447
+#     ExTrue = -1.4916149721121696
+#     EcTrue = -0.15971669832262905
+#     Eband = -3.8616389456972078
+
+    [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(auxiliaryFile)[:4]
      
-#     print('Initial energies before any orthogonalization')
-#     tree.updateOrbitalEnergies()
-#     tree.normalizeOrbital(0) 
-#     tree.normalizeOrbital(1) 
-#     print('Initial energies after normalization:')
-#     tree.updateOrbitalEnergies()
-#     
-#     
-#     """ Update V_eff using the non-orthogonalized orbitals. """
-#     tree.updateDensityAtQuadpoints()
-#     tree.normalizeDensity()
-# 
-#     targets = tree.extractLeavesDensity()  
-#     sources = tree.extractLeavesDensity() 
-# 
-#     V_coulombNew = np.zeros((len(targets)))
-#     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-# #     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,10)  # call the GPU convolution 
-#     tree.importVcoulombOnLeaves(V_coulombNew)
-#     tree.updateVxcAndVeffAtQuadpoints()
-#     
-#     tree.computeOrbitalKinetics()
-#     tree.computeOrbitalPotentials()
-#     
-#     print('Set initial v_eff using original orbitals...')
-#     print('Initial kinetic:   ', tree.orbitalKinetic)
-#     print('Initial Potential: ', tree.orbitalPotential)
-#     
-#     
-#     
-#     
-#     
-#     
-#     print('Now orthogonalizing and recomputing v_eff...')
+
     tree.orthonormalizeOrbitals()
     tree.updateDensityAtQuadpoints()
     tree.normalizeDensity()
@@ -126,33 +95,14 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
         Extract leaves and perform the Helmholtz solve 
         """
         startExtractionTime = timer()
-#         sources = tree.extractPhi(0)  # extract the source point locations.  Currently, these are just all the leaf midpoints
-#         targets = tree.extractPhi(0)  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
-#         ExtractionTime = timer() - startExtractionTime
-#         phiNew = np.zeros((len(targets)))
-#         k = np.sqrt(-2*tree.orbitalEnergies[0]) 
-# 
-#         startConvolutionTime = timer()    
-#         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
-#         ConvolutionTime = timer() - startConvolutionTime
-#         print('Extraction took:                %.4f seconds. ' %ExtractionTime)
-#         print('Helmholtz Convolution took:     %.4f seconds. ' %ConvolutionTime)
-#         
-#         
-#         
-#         """ 
-#         Import new orbital values, update pointwise densities
-#         """
-#         startImportTime = timer()
-#         tree.importPhiOnLeaves(phiNew, 0)         # import the new wavefunction values into the tree.
+
         scfResidual = 10
         oldOrbitalEnergies = 10
         eigensolveCount = 0
-        max_scfCount = 5
+        max_scfCount = 7
         while ( ( abs(scfResidual) > scfTolerance ) and ( eigensolveCount < max_scfCount) ):
 
-#             if greenIterationCounter<999:
-    #         if greenIterationCounter%2==0:
+
             """ TWO ORBITAL HELMHOLTZ """
             sources = tree.extractPhi(0)  # extract the source point locations.  Currently, these are just all the leaf midpoints
             targets = tree.extractPhi(0)  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
@@ -239,7 +189,7 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
             tree.computeBandEnergy()
             eigensolveCount += 1
 #             print('Sum of orbital energies after %i iterations in SCF #%i:  %f' %(eigensolveCount,greenIterationCounter,newOrbitalEnergies))
-            print('Band energy after %i iterations in SCF #%i:  %f H, %1.2e H' 
+            print('Band energy after %i iterations in SCF #%i:  %1.6f H, %1.2e H' 
                   %(eigensolveCount,greenIterationCounter,tree.totalBandEnergy, tree.totalBandEnergy-Eband))
             print('Residual: ', scfResidual)
             print()

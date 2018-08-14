@@ -34,17 +34,18 @@ class GridPoint(object):
         
         self.updateVeff()
 
-    def setExternalPotential(self, atoms):
+    def setExternalPotential(self, atoms, gaugeShift):
         self.v_ext = 0.0
         for atom in atoms:
             self.v_ext += atom.V(self.x,self.y,self.z)
+        self.v_ext += gaugeShift  # add the gauge shift to external potential.
         self.updateVeff()
             
     def updateVeff(self):
 #             # zero out v_coulomb and v_xc for testing purposes
 #             self.v_coulomb = 0.0
 #             self.v_xc = 0.0
-            self.v_eff = self.v_coulomb + self.v_x + self.v_c + self.v_ext - 1 # v_gauge
+            self.v_eff = self.v_coulomb + self.v_x + self.v_c + self.v_ext # v_gauge
            
     def setPhi(self, phi, orbitalNumber):
         self.phi[orbitalNumber] = phi
