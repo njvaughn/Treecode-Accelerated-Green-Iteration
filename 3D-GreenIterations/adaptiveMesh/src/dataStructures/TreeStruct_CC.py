@@ -203,7 +203,7 @@ class Tree(object):
         m = 0 # 
         ell = 0
         
-        
+        print('Adding 0.1sin(r)/r to the initial orbitals')
         for _,cell in self.masterList:
             if cell.leaf==True:
                 
@@ -229,7 +229,8 @@ class Tree(object):
                                     for ell in range(-m,m+1):
 #                                             print('Using orbital ', psiID + str(ell) )
                                         if r < 19:
-                                            phiIncrement = atom.interpolators[psiID](r)
+#                                             phiIncrement = atom.interpolators[psiID](r)
+                                            phiIncrement = atom.interpolators[psiID](r) + 0.1*np.sin(r)/r
                                         else:
                                             phiIncrement = atom.interpolators[psiID](19)
                                         gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
@@ -547,22 +548,7 @@ class Tree(object):
                     self.minDepthAchieved,self.maxDepthAchieved, 
                     timer.elapsedTime))
     
-#     def populatePhiWithAnalytic(self,n):
-#         # outdated to when I had analytic wavaefunction for Hydrogen atom
-#         for element in self.masterList:
-#             for i,j,k in self.PxByPyByPz:
-#                 element[1].gridpoints[i,j,k].setAnalyticPhi(n)
-#         self.normalizeOrbital()   
-    
-#     def populatePhi(self):
-#         for element in self.masterList:
-#             for i,j,k in self.PxByPyByPz:
-#                 gp=element[1].gridpoints[i,j,k]
-#                 for m in range(self.nOrbitals):
-#                     gp.setPhi(np.exp( - np.sqrt( gp.x**2 + gp.y**2 + gp.z**2 )), m)
-#         print('Populating phi from tree.populatePhi()')
-#         self.orthonormalizeOrbitals()  
-        
+
     def refineOnTheFly(self, divideTolerance):
         counter = 0
         for _,cell in self.masterList:
@@ -725,6 +711,16 @@ class Tree(object):
                 self.orbitalKinetic += cell.orbitalKE
             
         
+    def scrambleOrbital(self,m):
+        # randomize orbital because its energy went > Vgauge
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
+                    gp.phi[m] = (np.random.rand(1)-0.5)/r
+    
+    
     def updateOrbitalEnergies(self):
         self.computeOrbitalKinetics()
         self.computeOrbitalPotentials()
@@ -732,15 +728,18 @@ class Tree(object):
         print('Orbital Potential Energy: ', self.orbitalPotential)
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
         for m in range(self.nOrbitals):
-            if self.orbitalEnergies[m] > 0:
+#             if self.orbitalEnergies[m] > 0:
+            if self.orbitalEnergies[m] > self.gaugeShift:
                 if m>0:
 #                     print('Warning, orbital energy is positive.  Resetting to 1/2 previous orbital energy')
-                    print('Warning, orbital energy is positive.  Resetting to some fraction of previous orbital energy')
+                    print('Warning, orbital energy is positive.  Resetting to some fraction of previous orbital energy and scrambling the orbital')
                     self.orbitalEnergies[m] = np.random.rand(1)*(self.orbitalEnergies[m-1]+1) + self.gaugeShift
 #                     self.orbitalEnergies[m] = -5
+                    self.scrambleOrbital(m)
                 else:
                     self.orbitalEnergies[m] = np.random.rand(1) + self.gaugeShift
-            
+                    self.scrambleOrbital(m)
+                    
     def computeNuclearNuclearEnergy(self):
         self.nuclearNuclear = 0.0
         for atom1 in self.atoms:

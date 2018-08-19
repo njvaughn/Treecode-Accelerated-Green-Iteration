@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOMAIN=20
+DOMAIN=24
 MINDEPTH=3
 MAXDEPTH=20
 ORDER=4
@@ -19,14 +19,15 @@ NELECTRONS=3
 NORBITALS=2
 #OUTFILE='/home/njvaughn/onTheFly/results/onTheFlyMeshTests.csv'
 #OUTFILE='/home/njvaughn/results_Be/results.csv'
-OUTFILE='/home/njvaughn/results_H2/results.csv'
+#OUTFILE='/home/njvaughn/results_H2/results.csv'
+OUTFILE='/home/njvaughn/results_Li/results.csv'
 VTKFILEDIR='/home/njvaughn/onTheFly/meshes'
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 
 MESHTYPE='LW3'
-MESHPARAM=800
+MESHPARAM=1200
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $ENERGYRESIDUAL $SCFRESIDUAL \
 	$COORDINATES $AUXILIARYFILE $NELECTRONS $NORBITALS $OUTFILE $VTKFILEDIR

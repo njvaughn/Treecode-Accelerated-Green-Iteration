@@ -288,12 +288,12 @@ class TestInterpolation(unittest.TestCase):
         def func(x,y):
             r = np.sqrt(x**2+y**2)
 #             return np.exp(-np.sqrt(x**2+y**2))
-#             return np.exp(-r)/(r) 
-            return np.exp(-r) 
+            return np.exp(-r)/(r) 
+#             return np.exp(-r) 
 
 #         title = r"$f(x,y) = exp(-\sqrt{x^2+y^2})$"
-#         title = r"$f(r) = exp(-r)/r$"
-        title = r"$f(r) = exp(-r)$"
+        title = r"$f(r) = exp(-r)/r$"
+#         title = r"$f(r) = exp(-r)$"
 
         npoints = 200
 
@@ -310,7 +310,7 @@ class TestInterpolation(unittest.TestCase):
                 
         nChebPtsA = 4
         nChebPtsB = 8
-        nChebPtsC = 12
+        nChebPtsC = 16
         
         
         

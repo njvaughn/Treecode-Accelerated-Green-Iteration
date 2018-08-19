@@ -13,10 +13,10 @@ import os
 import shutil
 import csv
 from timeit import default_timer as timer
-from numpy import float32
+from numpy import float32, float64
 
 from hydrogenAtom import trueEnergy, trueWavefunction
-from convolution import *
+from convolution import gpuPoissonConvolution,gpuHelmholtzConvolutionSubractSingularity
 
 def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numberOfTargets, 
                                 subtractSingularity, smoothingN, smoothingEps, auxiliaryFile='',normalizationFactor=1, 
@@ -34,7 +34,7 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
     
     greenIterationCounter=1                                     # initialize the counter to counter the number of iterations required for convergence
     residual = 1                                    # initialize the residual to something that fails the convergence tolerance
-    Eold = -0.5
+    Eold = -0.5 + tree.gaugeShift
 
     """ H2 molecule """
 #     Etrue = -1.1394876  # from DFT-FE,  T=1e-3
@@ -99,7 +99,7 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
         scfResidual = 10
         oldOrbitalEnergies = 10
         eigensolveCount = 0
-        max_scfCount = 7
+        max_scfCount = 10
         while ( ( abs(scfResidual) > scfTolerance ) and ( eigensolveCount < max_scfCount) ):
 
 
@@ -118,7 +118,8 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #                 print('k = ',k,', skipping singularity for phi0.')
 #                 gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
                 print('k = ',k,', smoothing singularity for phi0.')
-                gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k, smoothingN, smoothingEps)  # call the GPU convolution 
+                print('Warning: not set up for this.')
+#                 gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k, smoothingN, smoothingEps)  # call the GPU convolution 
     
             tree.importPhiOnLeaves(phiNew, 0)         # import the new wavefunction values into the tree.
     #             print('max and min of phi10: ', max(phiNew), min(phiNew))
@@ -157,7 +158,8 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #                         print('k = ',k,', skipping singularity for phi1.')
 #                         gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
                         print('k = ',k,', smoothing singularity for phi1.')
-                        gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k, smoothingN, smoothingEps)  # call the GPU convolution 
+                        print('Warning: not set up for this.')
+#                         gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k, smoothingN, smoothingEps)  # call the GPU convolution 
     
                 tree.importPhiOnLeaves(phiNew, 1)         # import the new wavefunction values into the tree.
                 print('max and min of phi20: ', max(phiNew), min(phiNew))
@@ -257,14 +259,16 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #             tree.exportGreenIterationOrbital(vtkExport,greenIterationCounter)
 
         printEachIteration=True
-        outFile = 'iterationConvergenceLi_smoothingBoth.csv'
+#         outFile = 'iterationConvergenceLi_800.csv'
+        outFile = 'iterationConvergenceLi_1200_domain24.csv'
+#         outFile = 'iterationConvergenceLi_smoothingBoth.csv'
 #         outFile = 'iterationConvergenceBe_LW3_1200_perturbed.csv'
         if printEachIteration==True:
             header = ['Iteration', 'orbitalEnergies', 'exchangePotential', 'correlationPotential', 
-                      'exchangeEnergy', 'correlationEnergy', 'totalEnergy']
+                      'bandEnergy','exchangeEnergy', 'correlationEnergy', 'totalEnergy']
         
             myData = [greenIterationCounter, tree.orbitalEnergies, tree.totalVx, tree.totalVc, 
-                      tree.totalEx, tree.totalEc, tree.E]
+                      tree.totalBandEnergy, tree.totalEx, tree.totalEc, tree.E]
             
         
             if not os.path.isfile(outFile):
