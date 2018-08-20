@@ -13,6 +13,7 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.special import sph_harm
 import pylibxc
 import itertools
 import os
@@ -203,7 +204,7 @@ class Tree(object):
         m = 0 # 
         ell = 0
         
-        print('Adding 0.1sin(r)/r to the initial orbitals')
+#         print('Adding 0.1sin(r)/r to the initial orbitals')
         for _,cell in self.masterList:
             if cell.leaf==True:
                 
@@ -217,6 +218,8 @@ class Tree(object):
                         gp = cell.gridpoints[i,j,k]
 #                         print('\nPoint at: ', gp.x, gp.y, gp.z)
                         r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                        inclination = np.arccos(gp.z/r)
+                        azimuthal = np.arctan2(gp.y,gp.x)
                         # this cell is within the range of this atom.  
                         while orbitalCounter < self.nOrbitals:
 #                                 print('n: ',n)
@@ -229,10 +232,10 @@ class Tree(object):
                                     for ell in range(-m,m+1):
 #                                             print('Using orbital ', psiID + str(ell) )
                                         if r < 19:
-                                            phiIncrement = atom.interpolators[psiID](r)
+                                            phiIncrement = atom.interpolators[psiID](r)*sph_harm(m,ell,azimuthal,inclination)
 #                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + 0.1*np.sin((m+1)*r)/r )
                                         else:
-                                            phiIncrement = atom.interpolators[psiID](19)
+                                            phiIncrement = atom.interpolators[psiID](19)*sph_harm(m,ell,azimuthal,inclination)
 #                                             phiIncrement = atom.interpolators[psiID](19)*( 1 + 0.1*np.sin((m+1)*r)/r )
                                         gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
                                         orbitalCounter += 1
