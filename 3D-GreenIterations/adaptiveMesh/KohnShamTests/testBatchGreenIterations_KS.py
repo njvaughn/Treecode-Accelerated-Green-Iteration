@@ -72,7 +72,6 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
     greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
                                 smoothingN, smoothingEps,auxiliaryFile=auxiliaryFile, 
-                                normalizationFactor=1.0,
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
 

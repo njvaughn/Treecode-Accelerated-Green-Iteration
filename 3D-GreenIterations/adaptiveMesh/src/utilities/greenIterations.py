@@ -18,13 +18,13 @@ from numpy import float32, float64
 from hydrogenAtom import trueEnergy, trueWavefunction
 from convolution import gpuPoissonConvolution,gpuHelmholtzConvolutionSubractSingularity
 
-def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numberOfTargets, 
-                                subtractSingularity, smoothingN, smoothingEps, auxiliaryFile='',normalizationFactor=1, 
-                                threadsPerBlock=512, onTheFlyRefinement = False, vtkExport=False, outputErrors=False):  # @DontTrace
+def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, 
+                                subtractSingularity, smoothingN, smoothingEps, auxiliaryFile='',iterationOutFile='iterationConvergence.csv',
+                                onTheFlyRefinement = False, vtkExport=False, outputErrors=False): 
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
-    
+    threadsPerBlock = 512
     blocksPerGrid = (numberOfTargets + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
     
     print('\nEntering greenIterations_KohnSham_SCF()')
@@ -33,7 +33,7 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
     print('Blocks per grid:     ', blocksPerGrid)
     
     greenIterationCounter=1                                     # initialize the counter to counter the number of iterations required for convergence
-    residual = 1                                    # initialize the residual to something that fails the convergence tolerance
+    energyResidual = 1                                    # initialize the energyResidual to something that fails the convergence tolerance
     Eold = -0.5 + tree.gaugeShift
 
     """ H2 molecule """
@@ -64,12 +64,9 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 
     V_coulombNew = np.zeros((len(targets)))
     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-#     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,10)  # call the GPU convolution 
     tree.importVcoulombOnLeaves(V_coulombNew)
     tree.updateVxcAndVeffAtQuadpoints()
     
-#     tree.computeOrbitalKinetics()
-#     tree.computeOrbitalPotentials()
     tree.updateOrbitalEnergies()
     
     print('Set initial v_eff using orthonormalized orbitals...')
@@ -84,123 +81,62 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
         tree.exportMeshVTK(filename)
         
     
-    while ( residual > totalEnergyTolerance ):
+#     oldOrbitalEnergies = 10
+    while ( energyResidual > interScfTolerance ):
         
-#         print('\nGreen Iteration Count ', greenIterationCounter)
         print('\nSCF Count ', greenIterationCounter)
-        
-#         tree.normalizeOrbital()
-        
-        """ 
-        Extract leaves and perform the Helmholtz solve 
-        """
-        startExtractionTime = timer()
 
-        scfResidual = 10
-        oldOrbitalEnergies = 10
+        orbitalResidual = 10
         eigensolveCount = 0
         max_scfCount = 10
-        while ( ( abs(scfResidual) > scfTolerance ) and ( eigensolveCount < max_scfCount) ):
-
-
-            """ TWO ORBITAL HELMHOLTZ """
-            sources = tree.extractPhi(0)  # extract the source point locations.  Currently, these are just all the leaf midpoints
-            targets = tree.extractPhi(0)  # extract the target point locations.  Currently, these are all 27 gridpoints per cell (no redundancy)
-#             print(np.shape(sources[:,3]))
-#             print('max and min of phi10: ', np.max(sources[:,3]), np.min(sources[:,3]))
-            phiNew = np.zeros((len(targets)))
-            k = np.sqrt(-2*tree.orbitalEnergies[0]) 
+        while ( ( orbitalResidual > intraScfTolerance ) and ( eigensolveCount < max_scfCount) ):
             
-            if k >0.0:
-                print('k = ',k,', using Singularity Subtraction for phi0.')
-                gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
-            else:
-#                 print('k = ',k,', skipping singularity for phi0.')
-#                 gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
-                print('k = ',k,', smoothing singularity for phi0.')
-                print('Warning: not set up for this.')
-#                 gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k, smoothingN, smoothingEps)  # call the GPU convolution 
-    
-            tree.importPhiOnLeaves(phiNew, 0)         # import the new wavefunction values into the tree.
-    #             print('max and min of phi10: ', max(phiNew), min(phiNew))
-    #             tree.orthonormalizeOrbitals()
-    #             tree.updateOrbitalEnergies()
+            orbitalResidual = 0.0
             
-            if ( (tree.nOrbitals>1) ):
-#             if ( (tree.nOrbitals>1) and (greenIterationCounter > -1) ):
-    #         elif greenIterationCounter%2==1:
-    
-                # try orthonormalizing orbitals BEFORE calling the convolution on phi1
-    #             tree.orthonormalizeOrbitals()
+            """ N ORBITAL HELMHOLTZ SOLVES """
+            for m in range(tree.nOrbitals):
+                sources = tree.extractPhi(m)
+                targets = np.copy(sources)
                 
-                sources = tree.extractPhi(1)  
-                targets = tree.extractPhi(1)
-                print('max and min of phi20: ', max(sources[:,3]), min(sources[:,3]))
-                minIdx = np.argmin(sources[:,3])  
-                maxIdx = np.argmax(sources[:,3])  
-                print('min occured at x,y,z = ', sources[minIdx,0:3])
-                print('max occured at x,y,z = ', sources[maxIdx,0:3])
-#                 print('min of abs(phi20): ',min(abs(sources[:,3])))
+                phiOld = np.copy(targets[:,3])
+                weights = np.copy(targets[:,5])
                 phiNew = np.zeros((len(targets)))
-                k = np.sqrt(-2*tree.orbitalEnergies[1]) 
-#                 k = 0.5 
-#                 print('Resetting k for testing.')
-                if k>0.0:
-                    print('k = ',k,', using Singularity Subtraction for phi1.')
-                    gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
-#                     print('Using Kahan summation.')
-#                     gpuHelmholtzConvolutionSubractSingularity_Kahan[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
-                else:
-                    if greenIterationCounter > 999:
-                        print('k = ',k,', would skip, but SCF count high enough.')
-                        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
-                    else:
-#                         print('k = ',k,', skipping singularity for phi1.')
-#                         gpuConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)  # call the GPU convolution 
-                        print('k = ',k,', smoothing singularity for phi1.')
-                        print('Warning: not set up for this.')
-#                         gpuConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k, smoothingN, smoothingEps)  # call the GPU convolution 
-    
-                tree.importPhiOnLeaves(phiNew, 1)         # import the new wavefunction values into the tree.
-                print('max and min of phi20: ', max(phiNew), min(phiNew))
-                minIdx = np.argmin(phiNew)  
-                maxIdx = np.argmax(phiNew) 
-                print('min occured at x,y,z = ', sources[minIdx,0:3])
-                print('max occured at x,y,z = ', sources[maxIdx,0:3])
-                print('min of abs(phi20): ',min(abs(phiNew)))
-    #             
-    #             print('Pre-Normalization Energy')
-    #             tree.updateOrbitalEnergies()
-    #             tree.normalizeOrbital(0) 
-    #             tree.normalizeOrbital(1) 
-    #             print('After normalization:')
-    #             tree.updateOrbitalEnergies()
-    #             print('After orthogonalization and normalization')
-                tree.orthonormalizeOrbitals()
-                tree.updateOrbitalEnergies() 
-            else:    
-    #             tree.updateOrbitalEnergies() 
-    #             tree.normalizeOrbital(0) 
-                tree.orthonormalizeOrbitals()
-                tree.updateOrbitalEnergies()
-                 
-            newOrbitalEnergies = np.sum(tree.orbitalEnergies)
-            scfResidual = newOrbitalEnergies - oldOrbitalEnergies
-            oldOrbitalEnergies = np.copy(newOrbitalEnergies)
+                k = np.sqrt(-2*tree.orbitalEnergies[m])
+                gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                tree.importPhiOnLeaves(phiNew, m)
+                
+                B = np.sqrt( np.sum( phiNew**2*weights ) )
+                phiNew /= B
+                normDiff = np.sqrt( np.sum( (phiNew-phiOld)**2*weights ) )
+                print('Residual for orbtital %i: %1.2e' %(m,normDiff))
+                if normDiff > orbitalResidual:
+                    orbitalResidual = np.copy(normDiff)
+#                 minIdx = np.argmin(phiNew)  
+#                 maxIdx = np.argmax(phiNew) 
+#                 print('min occured at x,y,z = ', sources[minIdx,0:3])
+#                 print('max occured at x,y,z = ', sources[maxIdx,0:3])
+#                 print('min of abs(phi20): ',min(abs(phiNew)))
+            
+#             tree.orthonormalizeOrbitals()
+            tree.updateOrbitalEnergies()
+            
+#             newOrbitalEnergies = np.sum(tree.orbitalEnergies)
+#             orbitalResidual = newOrbitalEnergies - oldOrbitalEnergies
+#             oldOrbitalEnergies = np.copy(newOrbitalEnergies)
             
             tree.computeBandEnergy()
             eigensolveCount += 1
 #             print('Sum of orbital energies after %i iterations in SCF #%i:  %f' %(eigensolveCount,greenIterationCounter,newOrbitalEnergies))
             print('Band energy after %i iterations in SCF #%i:  %1.6f H, %1.2e H' 
                   %(eigensolveCount,greenIterationCounter,tree.totalBandEnergy, tree.totalBandEnergy-Eband))
-            print('Residual: ', scfResidual)
+#             print('Residual: ', orbitalResidual)
             print()
+
 
         tree.updateDensityAtQuadpoints()
         tree.normalizeDensity()
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
-#         importTime = timer() - startImportTime
-#         print('Import and Desnity Update took:  %.4f seconds. ' %importTime)
+
 
         """ 
         Compute new electron-electron potential and update pointwise potential values 
@@ -221,12 +157,10 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #         tree.updateOrbitalEnergies() 
         tree.updateTotalEnergy() 
         
-#         tree.E = tree.orbitalKinetic + tree.orbitalPotential
         
-        
-        energyUpdateTime = timer() - startEnergyTime
+#         energyUpdateTime = timer() - startEnergyTime
 #         print('Energy Update took:                     %.4f seconds. ' %energyUpdateTime)
-        residual = abs(Eold - tree.E)  # Compute the residual for determining convergence
+        energyResidual = abs(Eold - tree.E)  # Compute the energyResidual for determining convergence
         Eold = np.copy(tree.E)
         
         
@@ -241,6 +175,8 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #         print('Orbital Energy:                         %.10f H, %.10e H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
         elif tree.nOrbitals==2:
             print('Orbital Energies:                      %.10f H, %.10f H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
+        else: 
+            print('Orbital Energies: ', tree.orbitalEnergies) 
 
         print('Updated V_coulomb:                      %.10f Hartree' %tree.totalVcoulomb)
         print('Updated V_x:                           %.10f Hartree' %tree.totalVx)
@@ -253,16 +189,16 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #         print('\n\nHOMO Energy                             %.10f H, %.10e H' %(tree.orbitalEnergies[-1], tree.orbitalEnergies[-1]-HOMOtrue))
 #         print('\n\nHOMO Energy                            %.10f H' %(tree.orbitalEnergies[-1]))
         print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etrue))
-        print('Energy Residual:                        %.3e\n\n' %residual)
+        print('Energy Residual:                        %.3e\n\n' %energyResidual)
 
 #         if vtkExport != False:
 #             tree.exportGreenIterationOrbital(vtkExport,greenIterationCounter)
 
         printEachIteration=True
-#         outFile = 'iterationConvergenceLi_800.csv'
-        outFile = 'iterationConvergenceLi_1200_domain24.csv'
-#         outFile = 'iterationConvergenceLi_smoothingBoth.csv'
-#         outFile = 'iterationConvergenceBe_LW3_1200_perturbed.csv'
+#         iterationOutFile = 'iterationConvergenceLi_800.csv'
+#         iterationOutFile = 'iterationConvergenceLi_1200_domain24.csv'
+#         iterationOutFile = 'iterationConvergenceLi_smoothingBoth.csv'
+#         iterationOutFile = 'iterationConvergenceBe_LW3_1200_perturbed.csv'
         if printEachIteration==True:
             header = ['Iteration', 'orbitalEnergies', 'exchangePotential', 'correlationPotential', 
                       'bandEnergy','exchangeEnergy', 'correlationEnergy', 'totalEnergy']
@@ -271,14 +207,14 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
                       tree.totalBandEnergy, tree.totalEx, tree.totalEc, tree.E]
             
         
-            if not os.path.isfile(outFile):
-                myFile = open(outFile, 'a')
+            if not os.path.isfile(iterationOutFile):
+                myFile = open(iterationOutFile, 'a')
                 with myFile:
                     writer = csv.writer(myFile)
                     writer.writerow(header) 
                 
             
-            myFile = open(outFile, 'a')
+            myFile = open(iterationOutFile, 'a')
             with myFile:
                 writer = csv.writer(myFile)
                 writer.writerow(myData)
@@ -299,11 +235,11 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
         greenIterationCounter+=1
 
         
-    print('\nConvergence to a tolerance of %f took %i iterations' %(totalEnergyTolerance, greenIterationCounter))
+    print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, greenIterationCounter))
       
       
     """ OLD GREEN ITERATIONS FOR SCHRODINGER EQUATION         
-# def greenIterations_Schrodinger_CC(tree, energyLevel, totalEnergyTolerance, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1, threadsPerBlock=512, visualize=False, outputErrors=False):  # @DontTrace
+# def greenIterations_Schrodinger_CC(tree, energyLevel, interScfTolerance, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1, threadsPerBlock=512, visualize=False, outputErrors=False):  # @DontTrace
 #     '''
 #     Green Iterations for the Schrodinger Equation using Clenshaw-Curtis quadrature.
 #     '''
@@ -316,11 +252,11 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #     print('Blocks per grid:     ', blocksPerGrid)
 #     
 #     GIcounter=1                                     # initialize the counter to counter the number of iterations required for convergence
-#     residual = 1                                    # initialize the residual to something that fails the convergence tolerance
+#     energyResidual = 1                                    # initialize the energyResidual to something that fails the convergence tolerance
 #     Eold = -10.0
 #     Etrue = trueEnergy(energyLevel)
 #     
-#     while ( residual > totalEnergyTolerance ):
+#     while ( energyResidual > interScfTolerance ):
 #         print('\nGreen Iteration Count ', GIcounter)
 #         GIcounter+=1
 #         
@@ -351,8 +287,8 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #         tree.updateTotalEnergy()  
 #         energyUpdateTime = timer() - startEnergyTime
 #         print('Energy Update took:              %.4f seconds. ' %energyUpdateTime)
-#         residual = abs(Eold - tree.E)  # Compute the residual for determining convergence
-#         print('Energy Residual:                 %.3e' %residual)
+#         energyResidual = abs(Eold - tree.E)  # Compute the energyResidual for determining convergence
+#         print('Energy Residual:                 %.3e' %energyResidual)
 # 
 #         Eold = tree.E
 #         print('Updated Potential Value:         %.10f Hartree, %.10e error' %(tree.totalPotential, -1.0 - tree.totalPotential))
@@ -363,12 +299,12 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #             print('Warning, Energy is positive')
 #             tree.E = -0.5
 #         
-#     print('\nConvergence to a tolerance of %f took %i iterations' %(totalEnergyTolerance, GIcounter))
+#     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, GIcounter))
 #     
 # 
-# def greenIterations_Schrodinger_midpt(tree, energyLevel, totalEnergyTolerance, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1, threadsPerBlock=512, visualize=False, outputErrors=False):  # @DontTrace
+# def greenIterations_Schrodinger_midpt(tree, energyLevel, interScfTolerance, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1, threadsPerBlock=512, visualize=False, outputErrors=False):  # @DontTrace
 #     '''
-#     :param totalEnergyTolerance: exit condition for Green Iterations, residual on the total energy
+#     :param interScfTolerance: exit condition for Green Iterations, energyResidual on the total energy
 #     :param energyLevel: energy level trying to compute
 #     '''
 #     blocksPerGrid = (numberOfTargets + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
@@ -377,12 +313,12 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #     print('Blocks per grid:     ', blocksPerGrid)
 # 
 #     GIcounter=1                                     # initialize the counter to counter the number of iterations required for convergence
-#     residual = 1                                    # initialize the residual to something that fails the convergence tolerance
+#     energyResidual = 1                                    # initialize the energyResidual to something that fails the convergence tolerance
 #     Eold = -10.0
 #     
 #     Etrue = trueEnergy(energyLevel)
 #     
-#     while ( residual > totalEnergyTolerance ):
+#     while ( energyResidual > interScfTolerance ):
 #         print('\nGreen Iteration Count ', GIcounter)
 #         GIcounter+=1
 #         
@@ -413,8 +349,8 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #         tree.updateTotalEnergy()  
 #         energyUpdateTime = timer() - startEnergyTime
 #         print('Energy Update took:              %.4f seconds. ' %energyUpdateTime)
-#         residual = abs(Eold - tree.E)  # Compute the residual for determining convergence
-#         print('Energy Residual:                 %.3e' %residual)
+#         energyResidual = abs(Eold - tree.E)  # Compute the energyResidual for determining convergence
+#         print('Energy Residual:                 %.3e' %energyResidual)
 # 
 #         Eold = tree.E
 #         print('Updated Potential Value:         %.10f Hartree, %.10e error' %(tree.totalPotential, -1.0 - tree.totalPotential))
@@ -425,6 +361,6 @@ def greenIterations_KohnSham_SCF(tree, scfTolerance, totalEnergyTolerance, numbe
 #             print('Warning, Energy is positive')
 #             tree.E = -1.0
 #             
-#     print('\nConvergence to a tolerance of %f took %i iterations' %(totalEnergyTolerance, GIcounter))
+#     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, GIcounter))
 #     
         """
