@@ -13,6 +13,7 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.special import sph_harm
 import pylibxc
 import itertools
 import os
@@ -203,7 +204,7 @@ class Tree(object):
         m = 0 # 
         ell = 0
         
-        print('Adding 0.1sin(r)/r to the initial orbitals')
+#         print('Adding 0.1sin(r)/r to the initial orbitals')
         for _,cell in self.masterList:
             if cell.leaf==True:
                 
@@ -217,6 +218,8 @@ class Tree(object):
                         gp = cell.gridpoints[i,j,k]
 #                         print('\nPoint at: ', gp.x, gp.y, gp.z)
                         r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                        inclination = np.arccos(gp.z/r)
+                        azimuthal = np.arctan2(gp.y,gp.x)
                         # this cell is within the range of this atom.  
                         while orbitalCounter < self.nOrbitals:
 #                                 print('n: ',n)
@@ -229,10 +232,11 @@ class Tree(object):
                                     for ell in range(-m,m+1):
 #                                             print('Using orbital ', psiID + str(ell) )
                                         if r < 19:
-#                                             phiIncrement = atom.interpolators[psiID](r)
-                                            phiIncrement = atom.interpolators[psiID](r) + 0.1*np.sin(r)/r
+                                            phiIncrement = atom.interpolators[psiID](r)*sph_harm(m,ell,azimuthal,inclination)
+#                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + 0.1*np.sin((m+1)*r)/r )
                                         else:
-                                            phiIncrement = atom.interpolators[psiID](19)
+                                            phiIncrement = atom.interpolators[psiID](19)*sph_harm(m,ell,azimuthal,inclination)
+#                                             phiIncrement = atom.interpolators[psiID](19)*( 1 + 0.1*np.sin((m+1)*r)/r )
                                         gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
                                         orbitalCounter += 1
 #                                             print('orbital counter: ', orbitalCounter)
@@ -715,10 +719,21 @@ class Tree(object):
         # randomize orbital because its energy went > Vgauge
         for _,cell in self.masterList:
             if cell.leaf==True:
+                val = np.random.rand(1)
                 for i,j,k in self.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
-                    gp.phi[m] = (np.random.rand(1)-0.5)/r
+                    gp.phi[m] = val/r
+    
+    def softenOrbital(self,m):
+        print('Softening orbital ', m)
+        # randomize orbital because its energy went > Vgauge
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
+                    gp.phi[m] *= np.exp(-r)
     
     
     def updateOrbitalEnergies(self):
@@ -727,18 +742,23 @@ class Tree(object):
         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
         print('Orbital Potential Energy: ', self.orbitalPotential)
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
+        energyResetFlag = 0
         for m in range(self.nOrbitals):
-#             if self.orbitalEnergies[m] > 0:
-            if self.orbitalEnergies[m] > self.gaugeShift:
-                if m>0:
-#                     print('Warning, orbital energy is positive.  Resetting to 1/2 previous orbital energy')
-                    print('Warning, orbital energy is positive.  Resetting to some fraction of previous orbital energy and scrambling the orbital')
-                    self.orbitalEnergies[m] = np.random.rand(1)*(self.orbitalEnergies[m-1]+1) + self.gaugeShift
-#                     self.orbitalEnergies[m] = -5
-                    self.scrambleOrbital(m)
-                else:
-                    self.orbitalEnergies[m] = np.random.rand(1) + self.gaugeShift
-                    self.scrambleOrbital(m)
+            if self.orbitalEnergies[m] > 0:
+#             if self.orbitalEnergies[m] > self.gaugeShift:
+#                 print('Warning: %i orbital energy > gauge shift.' %m)
+                print('Warning: %i orbital energy > 0.' %m)
+                self.orbitalEnergies[m] = self.gaugeShift - 1/(m+1)
+#                 self.scrambleOrbital(m)
+#                 self.softenOrbital(m)
+                energyResetFlag=1
+        
+        
+#         if energyResetFlag==1:
+# #             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
+# #             self.orthonormalizeOrbitals()
+#             self.updateOrbitalEnergies()
+
                     
     def computeNuclearNuclearEnergy(self):
         self.nuclearNuclear = 0.0
