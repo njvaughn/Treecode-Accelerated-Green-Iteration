@@ -408,6 +408,8 @@ class Tree(object):
             self.initializeOrbitalsFromAtomicData()
         elif initializationType=='random':
             self.initializeOrbitalsRandomly()
+            
+            
 #         self.initializeForHydrogenMolecule()
 #         self.initializeForBerylliumAtom()
 #         self.orthonormalizeOrbitals()
@@ -575,7 +577,7 @@ class Tree(object):
         
         def CellupdateVxcAndVeff(cell,exchangeFunctional, correlationFunctional):
             '''
-            After density is updated the convolution gets called to update V_coulom.
+            After density is updated the convolution gets called to update V_coulomb.
             Now I need to update v_xc, then get the new value of v_eff. 
             '''
             

@@ -19,7 +19,7 @@ import itertools
 import csv
 
 from TreeStruct_CC import Tree
-from greenIterations import greenIterations_KohnSham_SCF,greenIterations_KohnSham_SINGSUB
+from greenIterations import greenIterations_KohnSham_SCF#,greenIterations_KohnSham_SINGSUB
 
 # from hydrogenPotential import trueWavefunction
 

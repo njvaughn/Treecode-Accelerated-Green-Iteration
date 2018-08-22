@@ -229,7 +229,7 @@ def gpuPoissonConvolutionSingularitySubtract(targets,sources,V_coulomb_new,k):
     
     globalID = cuda.grid(1)  # identify the global ID of the thread
     if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
-        x_t, y_t, z_t, rho_t = targets[globalID][0:3] # set the x, y, and z values of the target
+        x_t, y_t, z_t, rho_t = targets[globalID][0:4] # set the x, y, and z values of the target
         V_coulomb_new[globalID] = 4*pi*rho_t/k**2
         for i in range(len(sources)):  # loop through all source midpoints
             x_s, y_s, z_s, rho_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
