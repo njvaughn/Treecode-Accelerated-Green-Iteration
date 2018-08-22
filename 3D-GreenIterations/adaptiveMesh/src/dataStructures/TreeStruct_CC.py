@@ -232,10 +232,12 @@ class Tree(object):
                                     for ell in range(-m,m+1):
 #                                             print('Using orbital ', psiID + str(ell) )
                                         if r < 19:
-                                            phiIncrement = atom.interpolators[psiID](r)*sph_harm(m,ell,azimuthal,inclination)
+#                                             phiIncrement = atom.interpolators[psiID](r)*sph_harm(m,ell,azimuthal,inclination)
+                                            phiIncrement = atom.interpolators[psiID](r)
 #                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + 0.1*np.sin((m+1)*r)/r )
                                         else:
-                                            phiIncrement = atom.interpolators[psiID](19)*sph_harm(m,ell,azimuthal,inclination)
+                                            phiIncrement = atom.interpolators[psiID](19)
+#                                             phiIncrement = atom.interpolators[psiID](19)*sph_harm(m,ell,azimuthal,inclination)
 #                                             phiIncrement = atom.interpolators[psiID](19)*( 1 + 0.1*np.sin((m+1)*r)/r )
                                         gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
                                         orbitalCounter += 1
