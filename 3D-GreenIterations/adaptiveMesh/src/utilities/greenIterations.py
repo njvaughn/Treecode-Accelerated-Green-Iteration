@@ -130,7 +130,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 weights = np.copy(targets[:,5])
                 
                 oldOrbitals[:,m] = np.copy(targets[:,3])
-                if ( (m==1) and (greenIterationCounter<5)):
+                if ( (m==1) and (greenIterationCounter<-1)):
                     print('Not computing new phi1')
                     orbitals[:,m] = np.copy(targets[:,3])
                 else:
@@ -201,6 +201,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print()
             tree.updateOrbitalEnergies()
             
+            print('Before Veff update')
             newOrbitalEnergies = np.sum(tree.orbitalEnergies)
             bandEnergyResidual = newOrbitalEnergies - oldOrbitalEnergies
             oldOrbitalEnergies = np.copy(newOrbitalEnergies)
@@ -208,14 +209,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             tree.computeBandEnergy()
             eigensolveCount += 1
 #             print('Sum of orbital energies after %i iterations in SCF #%i:  %f' %(eigensolveCount,greenIterationCounter,newOrbitalEnergies))
-            print()
+#             print()
             print('Band energy after %i iterations in SCF #%i:  %1.6f H, %1.2e H' 
                   %(eigensolveCount,greenIterationCounter,tree.totalBandEnergy, tree.totalBandEnergy-Eband))
             print('Band energy residual: ', bandEnergyResidual)
             print()
             orbitalResidual = abs(bandEnergyResidual)
 
-
+        tree.orthonormalizeOrbitals()
         tree.updateDensityAtQuadpoints()
         tree.normalizeDensity()
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
@@ -226,8 +227,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         """
         startCoulombConvolutionTime = timer()
         V_coulombNew = np.zeros((len(targets)))
-#         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-        gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)  # call the GPU convolution 
+        gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
+        ###gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)  # call the GPU convolution 
         tree.importVcoulombOnLeaves(V_coulombNew)
         tree.updateVxcAndVeffAtQuadpoints()
         CoulombConvolutionTime = timer() - startCoulombConvolutionTime
@@ -237,9 +238,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         Compute the new orbital and total energies 
         """
         startEnergyTime = timer()
-#         tree.updateOrbitalEnergies() 
+        tree.updateOrbitalEnergies() 
         tree.updateTotalEnergy() 
-        
+        print('Band energies after Veff update: %1.6f H, %1.2e H'
+              %(tree.totalBandEnergy, tree.totalBandEnergy-Eband))
         
 #         energyUpdateTime = timer() - startEnergyTime
 #         print('Energy Update took:                     %.4f seconds. ' %energyUpdateTime)

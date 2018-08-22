@@ -748,7 +748,7 @@ class Tree(object):
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
         energyResetFlag = 0
         for m in range(self.nOrbitals):
-            if self.orbitalEnergies[m] > 0:
+            if self.orbitalEnergies[m] > -1:
 #             if self.orbitalEnergies[m] > self.gaugeShift:
 #                 print('Warning: %i orbital energy > gauge shift.' %m)
                 print('Warning: %i orbital energy > 0.' %m)
