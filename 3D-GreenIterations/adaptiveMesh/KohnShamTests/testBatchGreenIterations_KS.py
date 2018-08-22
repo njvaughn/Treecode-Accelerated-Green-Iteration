@@ -19,7 +19,7 @@ import itertools
 import csv
 
 from TreeStruct_CC import Tree
-from greenIterations import greenIterations_KohnSham_SCF
+from greenIterations import greenIterations_KohnSham_SCF#,greenIterations_KohnSham_SINGSUB
 
 # from hydrogenPotential import trueWavefunction
 
@@ -54,7 +54,7 @@ def setUpTree():
                 coordinateFile=coordinateFile,auxiliaryFile=auxiliaryFile)
 
     print('max depth ', maxDepth)
-    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
+    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
 #     for element in tree.masterList:
 #         
 # #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
@@ -73,6 +73,10 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
     greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
                                 smoothingN, smoothingEps,auxiliaryFile=auxiliaryFile, 
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
+
+#     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
+#                                 smoothingN, smoothingEps,auxiliaryFile=auxiliaryFile, 
+#                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
 
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',

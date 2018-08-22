@@ -232,10 +232,12 @@ class Tree(object):
                                     for ell in range(-m,m+1):
 #                                             print('Using orbital ', psiID + str(ell) )
                                         if r < 19:
-                                            phiIncrement = atom.interpolators[psiID](r)*sph_harm(m,ell,azimuthal,inclination)
+#                                             phiIncrement = atom.interpolators[psiID](r)*sph_harm(m,ell,azimuthal,inclination)
+                                            phiIncrement = atom.interpolators[psiID](r)
 #                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + 0.1*np.sin((m+1)*r)/r )
                                         else:
-                                            phiIncrement = atom.interpolators[psiID](19)*sph_harm(m,ell,azimuthal,inclination)
+                                            phiIncrement = atom.interpolators[psiID](19)
+#                                             phiIncrement = atom.interpolators[psiID](19)*sph_harm(m,ell,azimuthal,inclination)
 #                                             phiIncrement = atom.interpolators[psiID](19)*( 1 + 0.1*np.sin((m+1)*r)/r )
                                         gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
                                         orbitalCounter += 1
@@ -406,6 +408,8 @@ class Tree(object):
             self.initializeOrbitalsFromAtomicData()
         elif initializationType=='random':
             self.initializeOrbitalsRandomly()
+            
+            
 #         self.initializeForHydrogenMolecule()
 #         self.initializeForBerylliumAtom()
 #         self.orthonormalizeOrbitals()
@@ -573,7 +577,7 @@ class Tree(object):
         
         def CellupdateVxcAndVeff(cell,exchangeFunctional, correlationFunctional):
             '''
-            After density is updated the convolution gets called to update V_coulom.
+            After density is updated the convolution gets called to update V_coulomb.
             Now I need to update v_xc, then get the new value of v_eff. 
             '''
             
@@ -744,7 +748,7 @@ class Tree(object):
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
         energyResetFlag = 0
         for m in range(self.nOrbitals):
-            if self.orbitalEnergies[m] > 0:
+            if self.orbitalEnergies[m] > -1:
 #             if self.orbitalEnergies[m] > self.gaugeShift:
 #                 print('Warning: %i orbital energy > gauge shift.' %m)
                 print('Warning: %i orbital energy > 0.' %m)
