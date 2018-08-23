@@ -116,7 +116,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
         orbitalResidual = 10
         eigensolveCount = 0
-        max_scfCount = 1
+        max_scfCount = 10
         while ( ( orbitalResidual > intraScfTolerance ) and ( eigensolveCount < max_scfCount) ):
             
             orbitalResidual = 0.0
@@ -159,7 +159,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     #                 print('~'*50)
     
                     phiNew = np.zeros((len(targets)))
-    #                 gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+#                     gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
                     gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
                     orbitals[:,m] = np.copy(phiNew)
     #                 dummyConvolutionToTestImportExport(targets,sources,phiNew,k)
@@ -238,10 +238,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         Compute the new orbital and total energies 
         """
         startEnergyTime = timer()
-        tree.updateOrbitalEnergies() 
+        tree.updateOrbitalEnergies(correctPositiveEnergies=False) 
         tree.updateTotalEnergy() 
         print('Band energies after Veff update: %1.6f H, %1.2e H'
               %(tree.totalBandEnergy, tree.totalBandEnergy-Eband))
+        
+        for m in range(tree.nOrbitals):
+            if tree.orbitalEnergies[m] > 0:
+                tree.scrambleOrbital(m)
+                print('Scrambling orbital %i'%m)
+        tree.updateOrbitalEnergies()
         
 #         energyUpdateTime = timer() - startEnergyTime
 #         print('Energy Update took:                     %.4f seconds. ' %energyUpdateTime)

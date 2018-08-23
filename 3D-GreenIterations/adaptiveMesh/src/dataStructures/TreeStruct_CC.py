@@ -233,8 +233,8 @@ class Tree(object):
 #                                             print('Using orbital ', psiID + str(ell) )
                                         if r < 19:
 #                                             phiIncrement = atom.interpolators[psiID](r)*sph_harm(m,ell,azimuthal,inclination)
-                                            phiIncrement = atom.interpolators[psiID](r)
-#                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + 0.1*np.sin((m+1)*r)/r )
+#                                             phiIncrement = atom.interpolators[psiID](r)
+                                            phiIncrement = atom.interpolators[psiID](r)*( 1 + 0.1*np.sin((m+1)*r)/r )
                                         else:
                                             phiIncrement = atom.interpolators[psiID](19)
 #                                             phiIncrement = atom.interpolators[psiID](19)*sph_harm(m,ell,azimuthal,inclination)
@@ -740,22 +740,23 @@ class Tree(object):
                     gp.phi[m] *= np.exp(-r)
     
     
-    def updateOrbitalEnergies(self):
+    def updateOrbitalEnergies(self,correctPositiveEnergies=True):
         self.computeOrbitalKinetics()
         self.computeOrbitalPotentials()
         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
         print('Orbital Potential Energy: ', self.orbitalPotential)
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
         energyResetFlag = 0
-        for m in range(self.nOrbitals):
-            if self.orbitalEnergies[m] > -1:
-#             if self.orbitalEnergies[m] > self.gaugeShift:
-#                 print('Warning: %i orbital energy > gauge shift.' %m)
-                print('Warning: %i orbital energy > 0.' %m)
-                self.orbitalEnergies[m] = self.gaugeShift - 1/(m+1)
+        if correctPositiveEnergies==True:
+            for m in range(self.nOrbitals):
+                if self.orbitalEnergies[m] > 0:
+    #             if self.orbitalEnergies[m] > self.gaugeShift:
+    #                 print('Warning: %i orbital energy > gauge shift.' %m)
+                    print('Warning: %i orbital energy > 0.' %m)
+                    self.orbitalEnergies[m] = self.gaugeShift - 1/(m+1)
 #                 self.scrambleOrbital(m)
 #                 self.softenOrbital(m)
-                energyResetFlag=1
+                    energyResetFlag=1
         
         
 #         if energyResetFlag==1:
