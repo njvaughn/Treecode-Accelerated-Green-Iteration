@@ -9,7 +9,7 @@ import itertools
 import bisect
 
 from hydrogenAtom import potential
-from meshUtilities import meshDensity, weights3D, unscaledWeights, ChebGradient3D, ChebyshevPoints
+from meshUtilities import meshDensity, weights3D, unscaledWeights, ChebGradient3D, ChebyshevPoints,computeDerivativeMatrix
 from GridpointStruct import GridPoint
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -939,11 +939,16 @@ class Cell(object):
                 gp = self.gridpoints[i,j,k]
                 phi[i,j,k] = gp.phi[m]
             
-            gradPhi = ChebGradient3D(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.px,phi) 
+            gradPhi = ChebGradient3D(self.DopenX, self.DopenY, self.DopenZ, self.px, phi)
+#             gradPhi = ChebGradient3D(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.px,phi) 
             gradPhiSq = gradPhi[0]**2 + gradPhi[1]**2 + gradPhi[2]**2
             
             self.orbitalKE[m] = 1/2*np.sum( self.w * gradPhiSq )
-
+    
+    def computeDerivativeMatrices(self):
+        self.DopenX = computeDerivativeMatrix(self.xmin, self.xmax, self.px)
+        self.DopenY = computeDerivativeMatrix(self.ymin, self.ymax, self.py)
+        self.DopenZ = computeDerivativeMatrix(self.zmin, self.zmax, self.pz)
 
 
         

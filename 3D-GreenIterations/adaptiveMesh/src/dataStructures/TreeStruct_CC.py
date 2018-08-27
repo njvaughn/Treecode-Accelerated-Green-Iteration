@@ -19,6 +19,7 @@ import itertools
 import os
 import csv
 import vtk
+import time
 try:
     from pyevtk.hl import pointsToVTK
 except ImportError:
@@ -400,6 +401,8 @@ class Tree(object):
         
         self.rmin = closestToOrigin
         
+        self.computeDerivativeMatrices()
+        
                         
         for _,cell in self.masterList:
             for i,j,k in self.PxByPyByPz:
@@ -765,10 +768,15 @@ class Tree(object):
     
     
     def updateOrbitalEnergies(self,correctPositiveEnergies=True):
+        start = time.time()
         self.computeOrbitalKinetics()
+        kinTime = time.time()-start
+        start=time.time()
         self.computeOrbitalPotentials()
+        potTime = time.time()-start
         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
         print('Orbital Potential Energy: ', self.orbitalPotential)
+        print('Kinetic took %2.3f, Potential took %2.3f seconds' %(kinTime,potTime))
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
         energyResetFlag = 0
         if correctPositiveEnergies==True:
@@ -799,6 +807,11 @@ class Tree(object):
 #             self.orthonormalizeOrbitals()
 #             self.updateOrbitalEnergies()
 
+    def computeDerivativeMatrices(self):
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                cell.computeDerivativeMatrices()
+        
                     
     def computeNuclearNuclearEnergy(self):
         self.nuclearNuclear = 0.0
@@ -809,7 +822,7 @@ class Tree(object):
                     self.nuclearNuclear += atom1.atomicNumber*atom2.atomicNumber/r
         self.nuclearNuclear /= 2 # because of double counting
         print('Nuclear energy: ', self.nuclearNuclear)
-            
+      
                     
     """
     NORMALIZATION, ORTHOGONALIZATION, AND WAVEFUNCTION ERRORS
