@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #!/bin/sh
 #PBS -S /bin/sh
 #PBS -N heatmap 
@@ -17,3 +18,24 @@ python main.py 20 8 1e-4
 
 # args:  numpts gridsize tolerance
 
+=======
+#!/bin/sh
+#PBS -S /bin/sh
+#PBS -N heatmap 
+#PBS -l procs=1,mem=12gb,walltime=4:00:00
+#PBS -A lsa_flux
+#PBS -l qos=flux
+#PBS -q flux
+
+#PBS -m a
+#PBS -j oe
+#PBS -V
+#
+
+cd ~/Greens-Functions-Iterative-Methods/3D-GreenIterations
+module load python-anaconda3
+python main.py 20 8 1e-4
+
+# args:  numpts gridsize tolerance
+
+>>>>>>> refs/remotes/eclipse_auto/master

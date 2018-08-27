@@ -30,4 +30,3 @@ class Timer(object):
         return self.elapsedTime
     
     
-    

@@ -13,19 +13,16 @@ from TreeStruct_CC import Tree
 
 
 
-def exportMeshForParaview(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,minLevels, maxLevels, divideCriterion, divideParameter,inputFile):    
-    tree = Tree(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,inputFile)
-    tree.exportMeshVTK('/Users/nathanvaughn/Desktop/coaxial.vtk')
+def exportMeshForParaview(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,minLevels, maxLevels, divideCriterion, divideParameter,coordinateFile):    
+#     tree = Tree(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coordinateFile=coordinateFile)
 #     tree.buildTree( minLevels, maxLevels, divideCriterion, divideParameter, printTreeProperties=True)
-#     tree.exportMeshVTK('/Users/nathanvaughn/Desktop/coaxial.vtk')
+#     tree.exportMeshVTK('/Users/nathanvaughn/Desktop/hydrogenMolecule.vtk')
+#     tree.exportGridpoints('/Users/nathanvaughn/Desktop/hydrogenMolecule')
     
-#     tree.exportMeshMidpointsForParaview('/Users/nathanvaughn/Desktop/meshTesting.csv')
-#     tree.exportMeshQuadpointsForParaview('/Users/nathanvaughn/Desktop/quadTesting.csv')
-#     tree.exportMeshVerticesForParaview('/Users/nathanvaughn/Desktop/verticesTesting.csv')
-#     tree.exportMeshVTK('/Users/nathanvaughn/Desktop/verticesVTK_quadrupleAtom.vtk')
-#     tree.exportMeshVTK('/Users/nathanvaughn/Desktop/1Dchain.vtk')
-#     for atom in tree.atoms:
-#         print('atom: x,y,z: ', atom.x, atom.y, atom.z)
+    tree = Tree(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons=4,nOrbitals=2,coordinateFile=coordinateFile)
+    tree.buildTree( minLevels, maxLevels, divideCriterion, divideParameter, printTreeProperties=True)
+    tree.exportGridpoints('/Users/nathanvaughn/Desktop/berylliumAtom')
+
     print('Mesh Exported.')
     
     
@@ -33,14 +30,19 @@ def exportMeshForParaview(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,minLevels, maxL
             
 
 if __name__ == "__main__":
-    exportMeshForParaview(xmin=10, xmax=10,px=3,
-                          ymin=-10, ymax=10,py=3,
-                          zmin=-10, zmax=10,pz=3,
-                          minLevels=2, maxLevels=20, divideCriterion='LW1', 
-                          divideParameter=500,inputFile='../meshTests/diatomic_example.csv')
+    exportMeshForParaview(xmin=-10, xmax=10,px=4,
+                          ymin=-10, ymax=10,py=4,
+                          zmin=-10, zmax=10,pz=4,
+                          minLevels=3, maxLevels=20, divideCriterion='LW1', 
+#                           divideParameter=100,coordinateFile='../src/utilities/molecularConfigurations/hydrogenMolecule.csv')
+                          divideParameter=800,coordinateFile='../src/utilities/molecularConfigurations/berylliumAtom.csv')
     
     
-    
+#     exportMeshForParaview(xmin=-10, xmax=10,px=4,
+#                           ymin=-10, ymax=10,py=4,
+#                           zmin=-10, zmax=10,pz=4,
+#                           minLevels=3, maxLevels=20, divideCriterion='LW1', 
+#                           divideParameter=200,coordinateFile='../src/utilities/molecularConfigurations/diatomic_example.csv')
     
     
     

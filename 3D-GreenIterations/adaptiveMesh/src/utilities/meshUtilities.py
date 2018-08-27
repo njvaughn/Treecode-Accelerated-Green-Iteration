@@ -5,6 +5,7 @@ Mesh utilities for the adaptive mesh refinement.
 '''
 from numpy import pi, cos, arccos, sin, sqrt, exp
 import numpy as np
+from scipy.special import factorial
 import vtk
 
 def meshDensity(r,divideParameter,divideCriterion):
@@ -54,7 +55,7 @@ def weights(xlow, xhigh, N, w=None):
     try: 
         return (xhigh - xlow)/2 * w
     except TypeError:
-        print('meshUtilities: Generating weights from scratch')
+#         print('meshUtilities: Generating weights from scratch')
         return (xhigh - xlow)/2 *unscaledWeights(N)
     
 def weights3D(xlow,xhigh,Nx,ylow,yhigh,Ny,zlow,zhigh,Nz,w=None):
@@ -85,9 +86,7 @@ def Tprime(n,x):
             output[i] = n*sin( n*arccos(x[i]) ) / sqrt(1-x[i]**2)
     return output
 
-
-def ChebDerivative(xlow, xhigh, N, f):
-    # generate Lambda
+def computeDerivativeMatrix(xlow, xhigh, N):
     Lambda = np.ones((N,N))
     for i in range(N):
         for j in range(N):
@@ -99,155 +98,145 @@ def ChebDerivative(xlow, xhigh, N, f):
 #     for i in range(N+1):
     for j in range(N):
         Tp[:,j] = Tprime(j,x)
-    Dopen = 2/(xhigh - xlow) * np.dot(Tp,Lambda)
+    D = 2/(xhigh - xlow) * np.dot(Tp,Lambda)
+    return D
+
+# def ChebDerivative(xlow, xhigh, N, f,Dopen=None):
+def ChebDerivative(f,Dopen):
+#     if not Dopen:
+#         # if cell hasn't computed Dopen, compute it now.  
+#         # generate Lambda
+#         Lambda = np.ones((N,N))
+#         for i in range(N):
+#             for j in range(N):
+#                 j_shift = j+1/2
+#                 Lambda[i,j] = 2/N * cos(i*j_shift*pi/N)
+#                     
+#         x = ChebyshevPoints(1,-1,N)
+#         Tp = np.zeros((N,N))
+#     #     for i in range(N+1):
+#         for j in range(N):
+#             Tp[:,j] = Tprime(j,x)
+#         Dopen = 2/(xhigh - xlow) * np.dot(Tp,Lambda)
     return -np.dot(Dopen,f)
 
-def ChebGradient3D(xlow, xhigh, ylow, yhigh, zlow, zhigh, N, F):
+# def ChebGradient3D(xlow, xhigh, ylow, yhigh, zlow, zhigh, N, F,DopenX=None):
+def ChebGradient3D(DopenX,DopenY,DopenZ,N,F):
  
     DFDX = np.zeros_like(F)
     DFDY = np.zeros_like(F)
     DFDZ = np.zeros_like(F)
     for i in range(N):  # assumes Nx=Ny=Nz
         for j in range(N):
-            DFDX[:,i,j] = ChebDerivative(xlow,xhigh,N,F[:,i,j])
-            DFDY[i,:,j] = ChebDerivative(ylow,yhigh,N,F[i,:,j])
-            DFDZ[i,j,:] = ChebDerivative(zlow,zhigh,N,F[i,j,:])
+            DFDX[:,i,j] = -np.dot(DopenX,F[:,i,j]) #ChebDerivative(F[:,i,j],DopenX)
+            DFDY[i,:,j] = -np.dot(DopenY,F[i,:,j]) #ChebDerivative(F[i,:,j],DopenY)
+            DFDZ[i,j,:] = -np.dot(DopenZ,F[i,j,:]) #ChebDerivative(F[i,j,:],DopenZ)
     return [DFDX,DFDY,DFDZ]
 
-#!/usr/bin/env python
- 
-# This is (almost) a direct C++ to Python transliteration of
-# <VTK-root>/Examples/DataManipulation/Cxx/Cube.cxx from the VTK
-# source distribution, which "shows how to manually create vtkPolyData"
-#
-# A convenience function, mkVtkIdList(), has been added and one if/else
-# so the example also works in version 6 or later.
-#
-# Lines like `obj->Delete()` have been transliterated as `del obj` to,
-# preserve the resemblance to the original C++ example, although I 
-# doubt this achieves anything beyond what Python's garbage collection
-# would do anyway.
- 
- 
-# Makes a vtkIdList from a Python iterable. I'm kinda surprised that
-# this is necessary, since I assumed that this kind of thing would
-# have been built into the wrapper and happen transparently, but it
-# seems not.
+def interpolator1Dchebyshev(x,f):
+    n = len(x)
+    w = np.ones(n)
+    for i in range(n):
+        w[i] = (-1)**i * np.sin(  (2*i+1)*np.pi / (2*(n-1)+2)  )
+
+    def P(y):
+        num = 0
+        den = 0
+#         print('entering 1D interpolator loop')
+        for j in range(len(x)):
+            if y==x[j]:
+                num += f[j]
+                den += 1
+            else:
+                num += ( w[j]/(y-x[j])*f[j] ) 
+                den += ( w[j]/(y-x[j]) )
+        
+        return num/den
+
+    return np.vectorize(P)
+
+def interpolator2Dchebyshev(x,y,f):
+    n = len(x)
+    w = np.ones(n)
+    for i in range(n):
+        w[i] = (-1)**i * np.sin(  (2*i+1)*np.pi / (2*(n-1)+2)  )
+    
+    def P(xt,yt):  # 2D interpolator.  
+        num = 0
+        den = 0
+        for j in range(n):
+            Py = interpolator1Dchebyshev(y, f[j,:])  # calls the 1D interpolator using the y values along xi
+            num += ( w[j]/(xt-x[j])*Py(yt) ) 
+            den += ( w[j]/(xt-x[j]) )
+        
+        return num/den
+
+    return np.vectorize(P)
+
+def interpolator2Dchebyshev_oneStep(x,y,f):
+    nx = len(x)
+    wx = np.ones(nx)
+    for i in range(nx):
+        wx[i] = (-1)**i * np.sin(  (2*i+1)*np.pi / (2*(nx-1)+2)  )
+    
+    ny = len(y)
+    wy = np.ones(ny)
+    for j in range(ny):
+        wy[j] = (-1)**j * np.sin(  (2*j+1)*np.pi / (2*(ny-1)+2)  )
+    
+    def P(xt,yt):  # 2D interpolator.  
+        
+        num = 0
+        for i in range(nx):
+            numY = 0
+            for j in range(ny):
+                numY += ( wy[j]/(yt-y[j])*f[i,j] )
+            num +=  ( wx[i]/(xt-x[i]) )*numY
+        
+        denX=0
+        for i in range(nx):
+            denX += wx[i]/(xt-x[i])
+        
+        denY=0
+        for j in range(ny):
+            denY += wy[j]/(yt-y[j])
+        
+        den = denX*denY
+            
+        return num/den
+
+    return np.vectorize(P)
+
+def interpolator1Duniform(x,f):
+    n = len(x)
+    w = np.ones(n)
+    for i in range(n):
+        w[i] = (-1)**i * factorial(n) / (factorial(i)*factorial(n-i))
+
+    
+    def P(y):
+        num = 0
+        den = 0
+        for j in range(len(x)):
+            if y==x[j]:
+                num += f[j]
+                den += 1
+            else:
+                num += ( w[j]/(y-x[j])*f[j] ) 
+                den += ( w[j]/(y-x[j]) )
+        
+        return num/den
+
+    return np.vectorize(P)
+
+
 def mkVtkIdList(it):
     vil = vtk.vtkIdList()
     for i in it:
         vil.InsertNextId(int(i))
     return vil
  
- 
-def displayCube(filename):
-    
-    # x = array of 8 3-tuples of float representing the vertices of a cube:
-    x1 = [(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (1.0, 1.0, 0.0), (0.0, 1.0, 0.0),
-         (0.0, 0.0, 1.0), (1.0, 0.0 ,1.0), (1.0, 1.0, 1.0), (0.0, 1.0, 1.0),
-         (2.0, 2.0, 2.0), (1.0, 2.0, 2.0), (1.0, 1.0, 2.0), (2.0, 1.0, 2.0),
-         (2.0, 2.0, 1.0), (1.0, 2.0 ,1.0), (1.0, 1.0, 1.0), (2.0, 1.0, 1.0)]
-    
-    x2 = [(2.0, 2.0, 2.0), (1.0, 2.0, 2.0), (1.0, 1.0, 2.0), (2.0, 1.0, 2.0),
-         (2.0, 2.0, 1.0), (1.0, 2.0 ,1.0), (1.0, 1.0, 1.0), (2.0, 1.0, 1.0)]
- 
-    # pts = array of 6 4-tuples of vtkIdType (int) representing the faces
-    #     of the cube in terms of the above vertices
-    pts = [(0,1,2,3), (4,5,6,7), (0,1,5,4),
-           (1,2,6,5), (2,3,7,6), (3,0,4,7),
-           (8,9,10,11), (12,13,14,15), (8,9,13,12),
-           (9,10,14,13), (10,11,15,14), (11,8,12,15)]
- 
-    # We'll create the building blocks of polydata including data attributes.
-    cube1    = vtk.vtkPolyData()
-    points1  = vtk.vtkPoints()
-    polys1   = vtk.vtkCellArray()
-    scalars = vtk.vtkFloatArray()
- 
-    # Load the point, cell, and data attributes.
-    
-    for i in range(16):
-        points1.InsertPoint(i, x1[i])
-#         points2.InsertPoint(i, x2[i])
-    for i in range(12):
-        polys1.InsertNextCell( mkVtkIdList(pts[i]) )
-#         polys2.InsertNextCell( mkVtkIdList(pts[i]) )
-    for i in range(16):
-        scalars.InsertTuple1(i,i)
-#         scalars.InsertTuple1(i+8,-1.0)
-    
-#     for i in range(8):
-#         points1.InsertPoint(i, x2[i])
-# #         points2.InsertPoint(i, x2[i])
-#     for i in range(6):
-#         polys1.InsertNextCell( mkVtkIdList(pts[i]) )
-# #         polys2.InsertNextCell( mkVtkIdList(pts[i]) )
-#     for i in range(8):
-#         scalars.InsertTuple1(i,2*i)
- 
-    # We now assign the pieces to the vtkPolyData.
-    cube1.SetPoints(points1)
-    cube1.SetPolys(polys1)
-    cube1.GetPointData().SetScalars(scalars)
-#     cube1.SetPoints(points2)
-#     cube1.SetPolys(polys2)
-#     cube2.SetPoints(points2)
-#     cube2.SetPolys(polys2)
-#     cube1.GetPointData().SetScalars(scalars)
-    del scalars
-    
-    writer1 = vtk.vtkPolyDataWriter()
-    writer1.SetFileName(filename)
-#     writer2 = vtk.vtkPolyDataWriter()
-#     writer2.SetFileName(filename)
-    
-    writer1.SetInputData(cube1)
-#     writer2.SetInputData(cube2)
-#     writer2.Write()
-    writer1.Write()
-    print('Done writing ', filename)
- 
-    # Now we'll look at it.
-#     cubeMapper = vtk.vtkPolyDataMapper()
-#     if vtk.VTK_MAJOR_VERSION <= 5:
-#         cubeMapper.SetInput(cube)
-#     else:
-#         cubeMapper.SetInputData(cube)
-#     cubeMapper.SetScalarRange(0,7)
-#     cubeActor = vtk.vtkActor()
-#     cubeActor.SetMapper(cubeMapper)
-#  
-#     # The usual rendering stuff.
-#     camera = vtk.vtkCamera()
-#     camera.SetPosition(1,1,1)
-#     camera.SetFocalPoint(0,0,0)
-#  
-#     renderer = vtk.vtkRenderer()
-#     renWin   = vtk.vtkRenderWindow()
-#     renWin.AddRenderer(renderer)
-#  
-#     iren = vtk.vtkRenderWindowInteractor()
-#     iren.SetRenderWindow(renWin)
-#  
-#     renderer.AddActor(cubeActor)
-#     renderer.SetActiveCamera(camera)
-#     renderer.ResetCamera()
-#     renderer.SetBackground(1,1,1)
-#  
-#     renWin.SetSize(300,300)
-#  
-#     # interact with data
-#     renWin.Render()
-#     iren.Start()
- 
-#     # Clean up
-#     del cube
-#     del cubeMapper
-#     del cubeActor
-#     del camera
-#     del renderer
-#     del renWin
-#     del iren
+
  
 if __name__=="__main__":
-        displayCube('/Users/nathanvaughn/Desktop/testvtk.vtk')
+        pass

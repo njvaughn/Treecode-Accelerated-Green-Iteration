@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+OUTFILE="/home/njvaughn/SingularitySubtraction/testing.csv"
+SINGTYPE=0
+DOMAIN=10
+MINDEPTH=3
+MAXDEPTH=20
+MESHTYPE="LW3"
+MESHPARAMETER=800
+
+
+SINGTYPE=0
+K=0
+
+ORDER=4
+python testSingularitySubtraction.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGTYPE $K $MESHTYPE $MESHPARAMETER $OUTFILE 
+
+

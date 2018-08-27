@@ -1,2 +1,2 @@
 # Greens-Functions-Iterative-Methods
-Contains iterative Greens functions methods for solving Schrodinger Equations (Helmholtz Form)
+This is a Kohn-Sham Density Functional Theory solver that uses Treecodes to accelerate convolution integrals.  The Kohn-Sham equations are rearranged as Helmholtz equations, which are then converted to integral equations using Greens Functions.  The orbitals and orbital energies are computed with an iterative process called Green Iterations.  
