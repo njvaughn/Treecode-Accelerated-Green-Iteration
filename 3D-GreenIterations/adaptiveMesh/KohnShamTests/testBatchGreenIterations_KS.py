@@ -34,15 +34,16 @@ smoothingN          = int(sys.argv[6])
 smoothingEps        = float(sys.argv[7])
 divideCriterion     = str(sys.argv[8])
 divideParameter     = float(sys.argv[9])
-energyTolerance      = float(sys.argv[10])
+energyTolerance     = float(sys.argv[10])
 scfTolerance        = float(sys.argv[11])
-coordinateFile      = str(sys.argv[12])
-auxiliaryFile      = str(sys.argv[13])
-nElectrons          = int(sys.argv[14])
-nOrbitals          = int(sys.argv[15])
-outFile             = str(sys.argv[16])
-vtkFileBase         = str(sys.argv[17])
-
+inputFile           = str(sys.argv[12])
+# coordinateFile      = str(sys.argv[12])
+# auxiliaryFile      = str(sys.argv[13])
+# nElectrons          = int(sys.argv[14])
+# nOrbitals          = int(sys.argv[15])
+# outFile             = str(sys.argv[16])
+# vtkFileBase         = str(sys.argv[17])
+vtkFileBase='/home/njvaughn/onTheFly/meshes'
 
 def setUpTree():
     '''
@@ -50,11 +51,21 @@ def setUpTree():
     '''
     xmin = ymin = zmin = -domainSize
     xmax = ymax = zmax = domainSize
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,
-                coordinateFile=coordinateFile,auxiliaryFile=auxiliaryFile)
+#     [coordinateFile, outputFile, nElectrons, nOrbitals] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[0:4]
+#     [coordinateFile, outputFile, nElectrons, nOrbitals, 
+#      Etrue, ExTrue, EcTrue, Eband, gaugeShift] = np.genfromtxt(inputFile,delimiter=',',dtype=[("|U100","|U100",int,int,float,float,float,float,float)])
+    [coordinateFile, outputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+    [nElectrons, nOrbitals, Etrue, ExTrue, EcTrue, Eband, gaugeShift] = np.genfromtxt(inputFile)[2:]
+    nElectrons = int(nElectrons)
+    nOrbitals = int(nOrbitals)
+    
+    print([coordinateFile, outputFile, nElectrons, nOrbitals, 
+     Etrue, ExTrue, EcTrue, Eband, gaugeShift])
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,gaugeShift=gaugeShift,
+                coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
 
     print('max depth ', maxDepth)
-    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
+    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
 #     for element in tree.masterList:
 #         
 # #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
@@ -71,7 +82,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
     greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
-                                smoothingN, smoothingEps,auxiliaryFile=auxiliaryFile, 
+                                smoothingN, smoothingEps,inputFile=inputFile, 
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
 #     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 

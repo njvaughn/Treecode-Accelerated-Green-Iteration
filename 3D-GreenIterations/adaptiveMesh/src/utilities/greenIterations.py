@@ -47,7 +47,7 @@ def modifiedGramSchrmidt_noNormalization(V,weights):
     return U
 
 def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, 
-                                subtractSingularity, smoothingN, smoothingEps, auxiliaryFile='',iterationOutFile='iterationConvergence.csv',
+                                subtractSingularity, smoothingN, smoothingEps, inputFile='',iterationOutFile='iterationConvergence.csv',
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False): 
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
@@ -64,29 +64,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     energyResidual = 1                                    # initialize the energyResidual to something that fails the convergence tolerance
     Eold = -0.5 + tree.gaugeShift
 
-    """ H2 molecule """
-#     Etrue = -1.1394876  # from DFT-FE,  T=1e-3
-#     HOMOtrue = -0.378665
+#     [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[4:8]
+    [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile)[4:8]
+    print([Etrue, ExTrue, EcTrue, Eband])
 
-    """ Beryllium Atom """
-#     Etrue = -1.4446182766680081e+01
-#     ExTrue = -2.2902495359115198e+00
-#     EcTrue = -2.2341044592808737e-01
-#     Eband = -8.1239182420318166e+00
-
-    """ Lithium Atom """
-#     Etrue = -7.3340536782581447
-#     ExTrue = -1.4916149721121696
-#     EcTrue = -0.15971669832262905
-#     Eband = -3.8616389456972078
-
-    [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(auxiliaryFile)[:4]
-     
-
-    tree.orthonormalizeOrbitals()
-    tree.updateDensityAtQuadpoints()
-    tree.normalizeDensity()
-
+    ### COMPUTE THE INITIAL HAMILTONIAN ###
     targets = tree.extractLeavesDensity()  
     sources = tree.extractLeavesDensity() 
 
@@ -94,15 +76,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
     tree.importVcoulombOnLeaves(V_coulombNew)
     tree.updateVxcAndVeffAtQuadpoints()
-    
     tree.updateOrbitalEnergies()
     
-    print('Set initial v_eff using orthonormalized orbitals...')
-    print('Initial kinetic:   ', tree.orbitalKinetic)
-    print('Initial Potential: ', tree.orbitalPotential)
-    
-    
-#     tree.orbitalEnergies[0] = Eold
     
     if vtkExport != False:
         filename = vtkExport + '/mesh%03d'%(greenIterationCounter-1) + '.vtk'
@@ -116,7 +91,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
         orbitalResidual = 10
         eigensolveCount = 0
-        max_scfCount = 1
+        max_scfCount = 15
         while ( ( orbitalResidual > intraScfTolerance ) and ( eigensolveCount < max_scfCount) ):
             
             orbitalResidual = 0.0
@@ -136,59 +111,59 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 else:
 #                     weights = np.copy(targets[:,5])
     #                 phiNew = np.zeros((len(targets)))
-                
-                    k = np.sqrt(-2*tree.orbitalEnergies[m])
-    
-    #                 phiT=np.copy(targets[:,3])
-    #                 vT = np.copy(targets[:,4])
-    #                 analyticPiece = -2*phiT*vT/k**2
+                    if tree.orbitalEnergies[m] < tree.gaugeShift:
+                        k = np.sqrt(-2*tree.orbitalEnergies[m])
+                    else:
+                        temporaryEpsilon = tree.gaugeShift-1/(m+1)
+                        k = np.sqrt(-2*temporaryEpsilon)
+                        print('Orbital %i energy %1.3e > Gauge Shift. Resetting to %1.3f' 
+                              %(m,tree.orbitalEnergies[m],temporaryEpsilon))
                     
-                
-    # #                 print('max abs of analytic piece: ', max(abs(analyticPiece)))
-    #                 minIdx = np.argmin(analyticPiece)  
-    #                 maxIdx = np.argmax(analyticPiece) 
-    #                 print('~'*50)
-    #                 print('Orbital %i, k=%1.3f' %(m,k))
-    #                 print('min analytic piece: ', analyticPiece[minIdx])
-    #                 rmin = np.sqrt(targets[minIdx,0]**2 + targets[minIdx,1]**2 + targets[minIdx,2]**2 )
-    #                 print('min occurred at r = ', rmin)
-    #                 print()
-    #                 rmax = np.sqrt(targets[maxIdx,0]**2 + targets[maxIdx,1]**2 + targets[maxIdx,2]**2 )
-    #                 print('max analytic piece: ', analyticPiece[maxIdx])
-    #                 print('max occurred at r = ', rmax)
-    #                 print('~'*50)
+    
+#                     phiT=np.copy(targets[:,3])
+#                     vT = np.copy(targets[:,4])
+#                     analyticPiece = -2*phiT*vT/k**2
+#                      
+#                  
+#     # #                 print('max abs of analytic piece: ', max(abs(analyticPiece)))
+#                     minIdx = np.argmin(analyticPiece)  
+#                     maxIdx = np.argmax(analyticPiece) 
+#                     print('~'*50)
+#                     print('Orbital %i, k=%1.3f' %(m,k))
+#                     print('1/(r*epsilon) near nucleus: ', 1/tree.rmin/tree.orbitalEnergies[m])
+#                     print('min analytic piece: ', analyticPiece[minIdx])
+#                     rmin = np.sqrt(targets[minIdx,0]**2 + targets[minIdx,1]**2 + targets[minIdx,2]**2 )
+#                     print('min occurred at r = ', rmin)
+#                     print()
+#                     rmax = np.sqrt(targets[maxIdx,0]**2 + targets[maxIdx,1]**2 + targets[maxIdx,2]**2 )
+#                     print('max analytic piece: ', analyticPiece[maxIdx])
+#                     print('max occurred at r = ', rmax)
+#                     print('~'*50)
     
                     phiNew = np.zeros((len(targets)))
-    #                 gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+#                     gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
                     gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+#                     k2 = 5
+#                     gpuHelmholtzConvolutionSubractSingularity_k2[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,k2) 
+                    
                     orbitals[:,m] = np.copy(phiNew)
-    #                 dummyConvolutionToTestImportExport(targets,sources,phiNew,k)
-    #                 tree.importPhiOnLeaves(phiNew, m)
-    #                 
-    #                 B = np.sqrt( np.sum( phiNew**2*weights ) )
-    #                 phiNew /= B
-    #                 normDiff = np.sqrt( np.sum( (phiNew-phiOld)**2*weights ) )
-    #                 print('Residual for orbtital %i: %1.2e' %(m,normDiff))
-    #                 if normDiff > orbitalResidual:
-    #                     orbitalResidual = np.copy(normDiff)
-    #                 minIdx = np.argmin(phiNew)  
-    #                 maxIdx = np.argmax(phiNew) 
-    #                 print('min occured at x,y,z = ', sources[minIdx,0:3])
-    #                 print('max occured at x,y,z = ', sources[maxIdx,0:3])
-    #                 print('min of abs(phi20): ',min(abs(phiNew)))
-#             print('Before orthonormalizing:')
-#             for m in range(tree.nOrbitals):
-#                 normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
-#                 print('Residual for orbtital %i: %1.5e' %(m,normDiff))
-#             orthonormalizedOrbitals = modifiedGramSchrmidt_noNormalization(orbitals,weights)
-#             print()
-#             print('After orthogonalizing:')
-#             for m in range(tree.nOrbitals):
-#                 normDiff = np.sqrt( np.sum( (orthonormalizedOrbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
-#                 print('Residual for orbtital %i: %1.5e' %(m,normDiff))
-#             print()
-#             print('After normalization:')
-#                 orthonormalizedOrbitals = modifiedGramSchrmidt(orbitals,weights)
+
+#                     minIdxIn = np.argmin(sources[:,3])  
+#                     maxIdxIn = np.argmax(sources[:,3]) 
+#                     minIdxOut = np.argmin(phiNew)  
+#                     maxIdxOut = np.argmax(phiNew) 
+#                     
+#                     print('phi%i'%m)
+#                     print('input min:  ', sources[minIdxIn,3])
+#                     print('output min: ', phiNew[minIdxOut])
+#                     print('input max:  ', sources[maxIdxIn,3])
+#                     print('output max: ', phiNew[maxIdxOut])
+#                     print('input min occurred at x,y,z = ', sources[minIdxIn,0:3])
+#                     print('input max occurred at x,y,z = ', sources[maxIdxIn,0:3])
+#                     print('output min occurred at x,y,z = ', sources[minIdxOut,0:3])
+#                     print('output max occurred at x,y,z = ', sources[maxIdxOut,0:3])
+
+
             orthonormalizedOrbitals = modifiedGramSchrmidt(orbitals,weights)
             for m in range(tree.nOrbitals):
                 normDiff = np.sqrt( np.sum( (orthonormalizedOrbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
@@ -200,8 +175,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print()
             print()
             tree.updateOrbitalEnergies()
-            
-            print('Before Veff update')
+#             tree.orthonormalizeOrbitals()
+
+#             print('Before Veff update')
             newOrbitalEnergies = np.sum(tree.orbitalEnergies)
             bandEnergyResidual = newOrbitalEnergies - oldOrbitalEnergies
             oldOrbitalEnergies = np.copy(newOrbitalEnergies)
@@ -214,7 +190,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                   %(eigensolveCount,greenIterationCounter,tree.totalBandEnergy, tree.totalBandEnergy-Eband))
             print('Band energy residual: ', bandEnergyResidual)
             print()
-            orbitalResidual = abs(bandEnergyResidual)
+#             orbitalResidual = abs(bandEnergyResidual)
 
         tree.orthonormalizeOrbitals()
         tree.updateDensityAtQuadpoints()
@@ -238,14 +214,21 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         Compute the new orbital and total energies 
         """
         startEnergyTime = timer()
-        tree.updateOrbitalEnergies() 
+        tree.updateOrbitalEnergies(correctPositiveEnergies=False) 
         tree.updateTotalEnergy() 
         print('Band energies after Veff update: %1.6f H, %1.2e H'
               %(tree.totalBandEnergy, tree.totalBandEnergy-Eband))
         
+        for m in range(tree.nOrbitals):
+            if tree.orbitalEnergies[m] > 0:
+                tree.scrambleOrbital(m)
+                print('Scrambling orbital %i'%m)
+        tree.updateOrbitalEnergies()
+        
 #         energyUpdateTime = timer() - startEnergyTime
 #         print('Energy Update took:                     %.4f seconds. ' %energyUpdateTime)
         energyResidual = abs(Eold - tree.E)  # Compute the energyResidual for determining convergence
+#         energyResidual = -10 # STOP AFTER FIRST SCF
         Eold = np.copy(tree.E)
         
         
@@ -269,10 +252,6 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         print('Updated E_x:                           %.10f H, %.10e H' %(tree.totalEx, tree.totalEx-ExTrue) )
         print('Updated E_c:                           %.10f H, %.10e H' %(tree.totalEc, tree.totalEc-EcTrue) )
         print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalBandEnergy, tree.totalBandEnergy-Eband) )
-#         print('HOMO Energy                             %.10f Hartree' %tree.orbitalEnergies[0])
-#         print('Total Energy                            %.10f Hartree' %tree.E)
-#         print('\n\nHOMO Energy                             %.10f H, %.10e H' %(tree.orbitalEnergies[-1], tree.orbitalEnergies[-1]-HOMOtrue))
-#         print('\n\nHOMO Energy                            %.10f H' %(tree.orbitalEnergies[-1]))
         print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etrue))
         print('Energy Residual:                        %.3e\n\n' %energyResidual)
 
@@ -469,7 +448,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         Compute the new orbital and total energies 
 #         """
 #         startEnergyTime = timer()
-# #         tree.updateOrbitalEnergies() 
+#         tree.updateOrbitalEnergies() 
 #         tree.updateTotalEnergy() 
 #         
 #         

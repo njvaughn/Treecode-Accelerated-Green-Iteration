@@ -86,9 +86,7 @@ def Tprime(n,x):
             output[i] = n*sin( n*arccos(x[i]) ) / sqrt(1-x[i]**2)
     return output
 
-
-def ChebDerivative(xlow, xhigh, N, f):
-    # generate Lambda
+def computeDerivativeMatrix(xlow, xhigh, N):
     Lambda = np.ones((N,N))
     for i in range(N):
         for j in range(N):
@@ -100,19 +98,39 @@ def ChebDerivative(xlow, xhigh, N, f):
 #     for i in range(N+1):
     for j in range(N):
         Tp[:,j] = Tprime(j,x)
-    Dopen = 2/(xhigh - xlow) * np.dot(Tp,Lambda)
+    D = 2/(xhigh - xlow) * np.dot(Tp,Lambda)
+    return D
+
+# def ChebDerivative(xlow, xhigh, N, f,Dopen=None):
+def ChebDerivative(f,Dopen):
+#     if not Dopen:
+#         # if cell hasn't computed Dopen, compute it now.  
+#         # generate Lambda
+#         Lambda = np.ones((N,N))
+#         for i in range(N):
+#             for j in range(N):
+#                 j_shift = j+1/2
+#                 Lambda[i,j] = 2/N * cos(i*j_shift*pi/N)
+#                     
+#         x = ChebyshevPoints(1,-1,N)
+#         Tp = np.zeros((N,N))
+#     #     for i in range(N+1):
+#         for j in range(N):
+#             Tp[:,j] = Tprime(j,x)
+#         Dopen = 2/(xhigh - xlow) * np.dot(Tp,Lambda)
     return -np.dot(Dopen,f)
 
-def ChebGradient3D(xlow, xhigh, ylow, yhigh, zlow, zhigh, N, F):
+# def ChebGradient3D(xlow, xhigh, ylow, yhigh, zlow, zhigh, N, F,DopenX=None):
+def ChebGradient3D(DopenX,DopenY,DopenZ,N,F):
  
     DFDX = np.zeros_like(F)
     DFDY = np.zeros_like(F)
     DFDZ = np.zeros_like(F)
     for i in range(N):  # assumes Nx=Ny=Nz
         for j in range(N):
-            DFDX[:,i,j] = ChebDerivative(xlow,xhigh,N,F[:,i,j])
-            DFDY[i,:,j] = ChebDerivative(ylow,yhigh,N,F[i,:,j])
-            DFDZ[i,j,:] = ChebDerivative(zlow,zhigh,N,F[i,j,:])
+            DFDX[:,i,j] = -np.dot(DopenX,F[:,i,j]) #ChebDerivative(F[:,i,j],DopenX)
+            DFDY[i,:,j] = -np.dot(DopenY,F[i,:,j]) #ChebDerivative(F[i,:,j],DopenY)
+            DFDZ[i,j,:] = -np.dot(DopenZ,F[i,j,:]) #ChebDerivative(F[i,j,:],DopenZ)
     return [DFDX,DFDY,DFDZ]
 
 def interpolator1Dchebyshev(x,f):

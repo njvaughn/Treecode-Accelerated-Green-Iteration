@@ -19,6 +19,7 @@ import itertools
 import os
 import csv
 import vtk
+import time
 try:
     from pyevtk.hl import pointsToVTK
 except ImportError:
@@ -49,8 +50,8 @@ class Tree(object):
     """
     
     
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,
-                 coordinateFile='',auxiliaryFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,gaugeShift=0.0,
+                 coordinateFile='',inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
                  printTreeProperties = True):
         '''
@@ -71,7 +72,7 @@ class Tree(object):
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         self.nElectrons = nElectrons
         self.nOrbitals = nOrbitals
-        
+        self.gaugeShift = gaugeShift
         self.occupations = np.ones(nOrbitals)
         self.initializeOccupations()
         
@@ -99,7 +100,9 @@ class Tree(object):
         self.root.uniqueID = ''
         self.masterList = [[self.root.uniqueID, self.root]]
         
-        self.gaugeShift = np.genfromtxt(auxiliaryFile)[-1]
+# #         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
+#         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
+        print('Gauge shift ', self.gaugeShift)
         self.initialDivideBasedOnNuclei(coordinateFile)
         if  printTreeProperties == True:
             print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -194,7 +197,20 @@ class Tree(object):
 #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
                         gp.phi[m] = np.random.rand(1)
         
-          
+    def initializeDensityFromAtomicData(self):
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    gp.rho = 0.0
+                    for atom in self.atoms:
+                        r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                        try:
+                            gp.rho += atom.interpolators['density'](r)
+                        except ValueError:
+                            gp.rho += 0.0   # if outside the interpolation range, assume 0.
+                        
+    
     def initializeOrbitalsFromAtomicData(self):
         # Generalized for any atoms.  Not complete yet.  
         timer = Timer()
@@ -234,7 +250,7 @@ class Tree(object):
                                         if r < 19:
 #                                             phiIncrement = atom.interpolators[psiID](r)*sph_harm(m,ell,azimuthal,inclination)
                                             phiIncrement = atom.interpolators[psiID](r)
-#                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + 0.1*np.sin((m+1)*r)/r )
+#                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + np.cos((m+1)*r) )
                                         else:
                                             phiIncrement = atom.interpolators[psiID](19)
 #                                             phiIncrement = atom.interpolators[psiID](19)*sph_harm(m,ell,azimuthal,inclination)
@@ -396,6 +412,10 @@ class Tree(object):
                             closestCoords = [gp.x, gp.y, gp.z]
                             closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
         
+        self.rmin = closestToOrigin
+        
+        self.computeDerivativeMatrices()
+        
                         
         for _,cell in self.masterList:
             for i,j,k in self.PxByPyByPz:
@@ -404,10 +424,16 @@ class Tree(object):
          
         
 
+        ### INITIALIZE ORBTIALS AND DENSITY ####
         if initializationType=='atomic':
             self.initializeOrbitalsFromAtomicData()
         elif initializationType=='random':
             self.initializeOrbitalsRandomly()
+        self.orthonormalizeOrbitals()
+            
+        self.initializeDensityFromAtomicData()
+        self.normalizeDensity()
+        
             
             
 #         self.initializeForHydrogenMolecule()
@@ -738,31 +764,73 @@ class Tree(object):
                     gp = cell.gridpoints[i,j,k]
                     r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
                     gp.phi[m] *= np.exp(-r)
+                    
+    def zeroOutOrbital(self,m):
+#         print('Zeroing orbital ', m)
+        print('setting orbital %i to exp(-r).'%m)
+        # randomize orbital because its energy went > Vgauge
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
+                    gp.phi[m] = np.exp(-r)
+        self.normalizeOrbital(m)
+        
+    def resetOrbitalij(self,m,n):
+        # set orbital m equal to orbital n
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    gp.phi[m] = gp.phi[n]
     
     
-    def updateOrbitalEnergies(self):
+    def updateOrbitalEnergies(self,correctPositiveEnergies=True):
+        start = time.time()
         self.computeOrbitalKinetics()
+        kinTime = time.time()-start
+        start=time.time()
         self.computeOrbitalPotentials()
+        potTime = time.time()-start
         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
         print('Orbital Potential Energy: ', self.orbitalPotential)
+#         print('Kinetic took %2.3f, Potential took %2.3f seconds' %(kinTime,potTime))
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
         energyResetFlag = 0
-        for m in range(self.nOrbitals):
-            if self.orbitalEnergies[m] > -1:
-#             if self.orbitalEnergies[m] > self.gaugeShift:
-#                 print('Warning: %i orbital energy > gauge shift.' %m)
-                print('Warning: %i orbital energy > 0.' %m)
-                self.orbitalEnergies[m] = self.gaugeShift - 1/(m+1)
+        if correctPositiveEnergies==True:
+            for m in range(self.nOrbitals):
+                if self.orbitalEnergies[m] > self.gaugeShift:
+                    if m==0:
+                        print('phi0 energy > gauge shift, setting to gauge shift - 3')
+                        self.orbitalEnergies[m] = self.gaugeShift-3
+                    else:
+                        print('orbital %i energy > gauge shift.  Setting orbital to same as %i, energy slightly higher' %(m,m-1))
+                        self.resetOrbitalij(m,m-1)
+                        self.orbitalEnergies[m] = self.orbitalEnergies[m-1] + 0.1
+    #             if self.orbitalEnergies[m] > self.gaugeShift:
+    #                 print('Warning: %i orbital energy > gauge shift.' %m)
+#                     print('Warning: %i orbital energy > gaugeShift. Setting phi to zero' %m)
+                    
+#                     self.zeroOutOrbital(m)
+#                     self.orbitalEnergies[m] = self.gaugeShift - 1/(m+1)
+#                     print('Setting energy to %1.3e' %self.orbitalEnergies[m])
 #                 self.scrambleOrbital(m)
 #                 self.softenOrbital(m)
-                energyResetFlag=1
+#                     energyResetFlag=1
         
         
 #         if energyResetFlag==1:
-# #             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
-# #             self.orthonormalizeOrbitals()
+#             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
+#             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
+#             self.orthonormalizeOrbitals()
 #             self.updateOrbitalEnergies()
 
+    def computeDerivativeMatrices(self):
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                cell.computeDerivativeMatrices()
+        
                     
     def computeNuclearNuclearEnergy(self):
         self.nuclearNuclear = 0.0
@@ -773,7 +841,7 @@ class Tree(object):
                     self.nuclearNuclear += atom1.atomicNumber*atom2.atomicNumber/r
         self.nuclearNuclear /= 2 # because of double counting
         print('Nuclear energy: ', self.nuclearNuclear)
-            
+      
                     
     """
     NORMALIZATION, ORTHOGONALIZATION, AND WAVEFUNCTION ERRORS
