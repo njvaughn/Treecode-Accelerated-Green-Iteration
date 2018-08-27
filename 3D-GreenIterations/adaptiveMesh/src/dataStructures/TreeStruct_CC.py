@@ -197,7 +197,20 @@ class Tree(object):
 #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
                         gp.phi[m] = np.random.rand(1)
         
-          
+    def initializeDensityFromAtomicData(self):
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    gp.rho = 0.0
+                    for atom in self.atoms:
+                        r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                        try:
+                            gp.rho += atom.interpolators['density'](r)
+                        except ValueError:
+                            gp.rho += 0.0   # if outside the interpolation range, assume 0.
+                        
+    
     def initializeOrbitalsFromAtomicData(self):
         # Generalized for any atoms.  Not complete yet.  
         timer = Timer()
@@ -411,10 +424,16 @@ class Tree(object):
          
         
 
+        ### INITIALIZE ORBTIALS AND DENSITY ####
         if initializationType=='atomic':
             self.initializeOrbitalsFromAtomicData()
         elif initializationType=='random':
             self.initializeOrbitalsRandomly()
+        self.orthonormalizeOrbitals()
+            
+        self.initializeDensityFromAtomicData()
+        self.normalizeDensity()
+        
             
             
 #         self.initializeForHydrogenMolecule()
@@ -776,7 +795,7 @@ class Tree(object):
         potTime = time.time()-start
         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
         print('Orbital Potential Energy: ', self.orbitalPotential)
-        print('Kinetic took %2.3f, Potential took %2.3f seconds' %(kinTime,potTime))
+#         print('Kinetic took %2.3f, Potential took %2.3f seconds' %(kinTime,potTime))
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
         energyResetFlag = 0
         if correctPositiveEnergies==True:

@@ -47,11 +47,13 @@ class Atom(object):
             
         print('Using single atom data from:')
         print(path)
-        for orbital in os.listdir(path): 
-            if orbital[:3]=='psi':
-                data = np.genfromtxt(path+orbital)
-                self.interpolators[orbital[:5]] = interp1d(data[:,0],data[:,1])
-        
+        for singleAtomData in os.listdir(path): 
+            if singleAtomData[:3]=='psi':
+                data = np.genfromtxt(path+singleAtomData)
+                self.interpolators[singleAtomData[:5]] = interp1d(data[:,0],data[:,1])
+            elif singleAtomData[:7]=='density':
+                data = np.genfromtxt(path+singleAtomData)
+                self.interpolators[singleAtomData[:7]] = interp1d(data[:,0],data[:,1])
         
 
         

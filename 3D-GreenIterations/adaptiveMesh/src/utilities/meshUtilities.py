@@ -128,9 +128,9 @@ def ChebGradient3D(DopenX,DopenY,DopenZ,N,F):
     DFDZ = np.zeros_like(F)
     for i in range(N):  # assumes Nx=Ny=Nz
         for j in range(N):
-            DFDX[:,i,j] = ChebDerivative(F[:,i,j],DopenX)
-            DFDY[i,:,j] = ChebDerivative(F[i,:,j],DopenY)
-            DFDZ[i,j,:] = ChebDerivative(F[i,j,:],DopenZ)
+            DFDX[:,i,j] = -np.dot(DopenX,F[:,i,j]) #ChebDerivative(F[:,i,j],DopenX)
+            DFDY[i,:,j] = -np.dot(DopenY,F[i,:,j]) #ChebDerivative(F[i,:,j],DopenY)
+            DFDZ[i,j,:] = -np.dot(DopenZ,F[i,j,:]) #ChebDerivative(F[i,j,:],DopenZ)
     return [DFDX,DFDY,DFDZ]
 
 def interpolator1Dchebyshev(x,f):

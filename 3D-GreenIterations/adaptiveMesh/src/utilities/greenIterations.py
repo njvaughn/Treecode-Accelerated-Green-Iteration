@@ -68,10 +68,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile)[4:8]
     print([Etrue, ExTrue, EcTrue, Eband])
 
-    tree.orthonormalizeOrbitals()
-    tree.updateDensityAtQuadpoints()
-    tree.normalizeDensity()
-
+    ### COMPUTE THE INITIAL HAMILTONIAN ###
     targets = tree.extractLeavesDensity()  
     sources = tree.extractLeavesDensity() 
 
@@ -79,15 +76,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
     tree.importVcoulombOnLeaves(V_coulombNew)
     tree.updateVxcAndVeffAtQuadpoints()
-    
     tree.updateOrbitalEnergies()
-#     tree.orthonormalizeOrbitals()
-    print('Set initial v_eff using orthonormalized orbitals...')
-#     print('Initial kinetic:   ', tree.orbitalKinetic)
-#     print('Initial Potential: ', tree.orbitalPotential)
     
-    
-#     tree.orbitalEnergies[0] = Eold
     
     if vtkExport != False:
         filename = vtkExport + '/mesh%03d'%(greenIterationCounter-1) + '.vtk'
@@ -158,34 +148,22 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     
                     orbitals[:,m] = np.copy(phiNew)
 
-                    minIdxIn = np.argmin(sources[:,3])  
-                    maxIdxIn = np.argmax(sources[:,3]) 
-                    minIdxOut = np.argmin(phiNew)  
-                    maxIdxOut = np.argmax(phiNew) 
-                    
-                    print('phi%i'%m)
-                    print('input min:  ', sources[minIdxIn,3])
-                    print('output min: ', phiNew[minIdxOut])
-                    print('input max:  ', sources[maxIdxIn,3])
-                    print('output max: ', phiNew[maxIdxOut])
+#                     minIdxIn = np.argmin(sources[:,3])  
+#                     maxIdxIn = np.argmax(sources[:,3]) 
+#                     minIdxOut = np.argmin(phiNew)  
+#                     maxIdxOut = np.argmax(phiNew) 
+#                     
+#                     print('phi%i'%m)
+#                     print('input min:  ', sources[minIdxIn,3])
+#                     print('output min: ', phiNew[minIdxOut])
+#                     print('input max:  ', sources[maxIdxIn,3])
+#                     print('output max: ', phiNew[maxIdxOut])
 #                     print('input min occurred at x,y,z = ', sources[minIdxIn,0:3])
 #                     print('input max occurred at x,y,z = ', sources[maxIdxIn,0:3])
 #                     print('output min occurred at x,y,z = ', sources[minIdxOut,0:3])
 #                     print('output max occurred at x,y,z = ', sources[maxIdxOut,0:3])
 
-#             print('Before orthonormalizing:')
-#             for m in range(tree.nOrbitals):
-#                 normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
-#                 print('Residual for orbtital %i: %1.5e' %(m,normDiff))
-#             orthonormalizedOrbitals = modifiedGramSchrmidt_noNormalization(orbitals,weights)
-#             print()
-#             print('After orthogonalizing:')
-#             for m in range(tree.nOrbitals):
-#                 normDiff = np.sqrt( np.sum( (orthonormalizedOrbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
-#                 print('Residual for orbtital %i: %1.5e' %(m,normDiff))
-#             print()
-#             print('After normalization:')
-#                 orthonormalizedOrbitals = modifiedGramSchrmidt(orbitals,weights)
+
             orthonormalizedOrbitals = modifiedGramSchrmidt(orbitals,weights)
             for m in range(tree.nOrbitals):
                 normDiff = np.sqrt( np.sum( (orthonormalizedOrbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
@@ -199,7 +177,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             tree.updateOrbitalEnergies()
 #             tree.orthonormalizeOrbitals()
 
-            print('Before Veff update')
+#             print('Before Veff update')
             newOrbitalEnergies = np.sum(tree.orbitalEnergies)
             bandEnergyResidual = newOrbitalEnergies - oldOrbitalEnergies
             oldOrbitalEnergies = np.copy(newOrbitalEnergies)
@@ -212,7 +190,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                   %(eigensolveCount,greenIterationCounter,tree.totalBandEnergy, tree.totalBandEnergy-Eband))
             print('Band energy residual: ', bandEnergyResidual)
             print()
-            orbitalResidual = abs(bandEnergyResidual)
+#             orbitalResidual = abs(bandEnergyResidual)
 
         tree.orthonormalizeOrbitals()
         tree.updateDensityAtQuadpoints()
