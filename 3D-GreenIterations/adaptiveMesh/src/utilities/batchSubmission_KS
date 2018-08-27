@@ -9,29 +9,32 @@ SMOOTHINGN=0
 SMOOTHINGEPS=0.0
 MESHTYPE='LW1'
 MESHPARAM=50
-INTRASCFTOLERANCE=1e-7
+INTRASCFTOLERANCE=1e-4
 INTERSCFTOLERANCE=1e-7
-COORDINATES='../src/utilities/molecularConfigurations/berylliumAtom.csv'
+
+INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+
+#COORDINATES='../src/utilities/molecularConfigurations/berylliumAtom.csv'
 #COORDINATES='../src/utilities/molecularConfigurations/lithiumAtom.csv'
 #COORDINATES='../src/utilities/molecularConfigurations/hydrogenMolecule.csv'
-AUXILIARYFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#AUXILIARYFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #AUXILIARYFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #AUXILIARYFILE='../src/utilities/molecularConfigurations/HydrogenMoleculeAuxiliary.csv'
-NELECTRONS=4
-NORBITALS=2
+#NELECTRONS=4
+#NORBITALS=2
 #OUTFILE='/home/njvaughn/onTheFly/results/onTheFlyMeshTests.csv'
-OUTFILE='/home/njvaughn/results_Be/results.csv'
+#OUTFILE='/home/njvaughn/results_Be/results.csv'
 #OUTFILE='/home/njvaughn/results_H2/results.csv'
 #OUTFILE='/home/njvaughn/results_Li/results.csv'
-VTKFILEDIR='/home/njvaughn/onTheFly/meshes'
+#VTKFILEDIR='/home/njvaughn/onTheFly/meshes'
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 
 MESHTYPE='LW3'
-MESHPARAM=800
+MESHPARAM=1200
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$COORDINATES $AUXILIARYFILE $NELECTRONS $NORBITALS $OUTFILE $VTKFILEDIR
-
-	
+	$INPUTFILE $VTKFILEDIR

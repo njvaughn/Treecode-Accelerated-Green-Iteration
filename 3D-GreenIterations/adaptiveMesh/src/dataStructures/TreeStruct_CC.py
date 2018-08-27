@@ -49,8 +49,8 @@ class Tree(object):
     """
     
     
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,
-                 coordinateFile='',auxiliaryFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,gaugeShift=0.0,
+                 coordinateFile='',inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
                  printTreeProperties = True):
         '''
@@ -71,7 +71,7 @@ class Tree(object):
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         self.nElectrons = nElectrons
         self.nOrbitals = nOrbitals
-        
+        self.gaugeShift = gaugeShift
         self.occupations = np.ones(nOrbitals)
         self.initializeOccupations()
         
@@ -99,7 +99,9 @@ class Tree(object):
         self.root.uniqueID = ''
         self.masterList = [[self.root.uniqueID, self.root]]
         
-        self.gaugeShift = np.genfromtxt(auxiliaryFile)[-1]
+# #         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
+#         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
+        print('Gauge shift ', self.gaugeShift)
         self.initialDivideBasedOnNuclei(coordinateFile)
         if  printTreeProperties == True:
             print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -233,8 +235,8 @@ class Tree(object):
 #                                             print('Using orbital ', psiID + str(ell) )
                                         if r < 19:
 #                                             phiIncrement = atom.interpolators[psiID](r)*sph_harm(m,ell,azimuthal,inclination)
-#                                             phiIncrement = atom.interpolators[psiID](r)
-                                            phiIncrement = atom.interpolators[psiID](r)*( 1 + 0.1*np.sin((m+1)*r)/r )
+                                            phiIncrement = atom.interpolators[psiID](r)
+#                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + np.cos((m+1)*r) )
                                         else:
                                             phiIncrement = atom.interpolators[psiID](19)
 #                                             phiIncrement = atom.interpolators[psiID](19)*sph_harm(m,ell,azimuthal,inclination)
@@ -395,6 +397,8 @@ class Tree(object):
                             closestToOrigin = np.copy(r)
                             closestCoords = [gp.x, gp.y, gp.z]
                             closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
+        
+        self.rmin = closestToOrigin
         
                         
         for _,cell in self.masterList:
@@ -738,6 +742,26 @@ class Tree(object):
                     gp = cell.gridpoints[i,j,k]
                     r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
                     gp.phi[m] *= np.exp(-r)
+                    
+    def zeroOutOrbital(self,m):
+#         print('Zeroing orbital ', m)
+        print('setting orbital %i to exp(-r).'%m)
+        # randomize orbital because its energy went > Vgauge
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
+                    gp.phi[m] = np.exp(-r)
+        self.normalizeOrbital(m)
+        
+    def resetOrbitalij(self,m,n):
+        # set orbital m equal to orbital n
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    gp.phi[m] = gp.phi[n]
     
     
     def updateOrbitalEnergies(self,correctPositiveEnergies=True):
@@ -749,19 +773,30 @@ class Tree(object):
         energyResetFlag = 0
         if correctPositiveEnergies==True:
             for m in range(self.nOrbitals):
-                if self.orbitalEnergies[m] > 0:
+                if self.orbitalEnergies[m] > self.gaugeShift:
+                    if m==0:
+                        print('phi0 energy > gauge shift, setting to gauge shift - 3')
+                        self.orbitalEnergies[m] = self.gaugeShift-3
+                    else:
+                        print('orbital %i energy > gauge shift.  Setting orbital to same as %i, energy slightly higher' %(m,m-1))
+                        self.resetOrbitalij(m,m-1)
+                        self.orbitalEnergies[m] = self.orbitalEnergies[m-1] + 0.1
     #             if self.orbitalEnergies[m] > self.gaugeShift:
     #                 print('Warning: %i orbital energy > gauge shift.' %m)
-                    print('Warning: %i orbital energy > 0.' %m)
-                    self.orbitalEnergies[m] = self.gaugeShift - 1/(m+1)
+#                     print('Warning: %i orbital energy > gaugeShift. Setting phi to zero' %m)
+                    
+#                     self.zeroOutOrbital(m)
+#                     self.orbitalEnergies[m] = self.gaugeShift - 1/(m+1)
+#                     print('Setting energy to %1.3e' %self.orbitalEnergies[m])
 #                 self.scrambleOrbital(m)
 #                 self.softenOrbital(m)
-                    energyResetFlag=1
+#                     energyResetFlag=1
         
         
 #         if energyResetFlag==1:
-# #             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
-# #             self.orthonormalizeOrbitals()
+#             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
+#             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
+#             self.orthonormalizeOrbitals()
 #             self.updateOrbitalEnergies()
 
                     
