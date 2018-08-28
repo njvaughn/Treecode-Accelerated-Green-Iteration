@@ -14,6 +14,7 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.special import sph_harm
+from scipy.optimize import broyden1, anderson, brentq
 import pylibxc
 import itertools
 import os
@@ -73,8 +74,8 @@ class Tree(object):
         self.nElectrons = nElectrons
         self.nOrbitals = nOrbitals
         self.gaugeShift = gaugeShift
-        self.occupations = np.ones(nOrbitals)
-        self.initializeOccupations()
+#         self.occupations = np.ones(nOrbitals)
+#         self.computeOccupations()
         
         
         self.exchangeFunctional = pylibxc.LibXCFunctional(exchangeFunctional, polarization)
@@ -116,17 +117,28 @@ class Tree(object):
             print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
         
     
-    def initializeOccupations(self):
-        for i in range(self.nOrbitals):
-            if (i+1)*2 <= self.nElectrons:
-                self.occupations[i] = 2
-            else:
-                self.occupations[i] = 1
-                
+    
+    def fermiObjectiveFunction(self,fermiEnergy):
+            exponentialArg = (self.orbitalEnergies-fermiEnergy)/self.sigma
+            temp = 1/(1+np.exp( exponentialArg ) )
+            return self.nElectrons - 2 * np.sum(temp)
+        
+        
+    def computeOccupations(self):
+        
+        self.T = 100
+        KB = 8.6173303e-5/27.211386
+        self.sigma = self.T*KB
+        
+        
+        
+        eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 0)
+        print('Fermi energy: ', eF)
+        exponentialArg = (self.orbitalEnergies-eF)/self.sigma
+        self.occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
         print('Occupations: ', self.occupations)
         
-        if np.sum(self.occupations) != self.nElectrons:
-            print('warning: sum of occupations does not equal number of electrons.')
+
             
     def initialDivideBasedOnNuclei(self, coordinateFile):
             
@@ -230,7 +242,7 @@ class Tree(object):
                         
             singleAtomOrbitalCount=0
             for nell in aufbauList:
-                if singleAtomOrbitalCount< atom.nAtomicOrbitals:
+                if singleAtomOrbitalCount< atom.nAtomicOrbitals:  
                     n = int(nell[0])
                     ell = int(nell[1])
                     psiID = 'psi'+str(n)+str(ell)
@@ -892,6 +904,8 @@ class Tree(object):
 #             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
 #             self.orthonormalizeOrbitals()
 #             self.updateOrbitalEnergies()
+        self.computeOccupations()
+#         print('Occupations: ', self.occupations)
 
     def computeDerivativeMatrices(self):
         for _,cell in self.masterList:

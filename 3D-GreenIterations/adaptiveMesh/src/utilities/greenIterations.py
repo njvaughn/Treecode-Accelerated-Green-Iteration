@@ -27,7 +27,7 @@ def modifiedGramSchrmidt(V,weights):
     for i in range(1,k):
         U[:,i] = V[:,i]
         for j in range(i):
-            print('Orthogonalizing %i against %i' %(i,j))
+#             print('Orthogonalizing %i against %i' %(i,j))
             U[:,i] -= (np.dot(U[:,i],U[:,j]*weights) / np.dot(U[:,j],U[:,j]*weights))*U[:,j]
         U[:i] /= np.dot(U[:,i],U[:,i]*weights)
         
