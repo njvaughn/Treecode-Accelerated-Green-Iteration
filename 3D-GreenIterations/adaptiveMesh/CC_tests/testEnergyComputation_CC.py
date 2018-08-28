@@ -26,7 +26,7 @@ class TestEnergyComputation(unittest.TestCase):
         xmax = ymax = zmax = 20
         order=3
         minDepth=3
-        maxDepth=15
+        maxDepth=3
         divideCriterion='LW3'
         divideParameter=1200
         

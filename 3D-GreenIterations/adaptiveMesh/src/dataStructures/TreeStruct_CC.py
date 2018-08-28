@@ -212,29 +212,42 @@ class Tree(object):
                         
     
     def initializeOrbitalsFromAtomicData(self):
+        
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
 
         timer = Timer()
         timer.start()
-        
+        orbitalIndex=0
         for atom in self.atoms:
-            atom.nOrbitals=5 # set this to 5 right now. This needs to be determined from the input files
-            
-            nMax = 2 #determine this from the number of orbtials given to the atom
-            
-            orbitalIndex=0
-            for n in range(1,nMax+1):
-                for ell in range(n):
+            print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+                      %(atom.atomicNumber, atom.x,atom.y,atom.z))
+                        
+            singleAtomOrbitalCount=0
+            for nell in aufbauList:
+                if singleAtomOrbitalCount< atom.nAtomicOrbitals:
+                    n = int(nell[0])
+                    ell = int(nell[1])
                     psiID = 'psi'+str(n)+str(ell)
                     for m in range(-ell,ell+1):
                         for _,cell in self.masterList:
                             if cell.leaf==True:
                                 for i,j,k in self.PxByPyByPz:
                                     gp = cell.gridpoints[i,j,k]
-                                    r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
-                                    inclination = np.arccos(gp.z/r)
-                                    azimuthal = np.arctan2(gp.y,gp.x)
+                                    dx = gp.x-atom.x
+                                    dy = gp.y-atom.y
+                                    dz = gp.z-atom.z
+                                    r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                                    inclination = np.arccos(dz/r)
+                                    azimuthal = np.arctan2(dy,dx)
+                                    
                                 
-#                                     Y = sph_harm(m,ell,azimuthal,inclination)*np.exp(-1j*m*azimuthal)
+    #                                     Y = sph_harm(m,ell,azimuthal,inclination)*np.exp(-1j*m*azimuthal)
                                     if m<0:
                                         Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
                                     if m>0:
@@ -243,7 +256,7 @@ class Tree(object):
                                         Y = sph_harm(m,ell,azimuthal,inclination)
                                     if abs(np.imag(Y)) > 1e-14:
                                         print('imag(Y) ', np.imag(Y))
-#                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+    #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
                                     try:
                                         gp.phi[orbitalIndex] = atom.interpolators[psiID](r)*np.real(Y)
                                     except ValueError:
@@ -253,70 +266,76 @@ class Tree(object):
                         
                         print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
                         orbitalIndex += 1
+                        singleAtomOrbitalCount += 1
+                        
+        if orbitalIndex < self.nOrbitals:
+            print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
+        if orbitalIndex > self.nOrbitals:
+            print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
 
         
     
-    def initializeOrbitalsFromAtomicDataOLD(self):
-        # Generalized for any atoms.  Not complete yet.  
-        timer = Timer()
-        timer.start()
-        
-        n = 1 # principal quantum number
-        m = 0 # 
-        ell = 0
-        
-#         print('Adding 0.1sin(r)/r to the initial orbitals')
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                
-                for atom in self.atoms:
-                    
-                    for i,j,k in self.PxByPyByPz:
-                        # reset the counter and the principal quantum number for next gridpoint
-                        orbitalCounter = 0
-                        n=1
-                        
-                        gp = cell.gridpoints[i,j,k]
-#                         print('\nPoint at: ', gp.x, gp.y, gp.z)
-                        r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
-                        inclination = np.arccos(gp.z/r)
-                        azimuthal = np.arctan2(gp.y,gp.x)
-                        # this cell is within the range of this atom.  
-                        while orbitalCounter < self.nOrbitals:
-#                                 print('n: ',n)
-                            for m in range(n):
-                                if orbitalCounter < self.nOrbitals:
-#                                         print('m: ', m)
-                                    psiID = 'psi'+str(n)+str(m)
-#                                     if m != 0: print('Need to use spherical harmonics: n,m = ', n, m)
-#                                         print('Using orbital ', psiID)
-                                    for ell in range(-m,m+1):
-#                                             print('Using orbital ', psiID + str(ell) )
-                                        if r < 19:
-                                            Y = np.real(sph_harm(ell,m,azimuthal,inclination)*np.exp(-1j*ell*azimuthal))
-                                            phiIncrement = atom.interpolators[psiID](r)*Y
-#                                             phiIncrement = atom.interpolators[psiID](r)
-#                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + np.cos((m+1)*r) )
-                                        else:
-#                                             phiIncrement = atom.interpolators[psiID](19)
-                                            Y = np.real(sph_harm(ell,m,azimuthal,inclination)*np.exp(-1j*ell*azimuthal))
-                                            phiIncrement = atom.interpolators[psiID](19)*Y
-#                                             phiIncrement = atom.interpolators[psiID](19)*( 1 + 0.1*np.sin((m+1)*r)/r )
-                                        gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
-                                        orbitalCounter += 1
-#                                             print('orbital counter: ', orbitalCounter)
-
-                            n += 1
-#                         for m in range(self.nOrbitals):
-#                             psi = psiList[m]
-#                             gp.setPhi(atom.interpolators[psi](r),m)
-                
-            
-                        
-                    
-        timer.stop()
-        print('Initialization from single atom data took %f.3 seconds.' %timer.elapsedTime)
+#     def initializeOrbitalsFromAtomicDataOLD(self):
+#         # Generalized for any atoms.  Not complete yet.  
+#         timer = Timer()
+#         timer.start()
+#         
+#         n = 1 # principal quantum number
+#         m = 0 # 
+#         ell = 0
+#         
+# #         print('Adding 0.1sin(r)/r to the initial orbitals')
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 
+#                 for atom in self.atoms:
+#                     
+#                     for i,j,k in self.PxByPyByPz:
+#                         # reset the counter and the principal quantum number for next gridpoint
+#                         orbitalCounter = 0
+#                         n=1
+#                         
+#                         gp = cell.gridpoints[i,j,k]
+# #                         print('\nPoint at: ', gp.x, gp.y, gp.z)
+#                         r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+#                         inclination = np.arccos(gp.z/r)
+#                         azimuthal = np.arctan2(gp.y,gp.x)
+#                         # this cell is within the range of this atom.  
+#                         while orbitalCounter < self.nOrbitals:
+# #                                 print('n: ',n)
+#                             for m in range(n):
+#                                 if orbitalCounter < self.nOrbitals:
+# #                                         print('m: ', m)
+#                                     psiID = 'psi'+str(n)+str(m)
+# #                                     if m != 0: print('Need to use spherical harmonics: n,m = ', n, m)
+# #                                         print('Using orbital ', psiID)
+#                                     for ell in range(-m,m+1):
+# #                                             print('Using orbital ', psiID + str(ell) )
+#                                         if r < 19:
+#                                             Y = np.real(sph_harm(ell,m,azimuthal,inclination)*np.exp(-1j*ell*azimuthal))
+#                                             phiIncrement = atom.interpolators[psiID](r)*Y
+# #                                             phiIncrement = atom.interpolators[psiID](r)
+# #                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + np.cos((m+1)*r) )
+#                                         else:
+# #                                             phiIncrement = atom.interpolators[psiID](19)
+#                                             Y = np.real(sph_harm(ell,m,azimuthal,inclination)*np.exp(-1j*ell*azimuthal))
+#                                             phiIncrement = atom.interpolators[psiID](19)*Y
+# #                                             phiIncrement = atom.interpolators[psiID](19)*( 1 + 0.1*np.sin((m+1)*r)/r )
+#                                         gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
+#                                         orbitalCounter += 1
+# #                                             print('orbital counter: ', orbitalCounter)
+# 
+#                             n += 1
+# #                         for m in range(self.nOrbitals):
+# #                             psi = psiList[m]
+# #                             gp.setPhi(atom.interpolators[psi](r),m)
+#                 
+#             
+#                         
+#                     
+#         timer.stop()
+#         print('Initialization from single atom data took %f.3 seconds.' %timer.elapsedTime)
         
     def initializeForBerylliumAtom(self):
         print('Initializing orbitals for beryllium atom exclusively. ')
@@ -1256,11 +1275,17 @@ class Tree(object):
         y = []
         z = []
         v = []
-        phi10 = []
-        phi20 = []
-        phi21x = []
-        phi21y = []
-        phi21z = []
+        
+        phi0 = []
+        phi1 = []
+        phi2 = []
+        phi3 = []
+        phi4 = []
+        phi5 = []
+        phi6 = []
+        phi7 = []
+        phi8 = []
+        phi9 = []
         for _,cell in self.masterList:
             if cell.leaf==True:
                 for i,j,k in cell.PxByPyByPz:
@@ -1269,15 +1294,46 @@ class Tree(object):
                     y.append(gp.y)
                     z.append(gp.z)
                     v.append(gp.v_eff)
-                    phi10.append(gp.phi[0])
-                    phi20.append(gp.phi[1])
-                    phi21x.append(gp.phi[2])
-                    phi21y.append(gp.phi[3])
-                    phi21z.append(gp.phi[4])
+                    phi0.append(gp.phi[0])
+                    phi1.append(gp.phi[1])
+                    phi2.append(gp.phi[2])
+                    phi3.append(gp.phi[3])
+                    phi4.append(gp.phi[4])
+                    phi5.append(gp.phi[5])
+                    phi6.append(gp.phi[6])
+                    phi7.append(gp.phi[7])
+                    phi8.append(gp.phi[8])
+                    phi9.append(gp.phi[9])
         
         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
-                    {"V" : np.array(v), "Phi10" : np.array(phi10), "Phi20" : np.array(phi20),
-                     "Phi21x" : np.array(phi21x), "Phi21y" : np.array(phi21y), "Phi21z" : np.array(phi21z)})
+                    {"V" : np.array(v), "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),
+                     "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4),
+                     "Phi5" : np.array(phi5), "Phi6" : np.array(phi6),
+                     "Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})
+        
+        
+#         phi10 = []
+#         phi20 = []
+#         phi21x = []
+#         phi21y = []
+#         phi21z = []
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 for i,j,k in cell.PxByPyByPz:
+#                     gp = cell.gridpoints[i,j,k]
+#                     x.append(gp.x)
+#                     y.append(gp.y)
+#                     z.append(gp.z)
+#                     v.append(gp.v_eff)
+#                     phi10.append(gp.phi[0])
+#                     phi20.append(gp.phi[1])
+#                     phi21x.append(gp.phi[2])
+#                     phi21y.append(gp.phi[3])
+#                     phi21z.append(gp.phi[4])
+#         
+#         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
+#                     {"V" : np.array(v), "Phi10" : np.array(phi10), "Phi20" : np.array(phi20),
+#                      "Phi21x" : np.array(phi21x), "Phi21y" : np.array(phi21y), "Phi21z" : np.array(phi21z)})
                 
         
     def exportGreenIterationOrbital(self,filename,iterationNumber):
