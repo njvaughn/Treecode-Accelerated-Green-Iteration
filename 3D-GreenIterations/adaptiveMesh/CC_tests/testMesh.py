@@ -19,7 +19,7 @@ def exportMeshForParaview(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,minLevels, maxL
 #     tree.exportMeshVTK('/Users/nathanvaughn/Desktop/hydrogenMolecule.vtk')
 #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/hydrogenMolecule')
     
-    tree = Tree(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons=4,nOrbitals=2,coordinateFile=coordinateFile)
+    tree = Tree(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons=4,nOrbitals=5,coordinateFile=coordinateFile)
     tree.buildTree( minLevels, maxLevels, divideCriterion, divideParameter, printTreeProperties=True)
     tree.exportGridpoints('/Users/nathanvaughn/Desktop/berylliumAtom')
 
@@ -30,10 +30,10 @@ def exportMeshForParaview(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,minLevels, maxL
             
 
 if __name__ == "__main__":
-    exportMeshForParaview(xmin=-10, xmax=10,px=4,
-                          ymin=-10, ymax=10,py=4,
-                          zmin=-10, zmax=10,pz=4,
-                          minLevels=3, maxLevels=20, divideCriterion='LW1', 
+    exportMeshForParaview(xmin=-10, xmax=10,px=3,
+                          ymin=-10, ymax=10,py=3,
+                          zmin=-10, zmax=10,pz=3,
+                          minLevels=3, maxLevels=8, divideCriterion='LW3', 
 #                           divideParameter=100,coordinateFile='../src/utilities/molecularConfigurations/hydrogenMolecule.csv')
                           divideParameter=800,coordinateFile='../src/utilities/molecularConfigurations/berylliumAtom.csv')
     

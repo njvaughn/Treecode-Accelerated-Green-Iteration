@@ -212,6 +212,52 @@ class Tree(object):
                         
     
     def initializeOrbitalsFromAtomicData(self):
+
+        timer = Timer()
+        timer.start()
+        
+        for atom in self.atoms:
+            atom.nOrbitals=5 # set this to 5 right now. This needs to be determined from the input files
+            
+            nMax = 2 #determine this from the number of orbtials given to the atom
+            
+            orbitalIndex=0
+            for n in range(1,nMax+1):
+                for ell in range(n):
+                    psiID = 'psi'+str(n)+str(ell)
+                    for m in range(-ell,ell+1):
+                        for _,cell in self.masterList:
+                            if cell.leaf==True:
+                                for i,j,k in self.PxByPyByPz:
+                                    gp = cell.gridpoints[i,j,k]
+                                    r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                                    inclination = np.arccos(gp.z/r)
+                                    azimuthal = np.arctan2(gp.y,gp.x)
+                                
+#                                     Y = sph_harm(m,ell,azimuthal,inclination)*np.exp(-1j*m*azimuthal)
+                                    if m<0:
+                                        Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                                    if m>0:
+                                        Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+                                    if m==0:
+                                        Y = sph_harm(m,ell,azimuthal,inclination)
+                                    if abs(np.imag(Y)) > 1e-14:
+                                        print('imag(Y) ', np.imag(Y))
+#                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+                                    try:
+                                        gp.phi[orbitalIndex] = atom.interpolators[psiID](r)*np.real(Y)
+                                    except ValueError:
+                                        gp.phi[orbitalIndex] = 0.0
+                                        
+                        
+                        
+                        print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
+                        orbitalIndex += 1
+                        
+
+        
+    
+    def initializeOrbitalsFromAtomicDataOLD(self):
         # Generalized for any atoms.  Not complete yet.  
         timer = Timer()
         timer.start()
@@ -243,17 +289,19 @@ class Tree(object):
                                 if orbitalCounter < self.nOrbitals:
 #                                         print('m: ', m)
                                     psiID = 'psi'+str(n)+str(m)
-                                    if m != 0: print('Need to use spherical harmonics: n,m = ', n, m)
+#                                     if m != 0: print('Need to use spherical harmonics: n,m = ', n, m)
 #                                         print('Using orbital ', psiID)
                                     for ell in range(-m,m+1):
 #                                             print('Using orbital ', psiID + str(ell) )
                                         if r < 19:
-#                                             phiIncrement = atom.interpolators[psiID](r)*sph_harm(m,ell,azimuthal,inclination)
-                                            phiIncrement = atom.interpolators[psiID](r)
+                                            Y = np.real(sph_harm(ell,m,azimuthal,inclination)*np.exp(-1j*ell*azimuthal))
+                                            phiIncrement = atom.interpolators[psiID](r)*Y
+#                                             phiIncrement = atom.interpolators[psiID](r)
 #                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + np.cos((m+1)*r) )
                                         else:
-                                            phiIncrement = atom.interpolators[psiID](19)
-#                                             phiIncrement = atom.interpolators[psiID](19)*sph_harm(m,ell,azimuthal,inclination)
+#                                             phiIncrement = atom.interpolators[psiID](19)
+                                            Y = np.real(sph_harm(ell,m,azimuthal,inclination)*np.exp(-1j*ell*azimuthal))
+                                            phiIncrement = atom.interpolators[psiID](19)*Y
 #                                             phiIncrement = atom.interpolators[psiID](19)*( 1 + 0.1*np.sin((m+1)*r)/r )
                                         gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
                                         orbitalCounter += 1
@@ -1210,6 +1258,9 @@ class Tree(object):
         v = []
         phi10 = []
         phi20 = []
+        phi21x = []
+        phi21y = []
+        phi21z = []
         for _,cell in self.masterList:
             if cell.leaf==True:
                 for i,j,k in cell.PxByPyByPz:
@@ -1220,9 +1271,13 @@ class Tree(object):
                     v.append(gp.v_eff)
                     phi10.append(gp.phi[0])
                     phi20.append(gp.phi[1])
+                    phi21x.append(gp.phi[2])
+                    phi21y.append(gp.phi[3])
+                    phi21z.append(gp.phi[4])
         
         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
-                    {"V" : np.array(v), "Phi10" : np.array(phi10), "Phi20" : np.array(phi20)})
+                    {"V" : np.array(v), "Phi10" : np.array(phi10), "Phi20" : np.array(phi20),
+                     "Phi21x" : np.array(phi21x), "Phi21y" : np.array(phi21y), "Phi21z" : np.array(phi21z)})
                 
         
     def exportGreenIterationOrbital(self,filename,iterationNumber):
