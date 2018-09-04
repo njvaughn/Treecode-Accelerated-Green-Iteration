@@ -43,7 +43,7 @@ inputFile           = str(sys.argv[12])
 # nOrbitals          = int(sys.argv[15])
 # outFile             = str(sys.argv[16])
 # vtkFileBase         = str(sys.argv[17])
-vtkFileBase='/home/njvaughn/onTheFly/meshes'
+vtkFileBase='/home/njvaughn/results_CO/orbitals'
 
 def setUpTree():
     '''

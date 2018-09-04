@@ -24,8 +24,8 @@ plotsDir = resultsDir+'/plots/'
 # Lithium
 # df_good = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200_ssForPhi0.csv', header=0)
 # df_bad = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200.csv', header=0)
-df_Li = pd.read_csv(resultsDir+'/iterationConvergenceLi_800.csv', header=0)
-
+# df_Li = pd.read_csv(resultsDir+'/iterationConvergenceLi_800.csv', header=0)
+df_CO = pd.read_csv(resultsDir+'/iterationConvergenceCO_LW1_1000.csv', header=0)
 
 def plotBeIterationConvergence(system="Beryllium"):
    
@@ -124,6 +124,12 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeExchangeEnergy = -1.4916149721121696
         dftfeCorrelationEnergy = -1.5971669832262905e-01
         dftfeBandEnergy = -3.8616389456972078
+        
+    if system == "carbonMonoxide":
+        dftfeTotalEnergy = -1.1247266168240085e+02
+        dftfeExchangeEnergy = -1.1997121612563481e+01
+        dftfeCorrelationEnergy = -9.4214559243453999e-01
+        dftfeBandEnergy = -6.2899640319071970e+01
     
     # Combined plot
     f0, ax0 = plt.subplots(1, 1, figsize=(8,6))
@@ -155,6 +161,12 @@ def plotSCFconvergence(df, system = 'H2'):
     df['exchangeEnergyError']=abs(df['exchangeEnergy']-dftfeExchangeEnergy)
     df['correlationEnergyError']=abs(df['correlationEnergy']-dftfeCorrelationEnergy)
     df['totalEnergyError']=abs(df['totalEnergy']-dftfeTotalEnergy)
+    
+    
+    print("band energy errors: ", df['bandEnergyError'])
+    print("exchange energy errors: ", df['exchangeEnergyError'])
+    print("correlation energy errors: ", df['correlationEnergyError'])
+    print("total energy errors: ", df['totalEnergyError'])
 
     
     df.plot(x='Iteration', y='bandEnergyError', logy=True, ax=ax1, style='mo')
@@ -163,7 +175,7 @@ def plotSCFconvergence(df, system = 'H2'):
     df.plot(x='Iteration', y='totalEnergyError', logy=True, ax=ax4, style='ro')
     
 
-
+# 
 #     ax1.axhline(y=dftfeExchangeEnergy,color='b',label='dft-fe')
 #     ax2.axhline(y=dftfeCorrelationEnergy,color='g',label='dft-fe')
 #     ax3.axhline(y=dftfeTotalEnergy,color='r',label='dft-fe')
@@ -189,7 +201,8 @@ def plotSCFconvergence(df, system = 'H2'):
 
 if __name__=="__main__":
 #     plotBeIterationConvergence(system = 'Lithium')    
-    plotSCFconvergence(df_Li, system="Lithium")    
+#     plotSCFconvergence(df_Li, system="Lithium")    
+    plotSCFconvergence(df_CO, system="carbonMonoxide")    
 
 
 #     grouped = df_good.groupby('divideCriterion')

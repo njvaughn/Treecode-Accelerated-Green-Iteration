@@ -22,8 +22,8 @@ class TestEnergyComputation(unittest.TestCase):
         setUp() gets called before every test below.
         '''
 #         inputFile ='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
-#         inputFile ='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-        inputFile ='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
+        inputFile ='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#         inputFile ='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
         xmin = ymin = zmin = -20
         xmax = ymax = zmax = 20
         order=3

@@ -1,9 +1,11 @@
 ../src/utilities/molecularConfigurations/carbonMonoxide.csv
-/home/njvaughn/results_Be/results.csv
+/home/njvaughn/results_CO/results.csv
 14
 10
--999
--999
--999
--999
-0
+-1.1247200574178584e+02
+-1.1997079041959250e+01
+-9.4214556068954625e-01
+-6.2899047800338650e+01
+-1
+
+# [Etrue, ExTrue, EcTrue, Eband]

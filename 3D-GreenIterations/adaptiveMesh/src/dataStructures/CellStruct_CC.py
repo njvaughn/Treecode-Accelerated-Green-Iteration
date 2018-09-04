@@ -923,27 +923,29 @@ class Cell(object):
         pot = np.empty((self.px,self.py,self.pz))
         
         for m in range(self.tree.nOrbitals):
-            for i,j,k in self.PxByPyByPz:
-                gp = self.gridpoints[i,j,k]
-                phi[i,j,k] = gp.phi[m]
-                pot[i,j,k] = gp.v_eff
-                
-            self.orbitalPE[m] = np.sum( self.w * phi**2 * pot)
+            if self.tree.occupations[m] > 1e-10: #otherwise dont update energy
+                for i,j,k in self.PxByPyByPz:
+                    gp = self.gridpoints[i,j,k]
+                    phi[i,j,k] = gp.phi[m]
+                    pot[i,j,k] = gp.v_eff
+                    
+                self.orbitalPE[m] = np.sum( self.w * phi**2 * pot)
 
     def computeOrbitalKinetics(self):
         
         phi = np.empty((self.px,self.py,self.pz))
         
         for m in range(self.tree.nOrbitals):
-            for i,j,k in self.PxByPyByPz:
-                gp = self.gridpoints[i,j,k]
-                phi[i,j,k] = gp.phi[m]
+            if self.tree.occupations[m] > 1e-10: #otherwise dont update energy
+                for i,j,k in self.PxByPyByPz:
+                    gp = self.gridpoints[i,j,k]
+                    phi[i,j,k] = gp.phi[m]
             
-            gradPhi = ChebGradient3D(self.DopenX, self.DopenY, self.DopenZ, self.px, phi)
-#             gradPhi = ChebGradient3D(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.px,phi) 
-            gradPhiSq = gradPhi[0]**2 + gradPhi[1]**2 + gradPhi[2]**2
-            
-            self.orbitalKE[m] = 1/2*np.sum( self.w * gradPhiSq )
+                gradPhi = ChebGradient3D(self.DopenX, self.DopenY, self.DopenZ, self.px, phi)
+#                gradPhi = ChebGradient3D(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.px,phi) 
+                gradPhiSq = gradPhi[0]**2 + gradPhi[1]**2 + gradPhi[2]**2
+                
+                self.orbitalKE[m] = 1/2*np.sum( self.w * gradPhiSq )
     
     def computeDerivativeMatrices(self):
         self.DopenX = computeDerivativeMatrix(self.xmin, self.xmax, self.px)
