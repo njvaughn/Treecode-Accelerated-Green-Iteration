@@ -1,3 +1,4 @@
 Running on
-      1 nyx7508
+      1 nyx7505
 Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+python: can't open file 'testBatchGreenIterations_KS.py': [Errno 2] No such file or directory

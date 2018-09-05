@@ -85,8 +85,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 ### CARBON MONOXIDE MOLECULE ###    
     dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
                                       -1.075324514852165958e+00, -5.215419985881135645e-01,
-                                      -3.351419327004790394e-01, -4.455527560478895199e-01,
-                                      -4.455527567163568570e-01, -8.275071966753577701e-02,
+                                      -4.455527567163568570e-01, -4.455527560478895199e-01,
+                                      -3.351419327004790394e-01, -8.275071966753577701e-02,
                                       -8.273399296312561324e-02,  7.959071929649078059e-03] )
 
 ### OXYGEN ATOM ###
@@ -111,7 +111,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
         orbitalResidual = 10
         eigensolveCount = 0
-        max_scfCount = 4
+        max_scfCount = 10
         while ( ( orbitalResidual > intraScfTolerance ) and ( eigensolveCount < max_scfCount) ):
             
             orbitalResidual = 0.0
@@ -162,11 +162,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                     print('max analytic piece: ', analyticPiece[maxIdx])
 #                     print('max occurred at r = ', rmax)
 #                     print('~'*50)
-                if tree.occupations[m] > 1e-15:  # don't compute new orbitals if it is not occupied.
+                if tree.occupations[m] > 1e-20:  # don't compute new orbitals if it is not occupied.
                     k = np.sqrt(-2*tree.orbitalEnergies[m])
                     phiNew = np.zeros((len(targets)))
-    #                     gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-                    gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                    gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+#                     gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
     #                     k2 = 5
     #                     gpuHelmholtzConvolutionSubractSingularity_k2[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,k2) 
                     

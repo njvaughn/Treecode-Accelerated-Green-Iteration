@@ -1,0 +1,3677 @@
+Running on
+      1 nyx7508
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/results_CO/results.csv', 14, 10, -112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865, -0.0]
+Gauge shift  -0.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Orbital 7 filled with (n,ell,m) = (2,1,-1) 
+Orbital 8 filled with (n,ell,m) = (2,1,0) 
+Orbital 9 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            1.20e+03 
+Total Number of Cells:       7913 
+Total Number of Leaf Cells:  6732 
+Total Number of Gridpoints:  430848 
+Minimum Depth                3 levels 
+Maximum Depth:               15 levels 
+Cell Order:                  4 
+Construction time:           8.49 seconds.
+Closest gridpoint to origin:  [-0.01014124443176817, -0.01189382304511144, -0.01189382304511144]
+For a distance of:  0.019641051190853222
+Part of a cell centered at:  [-0.13322624999999999, -0.15625, -0.15625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    430848
+Threads per block:    512
+Blocks per grid:      842
+[-112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865]
+Need to re-order orbitals.
+Orbital Energy:            [-18.71229514 -10.01837324  -0.72243382  -0.65904343  -0.41635126
+  -0.35563778  -0.35563778  -0.27826717  -0.27826717  -0.11287291]
+Fermi energy:  -0.31161511240443174
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   3.69706767e-046
+   3.69706767e-046   5.58691462e-273]
+
+SCF Count  1
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 9.47307e-02
+Residual for orbtital 1: 7.79402e-03
+Residual for orbtital 2: 3.19776e-01
+Residual for orbtital 3: 4.12281e-01
+Residual for orbtital 4: 4.62364e-01
+Residual for orbtital 5: 1.52954e-01
+Residual for orbtital 6: 1.52954e-01
+Residual for orbtital 7: 1.59960e-01
+Residual for orbtital 8: 1.59960e-01
+Residual for orbtital 9: 2.99356e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-18.99774765  -9.95835143  -0.97076348  -0.53755623  -0.41436269
+  -0.41436269  -0.35563778  -0.35563778  -0.27720439  -0.11287291]
+Fermi energy:  -0.3556377841700214
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   1.00000000e+000   1.00000000e+000
+   5.46950923e-108   0.00000000e+000]
+Orbital 0 error: -2.782e-01
+Orbital 1 error: -5.116e-02
+Orbital 2 error: 1.046e-01
+Orbital 3 error: -1.601e-02
+Orbital 4 error: 3.119e-02
+Orbital 5 error: 3.119e-02
+Orbital 6 error: -2.050e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -1.945e-01
+Orbital 9 error: -1.208e-01
+Band energy after 1 iterations in SCF #1:  -63.297564 H, -3.99e-01 H
+Band energy residual:  -42.3944970401
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.06572e-02
+Residual for orbtital 1: 1.95612e-03
+Residual for orbtital 2: 2.10948e-01
+Residual for orbtital 3: 1.98584e-01
+Residual for orbtital 4: 1.04258e-01
+Residual for orbtital 5: 1.04258e-01
+Residual for orbtital 6: 1.48706e-01
+Residual for orbtital 7: 2.61053e-01
+Residual for orbtital 8: 2.33645e-01
+Residual for orbtital 9: 2.69143e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.21727438  -9.94097578  -1.01816228  -0.46942826  -0.45326305
+  -0.45326305  -0.35563778  -0.35563778  -0.14111535   0.07945425]
+Warning: 9 orbital energy > 0.  Resetting to gauge shift.
+Fermi energy:  -0.35563778417012654
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   1.00000000e+000   1.00000000e+000
+   1.27719666e-294   0.00000000e+000]
+Orbital 0 error: -4.977e-01
+Orbital 1 error: -3.379e-02
+Orbital 2 error: 5.716e-02
+Orbital 3 error: 5.211e-02
+Orbital 4 error: -7.710e-03
+Orbital 5 error: -7.710e-03
+Orbital 6 error: -2.050e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -5.838e-02
+Orbital 9 error: -7.959e-03
+Band energy after 2 iterations in SCF #1:  -63.816009 H, -9.17e-01 H
+Band energy residual:  -0.0102606810022
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 3.36066e-03
+Residual for orbtital 1: 1.28824e-03
+Residual for orbtital 2: 1.35975e-01
+Residual for orbtital 3: 1.43354e-01
+Residual for orbtital 4: 7.94953e-02
+Residual for orbtital 5: 7.94953e-02
+Residual for orbtital 6: 1.51906e-01
+Residual for orbtital 7: 2.67460e-01
+Residual for orbtital 8: 1.87891e-01
+Residual for orbtital 9: 2.38598e+00
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.22945448  -9.93253889  -1.08149595  -0.47608344  -0.47608344
+  -0.43385814  -0.35563778  -0.35563778  -0.1984758   -0.15684706]
+Fermi energy:  -0.3556377841700843
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   1.00000000e+000   1.00000000e+000
+   5.88891602e-216   4.79319652e-273]
+Orbital 0 error: -5.099e-01
+Orbital 1 error: -2.535e-02
+Orbital 2 error: -6.171e-03
+Orbital 3 error: 4.546e-02
+Orbital 4 error: -3.053e-02
+Orbital 5 error: 1.169e-02
+Orbital 6 error: -2.050e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -1.157e-01
+Orbital 9 error: -1.648e-01
+Band energy after 3 iterations in SCF #1:  -63.970304 H, -1.07e+00 H
+Band energy residual:  -0.291355061552
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.96018e-03
+Residual for orbtital 1: 9.51408e-04
+Residual for orbtital 2: 9.69567e-02
+Residual for orbtital 3: 6.33661e-02
+Residual for orbtital 4: 6.33661e-02
+Residual for orbtital 5: 1.12250e-01
+Residual for orbtital 6: 1.82793e-01
+Residual for orbtital 7: 2.30656e+00
+Residual for orbtital 8: 1.52957e-01
+Residual for orbtital 9: 1.33040e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.18303667  -9.92620593  -1.11511422  -0.49151884  -0.49151884
+  -0.43740619  -0.35563778  -0.35563778  -0.1083967    0.15339299]
+Warning: 9 orbital energy > 0.  Resetting to gauge shift.
+Fermi energy:  -0.35563778417002534
+Occupations:  [ 2.  2.  2.  2.  2.  2.  1.  1.  0.  0.]
+Orbital 0 error: -4.635e-01
+Orbital 1 error: -1.902e-02
+Orbital 2 error: -3.979e-02
+Orbital 3 error: 3.002e-02
+Orbital 4 error: -4.597e-02
+Orbital 5 error: 8.147e-03
+Orbital 6 error: -2.050e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.566e-02
+Orbital 9 error: -7.959e-03
+Band energy after 4 iterations in SCF #1:  -64.000877 H, -1.10e+00 H
+Band energy residual:  0.23163983379
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 9.61142e-04
+Residual for orbtital 1: 7.38975e-04
+Residual for orbtital 2: 6.73562e-02
+Residual for orbtital 3: 5.17105e-02
+Residual for orbtital 4: 5.17105e-02
+Residual for orbtital 5: 8.45823e-02
+Residual for orbtital 6: 1.38212e-01
+Residual for orbtital 7: 1.95024e-01
+Residual for orbtital 8: 1.98135e-01
+Residual for orbtital 9: 3.71274e+00
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15643246  -9.92240176  -1.14103295  -0.50218298  -0.50218298
+  -0.44548378  -0.35563778  -0.35563778  -0.30343408  -0.11279078]
+Fermi energy:  -0.3556377841700261
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   1.00000000e+00   1.00000000e+00
+   5.11907817e-72   0.00000000e+00]
+Orbital 0 error: -4.369e-01
+Orbital 1 error: -1.521e-02
+Orbital 2 error: -6.571e-02
+Orbital 3 error: 1.936e-02
+Orbital 4 error: -5.663e-02
+Orbital 5 error: 6.898e-05
+Orbital 6 error: -2.050e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.207e-01
+Orbital 9 error: -1.207e-01
+Band energy after 5 iterations in SCF #1:  -64.050709 H, -1.15e+00 H
+Band energy residual:  -0.332744387989
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.05439e-04
+Residual for orbtital 1: 5.77217e-04
+Residual for orbtital 2: 4.66760e-02
+Residual for orbtital 3: 4.28125e-02
+Residual for orbtital 4: 4.28125e-02
+Residual for orbtital 5: 6.74867e-02
+Residual for orbtital 6: 2.08348e-01
+Residual for orbtital 7: 3.65923e+00
+Residual for orbtital 8: 1.85175e-01
+Residual for orbtital 9: 1.85707e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15347505  -9.9198026   -1.15525436  -0.50953929  -0.50953929
+  -0.45342334  -0.35563778  -0.35563778  -0.09084083   0.22804891]
+Warning: 9 orbital energy > 0.  Resetting to gauge shift.
+Fermi energy:  -0.35563778417002395
+Occupations:  [ 2.  2.  2.  2.  2.  2.  1.  1.  0.  0.]
+Orbital 0 error: -4.339e-01
+Orbital 1 error: -1.261e-02
+Orbital 2 error: -7.993e-02
+Orbital 3 error: 1.200e-02
+Orbital 4 error: -6.399e-02
+Orbital 5 error: -7.871e-03
+Orbital 6 error: -2.050e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -8.107e-03
+Orbital 9 error: -7.959e-03
+Band energy after 6 iterations in SCF #1:  -64.113343 H, -1.21e+00 H
+Band energy residual:  0.294067007551
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 4.35649e-04
+Residual for orbtital 1: 4.49343e-04
+Residual for orbtital 2: 3.19956e-02
+Residual for orbtital 3: 3.57912e-02
+Residual for orbtital 4: 3.57912e-02
+Residual for orbtital 5: 5.69329e-02
+Residual for orbtital 6: 9.03339e-02
+Residual for orbtital 7: 2.10667e-01
+Residual for orbtital 8: 1.96910e-01
+Residual for orbtital 9: 3.51184e+00
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.1579432   -9.91813833  -1.16519328  -0.51455216  -0.51455216
+  -0.50941568  -0.46111753  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.4253819623924487
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.51112385e-96
+   4.51112385e-96   0.00000000e+00]
+Orbital 0 error: -4.384e-01
+Orbital 1 error: -1.095e-02
+Orbital 2 error: -8.987e-02
+Orbital 3 error: 6.990e-03
+Orbital 4 error: -6.900e-02
+Orbital 5 error: -6.386e-02
+Orbital 6 error: -1.260e-01
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 7 iterations in SCF #1:  -64.481825 H, -1.58e+00 H
+Band energy residual:  -0.543250146949
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 3.14030e-04
+Residual for orbtital 1: 3.48235e-04
+Residual for orbtital 2: 2.21198e-02
+Residual for orbtital 3: 3.01355e-02
+Residual for orbtital 4: 3.01355e-02
+Residual for orbtital 5: 1.42684e-01
+Residual for orbtital 6: 6.28678e-02
+Residual for orbtital 7: 2.17265e-01
+Residual for orbtital 8: 3.52204e+00
+Residual for orbtital 9: 1.88989e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.16081856  -9.91703337  -1.17161409  -0.51788657  -0.51788657
+  -0.47802092  -0.44241216  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.4254458067840632
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   3.68747375e-96
+   3.68747375e-96   0.00000000e+00]
+Orbital 0 error: -4.413e-01
+Orbital 1 error: -9.845e-03
+Orbital 2 error: -9.629e-02
+Orbital 3 error: 3.655e-03
+Orbital 4 error: -7.233e-02
+Orbital 5 error: -3.247e-02
+Orbital 6 error: -1.073e-01
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 8 iterations in SCF #1:  -64.411344 H, -1.51e+00 H
+Band energy residual:  0.0352401080253
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.39307e-04
+Residual for orbtital 1: 2.69273e-04
+Residual for orbtital 2: 1.54517e-02
+Residual for orbtital 3: 2.55172e-02
+Residual for orbtital 4: 2.55172e-02
+Residual for orbtital 5: 7.89049e-02
+Residual for orbtital 6: 6.53901e-02
+Residual for orbtital 7: 2.64949e-01
+Residual for orbtital 8: 2.16079e-01
+Residual for orbtital 9: 1.62472e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.1612418   -9.91631321  -1.17622417  -0.52001272  -0.52001272
+  -0.49759727  -0.43697444  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.4254552044254271
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   3.57965415e-96
+   3.57965415e-96   0.00000000e+00]
+Orbital 0 error: -4.417e-01
+Orbital 1 error: -9.125e-03
+Orbital 2 error: -1.009e-01
+Orbital 3 error: 1.529e-03
+Orbital 4 error: -7.446e-02
+Orbital 5 error: -5.204e-02
+Orbital 6 error: -1.018e-01
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 9 iterations in SCF #1:  -64.456753 H, -1.56e+00 H
+Band energy residual:  -0.0227040909835
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.84977e-04
+Residual for orbtital 1: 2.08046e-04
+Residual for orbtital 2: 1.09862e-02
+Residual for orbtital 3: 2.17088e-02
+Residual for orbtital 4: 2.17088e-02
+Residual for orbtital 5: 7.32202e-02
+Residual for orbtital 6: 6.50662e-02
+Residual for orbtital 7: 1.07919e-01
+Residual for orbtital 8: 1.98040e-01
+Residual for orbtital 9: 6.84927e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.16080626  -9.915839    -1.17941102  -0.52126949  -0.52126949
+  -0.51486903  -0.42999706  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.39505661085590954
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.74698387e-54
+   1.74698387e-54   0.00000000e+00]
+Orbital 0 error: -4.413e-01
+Orbital 1 error: -8.651e-03
+Orbital 2 error: -1.041e-01
+Orbital 3 error: 2.725e-04
+Orbital 4 error: -7.572e-02
+Orbital 5 error: -6.932e-02
+Orbital 6 error: -9.486e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 10 iterations in SCF #1:  -64.486923 H, -1.59e+00 H
+Band energy residual:  -0.0150850351872
+
+Computing Vcoulomb and updating Veff took:    18.5706 seconds. 
+Need to re-order orbitals.
+Orbital Energy:            [-18.96322897 -10.04230306  -1.18664112  -0.51905714  -0.50907358
+  -0.50907358  -0.43427789  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.42173039574469895
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.59220452e-91
+   4.59220452e-91   0.00000000e+00]
+Band energies after Veff update: -64.327311 H, -1.43e+00 H
+Need to re-order orbitals.
+Orbital Energy:            [-18.96322897 -10.04230306  -1.18664112  -0.51905714  -0.50907358
+  -0.50907358  -0.43427789  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.42173039574469895
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.59220452e-91
+   4.59220452e-91   0.00000000e+00]
+Orbital Energies:  [-18.96322897 -10.04230306  -1.18664112  -0.51905714  -0.50907358
+  -0.50907358  -0.43427789  -0.35563778  -0.35563778  -0.09421258]
+Updated V_coulomb:                      149.6247309927 Hartree
+Updated V_x:                           -15.8116843418 Hartree
+Updated V_c:                           -1.0427795617 Hartree
+Updated E_x:                           -11.8587632563 H, 1.3831578564e-01 H
+Updated E_c:                           -0.9340906809 H, 8.0548797708e-03 H
+Updated Band Energy:                   -64.3273106939 H, -1.4282628936e+00 H
+Total Energy:                          -112.5599813872 H, -8.7975645375e-02 H
+Energy Residual:                        1.121e+02
+
+
+
+SCF Count  2
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.19021e-03
+Residual for orbtital 1: 7.55400e-03
+Residual for orbtital 2: 9.43395e-03
+Residual for orbtital 3: 6.76083e-02
+Residual for orbtital 4: 2.09620e-02
+Residual for orbtital 5: 2.09620e-02
+Residual for orbtital 6: 6.23836e-02
+Residual for orbtital 7: 1.10028e-01
+Residual for orbtital 8: 1.34243e-01
+Residual for orbtital 9: 1.38801e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.13869068  -9.90321671  -1.17935068  -0.53222907  -0.51746916
+  -0.51746916  -0.42454521  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.39460058907779616
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   7.37351230e-54
+   7.37351230e-54   0.00000000e+00]
+Orbital 0 error: -4.192e-01
+Orbital 1 error: 3.971e-03
+Orbital 2 error: -1.040e-01
+Orbital 3 error: -1.069e-02
+Orbital 4 error: -7.192e-02
+Orbital 5 error: -7.192e-02
+Orbital 6 error: -8.940e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 1 iterations in SCF #2:  -64.425941 H, -1.53e+00 H
+Band energy residual:  0.0304906762984
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.94037e-03
+Residual for orbtital 1: 2.84601e-03
+Residual for orbtital 2: 5.62515e-03
+Residual for orbtital 3: 6.07408e-02
+Residual for orbtital 4: 1.60681e-02
+Residual for orbtital 5: 1.60681e-02
+Residual for orbtital 6: 5.90705e-02
+Residual for orbtital 7: 9.64434e-02
+Residual for orbtital 8: 2.88315e-01
+Residual for orbtital 9: 2.05291e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.19413526  -9.93987397  -1.18104152  -0.54571606  -0.51854927
+  -0.51854927  -0.42240414  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3957437427174343
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.99508041e-55
+   1.99508041e-55   0.00000000e+00]
+Orbital 0 error: -4.746e-01
+Orbital 1 error: -3.269e-02
+Orbital 2 error: -1.057e-01
+Orbital 3 error: -2.417e-02
+Orbital 4 error: -7.300e-02
+Orbital 5 error: -7.300e-02
+Orbital 6 error: -8.726e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 2 iterations in SCF #2:  -64.640539 H, -1.74e+00 H
+Band energy residual:  -0.107298805825
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.17194e-03
+Residual for orbtital 1: 1.01946e-03
+Residual for orbtital 2: 4.53708e-03
+Residual for orbtital 3: 5.37303e-02
+Residual for orbtital 4: 1.37091e-02
+Residual for orbtital 5: 1.37091e-02
+Residual for orbtital 6: 5.26038e-02
+Residual for orbtital 7: 1.47912e-01
+Residual for orbtital 8: 1.96766e-01
+Residual for orbtital 9: 1.76476e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.18142059  -9.91966699  -1.18251965  -0.55812029  -0.51912589
+  -0.51912589  -0.41647387  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3954815922594241
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.56532775e-55
+   4.56532775e-55   0.00000000e+00]
+Orbital 0 error: -4.619e-01
+Orbital 1 error: -1.248e-02
+Orbital 2 error: -1.072e-01
+Orbital 3 error: -3.658e-02
+Orbital 4 error: -7.357e-02
+Orbital 5 error: -7.357e-02
+Orbital 6 error: -8.133e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 3 iterations in SCF #2:  -64.592906 H, -1.69e+00 H
+Band energy residual:  0.0238163191578
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.68591e-04
+Residual for orbtital 1: 4.71847e-04
+Residual for orbtital 2: 3.58827e-03
+Residual for orbtital 3: 4.72065e-02
+Residual for orbtital 4: 1.17623e-02
+Residual for orbtital 5: 1.17623e-02
+Residual for orbtital 6: 4.68679e-02
+Residual for orbtital 7: 1.05738e-01
+Residual for orbtital 8: 1.70600e-01
+Residual for orbtital 9: 8.20281e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.16244452  -9.92193426  -1.18496131  -0.56882193  -0.51929835
+  -0.51929835  -0.41328631  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.39509034463951886
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.57045894e-54
+   1.57045894e-54   0.00000000e+00]
+Orbital 0 error: -4.429e-01
+Orbital 1 error: -1.475e-02
+Orbital 2 error: -1.096e-01
+Orbital 3 error: -4.728e-02
+Orbital 4 error: -7.375e-02
+Orbital 5 error: -7.375e-02
+Orbital 6 error: -7.814e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 4 iterations in SCF #2:  -64.580090 H, -1.68e+00 H
+Band energy residual:  0.00640813415079
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.22184e-04
+Residual for orbtital 1: 2.33611e-04
+Residual for orbtital 2: 2.93325e-03
+Residual for orbtital 3: 4.08888e-02
+Residual for orbtital 4: 1.01307e-02
+Residual for orbtital 5: 1.01307e-02
+Residual for orbtital 6: 4.07079e-02
+Residual for orbtital 7: 9.20811e-02
+Residual for orbtital 8: 1.11050e-01
+Residual for orbtital 9: 1.61154e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15583232  -9.91802662  -1.18556086  -0.57744086  -0.51922188
+  -0.51922188  -0.40973848  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.39495401449143247
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   2.41539926e-54
+   2.41539926e-54   0.00000000e+00]
+Orbital 0 error: -4.363e-01
+Orbital 1 error: -1.084e-02
+Orbital 2 error: -1.102e-01
+Orbital 3 error: -5.590e-02
+Orbital 4 error: -7.367e-02
+Orbital 5 error: -7.367e-02
+Orbital 6 error: -7.460e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 5 iterations in SCF #2:  -64.570086 H, -1.67e+00 H
+Band energy residual:  0.00500211879348
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.30468e-04
+Residual for orbtital 1: 1.48199e-04
+Residual for orbtital 2: 2.34017e-03
+Residual for orbtital 3: 3.51166e-02
+Residual for orbtital 4: 8.75146e-03
+Residual for orbtital 5: 8.75146e-03
+Residual for orbtital 6: 3.50828e-02
+Residual for orbtital 7: 7.20397e-02
+Residual for orbtital 8: 1.64921e-01
+Residual for orbtital 9: 1.39283e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15680263  -9.91734991  -1.1860664   -0.584235    -0.51898477
+  -0.51898477  -0.4069632   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3949740204551593
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   2.26752911e-54
+   2.26752911e-54   0.00000000e+00]
+Orbital 0 error: -4.373e-01
+Orbital 1 error: -1.016e-02
+Orbital 2 error: -1.107e-01
+Orbital 3 error: -6.269e-02
+Orbital 4 error: -7.343e-02
+Orbital 5 error: -7.343e-02
+Orbital 6 error: -7.182e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 6 iterations in SCF #2:  -64.578773 H, -1.68e+00 H
+Band energy residual:  -0.00434378735161
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.86073e-05
+Residual for orbtital 1: 9.40341e-05
+Residual for orbtital 2: 1.94825e-03
+Residual for orbtital 3: 2.99609e-02
+Residual for orbtital 4: 7.57929e-03
+Residual for orbtital 5: 7.57929e-03
+Residual for orbtital 6: 2.99609e-02
+Residual for orbtital 7: 8.87963e-02
+Residual for orbtital 8: 1.43096e-01
+Residual for orbtital 9: 4.31147e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15876773  -9.91625071  -1.18628032  -0.5894891   -0.51864701
+  -0.51864701  -0.40442022  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3914008230464042
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.80224671e-49
+   1.80224671e-49   0.00000000e+00]
+Orbital 0 error: -4.392e-01
+Orbital 1 error: -9.063e-03
+Orbital 2 error: -1.110e-01
+Orbital 3 error: -6.795e-02
+Orbital 4 error: -7.309e-02
+Orbital 5 error: -7.309e-02
+Orbital 6 error: -6.928e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 7 iterations in SCF #2:  -64.585004 H, -1.69e+00 H
+Band energy residual:  -0.00311539681642
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 3.34078e-05
+Residual for orbtital 1: 6.36561e-05
+Residual for orbtital 2: 1.62366e-03
+Residual for orbtital 3: 2.54732e-02
+Residual for orbtital 4: 6.57871e-03
+Residual for orbtital 5: 6.57871e-03
+Residual for orbtital 6: 2.54880e-02
+Residual for orbtital 7: 7.72917e-02
+Residual for orbtital 8: 5.59755e-02
+Residual for orbtital 9: 1.30870e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15952504  -9.91575896  -1.18656901  -0.59351281  -0.5182504
+  -0.5182504   -0.40224563  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3800537429450649
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   6.56343871e-34
+   6.56343871e-34   0.00000000e+00]
+Orbital 0 error: -4.400e-01
+Orbital 1 error: -8.571e-03
+Orbital 2 error: -1.112e-01
+Orbital 3 error: -7.197e-02
+Orbital 4 error: -7.270e-02
+Orbital 5 error: -7.270e-02
+Orbital 6 error: -6.710e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 8 iterations in SCF #2:  -64.588225 H, -1.69e+00 H
+Band energy residual:  -0.00161016451354
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.28208e-05
+Residual for orbtital 1: 4.28560e-05
+Residual for orbtital 2: 1.36862e-03
+Residual for orbtital 3: 2.16170e-02
+Residual for orbtital 4: 5.72137e-03
+Residual for orbtital 5: 5.72137e-03
+Residual for orbtital 6: 2.16289e-02
+Residual for orbtital 7: 3.80254e-02
+Residual for orbtital 8: 1.35889e-01
+Residual for orbtital 9: 1.13473e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15945938  -9.91535704  -1.1868007   -0.59654499  -0.51782437
+  -0.51782437  -0.40034518  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37996984666413625
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   8.55433566e-34
+   8.55433566e-34   0.00000000e+00]
+Orbital 0 error: -4.399e-01
+Orbital 1 error: -8.169e-03
+Orbital 2 error: -1.115e-01
+Orbital 3 error: -7.500e-02
+Orbital 4 error: -7.227e-02
+Orbital 5 error: -7.227e-02
+Orbital 6 error: -6.520e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 9 iterations in SCF #2:  -64.588312 H, -1.69e+00 H
+Band energy residual:  -4.37741107504e-05
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.60112e-05
+Residual for orbtital 1: 2.94853e-05
+Residual for orbtital 2: 1.15741e-03
+Residual for orbtital 3: 1.83368e-02
+Residual for orbtital 4: 4.98430e-03
+Residual for orbtital 5: 4.98430e-03
+Residual for orbtital 6: 1.83429e-02
+Residual for orbtital 7: 7.37142e-02
+Residual for orbtital 8: 1.18077e-01
+Residual for orbtital 9: 2.27029e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.1592565   -9.91512133  -1.18700244  -0.59879414  -0.51738957
+  -0.51738957  -0.3987132   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37983136129889195
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.32465957e-33
+   1.32465957e-33   0.00000000e+00]
+Orbital 0 error: -4.397e-01
+Orbital 1 error: -7.933e-03
+Orbital 2 error: -1.117e-01
+Orbital 3 error: -7.725e-02
+Orbital 4 error: -7.184e-02
+Orbital 5 error: -7.184e-02
+Orbital 6 error: -6.357e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 10 iterations in SCF #2:  -64.587333 H, -1.69e+00 H
+Band energy residual:  0.000489288708899
+
+Computing Vcoulomb and updating Veff took:    18.5422 seconds. 
+Need to re-order orbitals.
+Orbital Energy:            [-18.96322436 -10.04237184  -1.18797688  -0.60361017  -0.51722503
+  -0.51722503  -0.39713873  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.377670614234661
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.21713786e-30
+   1.21713786e-30   0.00000000e+00]
+Band energies after Veff update: -64.457544 H, -1.56e+00 H
+Need to re-order orbitals.
+Orbital Energy:            [-18.96322436 -10.04237184  -1.18797688  -0.60361017  -0.51722503
+  -0.51722503  -0.39713873  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.377670614234661
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.21713786e-30
+   1.21713786e-30   0.00000000e+00]
+Orbital Energies:  [-18.96322436 -10.04237184  -1.18797688  -0.60361017  -0.51722503
+  -0.51722503  -0.39713873  -0.35563778  -0.35563778  -0.09421258]
+Updated V_coulomb:                      149.6240212329 Hartree
+Updated V_x:                           -15.8115683983 Hartree
+Updated V_c:                           -1.0427744907 Hartree
+Updated E_x:                           -11.8586762987 H, 1.3840274326e-01 H
+Updated E_c:                           -0.9340859305 H, 8.0596301812e-03 H
+Updated Band Energy:                   -64.4575440984 H, -1.5584962980e+00 H
+Total Energy:                          -112.6898892182 H, -2.1788347640e-01 H
+Energy Residual:                        1.299e-01
+
+
+
+SCF Count  3
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.18811e-03
+Residual for orbtital 1: 7.57809e-03
+Residual for orbtital 2: 1.73411e-03
+Residual for orbtital 3: 1.55230e-02
+Residual for orbtital 4: 4.34722e-03
+Residual for orbtital 5: 4.34722e-03
+Residual for orbtital 6: 1.52120e-02
+Residual for orbtital 7: 1.04883e-01
+Residual for orbtital 8: 1.22443e-01
+Residual for orbtital 9: 1.45225e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.13873903  -9.90295095  -1.18693491  -0.60171407  -0.51692613
+  -0.51692613  -0.39723085  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3794246021123545
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.78554469e-33
+   4.78554469e-33   0.00000000e+00]
+Orbital 0 error: -4.192e-01
+Orbital 1 error: 4.237e-03
+Orbital 2 error: -1.116e-01
+Orbital 3 error: -8.017e-02
+Orbital 4 error: -7.137e-02
+Orbital 5 error: -7.137e-02
+Orbital 6 error: -6.209e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 1 iterations in SCF #3:  -64.522844 H, -1.62e+00 H
+Band energy residual:  0.0322446610874
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.93762e-03
+Residual for orbtital 1: 2.84941e-03
+Residual for orbtital 2: 2.62292e-03
+Residual for orbtital 3: 1.41267e-02
+Residual for orbtital 4: 3.78871e-03
+Residual for orbtital 5: 3.78871e-03
+Residual for orbtital 6: 1.40253e-02
+Residual for orbtital 7: 9.25780e-02
+Residual for orbtital 8: 2.27310e-01
+Residual for orbtital 9: 1.88246e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.19414912  -9.93984122  -1.18454447  -0.60226082  -0.51652622
+  -0.51652622  -0.39743224  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3805231043122339
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.49091226e-34
+   1.49091226e-34   0.00000000e+00]
+Orbital 0 error: -4.746e-01
+Orbital 1 error: -3.265e-02
+Orbital 2 error: -1.092e-01
+Orbital 3 error: -8.072e-02
+Orbital 4 error: -7.097e-02
+Orbital 5 error: -7.097e-02
+Orbital 6 error: -6.229e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 2 iterations in SCF #3:  -64.702561 H, -1.80e+00 H
+Band energy residual:  -0.0898582289199
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.16910e-03
+Residual for orbtital 1: 1.01565e-03
+Residual for orbtital 2: 1.22700e-03
+Residual for orbtital 3: 1.12970e-02
+Residual for orbtital 4: 3.31452e-03
+Residual for orbtital 5: 3.31452e-03
+Residual for orbtital 6: 1.13144e-02
+Residual for orbtital 7: 1.44824e-01
+Residual for orbtital 8: 1.84456e-01
+Residual for orbtital 9: 1.65729e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.18140735  -9.91963131  -1.18621645  -0.60281282  -0.5161451
+  -0.5161451   -0.39538466  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3802704994227297
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   3.31034234e-34
+   3.31034234e-34   0.00000000e+00]
+Orbital 0 error: -4.619e-01
+Orbital 1 error: -1.244e-02
+Orbital 2 error: -1.109e-01
+Orbital 3 error: -8.127e-02
+Orbital 4 error: -7.059e-02
+Orbital 5 error: -7.059e-02
+Orbital 6 error: -6.024e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 3 iterations in SCF #3:  -64.635486 H, -1.74e+00 H
+Band energy residual:  0.033537515452
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.64666e-04
+Residual for orbtital 1: 4.63999e-04
+Residual for orbtital 2: 8.83817e-04
+Residual for orbtital 3: 9.63716e-03
+Residual for orbtital 4: 2.90188e-03
+Residual for orbtital 5: 2.90188e-03
+Residual for orbtital 6: 9.64558e-03
+Residual for orbtital 7: 1.02167e-01
+Residual for orbtital 8: 1.62579e-01
+Residual for orbtital 9: 8.21337e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.16242574  -9.92195108  -1.18750959  -0.60356073  -0.51578546
+  -0.51578546  -0.39477055  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3798941898190036
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.08627961e-33
+   1.08627961e-33   0.00000000e+00]
+Orbital 0 error: -4.429e-01
+Orbital 1 error: -1.476e-02
+Orbital 2 error: -1.122e-01
+Orbital 3 error: -8.202e-02
+Orbital 4 error: -7.023e-02
+Orbital 5 error: -7.023e-02
+Orbital 6 error: -5.963e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 4 iterations in SCF #3:  -64.603577 H, -1.70e+00 H
+Band energy residual:  0.0159542086429
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.16125e-04
+Residual for orbtital 1: 2.24542e-04
+Residual for orbtital 2: 6.62824e-04
+Residual for orbtital 3: 8.10381e-03
+Residual for orbtital 4: 2.54269e-03
+Residual for orbtital 5: 2.54269e-03
+Residual for orbtital 6: 8.14709e-03
+Residual for orbtital 7: 9.01600e-02
+Residual for orbtital 8: 1.07724e-01
+Residual for orbtital 9: 1.51233e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15581685  -9.9180591   -1.1877363   -0.60387541  -0.51545056
+  -0.51545056  -0.39377496  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37976316896491413
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.64294429e-33
+   1.64294429e-33   0.00000000e+00]
+Orbital 0 error: -4.363e-01
+Orbital 1 error: -1.087e-02
+Orbital 2 error: -1.124e-01
+Orbital 3 error: -8.233e-02
+Orbital 4 error: -6.990e-02
+Orbital 5 error: -6.990e-02
+Orbital 6 error: -5.863e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 5 iterations in SCF #3:  -64.580327 H, -1.68e+00 H
+Band energy residual:  0.0116248456205
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.24208e-04
+Residual for orbtital 1: 1.39768e-04
+Residual for orbtital 2: 4.40930e-04
+Residual for orbtital 3: 6.93500e-03
+Residual for orbtital 4: 2.22959e-03
+Residual for orbtital 5: 2.22959e-03
+Residual for orbtital 6: 6.97662e-03
+Residual for orbtital 7: 7.45440e-02
+Residual for orbtital 8: 1.57429e-01
+Residual for orbtital 9: 1.33280e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15679003  -9.91739931  -1.18776238  -0.60400759  -0.51514156
+  -0.51514156  -0.39314645  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37978246216637046
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.54583899e-33
+   1.54583899e-33   0.00000000e+00]
+Orbital 0 error: -4.373e-01
+Orbital 1 error: -1.021e-02
+Orbital 2 error: -1.124e-01
+Orbital 3 error: -8.247e-02
+Orbital 4 error: -6.959e-02
+Orbital 5 error: -6.959e-02
+Orbital 6 error: -5.800e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 6 iterations in SCF #3:  -64.578778 H, -1.68e+00 H
+Band energy residual:  0.000774845859496
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.11585e-05
+Residual for orbtital 1: 8.63556e-05
+Residual for orbtital 2: 3.56886e-04
+Residual for orbtital 3: 5.93591e-03
+Residual for orbtital 4: 1.95633e-03
+Residual for orbtital 5: 1.95633e-03
+Residual for orbtital 6: 5.96807e-03
+Residual for orbtital 7: 8.64093e-02
+Residual for orbtital 8: 1.38843e-01
+Residual for orbtital 9: 4.38434e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15875578  -9.91630898  -1.18768189  -0.60401904  -0.51485849
+  -0.51485849  -0.39254225  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3798214330362223
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.36684680e-33
+   1.36684680e-33   0.00000000e+00]
+Orbital 0 error: -4.392e-01
+Orbital 1 error: -9.121e-03
+Orbital 2 error: -1.124e-01
+Orbital 3 error: -8.248e-02
+Orbital 4 error: -6.931e-02
+Orbital 5 error: -6.931e-02
+Orbital 6 error: -5.740e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 7 iterations in SCF #3:  -64.578050 H, -1.68e+00 H
+Band energy residual:  0.000363982917648
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.30888e-05
+Residual for orbtital 1: 5.69483e-05
+Residual for orbtital 2: 2.89765e-04
+Residual for orbtital 3: 5.10037e-03
+Residual for orbtital 4: 1.71756e-03
+Residual for orbtital 5: 1.71756e-03
+Residual for orbtital 6: 5.12442e-03
+Residual for orbtital 7: 7.62710e-02
+Residual for orbtital 8: 5.66203e-02
+Residual for orbtital 9: 1.24882e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15951276  -9.91582389  -1.18771092  -0.60399385  -0.51460065
+  -0.51460065  -0.3920621   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3798364400770081
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.30358477e-33
+   1.30358477e-33   0.00000000e+00]
+Orbital 0 error: -4.400e-01
+Orbital 1 error: -8.636e-03
+Orbital 2 error: -1.124e-01
+Orbital 3 error: -8.245e-02
+Orbital 4 error: -6.905e-02
+Orbital 5 error: -6.905e-02
+Orbital 6 error: -5.692e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 8 iterations in SCF #3:  -64.576610 H, -1.68e+00 H
+Band energy residual:  0.000720094305954
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.30219e-05
+Residual for orbtital 1: 3.69295e-05
+Residual for orbtital 2: 2.42091e-04
+Residual for orbtital 3: 4.38810e-03
+Residual for orbtital 4: 1.50870e-03
+Residual for orbtital 5: 1.50870e-03
+Residual for orbtital 6: 4.40695e-03
+Residual for orbtital 7: 3.95914e-02
+Residual for orbtital 8: 1.31136e-01
+Residual for orbtital 9: 1.10135e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15944677  -9.9154261   -1.1877492   -0.603941    -0.5143669
+  -0.5143669   -0.39164997  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3798351318679293
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.30898101e-33
+   1.30898101e-33   0.00000000e+00]
+Orbital 0 error: -4.399e-01
+Orbital 1 error: -8.238e-03
+Orbital 2 error: -1.124e-01
+Orbital 3 error: -8.240e-02
+Orbital 4 error: -6.881e-02
+Orbital 5 error: -6.881e-02
+Orbital 6 error: -5.651e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 9 iterations in SCF #3:  -64.573894 H, -1.67e+00 H
+Band energy residual:  0.00135798863065
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.69238e-06
+Residual for orbtital 1: 2.43027e-05
+Residual for orbtital 2: 2.02461e-04
+Residual for orbtital 3: 3.78433e-03
+Residual for orbtital 4: 1.32583e-03
+Residual for orbtital 5: 1.32583e-03
+Residual for orbtital 6: 3.79951e-03
+Residual for orbtital 7: 7.20396e-02
+Residual for orbtital 8: 1.15707e-01
+Residual for orbtital 9: 2.33642e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.1592438   -9.91519322  -1.18779217  -0.6038684   -0.5141558
+  -0.5141558   -0.39131012  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3798311080062708
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.32571950e-33
+   1.32571950e-33   0.00000000e+00]
+Orbital 0 error: -4.397e-01
+Orbital 1 error: -8.005e-03
+Orbital 2 error: -1.125e-01
+Orbital 3 error: -8.233e-02
+Orbital 4 error: -6.860e-02
+Orbital 5 error: -6.860e-02
+Orbital 6 error: -5.617e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 10 iterations in SCF #3:  -64.571439 H, -1.67e+00 H
+Band energy residual:  0.00122751139575
+
+Computing Vcoulomb and updating Veff took:    18.5366 seconds. 
+Need to re-order orbitals.
+Orbital Energy:            [-18.96335049 -10.0423466   -1.18810325  -0.60702704  -0.51769368
+  -0.51769368  -0.39532611  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37727801442382625
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.20483329e-30
+   4.20483329e-30   0.00000000e+00]
+Band energies after Veff update: -64.463082 H, -1.56e+00 H
+Need to re-order orbitals.
+Orbital Energy:            [-18.96335049 -10.0423466   -1.18810325  -0.60702704  -0.51769368
+  -0.51769368  -0.39532611  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37727801442382625
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.20483329e-30
+   4.20483329e-30   0.00000000e+00]
+Orbital Energies:  [-18.96335049 -10.0423466   -1.18810325  -0.60702704  -0.51769368
+  -0.51769368  -0.39532611  -0.35563778  -0.35563778  -0.09421258]
+Updated V_coulomb:                      149.6229408472 Hartree
+Updated V_x:                           -15.8114785569 Hartree
+Updated V_c:                           -1.0427713177 Hartree
+Updated E_x:                           -11.8586089177 H, 1.3847012426e-01 H
+Updated E_c:                           -0.9340829662 H, 8.0625945384e-03 H
+Updated Band Energy:                   -64.4630816984 H, -1.5640338981e+00 H
+Total Energy:                          -112.6949092943 H, -2.2290355256e-01 H
+Energy Residual:                        5.020e-03
+
+
+
+SCF Count  4
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.18807e-03
+Residual for orbtital 1: 7.57757e-03
+Residual for orbtital 2: 1.31707e-03
+Residual for orbtital 3: 3.79301e-03
+Residual for orbtital 4: 2.83504e-03
+Residual for orbtital 5: 2.83504e-03
+Residual for orbtital 6: 6.17098e-03
+Residual for orbtital 7: 1.04196e-01
+Residual for orbtital 8: 1.21218e-01
+Residual for orbtital 9: 1.46014e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.13887754  -9.90293148  -1.18775559  -0.60456598  -0.51513335
+  -0.51513335  -0.39127514  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3794273478698363
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.74423137e-33
+   4.74423137e-33   0.00000000e+00]
+Orbital 0 error: -4.193e-01
+Orbital 1 error: 4.257e-03
+Orbital 2 error: -1.124e-01
+Orbital 3 error: -8.302e-02
+Orbital 4 error: -6.958e-02
+Orbital 5 error: -6.958e-02
+Orbital 6 error: -5.613e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 1 iterations in SCF #4:  -64.511345 H, -1.61e+00 H
+Band energy residual:  0.0300468763638
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.93770e-03
+Residual for orbtital 1: 2.84928e-03
+Residual for orbtital 2: 2.31668e-03
+Residual for orbtital 3: 4.17479e-03
+Residual for orbtital 4: 1.16901e-03
+Residual for orbtital 5: 1.16901e-03
+Residual for orbtital 6: 4.61688e-03
+Residual for orbtital 7: 9.21186e-02
+Residual for orbtital 8: 2.22471e-01
+Residual for orbtital 9: 1.84317e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.19428221  -9.93981742  -1.18502321  -0.60408095  -0.5147266
+  -0.5147266   -0.39289598  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3805257429176522
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.47854150e-34
+   1.47854150e-34   0.00000000e+00]
+Orbital 0 error: -4.748e-01
+Orbital 1 error: -3.263e-02
+Orbital 2 error: -1.097e-01
+Orbital 3 error: -8.254e-02
+Orbital 4 error: -6.917e-02
+Orbital 5 error: -6.917e-02
+Orbital 6 error: -5.775e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 2 iterations in SCF #4:  -64.691106 H, -1.79e+00 H
+Band energy residual:  -0.0898805435537
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.16916e-03
+Residual for orbtital 1: 1.01559e-03
+Residual for orbtital 2: 9.82515e-04
+Residual for orbtital 3: 2.59592e-03
+Residual for orbtital 4: 9.83691e-04
+Residual for orbtital 5: 9.83691e-04
+Residual for orbtital 6: 3.18578e-03
+Residual for orbtital 7: 1.44546e-01
+Residual for orbtital 8: 1.81753e-01
+Residual for orbtital 9: 1.62867e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.18153541  -9.9196078   -1.18671908  -0.6037651   -0.51437215
+  -0.51437215  -0.3912929   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37263930426689773
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   9.66602481e-24
+   9.66602481e-24   0.00000000e+00]
+Orbital 0 error: -4.620e-01
+Orbital 1 error: -1.242e-02
+Orbital 2 error: -1.114e-01
+Orbital 3 error: -8.222e-02
+Orbital 4 error: -6.882e-02
+Orbital 5 error: -6.882e-02
+Orbital 6 error: -5.615e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 3 iterations in SCF #4:  -64.623329 H, -1.72e+00 H
+Band energy residual:  0.033888395121
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.64649e-04
+Residual for orbtital 1: 4.63941e-04
+Residual for orbtital 2: 7.44544e-04
+Residual for orbtital 3: 2.20236e-03
+Residual for orbtital 4: 8.59407e-04
+Residual for orbtital 5: 8.59407e-04
+Residual for orbtital 6: 2.32879e-03
+Residual for orbtital 7: 1.01387e-01
+Residual for orbtital 8: 1.60653e-01
+Residual for orbtital 9: 8.18243e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.16255249  -9.92192675  -1.18790963  -0.60393165  -0.51409316
+  -0.51409316  -0.39122481  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37989670270073306
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.07769403e-33
+   1.07769403e-33   0.00000000e+00]
+Orbital 0 error: -4.430e-01
+Orbital 1 error: -1.474e-02
+Orbital 2 error: -1.126e-01
+Orbital 3 error: -8.239e-02
+Orbital 4 error: -6.854e-02
+Orbital 5 error: -6.854e-02
+Orbital 6 error: -5.608e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 4 iterations in SCF #4:  -64.591463 H, -1.69e+00 H
+Band energy residual:  0.0159329369482
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.16093e-04
+Residual for orbtital 1: 2.24501e-04
+Residual for orbtital 2: 5.71560e-04
+Residual for orbtital 3: 1.75991e-03
+Residual for orbtital 4: 7.55752e-04
+Residual for orbtital 5: 7.55752e-04
+Residual for orbtital 6: 1.92048e-03
+Residual for orbtital 7: 8.96443e-02
+Residual for orbtital 8: 1.07108e-01
+Residual for orbtital 9: 1.48962e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15594403  -9.91803461  -1.18809602  -0.60381509  -0.51386312
+  -0.51386312  -0.39072174  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3721642953833306
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.33183816e-23
+   4.33183816e-23   0.00000000e+00]
+Orbital 0 error: -4.364e-01
+Orbital 1 error: -1.085e-02
+Orbital 2 error: -1.128e-01
+Orbital 3 error: -8.227e-02
+Orbital 4 error: -6.831e-02
+Orbital 5 error: -6.831e-02
+Orbital 6 error: -5.558e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 5 iterations in SCF #4:  -64.568675 H, -1.67e+00 H
+Band energy residual:  0.0113939270719
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.24175e-04
+Residual for orbtital 1: 1.39718e-04
+Residual for orbtital 2: 3.14035e-04
+Residual for orbtital 3: 1.52278e-03
+Residual for orbtital 4: 6.66418e-04
+Residual for orbtital 5: 6.66418e-04
+Residual for orbtital 6: 1.63372e-03
+Residual for orbtital 7: 7.45710e-02
+Residual for orbtital 8: 1.55704e-01
+Residual for orbtital 9: 1.31658e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.1569177   -9.9173746   -1.18807045  -0.6036588   -0.5136705
+  -0.5136705   -0.39052052  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37217639737138175
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.16941985e-23
+   4.16941985e-23   0.00000000e+00]
+Orbital 0 error: -4.374e-01
+Orbital 1 error: -1.019e-02
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.212e-02
+Orbital 4 error: -6.812e-02
+Orbital 5 error: -6.812e-02
+Orbital 6 error: -5.538e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 6 iterations in SCF #4:  -64.567766 H, -1.67e+00 H
+Band energy residual:  0.000454668390283
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.11103e-05
+Residual for orbtital 1: 8.63082e-05
+Residual for orbtital 2: 1.98146e-04
+Residual for orbtital 3: 1.30972e-03
+Residual for orbtital 4: 5.88304e-04
+Residual for orbtital 5: 5.88304e-04
+Residual for orbtital 6: 1.39154e-03
+Residual for orbtital 7: 8.58701e-02
+Residual for orbtital 8: 1.37647e-01
+Residual for orbtital 9: 4.37448e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.1588836   -9.91628416  -1.18795288  -0.60348151  -0.51350766
+  -0.51350766  -0.39029321  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37204734195822564
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   6.26702525e-23
+   6.26702525e-23   0.00000000e+00]
+Orbital 0 error: -4.394e-01
+Orbital 1 error: -9.096e-03
+Orbital 2 error: -1.126e-01
+Orbital 3 error: -8.194e-02
+Orbital 4 error: -6.795e-02
+Orbital 5 error: -6.795e-02
+Orbital 6 error: -5.515e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 7 iterations in SCF #4:  -64.567821 H, -1.67e+00 H
+Band energy residual:  -2.76327272601e-05
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.30094e-05
+Residual for orbtital 1: 5.69009e-05
+Residual for orbtital 2: 1.29116e-04
+Residual for orbtital 3: 1.13802e-03
+Residual for orbtital 4: 5.19590e-04
+Residual for orbtital 5: 5.19590e-04
+Residual for orbtital 6: 1.19552e-03
+Residual for orbtital 7: 7.59286e-02
+Residual for orbtital 8: 5.64703e-02
+Residual for orbtital 9: 1.23509e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15964055  -9.91579901  -1.18794774  -0.60334329  -0.51336916
+  -0.51336916  -0.39013663  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37200186797931534
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   7.23476093e-23
+   7.23476093e-23   0.00000000e+00]
+Orbital 0 error: -4.401e-01
+Orbital 1 error: -8.611e-03
+Orbital 2 error: -1.126e-01
+Orbital 3 error: -8.180e-02
+Orbital 4 error: -6.782e-02
+Orbital 5 error: -6.782e-02
+Orbital 6 error: -5.499e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 8 iterations in SCF #4:  -64.567211 H, -1.67e+00 H
+Band energy residual:  0.000305136410397
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.29368e-05
+Residual for orbtital 1: 3.68857e-05
+Residual for orbtital 2: 9.72092e-05
+Residual for orbtital 3: 9.88045e-04
+Residual for orbtital 4: 4.58976e-04
+Residual for orbtital 5: 4.58976e-04
+Residual for orbtital 6: 1.02992e-03
+Residual for orbtital 7: 3.95965e-02
+Residual for orbtital 8: 1.30047e-01
+Residual for orbtital 9: 1.09181e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15957452  -9.91540117  -1.18795799  -0.60323155  -0.51325085
+  -0.51325085  -0.39000288  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3720310916778735
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   6.59700755e-23
+   6.59700755e-23   0.00000000e+00]
+Orbital 0 error: -4.400e-01
+Orbital 1 error: -8.213e-03
+Orbital 2 error: -1.126e-01
+Orbital 3 error: -8.169e-02
+Orbital 4 error: -6.770e-02
+Orbital 5 error: -6.770e-02
+Orbital 6 error: -5.486e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 9 iterations in SCF #4:  -64.565340 H, -1.67e+00 H
+Band energy residual:  0.000935747218477
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.59164e-06
+Residual for orbtital 1: 2.42627e-05
+Residual for orbtital 2: 7.44949e-05
+Residual for orbtital 3: 8.62073e-04
+Residual for orbtital 4: 4.05437e-04
+Residual for orbtital 5: 4.05437e-04
+Residual for orbtital 6: 8.92363e-04
+Residual for orbtital 7: 7.16690e-02
+Residual for orbtital 8: 1.14978e-01
+Residual for orbtital 9: 2.33304e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15937154  -9.91516827  -1.18797673  -0.60313879  -0.51314942
+  -0.51314942  -0.38990083  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37199975518571365
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   7.28319029e-23
+   7.28319029e-23   0.00000000e+00]
+Orbital 0 error: -4.398e-01
+Orbital 1 error: -7.980e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.160e-02
+Orbital 4 error: -6.760e-02
+Orbital 5 error: -6.760e-02
+Orbital 6 error: -5.476e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 10 iterations in SCF #4:  -64.563710 H, -1.66e+00 H
+Band energy residual:  0.000814813646151
+
+Computing Vcoulomb and updating Veff took:    18.5480 seconds. 
+Need to re-order orbitals.
+Orbital Energy:            [-18.96340323 -10.04232968  -1.18813116  -0.60721985  -0.51771779
+  -0.51771779  -0.39519396  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37723536391686324
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.81104512e-30
+   4.81104512e-30   0.00000000e+00]
+Band energies after Veff update: -64.463427 H, -1.56e+00 H
+Need to re-order orbitals.
+Orbital Energy:            [-18.96340323 -10.04232968  -1.18813116  -0.60721985  -0.51771779
+  -0.51771779  -0.39519396  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37723536391686324
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.81104512e-30
+   4.81104512e-30   0.00000000e+00]
+Orbital Energies:  [-18.96340323 -10.04232968  -1.18813116  -0.60721985  -0.51771779
+  -0.51771779  -0.39519396  -0.35563778  -0.35563778  -0.09421258]
+Updated V_coulomb:                      149.6225494326 Hartree
+Updated V_x:                           -15.8114472569 Hartree
+Updated V_c:                           -1.0427702918 Hartree
+Updated E_x:                           -11.8585854427 H, 1.3849359928e-01 H
+Updated E_c:                           -0.9340820080 H, 8.0635526503e-03 H
+Updated Band Energy:                   -64.4634269277 H, -1.5643791274e+00 H
+Total Energy:                          -112.6950667091 H, -2.2306096734e-01 H
+Energy Residual:                        1.574e-04
+
+
+
+SCF Count  5
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.18808e-03
+Residual for orbtital 1: 7.57756e-03
+Residual for orbtital 2: 1.29893e-03
+Residual for orbtital 3: 3.03243e-03
+Residual for orbtital 4: 3.46909e-03
+Residual for orbtital 5: 3.46909e-03
+Residual for orbtital 6: 6.98971e-03
+Residual for orbtital 7: 1.04024e-01
+Residual for orbtital 8: 1.20913e-01
+Residual for orbtital 9: 1.46157e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.13892876  -9.90291496  -1.18792422  -0.60403091  -0.51454899
+  -0.51454899  -0.39018854  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3718354221667462
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.22373383e-22
+   1.22373383e-22   0.00000000e+00]
+Orbital 0 error: -4.194e-01
+Orbital 1 error: 4.273e-03
+Orbital 2 error: -1.126e-01
+Orbital 3 error: -8.249e-02
+Orbital 4 error: -6.900e-02
+Orbital 5 error: -6.900e-02
+Orbital 6 error: -5.505e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 1 iterations in SCF #5:  -64.506171 H, -1.61e+00 H
+Band energy residual:  0.0287696256644
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.93768e-03
+Residual for orbtital 1: 2.84927e-03
+Residual for orbtital 2: 2.26741e-03
+Residual for orbtital 3: 2.36821e-03
+Residual for orbtital 4: 7.44306e-04
+Residual for orbtital 5: 7.44306e-04
+Residual for orbtital 6: 3.39418e-03
+Residual for orbtital 7: 9.20028e-02
+Residual for orbtital 8: 2.22070e-01
+Residual for orbtital 9: 1.83342e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.194335    -9.93980066  -1.18512487  -0.60356459  -0.51416583
+  -0.51416583  -0.39206139  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3805267894134017
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.47366362e-34
+   1.47366362e-34   0.00000000e+00]
+Orbital 0 error: -4.748e-01
+Orbital 1 error: -3.261e-02
+Orbital 2 error: -1.098e-01
+Orbital 3 error: -8.202e-02
+Orbital 4 error: -6.861e-02
+Orbital 5 error: -6.861e-02
+Orbital 6 error: -5.692e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 2 iterations in SCF #5:  -64.686436 H, -1.79e+00 H
+Band energy residual:  -0.0901328114907
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.16915e-03
+Residual for orbtital 1: 1.01559e-03
+Residual for orbtital 2: 9.68622e-04
+Residual for orbtital 3: 9.14263e-04
+Residual for orbtital 4: 5.17638e-04
+Residual for orbtital 5: 5.17638e-04
+Residual for orbtital 6: 2.08325e-03
+Residual for orbtital 7: 1.44550e-01
+Residual for orbtital 8: 1.81077e-01
+Residual for orbtital 9: 1.62154e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.18158931  -9.91959107  -1.18682619  -0.60321101  -0.51383755
+  -0.51383755  -0.39052868  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3722595729852882
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   3.20633647e-23
+   3.20633647e-23   0.00000000e+00]
+Orbital 0 error: -4.621e-01
+Orbital 1 error: -1.240e-02
+Orbital 2 error: -1.115e-01
+Orbital 3 error: -8.167e-02
+Orbital 4 error: -6.828e-02
+Orbital 5 error: -6.828e-02
+Orbital 6 error: -5.539e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 3 iterations in SCF #5:  -64.618843 H, -1.72e+00 H
+Band energy residual:  0.0337968113012
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.64650e-04
+Residual for orbtital 1: 4.63938e-04
+Residual for orbtital 2: 7.56242e-04
+Residual for orbtital 3: 6.84619e-04
+Residual for orbtital 4: 4.15159e-04
+Residual for orbtital 5: 4.15159e-04
+Residual for orbtital 6: 9.38185e-04
+Residual for orbtital 7: 1.01193e-01
+Residual for orbtital 8: 1.60170e-01
+Residual for orbtital 9: 8.17868e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.16260656  -9.92190997  -1.187997    -0.60338826  -0.51359519
+  -0.51359519  -0.39054914  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3722184450852185
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   3.65099845e-23
+   3.65099845e-23   0.00000000e+00]
+Orbital 0 error: -4.431e-01
+Orbital 1 error: -1.472e-02
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.185e-02
+Orbital 4 error: -6.804e-02
+Orbital 5 error: -6.804e-02
+Orbital 6 error: -5.541e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 4 iterations in SCF #5:  -64.587283 H, -1.69e+00 H
+Band energy residual:  0.0157800543094
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.16092e-04
+Residual for orbtital 1: 2.24500e-04
+Residual for orbtital 2: 5.94132e-04
+Residual for orbtital 3: 4.87483e-04
+Residual for orbtital 4: 3.47412e-04
+Residual for orbtital 5: 3.47412e-04
+Residual for orbtital 6: 7.63881e-04
+Residual for orbtital 7: 8.95169e-02
+Residual for orbtital 8: 1.07046e-01
+Residual for orbtital 9: 1.48396e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.1559979   -9.91801783  -1.18817575  -0.60329108  -0.51340489
+  -0.51340489  -0.39013026  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3720230987731711
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   6.76563247e-23
+   6.76563247e-23   0.00000000e+00]
+Orbital 0 error: -4.365e-01
+Orbital 1 error: -1.083e-02
+Orbital 2 error: -1.129e-01
+Orbital 3 error: -8.175e-02
+Orbital 4 error: -6.785e-02
+Orbital 5 error: -6.785e-02
+Orbital 6 error: -5.499e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 5 iterations in SCF #5:  -64.564845 H, -1.67e+00 H
+Band energy residual:  0.0112187065536
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.24174e-04
+Residual for orbtital 1: 1.39717e-04
+Residual for orbtital 2: 3.38177e-04
+Residual for orbtital 3: 4.00450e-04
+Residual for orbtital 4: 2.97096e-04
+Residual for orbtital 5: 2.97096e-04
+Residual for orbtital 6: 5.79698e-04
+Residual for orbtital 7: 7.45647e-02
+Residual for orbtital 8: 1.55275e-01
+Residual for orbtital 9: 1.31252e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15697142  -9.91735781  -1.18814015  -0.60316537  -0.51325245
+  -0.51325245  -0.39000273  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3719968437584774
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   7.35045750e-23
+   7.35045750e-23   0.00000000e+00]
+Orbital 0 error: -4.374e-01
+Orbital 1 error: -1.017e-02
+Orbital 2 error: -1.128e-01
+Orbital 3 error: -8.162e-02
+Orbital 4 error: -6.770e-02
+Orbital 5 error: -6.770e-02
+Orbital 6 error: -5.486e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 6 iterations in SCF #5:  -64.564285 H, -1.67e+00 H
+Band energy residual:  0.000280222296325
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.11102e-05
+Residual for orbtital 1: 8.63072e-05
+Residual for orbtital 2: 2.16344e-04
+Residual for orbtital 3: 3.26963e-04
+Residual for orbtital 4: 2.57148e-04
+Residual for orbtital 5: 2.57148e-04
+Residual for orbtital 6: 4.57700e-04
+Residual for orbtital 7: 8.57384e-02
+Residual for orbtital 8: 1.37349e-01
+Residual for orbtital 9: 4.37217e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15893729  -9.91626737  -1.1880153   -0.60302327  -0.51312877
+  -0.51312877  -0.38984205  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3719908237509464
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   7.49152396e-23
+   7.49152396e-23   0.00000000e+00]
+Orbital 0 error: -4.394e-01
+Orbital 1 error: -9.079e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.148e-02
+Orbital 4 error: -6.758e-02
+Orbital 5 error: -6.758e-02
+Orbital 6 error: -5.470e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 7 iterations in SCF #5:  -64.564686 H, -1.67e+00 H
+Band energy residual:  -0.000200438419725
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.30088e-05
+Residual for orbtital 1: 5.68998e-05
+Residual for orbtital 2: 1.46206e-04
+Residual for orbtital 3: 2.74309e-04
+Residual for orbtital 4: 2.24225e-04
+Residual for orbtital 5: 2.24225e-04
+Residual for orbtital 6: 3.63103e-04
+Residual for orbtital 7: 7.58457e-02
+Residual for orbtital 8: 5.64408e-02
+Residual for orbtital 9: 1.23167e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15969427  -9.91578221  -1.18800337  -0.60292262  -0.51302758
+  -0.51302758  -0.38974364  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3719539765264711
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   8.41593232e-23
+   8.41593232e-23   0.00000000e+00]
+Orbital 0 error: -4.402e-01
+Orbital 1 error: -8.594e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.138e-02
+Orbital 4 error: -6.747e-02
+Orbital 5 error: -6.747e-02
+Orbital 6 error: -5.460e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 8 iterations in SCF #5:  -64.564403 H, -1.67e+00 H
+Band energy residual:  0.000141553378214
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.29360e-05
+Residual for orbtital 1: 3.68847e-05
+Residual for orbtital 2: 1.13312e-04
+Residual for orbtital 3: 2.32443e-04
+Residual for orbtital 4: 1.96460e-04
+Residual for orbtital 5: 1.96460e-04
+Residual for orbtital 6: 2.91959e-04
+Residual for orbtital 7: 3.95835e-02
+Residual for orbtital 8: 1.29778e-01
+Residual for orbtital 9: 1.08943e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15962826  -9.91538437  -1.18800801  -0.6028487   -0.51294427
+  -0.51294427  -0.38966086  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37191201146370484
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   9.60843968e-23
+   9.60843968e-23   0.00000000e+00]
+Orbital 0 error: -4.401e-01
+Orbital 1 error: -8.196e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.131e-02
+Orbital 4 error: -6.739e-02
+Orbital 5 error: -6.739e-02
+Orbital 6 error: -5.452e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 9 iterations in SCF #5:  -64.562837 H, -1.66e+00 H
+Band energy residual:  0.000782534487456
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.59097e-06
+Residual for orbtital 1: 2.42619e-05
+Residual for orbtital 2: 8.99722e-05
+Residual for orbtital 3: 2.01762e-04
+Residual for orbtital 4: 1.72689e-04
+Residual for orbtital 5: 1.72689e-04
+Residual for orbtital 6: 2.39255e-04
+Residual for orbtital 7: 7.15800e-02
+Residual for orbtital 8: 1.14798e-01
+Residual for orbtital 9: 2.33164e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15942527  -9.91515147  -1.18802186  -0.60279283  -0.51287534
+  -0.51287534  -0.3896031   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37176662116384274
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.52068845e-22
+   1.52068845e-22   0.00000000e+00]
+Orbital 0 error: -4.399e-01
+Orbital 1 error: -7.963e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.125e-02
+Orbital 4 error: -6.732e-02
+Orbital 5 error: -6.732e-02
+Orbital 6 error: -5.446e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 10 iterations in SCF #5:  -64.561490 H, -1.66e+00 H
+Band energy residual:  0.000673515835402
+
+Computing Vcoulomb and updating Veff took:    18.5721 seconds. 
+Need to re-order orbitals.
+Orbital Energy:            [-18.96341885 -10.04232399  -1.18813787  -0.60723939  -0.51771754
+  -0.51771754  -0.39517773  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37727743956419124
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.21247310e-30
+   4.21247310e-30   0.00000000e+00]
+Band energies after Veff update: -64.463466 H, -1.56e+00 H
+Need to re-order orbitals.
+Orbital Energy:            [-18.96341885 -10.04232399  -1.18813787  -0.60723939  -0.51771754
+  -0.51771754  -0.39517773  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37727743956419124
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.21247310e-30
+   4.21247310e-30   0.00000000e+00]
+Orbital Energies:  [-18.96341885 -10.04232399  -1.18813787  -0.60723939  -0.51771754
+  -0.51771754  -0.39517773  -0.35563778  -0.35563778  -0.09421258]
+Updated V_coulomb:                      149.6224391419 Hartree
+Updated V_x:                           -15.8114385248 Hartree
+Updated V_c:                           -1.0427700130 Hartree
+Updated E_x:                           -11.8585788936 H, 1.3850014832e-01 H
+Updated E_c:                           -0.9340817477 H, 8.0638129489e-03 H
+Updated Band Energy:                   -64.4634658140 H, -1.5644180136e+00 H
+Total Energy:                          -112.6950526516 H, -2.2304690977e-01 H
+Energy Residual:                        1.406e-05
+
+
+
+SCF Count  6
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.18808e-03
+Residual for orbtital 1: 7.57760e-03
+Residual for orbtital 2: 1.29848e-03
+Residual for orbtital 3: 3.27651e-03
+Residual for orbtital 4: 3.68420e-03
+Residual for orbtital 5: 3.68420e-03
+Residual for orbtital 6: 7.32573e-03
+Residual for orbtital 7: 1.03979e-01
+Residual for orbtital 8: 1.20834e-01
+Residual for orbtital 9: 1.46186e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.13894313  -9.90290887  -1.18796144  -0.6037948   -0.51438788
+  -0.51438788  -0.3899604   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3718313250978035
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.23966878e-22
+   1.23966878e-22   0.00000000e+00]
+Orbital 0 error: -4.194e-01
+Orbital 1 error: 4.279e-03
+Orbital 2 error: -1.126e-01
+Orbital 3 error: -8.225e-02
+Orbital 4 error: -6.884e-02
+Orbital 5 error: -6.884e-02
+Orbital 6 error: -5.482e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 1 iterations in SCF #6:  -64.504689 H, -1.61e+00 H
+Band energy residual:  0.0284008145526
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.93767e-03
+Residual for orbtital 1: 2.84928e-03
+Residual for orbtital 2: 2.25892e-03
+Residual for orbtital 3: 2.04051e-03
+Residual for orbtital 4: 7.11038e-04
+Residual for orbtital 5: 7.11038e-04
+Residual for orbtital 6: 3.25189e-03
+Residual for orbtital 7: 9.19726e-02
+Residual for orbtital 8: 2.22062e-01
+Residual for orbtital 9: 1.83090e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.19435029  -9.9397949   -1.18514724  -0.60335442  -0.51401262
+  -0.51401262  -0.3918824   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.38052709260890266
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.47225338e-34
+   1.47225338e-34   0.00000000e+00]
+Orbital 0 error: -4.748e-01
+Orbital 1 error: -3.261e-02
+Orbital 2 error: -1.098e-01
+Orbital 3 error: -8.181e-02
+Orbital 4 error: -6.846e-02
+Orbital 5 error: -6.846e-02
+Orbital 6 error: -5.674e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 2 iterations in SCF #6:  -64.685109 H, -1.79e+00 H
+Band energy residual:  -0.0902100911647
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.16914e-03
+Residual for orbtital 1: 1.01559e-03
+Residual for orbtital 2: 9.67829e-04
+Residual for orbtital 3: 6.83377e-04
+Residual for orbtital 4: 4.56721e-04
+Residual for orbtital 5: 4.56721e-04
+Residual for orbtital 6: 1.99028e-03
+Residual for orbtital 7: 1.44558e-01
+Residual for orbtital 8: 1.80902e-01
+Residual for orbtital 9: 1.61969e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.18160532  -9.91958529  -1.1868498   -0.60300383  -0.51369254
+  -0.51369254  -0.39036293  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3722103841207305
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   3.74512577e-23
+   3.74512577e-23   0.00000000e+00]
+Orbital 0 error: -4.621e-01
+Orbital 1 error: -1.240e-02
+Orbital 2 error: -1.115e-01
+Orbital 3 error: -8.146e-02
+Orbital 4 error: -6.814e-02
+Orbital 5 error: -6.814e-02
+Orbital 6 error: -5.522e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 3 iterations in SCF #6:  -64.617585 H, -1.72e+00 H
+Band energy residual:  0.033762241542
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.64650e-04
+Residual for orbtital 1: 4.63936e-04
+Residual for orbtital 2: 7.60128e-04
+Residual for orbtital 3: 4.35526e-04
+Residual for orbtital 4: 3.43851e-04
+Residual for orbtital 5: 3.43851e-04
+Residual for orbtital 6: 7.50053e-04
+Residual for orbtital 7: 1.01143e-01
+Residual for orbtital 8: 1.60045e-01
+Residual for orbtital 9: 8.17806e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.1626227   -9.92190426  -1.18801636  -0.60319562  -0.51346085
+  -0.51346085  -0.3904002   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3722639087271299
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   3.16273703e-23
+   3.16273703e-23   0.00000000e+00]
+Orbital 0 error: -4.431e-01
+Orbital 1 error: -1.472e-02
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.165e-02
+Orbital 4 error: -6.791e-02
+Orbital 5 error: -6.791e-02
+Orbital 6 error: -5.526e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 4 iterations in SCF #6:  -64.586122 H, -1.69e+00 H
+Band energy residual:  0.0157314234996
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.16091e-04
+Residual for orbtital 1: 2.24498e-04
+Residual for orbtital 2: 6.00136e-04
+Residual for orbtital 3: 3.59305e-04
+Residual for orbtital 4: 2.73187e-04
+Residual for orbtital 5: 2.73187e-04
+Residual for orbtital 6: 6.44070e-04
+Residual for orbtital 7: 8.94841e-02
+Residual for orbtital 8: 1.07040e-01
+Residual for orbtital 9: 1.48249e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15601393  -9.91801214  -1.18819353  -0.60311335  -0.51328183
+  -0.51328183  -0.3899982   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3719703089145868
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   7.99289478e-23
+   7.99289478e-23   0.00000000e+00]
+Orbital 0 error: -4.365e-01
+Orbital 1 error: -1.082e-02
+Orbital 2 error: -1.129e-01
+Orbital 3 error: -8.157e-02
+Orbital 4 error: -6.773e-02
+Orbital 5 error: -6.773e-02
+Orbital 6 error: -5.486e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 5 iterations in SCF #6:  -64.563790 H, -1.66e+00 H
+Band energy residual:  0.0111660152963
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.24173e-04
+Residual for orbtital 1: 1.39715e-04
+Residual for orbtital 2: 3.44917e-04
+Residual for orbtital 3: 2.70149e-04
+Residual for orbtital 4: 2.23862e-04
+Residual for orbtital 5: 2.23862e-04
+Residual for orbtital 6: 4.56609e-04
+Residual for orbtital 7: 7.45608e-02
+Residual for orbtital 8: 1.55164e-01
+Residual for orbtital 9: 1.31147e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15698736  -9.91735214  -1.18815582  -0.60300373  -0.51314061
+  -0.51314061  -0.38988562  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3719867415918093
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   7.58871812e-23
+   7.58871812e-23   0.00000000e+00]
+Orbital 0 error: -4.375e-01
+Orbital 1 error: -1.016e-02
+Orbital 2 error: -1.128e-01
+Orbital 3 error: -8.146e-02
+Orbital 4 error: -6.759e-02
+Orbital 5 error: -6.759e-02
+Orbital 6 error: -5.474e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 6 iterations in SCF #6:  -64.563332 H, -1.66e+00 H
+Band energy residual:  0.000228930790939
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.11102e-05
+Residual for orbtital 1: 8.63060e-05
+Residual for orbtital 2: 2.22240e-04
+Residual for orbtital 3: 2.08235e-04
+Residual for orbtital 4: 1.87111e-04
+Residual for orbtital 5: 1.87111e-04
+Residual for orbtital 6: 3.45036e-04
+Residual for orbtital 7: 8.57045e-02
+Residual for orbtital 8: 1.37272e-01
+Residual for orbtital 9: 4.37154e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15895322  -9.91626171  -1.18802946  -0.60287741  -0.51302773
+  -0.51302773  -0.38973879  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37195088505152674
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   8.49849189e-23
+   8.49849189e-23   0.00000000e+00]
+Orbital 0 error: -4.394e-01
+Orbital 1 error: -9.074e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.134e-02
+Orbital 4 error: -6.747e-02
+Orbital 5 error: -6.747e-02
+Orbital 6 error: -5.460e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 7 iterations in SCF #6:  -64.563832 H, -1.66e+00 H
+Band energy residual:  -0.000250149991793
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.30088e-05
+Residual for orbtital 1: 5.68990e-05
+Residual for orbtital 2: 1.52012e-04
+Residual for orbtital 3: 1.56675e-04
+Residual for orbtital 4: 1.58618e-04
+Residual for orbtital 5: 1.58618e-04
+Residual for orbtital 6: 2.53162e-04
+Residual for orbtital 7: 7.58245e-02
+Residual for orbtital 8: 5.64335e-02
+Residual for orbtital 9: 1.23079e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15971021  -9.91577656  -1.18801612  -0.60279191  -0.51293674
+  -0.51293674  -0.38965265  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37190490220991723
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   9.82658140e-23
+   9.82658140e-23   0.00000000e+00]
+Orbital 0 error: -4.402e-01
+Orbital 1 error: -8.588e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.125e-02
+Orbital 4 error: -6.738e-02
+Orbital 5 error: -6.738e-02
+Orbital 6 error: -5.451e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 8 iterations in SCF #6:  -64.563642 H, -1.66e+00 H
+Band energy residual:  9.5118664504e-05
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.29359e-05
+Residual for orbtital 1: 3.68842e-05
+Residual for orbtital 2: 1.18734e-04
+Residual for orbtital 3: 1.22127e-04
+Residual for orbtital 4: 1.35905e-04
+Residual for orbtital 5: 1.35905e-04
+Residual for orbtital 6: 1.86248e-04
+Residual for orbtital 7: 3.95780e-02
+Residual for orbtital 8: 1.29709e-01
+Residual for orbtital 9: 1.08882e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15964421  -9.91537872  -1.1880196   -0.60273215  -0.51286294
+  -0.51286294  -0.3895808   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37168639120028346
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.95914751e-22
+   1.95914751e-22   0.00000000e+00]
+Orbital 0 error: -4.401e-01
+Orbital 1 error: -8.191e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.119e-02
+Orbital 4 error: -6.731e-02
+Orbital 5 error: -6.731e-02
+Orbital 6 error: -5.444e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 9 iterations in SCF #6:  -64.562163 H, -1.66e+00 H
+Band energy residual:  0.000739557238738
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.59096e-06
+Residual for orbtital 1: 2.42615e-05
+Residual for orbtital 2: 9.50251e-05
+Residual for orbtital 3: 9.75820e-05
+Residual for orbtital 4: 1.17409e-04
+Residual for orbtital 5: 1.17409e-04
+Residual for orbtital 6: 1.35859e-04
+Residual for orbtital 7: 7.15573e-02
+Residual for orbtital 8: 1.14752e-01
+Residual for orbtital 9: 2.33119e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15944123  -9.91514582  -1.18803244  -0.60268935  -0.5128028
+  -0.5128028   -0.38953268  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3718090708012686
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.32991864e-22
+   1.32991864e-22   0.00000000e+00]
+Orbital 0 error: -4.399e-01
+Orbital 1 error: -7.958e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.115e-02
+Orbital 4 error: -6.725e-02
+Orbital 5 error: -6.725e-02
+Orbital 6 error: -5.439e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 10 iterations in SCF #6:  -64.560894 H, -1.66e+00 H
+Band energy residual:  0.00063423958435
+
+Computing Vcoulomb and updating Veff took:    18.5294 seconds. 
+Need to re-order orbitals.
+Orbital Energy:            [-18.96342311 -10.04232238  -1.18813951  -0.60724272  -0.51771702
+  -0.51771702  -0.39517447  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37723710608524674
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.78465062e-30
+   4.78465062e-30   0.00000000e+00]
+Band energies after Veff update: -64.463472 H, -1.56e+00 H
+Need to re-order orbitals.
+Orbital Energy:            [-18.96342311 -10.04232238  -1.18813951  -0.60724272  -0.51771702
+  -0.51771702  -0.39517447  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37723710608524674
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.78465062e-30
+   4.78465062e-30   0.00000000e+00]
+Orbital Energies:  [-18.96342311 -10.04232238  -1.18813951  -0.60724272  -0.51771702
+  -0.51771702  -0.39517447  -0.35563778  -0.35563778  -0.09421258]
+Updated V_coulomb:                      149.6224096706 Hartree
+Updated V_x:                           -15.8114361991 Hartree
+Updated V_c:                           -1.0427699395 Hartree
+Updated E_x:                           -11.8585771493 H, 1.3850189261e-01 H
+Updated E_c:                           -0.9340816791 H, 8.0638815767e-03 H
+Updated Band Energy:                   -64.4634724461 H, -1.5644246457e+00 H
+Total Energy:                          -112.6950451343 H, -2.2303939255e-01 H
+Energy Residual:                        7.517e-06
+
+
+
+SCF Count  7
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.18809e-03
+Residual for orbtital 1: 7.57762e-03
+Residual for orbtital 2: 1.29851e-03
+Residual for orbtital 3: 3.36636e-03
+Residual for orbtital 4: 3.74311e-03
+Residual for orbtital 5: 3.74311e-03
+Residual for orbtital 6: 7.41371e-03
+Residual for orbtital 7: 1.03967e-01
+Residual for orbtital 8: 1.20813e-01
+Residual for orbtital 9: 1.46193e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.13894699  -9.90290708  -1.18796959  -0.60372512  -0.51434511
+  -0.51434511  -0.38990644  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3717855121167595
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.43262759e-22
+   1.43262759e-22   0.00000000e+00]
+Orbital 0 error: -4.194e-01
+Orbital 1 error: 4.281e-03
+Orbital 2 error: -1.126e-01
+Orbital 3 error: -8.218e-02
+Orbital 4 error: -6.879e-02
+Orbital 5 error: -6.879e-02
+Orbital 6 error: -5.476e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 1 iterations in SCF #7:  -64.504291 H, -1.61e+00 H
+Band energy residual:  0.0283016884631
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.93767e-03
+Residual for orbtital 1: 2.84928e-03
+Residual for orbtital 2: 2.25740e-03
+Residual for orbtital 3: 1.97173e-03
+Residual for orbtital 4: 7.09897e-04
+Residual for orbtital 5: 7.09897e-04
+Residual for orbtital 6: 3.22853e-03
+Residual for orbtital 7: 9.19647e-02
+Residual for orbtital 8: 2.22070e-01
+Residual for orbtital 9: 1.83024e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.19435444  -9.93979324  -1.18515214  -0.60329319  -0.51397204
+  -0.51397204  -0.39183954  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3805271747061828
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.47187176e-34
+   1.47187176e-34   0.00000000e+00]
+Orbital 0 error: -4.748e-01
+Orbital 1 error: -3.261e-02
+Orbital 2 error: -1.098e-01
+Orbital 3 error: -8.175e-02
+Orbital 4 error: -6.842e-02
+Orbital 5 error: -6.842e-02
+Orbital 6 error: -5.670e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 2 iterations in SCF #7:  -64.684753 H, -1.79e+00 H
+Band energy residual:  -0.0902312057618
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.16913e-03
+Residual for orbtital 1: 1.01560e-03
+Residual for orbtital 2: 9.67788e-04
+Residual for orbtital 3: 6.61716e-04
+Residual for orbtital 4: 4.48796e-04
+Residual for orbtital 5: 4.48796e-04
+Residual for orbtital 6: 1.98202e-03
+Residual for orbtital 7: 1.44561e-01
+Residual for orbtital 8: 1.80856e-01
+Residual for orbtital 9: 1.61921e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.18160968  -9.91958363  -1.18685499  -0.60294442  -0.51365419
+  -0.51365419  -0.39032301  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3721357953090788
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.73976765e-23
+   4.73976765e-23   0.00000000e+00]
+Orbital 0 error: -4.621e-01
+Orbital 1 error: -1.240e-02
+Orbital 2 error: -1.115e-01
+Orbital 3 error: -8.140e-02
+Orbital 4 error: -6.810e-02
+Orbital 5 error: -6.810e-02
+Orbital 6 error: -5.518e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 3 iterations in SCF #7:  -64.617248 H, -1.72e+00 H
+Band energy residual:  0.0337525101417
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.64650e-04
+Residual for orbtital 1: 4.63935e-04
+Residual for orbtital 2: 7.60936e-04
+Residual for orbtital 3: 4.07513e-04
+Residual for orbtital 4: 3.32326e-04
+Residual for orbtital 5: 3.32326e-04
+Residual for orbtital 6: 7.28875e-04
+Residual for orbtital 7: 1.01130e-01
+Residual for orbtital 8: 1.60013e-01
+Residual for orbtital 9: 8.17793e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.16262711  -9.92190263  -1.18802063  -0.60314095  -0.51342538
+  -0.51342538  -0.39036405  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37207495085781256
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   5.74379282e-23
+   5.74379282e-23   0.00000000e+00]
+Orbital 0 error: -4.431e-01
+Orbital 1 error: -1.471e-02
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.160e-02
+Orbital 4 error: -6.787e-02
+Orbital 5 error: -6.787e-02
+Orbital 6 error: -5.522e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 4 iterations in SCF #7:  -64.585812 H, -1.69e+00 H
+Band energy residual:  0.0157180079876
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.16091e-04
+Residual for orbtital 1: 2.24497e-04
+Residual for orbtital 2: 6.01370e-04
+Residual for orbtital 3: 3.69696e-04
+Residual for orbtital 4: 2.59720e-04
+Residual for orbtital 5: 2.59720e-04
+Residual for orbtital 6: 6.39355e-04
+Residual for orbtital 7: 8.94756e-02
+Residual for orbtital 8: 1.07039e-01
+Residual for orbtital 9: 1.48211e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15601831  -9.91801051  -1.18819748  -0.60306341  -0.51324938
+  -0.51324938  -0.38996594  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3719979512576204
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   7.32479633e-23
+   7.32479633e-23   0.00000000e+00]
+Orbital 0 error: -4.365e-01
+Orbital 1 error: -1.082e-02
+Orbital 2 error: -1.129e-01
+Orbital 3 error: -8.152e-02
+Orbital 4 error: -6.770e-02
+Orbital 5 error: -6.770e-02
+Orbital 6 error: -5.482e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 5 iterations in SCF #7:  -64.563509 H, -1.66e+00 H
+Band energy residual:  0.0111517266011
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.24173e-04
+Residual for orbtital 1: 1.39715e-04
+Residual for orbtital 2: 3.46325e-04
+Residual for orbtital 3: 2.78109e-04
+Residual for orbtital 4: 2.09456e-04
+Residual for orbtital 5: 2.09456e-04
+Residual for orbtital 6: 4.51639e-04
+Residual for orbtital 7: 7.45596e-02
+Residual for orbtital 8: 1.55135e-01
+Residual for orbtital 9: 1.31120e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15699171  -9.91735052  -1.18815932  -0.60295866  -0.51311114
+  -0.51311114  -0.38985683  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37198454630563704
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   7.64150714e-23
+   7.64150714e-23   0.00000000e+00]
+Orbital 0 error: -4.375e-01
+Orbital 1 error: -1.016e-02
+Orbital 2 error: -1.128e-01
+Orbital 3 error: -8.142e-02
+Orbital 4 error: -6.756e-02
+Orbital 5 error: -6.756e-02
+Orbital 6 error: -5.471e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 6 iterations in SCF #7:  -64.563079 H, -1.66e+00 H
+Band energy residual:  0.000215063793711
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.11102e-05
+Residual for orbtital 1: 8.63056e-05
+Residual for orbtital 2: 2.23498e-04
+Residual for orbtital 3: 2.17657e-04
+Residual for orbtital 4: 1.72461e-04
+Residual for orbtital 5: 1.72461e-04
+Residual for orbtital 6: 3.42218e-04
+Residual for orbtital 7: 8.56957e-02
+Residual for orbtital 8: 1.37252e-01
+Residual for orbtital 9: 4.37137e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15895756  -9.91626009  -1.18803265  -0.60283702  -0.51300113
+  -0.51300113  -0.38971325  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3719331481855971
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   8.98806274e-23
+   8.98806274e-23   0.00000000e+00]
+Orbital 0 error: -4.394e-01
+Orbital 1 error: -9.072e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.130e-02
+Orbital 4 error: -6.745e-02
+Orbital 5 error: -6.745e-02
+Orbital 6 error: -5.457e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 7 iterations in SCF #7:  -64.563606 H, -1.66e+00 H
+Band energy residual:  -0.000263509356913
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.30088e-05
+Residual for orbtital 1: 5.68987e-05
+Residual for orbtital 2: 1.53258e-04
+Residual for orbtital 3: 1.64278e-04
+Residual for orbtital 4: 1.44215e-04
+Residual for orbtital 5: 1.44215e-04
+Residual for orbtital 6: 2.50638e-04
+Residual for orbtital 7: 7.58190e-02
+Residual for orbtital 8: 5.64316e-02
+Residual for orbtital 9: 1.23056e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15971456  -9.91577494  -1.18801903  -0.60275593  -0.51291284
+  -0.51291284  -0.38963002  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37178302593340445
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.44391905e-22
+   1.44391905e-22   0.00000000e+00]
+Orbital 0 error: -4.402e-01
+Orbital 1 error: -8.587e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.121e-02
+Orbital 4 error: -6.736e-02
+Orbital 5 error: -6.736e-02
+Orbital 6 error: -5.449e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 8 iterations in SCF #7:  -64.563440 H, -1.66e+00 H
+Band energy residual:  8.26755711927e-05
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.29359e-05
+Residual for orbtital 1: 3.68840e-05
+Residual for orbtital 2: 1.19896e-04
+Residual for orbtital 3: 1.28979e-04
+Residual for orbtital 4: 1.22091e-04
+Residual for orbtital 5: 1.22091e-04
+Residual for orbtital 6: 1.84235e-04
+Residual for orbtital 7: 3.95764e-02
+Residual for orbtital 8: 1.29691e-01
+Residual for orbtital 9: 1.08866e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15964856  -9.91537711  -1.18802226  -0.60270024  -0.51284157
+  -0.51284157  -0.38956079  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3716676589037406
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   2.07853095e-22
+   2.07853095e-22   0.00000000e+00]
+Orbital 0 error: -4.401e-01
+Orbital 1 error: -8.189e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.116e-02
+Orbital 4 error: -6.729e-02
+Orbital 5 error: -6.729e-02
+Orbital 6 error: -5.442e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 9 iterations in SCF #7:  -64.561984 H, -1.66e+00 H
+Band energy residual:  0.000728076216774
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.59096e-06
+Residual for orbtital 1: 2.42614e-05
+Residual for orbtital 2: 9.61029e-05
+Residual for orbtital 3: 1.02381e-04
+Residual for orbtital 4: 1.04409e-04
+Residual for orbtital 5: 1.04409e-04
+Residual for orbtital 6: 1.33434e-04
+Residual for orbtital 7: 7.15514e-02
+Residual for orbtital 8: 1.14740e-01
+Residual for orbtital 9: 2.33106e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15944558  -9.91514421  -1.1880349   -0.60266115  -0.51278375
+  -0.51278375  -0.38951499  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3716914685820206
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.92798675e-22
+   1.92798675e-22   0.00000000e+00]
+Orbital 0 error: -4.399e-01
+Orbital 1 error: -7.956e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.112e-02
+Orbital 4 error: -6.723e-02
+Orbital 5 error: -6.723e-02
+Orbital 6 error: -5.437e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 10 iterations in SCF #7:  -64.560737 H, -1.66e+00 H
+Band energy residual:  0.000623770517493
+
+Computing Vcoulomb and updating Veff took:    18.5651 seconds. 
+Need to re-order orbitals.
+Orbital Energy:            [-18.96342424 -10.04232194  -1.18813991  -0.60724348  -0.51771686
+  -0.51771686  -0.39517367  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.377276691964623
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.22242938e-30
+   4.22242938e-30   0.00000000e+00]
+Band energies after Veff update: -64.463474 H, -1.56e+00 H
+Need to re-order orbitals.
+Orbital Energy:            [-18.96342424 -10.04232194  -1.18813991  -0.60724348  -0.51771686
+  -0.51771686  -0.39517367  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.377276691964623
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.22242938e-30
+   4.22242938e-30   0.00000000e+00]
+Orbital Energies:  [-18.96342424 -10.04232194  -1.18813991  -0.60724348  -0.51771686
+  -0.51771686  -0.39517367  -0.35563778  -0.35563778  -0.09421258]
+Updated V_coulomb:                      149.6224019122 Hartree
+Updated V_x:                           -15.8114355876 Hartree
+Updated V_c:                           -1.0427699202 Hartree
+Updated E_x:                           -11.8585766907 H, 1.3850235129e-01 H
+Updated E_c:                           -0.9340816611 H, 8.0638995478e-03 H
+Updated Band Energy:                   -64.4634739115 H, -1.5644261112e+00 H
+Total Energy:                          -112.6950428748 H, -2.2303713300e-01 H
+Energy Residual:                        2.260e-06
+
+
+
+SCF Count  8
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.18809e-03
+Residual for orbtital 1: 7.57762e-03
+Residual for orbtital 2: 1.29852e-03
+Residual for orbtital 3: 3.39141e-03
+Residual for orbtital 4: 3.75871e-03
+Residual for orbtital 5: 3.75871e-03
+Residual for orbtital 6: 7.43631e-03
+Residual for orbtital 7: 1.03964e-01
+Residual for orbtital 8: 1.20807e-01
+Residual for orbtital 9: 1.46195e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.138948    -9.90290659  -1.18797137  -0.60370621  -0.51433386
+  -0.51433386  -0.38989288  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3718292322144656
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.24788864e-22
+   1.24788864e-22   0.00000000e+00]
+Orbital 0 error: -4.194e-01
+Orbital 1 error: 4.282e-03
+Orbital 2 error: -1.126e-01
+Orbital 3 error: -8.216e-02
+Orbital 4 error: -6.878e-02
+Orbital 5 error: -6.878e-02
+Orbital 6 error: -5.475e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 1 iterations in SCF #8:  -64.504186 H, -1.61e+00 H
+Band energy residual:  0.0282755407413
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.93767e-03
+Residual for orbtital 1: 2.84928e-03
+Residual for orbtital 2: 2.25713e-03
+Residual for orbtital 3: 1.95536e-03
+Residual for orbtital 4: 7.10129e-04
+Residual for orbtital 5: 7.10129e-04
+Residual for orbtital 6: 3.22344e-03
+Residual for orbtital 7: 9.19626e-02
+Residual for orbtital 8: 2.22073e-01
+Residual for orbtital 9: 1.83007e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.19435553  -9.93979279  -1.18515322  -0.60327663  -0.51396138
+  -0.51396138  -0.39182871  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3805271964506659
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.47177070e-34
+   1.47177070e-34   0.00000000e+00]
+Orbital 0 error: -4.748e-01
+Orbital 1 error: -3.260e-02
+Orbital 2 error: -1.098e-01
+Orbital 3 error: -8.173e-02
+Orbital 4 error: -6.841e-02
+Orbital 5 error: -6.841e-02
+Orbital 6 error: -5.669e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 2 iterations in SCF #8:  -64.684659 H, -1.79e+00 H
+Band energy residual:  -0.0902368663803
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.16913e-03
+Residual for orbtital 1: 1.01560e-03
+Residual for orbtital 2: 9.67793e-04
+Residual for orbtital 3: 6.59201e-04
+Residual for orbtital 4: 4.47336e-04
+Residual for orbtital 5: 4.47336e-04
+Residual for orbtital 6: 1.98090e-03
+Residual for orbtital 7: 1.44562e-01
+Residual for orbtital 8: 1.80844e-01
+Residual for orbtital 9: 1.61908e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.18161084  -9.91958318  -1.18685612  -0.60292841  -0.51364412
+  -0.51364412  -0.3903129   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.372133947221165
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   4.76750887e-23
+   4.76750887e-23   0.00000000e+00]
+Orbital 0 error: -4.621e-01
+Orbital 1 error: -1.240e-02
+Orbital 2 error: -1.115e-01
+Orbital 3 error: -8.139e-02
+Orbital 4 error: -6.809e-02
+Orbital 5 error: -6.809e-02
+Orbital 6 error: -5.517e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 3 iterations in SCF #8:  -64.617159 H, -1.72e+00 H
+Band energy residual:  0.0337499298748
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 5.64650e-04
+Residual for orbtital 1: 4.63935e-04
+Residual for orbtital 2: 7.61089e-04
+Residual for orbtital 3: 4.03618e-04
+Residual for orbtital 4: 3.29904e-04
+Residual for orbtital 5: 3.29904e-04
+Residual for orbtital 6: 7.25550e-04
+Residual for orbtital 7: 1.01126e-01
+Residual for orbtital 8: 1.60004e-01
+Residual for orbtital 9: 8.17790e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.16262828  -9.92190219  -1.18802158  -0.60312627  -0.51341606
+  -0.51341606  -0.39035485  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3720747061246322
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   5.74823337e-23
+   5.74823337e-23   0.00000000e+00]
+Orbital 0 error: -4.431e-01
+Orbital 1 error: -1.471e-02
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.158e-02
+Orbital 4 error: -6.786e-02
+Orbital 5 error: -6.786e-02
+Orbital 6 error: -5.521e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 4 iterations in SCF #8:  -64.585731 H, -1.69e+00 H
+Band energy residual:  0.0157144240656
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.16091e-04
+Residual for orbtital 1: 2.24497e-04
+Residual for orbtital 2: 6.01610e-04
+Residual for orbtital 3: 3.75133e-04
+Residual for orbtital 4: 2.56728e-04
+Residual for orbtital 5: 2.56728e-04
+Residual for orbtital 6: 6.39998e-04
+Residual for orbtital 7: 8.94733e-02
+Residual for orbtital 8: 1.07039e-01
+Residual for orbtital 9: 1.48201e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15601947  -9.91801007  -1.18819835  -0.60305002  -0.51324086
+  -0.51324086  -0.38995771  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3719547242399359
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   8.39608496e-23
+   8.39608496e-23   0.00000000e+00]
+Orbital 0 error: -4.365e-01
+Orbital 1 error: -1.082e-02
+Orbital 2 error: -1.129e-01
+Orbital 3 error: -8.151e-02
+Orbital 4 error: -6.769e-02
+Orbital 5 error: -6.769e-02
+Orbital 6 error: -5.482e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 5 iterations in SCF #8:  -64.563435 H, -1.66e+00 H
+Band energy residual:  0.0111479441563
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.24172e-04
+Residual for orbtital 1: 1.39714e-04
+Residual for orbtital 2: 3.46603e-04
+Residual for orbtital 3: 2.82981e-04
+Residual for orbtital 4: 2.06140e-04
+Residual for orbtital 5: 2.06140e-04
+Residual for orbtital 6: 4.52365e-04
+Residual for orbtital 7: 7.45592e-02
+Residual for orbtital 8: 1.55127e-01
+Residual for orbtital 9: 1.31113e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15699287  -9.91735008  -1.18816011  -0.60294661  -0.51310341
+  -0.51310341  -0.38984946  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37196184245781183
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   8.20946666e-23
+   8.20946666e-23   0.00000000e+00]
+Orbital 0 error: -4.375e-01
+Orbital 1 error: -1.016e-02
+Orbital 2 error: -1.128e-01
+Orbital 3 error: -8.140e-02
+Orbital 4 error: -6.755e-02
+Orbital 5 error: -6.755e-02
+Orbital 6 error: -5.471e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 6 iterations in SCF #8:  -64.563012 H, -1.66e+00 H
+Band energy residual:  0.000211389797848
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.11102e-05
+Residual for orbtital 1: 8.63055e-05
+Residual for orbtital 2: 2.23749e-04
+Residual for orbtital 3: 2.22818e-04
+Residual for orbtital 4: 1.68998e-04
+Residual for orbtital 5: 1.68998e-04
+Residual for orbtital 6: 3.43490e-04
+Residual for orbtital 7: 8.56934e-02
+Residual for orbtital 8: 1.37247e-01
+Residual for orbtital 9: 4.37133e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15895872  -9.91625966  -1.18803337  -0.60282624  -0.51299415
+  -0.51299415  -0.3897067   -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37192717550957866
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   9.15918829e-23
+   9.15918829e-23   0.00000000e+00]
+Orbital 0 error: -4.394e-01
+Orbital 1 error: -9.072e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.128e-02
+Orbital 4 error: -6.744e-02
+Orbital 5 error: -6.744e-02
+Orbital 6 error: -5.456e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 7 iterations in SCF #8:  -64.563546 H, -1.66e+00 H
+Band energy residual:  -0.000267040506586
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 2.30088e-05
+Residual for orbtital 1: 5.68986e-05
+Residual for orbtital 2: 1.53508e-04
+Residual for orbtital 3: 1.69027e-04
+Residual for orbtital 4: 1.40739e-04
+Residual for orbtital 5: 1.40739e-04
+Residual for orbtital 6: 2.52059e-04
+Residual for orbtital 7: 7.58175e-02
+Residual for orbtital 8: 5.64312e-02
+Residual for orbtital 9: 1.23050e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15971571  -9.91577451  -1.18801969  -0.60274634  -0.51290658
+  -0.51290658  -0.38962421  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3717767547877859
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.47279757e-22
+   1.47279757e-22   0.00000000e+00]
+Orbital 0 error: -4.402e-01
+Orbital 1 error: -8.586e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.120e-02
+Orbital 4 error: -6.735e-02
+Orbital 5 error: -6.735e-02
+Orbital 6 error: -5.448e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 8 iterations in SCF #8:  -64.563387 H, -1.66e+00 H
+Band energy residual:  7.93881914802e-05
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 1.29359e-05
+Residual for orbtital 1: 3.68839e-05
+Residual for orbtital 2: 1.20129e-04
+Residual for orbtital 3: 1.33458e-04
+Residual for orbtital 4: 1.18701e-04
+Residual for orbtital 5: 1.18701e-04
+Residual for orbtital 6: 1.85858e-04
+Residual for orbtital 7: 3.95759e-02
+Residual for orbtital 8: 1.29686e-01
+Residual for orbtital 9: 1.08862e-01
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15964971  -9.91537667  -1.18802288  -0.60269175  -0.51283596
+  -0.51283596  -0.38955563  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37166139686680383
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   2.12004078e-22
+   2.12004078e-22   0.00000000e+00]
+Orbital 0 error: -4.401e-01
+Orbital 1 error: -8.189e-03../src/dataStructures/TreeStruct_CC.py:125: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+../src/dataStructures/TreeStruct_CC.py:140: RuntimeWarning: overflow encountered in exp
+  self.occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
+
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.115e-02
+Orbital 4 error: -6.728e-02
+Orbital 5 error: -6.728e-02
+Orbital 6 error: -5.441e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 9 iterations in SCF #8:  -64.561937 H, -1.66e+00 H
+Band energy residual:  0.000725045866666
+
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Residual for orbtital 0: 6.59096e-06
+Residual for orbtital 1: 2.42614e-05
+Residual for orbtital 2: 9.63202e-05
+Residual for orbtital 3: 1.06260e-04
+Residual for orbtital 4: 1.01174e-04
+Residual for orbtital 5: 1.01174e-04
+Residual for orbtital 6: 1.35060e-04
+Residual for orbtital 7: 7.15498e-02
+Residual for orbtital 8: 1.14737e-01
+Residual for orbtital 9: 2.33103e-02
+
+
+Need to re-order orbitals.
+Orbital Energy:            [-19.15944673  -9.91514378  -1.18803547  -0.60265365  -0.51277875
+  -0.51277875  -0.38951042  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.37168504980918793
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.96746363e-22
+   1.96746363e-22   0.00000000e+00]
+Orbital 0 error: -4.399e-01
+Orbital 1 error: -7.956e-03
+Orbital 2 error: -1.127e-01
+Orbital 3 error: -8.111e-02
+Orbital 4 error: -6.723e-02
+Orbital 5 error: -6.723e-02
+Orbital 6 error: -5.437e-02
+Orbital 7 error: -2.729e-01
+Orbital 8 error: -2.729e-01
+Orbital 9 error: -1.022e-01
+Band energy after 10 iterations in SCF #8:  -64.560695 H, -1.66e+00 H
+Band energy residual:  0.0006210086826
+
+Computing Vcoulomb and updating Veff took:    18.5192 seconds. 
+Need to re-order orbitals.
+Orbital Energy:            [-18.96342453 -10.04232182  -1.18814001  -0.60724367  -0.51771682
+  -0.51771682  -0.39517347  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3772057139437983
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   5.28325076e-30
+   5.28325076e-30   0.00000000e+00]
+Band energies after Veff update: -64.463474 H, -1.56e+00 H
+Need to re-order orbitals.
+Orbital Energy:            [-18.96342453 -10.04232182  -1.18814001  -0.60724367  -0.51771682
+  -0.51771682  -0.39517347  -0.35563778  -0.35563778  -0.09421258]
+Fermi energy:  -0.3772057139437983
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   5.28325076e-30
+   5.28325076e-30   0.00000000e+00]
+Orbital Energies:  [-18.96342453 -10.04232182  -1.18814001  -0.60724367  -0.51771682
+  -0.51771682  -0.39517347  -0.35563778  -0.35563778  -0.09421258]
+Updated V_coulomb:                      149.6223998777 Hartree
+Updated V_x:                           -15.8114354272 Hartree
+Updated V_c:                           -1.0427699152 Hartree
+Updated E_x:                           -11.8585765704 H, 1.3850247154e-01 H
+Updated E_c:                           -0.9340816564 H, 8.0639042503e-03 H
+Updated Band Energy:                   -64.4634742726 H, -1.5644264723e+00 H
+Total Energy:                          -112.6950422590 H, -2.2303651726e-01 H
+Energy Residual:                        6.157e-07
+
+
+
+Convergence to a tolerance of 0.000001 took 9 iterations
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 131, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
+  File "testBatchGreenIterations_KS.py", line 104, in testGreenIterationsGPU
+    if not os.path.isfile(outFile):
+NameError: name 'outFile' is not defined

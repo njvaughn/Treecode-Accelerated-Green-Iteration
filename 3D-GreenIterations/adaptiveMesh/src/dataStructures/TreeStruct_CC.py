@@ -880,7 +880,7 @@ class Tree(object):
                     gp.phi[m] = gp.phi[n]
     
     
-    def updateOrbitalEnergies(self,newOccupations=True,correctPositiveEnergies=True,sortByEnergy=False):
+    def updateOrbitalEnergies(self,newOccupations=True,correctPositiveEnergies=True,sortByEnergy=True):
         start = time.time()
         self.computeOrbitalKinetics()
         kinTime = time.time()-start
@@ -911,8 +911,10 @@ class Tree(object):
 #                         print('orbital %i energy > gauge shift.  Setting orbital to same as %i, energy slightly higher' %(m,m-1))
 #                         self.resetOrbitalij(m,m-1)
 #                         self.orbitalEnergies[m] = self.orbitalEnergies[m-1] + 0.1
-                if self.orbitalEnergies[m] > self.gaugeShift:
-                    print('Warning: %i orbital energy > gauge shift.  Resetting to gauge shift.' %m)
+                if self.orbitalEnergies[m] > 0.0:
+#                 if self.orbitalEnergies[m] > self.gaugeShift:
+                    print('Warning: %i orbital energy > 0.  Resetting to gauge shift.' %m)
+#                     print('Warning: %i orbital energy > gauge shift.  Resetting to gauge shift.' %m)
                     self.orbitalEnergies[m] = self.gaugeShift
 #                     print('Warning: %i orbital energy > gaugeShift. Setting phi to zero' %m)
                     

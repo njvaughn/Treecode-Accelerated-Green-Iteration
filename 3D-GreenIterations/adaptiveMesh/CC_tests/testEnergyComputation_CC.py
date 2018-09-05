@@ -51,7 +51,7 @@ class TestEnergyComputation(unittest.TestCase):
         Dmatrices = time.time()-start
         print('Time to compute derivative matrices: ', Dmatrices)
         start=time.time()
-        self.tree.updateOrbitalEnergies()
+        self.tree.updateOrbitalEnergies(sortByEnergy=False)
         end = time.time()
         print('Time to compute energy: ', end-start)
         print()

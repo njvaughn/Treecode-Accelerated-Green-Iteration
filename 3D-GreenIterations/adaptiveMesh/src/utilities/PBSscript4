@@ -30,7 +30,7 @@ fi
 #  Put your job commands after this line
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
-DOMAIN=25
+DOMAIN=20
 MINDEPTH=3
 MAXDEPTH=20
 ORDER=4
@@ -39,7 +39,7 @@ SMOOTHINGN=0
 SMOOTHINGEPS=0.0
 MESHTYPE='LW1'
 MESHPARAM=50
-INTRASCFTOLERANCE=1e-5
+INTRASCFTOLERANCE=1e-2
 INTERSCFTOLERANCE=1e-6
 
 INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
