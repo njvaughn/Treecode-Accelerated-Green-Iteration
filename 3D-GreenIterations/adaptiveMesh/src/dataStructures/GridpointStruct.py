@@ -17,7 +17,7 @@ class GridPoint(object):
         self.y = y
         self.z = z
         self.phi = np.zeros(Norbitals)  # intialize to zero before using the isngle atom data.
-
+        
         
         self.rho = 0
 
@@ -35,6 +35,16 @@ class GridPoint(object):
             self.v_ext += atom.V(self.x,self.y,self.z)
         self.v_ext += gaugeShift  # add the gauge shift to external potential.
         self.updateVeff()
+        
+    def sortOrbitals(self, newOrder):
+        tempPhi = np.zeros_like(self.phi)
+        for m in range(len(self.phi)):
+            tempPhi[m] = self.phi[m]
+        
+        for m in range(len(self.phi)):
+            self.setPhi(tempPhi[newOrder[m]], m)
+            
+    
             
     def updateVeff(self):
 #             # zero out v_coulomb and v_xc for testing purposes

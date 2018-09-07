@@ -16,7 +16,7 @@ class Test(unittest.TestCase):
 
 #     @unittest.skip('Skipping the plotting of radial data')
     def testReadingRadialData(self):
-        atomicNumber = 3
+        atomicNumber = 6
         AtomicDataPath = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atomicNumber)+'/singleAtomData/'
         print(AtomicDataPath)
         print(os.listdir(AtomicDataPath))

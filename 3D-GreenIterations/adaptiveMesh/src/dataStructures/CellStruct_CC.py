@@ -852,13 +852,16 @@ class Cell(object):
 #             print('dz = ', dz)
             
 #             # locate shortest dimension.  Divide, then check aspect ratio of children.  
-#             if (dx <= min(dy,dz)): # x is shortest dimension.
-#                 self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
-#             elif (dy <= min(dx,dz)): # y is shortest dimension
-#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
-#             elif (dz <= max(dx,dy)): # z is shortest dimension
-#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
-#              
+            if (dx <= min(dy,dz)): # x is shortest dimension.
+                self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
+            elif (dy <= min(dx,dz)): # y is shortest dimension
+                self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
+            elif (dz <= max(dx,dy)): # z is shortest dimension
+                self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
+              
+#               Should I divide children?  Maybe it's okay if a child still has a bad aspect ratio becasue
+#               at least no one side  
+
 #             if hasattr(self, "children"):
 #                 (ii,jj,kk) = np.shape(self.children)
 #                 for i in range(ii):
@@ -867,18 +870,18 @@ class Cell(object):
 #                             self.children[i,j,k].divideIfAspectRatioExceeds(tolerance)
                 
             # locate longest dimension.  Divide, then check aspect ratio of children.  
-            if (dx >= max(dy,dz)): # x is longest dimension.
-                self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
-            elif (dy >= max(dx,dz)): # y is longest dimension
-                self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
-            elif (dz >= max(dx,dy)): # z is longest dimension
-                self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
+#             if (dx >= max(dy,dz)): # x is longest dimension.
+#                 self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
+#             elif (dy >= max(dx,dz)): # y is longest dimension
+#                 self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
+#             elif (dz >= max(dx,dy)): # z is longest dimension
+#                 self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
              
     def divideButJustReturnChildren(self):
         '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
@@ -923,7 +926,7 @@ class Cell(object):
         pot = np.empty((self.px,self.py,self.pz))
         
         for m in range(self.tree.nOrbitals):
-            if self.tree.occupations[m] > 1e-10: #otherwise dont update energy
+            if self.tree.occupations[m] > -1e-10: #otherwise dont update energy
                 for i,j,k in self.PxByPyByPz:
                     gp = self.gridpoints[i,j,k]
                     phi[i,j,k] = gp.phi[m]
@@ -936,7 +939,7 @@ class Cell(object):
         phi = np.empty((self.px,self.py,self.pz))
         
         for m in range(self.tree.nOrbitals):
-            if self.tree.occupations[m] > 1e-10: #otherwise dont update energy
+            if self.tree.occupations[m] > -1e-10: #otherwise dont update energy
                 for i,j,k in self.PxByPyByPz:
                     gp = self.gridpoints[i,j,k]
                     phi[i,j,k] = gp.phi[m]

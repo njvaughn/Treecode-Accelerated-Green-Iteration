@@ -21,6 +21,7 @@ import os
 import csv
 import vtk
 import time
+import copy
 try:
     from pyevtk.hl import pointsToVTK
 except ImportError:
@@ -134,7 +135,7 @@ class Tree(object):
         
         
         
-        eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 0)
+        eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1)
         print('Fermi energy: ', eF)
         exponentialArg = (self.orbitalEnergies-eF)/self.sigma
         self.occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
@@ -201,7 +202,7 @@ class Tree(object):
 #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cell.divideIfAspectRatioExceeds(1.5)
+                cell.divideIfAspectRatioExceeds(2.0)
         
         # Reset all cells to level 1.  These divides shouldnt count towards its depth.  
         for _,cell in self.masterList:
@@ -246,16 +247,22 @@ class Tree(object):
         timer = Timer()
         timer.start()
         orbitalIndex=0
+        
+#         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
+#         self.atoms[1].nAtomicOrbitals = 2
+    
         for atom in self.atoms:
+            
             print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
                       %(atom.atomicNumber, atom.x,atom.y,atom.z))
-                        
+            print('Orbital index = %i'%orbitalIndex)            
             singleAtomOrbitalCount=0
             for nell in aufbauList:
                 if singleAtomOrbitalCount< atom.nAtomicOrbitals:  
                     n = int(nell[0])
                     ell = int(nell[1])
                     psiID = 'psi'+str(n)+str(ell)
+#                     print('Using ', psiID)
                     for m in range(-ell,ell+1):
                         for _,cell in self.masterList:
                             if cell.leaf==True:
@@ -274,8 +281,11 @@ class Tree(object):
                                         Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
                                     if m>0:
                                         Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
-                                    if m==0:
+#                                     if ( (m==0) and (ell>1) ):
+                                    if ( m==0 ):
                                         Y = sph_harm(m,ell,azimuthal,inclination)
+#                                     if ( (m==0) and (ell<=1) ):
+#                                         Y = 1
                                     if abs(np.imag(Y)) > 1e-14:
                                         print('imag(Y) ', np.imag(Y))
     #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
@@ -289,6 +299,12 @@ class Tree(object):
                         print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
                         orbitalIndex += 1
                         singleAtomOrbitalCount += 1
+                    
+#                 else:
+#                     n = int(nell[0])
+#                     ell = int(nell[1])
+#                     psiID = 'psi'+str(n)+str(ell)
+#                     print('Not using ', psiID)
                         
         if orbitalIndex < self.nOrbitals:
             print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
@@ -518,7 +534,7 @@ class Tree(object):
             self.initializeOrbitalsFromAtomicData()
         elif initializationType=='random':
             self.initializeOrbitalsRandomly()
-        self.orthonormalizeOrbitals()
+#         self.orthonormalizeOrbitals()
             
         self.initializeDensityFromAtomicData()
         self.normalizeDensity()
@@ -722,7 +738,7 @@ class Tree(object):
             if cell.leaf == True:
                 CellupdateVxcAndVeff(cell,self.exchangeFunctional, self.correlationFunctional)
 
-    def updateDensityAtQuadpoints(self, mixingScheme='None'):
+    def updateDensityAtQuadpoints(self, mixingScheme='Simple'):
         def CellUpdateDensity(cell,mixingScheme):
             for i,j,k in self.PxByPyByPz:
                 newRho = 0
@@ -881,6 +897,7 @@ class Tree(object):
     
     
     def updateOrbitalEnergies(self,newOccupations=True,correctPositiveEnergies=True,sortByEnergy=True):
+        print()
         start = time.time()
         self.computeOrbitalKinetics()
         kinTime = time.time()-start
@@ -895,72 +912,95 @@ class Tree(object):
         if sortByEnergy==True:
             if not np.all(self.orbitalEnergies[:-1] <= self.orbitalEnergies[1:]):
                 print('Need to re-order orbitals.')
+#                 print('Orbital Energies before sorting: ', self.orbitalEnergies)
                 self.sortOrbitalsAndEnergies()
+                self.updateOrbitalEnergies()
 #             print('After sorting...')
-        print('Orbital Energy:           ', self.orbitalEnergies)
-            
-#         print('Kinetic took %2.3f, Potential took %2.3f seconds' %(kinTime,potTime))
-        energyResetFlag = 0
-        if correctPositiveEnergies==True:
-            for m in range(self.nOrbitals):
-#                 if self.orbitalEnergies[m] > self.gaugeShift:
-#                     if m==0:
-#                         print('phi0 energy > gauge shift, setting to gauge shift - 3')
-#                         self.orbitalEnergies[m] = self.gaugeShift-3
-#                     else:
-#                         print('orbital %i energy > gauge shift.  Setting orbital to same as %i, energy slightly higher' %(m,m-1))
-#                         self.resetOrbitalij(m,m-1)
-#                         self.orbitalEnergies[m] = self.orbitalEnergies[m-1] + 0.1
-                if self.orbitalEnergies[m] > 0.0:
-#                 if self.orbitalEnergies[m] > self.gaugeShift:
-                    print('Warning: %i orbital energy > 0.  Resetting to gauge shift.' %m)
-#                     print('Warning: %i orbital energy > gauge shift.  Resetting to gauge shift.' %m)
-                    self.orbitalEnergies[m] = self.gaugeShift
-#                     print('Warning: %i orbital energy > gaugeShift. Setting phi to zero' %m)
+            else:
+                print('Orbital Energy:           ', self.orbitalEnergies)
                     
-#                     self.zeroOutOrbital(m)
-#                     self.orbitalEnergies[m] = self.gaugeShift - 1/(m+1)
-#                     print('Setting energy to %1.3e' %self.orbitalEnergies[m])
-#                 self.scrambleOrbital(m)
-#                 self.softenOrbital(m)
-#                     energyResetFlag=1
+        #         print('Kinetic took %2.3f, Potential took %2.3f seconds' %(kinTime,potTime))
+                energyResetFlag = 0
+                if correctPositiveEnergies==True:
+                    for m in range(self.nOrbitals):
+        #                 if self.orbitalEnergies[m] > self.gaugeShift:
+        #                     if m==0:
+        #                         print('phi0 energy > gauge shift, setting to gauge shift - 3')
+        #                         self.orbitalEnergies[m] = self.gaugeShift-3
+        #                     else:
+        #                         print('orbital %i energy > gauge shift.  Setting orbital to same as %i, energy slightly higher' %(m,m-1))
+        #                         self.resetOrbitalij(m,m-1)
+        #                         self.orbitalEnergies[m] = self.orbitalEnergies[m-1] + 0.1
+                        if self.orbitalEnergies[m] > 0.0:
+        #                 if self.orbitalEnergies[m] > self.gaugeShift:
+                            print('Warning: %i orbital energy > 0.  Resetting to gauge shift.' %m)
+        #                     print('Warning: %i orbital energy > gauge shift.  Resetting to gauge shift.' %m)
+                            self.orbitalEnergies[m] = self.gaugeShift
+        #                     print('Warning: %i orbital energy > gaugeShift. Setting phi to zero' %m)
+                            
+        #                     self.zeroOutOrbital(m)
+        #                     self.orbitalEnergies[m] = self.gaugeShift - 1/(m+1)
+        #                     print('Setting energy to %1.3e' %self.orbitalEnergies[m])
+        #                 self.scrambleOrbital(m)
+        #                 self.softenOrbital(m)
+        #                     energyResetFlag=1
+                    self.sortOrbitalsAndEnergies()
+                
+                
+        #         if energyResetFlag==1:
+        #             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
+        #             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
+        #             self.orthonormalizeOrbitals()
+        #             self.updateOrbitalEnergies()
         
-        
-#         if energyResetFlag==1:
-#             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
-#             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
-#             self.orthonormalizeOrbitals()
-#             self.updateOrbitalEnergies()
-
-        if newOccupations==True:
-            self.computeOccupations()
+                if newOccupations==True:
+                    self.computeOccupations()
+                print()
 #         print('Occupations: ', self.occupations)
 
     def sortOrbitalsAndEnergies(self):
         newOrder = np.argsort(self.orbitalEnergies)
+        print('New order: ', newOrder)
         phiNew = np.zeros_like(self.orbitalEnergies)
         for _,cell in self.masterList:
             if cell.leaf==True:
                 for i,j,k in self.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
-                    for m in range(self.nOrbitals):
-                        phiNew[m] = gp.phi[newOrder[m]]
-                    for m in range(self.nOrbitals):
-                        gp.phi[m] = phiNew[m]
+                    
+                    gp.sortOrbitals(newOrder)
+                    
+                    ###
+#                     phiSorted = np.zeros_like(self.orbitalEnergies)
+#                     for m in range(self.nOrbitals):
+#                         phiSorted[m] = copy.deepcopy(gp.phi[m])
+# #                     print('Pre-sort')
+# #                     print(phiSorted)
+#                     phiSorted = phiSorted[newOrder]
+# #                     print('Post-sort')
+# #                     print(phiSorted)
+#                     
+#                     for m in range(self.nOrbitals):
+#                         gp.setPhi(copy.deepcopy(phiSorted[m]),m)
+                    ### 
+                        
+#                     gp.phi = copy.deepcopy(phiSorted)
+#                     for m in range(self.nOrbitals):
+#                         gp.phi[m] = phiSorted[m]
+#                     gp.phi = phiNew
         
-        newOccupations = np.zeros_like(self.occupations)
-        newKinetics = np.zeros_like(self.orbitalKinetic)
-        newPotentials = np.zeros_like(self.orbitalPotential)
-        newEnergies = np.zeros_like(self.orbitalEnergies)
-        for m in range(self.nOrbitals):
-            newOccupations[m] = self.occupations[newOrder[m]]
-            newKinetics[m] = self.orbitalKinetic[newOrder[m]]
-            newPotentials[m] = self.orbitalPotential[newOrder[m]]
-            newEnergies[m] = self.orbitalEnergies[newOrder[m]]
-        self.occupations = newOccupations
-        self.orbitalKinetic = newKinetics
-        self.orbitalPotential = newPotentials
-        self.orbitalEnergies = newEnergies
+#         newOccupations = np.zeros_like(self.occupations)
+#         newKinetics = np.zeros_like(self.orbitalKinetic)
+#         newPotentials = np.zeros_like(self.orbitalPotential)
+#         newEnergies = np.zeros_like(self.orbitalEnergies)
+#         for m in range(self.nOrbitals):
+#             newOccupations[m] = self.occupations[newOrder[m]]
+#             newKinetics[m] = self.orbitalKinetic[newOrder[m]]
+#             newPotentials[m] = self.orbitalPotential[newOrder[m]]
+#             newEnergies[m] = self.orbitalEnergies[newOrder[m]]
+#         self.occupations = np.copy(newOccupations)
+#         self.orbitalKinetic = np.copy(newKinetics)
+#         self.orbitalPotential = np.copy(newPotentials)
+#         self.orbitalEnergies = np.copy(newEnergies)
         
     
     def computeDerivativeMatrices(self):
@@ -1111,6 +1151,7 @@ class Tree(object):
                     for i,j,k in self.PxByPyByPz:
                             cell.gridpoints[i,j,k].phi[m] /= np.sqrt(A)
         
+        print('Orthonormalizing orbitals within tree structure.')
         for m in range(self.nOrbitals):
             for n in range(m):
                 orthogonalizeOrbitals(self,m,n)

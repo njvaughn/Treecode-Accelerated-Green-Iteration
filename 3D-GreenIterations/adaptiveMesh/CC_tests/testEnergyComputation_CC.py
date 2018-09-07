@@ -44,6 +44,7 @@ class TestEnergyComputation(unittest.TestCase):
     
         self.tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
 #         self.tree.orthonormalizeOrbitals()
+        self.tree.occupations = np.array([2,2,1/3,1/3,1/3,2,2,2/3,2/3,2/3])
 
     def testEnergyComputation(self):
         start = time.time()
