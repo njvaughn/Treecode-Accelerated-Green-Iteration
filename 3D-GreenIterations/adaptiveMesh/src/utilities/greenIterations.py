@@ -98,10 +98,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Update orbital energies after computing the initial Veff.')
     tree.updateOrbitalEnergies(sortByEnergy=True)
     
-    print('Printing orbital energies directly from tree, not from the update function...')
-    print(tree.orbitalEnergies)
-    print('Now update orbital energies again.  No sorting should be necessary.')
-    tree.updateOrbitalEnergies(sortByEnergy=True)
+#     print('Printing orbital energies directly from tree, not from the update function...')
+#     print(tree.orbitalEnergies)
+#     print('Now update orbital energies again.  No sorting should be necessary.')
+#     tree.updateOrbitalEnergies(sortByEnergy=True)
     
 ### CARBON MONOXIDE MOLECULE ###    
     dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
@@ -109,6 +109,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                       -4.455527567163568570e-01, -4.455527560478895199e-01,
                                       -3.351419327004790394e-01, -8.275071966753577701e-02,
                                       -8.273399296312561324e-02,  7.959071929649078059e-03] )
+    
+    
+    dftfeOrbitalEnergiesFirstSCF = np.array( [-1.886806889771608198e+01, -1.000453177064216703e+01,
+                                      -1.185566512385654470e+00, -6.070957834271104581e-01,
+                                      -5.201957473314797742e-01, -5.201895527962699939e-01,
+                                      -3.959879088687816573e-01]) #, -7.423877195920526584e-02,
+                                      #-7.325760563979200057e-02,  1.721054880813185223e-02] )
+    
+    
 
 ### OXYGEN ATOM ###
 #     dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
@@ -153,16 +162,25 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
         orbitalResidual = 10
         eigensolveCount = 0
-        max_scfCount = 5
+        max_scfCount = 555
+        
+        
         while ( ( orbitalResidual > intraScfTolerance ) and ( eigensolveCount < max_scfCount) ):
             
+#             print('Setting orbital energies to the DFT-FE values')
+#             tree.orbitalEnergies = dftfeOrbitalEnergiesFirstSCF
+#             
             orbitalResidual = 0.0
             
             """ N ORBITAL HELMHOLTZ SOLVES """
             orbitals = np.zeros((len(targets),tree.nOrbitals))
             oldOrbitals = np.zeros((len(targets),tree.nOrbitals))
+            if eigensolveCount<999:
+                print('Using singularity skipping...')
+            else:
+                print('Using singularity subtraction...')
             for m in range(tree.nOrbitals):
-                print('Convolving orbital %i' %m)
+#                 print('Convolving orbital %i' %m)
                 sources = tree.extractPhi(m)
                 targets = np.copy(sources)
                 weights = np.copy(targets[:,5])
@@ -213,11 +231,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                 if tree.occupations[m] > 1e-20:  # don't compute new orbitals if it is not occupied.
                     k = np.sqrt(-2*tree.orbitalEnergies[m])
                     phiNew = np.zeros((len(targets)))
-                    gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-#                     gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                    if eigensolveCount<999:
+                        print('Using singularity skipping')
+                        gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                    else:
+                        print('Using singularity subtraction')
+                        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
     #                     k2 = 5
     #                     gpuHelmholtzConvolutionSubractSingularity_k2[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,k2) 
-                    
+                
                     orbitals[:,m] = np.copy(phiNew)
 #                 else:
 #                     print('Not updating phi%i' %m)
@@ -243,21 +265,29 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 ###            2. Import them into the tree.  
 ###            3. Compute energies, sorting orbitals where needed
 ###            4. Orthonormalize
-
+###            5. Compute new energiesm resort when necessary
+            residuals = np.zeros_like(tree.orbitalEnergies)
             normalizedOrbitals = normalizeOrbitals(orbitals,weights)
             for m in range(tree.nOrbitals):
                 tree.importPhiOnLeaves(normalizedOrbitals[:,m], m)
                 normDiff = np.sqrt( np.sum( (normalizedOrbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
                 print('Residual for orbital %i: %1.5e' %(m,normDiff))
+                residuals[m] = normDiff
                 if normDiff > orbitalResidual:
                     orbitalResidual = np.copy(normDiff) 
             print('Computing orbital energies before orthogonalizing.  Sort when needed.')
-#             tree.updateOrbitalEnergies(sortByEnergy=False)
+# #             tree.updateOrbitalEnergies(sortByEnergy=False)
             tree.updateOrbitalEnergies(sortByEnergy=True)
+#             print('Using DFT-FE results from after first SCF (before orthogonalization) ...')
+#             for m in range(tree.nOrbitals):
+#                 print('Orbital %i error: %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergiesFirstSCF[m]-tree.gaugeShift))
+#                 print('Orbital %i error: %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
+
             print('Orthogonalizing based on new order.')
+            
             tree.orthonormalizeOrbitals()
             print('Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.')
-#             tree.updateOrbitalEnergies(sortByEnergy=False)
+#             print('Not orthogonalizing...')
             tree.updateOrbitalEnergies(sortByEnergy=True)
 
                 
@@ -275,9 +305,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #             print()
 #             print('Computing energies again, now from the orthogonalized orbitals.  Hopefully no sorting needed.')
 #             tree.updateOrbitalEnergies(sortByEnergy=True)
-            
+            print('Using DFT-FE results from after first SCF (after orthogonalization) ...')
             for m in range(tree.nOrbitals):
-                print('Orbital %i error: %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
+#                 print('Orbital %i error: %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
+                print('Orbital %i error: %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergiesFirstSCF[m]-tree.gaugeShift))
 #             tree.orthonormalizeOrbitals()
 
 #             print('Before Veff update')
@@ -295,7 +326,31 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print()
             print()
             print()
-#             orbitalResidual = abs(bandEnergyResidual)
+#             iterationOutFile = '/home/njvaughn/CO_LW3_1200_SCF1_subtracting.csv'
+#             iterationOutFile = '/home/njvaughn/CO_LW3_1200_SCF1_skipping_DFTFEenergies.csv'
+
+#             iterationOutFile = '/home/njvaughn/CO_LW3_800_SCF1_skipping_minD3.csv'
+            iterationOutFile = '/home/njvaughn/CO_LW3_400_SCF1_skipping_minD5.csv'
+#             iterationOutFile = '/home/njvaughn/CO_LW3_1200_SCF1_skipping.csv'
+            header = ['Iteration', 'orbitalResiduals', 'energyErrors']
+    
+            myData = [eigensolveCount, residuals,
+                      tree.orbitalEnergies-dftfeOrbitalEnergiesFirstSCF-tree.gaugeShift]
+            
+        
+            if not os.path.isfile(iterationOutFile):
+                myFile = open(iterationOutFile, 'a')
+                with myFile:
+                    writer = csv.writer(myFile)
+                    writer.writerow(header) 
+                
+            
+            myFile = open(iterationOutFile, 'a')
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(myData)
+
+ 
 
         print()
         print()
@@ -326,6 +381,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         tree.updateTotalEnergy() 
         print('Band energies after Veff update: %1.6f H, %1.2e H'
               %(tree.totalBandEnergy, tree.totalBandEnergy-Eband))
+        
+        print('Using DFT-FE results from after first SCF...')
+        for m in range(tree.nOrbitals):
+            print('Orbital %i error: %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergiesFirstSCF[m]-tree.gaugeShift))
+#             print('Orbital %i error: %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
         
 #         for m in range(tree.nOrbitals):
 #             if tree.orbitalEnergies[m] > 0:
@@ -373,6 +433,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         printEachIteration=True
 #         iterationOutFile = 'iterationConvergenceCO_LW1_1000.csv'
         iterationOutFile = 'iterationConvergenceCO_LW1_800.csv'
+#         iterationOutFile = 'CO_LW3_800_SCF1.csv'
 #         iterationOutFile = 'iterationConvergenceCO_800_domain15.csv'
 #         iterationOutFile = 'iterationConvergenceCO_800_order5.csv'
 #         iterationOutFile = 'iterationConvergenceLi_1200_domain24.csv'

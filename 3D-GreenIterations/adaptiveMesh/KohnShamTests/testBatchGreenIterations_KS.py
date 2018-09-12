@@ -59,7 +59,8 @@ def setUpTree():
     nElectrons = int(nElectrons)
     nOrbitals = int(nOrbitals)
     
-#     nOrbitals = 7  # hard code this in for Carbon Monoxide
+    nOrbitals = 7  # hard code this in for Carbon Monoxide
+    print('Hard coding nOrbitals to 7')
     
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
@@ -70,7 +71,7 @@ def setUpTree():
     
     
     print('max depth ', maxDepth)
-    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
+    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
 #     for element in tree.masterList:
 #         
 # #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))

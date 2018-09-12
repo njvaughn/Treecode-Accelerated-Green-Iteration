@@ -933,9 +933,9 @@ class Tree(object):
         #                         self.orbitalEnergies[m] = self.orbitalEnergies[m-1] + 0.1
                         if self.orbitalEnergies[m] > 0.0:
         #                 if self.orbitalEnergies[m] > self.gaugeShift:
-                            print('Warning: %i orbital energy > 0.  Resetting to gauge shift.' %m)
+                            print('Warning: %i orbital energy > 0.  Resetting to gauge shift/2.' %m)
         #                     print('Warning: %i orbital energy > gauge shift.  Resetting to gauge shift.' %m)
-                            self.orbitalEnergies[m] = self.gaugeShift
+                            self.orbitalEnergies[m] = self.gaugeShift/2
         #                     print('Warning: %i orbital energy > gaugeShift. Setting phi to zero' %m)
                             
         #                     self.zeroOutOrbital(m)
