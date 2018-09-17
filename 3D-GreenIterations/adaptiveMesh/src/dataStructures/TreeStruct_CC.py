@@ -21,7 +21,7 @@ import os
 import csv
 try:
     import vtk
-except ImportError:
+except ModuleNotFoundError:
     pass
 import time
 import copy
