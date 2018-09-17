@@ -19,7 +19,10 @@ import pylibxc
 import itertools
 import os
 import csv
-import vtk
+try:
+    import vtk
+except ImportError:
+    pass
 import time
 import copy
 try:
