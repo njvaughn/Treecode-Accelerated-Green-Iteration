@@ -248,8 +248,8 @@ class Tree(object):
         timer.start()
         orbitalIndex=0
         
-#         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
-#         self.atoms[1].nAtomicOrbitals = 2
+        print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
+        self.atoms[1].nAtomicOrbitals = 2
     
         for atom in self.atoms:
             
@@ -738,7 +738,7 @@ class Tree(object):
             if cell.leaf == True:
                 CellupdateVxcAndVeff(cell,self.exchangeFunctional, self.correlationFunctional)
 
-    def updateDensityAtQuadpoints(self, mixingScheme='Simple'):
+    def updateDensityAtQuadpoints(self, mixingScheme='None'):
         def CellUpdateDensity(cell,mixingScheme):
             for i,j,k in self.PxByPyByPz:
                 newRho = 0
@@ -838,20 +838,20 @@ class Tree(object):
         self.computeTotalPotential()
         self.E = self.totalBandEnergy + self.totalPotential
     
-    def computeOrbitalPotentials(self): 
+    def computeOrbitalPotentials(self,targetEnergy=None): 
         
         self.orbitalPotential = np.zeros(self.nOrbitals)  
         for _,cell in self.masterList:
             if cell.leaf == True:
-                cell.computeOrbitalPotentials()
+                cell.computeOrbitalPotentials(targetEnergy)
                 self.orbitalPotential += cell.orbitalPE
                        
-    def computeOrbitalKinetics(self):
+    def computeOrbitalKinetics(self,targetEnergy=None):
 
         self.orbitalKinetic = np.zeros(self.nOrbitals)
         for _,cell in self.masterList:
             if cell.leaf == True:
-                cell.computeOrbitalKinetics()
+                cell.computeOrbitalKinetics(targetEnergy)
                 self.orbitalKinetic += cell.orbitalKE
             
         
@@ -863,7 +863,8 @@ class Tree(object):
                 for i,j,k in self.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
-                    gp.phi[m] = val/r
+#                     gp.phi[m] = val/r
+                    gp.phi[m] = val
     
     def softenOrbital(self,m):
         print('Softening orbital ', m)
@@ -896,13 +897,13 @@ class Tree(object):
                     gp.phi[m] = gp.phi[n]
     
     
-    def updateOrbitalEnergies(self,newOccupations=True,correctPositiveEnergies=True,sortByEnergy=True):
-        print()
+    def updateOrbitalEnergies(self,newOccupations=True,correctPositiveEnergies=True,sortByEnergy=True,targetEnergy=None):
+#         print()
         start = time.time()
-        self.computeOrbitalKinetics()
+        self.computeOrbitalKinetics(targetEnergy)
         kinTime = time.time()-start
         start=time.time()
-        self.computeOrbitalPotentials()
+        self.computeOrbitalPotentials(targetEnergy)
         potTime = time.time()-start
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
 #         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
@@ -955,7 +956,9 @@ class Tree(object):
         
                 if newOccupations==True:
                     self.computeOccupations()
-                print()
+        else: 
+            print('Orbital Energy:           ', self.orbitalEnergies)
+#                 print()
 #         print('Occupations: ', self.occupations)
 
     def sortOrbitalsAndEnergies(self):
@@ -1106,9 +1109,10 @@ class Tree(object):
                         gridpoint.phi -= B*gridpoint.finalWavefunction[n]
                         gridpoint.orthogonalized = True
                         
-    def orthonormalizeOrbitals(self):
+    def orthonormalizeOrbitals(self, targetOrbital=None):
         
         def orthogonalizeOrbitals(tree,m,n):
+            
 #             print('Orthogonalizing orbital %i against %i' %(m,n))
             """ Compute the overlap, integral phi_r * phi_s """
             B = 0.0
@@ -1151,11 +1155,17 @@ class Tree(object):
                     for i,j,k in self.PxByPyByPz:
                             cell.gridpoints[i,j,k].phi[m] /= np.sqrt(A)
         
-        print('Orthonormalizing orbitals within tree structure.')
-        for m in range(self.nOrbitals):
-            for n in range(m):
-                orthogonalizeOrbitals(self,m,n)
-            normalizeOrbital(self,m)
+        if targetOrbital==None:
+#         print('Orthonormalizing orbitals within tree structure up to orbital %i.' %maxOrbital)
+            for m in range(self.nOrbitals):
+                for n in range(m):
+                    
+                    orthogonalizeOrbitals(self,m,n)
+                normalizeOrbital(self,m)
+        else:
+            for n in range(targetOrbital):
+                orthogonalizeOrbitals(self,targetOrbital,n)
+            normalizeOrbital(self,targetOrbital)
             
             
     

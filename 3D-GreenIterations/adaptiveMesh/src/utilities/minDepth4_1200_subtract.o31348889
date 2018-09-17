@@ -1,0 +1,1824 @@
+Running on
+      1 nyx7507
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+Hard coding nOrbitals to 7
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/results_CO/results.csv', 14, 7, -112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865, -2.0]
+Gauge shift  -2.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Initializing orbitals randomly...
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            1.20e+03 
+Total Number of Cells:       9889 
+Total Number of Leaf Cells:  8608 
+Total Number of Gridpoints:  550912 
+Minimum Depth                4 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  4 
+Construction time:           10.4 seconds.
+Closest gridpoint to origin:  [-0.01014124443176817, -0.01189382304511144, -0.01189382304511144]
+For a distance of:  0.019641051190853222
+Part of a cell centered at:  [-0.13322624999999999, -0.15625, -0.15625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    550912
+Threads per block:    512
+Blocks per grid:      1076
+[-112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865]
+Update orbital energies after computing the initial Veff.
+
+Need to re-order orbitals.
+New order:  [4 1 6 0 2 5 3]
+
+Orbital Energy:            [ 7369.35417154  7437.62036376  7462.99262098  7475.88789596  7493.06423111
+  7680.90464508  7907.80519488]
+Warning: 0 orbital energy > 0.  Resetting to gauge shift.
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+
+
+
+SCF Count  1
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.45620e+02
+Residual for orbital 1: 1.45333e+02
+Residual for orbital 2: 1.45568e+02
+Residual for orbital 3: 1.45137e+02
+Residual for orbital 4: 1.45331e+02
+Residual for orbital 5: 1.44975e+02
+Residual for orbital 6: 1.44928e+02
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 4 1 2 3 5 6]
+
+Orbital Energy:            [-1.68394143 -1.68145242 -1.68129663 -1.67896995 -1.67678128 -1.67629208
+ -1.6734389 ]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 6 3 5 4]
+
+Orbital Energy:            [-1.68394143  1.35246563  1.42916522  1.48030802  1.48853078  1.49635623
+  1.54003312]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [1 2 3 4 5 6 0]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 1.918e+01
+Orbital 1 error: 1.000e+01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 1 iterations in SCF #1:  0.632117 H, 6.35e+01 H
+Band energy residual:  23.6839414289
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.21169e+00
+Residual for orbital 1: 1.26817e+00
+Residual for orbital 2: 1.27772e+00
+Residual for orbital 3: 1.25825e+00
+Residual for orbital 4: 1.25316e+00
+Residual for orbital 5: 1.27330e+00
+Residual for orbital 6: 3.57798e-01
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [6 0 3 1 4 2 5]
+
+Orbital Energy:            [-1.87525856  0.29236472  0.49711643  0.49780985  0.49966142  0.52335672
+  0.54461876]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [1 2 3 4 5 6 0]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [6 0 1 2 3 4 5]
+
+Orbital Energy:            [-1.6715453   0.29236472  0.49769271  0.50132577  0.50161622  0.52538246
+  0.54588729]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [1 2 3 4 5 6 0]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 1.920e+01
+Orbital 1 error: 1.000e+01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 2 iterations in SCF #1:  0.656909 H, 6.36e+01 H
+Band energy residual:  0.0123961275711
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.35122e+00
+Residual for orbital 1: 1.48955e+00
+Residual for orbital 2: 1.49110e+00
+Residual for orbital 3: 1.48662e+00
+Residual for orbital 4: 1.50943e+00
+Residual for orbital 5: 1.50972e+00
+Residual for orbital 6: 5.44897e-01
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [6 0 2 1 3 4 5]
+
+Orbital Energy:            [-1.88818093 -0.05191151  0.27542699  0.30091507  0.33961968  0.36401447
+  0.38755421]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [2 3 4 5 6 0 1]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [5 6 0 1 2 3 4]
+
+Orbital Energy:            [-1.84121921  0.0699062   0.27542699  0.30109175  0.33986334  0.36500021
+  0.388095  ]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [1 2 3 4 5 6 0]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 1.903e+01
+Orbital 1 error: 1.000e+01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 3 iterations in SCF #1:  0.317562 H, 6.32e+01 H
+Band energy residual:  0.169673911009
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.51257e+00
+Residual for orbital 1: 1.65816e+00
+Residual for orbital 2: 1.66505e+00
+Residual for orbital 3: 1.66509e+00
+Residual for orbital 4: 1.68321e+00
+Residual for orbital 5: 1.68542e+00
+Residual for orbital 6: 6.34002e-01
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [6 0 1 2 3 5 4]
+
+Orbital Energy:            [-2.56311544  0.01428985  0.32571639  0.33412619  0.37227525  0.41197932
+  0.42621645]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 3 2 4 5 6]
+
+Orbital Energy:            [-2.56311544  0.09571281  0.35363574  0.3572328   0.38042515  0.4245926
+  0.432871  ]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 1.830e+01
+Orbital 1 error: 1.000e+01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 4 iterations in SCF #1:  -1.126231 H, 6.18e+01 H
+Band energy residual:  0.721896231531
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 7.21255e-01
+Residual for orbital 1: 1.64783e+00
+Residual for orbital 2: 1.78315e+00
+Residual for orbital 3: 1.77225e+00
+Residual for orbital 4: 1.78530e+00
+Residual for orbital 5: 1.80068e+00
+Residual for orbital 6: 1.79873e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 3 2 4 5 6]
+
+Orbital Energy:            [-5.36609471 -0.06195439  0.23204953  0.31426619  0.42207973  0.43543456
+  0.46840257]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 2 3 4 5 6 1]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 6 1 2 3 4 5]
+
+Orbital Energy:            [-5.36609471  0.13817975  0.36136781  0.40270966  0.46252925  0.49500372
+  0.50405405]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 1.550e+01
+Orbital 1 error: 1.000e+01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 5 iterations in SCF #1:  -6.732189 H, 5.62e+01 H
+Band energy residual:  2.80297926912
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 7.09335e-01
+Residual for orbital 1: 1.74782e+00
+Residual for orbital 2: 1.84011e+00
+Residual for orbital 3: 1.85552e+00
+Residual for orbital 4: 1.86108e+00
+Residual for orbital 5: 1.87052e+00
+Residual for orbital 6: 1.87119e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 5 4 6]
+
+Orbital Energy:            [-10.63982411  -0.26723516   0.06550729   0.24387299   0.40562039
+   0.43048108   0.50669125]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 2 3 4 5 6 1]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 6 1 2 4 3 5]
+
+Orbital Energy:            [-10.63982411   0.30641253   0.49745091   0.51821818   0.5523538
+   0.58452368   0.60552921]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 1.023e+01
+Orbital 1 error: 1.000e+01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 6 iterations in SCF #1:  -17.279648 H, 4.56e+01 H
+Band energy residual:  5.2737293962
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 4.78283e-01
+Residual for orbital 1: 1.82792e+00
+Residual for orbital 2: 1.89402e+00
+Residual for orbital 3: 1.90813e+00
+Residual for orbital 4: 1.91241e+00
+Residual for orbital 5: 1.91840e+00
+Residual for orbital 6: 1.91965e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 5 4 6]
+
+Orbital Energy:            [ -1.53928935e+01   1.27018034e-02   2.89002485e-01   4.32841368e-01
+   5.55652619e-01   5.66950844e-01   6.25067370e-01]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 5 4 6]
+
+Orbital Energy:            [-15.39289346   0.34756372   0.52921249   0.5700169    0.61580702
+   0.63576201   0.66032758]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 5.475e+00
+Orbital 1 error: 1.000e+01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 7 iterations in SCF #1:  -26.785787 H, 3.61e+01 H
+Band energy residual:  4.75306935055
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 2.77877e-01
+Residual for orbital 1: 1.86216e+00
+Residual for orbital 2: 1.92241e+00
+Residual for orbital 3: 1.93742e+00
+Residual for orbital 4: 1.94235e+00
+Residual for orbital 5: 1.94455e+00
+Residual for orbital 6: 1.94832e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 5 4 6]
+
+Orbital Energy:            [-18.39237529   0.2429242    0.51725153   0.58488039   0.63956892
+   0.64038031   0.70082312]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 5 4 6]
+
+Orbital Energy:            [-18.39237529   0.26012905   0.53766743   0.59702879   0.64633331
+   0.64713052   0.70404046]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 2.476e+00
+Orbital 1 error: 1.000e+01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 8 iterations in SCF #1:  -32.784751 H, 3.01e+01 H
+Band energy residual:  2.99948182695
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.55559e-01
+Residual for orbital 1: 1.84742e+00
+Residual for orbital 2: 1.92877e+00
+Residual for orbital 3: 1.95002e+00
+Residual for orbital 4: 1.95748e+00
+Residual for orbital 5: 1.95363e+00
+Residual for orbital 6: 1.96455e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 5 4 6]
+
+Orbital Energy:            [-19.82344723  -0.06652209   0.482868     0.58999293   0.59000536
+   0.63911873   0.72010188]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 2 3 4 5 6 1]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 6 1 2 3 4 5]
+
+Orbital Energy:            [ -1.98234472e+01  -1.75485994e-02   4.82430944e-01   5.92772204e-01
+   5.94731907e-01   6.45002036e-01   7.21819231e-01]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 2 3 4 5 6 1]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 1.045e+00
+Orbital 1 error: 1.199e+01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 9 iterations in SCF #1:  -31.681992 H, 3.12e+01 H
+Band energy residual:  0.551379454821
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 8.87366e-02
+Residual for orbital 1: 4.71746e-01
+Residual for orbital 2: 1.95293e+00
+Residual for orbital 3: 1.94207e+00
+Residual for orbital 4: 1.95947e+00
+Residual for orbital 5: 1.97280e+00
+Residual for orbital 6: 1.78105e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 6 3 4 2 5 1]
+
+Orbital Energy:            [ -2.04056180e+01  -8.77473815e-01   3.60383051e-01   5.53469375e-01
+   5.58006411e-01   7.22180960e-01   1.12565533e+03]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 2 3 4 5 6 1]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 3 2 4 6 5]
+
+Orbital Energy:            [ -2.04056180e+01   3.62102311e-01   5.59765773e-01   5.69623376e-01
+   7.26207796e-01   1.68953247e+01   1.15571546e+03]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 4.625e-01
+Orbital 1 error: 1.000e+01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 10 iterations in SCF #1:  -36.811236 H, 2.61e+01 H
+Band energy residual:  2.5646221866
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 5.37228e-02
+Residual for orbital 1: 1.88300e+00
+Residual for orbital 2: 1.94538e+00
+Residual for orbital 3: 1.93994e+00
+Residual for orbital 4: 1.97410e+00
+Residual for orbital 5: 1.63464e+00
+Residual for orbital 6: 1.85281e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 5 1 3 2 4 6]
+
+Orbital Energy:            [-20.64058389  -2.23744245  -0.37587011   0.25443486   0.44320205
+   0.68333424   4.40805098]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 3 4 5 6 2]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 6 3 2 4 5]
+
+Orbital Energy:            [-20.64058389  -2.24177504   0.22552617   0.46902691   0.49406708
+   0.72947791   6.98555847]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 2.275e-01
+Orbital 1 error: 9.763e+00
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 11 iterations in SCF #1:  -37.764718 H, 2.51e+01 H
+Band energy residual:  0.476740913388
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 3.56263e-02
+Residual for orbital 1: 1.31315e+00
+Residual for orbital 2: 1.85426e+00
+Residual for orbital 3: 1.92338e+00
+Residual for orbital 4: 1.92164e+00
+Residual for orbital 5: 1.97550e+00
+Residual for orbital 6: 1.90078e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 4 6 3 5]
+
+Orbital Energy:            [-20.74709233  -4.50488048  -0.80919184  -0.04245562   0.07671362
+   0.21917218   0.66366132]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 4 5 6 2 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 5 3 6 2 4]
+
+Orbital Energy:            [-20.74709233  -4.50438054   0.31500039   0.35283758   0.58468223
+   0.70402936   0.7459497 ]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 1.210e-01
+Orbital 1 error: 7.500e+00
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 12 iterations in SCF #1:  -42.502946 H, 2.04e+01 H
+Band energy residual:  2.36911393775
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 2.56833e-02
+Residual for orbital 1: 9.98978e-01
+Residual for orbital 2: 1.88133e+00
+Residual for orbital 3: 1.89077e+00
+Residual for orbital 4: 1.94421e+00
+Residual for orbital 5: 1.92185e+00
+Residual for orbital 6: 1.97949e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 5 4 6]
+
+Orbital Energy:            [ -2.08027270e+01  -6.78677991e+00  -5.84536740e-01  -7.93843245e-03
+   9.21082785e-02   1.80807891e-01   6.90503888e-01]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 4 5 6 2 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 6 5 2 3 4]
+
+Orbital Energy:            [-20.80272696  -6.75871098   0.28960868   0.4801737    0.56605432
+   0.64041146   0.7494276 ]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 6.534e-02
+Orbital 1 error: 5.246e+00
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 13 iterations in SCF #1:  -47.122876 H, 1.58e+01 H
+Band energy residual:  2.30996506828
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.94483e-02
+Residual for orbital 1: 7.51287e-01
+Residual for orbital 2: 1.86373e+00
+Residual for orbital 3: 1.91709e+00
+Residual for orbital 4: 1.93811e+00
+Residual for orbital 5: 1.95586e+00
+Residual for orbital 6: 1.97993e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 3 2 4 5 6]
+
+Orbital Energy:            [ -2.08346405e+01  -9.04219154e+00  -7.15491824e-02   8.45447792e-03
+   2.53026916e-01   3.70537849e-01   7.07312611e-01]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 3 4 5 6 2]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 6 3 4 5]
+
+Orbital Energy:            [-20.83464045  -9.00939538   0.22773408   0.58383924   0.59537735
+   0.67494265   0.74403258]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 3.343e-02
+Orbital 1 error: 2.995e+00
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 14 iterations in SCF #1:  -51.688072 H, 1.12e+01 H
+Band energy residual:  2.28259789007
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.50570e-02
+Residual for orbital 1: 5.11998e-01
+Residual for orbital 2: 1.83303e+00
+Residual for orbital 3: 1.93706e+00
+Residual for orbital 4: 1.94780e+00
+Residual for orbital 5: 1.96130e+00
+Residual for orbital 6: 1.97725e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Orbital Energy:            [-20.85378261 -10.7087548    0.02345259   0.34166993   0.44853101
+   0.53917883   0.70505353]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-20.85378261 -10.68409856   0.10561964   0.5789668    0.60496373
+   0.67544045   0.73227401]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 1.429e-02
+Orbital 1 error: 1.320e+00
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 15 iterations in SCF #1:  -55.075762 H, 7.82e+00 H
+Band energy residual:  1.69384534538
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.17615e-02
+Residual for orbital 1: 3.10055e-01
+Residual for orbital 2: 1.78822e+00
+Residual for orbital 3: 1.93262e+00
+Residual for orbital 4: 1.94777e+00
+Residual for orbital 5: 1.95986e+00
+Residual for orbital 6: 1.97323e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Orbital Energy:            [-20.86547449 -11.56919517  -0.10188957   0.46099002   0.52051008
+   0.60461037   0.69237562]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 3 4 5 6 2]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 6 2 3 4 5]
+
+Orbital Energy:            [-20.86547449 -11.55346686  -0.03622888   0.53238517   0.56972165
+   0.65212489   0.7074287 ]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 3 4 5 6 2]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: 2.594e-03
+Orbital 1 error: 4.511e-01
+Orbital 2 error: 3.149e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 16 iterations in SCF #1:  -52.910340 H, 9.99e+00 H
+Band energy residual:  1.08271094186
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 9.21915e-03
+Residual for orbital 1: 1.69918e-01
+Residual for orbital 2: 5.91188e-01
+Residual for orbital 3: 1.93766e+00
+Residual for orbital 4: 1.95246e+00
+Residual for orbital 5: 1.96536e+00
+Residual for orbital 6: 1.73891e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 6 3 4 5 2]
+
+Orbital Energy:            [ -20.87266492  -11.89023005   -0.28162955    0.49547187    0.59205615
+    0.65702343  126.61876738]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 3 4 5 6 2]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 6 5]
+
+Orbital Energy:            [ -20.87266492  -11.88053652    0.51028981    0.61094142    0.67164406
+    1.42437917  131.28129006]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -4.596e-03
+Orbital 1 error: 1.240e-01
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 17 iterations in SCF #1:  -57.506403 H, 5.39e+00 H
+Band energy residual:  2.29803120051
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 7.23616e-03
+Residual for orbital 1: 8.70397e-02
+Residual for orbital 2: 1.91841e+00
+Residual for orbital 3: 1.94017e+00
+Residual for orbital 4: 1.95388e+00
+Residual for orbital 5: 1.69371e+00
+Residual for orbital 6: 1.90166e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 5 2 3 4 6]
+
+Orbital Energy:            [-20.87709797 -11.98336661  -0.45803093   0.41187529   0.5427031
+   0.60533845   0.73432862]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 3 4 5 6 2]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 6 2 3 4 5]
+
+Orbital Energy:            [-20.87709797 -11.97735048  -0.3158639    0.42192719   0.5614433
+   0.62792216   0.96816216]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 3 4 5 6 2]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -9.029e-03
+Orbital 1 error: 2.718e-02
+Orbital 2 error: 2.870e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 18 iterations in SCF #1:  -54.340625 H, 8.56e+00 H
+Band energy residual:  1.58288908909
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 5.68274e-03
+Residual for orbital 1: 4.29160e-02
+Residual for orbital 2: 1.56639e+00
+Residual for orbital 3: 1.92484e+00
+Residual for orbital 4: 1.93976e+00
+Residual for orbital 5: 1.91607e+00
+Residual for orbital 6: 1.64379e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 6 3 5 4]
+
+Orbital Energy:            [-20.87983338 -12.00546769  -1.89987368  -0.63850027   0.47551529
+   0.47879734   0.54204469]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 4 5 6 2 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 5 6 2 3 4]
+
+Orbital Energy:            [-20.87983338 -12.00170564  -1.16315705  -0.05674365   0.48261269
+   0.50773588   0.5646898 ]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 4 5 6 2 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.176e-02
+Orbital 1 error: 2.826e-03
+Orbital 2 error: 2.022e+00
+Orbital 3 error: 2.550e+00
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 19 iterations in SCF #1:  -52.202879 H, 1.07e+01 H
+Band energy residual:  1.0688726261
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 4.46375e-03
+Residual for orbital 1: 2.08428e-02
+Residual for orbital 2: 1.86049e+00
+Residual for orbital 3: 5.54704e-01
+Residual for orbital 4: 1.91971e+00
+Residual for orbital 5: 1.27827e+00
+Residual for orbital 6: 1.73250e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 5 6 2 4 3]
+
+Orbital Energy:            [-20.88152171 -12.00948503  -1.47532485  -0.27684936   0.05371697
+   0.45228812  20.23313963]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 4 5 6 2 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 6 2 3 5 4]
+
+Orbital Energy:            [ -2.08815217e+01  -1.20071302e+01  -1.69753984e-02   9.44101395e-02
+   5.16425815e-01   4.14002774e+00   2.10754402e+01]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 3 4 5 6 2]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.345e-02
+Orbital 1 error: -2.598e-03
+Orbital 2 error: 3.169e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 20 iterations in SCF #1:  -53.811255 H, 9.09e+00 H
+Band energy residual:  0.80418759956
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 3.50654e-03
+Residual for orbital 1: 1.01838e-02
+Residual for orbital 2: 5.71548e-01
+Residual for orbital 3: 1.90451e+00
+Residual for orbital 4: 1.44571e+00
+Residual for orbital 5: 1.69231e+00
+Residual for orbital 6: 1.73038e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 4 6 5 3 2]
+
+Orbital Energy:            [ -2.08825638e+01  -1.20096265e+01  -1.13082293e+00  -2.51806280e-01
+   5.06525848e-02   3.84471461e-01   3.41623236e+03]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 4 5 6 2 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 6 5 4]
+
+Orbital Energy:            [ -2.08825638e+01  -1.20081562e+01   5.15952316e-02   4.06491112e-01
+   8.60635893e+01   1.16122481e+03   3.99109816e+03]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.449e-02
+Orbital 1 error: -3.624e-03
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 21 iterations in SCF #1:  -57.781440 H, 5.12e+00 H
+Band energy residual:  1.9850927256
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 2.75468e-03
+Residual for orbital 1: 5.15088e-03
+Residual for orbital 2: 1.71798e+00
+Residual for orbital 3: 1.87010e+00
+Residual for orbital 4: 1.70584e+00
+Residual for orbital 5: 1.40549e+00
+Residual for orbital 6: 1.78496e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 4 2 3 5 6]
+
+Orbital Energy:            [ -2.08832070e+01  -1.20091756e+01  -1.24282954e-01  -1.65813880e-02
+   2.34714494e-01   1.82917286e+00   1.45362101e+01]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 4 5 6 2 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 6 5 2 3 4]
+
+Orbital Energy:            [-20.88320704 -12.00826061   0.14243591   0.18706477   0.24710128
+   3.49798381  24.44593293]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.514e-02
+Orbital 1 error: -3.729e-03
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 22 iterations in SCF #1:  -57.782935 H, 5.12e+00 H
+Band energy residual:  0.000747608880609
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 2.16406e-03
+Residual for orbital 1: 2.81561e-03
+Residual for orbital 2: 1.76617e+00
+Residual for orbital 3: 1.72273e+00
+Residual for orbital 4: 1.81946e+00
+Residual for orbital 5: 1.35533e+00
+Residual for orbital 6: 1.92325e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 5 3 4 2 6]
+
+Orbital Energy:            [-20.88360406 -12.00877614  -1.52523321  -0.28794592   0.02382974
+   0.13220797   0.87269375]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 4 5 6 2 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 5 6 2 3 4]
+
+Orbital Energy:            [ -2.08836041e+01  -1.20082083e+01  -9.03978560e-01  -7.55350653e-03
+   4.01401923e-02   1.57496296e-01   1.44066759e+00]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 4 5 6 2 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.554e-02
+Orbital 1 error: -3.677e-03
+Orbital 2 error: 2.282e+00
+Orbital 3 error: 2.600e+00
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 23 iterations in SCF #1:  -51.606689 H, 1.13e+01 H
+Band energy residual:  3.08812324073
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.70008e-03
+Residual for orbital 1: 1.73126e-03
+Residual for orbital 2: 1.63481e+00
+Residual for orbital 3: 4.69544e-01
+Residual for orbital 4: 1.94422e+00
+Residual for orbital 5: 1.36146e+00
+Residual for orbital 6: 1.74627e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 5 2 6 4 3]
+
+Orbital Energy:            [ -2.08838491e+01  -1.20085025e+01  -1.49968000e+00  -1.12614509e+00
+  -1.77706732e-01   5.88363392e-01   5.06134143e+03]
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 5 6 2 3 4]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 6 5 4 3]
+
+Orbital Energy:            [ -2.08838491e+01  -1.20081508e+01   6.37558620e-01   6.71620312e+00
+   1.01114222e+02   4.05726380e+02   5.31896970e+03]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.578e-02
+Orbital 1 error: -3.619e-03
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 24 iterations in SCF #1:  -57.784000 H, 5.12e+00 H
+Band energy residual:  3.08865549903
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.33558e-03
+Residual for orbital 1: 1.19385e-03
+Residual for orbital 2: 1.93584e+00
+Residual for orbital 3: 1.79468e+00
+Residual for orbital 4: 1.69674e+00
+Residual for orbital 5: 1.25839e+00
+Residual for orbital 6: 1.74404e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 5 4 3 2 6]
+
+Orbital Energy:            [-20.88400033 -12.00832763  -0.85906767  -0.19404481   0.06175591
+   0.5316435   18.42895392]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 4 5 6 2 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 6 3 5 4]
+
+Orbital Energy:            [-20.88400033 -12.0081101    0.06516939   0.37931628   0.53682374
+   0.63066873  25.47887443]
+Warning: 2 orbital energy > 0.  Resetting to gauge shift.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.593e-02
+Orbital 1 error: -3.578e-03
+Orbital 2 error: 1.186e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 25 iterations in SCF #1:  -57.784221 H, 5.11e+00 H
+Band energy residual:  0.000110518656371
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.04923e-03
+Residual for orbital 1: 8.85824e-04
+Residual for orbital 2: 1.76353e+00
+Residual for orbital 3: 1.76162e+00
+Residual for orbital 4: 1.91969e+00
+Residual for orbital 5: 1.21743e+00
+Residual for orbital 6: 1.84653e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 5 3 2 4 6]
+
+Orbital Energy:            [-20.88409367 -12.0082184   -1.90171787  -0.17864388  -0.10400658
+   0.4469863    0.75353794]
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 5 6 2 3 4]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 4 6 5 2 3]
+
+Orbital Energy:            [-20.88409367 -12.00808397  -1.58718971   0.13704757   0.2394941
+   0.4484658    1.18069119]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 3 4 5 6 2]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.602e-02
+Orbital 1 error: -3.552e-03
+Orbital 2 error: 1.598e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 26 iterations in SCF #1:  -56.958735 H, 5.94e+00 H
+Band energy residual:  0.412743082604
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 8.24274e-04
+Residual for orbital 1: 6.80505e-04
+Residual for orbital 2: 1.77183e+00
+Residual for orbital 3: 1.80576e+00
+Residual for orbital 4: 1.89493e+00
+Residual for orbital 5: 1.87176e+00
+Residual for orbital 6: 1.14231e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 6 2 3 4 5]
+
+Orbital Energy:            [ -2.08841513e+01  -1.20081507e+01  -2.04816086e+00  -1.30752615e-01
+  -7.81422233e-03   3.39349513e-01   4.45778301e-01]
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 5 6 3 4]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 5 6 3 4]
+
+Orbital Energy:            [-20.88415128 -12.0080677   -1.96618583   0.11056173   0.38841446
+   0.49222852   0.54991459]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 3 4 5 6 2]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.608e-02
+Orbital 1 error: -3.536e-03
+Orbital 2 error: 1.219e+00
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 27 iterations in SCF #1:  -57.716810 H, 5.18e+00 H
+Band energy residual:  0.379037461027
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 6.47548e-04
+Residual for orbital 1: 5.30180e-04
+Residual for orbital 2: 1.78070e+00
+Residual for orbital 3: 1.85761e+00
+Residual for orbital 4: 1.90773e+00
+Residual for orbital 5: 1.89554e+00
+Residual for orbital 6: 1.00547e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Need to re-order orbitals.
+New order:  [0 1 6 2 3 4 5]
+
+Orbital Energy:            [ -2.08841868e+01  -1.20081089e+01  -2.30439655e+00  -9.50804726e-03
+   2.18063743e-01   3.91759731e-01   4.95656613e-01]
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 4 5 6 3]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 6 3 4 5]
+
+Orbital Energy:            [-20.88418683 -12.00805767  -2.24151583   0.15967037   0.48400931
+   0.54764204   0.55959317]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.612e-02
+Orbital 1 error: -3.526e-03
+Orbital 2 error: 9.441e-01
+Orbital 3 error: 6.071e-01
+Orbital 4 error: 5.202e-01
+Orbital 5 error: 5.202e-01
+Orbital 6 error: 3.960e-01
+Band energy after 28 iterations in SCF #1:  -58.267521 H, 4.63e+00 H
+Band energy residual:  0.275355519977
+
+
+
+Using singularity skipping...
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Using singularity subtraction
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 5.08712e-04
+Residual for orbital 1: 4.15260e-04
+Residual for orbital 2: 8.93963e-01
+Residual for orbital 3: 1.80202e+00
+Residual for orbital 4: 1.88538e+00
+Residual for orbital 5: 1.92610e+00
+Residual for orbital 6: 1.91572e+00
+Computing orbital energies before orthogonalizing.  Sort when needed.
+
+Orbital Energy:            [-20.88420877 -12.00808315  -2.44264743   0.09183453   0.33275354
+   0.47465265   0.55454385]
+Warning: 3 orbital energy > 0.  Resetting to gauge shift.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.

@@ -1,4 +1,34 @@
-#!/bin/bash
+####  PBS preamble
+
+#PBS -N serial_LW3_400_atomic_subtract
+#PBS -M njvaughn@umich.edu
+
+#PBS -A lsa_fluxg
+#PBS -l qos=flux
+#PBS -q fluxg
+
+#PBS -l nodes=1:gpus=1,mem=8gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+#PBS -V
+
+####  End PBS preamble
+
+if [ -s "$PBS_NODEFILE" ] ; then
+    echo "Running on"
+    uniq -c $PBS_NODEFILE
+fi
+
+
+if [ -d "$PBS_O_WORKDIR" ] ; then
+    cd $PBS_O_WORKDIR
+    echo "Running from $PBS_O_WORKDIR"
+fi
+
+
+#  Put your job commands after this line
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
 DOMAIN=20
 MINDEPTH=4
 MAXDEPTH=20
@@ -8,7 +38,7 @@ SMOOTHINGN=0
 SMOOTHINGEPS=0.0
 MESHTYPE='LW1'
 MESHPARAM=50
-INTRASCFTOLERANCE=1e-2
+INTRASCFTOLERANCE=1e-4
 INTERSCFTOLERANCE=1e-7
 
 INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
@@ -17,9 +47,6 @@ INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
-
-
-cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 
 MESHTYPE='LW3'

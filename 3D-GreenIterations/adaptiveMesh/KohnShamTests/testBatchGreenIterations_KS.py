@@ -71,13 +71,15 @@ def setUpTree():
     
     
     print('max depth ', maxDepth)
-    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
+    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
 #     for element in tree.masterList:
 #         
 # #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
 #         for i,j,k in tree.PxByPyByPz:
 #             element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
             
+#     for m in range(4,tree.nOrbitals):
+#         tree.scrambleOrbital(m)
     return tree
     
     

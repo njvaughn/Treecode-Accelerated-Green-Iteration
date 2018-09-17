@@ -11,9 +11,12 @@ import os
 import numpy as np
 
 
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
 # resultsDir = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests'
-plotsDir = resultsDir+'/plots/'
+plotsDir = resultsDir+'plots/'
+##file='CO_LW3_400_SCF_10orb.csv'
+##file='CO_LW3_400_SCF.csv'
+file='LW3_400_atomicCore_7orb_24mH.csv'
 # df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceHe_LW3_1200.csv', header=0)
 # df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200.csv', header=0)
 # df_bad = pd.read_csv(resultsDir+'/iterationConvergenceH2_LW3_800_perturbed.csv', header=0)
@@ -25,7 +28,8 @@ plotsDir = resultsDir+'/plots/'
 # df_good = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200_ssForPhi0.csv', header=0)
 # df_bad = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200.csv', header=0)
 # df_Li = pd.read_csv(resultsDir+'/iterationConvergenceLi_800.csv', header=0)
-df_CO = pd.read_csv(resultsDir+'/iterationConvergenceCO_LW1_1000.csv', header=0)
+##df_CO = pd.read_csv(resultsDir+'/CO_LW3_1200_skip_SCFiterations.csv', header=0)
+df_CO = pd.read_csv(resultsDir+file, header=0)
 
 def plotBeIterationConvergence(system="Beryllium"):
    
@@ -132,7 +136,7 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeBandEnergy = -6.2899640319071970e+01
     
     # Combined plot
-    f0, ax0 = plt.subplots(1, 1, figsize=(8,6))
+    f0, ax0 = plt.subplots(1, 1, figsize=(6,5))
     df.plot(x='Iteration', y='exchangeEnergy', ax=ax0, style='bo')
     df.plot(x='Iteration', y='correlationEnergy', ax=ax0, style='go')
     df.plot(x='Iteration', y='bandEnergy', ax=ax0, style='mo')
@@ -155,7 +159,7 @@ def plotSCFconvergence(df, system = 'H2'):
     
 
     # Individual error plots
-    f, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12,7), sharex=True)
+    f, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(10,6), sharex=True)
     
     df['bandEnergyError']=abs(df['bandEnergy']-dftfeBandEnergy)
     df['exchangeEnergyError']=abs(df['exchangeEnergy']-dftfeExchangeEnergy)

@@ -1,8 +1,7 @@
 ####  PBS preamble
 
-#PBS -N minDepth5_400_skip
+#PBS -N serial_LW3_400_atomic_subtract
 #PBS -M njvaughn@umich.edu
-#PBS -m e
 
 #PBS -A lsa_fluxg
 #PBS -l qos=flux
@@ -27,13 +26,11 @@ if [ -d "$PBS_O_WORKDIR" ] ; then
 fi
 
 
-
-
 #  Put your job commands after this line
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 DOMAIN=20
-MINDEPTH=5
+MINDEPTH=4
 MAXDEPTH=20
 ORDER=4
 SINGSUBT=1
@@ -53,8 +50,9 @@ INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 
 
 MESHTYPE='LW3'
-MESHPARAM=400
+MESHPARAM=800
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$INPUTFILE $VTKFILEDIR
+	
 	

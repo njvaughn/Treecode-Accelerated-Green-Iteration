@@ -1,0 +1,1199 @@
+Running on
+      1 nyx7507
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/results_CO/results.csv', 14, 10, -112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+Orbital index = 5
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Orbital 7 filled with (n,ell,m) = (2,1,-1) 
+Orbital 8 filled with (n,ell,m) = (2,1,0) 
+Orbital 9 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            1.20e+03 
+Total Number of Cells:       7745 
+Total Number of Leaf Cells:  6732 
+Total Number of Gridpoints:  430848 
+Minimum Depth                3 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  4 
+Construction time:           9.23 seconds.
+Closest gridpoint to origin:  [-0.01014124443176817, -0.01189382304511144, -0.01189382304511144]
+For a distance of:  0.019641051190853222
+Part of a cell centered at:  [-0.13322624999999999, -0.15625, -0.15625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    430848
+Threads per block:    512
+Blocks per grid:      842
+[-112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865]
+Update orbital energies after computing the initial Veff.
+
+Need to re-order orbitals.
+New order:  [5 0 6 7 1 2 8 9 4 3]
+
+Orbital Energy:            [-19.90574104 -11.01855973  -2.08481511  -1.73231765  -1.72245147
+  -1.65907256  -1.46579065  -1.46579065  -1.27828578  -1.27828578]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.465790646639911
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   1.00000000e+000   1.00000000e+000
+   1.43877230e-257   1.43877230e-257]
+
+
+
+
+SCF Count  1
+Using singularity skipping...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 5.50304e-03
+Residual for orbital 1: 4.90227e-03
+Residual for orbital 2: 1.29711e-01
+Residual for orbital 3: 2.40443e-01
+Residual for orbital 4: 2.19817e-01
+Residual for orbital 5: 3.34360e-01
+Residual for orbital 6: 5.14107e-02
+Residual for orbital 7: 5.14107e-02
+Residual for orbital 8: 6.30044e-02
+Residual for orbital 9: 6.30044e-02
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 6 7 4 8 9 5]
+
+Orbital Energy:            [-19.96317102 -11.0416439   -2.09095215  -1.62555654  -1.46892442
+  -1.46892442  -1.22399013  -1.14948283  -1.14948283  -0.32006544]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.1721706809350263
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   1.53831869e-31
+   1.53831869e-31   0.00000000e+00]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -9.510e-02
+Orbital 1 error: -3.711e-02
+Orbital 2 error: 9.461e-02
+Orbital 3 error: -1.846e-02
+Orbital 4 error: 5.127e-02
+Orbital 5 error: 5.127e-02
+Orbital 6 error: 1.720e-01
+Orbital 7 error: -7.524e-02
+Orbital 8 error: -7.623e-02
+Orbital 9 error: 6.627e-01
+Band energy after 1 iterations in SCF #1:  -63.766325 H, -8.67e-01 H
+Band energy residual:  51.5021936718
+
+
+
+Using singularity skipping...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 9.63945e-04
+Residual for orbital 1: 8.51860e-04
+Residual for orbital 2: 5.70474e-02
+Residual for orbital 3: 9.48083e-02
+Residual for orbital 4: 4.06658e-02
+Residual for orbital 5: 4.06658e-02
+Residual for orbital 6: 8.94385e-02
+Residual for orbital 7: 3.17605e-02
+Residual for orbital 8: 3.17605e-02
+Residual for orbital 9: 3.93548e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6 8 7 9]
+
+Orbital Energy:            [-19.96289819 -11.04153752  -2.11726541  -1.63977945  -1.47929701
+  -1.47929701  -1.32245252  -1.14568259  -1.14568259  -0.78041525]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.2962731148199564
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   6.05465375e-207
+   6.05465375e-207   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -9.483e-02
+Orbital 1 error: -3.701e-02
+Orbital 2 error: 6.830e-02
+Orbital 3 error: -3.268e-02
+Orbital 4 error: 4.090e-02
+Orbital 5 error: 4.089e-02
+Orbital 6 error: 7.354e-02
+Orbital 7 error: -7.144e-02
+Orbital 8 error: -7.242e-02
+Orbital 9 error: 2.024e-01
+Band energy after 2 iterations in SCF #1:  -64.085054 H, -1.19e+00 H
+Band energy residual:  0.612113861122
+
+
+
+Using singularity skipping...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 4.13050e-04
+Residual for orbital 1: 3.44223e-04
+Residual for orbital 2: 4.55710e-02
+Residual for orbital 3: 7.58028e-02
+Residual for orbital 4: 3.39037e-02
+Residual for orbital 5: 3.39037e-02
+Residual for orbital 6: 5.61005e-02
+Residual for orbital 7: 2.79029e-02
+Residual for orbital 8: 2.79029e-02
+Residual for orbital 9: 1.30036e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 5 4 6 7 8 9]
+
+Orbital Energy:            [-19.96298935 -11.04156536  -2.13343264  -1.63526525  -1.48673469
+  -1.48673469  -1.34825382  -1.14152118  -1.14152118  -0.82360797]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.2755868572417952
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   2.78079989e-184
+   2.78079989e-184   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -9.492e-02
+Orbital 1 error: -3.703e-02
+Orbital 2 error: 5.213e-02
+Orbital 3 error: -2.817e-02
+Orbital 4 error: 3.346e-02
+Orbital 5 error: 3.345e-02
+Orbital 6 error: 4.773e-02
+Orbital 7 error: -6.728e-02
+Orbital 8 error: -6.826e-02
+Orbital 9 error: 1.592e-01
+Band energy after 3 iterations in SCF #1:  -64.189952 H, -1.29e+00 H
+Band energy residual:  0.0873185889615
+
+
+
+Using singularity skipping...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.81566e-04
+Residual for orbital 1: 1.46675e-04
+Residual for orbital 2: 3.78907e-02
+Residual for orbital 3: 6.41577e-02
+Residual for orbital 4: 2.89329e-02
+Residual for orbital 5: 2.89329e-02
+Residual for orbital 6: 4.53261e-02
+Residual for orbital 7: 2.48374e-02
+Residual for orbital 8: 2.48374e-02
+Residual for orbital 9: 1.01829e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.96302512 -11.04157611  -2.14495106  -1.62895612  -1.49236665
+  -1.49236665  -1.36227259  -1.1381416   -1.1381416   -0.84814278]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.2755915426570672
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   6.35344328e-189
+   6.35344328e-189   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -9.496e-02
+Orbital 1 error: -3.704e-02
+Orbital 2 error: 4.062e-02
+Orbital 3 error: -2.186e-02
+Orbital 4 error: 2.783e-02
+Orbital 5 error: 2.782e-02
+Orbital 6 error: 3.372e-02
+Orbital 7 error: -6.390e-02
+Orbital 8 error: -6.488e-02
+Orbital 9 error: 1.346e-01
+Band energy after 4 iterations in SCF #1:  -64.251029 H, -1.35e+00 H
+Band energy residual:  0.0483141582477
+
+
+
+Using singularity skipping...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 7.94538e-05
+Residual for orbital 1: 6.35275e-05
+Residual for orbital 2: 3.21430e-02
+Residual for orbital 3: 5.54422e-02
+Residual for orbital 4: 2.50575e-02
+Residual for orbital 5: 2.50575e-02
+Residual for orbital 6: 3.86362e-02
+Residual for orbital 7: 2.21584e-02
+Residual for orbital 8: 2.21584e-02
+Residual for orbital 9: 8.55521e-02
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 5 4 6 8 7 9]
+
+Orbital Energy:            [-19.96303962 -11.04158043  -2.15359871  -1.62342743  -1.49672962
+  -1.49672962  -1.37132458  -1.13546539  -1.13546539  -0.86799171]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.3273111424230744
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   1.60297968e-263
+   1.60297968e-263   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -9.497e-02
+Orbital 1 error: -3.705e-02
+Orbital 2 error: 3.197e-02
+Orbital 3 error: -1.633e-02
+Orbital 4 error: 2.347e-02
+Orbital 5 error: 2.346e-02
+Orbital 6 error: 2.466e-02
+Orbital 7 error: -6.123e-02
+Orbital 8 error: -6.221e-02
+Orbital 9 error: 1.148e-01
+Band energy after 5 iterations in SCF #1:  -64.292860 H, -1.39e+00 H
+Band energy residual:  0.0354122194213
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 5.36223e-03
+Residual for orbital 1: 4.44651e-03
+Residual for orbital 2: 2.82749e-02
+Residual for orbital 3: 4.86521e-02
+Residual for orbital 4: 2.26738e-02
+Residual for orbital 5: 2.26738e-02
+Residual for orbital 6: 3.39213e-02
+Residual for orbital 7: 2.28385e-02
+Residual for orbital 8: 2.28385e-02
+Residual for orbital 9: 8.66721e-02
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 5 4 6 7 8 9]
+
+Orbital Energy:            [-19.88326736 -11.00787069  -2.16577327  -1.6287693   -1.51093566
+  -1.51093566  -1.38393642  -1.14198127  -1.14198127  -0.89711806]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.3184548467704205
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   1.93302646e-242
+   1.93302646e-242   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.520e-02
+Orbital 1 error: -3.339e-03
+Orbital 2 error: 1.979e-02
+Orbital 3 error: -2.167e-02
+Orbital 4 error: 9.260e-03
+Orbital 5 error: 9.254e-03
+Orbital 6 error: 1.205e-02
+Orbital 7 error: -6.774e-02
+Orbital 8 error: -6.872e-02
+Orbital 9 error: 8.567e-02
+Band energy after 6 iterations in SCF #1:  -64.182977 H, -1.28e+00 H
+Band energy residual:  0.0127835294936
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 9.93121e-04
+Residual for orbital 1: 7.81397e-04
+Residual for orbital 2: 2.40179e-02
+Residual for orbital 3: 4.20700e-02
+Residual for orbital 4: 1.89295e-02
+Residual for orbital 5: 1.89295e-02
+Residual for orbital 6: 2.87822e-02
+Residual for orbital 7: 1.76863e-02
+Residual for orbital 8: 1.76863e-02
+Residual for orbital 9: 7.17850e-02
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88464401 -11.00840178  -2.17120197  -1.62499522  -1.51360267
+  -1.51360267  -1.38810889  -1.14046711  -1.14046711  -0.91330411]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.3186076819875965
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   1.00027863e-244
+   1.00027863e-244   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.658e-02
+Orbital 1 error: -3.870e-03
+Orbital 2 error: 1.436e-02
+Orbital 3 error: -1.790e-02
+Orbital 4 error: 6.593e-03
+Orbital 5 error: 6.587e-03
+Orbital 6 error: 7.879e-03
+Orbital 7 error: -6.623e-02
+Orbital 8 error: -6.721e-02
+Orbital 9 error: 6.949e-02
+Band energy after 7 iterations in SCF #1:  -64.209114 H, -1.31e+00 H
+Band energy residual:  0.0262265656231
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 4.04088e-04
+Residual for orbital 1: 3.29629e-04
+Residual for orbital 2: 2.10964e-02
+Residual for orbital 3: 3.70215e-02
+Residual for orbital 4: 1.66470e-02
+Residual for orbital 5: 1.66470e-02
+Residual for orbital 6: 2.49393e-02
+Residual for orbital 7: 1.57083e-02
+Residual for orbital 8: 1.57083e-02
+Residual for orbital 9: 6.43374e-02
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88467025 -11.00841237  -2.17542686  -1.6219963   -1.5156722
+  -1.5156722   -1.39094898  -1.13926611  -1.13926611  -0.92598059]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.3186105955034049
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   2.23403024e-246
+   2.23403024e-246   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.660e-02
+Orbital 1 error: -3.881e-03
+Orbital 2 error: 1.014e-02
+Orbital 3 error: -1.490e-02
+Orbital 4 error: 4.524e-03
+Orbital 5 error: 4.517e-03
+Orbital 6 error: 5.039e-03
+Orbital 7 error: -6.503e-02
+Orbital 8 error: -6.601e-02
+Orbital 9 error: 5.681e-02
+Band energy after 8 iterations in SCF #1:  -64.225598 H, -1.33e+00 H
+Band energy residual:  0.0185164413085
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.75275e-04
+Residual for orbital 1: 1.45816e-04
+Residual for orbital 2: 1.85463e-02
+Residual for orbital 3: 3.25476e-02
+Residual for orbital 4: 1.46949e-02
+Residual for orbital 5: 1.46949e-02
+Residual for orbital 6: 2.15346e-02
+Residual for orbital 7: 1.39935e-02
+Residual for orbital 8: 1.39935e-02
+Residual for orbital 9: 6.08972e-02
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88468031 -11.0084159   -2.17874642  -1.61964539  -1.51730764
+  -1.51730764  -1.39289899  -1.13833878  -1.13833878  -0.93523341]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.3186117117747227
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   1.19073805e-247
+   1.19073805e-247   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.661e-02
+Orbital 1 error: -3.884e-03
+Orbital 2 error: 6.820e-03
+Orbital 3 error: -1.255e-02
+Orbital 4 error: 2.888e-03
+Orbital 5 error: 2.882e-03
+Orbital 6 error: 3.089e-03
+Orbital 7 error: -6.410e-02
+Orbital 8 error: -6.508e-02
+Orbital 9 error: 4.756e-02
+Band energy after 9 iterations in SCF #1:  -64.238005 H, -1.34e+00 H
+Band energy residual:  0.0136012894854
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 7.61759e-05
+Residual for orbital 1: 6.45260e-05
+Residual for orbital 2: 1.63229e-02
+Residual for orbital 3: 2.85936e-02
+Residual for orbital 4: 1.30071e-02
+Residual for orbital 5: 1.30071e-02
+Residual for orbital 6: 1.85522e-02
+Residual for orbital 7: 1.25281e-02
+Residual for orbital 8: 1.25281e-02
+Residual for orbital 9: 6.75895e-02
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88468394 -11.00841715  -2.18135181  -1.61780307  -1.51860387
+  -1.51860387  -1.39423425  -1.13761742  -1.13761742  -0.93715931]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.3186121152350927
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   1.21897924e-248
+   1.21897924e-248   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.885e-03
+Orbital 2 error: 4.215e-03
+Orbital 3 error: -1.071e-02
+Orbital 4 error: 1.592e-03
+Orbital 5 error: 1.586e-03
+Orbital 6 error: 1.754e-03
+Orbital 7 error: -6.338e-02
+Orbital 8 error: -6.436e-02
+Orbital 9 error: 4.563e-02
+Band energy after 10 iterations in SCF #1:  -64.247396 H, -1.35e+00 H
+Band energy residual:  0.0051788418053
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 3.30909e-05
+Residual for orbital 1: 2.85322e-05
+Residual for orbital 2: 1.43804e-02
+Residual for orbital 3: 2.51030e-02
+Residual for orbital 4: 1.15390e-02
+Residual for orbital 5: 1.15390e-02
+Residual for orbital 6: 1.59665e-02
+Residual for orbital 7: 1.14095e-02
+Residual for orbital 8: 1.14095e-02
+Residual for orbital 9: 9.91054e-02
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88468537 -11.00841763  -2.18339514  -1.61635943  -1.51963365
+  -1.51963365  -1.39514493  -1.13704323  -1.13704323  -0.9189134 ]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.318612273441619
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   1.98761997e-249
+   1.98761997e-249   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: 2.171e-03
+Orbital 3 error: -9.264e-03
+Orbital 4 error: 5.621e-04
+Orbital 5 error: 5.559e-04
+Orbital 6 error: 8.430e-04
+Orbital 7 error: -6.280e-02
+Orbital 8 error: -6.379e-02
+Orbital 9 error: 6.388e-02
+Band energy after 11 iterations in SCF #1:  -64.254540 H, -1.36e+00 H
+Band energy residual:  0.0158224635924
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.43626e-05
+Residual for orbital 1: 1.26062e-05
+Residual for orbital 2: 1.26784e-02
+Residual for orbital 3: 2.20267e-02
+Residual for orbital 4: 1.02590e-02
+Residual for orbital 5: 1.02590e-02
+Residual for orbital 6: 1.37634e-02
+Residual for orbital 7: 1.10319e-02
+Residual for orbital 8: 1.10319e-02
+Residual for orbital 9: 1.76344e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88468595 -11.00841783  -2.18499636  -1.61522826  -1.52045301
+  -1.52045301  -1.39576019  -1.13654052  -1.13654052  -0.82556152]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.2670876199950216
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   1.86004920e-179
+   1.86004920e-179   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: 5.702e-04
+Orbital 3 error: -8.132e-03
+Orbital 4 error: -2.573e-04
+Orbital 5 error: -2.635e-04
+Orbital 6 error: 2.277e-04
+Orbital 7 error: -6.230e-02
+Orbital 8 error: -6.328e-02
+Orbital 9 error: 1.572e-01
+Band energy after 12 iterations in SCF #1:  -64.259989 H, -1.36e+00 H
+Band energy residual:  0.0916324574021
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 6.22975e-06
+Residual for orbital 1: 5.56622e-06
+Residual for orbital 2: 1.11836e-02
+Residual for orbital 3: 1.93238e-02
+Residual for orbital 4: 9.15029e-03
+Residual for orbital 5: 9.15029e-03
+Residual for orbital 6: 1.19947e-02
+Residual for orbital 7: 1.25362e-02
+Residual for orbital 8: 1.25362e-02
+Residual for orbital 9: 3.21084e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6 8 7 9]
+
+Orbital Energy:            [-19.8846862  -11.00841792  -2.18624997  -1.61434175  -1.52110517
+  -1.52110517  -1.39616268  -1.13595769  -1.13595769  -0.52864078]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.267087646969363
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   2.95259657e-180
+   2.95259657e-180   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: -6.835e-04
+Orbital 3 error: -7.246e-03
+Orbital 4 error: -9.094e-04
+Orbital 5 error: -9.156e-04
+Orbital 6 error: -1.748e-04
+Orbital 7 error: -6.172e-02
+Orbital 8 error: -6.270e-02
+Orbital 9 error: 4.541e-01
+Band energy after 13 iterations in SCF #1:  -64.264138 H, -1.37e+00 H
+Band energy residual:  0.296012141008
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 2.70140e-06
+Residual for orbital 1: 2.45676e-06
+Residual for orbital 2: 9.86801e-03
+Residual for orbital 3: 1.69676e-02
+Residual for orbital 4: 8.22455e-03
+Residual for orbital 5: 8.22455e-03
+Residual for orbital 6: 1.09513e-02
+Residual for orbital 7: 1.80800e-02
+Residual for orbital 8: 1.80800e-02
+Residual for orbital 9: 4.94991e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6 8 7 9]
+
+Orbital Energy:            [-19.88468631 -11.00841796  -2.18723049  -1.61364538  -1.52162233
+  -1.52162233  -1.39638667  -1.1348429   -1.1348429   -0.15767855]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.2670876585314164
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   8.73704583e-182
+   8.73704583e-182   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: -1.664e-03
+Orbital 3 error: -6.550e-03
+Orbital 4 error: -1.427e-03
+Orbital 5 error: -1.433e-03
+Orbital 6 error: -3.988e-04
+Orbital 7 error: -6.060e-02
+Orbital 8 error: -6.159e-02
+Orbital 9 error: 8.251e-01
+Band energy after 14 iterations in SCF #1:  -64.267223 H, -1.37e+00 H
+Band energy residual:  0.371649223563
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.17199e-06
+Residual for orbital 1: 1.08418e-06
+Residual for orbital 2: 8.70852e-03
+Residual for orbital 3: 1.49690e-02
+Residual for orbital 4: 7.57034e-03
+Residual for orbital 5: 7.57034e-03
+Residual for orbital 6: 1.15892e-02
+Residual for orbital 7: 3.06896e-02
+Residual for orbital 8: 3.06896e-02
+Residual for orbital 9: 5.18134e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88468635 -11.00841798  -2.18799666  -1.61309241  -1.52202542
+  -1.52202542  -1.39638241  -1.13172255  -1.13172255  -0.69569653]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.2670876635161405
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   4.59340696e-186
+   4.59340696e-186   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: -2.430e-03
+Orbital 3 error: -5.997e-03
+Orbital 4 error: -1.830e-03
+Orbital 5 error: -1.836e-03
+Orbital 6 error: -3.945e-04
+Orbital 7 error: -5.748e-02
+Orbital 8 error: -5.846e-02
+Orbital 9 error: 2.871e-01
+Band energy after 15 iterations in SCF #1:  -64.269253 H, -1.37e+00 H
+Band energy residual:  0.532792459445
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 5.09749e-07
+Residual for orbital 1: 4.78646e-07
+Residual for orbital 2: 7.68557e-03
+Residual for orbital 3: 1.34525e-02
+Residual for orbital 4: 7.48293e-03
+Residual for orbital 5: 7.48293e-03
+Residual for orbital 6: 1.58379e-02
+Residual for orbital 7: 5.54346e-02
+Residual for orbital 8: 5.54346e-02
+Residual for orbital 9: 4.29210e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88468637 -11.00841798  -2.18859478  -1.61263397  -1.52231712
+  -1.52231712  -1.39586859  -1.12150726  -1.12150726  -0.25551532]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.267087665670629
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   4.49717207e-200
+   4.49717207e-200   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: -3.028e-03
+Orbital 3 error: -5.538e-03
+Orbital 4 error: -2.121e-03
+Orbital 5 error: -2.128e-03
+Orbital 6 error: 1.193e-04
+Orbital 7 error: -4.727e-02
+Orbital 8 error: -4.825e-02
+Orbital 9 error: 7.273e-01
+Band energy after 16 iterations in SCF #1:  -64.269672 H, -1.37e+00 H
+Band energy residual:  0.460402512155
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 2.23634e-07
+Residual for orbital 1: 2.11900e-07
+Residual for orbital 2: 6.78250e-03
+Residual for orbital 3: 1.28707e-02
+Residual for orbital 4: 8.67097e-03
+Residual for orbital 5: 8.67097e-03
+Residual for orbital 6: 2.62197e-02
+Residual for orbital 7: 1.02058e-01
+Residual for orbital 8: 1.02058e-01
+Residual for orbital 9: 4.87354e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88468638 -11.00841799  -2.18906127  -1.61219622  -1.52245948
+  -1.52245948  -1.39383941  -1.08666634  -1.08666634  -0.54916182]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.2670876666029398
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   7.45260588e-248
+   7.45260588e-248   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: -3.495e-03
+Orbital 3 error: -5.100e-03
+Orbital 4 error: -2.264e-03
+Orbital 5 error: -2.270e-03
+Orbital 6 error: 2.148e-03
+Orbital 7 error: -1.243e-02
+Orbital 8 error: -1.341e-02
+Orbital 9 error: 4.336e-01
+Band energy after 17 iterations in SCF #1:  -64.266240 H, -1.37e+00 H
+Band energy residual:  0.222248962007
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.00749e-07
+Residual for orbital 1: 9.53420e-08
+Residual for orbital 2: 5.98497e-03
+Residual for orbital 3: 1.43837e-02
+Residual for orbital 4: 1.22729e-02
+Residual for orbital 5: 1.22729e-02
+Residual for orbital 6: 4.65867e-02
+Residual for orbital 7: 1.88482e-01
+Residual for orbital 8: 1.88482e-01
+Residual for orbital 9: 4.76561e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88468639 -11.00841799  -2.1894248   -1.61161436  -1.52230001
+  -1.52230001  -1.38690755  -0.96810153  -0.96810153  -0.20783898]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.267087667006508
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.  0.  0.  0.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: -3.858e-03
+Orbital 3 error: -4.519e-03
+Orbital 4 error: -2.104e-03
+Orbital 5 error: -2.110e-03
+Orbital 6 error: 9.080e-03
+Orbital 7 error: 1.061e-01
+Orbital 8 error: 1.052e-01
+Orbital 9 error: 7.750e-01
+Band energy after 18 iterations in SCF #1:  -64.251302 H, -1.35e+00 H
+Band energy residual:  0.585921585541
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 4.87106e-08
+Residual for orbital 1: 4.66860e-08
+Residual for orbital 2: 5.28056e-03
+Residual for orbital 3: 1.99073e-02
+Residual for orbital 4: 1.97706e-02
+Residual for orbital 5: 1.97706e-02
+Residual for orbital 6: 8.42145e-02
+Residual for orbital 7: 3.42694e-01
+Residual for orbital 8: 3.42694e-01
+Residual for orbital 9: 4.68454e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6 9 8 7]
+
+Orbital Energy:            [-19.88468639 -11.00841799  -2.18970787  -1.6104436   -1.52135115
+  -1.52135115  -1.36394771  -0.6725886   -0.59405614  -0.59405614]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -0.8548899095119078
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.00000000e+000   2.00000000e+000   2.00000000e+000   1.96839665e-250
+   0.00000000e+000   0.00000000e+000]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: -4.141e-03
+Orbital 3 error: -3.348e-03
+Orbital 4 error: -1.155e-03
+Orbital 5 error: -1.162e-03
+Orbital 6 error: 3.204e-02
+Orbital 7 error: 4.017e-01
+Orbital 8 error: 4.792e-01
+Orbital 9 error: 3.887e-01
+Band energy after 19 iterations in SCF #1:  -64.199812 H, -1.30e+00 H
+Band energy residual:  0.309086415064
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 2.70362e-08
+Residual for orbital 1: 3.00491e-08
+Residual for orbital 2: 4.65846e-03
+Residual for orbital 3: 3.17999e-02
+Residual for orbital 4: 3.35396e-02
+Residual for orbital 5: 3.35396e-02
+Residual for orbital 6: 1.52192e-01
+Residual for orbital 7: 4.38429e-01
+Residual for orbital 8: 5.78036e-01
+Residual for orbital 9: 5.78036e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88468639 -11.00841799  -2.18992812  -1.60739239  -1.51810855
+  -1.51810855  -1.28955252  -0.2572939    0.20878871   0.20878871]
+Warning: 8 orbital energy > 0.  Resetting to gauge shift.
+Warning: 9 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6 8 9 7]
+Fermi energy:  -1.2670876672568596
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.  0.  0.  0.]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: -4.362e-03
+Orbital 3 error: -2.966e-04
+Orbital 4 error: 2.087e-03
+Orbital 5 error: 2.081e-03
+Orbital 6 error: 1.064e-01
+Orbital 7 error: 8.169e-01
+Orbital 8 error: 7.326e-02
+Orbital 9 error: -1.721e-02
+Band energy after 20 iterations in SCF #1:  -64.032389 H, -1.13e+00 H
+Band energy residual:  0.31288167904
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.76491e-08
+Residual for orbital 1: 2.68927e-08
+Residual for orbital 2: 4.10933e-03
+Residual for orbital 3: 5.36606e-02
+Residual for orbital 4: 5.78846e-02
+Residual for orbital 5: 5.78846e-02
+Residual for orbital 6: 2.70981e-01
+Residual for orbital 7: 8.00542e-01
+Residual for orbital 8: 9.15495e-01
+Residual for orbital 9: 7.47509e-01
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6 7 9 8]
+
+Orbital Energy:            [-19.88468639 -11.00841799  -2.19009937  -1.59865897  -1.50799233
+  -1.50799233  -1.06290746   0.76886056   1.41280123   2.54077916]
+Warning: 7 orbital energy > 0.  Resetting to gauge shift.
+Warning: 8 orbital energy > 0.  Resetting to gauge shift.
+Warning: 9 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 6 7 8 9]
+Fermi energy:  -1.014136018798391
+Occupations:  [  2.00000000e+00   2.00000000e+00   2.00000000e+00   2.00000000e+00
+   2.00000000e+00   2.00000000e+00   2.00000000e+00   8.22203079e-20
+   8.22203079e-20   8.22203079e-20]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: -4.533e-03
+Orbital 3 error: 8.437e-03
+Orbital 4 error: 1.220e-02
+Orbital 5 error: 1.220e-02
+Orbital 6 error: 3.331e-01
+Orbital 7 error: 7.424e-02
+Orbital 8 error: 7.326e-02
+Orbital 9 error: -1.721e-02
+Band energy after 21 iterations in SCF #1:  -63.521510 H, -6.22e-01 H
+Band energy residual:  0.487266426052
+
+
+
+Using singularity subtraction...
+Convolving orbital 0
+Convolving orbital 1
+Convolving orbital 2
+Convolving orbital 3
+Convolving orbital 4
+Convolving orbital 5
+Convolving orbital 6
+Convolving orbital 7
+Convolving orbital 8
+Convolving orbital 9
+Only normalizing, not orthogonalizing orbitals
+Residual for orbital 0: 1.28372e-08
+Residual for orbital 1: 2.74244e-08
+Residual for orbital 2: 3.62530e-03
+Residual for orbital 3: 9.19347e-02
+Residual for orbital 4: 1.00450e-01
+Residual for orbital 5: 1.00450e-01
+Residual for orbital 6: 4.58000e-01
+Residual for orbital 7: 1.06378e+00
+Residual for orbital 8: 1.22745e+00
+Residual for orbital 9: 1.37647e+00
+Orthogonalizing based on new order.
+Orthonormalizing orbitals within tree structure.
+Compute new energies from the orthogonalized orbitals.  Hope no sorting needed.
+
+Orbital Energy:            [-19.88468639 -11.00841799  -2.19023242  -1.57304665  -1.47712547
+  -1.47712547  -0.50456571   3.75315034   4.37533495   6.10456293]
+Warning: 7 orbital energy > 0.  Resetting to gauge shift.
+Warning: 8 orbital energy > 0.  Resetting to gauge shift.
+Warning: 9 orbital energy > 0.  Resetting to gauge shift.
+New order:  [0 1 2 3 4 5 7 8 9 6]
+Fermi energy:  -1.0002195065773192
+Occupations:  [ 2.          2.          2.          2.          2.          2.          0.
+  0.66666667  0.66666667  0.66666667]
+
+Using DFT-FE results from after first SCF (after orthogonalization) ...
+Orbital 0 error: -1.662e-02
+Orbital 1 error: -3.886e-03
+Orbital 2 error: -4.666e-03
+Orbital 3 error: 3.405e-02

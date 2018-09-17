@@ -1,0 +1,260 @@
+Running on
+      1 nyx7508
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+Hard coding nOrbitals to 7
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/results_CO/results.csv', 14, 7, -112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865, -2.0]
+Gauge shift  -2.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Initializing orbitals randomly...
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            4.00e+02 
+Total Number of Cells:       5121 
+Total Number of Leaf Cells:  4436 
+Total Number of Gridpoints:  283904 
+Minimum Depth                4 levels 
+Maximum Depth:               10 levels 
+Cell Order:                  4 
+Construction time:           5.73 seconds.
+Closest gridpoint to origin:  [-0.01014124443176817, -0.01189382304511144, -0.01189382304511144]
+For a distance of:  0.019641051190853222
+Part of a cell centered at:  [-0.13322624999999999, -0.15625, -0.15625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    283904
+Threads per block:    512
+Blocks per grid:      555
+[-112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865]
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [5 0 4 1 2 6 3]
+Orbital Energy:            [-225.32347878    2.51287833   15.15012346  194.21028745  236.36656142
+  248.47846952  311.89385825]
+Warning: 1 orbital energy > 0.  Resetting to gauge shift/2.
+Warning: 2 orbital energy > 0.  Resetting to gauge shift/2.
+Warning: 3 orbital energy > 0.  Resetting to gauge shift/2.
+Warning: 4 orbital energy > 0.  Resetting to gauge shift/2.
+Warning: 5 orbital energy > 0.  Resetting to gauge shift/2.
+Warning: 6 orbital energy > 0.  Resetting to gauge shift/2.
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+
+
+SCF Count  1
+Working on orbital 0
+Iteration 0
+Residual for orbital 0: 1.46359e+02
+Orbital 0 error:        2.553e+01
+Iteration 1
+Resetting orbital %i energy to 1/2 gauge shift
+Residual for orbital 0: 7.63031e-01
+Orbital 0 error:        1.874e+01
+Iteration 2
+Residual for orbital 0: 4.04879e-01
+Orbital 0 error:        1.679e+01
+Iteration 3
+Residual for orbital 0: 5.77435e-01
+Orbital 0 error:        1.144e+01
+Iteration 4
+Residual for orbital 0: 4.18088e-01
+Orbital 0 error:        6.169e+00
+Iteration 5
+Residual for orbital 0: 2.60326e-01
+Orbital 0 error:        2.815e+00
+Iteration 6
+Residual for orbital 0: 1.61513e-01
+Orbital 0 error:        1.148e+00
+Iteration 7
+Residual for orbital 0: 9.73632e-02
+Orbital 0 error:        4.560e-01
+Iteration 8
+Residual for orbital 0: 6.00973e-02
+Orbital 0 error:        1.768e-01
+Iteration 9
+Residual for orbital 0: 4.01307e-02
+Orbital 0 error:        5.033e-02
+Iteration 10
+Residual for orbital 0: 2.90425e-02
+Orbital 0 error:        -1.625e-02
+Iteration 11
+Residual for orbital 0: 2.20409e-02
+Orbital 0 error:        -5.490e-02
+Iteration 12
+Residual for orbital 0: 1.70810e-02
+Orbital 0 error:        -7.833e-02
+Iteration 13
+Residual for orbital 0: 1.33457e-02
+Orbital 0 error:        -9.276e-02
+Iteration 14
+Residual for orbital 0: 1.04593e-02
+Orbital 0 error:        -1.017e-01
+Iteration 15
+Residual for orbital 0: 8.20670e-03
+Orbital 0 error:        -1.072e-01
+Iteration 16
+Residual for orbital 0: 6.44205e-03
+Orbital 0 error:        -1.106e-01
+Iteration 17
+Residual for orbital 0: 5.05765e-03
+Orbital 0 error:        -1.127e-01
+Iteration 18
+Residual for orbital 0: 3.97099e-03
+Orbital 0 error:        -1.140e-01
+Iteration 19
+Residual for orbital 0: 3.11786e-03
+Orbital 0 error:        -1.148e-01
+Iteration 20
+Residual for orbital 0: 2.44803e-03
+Orbital 0 error:        -1.153e-01
+Iteration 21
+Residual for orbital 0: 1.92210e-03
+Orbital 0 error:        -1.156e-01
+Iteration 22
+Residual for orbital 0: 1.50916e-03
+Orbital 0 error:        -1.158e-01
+Iteration 23
+Residual for orbital 0: 1.18493e-03
+Orbital 0 error:        -1.159e-01
+Iteration 24
+Residual for orbital 0: 9.30356e-04
+Orbital 0 error:        -1.160e-01
+Iteration 25
+Residual for orbital 0: 7.30475e-04
+Orbital 0 error:        -1.160e-01
+Iteration 26
+Residual for orbital 0: 5.73538e-04
+Orbital 0 error:        -1.161e-01
+Iteration 27
+Residual for orbital 0: 4.50317e-04
+Orbital 0 error:        -1.161e-01
+Iteration 28
+Residual for orbital 0: 3.53569e-04
+Orbital 0 error:        -1.161e-01
+Iteration 29
+Residual for orbital 0: 2.77607e-04
+Orbital 0 error:        -1.161e-01
+Iteration 30
+Residual for orbital 0: 2.17965e-04
+Orbital 0 error:        -1.161e-01
+Iteration 31
+Residual for orbital 0: 1.71136e-04
+Orbital 0 error:        -1.161e-01
+Iteration 32
+Residual for orbital 0: 1.34369e-04
+Orbital 0 error:        -1.161e-01
+Iteration 33
+Residual for orbital 0: 1.05500e-04
+Orbital 0 error:        -1.161e-01
+Iteration 34
+Residual for orbital 0: 8.28343e-05
+Orbital 0 error:        -1.161e-01
+Working on orbital 1
+Iteration 0
+Resetting orbital %i energy to 1/2 gauge shift
+Residual for orbital 1: 1.45242e+02
+Orbital 1 error:        1.021e+01
+Iteration 1
+Residual for orbital 1: 2.59639e-01
+Orbital 1 error:        1.032e+01
+Iteration 2
+Residual for orbital 1: 1.93569e-01
+Orbital 1 error:        1.024e+01
+Iteration 3
+Residual for orbital 1: 2.08603e-01
+Orbital 1 error:        1.000e+01
+Iteration 4
+Residual for orbital 1: 2.92531e-01
+Orbital 1 error:        9.140e+00
+Iteration 5
+Residual for orbital 1: 3.97991e-01
+Orbital 1 error:        6.988e+00
+Iteration 6
+Residual for orbital 1: 3.86945e-01
+Orbital 1 error:        4.065e+00
+Iteration 7
+Residual for orbital 1: 2.94177e-01
+Orbital 1 error:        1.754e+00
+Iteration 8
+Residual for orbital 1: 1.91585e-01
+Orbital 1 error:        5.448e-01
+Iteration 9
+Residual for orbital 1: 1.09655e-01
+Orbital 1 error:        8.710e-02
+Iteration 10
+Residual for orbital 1: 5.70486e-02
+Orbital 1 error:        -4.665e-02
+Iteration 11
+Residual for orbital 1: 2.76849e-02
+Orbital 1 error:        -7.815e-02
+Iteration 12
+Residual for orbital 1: 1.28644e-02
+Orbital 1 error:        -8.405e-02
+Iteration 13
+Residual for orbital 1: 5.84981e-03
+Orbital 1 error:        -8.469e-02
+Iteration 14
+Residual for orbital 1: 2.63860e-03
+Orbital 1 error:        -8.453e-02
+Iteration 15
+Residual for orbital 1: 1.18855e-03
+Orbital 1 error:        -8.436e-02
+Iteration 16
+Residual for orbital 1: 5.36180e-04
+Orbital 1 error:        -8.426e-02
+Iteration 17
+Residual for orbital 1: 2.42500e-04
+Orbital 1 error:        -8.421e-02
+Iteration 18
+Residual for orbital 1: 1.09996e-04
+Orbital 1 error:        -8.419e-02
+Iteration 19
+Residual for orbital 1: 5.00501e-05
+Orbital 1 error:        -8.418e-02
+Working on orbital 2
+Iteration 0
+Resetting orbital %i energy to 1/2 gauge shift
+Residual for orbital 2: 1.45411e+02
+Orbital 2 error:        1.396e+00
+Iteration 1
+Residual for orbital 2: 2.58799e-01
+Orbital 2 error:        1.514e+00
+Iteration 2
+Residual for orbital 2: 1.82405e-01
+Orbital 2 error:        1.486e+00
+Iteration 3
+Residual for orbital 2: 1.57862e-01
+Orbital 2 error:        1.468e+00
+Iteration 4
+Residual for orbital 2: 1.44946e-01
+Orbital 2 error:        1.430e+00
+Iteration 5
+Residual for orbital 2: 1.42775e-01
+Orbital 2 error:        1.365e+00
+Iteration 6
+Residual for orbital 2: 1.49124e-01
