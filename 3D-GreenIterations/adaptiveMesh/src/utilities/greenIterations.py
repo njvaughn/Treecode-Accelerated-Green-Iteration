@@ -68,9 +68,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
-    
-    greenIterationOutFile = '/home/njvaughn/iterationResults/CO_LW3_800_GREEN_max10.csv'
-    SCFiterationOutFile = '/home/njvaughn/iterationResults/CO_LW3_800_SCF_max10.csv'
+     
+    greenIterationOutFile = '/home/njvaughn/iterationResults/CO_LW3_1200_GREEN_max10.csv'
+    SCFiterationOutFile = '/home/njvaughn/iterationResults/CO_LW3_1200_SCF_max10.csv'
 
 
     threadsPerBlock = 512
@@ -105,10 +105,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Update orbital energies after computing the initial Veff.')
     tree.updateOrbitalEnergies(sortByEnergy=True)
     
-    print('Setting the three highest energy orbitals to gauge shift.  They wont be updated')
-    tree.orbitalEnergies[-1] = tree.gaugeShift
-    tree.orbitalEnergies[-2] = tree.gaugeShift
-    tree.orbitalEnergies[-3] = tree.gaugeShift
+#     print('Setting the three highest energy orbitals to gauge shift.  They wont be updated')
+#     tree.orbitalEnergies[-1] = tree.gaugeShift
+#     tree.orbitalEnergies[-2] = tree.gaugeShift
+#     tree.orbitalEnergies[-3] = tree.gaugeShift
     
     
     for m in range(4,tree.nOrbitals):
@@ -191,7 +191,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 k = np.sqrt(-2*tree.orbitalEnergies[m])
                 phiNew = np.zeros((len(targets)))
 #                 if eigensolveCount<10:
-                if orbitalResidual > -1e10:
+                if orbitalResidual > -1e10: 
 #                     print('Using singularity skipping')
                     gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
                 else:

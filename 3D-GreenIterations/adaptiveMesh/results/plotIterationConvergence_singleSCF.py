@@ -18,7 +18,8 @@ resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMo
 ##file='CO_LW3_1200_skip_GreenIterations.csv'   # higher refinement test 09/13/18 with tolerance 1e-2
 ##file='CO_LW3_1200_skip_GreenIterations_tighter.csv'   # higher refinement test 09/13/18 with tolerance 1e-3
 ##file='CO_LW3_400_SCF_atomic.csv'
-file='LW3_400_SCF_atomicCore_7orb_24mH.csv'  # good result for coarse mesh
+##file='LW3_400_SCF_atomicCore_7orb_24mH.csv'  # good result for coarse mesh
+file='CO_LW3_800_GREEN_max10_subtract.csv'
 ##file='CO_LW3_400_GREEN_subtract.csv'
 ##file='CO_LW3_400_GREEN_longDomain.csv'
 ##file='CO_LW3_400_GREEN_10orb.csv'
@@ -32,8 +33,8 @@ df = pd.read_csv(resultsDir+file, header=0)
 
 print(df.shape)
 
-residualsMatrix = np.zeros((df.shape[0],10))
-errorsMatrix = np.zeros((df.shape[0],10))
+residualsMatrix = np.zeros((df.shape[0],7))
+errorsMatrix = np.zeros((df.shape[0],7))
 for i in range(df.shape[0]):
 ##    print('i=%i'%i)
 ##    print(np.array(df.orbitalResiduals[i][1:-1].split('  '),dtype=float))

@@ -16,7 +16,10 @@ resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMo
 plotsDir = resultsDir+'plots/'
 ##file='CO_LW3_400_SCF_10orb.csv'
 ##file='CO_LW3_400_SCF.csv'
-file='LW3_400_atomicCore_7orb_24mH.csv'
+##file='LW3_400_atomicCore_7orb_24mH.csv'
+##file='CO_LW3_400_SCF_max10_subtract.csv'
+##file='CO_LW3_800_SCF_max10_subtract.csv'
+file='CO_LW3_1200_SCF_max10.csv'
 # df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceHe_LW3_1200.csv', header=0)
 # df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200.csv', header=0)
 # df_bad = pd.read_csv(resultsDir+'/iterationConvergenceH2_LW3_800_perturbed.csv', header=0)
