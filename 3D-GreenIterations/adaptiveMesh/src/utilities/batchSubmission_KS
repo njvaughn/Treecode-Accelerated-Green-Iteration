@@ -8,10 +8,12 @@ SMOOTHINGN=0
 SMOOTHINGEPS=0.0
 MESHTYPE='LW1'
 MESHPARAM=50
-INTRASCFTOLERANCE=1e-4
+INTRASCFTOLERANCE=1e-2
 INTERSCFTOLERANCE=1e-7
-
+OUTPUTFILE='/home/njvaughn/iterationResults/CO_400_test.csv'
 INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+
+
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
@@ -23,8 +25,8 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 
 MESHTYPE='LW3'
-MESHPARAM=800
+MESHPARAM=400
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$INPUTFILE $VTKFILEDIR
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
 	

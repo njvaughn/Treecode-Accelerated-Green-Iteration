@@ -63,14 +63,15 @@ def normalizeOrbitals(V,weights):
 
 
 def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, 
-                                subtractSingularity, smoothingN, smoothingEps, inputFile='',SCFiterationOutFile='iterationConvergence.csv',
+                                subtractSingularity, smoothingN, smoothingEps, inputFile='',outputFile='',
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False): 
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
      
-    greenIterationOutFile = '/home/njvaughn/iterationResults/CO_LW3_1200_GREEN_max10.csv'
-    SCFiterationOutFile = '/home/njvaughn/iterationResults/CO_LW3_1200_SCF_max10.csv'
+    greenIterationOutFile = outputFile[:-4]+'_GREEN_'+outputFile[-4:]
+    SCFiterationOutFile = outputFile[:-4]+'_SCF_'+outputFile[-4:]
+
 
 
     threadsPerBlock = 512
@@ -229,9 +230,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                 greenIterationOutFile = '/home/njvaughn/iterationResults/CO_LW3_400_SCF_atomicCore_7orb.csv'
 #                 greenIterationOutFile = '/home/njvaughn/CO_LW3_1200_skip_GreenIterations_tighter.csv'
     #             SCFiterationOutFile = '/home/njvaughn/CO_LW3_1200_SCF1_skipping.csv'
-                header = ['Iteration', 'orbitalResiduals', 'energyErrors']
+                header = ['Iteration', 'orbitalResiduals', 'energyErrorsWRTfirstSCF', 'energyErrors']
         
+#                 myData = [eigensolveCount, residuals,
+#                           tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
                 myData = [eigensolveCount, residuals,
+                          tree.orbitalEnergies-dftfeOrbitalEnergiesFirstSCF-tree.gaugeShift,
                           tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
                 
         

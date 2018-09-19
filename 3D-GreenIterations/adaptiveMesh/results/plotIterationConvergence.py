@@ -16,10 +16,20 @@ resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMo
 plotsDir = resultsDir+'plots/'
 ##file='CO_LW3_400_SCF_10orb.csv'
 ##file='CO_LW3_400_SCF.csv'
+##file='CO_LW3_400_SCF_1stSCF_domain30.csv'
+##file='CO_LW3_800_SCF_1stSCF_domain30.csv'
+##file='CO_LW3_1200_SCF_max10.csv'
+
 ##file='LW3_400_atomicCore_7orb_24mH.csv'
 ##file='CO_LW3_400_SCF_max10_subtract.csv'
 ##file='CO_LW3_800_SCF_max10_subtract.csv'
-file='CO_LW3_1200_SCF_max10.csv'
+##file='CO_LW3_400_SCF_max10.csv'
+##file='CO_400_baseline_SCF_.csv'
+file='CO_800_baseline_SCF_.csv'
+##file='CO_1200_baseline_SCF_.csv'
+
+
+##file='CO_LW3_1200_SCF_max10.csv'
 # df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceHe_LW3_1200.csv', header=0)
 # df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200.csv', header=0)
 # df_bad = pd.read_csv(resultsDir+'/iterationConvergenceH2_LW3_800_perturbed.csv', header=0)
@@ -159,6 +169,10 @@ def plotSCFconvergence(df, system = 'H2'):
     ax0.set_xlabel('Iteration Number')
     plt.savefig(plotsDir+system+'Energies'+'.pdf', bbox_inches='tight',format='pdf')
 
+
+    
+
+
     
 
     # Individual error plots
@@ -170,10 +184,14 @@ def plotSCFconvergence(df, system = 'H2'):
     df['totalEnergyError']=abs(df['totalEnergy']-dftfeTotalEnergy)
     
     
-    print("band energy errors: ", df['bandEnergyError'])
-    print("exchange energy errors: ", df['exchangeEnergyError'])
-    print("correlation energy errors: ", df['correlationEnergyError'])
-    print("total energy errors: ", df['totalEnergyError'])
+    print("band energy errors:")
+    print(df['bandEnergyError'])
+    print("exchange energy errors:")
+    print(df['exchangeEnergyError'])
+    print("correlation energy errors:")
+    print(df['correlationEnergyError'])
+    print("total energy errors: \n")
+    print(df['totalEnergyError'])
 
     
     df.plot(x='Iteration', y='bandEnergyError', logy=True, ax=ax1, style='mo')
@@ -203,6 +221,27 @@ def plotSCFconvergence(df, system = 'H2'):
     plt.suptitle(system + ': Absolute Errors During Iterations')
     plt.savefig(plotsDir+system+'Errors'+'.pdf', bbox_inches='tight',format='pdf')
     
+# Combined error plot
+    f2, ax2 = plt.subplots(1, 1, figsize=(10,6))
+    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='bo-')
+    df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='go-')
+    df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='mo-')
+    df.plot(x='Iteration', y='totalEnergyError',logy=True, ax=ax2, style='ro-')
+    
+    ax2.legend()
+##    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='bo')
+##    df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='go')
+##    df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='mo')
+##    df.plot(x='Iteration', y='totalEnergyError',logy=True, ax=ax2, style='ro')
+#     ax0.set_title(system + ': Energy Values During Green Iterations -- Good Initial Guess')
+#     ax0.set_title(system + ': Energy Values During Green Iterations -- Bad Initial Guess')
+    ax2.set_title(system + ': Energy Errors After Each SCF')
+    ax2.set_ylabel('Energy (H)')
+    ax2.set_xlabel('SCF Number')
+    plt.savefig(plotsDir+system+'Errors_combined'+'.pdf', bbox_inches='tight',format='pdf')
+
+
+
     plt.show()
     
 

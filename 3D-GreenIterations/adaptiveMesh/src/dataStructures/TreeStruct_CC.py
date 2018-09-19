@@ -749,7 +749,7 @@ class Tree(object):
                     newRho += cell.tree.occupations[m] * cell.gridpoints[i,j,k].phi[m]**2
             if mixingScheme=='None':
                 cell.gridpoints[i,j,k].rho = newRho
-            if mixingScheme=='Simple':
+            elif mixingScheme=='Simple':
                 cell.gridpoints[i,j,k].rho = ( self.mixingParameter*cell.gridpoints[i,j,k].rho + 
                     (1-self.mixingParameter)*newRho )
             

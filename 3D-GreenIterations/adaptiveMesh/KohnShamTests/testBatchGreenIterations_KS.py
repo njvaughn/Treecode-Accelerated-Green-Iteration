@@ -36,7 +36,9 @@ divideCriterion     = str(sys.argv[8])
 divideParameter     = float(sys.argv[9])
 energyTolerance     = float(sys.argv[10])
 scfTolerance        = float(sys.argv[11])
-inputFile           = str(sys.argv[12])
+outputFile          = str(sys.argv[12])
+inputFile           = str(sys.argv[13])
+
 # coordinateFile      = str(sys.argv[12])
 # auxiliaryFile      = str(sys.argv[13])
 # nElectrons          = int(sys.argv[14])
@@ -54,7 +56,7 @@ def setUpTree():
 #     [coordinateFile, outputFile, nElectrons, nOrbitals] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[0:4]
 #     [coordinateFile, outputFile, nElectrons, nOrbitals, 
 #      Etrue, ExTrue, EcTrue, Eband, gaugeShift] = np.genfromtxt(inputFile,delimiter=',',dtype=[("|U100","|U100",int,int,float,float,float,float,float)])
-    [coordinateFile, outputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+    [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
     [nElectrons, nOrbitals, Etrue, ExTrue, EcTrue, Eband, gaugeShift] = np.genfromtxt(inputFile)[2:]
     nElectrons = int(nElectrons)
     nOrbitals = int(nOrbitals)
@@ -90,7 +92,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
     greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
-                                smoothingN, smoothingEps,inputFile=inputFile, 
+                                smoothingN, smoothingEps,inputFile=inputFile,outputFile=outputFile, 
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
 #     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
