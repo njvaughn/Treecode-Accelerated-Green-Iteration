@@ -149,7 +149,7 @@ class Tree(object):
     def initialDivideBasedOnNuclei(self, coordinateFile):
             
         
-        def recursiveDivideByAtom(self,Atom,Cell):
+        def recursiveDivideByAtom(self,Atom,Cell,maxLevels):
             # Atom is in this cell.  Check if this cell has children.  If so, find the child that contains
             # the atom.  If not, divideInto8 the cell.
             if hasattr(Cell, "children"):
@@ -163,7 +163,7 @@ class Tree(object):
 #                 for i,j,k in TwoByTwoByTwo: # this should catch cases where atom is on the boundary of a previous cut
                             if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
                                 if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
-                                    if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ):
+                                    if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ):                                            
                                         recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
                                 
                                         
@@ -205,7 +205,7 @@ class Tree(object):
 #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cell.divideIfAspectRatioExceeds(2.0)
+                cell.divideIfAspectRatioExceeds(1.5) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
         
         # Reset all cells to level 1.  These divides shouldnt count towards its depth.  
         for _,cell in self.masterList:
@@ -251,8 +251,8 @@ class Tree(object):
         timer.start()
         orbitalIndex=0
         
-        print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
-        self.atoms[1].nAtomicOrbitals = 2
+#         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
+#         self.atoms[1].nAtomicOrbitals = 2
     
         for atom in self.atoms:
             
@@ -317,66 +317,7 @@ class Tree(object):
 
         
     
-#     def initializeOrbitalsFromAtomicDataOLD(self):
-#         # Generalized for any atoms.  Not complete yet.  
-#         timer = Timer()
-#         timer.start()
-#         
-#         n = 1 # principal quantum number
-#         m = 0 # 
-#         ell = 0
-#         
-# #         print('Adding 0.1sin(r)/r to the initial orbitals')
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 
-#                 for atom in self.atoms:
-#                     
-#                     for i,j,k in self.PxByPyByPz:
-#                         # reset the counter and the principal quantum number for next gridpoint
-#                         orbitalCounter = 0
-#                         n=1
-#                         
-#                         gp = cell.gridpoints[i,j,k]
-# #                         print('\nPoint at: ', gp.x, gp.y, gp.z)
-#                         r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
-#                         inclination = np.arccos(gp.z/r)
-#                         azimuthal = np.arctan2(gp.y,gp.x)
-#                         # this cell is within the range of this atom.  
-#                         while orbitalCounter < self.nOrbitals:
-# #                                 print('n: ',n)
-#                             for m in range(n):
-#                                 if orbitalCounter < self.nOrbitals:
-# #                                         print('m: ', m)
-#                                     psiID = 'psi'+str(n)+str(m)
-# #                                     if m != 0: print('Need to use spherical harmonics: n,m = ', n, m)
-# #                                         print('Using orbital ', psiID)
-#                                     for ell in range(-m,m+1):
-# #                                             print('Using orbital ', psiID + str(ell) )
-#                                         if r < 19:
-#                                             Y = np.real(sph_harm(ell,m,azimuthal,inclination)*np.exp(-1j*ell*azimuthal))
-#                                             phiIncrement = atom.interpolators[psiID](r)*Y
-# #                                             phiIncrement = atom.interpolators[psiID](r)
-# #                                             phiIncrement = atom.interpolators[psiID](r)*( 1 + np.cos((m+1)*r) )
-#                                         else:
-# #                                             phiIncrement = atom.interpolators[psiID](19)
-#                                             Y = np.real(sph_harm(ell,m,azimuthal,inclination)*np.exp(-1j*ell*azimuthal))
-#                                             phiIncrement = atom.interpolators[psiID](19)*Y
-# #                                             phiIncrement = atom.interpolators[psiID](19)*( 1 + 0.1*np.sin((m+1)*r)/r )
-#                                         gp.setPhi(gp.phi[orbitalCounter] + phiIncrement, orbitalCounter)
-#                                         orbitalCounter += 1
-# #                                             print('orbital counter: ', orbitalCounter)
-# 
-#                             n += 1
-# #                         for m in range(self.nOrbitals):
-# #                             psi = psiList[m]
-# #                             gp.setPhi(atom.interpolators[psi](r),m)
-#                 
-#             
-#                         
-#                     
-#         timer.stop()
-#         print('Initialization from single atom data took %f.3 seconds.' %timer.elapsedTime)
+
         
     def initializeForBerylliumAtom(self):
         print('Initializing orbitals for beryllium atom exclusively. ')
@@ -531,6 +472,7 @@ class Tree(object):
                     cell.gridpoints[i,j,k].counted = None
          
         
+        print('Number of gridpoints: ', self.numberOfGridpoints)
 
         ### INITIALIZE ORBTIALS AND DENSITY ####
         if initializationType=='atomic':

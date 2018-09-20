@@ -1,6 +1,6 @@
 ####  PBS preamble
 
-#PBS -N LW3_800_threeTests
+#PBS -N LW3_400_baseline
 
 #PBS -A lsa_fluxg
 #PBS -l qos=flux
@@ -31,13 +31,11 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 DOMAIN=20
 MINDEPTH=4
 MAXDEPTH=20
-ORDER=4
-SINGSUBT=1
+SINGSUBT=0
 SMOOTHINGN=0
 SMOOTHINGEPS=0.0
-MESHTYPE='LW1'
-MESHPARAM=1200
-INTRASCFTOLERANCE=1e-3
+MESHTYPE='LW3'
+INTRASCFTOLERANCE=1e-2
 INTERSCFTOLERANCE=1e-7
 
 
@@ -49,7 +47,9 @@ INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 
-OUTPUTFILE='/home/njvaughn/iterationResults/CO_1200_baseline.csv'
+OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW3_400_10orb.csv'
+MESHPARAM=400
+ORDER=5
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR

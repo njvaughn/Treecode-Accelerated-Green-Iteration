@@ -111,30 +111,36 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     tree.orbitalEnergies[-2] = tree.gaugeShift
 #     tree.orbitalEnergies[-3] = tree.gaugeShift
     
-    
-    for m in range(4,tree.nOrbitals):
-        tree.scrambleOrbital(m)
+#     print('Scrambling last 4 orbitals')
+#     for m in range(4,tree.nOrbitals):
+#         tree.scrambleOrbital(m)
     
 
 ### CARBON MONOXIDE MOLECULE ###    
-#     dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
-#                                       -1.075324514852165958e+00, -5.215419985881135645e-01,
-#                                       -4.455527567163568570e-01, -4.455527560478895199e-01,
-#                                       -3.351419327004790394e-01, -8.275071966753577701e-02,
-#                                       -8.273399296312561324e-02,  7.959071929649078059e-03] )
-                                      
     dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
                                       -1.075324514852165958e+00, -5.215419985881135645e-01,
                                       -4.455527567163568570e-01, -4.455527560478895199e-01,
-                                      -3.351419327004790394e-01])#, -8.275071966753577701e-02,
-#                                      8.273399296312561324e-02,  7.959071929649078059e-03] )
-    
-    
+                                      -3.351419327004790394e-01, -8.275071966753577701e-02,
+                                      -8.273399296312561324e-02,  7.959071929649078059e-03] )
+
     dftfeOrbitalEnergiesFirstSCF = np.array( [-1.886806889771608198e+01, -1.000453177064216703e+01,
                                       -1.185566512385654470e+00, -6.070957834271104581e-01,
                                       -5.201957473314797742e-01, -5.201895527962699939e-01,
-                                      -3.959879088687816573e-01]) #, -7.423877195920526584e-02,
-                                      #-7.325760563979200057e-02,  1.721054880813185223e-02] )
+                                      -3.959879088687816573e-01, -7.423877195920526584e-02,
+                                      -7.325760563979200057e-02,  1.721054880813185223e-02] )
+                                      
+#     dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
+#                                       -1.075324514852165958e+00, -5.215419985881135645e-01,
+#                                       -4.455527567163568570e-01, -4.455527560478895199e-01,
+#                                       -3.351419327004790394e-01])#, -8.275071966753577701e-02,
+# #                                      8.273399296312561324e-02,  7.959071929649078059e-03] )
+#     
+#     
+#     dftfeOrbitalEnergiesFirstSCF = np.array( [-1.886806889771608198e+01, -1.000453177064216703e+01,
+#                                       -1.185566512385654470e+00, -6.070957834271104581e-01,
+#                                       -5.201957473314797742e-01, -5.201895527962699939e-01,
+#                                       -3.959879088687816573e-01]) #, -7.423877195920526584e-02,
+#                                       #-7.325760563979200057e-02,  1.721054880813185223e-02] )
     
     
 
@@ -171,7 +177,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
             orbitalResidual = 10
             eigensolveCount = 0
-            max_scfCount = 10
+            max_scfCount = 555
         
             print('Working on orbital %i' %m)
             while ( ( orbitalResidual > intraScfTolerance ) and ( eigensolveCount < max_scfCount) ):
@@ -192,12 +198,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 k = np.sqrt(-2*tree.orbitalEnergies[m])
                 phiNew = np.zeros((len(targets)))
 #                 if eigensolveCount<10:
-                if orbitalResidual > -1e10: 
+#                 if orbitalResidual > -1e10:
+                if subtractSingularity==0: 
 #                     print('Using singularity skipping')
                     gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-                else:
-#                     print('Using singularity subtraction')
+#                 else:
+                elif subtractSingularity==1:
+                    print('Using singularity subtraction')
                     gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                else:
+                    print('Invalid option for singularitySubtraction, should be 0 or 1.')
+                    return
 
 
                 orbitals[:,m] = np.copy(phiNew)
@@ -219,7 +230,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 if normDiff > orbitalResidual:
                     orbitalResidual = np.copy(normDiff) 
                 tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
-#                 print('Orbital %i error:        %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergiesFirstSCF[m]-tree.gaugeShift))
+                print('Orbital %i error:        %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergiesFirstSCF[m]-tree.gaugeShift))
 #                 print()
 
   
@@ -230,11 +241,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                 greenIterationOutFile = '/home/njvaughn/iterationResults/CO_LW3_400_SCF_atomicCore_7orb.csv'
 #                 greenIterationOutFile = '/home/njvaughn/CO_LW3_1200_skip_GreenIterations_tighter.csv'
     #             SCFiterationOutFile = '/home/njvaughn/CO_LW3_1200_SCF1_skipping.csv'
-                header = ['Iteration', 'orbitalResiduals', 'energyErrorsWRTfirstSCF', 'energyErrors']
+                header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyErrorsWRTfirstSCF', 'energyErrors']
         
 #                 myData = [eigensolveCount, residuals,
 #                           tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
-                myData = [eigensolveCount, residuals,
+                myData = [m, eigensolveCount, residuals,
                           tree.orbitalEnergies-dftfeOrbitalEnergiesFirstSCF-tree.gaugeShift,
                           tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
                 

@@ -2,15 +2,15 @@
 DOMAIN=20
 MINDEPTH=4
 MAXDEPTH=20
-ORDER=4
-SINGSUBT=1
+ORDER=5
+SINGSUBT=0
 SMOOTHINGN=0
 SMOOTHINGEPS=0.0
 MESHTYPE='LW1'
 MESHPARAM=50
-INTRASCFTOLERANCE=1e-2
+INTRASCFTOLERANCE=1e-3
 INTERSCFTOLERANCE=1e-7
-OUTPUTFILE='/home/njvaughn/iterationResults/CO_400_test.csv'
+OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW3_400_order5.csv'
 INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 
 
