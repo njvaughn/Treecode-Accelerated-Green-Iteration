@@ -1,0 +1,178 @@
+Running on
+      1 nyx7508
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+Hard coding nOrbitals to 7
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/iterationResults/CO_LW3_200_order5.csv', 14, 7, -112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865, -0.0]
+Gauge shift  -0.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  439000
+Hard coding nAtomicOrbitals to 2 for the oxygen atom.
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+Orbital index = 5
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            2.00e+02 
+Total Number of Cells:       4065 
+Total Number of Leaf Cells:  3512 
+Total Number of Gridpoints:  439000 
+Minimum Depth                4 levels 
+Maximum Depth:               9 levels 
+Cell Order:                  5 
+Construction time:           7.22 seconds.
+Closest gridpoint to origin:  [-0.01304111359186555, -0.015294838657764487, -0.015294838657764487]
+For a distance of:  0.02525737165363875
+Part of a cell centered at:  [-0.26645249999999998, -0.3125, -0.3125]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    439000
+Threads per block:    512
+Blocks per grid:      858
+[-112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865]
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [5 0 6 1 2 3 4]
+Orbital Energy:            [-19.28515245 -10.14414583  -1.11300167  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+
+
+
+SCF Count  1
+Working on orbital 0
+Orbital Energy:            [-18.319493   -10.14414583  -1.11300167  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 0 error:        5.486e-01
+Orbital Energy:            [-18.38044827 -10.14414583  -1.11300167  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 0 error:        4.876e-01
+Orbital Energy:            [-18.38101772 -10.14414583  -1.11300167  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 0 error:        4.871e-01
+Orbital Energy:            [-18.38184226 -10.14414583  -1.11300167  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 0 error:        4.862e-01
+Orbital Energy:            [-18.38209164 -10.14414583  -1.11300167  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 0 error:        4.860e-01
+Used 5 iterations for orbital 0.
+Working on orbital 1
+Orbital Energy:            [-18.38209164  -9.81575949  -1.11300167  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 1 error:        1.888e-01
+Orbital Energy:            [-18.38209164  -9.82947186  -1.11300167  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 1 error:        1.751e-01
+Orbital Energy:            [-18.38209164  -9.83022473  -1.11300167  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 1 error:        1.743e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.11300167  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 1 error:        1.740e-01
+Used 4 iterations for orbital 1.
+Working on orbital 2
+Orbital Energy:            [-18.38209164  -9.83056317  -1.06339606  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 2 error:        1.222e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.09913374  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 2 error:        8.643e-02
+Orbital Energy:            [-18.38209164  -9.83056317  -1.11519341  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 2 error:        7.037e-02
+Orbital Energy:            [-18.38209164  -9.83056317  -1.12594072  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 2 error:        5.963e-02
+Orbital Energy:            [-18.38209164  -9.83056317  -1.13355466  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 2 error:        5.201e-02
+Orbital Energy:            [-18.38209164  -9.83056317  -1.139062    -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 2 error:        4.650e-02
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14307551  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 2 error:        4.249e-02
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14600744  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 2 error:        3.956e-02
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14814897  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 2 error:        3.742e-02
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.73224587  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 2 error:        3.586e-02
+Working on orbital 3
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.29297557  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 3 error:        3.141e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.399614    -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 3 error:        2.075e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.41088291  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 3 error:        1.962e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.41779599  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 3 error:        1.893e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.42406755  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 3 error:        1.830e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.4303778   -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 3 error:        1.767e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.43691835  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 3 error:        1.702e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.4437703   -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 3 error:        1.633e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.45096618  -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 3 error:        1.561e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.4585071   -0.66369494
+  -0.2809871   -0.2809871 ]
+Orbital 3 error:        1.486e-01
+Working on orbital 4
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.4585071    0.09464512
+  -0.2809871   -0.2809871 ]
+Orbital 4 error:        6.148e-01
+Resetting orbital %i energy to 1/2 gauge shift
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.4585071   -0.02484087
+  -0.2809871   -0.2809871 ]
+Orbital 4 error:        4.954e-01
+Orbital Energy:            [-18.38209164  -9.83056317  -1.14971069  -0.4585071   -0.09872419
+  -0.2809871   -0.2809871 ]

@@ -80,6 +80,7 @@ class Tree(object):
         self.gaugeShift = gaugeShift
         
         self.mixingParameter=0.5
+#         self.mixingParameter=-1 # accelerate with -1
 #         self.occupations = np.ones(nOrbitals)
 #         self.computeOccupations()
         
@@ -146,10 +147,37 @@ class Tree(object):
         
 
             
-    def initialDivideBasedOnNuclei(self, coordinateFile):
+    def initialDivideBasedOnNuclei(self, coordinateFile,maxLevels=15):
+            
+        def refineToMaxDepth(self,Atom,Cell,maxLevels=15):
+            if hasattr(Cell, "children"):
+                (ii,jj,kk) = np.shape(Cell.children)
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+                            if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
+                                if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
+                                    if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ):                                            
+                                        refineToMaxDepth(self, Atom, Cell.children[i,j,k])
+            
+            else:
+                if Cell.level < maxLevels:
+                    xdiv = Cell.xmid
+                    ydiv = Cell.ymid
+                    zdiv = Cell.zmid
+#                     if ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) ):
+#                         xdiv = None
+#                     if ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ):
+#                         ydiv = None
+#                     if ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ):
+#                         zdiv = None
+                    Cell.divide(xdiv, ydiv, zdiv)
+#                     print('Dividing cell at depth ', Cell.level)
+                    refineToMaxDepth(self,Atom,Cell)
+                    
             
         
-        def recursiveDivideByAtom(self,Atom,Cell,maxLevels):
+        def recursiveDivideByAtom(self,Atom,Cell):
             # Atom is in this cell.  Check if this cell has children.  If so, find the child that contains
             # the atom.  If not, divideInto8 the cell.
             if hasattr(Cell, "children"):
@@ -202,6 +230,8 @@ class Tree(object):
         for atom in self.atoms:
             recursiveDivideByAtom(self,atom,self.root)
         
+        
+        
 #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
         for _,cell in self.masterList:
             if cell.leaf==True:
@@ -210,7 +240,10 @@ class Tree(object):
         # Reset all cells to level 1.  These divides shouldnt count towards its depth.  
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cell.level = 1
+                cell.level = 0
+            
+#         for atom in self.atoms:
+#             refineToMaxDepth(self,atom,self.root)
                 
       
     def initializeOrbitalsRandomly(self):
@@ -251,8 +284,8 @@ class Tree(object):
         timer.start()
         orbitalIndex=0
         
-#         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
-#         self.atoms[1].nAtomicOrbitals = 2
+        print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
+        self.atoms[1].nAtomicOrbitals = 2
     
         for atom in self.atoms:
             
@@ -463,7 +496,6 @@ class Tree(object):
         
         self.rmin = closestToOrigin
         
-        self.computeDerivativeMatrices()
         
                         
         for _,cell in self.masterList:
@@ -473,6 +505,8 @@ class Tree(object):
          
         
         print('Number of gridpoints: ', self.numberOfGridpoints)
+
+        self.computeDerivativeMatrices()
 
         ### INITIALIZE ORBTIALS AND DENSITY ####
         if initializationType=='atomic':

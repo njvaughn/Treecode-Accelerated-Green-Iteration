@@ -33,7 +33,7 @@ if __name__ == "__main__":
     exportMeshForParaview(xmin=-20, xmax=20,px=3,
                           ymin=-20, ymax=20,py=3,
                           zmin=-20, zmax=20,pz=3,
-                          minLevels=3, maxLevels=14, divideCriterion='LW3', 
+                          minLevels=3, maxLevels=20, divideCriterion='LW3', 
 #                           divideParameter=100,coordinateFile='../src/utilities/molecularConfigurations/hydrogenMolecule.csv')
 #                           divideParameter=100,coordinateFile='../src/utilities/molecularConfigurations/berylliumAtom.csv')
                           divideParameter=1,coordinateFile='../src/utilities/molecularConfigurations/carbonMonoxide.csv')

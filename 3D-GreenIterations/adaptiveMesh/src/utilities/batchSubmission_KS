@@ -1,16 +1,15 @@
 #!/bin/bash
 DOMAIN=20
-MINDEPTH=4
+MINDEPTH=3
 MAXDEPTH=20
-ORDER=5
-SINGSUBT=0
+ORDER=4
+SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0.0
-MESHTYPE='LW1'
-MESHPARAM=50
-INTRASCFTOLERANCE=1e-3
+INTRASCFTOLERANCE=1e-2
 INTERSCFTOLERANCE=1e-7
-OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW3_400_order5.csv'
+
+
 INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 
 
@@ -24,8 +23,11 @@ INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 
+OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW3_800_singSub_Gauge0_simpleAccel.csv'
 MESHTYPE='LW3'
-MESHPARAM=400
+MESHPARAM=800
+ORDER=4
+
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR

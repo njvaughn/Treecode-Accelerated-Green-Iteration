@@ -1,0 +1,27 @@
+Running on
+      1 nyx7509
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/iterationResults/CO_LW3_400_10orb.csv', 14, 10, -112.47200574178584, -11.99707904195925, -0.94214556068954625, -62.89904780033865, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  22.5180848369
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 138, in <module>
+    tree = setUpTree()
+  File "testBatchGreenIterations_KS.py", line 71, in setUpTree
+    coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
+  File "../src/dataStructures/TreeStruct_CC.py", line 113, in __init__
+    self.initialDivideBasedOnNuclei(coordinateFile)
+  File "../src/dataStructures/TreeStruct_CC.py", line 203, in initialDivideBasedOnNuclei
+    recursiveDivideByAtom(self,atom,self.root)
+TypeError: recursiveDivideByAtom() missing 1 required positional argument: 'maxLevels'
