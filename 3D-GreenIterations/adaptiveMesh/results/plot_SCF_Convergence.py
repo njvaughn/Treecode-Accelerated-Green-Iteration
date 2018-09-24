@@ -26,7 +26,10 @@ plotsDir = resultsDir+'plots/'
 ##file='CO_LW3_400_SCF_max10.csv'
 ##file='CO_400_LW1_SCF.csv'
 ##file='CO_800_LW1_SCF.csv'
-file='CO_1200_baseline_SCF_.csv'
+##file='CO_1200_baseline_SCF_.csv'
+##file='CO_LW3_1200_singSub_SCF_.csv'
+
+file='CO_LW3_1200_singSub_fixedMixingBug_SCF_.csv'
 
 
 ##file='CO_LW3_1200_SCF_max10.csv'

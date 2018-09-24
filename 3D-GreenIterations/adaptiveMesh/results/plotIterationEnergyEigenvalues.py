@@ -32,7 +32,11 @@ resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMo
 
 ##file='CO_400_baseline_GREEN_.csv'
 ##file='CO_800_baseline_GREEN_.csv'
-file='CO_1200_baseline_GREEN_.csv'
+##file='CO_1200_baseline_GREEN_.csv'
+
+##file='CO_LW3_2000_singSub_GREEN_.csv'
+file='CO_LW3_1200_singSub_fixedMixingBug_GREEN_.csv'
+
 
 ##file='CO_LW3_400_GREEN_max10.csv'
 ##file='CO_LW3_400_GREEN_subtract.csv'

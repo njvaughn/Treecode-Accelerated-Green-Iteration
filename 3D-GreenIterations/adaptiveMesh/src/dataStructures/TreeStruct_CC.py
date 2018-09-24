@@ -723,11 +723,15 @@ class Tree(object):
                 newRho = 0
                 for m in range(self.nOrbitals):
                     newRho += cell.tree.occupations[m] * cell.gridpoints[i,j,k].phi[m]**2
-            if mixingScheme=='None':
-                cell.gridpoints[i,j,k].rho = newRho
-            elif mixingScheme=='Simple':
-                cell.gridpoints[i,j,k].rho = ( self.mixingParameter*cell.gridpoints[i,j,k].rho + 
-                    (1-self.mixingParameter)*newRho )
+                if mixingScheme=='None':
+                    cell.gridpoints[i,j,k].rho = newRho
+                elif mixingScheme=='Simple':
+                    cell.gridpoints[i,j,k].rho = ( self.mixingParameter*cell.gridpoints[i,j,k].rho + 
+                        (1-self.mixingParameter)*newRho )
+                else: 
+                    print('Not a valid density mixing scheme.')
+                    return
+            
             
         for _,cell in self.masterList:
             if cell.leaf==True:

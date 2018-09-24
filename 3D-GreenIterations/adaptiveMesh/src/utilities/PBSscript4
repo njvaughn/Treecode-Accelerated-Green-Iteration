@@ -1,6 +1,6 @@
 ####  PBS preamble
 
-#PBS -N oxygenTest
+#PBS -N LW3_400
 
 #PBS -A lsa_fluxg
 #PBS -l qos=flux
@@ -46,11 +46,11 @@ INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 ORDER=4
-MESHTYPE='LW1'
+MESHTYPE='LW3'
 
 
-OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW1_400_singSub.csv'
-MESHPARAM=400
+OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW3_1200_singSub_fixedMixingBug.csv'
+MESHPARAM=1200
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
