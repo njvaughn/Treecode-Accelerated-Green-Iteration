@@ -717,7 +717,7 @@ class Tree(object):
             if cell.leaf == True:
                 CellupdateVxcAndVeff(cell,self.exchangeFunctional, self.correlationFunctional)
 
-    def updateDensityAtQuadpoints(self, mixingScheme='None'):
+    def updateDensityAtQuadpoints(self, mixingScheme='Simple'):
         def CellUpdateDensity(cell,mixingScheme):
             for i,j,k in self.PxByPyByPz:
                 newRho = 0

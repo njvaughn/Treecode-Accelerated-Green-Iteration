@@ -23,10 +23,9 @@ INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 
-OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW3_800_gauge0.csv'
+OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW3_1200_simpleMixing.csv'
 MESHTYPE='LW3'
-MESHPARAM=800
-ORDER=4
+MESHPARAM=1200
 
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

@@ -83,7 +83,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Blocks per grid:     ', blocksPerGrid)
     
     greenIterationCounter=1                                     # initialize the counter to counter the number of iterations required for convergence
-    energyResidual = 1                                    # initialize the energyResidual to something that fails the convergence tolerance
+    densityResidual = 1                                    # initialize the densityResidual to something that fails the convergence tolerance
     Eold = -0.5 + tree.gaugeShift
 
 #     [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[4:8]
@@ -114,9 +114,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     tree.orbitalEnergies[-3] = tree.gaugeShift
     
 #     if tree.nOrbitals==7:
-#     print('Scrambling valence orbitals')
-#     for m in range(4,tree.nOrbitals):
-#         tree.scrambleOrbital(m)
+    print('Scrambling valence orbitals')
+    for m in range(4,tree.nOrbitals):
+        tree.scrambleOrbital(m)
     
 
 ### CARBON MONOXIDE MOLECULE ###    
@@ -170,7 +170,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     tree.nOrbitals = 5
 #     tree.occupations = [2,2,2,2,2]
     residuals = np.ones_like(tree.orbitalEnergies)
-    while ( energyResidual > interScfTolerance ):
+    while ( densityResidual > interScfTolerance ):
         print()
         print()
         print('\nSCF Count ', greenIterationCounter)
@@ -348,7 +348,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
 #         energyUpdateTime = timer() - startEnergyTime
 #         print('Energy Update took:                     %.4f seconds. ' %energyUpdateTime)
-        energyResidual = abs(Eold - tree.E)  # Compute the energyResidual for determining convergence
+        energyResidual = tree.E - Eold  # Compute the densityResidual for determining convergence
 #         energyResidual = -10 # STOP AFTER FIRST SCF
         Eold = np.copy(tree.E)
         
@@ -449,7 +449,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     print('Blocks per grid:     ', blocksPerGrid)
 #     
 #     greenIterationCounter=1                                     # initialize the counter to counter the number of iterations required for convergence
-#     energyResidual = 1                                    # initialize the energyResidual to something that fails the convergence tolerance
+#     densityResidual = 1                                    # initialize the densityResidual to something that fails the convergence tolerance
 #     Eold = -0.5 + tree.gaugeShift
 # 
 # #     [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[4:8]
@@ -509,7 +509,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     oldOrbitalEnergies = 10
 # #     tree.nOrbitals = 5
 # #     tree.occupations = [2,2,2,2,2]
-#     while ( energyResidual > interScfTolerance ):
+#     while ( densityResidual > interScfTolerance ):
 #         print()
 #         print()
 #         print('\nSCF Count ', greenIterationCounter)
@@ -769,8 +769,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         
 # #         energyUpdateTime = timer() - startEnergyTime
 # #         print('Energy Update took:                     %.4f seconds. ' %energyUpdateTime)
-#         energyResidual = abs(Eold - tree.E)  # Compute the energyResidual for determining convergence
-# #         energyResidual = -10 # STOP AFTER FIRST SCF
+#         densityResidual = abs(Eold - tree.E)  # Compute the densityResidual for determining convergence
+# #         densityResidual = -10 # STOP AFTER FIRST SCF
 #         Eold = np.copy(tree.E)
 #         
 #         
@@ -795,7 +795,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         print('Updated E_c:                           %.10f H, %.10e H' %(tree.totalEc, tree.totalEc-EcTrue) )
 #         print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalBandEnergy, tree.totalBandEnergy-Eband) )
 #         print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etrue))
-#         print('Energy Residual:                        %.3e\n\n' %energyResidual)
+#         print('Energy Residual:                        %.3e\n\n' %densityResidual)
 # 
 # #         if vtkExport != False:
 # #             tree.exportGreenIterationOrbital(vtkExport,greenIterationCounter)
@@ -866,7 +866,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     print('Blocks per grid:     ', blocksPerGrid)
 #     
 #     greenIterationCounter=1                                     # initialize the counter to counter the number of iterations required for convergence
-#     energyResidual = 1                                    # initialize the energyResidual to something that fails the convergence tolerance
+#     densityResidual = 1                                    # initialize the densityResidual to something that fails the convergence tolerance
 #     Eold = -0.5 + tree.gaugeShift
 # 
 #     [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(auxiliaryFile)[:4]
@@ -899,7 +899,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         
 #     
 # #     oldOrbitalEnergies = 10
-#     while ( energyResidual > interScfTolerance ):
+#     while ( densityResidual > interScfTolerance ):
 #         
 #         print('\nSCF Count ', greenIterationCounter)
 # 
@@ -1004,7 +1004,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         
 # #         energyUpdateTime = timer() - startEnergyTime
 # #         print('Energy Update took:                     %.4f seconds. ' %energyUpdateTime)
-#         energyResidual = abs(Eold - tree.E)  # Compute the energyResidual for determining convergence
+#         densityResidual = abs(Eold - tree.E)  # Compute the densityResidual for determining convergence
 #         Eold = np.copy(tree.E)
 #         
 #         
@@ -1033,7 +1033,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 # #         print('\n\nHOMO Energy                             %.10f H, %.10e H' %(tree.orbitalEnergies[-1], tree.orbitalEnergies[-1]-HOMOtrue))
 # #         print('\n\nHOMO Energy                            %.10f H' %(tree.orbitalEnergies[-1]))
 #         print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etrue))
-#         print('Energy Residual:                        %.3e\n\n' %energyResidual)
+#         print('Energy Residual:                        %.3e\n\n' %densityResidual)
 # 
 # #         if vtkExport != False:
 # #             tree.exportGreenIterationOrbital(vtkExport,greenIterationCounter)
@@ -1097,11 +1097,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     print('Blocks per grid:     ', blocksPerGrid)
 #     
 #     GIcounter=1                                     # initialize the counter to counter the number of iterations required for convergence
-#     energyResidual = 1                                    # initialize the energyResidual to something that fails the convergence tolerance
+#     densityResidual = 1                                    # initialize the densityResidual to something that fails the convergence tolerance
 #     Eold = -10.0
 #     Etrue = trueEnergy(energyLevel)
 #     
-#     while ( energyResidual > interScfTolerance ):
+#     while ( densityResidual > interScfTolerance ):
 #         print('\nGreen Iteration Count ', GIcounter)
 #         GIcounter+=1
 #         
@@ -1132,8 +1132,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         tree.updateTotalEnergy()  
 #         energyUpdateTime = timer() - startEnergyTime
 #         print('Energy Update took:              %.4f seconds. ' %energyUpdateTime)
-#         energyResidual = abs(Eold - tree.E)  # Compute the energyResidual for determining convergence
-#         print('Energy Residual:                 %.3e' %energyResidual)
+#         densityResidual = abs(Eold - tree.E)  # Compute the densityResidual for determining convergence
+#         print('Energy Residual:                 %.3e' %densityResidual)
 # 
 #         Eold = tree.E
 #         print('Updated Potential Value:         %.10f Hartree, %.10e error' %(tree.totalPotential, -1.0 - tree.totalPotential))
@@ -1149,7 +1149,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 # 
 # def greenIterations_Schrodinger_midpt(tree, energyLevel, interScfTolerance, numberOfTargets, subtractSingularity, smoothingN, smoothingEps, normalizationFactor=1, threadsPerBlock=512, visualize=False, outputErrors=False):  # @DontTrace
 #     '''
-#     :param interScfTolerance: exit condition for Green Iterations, energyResidual on the total energy
+#     :param interScfTolerance: exit condition for Green Iterations, densityResidual on the total energy
 #     :param energyLevel: energy level trying to compute
 #     '''
 #     blocksPerGrid = (numberOfTargets + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
@@ -1158,12 +1158,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     print('Blocks per grid:     ', blocksPerGrid)
 # 
 #     GIcounter=1                                     # initialize the counter to counter the number of iterations required for convergence
-#     energyResidual = 1                                    # initialize the energyResidual to something that fails the convergence tolerance
+#     densityResidual = 1                                    # initialize the densityResidual to something that fails the convergence tolerance
 #     Eold = -10.0
 #     
 #     Etrue = trueEnergy(energyLevel)
 #     
-#     while ( energyResidual > interScfTolerance ):
+#     while ( densityResidual > interScfTolerance ):
 #         print('\nGreen Iteration Count ', GIcounter)
 #         GIcounter+=1
 #         
@@ -1194,8 +1194,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         tree.updateTotalEnergy()  
 #         energyUpdateTime = timer() - startEnergyTime
 #         print('Energy Update took:              %.4f seconds. ' %energyUpdateTime)
-#         energyResidual = abs(Eold - tree.E)  # Compute the energyResidual for determining convergence
-#         print('Energy Residual:                 %.3e' %energyResidual)
+#         densityResidual = abs(Eold - tree.E)  # Compute the densityResidual for determining convergence
+#         print('Energy Residual:                 %.3e' %densityResidual)
 # 
 #         Eold = tree.E
 #         print('Updated Potential Value:         %.10f Hartree, %.10e error' %(tree.totalPotential, -1.0 - tree.totalPotential))

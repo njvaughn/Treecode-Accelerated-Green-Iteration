@@ -1,0 +1,995 @@
+Running on
+      1 nyx7509
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+Hard coding nOrbitals to 7
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/iterationResults/CO_LW3_800.csv', 14, 7, -112.47266168377607, -11.997129303382843, -0.94214592330574143, -62.899667088532567, -0.0]
+Gauge shift  -0.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  294656
+Hard coding nAtomicOrbitals to 2 for the oxygen atom.
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+Orbital index = 5
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            8.00e+02 
+Total Number of Cells:       5313 
+Total Number of Leaf Cells:  4604 
+Total Number of Gridpoints:  294656 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  4 
+Construction time:           6.18 seconds.
+Closest gridpoint to origin:  [-0.01014124443176817, -0.01189382304511144, -0.01189382304511144]
+For a distance of:  0.019641051190853222
+Part of a cell centered at:  [-0.13322624999999999, -0.15625, -0.15625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    294656
+Threads per block:    512
+Blocks per grid:      576
+[-112.47266168377607, -11.997129303382843, -0.94214592330574143, -62.899667088532567]
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [5 0 6 1 2 3 4]
+Orbital Energy:            [-18.96019012 -10.03789618  -1.08816013  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Scrambling last 6 orbitals
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.03789618  -1.08816013  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 0 error:        -2.083e-01
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.08816013  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 1 error:        -1.170e-01
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.10568182  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -3.036e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.13332742  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -5.800e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.15083226  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -7.551e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.16262875  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -8.730e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.17090849  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -9.558e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.17686571  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -1.015e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.18121167  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -1.059e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.18440428  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -1.091e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.18675627  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -1.114e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.18848983  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -1.132e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.18976657  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -1.144e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19070552  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -1.154e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.72371164  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 2 error:        -1.161e-01
+Used 13 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.40426763  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        1.173e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.42985047  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        9.169e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.44199896  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        7.954e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.45166881  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        6.987e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.46082594  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        6.072e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.46990033  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        5.164e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.47906357  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        4.248e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.48838099  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        3.316e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.49785361  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        2.369e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.50743656  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        1.411e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.51705085  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        4.491e-03
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.52659301  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -5.051e-03
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.5359441   -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -1.440e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.54497909  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -2.344e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.55357637  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -3.203e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.56162699  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -4.008e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.56904274  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -4.750e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.57576194  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -5.422e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.58175233  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -6.021e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.58701071  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -6.547e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.59155985  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -7.002e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.59544322  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -7.390e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.59871883  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -7.718e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.60145302  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -7.991e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.60371498  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -8.217e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.60557244  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -8.403e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.60708869  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -8.555e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.60832077  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -8.678e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.60931865  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -8.778e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61012512  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -8.858e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61077618  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -8.923e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.6113017   -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -8.976e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.65960157
+  -0.2787109   -0.2787109 ]
+Orbital 3 error:        -9.018e-02
+Used 33 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.17310158
+  -0.2787109   -0.2787109 ]
+Orbital 4 error:        2.725e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.29540675
+  -0.2787109   -0.2787109 ]
+Orbital 4 error:        1.501e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.36449578
+  -0.2787109   -0.2787109 ]
+Orbital 4 error:        8.106e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.38909596
+  -0.2787109   -0.2787109 ]
+Orbital 4 error:        5.646e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.39655671
+  -0.2787109   -0.2787109 ]
+Orbital 4 error:        4.900e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.39867651
+  -0.2787109   -0.2787109 ]
+Orbital 4 error:        4.688e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.3993589
+  -0.2787109   -0.2787109 ]
+Orbital 4 error:        4.619e-02
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.39962539
+  -0.2787109   -0.2787109 ]
+Orbital 4 error:        4.593e-02
+Used 8 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.39962539
+   0.05873455  -0.2787109 ]
+Orbital 5 error:        5.043e-01
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.39962539
+          nan  -0.2787109 ]
+Orbital 5 error:        nan
+Used 2 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.92785687 -10.02420727  -1.19139489  -0.61172617  -0.39962539
+          nan          nan]
+Orbital 6 error:        nan
+Used 1 iterations for orbital 6.
+
+
+Density Residual  nan
+Computing Vcoulomb and updating Veff took:    11.8747 seconds. 
+Band energies before Veff update: nan H, nan H
+Total Energy without computing orbitals energies with new Veff: nan H, nan H
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
+New order:  [0 1 2 3 4 5 6]
+Need to re-order orbitals.
