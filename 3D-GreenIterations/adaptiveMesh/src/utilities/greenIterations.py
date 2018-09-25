@@ -114,9 +114,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     tree.orbitalEnergies[-3] = tree.gaugeShift
     
 #     if tree.nOrbitals==7:
-#         print('Scrambling last 3 orbitals')
-#         for m in range(4,tree.nOrbitals):
-#             tree.scrambleOrbital(m)
+#     print('Scrambling valence orbitals')
+#     for m in range(4,tree.nOrbitals):
+#         tree.scrambleOrbital(m)
     
 
 ### CARBON MONOXIDE MOLECULE ###    
@@ -137,13 +137,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                       -4.455527567163568570e-01, -4.455527560478895199e-01,
                                       -3.351419327004790394e-01])#, -8.275071966753577701e-02,
 #                                      8.273399296312561324e-02,  7.959071929649078059e-03] )
+
+ 
+
+
        
        
-    dftfeOrbitalEnergiesFirstSCF = np.array( [-1.886806889771608198e+01, -1.000453177064216703e+01,
-                                      -1.185566512385654470e+00, -6.070957834271104581e-01,
-                                      -5.201957473314797742e-01, -5.201895527962699939e-01,
-                                      -3.959879088687816573e-01]) #, -7.423877195920526584e-02,
-                                    #7.325760563979200057e-02,  1.721054880813185223e-02] )
+#     dftfeOrbitalEnergiesFirstSCF = np.array( [-1.886806889771608198e+01, -1.000453177064216703e+01,
+#                                       -1.185566512385654470e+00, -6.070957834271104581e-01,
+#                                       -5.201957473314797742e-01, -5.201895527962699939e-01,
+#                                       -3.959879088687816573e-01]) #, -7.423877195920526584e-02,
+#                                     #7.325760563979200057e-02,  1.721054880813185223e-02] )
                                       
 #     ## OXYGEN ATOM     
 #     dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
@@ -207,8 +211,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
                 if tree.orbitalEnergies[m] > 0:
 #                     print('Resetting orbital %i energy to 1/2 gauge shift')
-#                     tree.orbitalEnergies[m] = tree.gaugeShift/2
-                    tree.orbitalEnergies[m] = -0.5
+#                     tree.orbitalEnergies[m] = tree.gaugeShift
+                    tree.orbitalEnergies[m] = tree.gaugeShift-1/2
+#                     print('Setting orbital %i energy to zero' %m)
                     
                 k = np.sqrt(-2*tree.orbitalEnergies[m])
                 phiNew = np.zeros((len(targets)))
@@ -256,13 +261,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                 greenIterationOutFile = '/home/njvaughn/iterationResults/CO_LW3_400_SCF_atomicCore_7orb.csv'
 #                 greenIterationOutFile = '/home/njvaughn/CO_LW3_1200_skip_GreenIterations_tighter.csv'
     #             SCFiterationOutFile = '/home/njvaughn/CO_LW3_1200_SCF1_skipping.csv'
-                header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyErrorsWRTfirstSCF', 'energyErrors']
+                header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyEigenvalues']
         
 #                 myData = [eigensolveCount, residuals,
 #                           tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
+#                 myData = [m, eigensolveCount, residuals,
+#                           tree.orbitalEnergies-dftfeOrbitalEnergiesFirstSCF-tree.gaugeShift,
+#                           tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
                 myData = [m, eigensolveCount, residuals,
-                          tree.orbitalEnergies-dftfeOrbitalEnergiesFirstSCF-tree.gaugeShift,
-                          tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
+                          tree.orbitalEnergies-tree.gaugeShift]
                 
         
                 if not os.path.isfile(greenIterationOutFile):

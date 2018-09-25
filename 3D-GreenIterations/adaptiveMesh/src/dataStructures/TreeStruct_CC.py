@@ -133,7 +133,7 @@ class Tree(object):
         
     def computeOccupations(self):
         
-        self.T = 100
+        self.T = 50
         KB = 8.6173303e-5/27.211386
         self.sigma = self.T*KB
         
