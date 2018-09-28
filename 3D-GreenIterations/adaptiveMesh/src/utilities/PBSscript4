@@ -1,12 +1,12 @@
 ####  PBS preamble
 
-#PBS -N LW3_400
+#PBS -N LW3_2000
 
 #PBS -A lsa_fluxg
 #PBS -l qos=flux
 #PBS -q fluxg
 
-#PBS -l nodes=1:gpus=1,mem=8gb
+#PBS -l nodes=1:gpus=1:titanv,mem=8gb
 #PBS -l walltime=36:00:00
 #PBS -j oe
 #PBS -V
@@ -31,15 +31,15 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 DOMAIN=20
 MINDEPTH=3
 MAXDEPTH=20
-SINGSUBT=1
+SINGSUBT=0
 SMOOTHINGN=0
 SMOOTHINGEPS=0.0
 INTRASCFTOLERANCE=1e-2
-INTERSCFTOLERANCE=1e-7
+INTERSCFTOLERANCE=1e-6
 
 
-INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
@@ -50,8 +50,10 @@ ORDER=4
 MESHTYPE='LW3'
 
 
-OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW3_1200_simpleMixing.csv'
-MESHPARAM=1200
+
+#OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW3_2000_domain15_PoissonSingSub.csv'
+OUTPUTFILE='/home/njvaughn/OxygenIterationResults/LW3_2000.csv'
+MESHPARAM=2000
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR

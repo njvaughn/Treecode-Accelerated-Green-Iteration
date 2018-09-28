@@ -14,122 +14,18 @@ import numpy as np
 resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
 # resultsDir = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests'
 plotsDir = resultsDir+'plots/'
-##file='CO_LW3_400_SCF_10orb.csv'
-##file='CO_LW3_400_SCF.csv'
-##file='CO_LW3_400_SCF_1stSCF_domain30.csv'
-##file='CO_LW3_800_SCF_1stSCF_domain30.csv'
-##file='CO_LW3_1200_SCF_max10.csv'
-
-##file='LW3_400_atomicCore_7orb_24mH.csv'
-##file='CO_LW3_400_SCF_max10_subtract.csv'
-##file='CO_LW3_800_SCF_max10_subtract.csv'
-##file='CO_LW3_400_SCF_max10.csv'
-##file='CO_400_LW1_SCF.csv'
-##file='CO_800_LW1_SCF.csv'
-##file='CO_1200_baseline_SCF_.csv'
-##file='CO_LW3_1200_singSub_SCF_.csv'
-
-file='CO_LW3_1200_singSub_fixedMixingBug_SCF_.csv'
 
 
-##file='CO_LW3_1200_SCF_max10.csv'
-# df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceHe_LW3_1200.csv', header=0)
-# df_H2 = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200.csv', header=0)
-# df_bad = pd.read_csv(resultsDir+'/iterationConvergenceH2_LW3_800_perturbed.csv', header=0)
-# df_good = pd.read_csv(resultsDir+'/iterationConvergenceBe_LW3_1200.csv', header=0)
-# df_bad = pd.read_csv(resultsDir+'/iterationConvergenceBe_LW3_1200_perturbed.csv', header=0)
+##file='CO_LW3_1200_singSub_fixedMixingBug_SCF_.csv'
+##file='CO_LW3_800_simpleMixing_SCF_.csv'
+##file='CO_LW3_1200_simpleMixing_SCF_.csv'
+##file='CO_LW1_2000_simpleMixing_SCF_.csv'
+file='CO_LW3_2500_simpleMixing_SCF_.csv'
+##file='CO_LW3_1600_simpleMixing_SCF_.csv'
+##file='CO_LW3_1000_simpleMixing_SCF_.csv'
 
 
-# Lithium
-# df_good = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200_ssForPhi0.csv', header=0)
-# df_bad = pd.read_csv(resultsDir+'/iterationConvergenceLi_LW3_1200.csv', header=0)
-# df_Li = pd.read_csv(resultsDir+'/iterationConvergenceLi_800.csv', header=0)
-##df_CO = pd.read_csv(resultsDir+'/CO_LW3_1200_skip_SCFiterations.csv', header=0)
 df_CO = pd.read_csv(resultsDir+file, header=0)
-
-def plotBeIterationConvergence(system="Beryllium"):
-   
-   
-    if system == "Lithium": 
-        dftfeTotalEnergy = -7.3340536782581447
-        dftfeExchangeEnergy = -1.4916149721121696
-        dftfeCorrelationEnergy = -0.15971669832262905
-        dftfeBandEnergy = -3.8616389456972078
-           
-    if system == "Beryllium": 
-        dftfeTotalEnergy = -1.4446182766680081e+01
-        dftfeExchangeEnergy = -2.2902495359115198e+00
-        dftfeCorrelationEnergy = -2.2341044592808737e-01
-        dftfeBandEnergy = -8.1239182420318166e+00
-    
-#     if system == "Li":
-#         dftfeTotalEnergy = -7.3340536782581447
-#         dftfeExchangeEnergy = -1.4916149721121696
-#         dftfeCorrelationEnergy = -1.5971669832262905e-01
-#         dftfeBandEnergy = -3.8616389456972078
-
-    # Combined plot
-    f0, ax0 = plt.subplots(1, 1, figsize=(8,6))
-    df_good.plot(x='Iteration', y='exchangeEnergy', ax=ax0, style='bo', label='Good Initial Guess')
-    df_good.plot(x='Iteration', y='correlationEnergy', ax=ax0, style='go', label='Good Initial Guess')
-    df_good.plot(x='Iteration', y='totalEnergy', ax=ax0, style='ro', label='Good Initial Guess')
-    
-    df_bad.plot(x='Iteration', y='exchangeEnergy', ax=ax0, style='bx', label='Bad Initial Guess')
-    df_bad.plot(x='Iteration', y='correlationEnergy', ax=ax0, style='gx', label='Bad Initial Guess')
-    df_bad.plot(x='Iteration', y='totalEnergy', ax=ax0, style='rx', label='Bad Initial Guess')
-    
-    ax0.axhline(y=dftfeExchangeEnergy,color='b',label='dft-fe')
-    ax0.axhline(y=dftfeCorrelationEnergy,color='g',label='dft-fe')
-    ax0.axhline(y=dftfeTotalEnergy,color='r',label='dft-fe')
-    
-    ax0.legend()
-#     ax0.set_title(system + ': Energy Values During Green Iterations -- Good Initial Guess')
-#     ax0.set_title(system + ': Energy Values During Green Iterations -- Bad Initial Guess')
-    ax0.set_title(system + ': Energy Values During Green Iterations')
-    ax0.set_ylabel('Energy (H)')
-    ax0.set_xlabel('Iteration Number')
-    plt.savefig(plotsDir+system+'Energies'+'.pdf', bbox_inches='tight',format='pdf')
-
-    
-
-    # Individual error plots
-    f, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12,8), sharex=True)
-    
-    df_good['exchangeEnergyError -- Good Initial']=abs(df_good['exchangeEnergy']-dftfeExchangeEnergy)
-    df_good['correlationEnergyError -- Good Initial']=abs(df_good['correlationEnergy']-dftfeCorrelationEnergy)
-    df_good['totalEnergyError -- Good Initial']=abs(df_good['totalEnergy']-dftfeTotalEnergy)
-    
-    df_bad['exchangeEnergyError -- Bad Initial']=abs(df_bad['exchangeEnergy']-dftfeExchangeEnergy)
-    df_bad['correlationEnergyError -- Bad Initial']=abs(df_bad['correlationEnergy']-dftfeCorrelationEnergy)
-    df_bad['totalEnergyError -- Bad Initial']=abs(df_bad['totalEnergy']-dftfeTotalEnergy)
-    
-    df_good.plot(x='Iteration', y='exchangeEnergyError -- Good Initial', logy=True, ax=ax1, style='bo')
-    df_good.plot(x='Iteration', y='correlationEnergyError -- Good Initial', logy=True, ax=ax2, style='go')
-    df_good.plot(x='Iteration', y='totalEnergyError -- Good Initial', logy=True, ax=ax3, style='ro')
-    
-    df_bad.plot(x='Iteration', y='exchangeEnergyError -- Bad Initial', logy=True, ax=ax1, style='bx')
-    df_bad.plot(x='Iteration', y='correlationEnergyError -- Bad Initial', logy=True, ax=ax2, style='gx')
-    df_bad.plot(x='Iteration', y='totalEnergyError -- Bad Initial', logy=True, ax=ax3, style='rx')
-
-#     ax1.axhline(y=dftfeExchangeEnergy,color='b',label='dft-fe')
-#     ax2.axhline(y=dftfeCorrelationEnergy,color='g',label='dft-fe')
-#     ax3.axhline(y=dftfeTotalEnergy,color='r',label='dft-fe')
-    
-    ax1.legend()
-    ax2.legend()
-    ax3.legend()
-    
-    ax1.set_ylabel('Energy (H)')
-    ax2.set_ylabel('Energy (H)')
-    ax3.set_ylabel('Energy (H)')
-    ax3.set_xlabel('Iteration Number')
-    
-#     plt.suptitle(system + ': Absolute Errors During Iterations -- Good Initial Guess')
-#     plt.suptitle(system + ': Absolute Errors During Iterations -- Bad Initial Guess')
-    plt.suptitle(system + ': Absolute Errors During Iterations')
-    plt.savefig(plotsDir+system+'Errors'+'.pdf', bbox_inches='tight',format='pdf')
-    
-    plt.show()
     
 def plotSCFconvergence(df, system = 'H2'):
     
@@ -146,16 +42,17 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeBandEnergy = -3.8616389456972078
         
     if system == "carbonMonoxide":
-        dftfeTotalEnergy = -1.1247266168240085e+02
-        dftfeExchangeEnergy = -1.1997121612563481e+01
-        dftfeCorrelationEnergy = -9.4214559243453999e-01
-        dftfeBandEnergy = -6.2899640319071970e+01
+        # these taken from mesh size 0.125 run
+        dftfeTotalEnergy = -1.1247167888813128e+02
+        dftfeExchangeEnergy = -1.1997052574614749e+01
+        dftfeCorrelationEnergy = -9.4214501809750550e-01
+        dftfeBandEnergy = -6.2898649220361037e+01
 
 
     df['bandEnergyError']=abs(df['bandEnergy']-dftfeBandEnergy)
     df['exchangeEnergyError']=abs(df['exchangeEnergy']-dftfeExchangeEnergy)
     df['correlationEnergyError']=abs(df['correlationEnergy']-dftfeCorrelationEnergy)
-    df['totalEnergyError']=abs(df['totalEnergy']-dftfeTotalEnergy)
+    df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/2
 
     print("band energy errors:")
     print(df['bandEnergyError'])
@@ -164,70 +61,18 @@ def plotSCFconvergence(df, system = 'H2'):
     print("correlation energy errors:")
     print(df['correlationEnergyError'])
     print("total energy errors: \n")
-    print(df['totalEnergyError'])
+    print(df['totalEnergyErrorPerAtom'])
     
-##    # Combined plot
-##    f0, ax0 = plt.subplots(1, 1, figsize=(6,5))
-##    df.plot(x='Iteration', y='exchangeEnergy', ax=ax0, style='bo')
-##    df.plot(x='Iteration', y='correlationEnergy', ax=ax0, style='go')
-##    df.plot(x='Iteration', y='bandEnergy', ax=ax0, style='mo')
-##    df.plot(x='Iteration', y='totalEnergy', ax=ax0, style='ro')
-##    
-##
-##    ax0.axhline(y=dftfeExchangeEnergy,color='b',label='dft-fe')
-##    ax0.axhline(y=dftfeCorrelationEnergy,color='g',label='dft-fe')
-##    ax0.axhline(y=dftfeBandEnergy,color='m',label='dft-fe')
-##    ax0.axhline(y=dftfeTotalEnergy,color='r',label='dft-fe')
-##    
-##    ax0.legend()
-###     ax0.set_title(system + ': Energy Values During Green Iterations -- Good Initial Guess')
-###     ax0.set_title(system + ': Energy Values During Green Iterations -- Bad Initial Guess')
-##    ax0.set_title(system + ': Energy Values During Green Iterations')
-##    ax0.set_ylabel('Energy (H)')
-##    ax0.set_xlabel('Iteration Number')
-##    plt.savefig(plotsDir+system+'Energies'+'.pdf', bbox_inches='tight',format='pdf')
-##
-##
-##    
-##
-##
-##    
-##
-##    # Individual error plots
-##    f, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(10,6), sharex=True)
-##
-##    
-##    df.plot(x='Iteration', y='bandEnergyError', logy=True, ax=ax1, style='mo')
-##    df.plot(x='Iteration', y='exchangeEnergyError', logy=True, ax=ax2, style='bo')
-##    df.plot(x='Iteration', y='correlationEnergyError', logy=True, ax=ax3, style='go')
-##    df.plot(x='Iteration', y='totalEnergyError', logy=True, ax=ax4, style='ro')
-##    
-##
-##    
-##    ax1.legend()
-##    ax2.legend()
-##    ax3.legend()
-##    ax4.legend()
-##    
-##    ax1.set_ylabel('Energy (H)')
-##    ax2.set_ylabel('Energy (H)')
-##    ax3.set_ylabel('Energy (H)')
-##    ax4.set_ylabel('Energy (H)')
-##    ax4.set_xlabel('SCF Iteration Number')
-##    
-###     plt.suptitle(system + ': Absolute Errors During Iterations -- Good Initial Guess')
-###     plt.suptitle(system + ': Absolute Errors During Iterations -- Bad Initial Guess')
-##    plt.suptitle(system + ': Absolute Errors During Iterations')
-##    plt.savefig(plotsDir+system+'Errors'+'.pdf', bbox_inches='tight',format='pdf')
+
     
 # Combined error plot
     f2, ax2 = plt.subplots(1, 1, figsize=(10,6))
     df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='bo-')
     df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='go-')
     df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='mo-')
-    df.plot(x='Iteration', y='totalEnergyError',logy=True, ax=ax2, style='ro-')
+    df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='ro-')
     
-    ax2.legend()
+    ax2.legend(loc='upper right')
 ##    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='bo')
 ##    df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='go')
 ##    df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='mo')

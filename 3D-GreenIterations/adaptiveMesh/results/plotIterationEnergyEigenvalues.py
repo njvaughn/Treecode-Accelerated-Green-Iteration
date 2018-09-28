@@ -12,54 +12,38 @@ import numpy as np
 
 
 resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
-##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/singleSCF/'
-##file='CO_LW3_400_GREEN_1stSCF.csv'
-##file='CO_LW3_400_GREEN_1stSCF_domain30.csv'
-##file='CO_LW3_800_GREEN_1stSCF_domain30.csv'
 
-##file='CO_LW3_400_SCF1_skipping_minD4.csv'
-##file='CO_LW3_400_SCF1_skipping_minD4_serial.csv'
-##file='CO_LW3_400_SCF1.csv'                      #overnight, 1170 total iterations
-##file='CO_LW3_1200_skip_GreenIterations.csv'   # higher refinement test 09/13/18 with tolerance 1e-2
-##file='CO_LW3_1200_skip_GreenIterations_tighter.csv'   # higher refinement test 09/13/18 with tolerance 1e-3
-##file='CO_LW3_400_SCF_atomic.csv'
-##file='CO_LW3_400_SCF_atomicCore_7orb.csv'
-##file='CO_LW3_400_GREEN.csv'
-##file='CO_LW3_400_GREEN_1eminus2.csv'
-##file='LW3_400_SCF_atomicCore_7orb_24mH.csv'  # good result for coarse mesh
-##file='CO_LW3_800_GREEN_max10_subtract.csv'
-##file='CO_LW3_1200_GREEN_max10.csv'
+##file='CO_LW3_1200_singSub_fixedMixingBug_GREEN_.csv'
 
-##file='CO_400_baseline_GREEN_.csv'
-##file='CO_800_baseline_GREEN_.csv'
-##file='CO_1200_baseline_GREEN_.csv'
-
-##file='CO_LW3_2000_singSub_GREEN_.csv'
-file='CO_LW3_1200_singSub_fixedMixingBug_GREEN_.csv'
+##file='CO_LW3_800_simpleMixing_GREEN_.csv'
+##file='CO_LW3_1200_simpleMixing_GREEN_.csv'
+##file='CO_LW3_1000_simpleMixing_GREEN_.csv'
+##file='CO_LW3_1600_simpleMixing_GREEN_.csv'
+##file='CO_LW1_2000_simpleMixing_GREEN_.csv'
+file='CO_LW3_2500_simpleMixing_GREEN_.csv'
 
 
-##file='CO_LW3_400_GREEN_max10.csv'
-##file='CO_LW3_400_GREEN_subtract.csv'
-##file='CO_LW3_400_GREEN_longDomain.csv'
-##file='CO_LW3_400_GREEN_10orb.csv'
-##file='CO_LW3_1200_SCF_atomic.csv'
+
 plotsDir = resultsDir+'plots/'
 
-##df = pd.read_csv(resultsDir+'/CO_LW3_800_SCF1_skipping.csv', header=0)
-##df = pd.read_csv(resultsDir+'/CO_LW3_800_SCF1_subtracting.csv', header=0)
-##df = pd.read_csv(resultsDir+'/CO_LW3_800_SCF1_skipping_minD3.csv', header=0)
 df = pd.read_csv(resultsDir+file, header=0)
 
 print(df.shape)
+
+referenceEnergies = np.array([-1.871923237485756886e+01,
+                              -9.907091923705507952e+00,
+                              -1.075296339177760352e+00,
+                              -5.215175505938050016e-01,
+                              -4.455359698088234843e-01,
+                              -4.455359698088187659e-01 ,
+                              -3.351144822320292205e-01])
 
 residualsMatrix = np.zeros((df.shape[0],7))
 errorsMatrix = np.zeros((df.shape[0],7))
 errorsMatrix1st = np.zeros((df.shape[0],7))
 for i in range(df.shape[0]):
-##    print('i=%i'%i)
-##    print(np.array(df.orbitalResiduals[i][1:-1].split('  '),dtype=float))
     residualsMatrix[i,:] = np.array(df.orbitalResiduals[i][1:-1].split(),dtype=float)
-    errorsMatrix[i,:] = np.array( df.energyErrors[i][1:-1].split(),dtype=float) 
+    errorsMatrix[i,:] = np.array( df.energyEigenvalues[i][1:-1].split(),dtype=float) - referenceEnergies
     try:
         errorsMatrix1st[i,:] = np.array( df.energyErrorsWRTfirstSCF[i][1:-1].split(),dtype=float) 
     except AttributeError:
@@ -133,25 +117,25 @@ def plotFirstSCF(df):
     plt.suptitle('Using Singularity Subtraction, LW3-800, minDepth 3')
     plt.suptitle(file)
 
-    try:
-        f1, (ax2,ax3) = plt.subplots(1,2, figsize=(12,6))
-        df.plot(y='residual0',ax=ax2,logy=True,label='Phi0')
-        df.plot(y='residual1',ax=ax2,logy=True,label='Phi1')
-        df.plot(y='residual2',ax=ax2,logy=True,label='Phi2')
-        df.plot(y='residual3',ax=ax2,logy=True,label='Phi3')
-        df.plot(y='residual4',ax=ax2,logy=True,label='Phi4')
-        df.plot(y='residual5',ax=ax2,logy=True,label='Phi5')
-        df.plot(y='residual6',ax=ax2,logy=True,label='Phi6')
-        plt.suptitle(file+'Errors w.r.t. first SCF energies')
-        df.plot(y='1stSCFerrors0',ax=ax3,logy=True,label='Phi0')
-        df.plot(y='1stSCFerrors1',ax=ax3,logy=True,label='Phi1')
-        df.plot(y='1stSCFerrors2',ax=ax3,logy=True,label='Phi2')
-        df.plot(y='1stSCFerrors3',ax=ax3,logy=True,label='Phi3')
-        df.plot(y='1stSCFerrors4',ax=ax3,logy=True,label='Phi4')
-        df.plot(y='1stSCFerrors5',ax=ax3,logy=True,label='Phi5')
-        df.plot(y='1stSCFerrors6',ax=ax3,logy=True,label='Phi6')
-    except AttributeError:
-        pass
+##    try:
+##        f1, (ax2,ax3) = plt.subplots(1,2, figsize=(12,6))
+##        df.plot(y='residual0',ax=ax2,logy=True,label='Phi0')
+##        df.plot(y='residual1',ax=ax2,logy=True,label='Phi1')
+##        df.plot(y='residual2',ax=ax2,logy=True,label='Phi2')
+##        df.plot(y='residual3',ax=ax2,logy=True,label='Phi3')
+##        df.plot(y='residual4',ax=ax2,logy=True,label='Phi4')
+##        df.plot(y='residual5',ax=ax2,logy=True,label='Phi5')
+##        df.plot(y='residual6',ax=ax2,logy=True,label='Phi6')
+##        plt.suptitle(file+'Errors w.r.t. first SCF energies')
+##        df.plot(y='1stSCFerrors0',ax=ax3,logy=True,label='Phi0')
+##        df.plot(y='1stSCFerrors1',ax=ax3,logy=True,label='Phi1')
+##        df.plot(y='1stSCFerrors2',ax=ax3,logy=True,label='Phi2')
+##        df.plot(y='1stSCFerrors3',ax=ax3,logy=True,label='Phi3')
+##        df.plot(y='1stSCFerrors4',ax=ax3,logy=True,label='Phi4')
+##        df.plot(y='1stSCFerrors5',ax=ax3,logy=True,label='Phi5')
+##        df.plot(y='1stSCFerrors6',ax=ax3,logy=True,label='Phi6')
+##    except AttributeError:
+##        pass
     
     plt.show()
 

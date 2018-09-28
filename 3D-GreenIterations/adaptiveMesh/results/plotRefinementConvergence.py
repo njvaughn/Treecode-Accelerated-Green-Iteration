@@ -23,6 +23,11 @@ df['EnergyError1'] = -1.1247200574178584e+02 - df['TotalEnergy']
 df['EnergyError2'] = -1.1248147249764637e+02 - df['TotalEnergy']
 df['EnergyError3'] = -1.1247635297749687e+02 - df['TotalEnergy']
 
+df['TotalEnergyErrorPerAtom'] = abs( (df['TotalEnergy']+1.1247167888813128e+02)/2 )
+df['BandEnergyError'] = abs( df['BandEnergy']+6.2898649220361037e+01 )
+df['CorrelationEnergyError'] = abs( df['CorrelationEnergy']+9.4214501809750550e-01 )
+df['ExchangeEnergyError'] = abs( df['ExchangeEnergy']+1.1997052574614749e+01 )
+
 
 
 def AversusB(df,A,B,save=False):
@@ -62,15 +67,22 @@ def logAversusLogB(df,A,B,save=False):
 
 def energyErrors():
     fig, ax = plt.subplots(figsize=(8,6))
-    fig.suptitle("Energy Errors w.r.t. Different DFT-FE Runs")
-    df.plot(x='NumberOfGridpoints', y='EnergyError1', style='o', ax=ax, loglog=True)
-    df.plot(x='NumberOfGridpoints', y='EnergyError2', style='o', ax=ax, loglog=True)
-    df.plot(x='NumberOfGridpoints', y='EnergyError3', style='o', ax=ax, loglog=True)
-
+    fig.suptitle("Energy Errors w.r.t. DFT-FE")
+    df.plot(x='NumberOfGridpoints', y='BandEnergyError', style='o', ax=ax, loglog=True)
+    df.plot(x='NumberOfGridpoints', y='ExchangeEnergyError', style='o', ax=ax, loglog=True)
+    df.plot(x='NumberOfGridpoints', y='CorrelationEnergyError', style='o', ax=ax, loglog=True)
+    df.plot(x='NumberOfGridpoints', y='TotalEnergyErrorPerAtom', style='o', ax=ax, loglog=True)
+##
         
+##    df.plot(x='NumberOfGridpoints', y='BandEnergyError', ax=ax, loglog=True)
+##    df.plot(x='NumberOfGridpoints', y='ExchangeEnergyError', ax=ax, loglog=True)
+##    df.plot(x='NumberOfGridpoints', y='CorrelationEnergyError', ax=ax, loglog=True)
+##    df.plot(x='NumberOfGridpoints', y='TotalEnergyErrorPerAtom', ax=ax, loglog=True)
+
+
     plt.legend(loc = 'best')
     plt.xlabel('Number of Gridpoints')
-    plt.ylabel('Total Energy Error (Hartree)')
+    plt.ylabel('Energy Error (Hartree)')
 
     plt.show()
 
@@ -98,10 +110,10 @@ def energyValues():
 
 if __name__=="__main__":
 #     plotFirstSCF(df)
-    AversusB(df,'TotalEnergy','NumberOfGridpoints')
+##    AversusB(df,'TotalEnergy','NumberOfGridpoints')
 ##    logAversusLogB(df,'EnergyError2','NumberOfGridpoints')
     energyErrors()
 
-    energyValues()    
+##    energyValues()    
 
 

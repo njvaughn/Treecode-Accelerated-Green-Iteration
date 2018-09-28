@@ -95,14 +95,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     sources = tree.extractLeavesDensity() 
 
     V_coulombNew = np.zeros((len(targets)))
+    startCoulombConvolutionTime = timer()
     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
 #     print('Using singularity subtraction for initial Poisson solve')
-#     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,1)
+#     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,10)
+    CoulombConvolutionTime = timer() - startCoulombConvolutionTime
+    print('Computing Vcoulomb took:    %.4f seconds. ' %CoulombConvolutionTime)
     tree.importVcoulombOnLeaves(V_coulombNew)
     tree.updateVxcAndVeffAtQuadpoints()
     
     #manually set the initial occupations, otherwise oxygen P shell gets none.
-    tree.occupations = np.array([2,2,2,2,2,2,2,0,0,0])
+    tree.occupations = np.array([2,2,2,2,2,2,2])
 #     tree.updateOrbitalEnergies(sortByEnergy=False)
 #     print('In the above energies, first 5 are for the carbon, next 5 for the oxygen.')
     print('Update orbital energies after computing the initial Veff.')
@@ -113,10 +116,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     tree.orbitalEnergies[-2] = tree.gaugeShift
 #     tree.orbitalEnergies[-3] = tree.gaugeShift
     
-#     if tree.nOrbitals==7:
-    print('Scrambling valence orbitals')
-    for m in range(4,tree.nOrbitals):
-        tree.scrambleOrbital(m)
+# #     if tree.nOrbitals==7:
+#     print('Scrambling valence orbitals')
+#     for m in range(4,tree.nOrbitals):
+#         tree.scrambleOrbital(m)
     
 
 ### CARBON MONOXIDE MOLECULE ###    
@@ -132,11 +135,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                       -3.959879088687816573e-01, -7.423877195920526584e-02,
 #                                       -7.325760563979200057e-02,  1.721054880813185223e-02] )
                                       
-    dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
-                                      -1.075324514852165958e+00, -5.215419985881135645e-01,
-                                      -4.455527567163568570e-01, -4.455527560478895199e-01,
-                                      -3.351419327004790394e-01])#, -8.275071966753577701e-02,
-#                                      8.273399296312561324e-02,  7.959071929649078059e-03] )
+#     dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
+#                                       -1.075324514852165958e+00, -5.215419985881135645e-01,
+#                                       -4.455527567163568570e-01, -4.455527560478895199e-01,
+#                                       -3.351419327004790394e-01])#, -8.275071966753577701e-02,
+# #                                      8.273399296312561324e-02,  7.959071929649078059e-03] )
 
  
 
@@ -155,8 +158,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                       -3.382974161584920147e-01]) 
 #     dftfeOrbitalEnergiesFirstSCF = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
 #                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
-#                                       -3.382974161584920147e-01])                            
-                            
+#                                       -3.382974161584920147e-01])         
+
+    ## BERYLLIUM ATOM
+#     dftfeOrbitalEnergies = np.array( [0, 0])
+
+    ## H2 Molecule
+    dftfeOrbitalEnergies = np.array( [-7.5499497178953057e-01/2])
+                        
     
     
 
@@ -209,7 +218,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 
                 oldOrbitals[:,m] = np.copy(targets[:,3])
 
-                if tree.orbitalEnergies[m] > 0:
+                if tree.orbitalEnergies[m] > tree.gaugeShift:
 #                     print('Resetting orbital %i energy to 1/2 gauge shift')
 #                     tree.orbitalEnergies[m] = tree.gaugeShift
                     tree.orbitalEnergies[m] = tree.gaugeShift-1/2
@@ -224,8 +233,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
 #                 else:
                 elif subtractSingularity==1:
-                    print('Using singularity subtraction')
-                    gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                    if tree.orbitalEnergies[m] < -0.0:
+                        print('Using singularity subtraction')
+                        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                    else:
+                        print('Using singularity skipping because energy too close to 0')
+                        gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)
                 else:
                     print('Invalid option for singularitySubtraction, should be 0 or 1.')
                     return
@@ -235,12 +248,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
 
                 # normalize
-                orbitals[:,m] /= np.sqrt( np.dot(orbitals[:,m],orbitals[:,m]*weights) )
+#                 print('Not normalizing...')
+#                 orbitals[:,m] /= np.sqrt( np.dot(orbitals[:,m],orbitals[:,m]*weights) )
 #                 normalizedOrbitals = normalizeOrbitals(orbitals,weights)  # could optimize this to only normalize the current orbital
                 
                 
                 tree.importPhiOnLeaves(orbitals[:,m], m)
-
+                tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+                print('Before orthonormalization:  Orbital %i error:        %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
+                print('Orthonormalizing.')
                 tree.orthonormalizeOrbitals(targetOrbital=m)
                 tempOrbital = tree.extractPhi(m)
                 orbitals[:,m] = tempOrbital[:,3]
@@ -262,14 +278,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                 greenIterationOutFile = '/home/njvaughn/CO_LW3_1200_skip_GreenIterations_tighter.csv'
     #             SCFiterationOutFile = '/home/njvaughn/CO_LW3_1200_SCF1_skipping.csv'
                 header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyEigenvalues']
+#                 header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyEigenvalues', 'energyErrors']
         
-#                 myData = [eigensolveCount, residuals,
+                myData = [eigensolveCount, residuals,
+                          tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
+#                 myData = [m, eigensolveCount, residuals,
+#                           tree.orbitalEnergies-tree.gaugeShift,
 #                           tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
 #                 myData = [m, eigensolveCount, residuals,
-#                           tree.orbitalEnergies-dftfeOrbitalEnergiesFirstSCF-tree.gaugeShift,
-#                           tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
-                myData = [m, eigensolveCount, residuals,
-                          tree.orbitalEnergies-tree.gaugeShift]
+#                           tree.orbitalEnergies-tree.gaugeShift]
                 
         
                 if not os.path.isfile(greenIterationOutFile):
@@ -313,7 +330,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         V_coulombNew = np.zeros((len(targets)))
         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
 #         print('Using singularity subtraction for the Poisson solve!')
-#         gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,1)  # call the GPU convolution 
+#         gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,10)  # call the GPU convolution 
         tree.importVcoulombOnLeaves(V_coulombNew)
         tree.updateVxcAndVeffAtQuadpoints()
         CoulombConvolutionTime = timer() - startCoulombConvolutionTime

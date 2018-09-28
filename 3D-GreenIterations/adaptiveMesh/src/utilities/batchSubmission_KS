@@ -2,30 +2,30 @@
 DOMAIN=20
 MINDEPTH=3
 MAXDEPTH=20
-ORDER=4
-SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0.0
 INTRASCFTOLERANCE=1e-2
 INTERSCFTOLERANCE=1e-7
+SINGSUBT=1
 
 
-INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 
 
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 
-OUTPUTFILE='/home/njvaughn/iterationResults/CO_LW3_1200_simpleMixing.csv'
+OUTPUTFILE='/home/njvaughn/H2IterationResults/LW3_800.csv'
 MESHTYPE='LW3'
-MESHPARAM=1200
+MESHPARAM=800
+ORDER=4
 
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

@@ -4,8 +4,8 @@ OUTFILE="/home/njvaughn/Coulomb/gaussian_uniform_highOrder.csv"
 SINGTYPE=0
 DOMAIN=0.5
 MINDEPTH=3
-MAXDEPTH=3
-PARAMETER=0
+MAXDEPTH=20
+PARAMETER=400
 MESHTYPE="LW3"
 
 
