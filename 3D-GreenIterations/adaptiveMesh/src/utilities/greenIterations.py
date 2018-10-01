@@ -156,15 +156,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                     #7.325760563979200057e-02,  1.721054880813185223e-02] )
                                       
 #     ## OXYGEN ATOM     
-#     dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
-#                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
-#                                       -3.382974161584920147e-01]) 
+    dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
+                                      -3.382974161584920147e-01, -3.382974161584920147e-01,
+                                      -3.382974161584920147e-01]) 
 #     dftfeOrbitalEnergiesFirstSCF = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
 #                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
 #                                       -3.382974161584920147e-01])         
 
     # BERYLLIUM ATOM
-    dftfeOrbitalEnergies = np.array( [0, 0])
+#     dftfeOrbitalEnergies = np.array( [0, 0])
 
     ## H2 Molecule
 #     dftfeOrbitalEnergies = np.array( [-7.5499497178953057e-01/2])
@@ -322,11 +322,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         tree.occupations = np.array([2,2,4/3,4/3,4/3])
 
         tree.updateDensityAtQuadpoints()
-        tree.normalizeDensity()
+#         tree.normalizeDensity()  # Don't normalize the density.  Just print it
+        
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = np.copy(sources)
-        
+        newDensity = sources[:,3]
+        integratedDensity = np.sum( newDensity*weights )
         densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
+        print('Integrated density: ', integratedDensity)
         print('Density Residual ', densityResidual)
  
         """ 
