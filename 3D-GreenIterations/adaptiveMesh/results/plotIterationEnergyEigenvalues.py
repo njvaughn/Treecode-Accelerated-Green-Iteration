@@ -11,16 +11,53 @@ import os
 import numpy as np
 
 
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
 
-##file='CO_LW3_1200_singSub_fixedMixingBug_GREEN_.csv'
+#### H2
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
+##file='LW3_2500_GREEN_.csv'
+##
+#### Lithium
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/'
+##file='LW3_1000_GREEN_.csv'
 
-##file='CO_LW3_800_simpleMixing_GREEN_.csv'
-##file='CO_LW3_1200_simpleMixing_GREEN_.csv'
-##file='CO_LW3_1000_simpleMixing_GREEN_.csv'
-##file='CO_LW3_1600_simpleMixing_GREEN_.csv'
-##file='CO_LW1_2000_simpleMixing_GREEN_.csv'
-file='CO_LW3_2500_simpleMixing_GREEN_.csv'
+#### Beryllium
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/'
+##file='LW3_1000_GREEN_.csv'
+
+## Oxygen
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
+file='LW3_1500_GREEN_.csv'
+
+if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
+    TotalEnergy = -7.3340536782581447
+    ExchangeEnergy = -1.4916149721121696
+    CorrelationEnergy = -0.15971669832262905
+    BandEnergy = -3.8616389456972078
+
+
+if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/':
+    TotalEnergy = -1.4446182766680081e+01
+    ExchangeEnergy = -2.2902495359115198e+00
+    CorrelationEnergy = -2.2341044592808737e-01
+    BandEnergy = -8.1239182420318166e+00
+
+    df = df.drop([6,7,8,9,10])  #because I accidentally wrote to the same file again
+
+
+
+if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/':
+    TotalEnergy = -7.4469012607372008e+01
+    ExchangeEnergy = -7.2193424444124350e+00
+    CorrelationEnergy = -5.4455323198374961e-01
+    BandEnergy = -4.0613156367497737e+01
+
+
+if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/':
+    TotalEnergy = -1.1376691191341821e+00
+    ExchangeEnergy = -5.5876966592456134e-01
+    CorrelationEnergy = -9.4268448521496129e-02
+    BandEnergy = -7.5499497178953057e-01
 
 
 
@@ -30,20 +67,32 @@ df = pd.read_csv(resultsDir+file, header=0)
 
 print(df.shape)
 
-referenceEnergies = np.array([-1.871923237485756886e+01,
-                              -9.907091923705507952e+00,
-                              -1.075296339177760352e+00,
-                              -5.215175505938050016e-01,
-                              -4.455359698088234843e-01,
-                              -4.455359698088187659e-01 ,
-                              -3.351144822320292205e-01])
+##referenceEnergies = np.array([-1.871923237485756886e+01,
+##                              -9.907091923705507952e+00,
+##                              -1.075296339177760352e+00,
+##                              -5.215175505938050016e-01,
+##                              -4.455359698088234843e-01,
+##                              -4.455359698088187659e-01 ,
+##                              -3.351144822320292205e-01])
 
-residualsMatrix = np.zeros((df.shape[0],7))
-errorsMatrix = np.zeros((df.shape[0],7))
-errorsMatrix1st = np.zeros((df.shape[0],7))
+## OXYGEN
+referenceEnergies = np.array([-1.875878370505640547e+01,
+                              -8.711996463756719322e-01,
+                              -3.382974161584920147e-01,
+                              -3.382974161584920147e-01,
+                              -3.382974161584920147e-01])
+
+## H2
+##referenceEnergies = np.array([-0.3774974859])
+
+
+residualsMatrix = np.zeros((df.shape[0],5))
+errorsMatrix = np.zeros((df.shape[0],5))
+errorsMatrix1st = np.zeros((df.shape[0],5))
 for i in range(df.shape[0]):
     residualsMatrix[i,:] = np.array(df.orbitalResiduals[i][1:-1].split(),dtype=float)
-    errorsMatrix[i,:] = np.array( df.energyEigenvalues[i][1:-1].split(),dtype=float) - referenceEnergies
+    errorsMatrix[i,:] = abs( np.array( df.energyEigenvalues[i][1:-1].split(),dtype=float) - referenceEnergies )
+##    errorsMatrix[i,:] = np.array( df.energyEigenvalues[i][1:-1].split(),dtype=float)
     try:
         errorsMatrix1st[i,:] = np.array( df.energyErrorsWRTfirstSCF[i][1:-1].split(),dtype=float) 
     except AttributeError:
@@ -54,31 +103,32 @@ df['residual1'] = residualsMatrix[:,1]
 df['residual2'] = residualsMatrix[:,2]
 df['residual3'] = residualsMatrix[:,3]
 df['residual4'] = residualsMatrix[:,4]
-df['residual5'] = residualsMatrix[:,5]
-df['residual6'] = residualsMatrix[:,6]
+##df['residual5'] = residualsMatrix[:,5]
+##df['residual6'] = residualsMatrix[:,6]
 ##df['residual7'] = residualsMatrix[:,7]
 ##df['residual8'] = residualsMatrix[:,8]
 ##df['residual9'] = residualsMatrix[:,9]
 
+##df['errors0'] = np.copy(df['energyEigenvalues'])
 df['errors0'] = np.abs(errorsMatrix[:,0])
 df['errors1'] = np.abs(errorsMatrix[:,1])
 df['errors2'] = np.abs(errorsMatrix[:,2])
 df['errors3'] = np.abs(errorsMatrix[:,3])
 df['errors4'] = np.abs(errorsMatrix[:,4])
-df['errors5'] = np.abs(errorsMatrix[:,5])
-df['errors6'] = np.abs(errorsMatrix[:,6])
+##df['errors5'] = np.abs(errorsMatrix[:,5])
+##df['errors6'] = np.abs(errorsMatrix[:,6])
 
 
-try:
-    df['1stSCFerrors0'] = np.abs(errorsMatrix1st[:,0])
-    df['1stSCFerrors1'] = np.abs(errorsMatrix1st[:,1])
-    df['1stSCFerrors2'] = np.abs(errorsMatrix1st[:,2])
-    df['1stSCFerrors3'] = np.abs(errorsMatrix1st[:,3])
-    df['1stSCFerrors4'] = np.abs(errorsMatrix1st[:,4])
-    df['1stSCFerrors5'] = np.abs(errorsMatrix1st[:,5])
-    df['1stSCFerrors6'] = np.abs(errorsMatrix1st[:,6])
-except AttributeError:
-    pass
+##try:
+##    df['1stSCFerrors0'] = np.abs(errorsMatrix1st[:,0])
+##    df['1stSCFerrors1'] = np.abs(errorsMatrix1st[:,1])
+##    df['1stSCFerrors2'] = np.abs(errorsMatrix1st[:,2])
+##    df['1stSCFerrors3'] = np.abs(errorsMatrix1st[:,3])
+##    df['1stSCFerrors4'] = np.abs(errorsMatrix1st[:,4])
+##    df['1stSCFerrors5'] = np.abs(errorsMatrix1st[:,5])
+##    df['1stSCFerrors6'] = np.abs(errorsMatrix1st[:,6])
+##except AttributeError:
+##    pass
 
 def plotFirstSCF(df):
 
@@ -89,8 +139,8 @@ def plotFirstSCF(df):
     df.plot(y='residual2',ax=ax0,logy=True,label='Phi2')
     df.plot(y='residual3',ax=ax0,logy=True,label='Phi3')
     df.plot(y='residual4',ax=ax0,logy=True,label='Phi4')
-    df.plot(y='residual5',ax=ax0,logy=True,label='Phi5')
-    df.plot(y='residual6',ax=ax0,logy=True,label='Phi6')
+##    df.plot(y='residual5',ax=ax0,logy=True,label='Phi5')
+##    df.plot(y='residual6',ax=ax0,logy=True,label='Phi6')
 ##    df.plot(y='residual7',ax=ax0,logy=True,label='Phi7')
 ##    df.plot(y='residual8',ax=ax0,logy=True,label='Phi8')
 ##    df.plot(y='residual9',ax=ax0,logy=True,label='Phi9')
@@ -104,8 +154,8 @@ def plotFirstSCF(df):
     df.plot(y='errors2',ax=ax1,logy=True,label='Phi2')
     df.plot(y='errors3',ax=ax1,logy=True,label='Phi3')
     df.plot(y='errors4',ax=ax1,logy=True,label='Phi4')
-    df.plot(y='errors5',ax=ax1,logy=True,label='Phi5')
-    df.plot(y='errors6',ax=ax1,logy=True,label='Phi6')
+##    df.plot(y='errors5',ax=ax1,logy=True,label='Phi5')
+##    df.plot(y='errors6',ax=ax1,logy=True,label='Phi6')
 ##    df.plot(y='errors7',ax=ax1,logy=True,label='Phi7')
 ##    df.plot(y='errors8',ax=ax1,logy=True,label='Phi8')
 ##    df.plot(y='errors9',ax=ax1,logy=True,label='Phi9')
@@ -114,8 +164,9 @@ def plotFirstSCF(df):
     ax1.set_title('Orbital Errors')
 
 ##    plt.suptitle('Using Singularity Skipping, LW3-800')
-    plt.suptitle('Using Singularity Subtraction, LW3-800, minDepth 3')
-    plt.suptitle(file)
+##    plt.suptitle('Using Singularity Subtraction, LW3-800, minDepth 3')
+##    plt.suptitle(file)
+    plt.suptitle('Convergence of Green Iterations for Oxygen -- Coarse')
 
 ##    try:
 ##        f1, (ax2,ax3) = plt.subplots(1,2, figsize=(12,6))
@@ -140,51 +191,6 @@ def plotFirstSCF(df):
     plt.show()
 
 
-def plotFirstSCF_2(df):
-    ### Alternative where the x axis is iterations.  Need to use only data where iteration != 0
-##    backup = np.copy(df)
-    
-    f0, (ax0, ax1) = plt.subplots(1,2, figsize=(12,6))
-##    df6 = df.loc[df.residual6!=1.0]
-##    df6.plot(x='Iteration',y='residual6',ax=ax0,logy=True,label='Phi6')
-##    df6.plot(x='Iteration',y='errors6',ax=ax1,logy=True,label='Phi6')
-##    
-##    df5 = df.loc[df.residual5!=1.0]
-##    df5.plot(x='Iteration',y='residual5',ax=ax0,logy=True,label='Phi5')
-##    df5.plot(x='Iteration',y='errors5',ax=ax1,logy=True,label='Phi5')
-##
-##    df4 = df.loc[df.residual4!=1.0]
-##    df4.plot(x='Iteration',y='residual4',ax=ax0,logy=True,label='Phi4')
-##    df4.plot(x='Iteration',y='errors4',ax=ax1,logy=True,label='Phi4')
-##
-##    df3 = df.loc[df.residual3!=1.0]
-##    df3.plot(x='Iteration',y='residual3',ax=ax0,logy=True,label='Phi3')
-##    df3.plot(x='Iteration',y='errors3',ax=ax1,logy=True,label='Phi3')
-
-    df2 = df.loc[df.residual2!=1.0]
-    df2.plot(x='Iteration',y='residual2',ax=ax0,logy=True,label='Phi2')
-    df2.plot(x='Iteration',y='errors2',ax=ax1,logy=True,label='Phi2')
-
-    df1 = df.loc[df.residual1!=1.0]
-    df1.plot(x='Iteration',y='residual1',ax=ax0,logy=True,label='Phi1')
-    df1.plot(x='Iteration',y='errors1',ax=ax1,logy=True,label='Phi1')
-
-
-    df0 = df.loc[df.residual0!=1.0].loc[df.residual1!=1.0].loc[df.residual2!=1.0]
-    df0.plot(x='Iteration',y='residual0',ax=ax0,logy=True,label='Phi0')
-    df0.plot(x='Iteration',y='errors0',ax=ax1,logy=True,label='Phi0')
-
-
-    ax0.set_xlabel('Iteration Number')
-    ax0.set_ylabel('Residual L2 Norm')
-    ax0.set_title('Orbital Residuals')
-
-
-    ax1.set_xlabel('Iteration Number')
-    ax1.set_ylabel('Energy Error (Hartree)')
-    ax1.set_title('Orbital Errors')
-
-    plt.show()
 
     
 

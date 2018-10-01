@@ -98,14 +98,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     startCoulombConvolutionTime = timer()
     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
 #     print('Using singularity subtraction for initial Poisson solve')
-#     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,10)
+#     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
     CoulombConvolutionTime = timer() - startCoulombConvolutionTime
     print('Computing Vcoulomb took:    %.4f seconds. ' %CoulombConvolutionTime)
     tree.importVcoulombOnLeaves(V_coulombNew)
     tree.updateVxcAndVeffAtQuadpoints()
     
     #manually set the initial occupations, otherwise oxygen P shell gets none.
-    tree.occupations = np.array([2,2,2,2,2,2,2])
+#     tree.occupations = np.array([2,2,2,2,2,2,2])
+    tree.occupations = np.array([2,2,2/3,2/3,2/3])
+
 #     tree.updateOrbitalEnergies(sortByEnergy=False)
 #     print('In the above energies, first 5 are for the carbon, next 5 for the oxygen.')
     print('Update orbital energies after computing the initial Veff.')
@@ -118,8 +120,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
 # #     if tree.nOrbitals==7:
 #     print('Scrambling valence orbitals')
-#     for m in range(4,tree.nOrbitals):
+#     for m in range(5,tree.nOrbitals):
 #         tree.scrambleOrbital(m)
+#     tree.orbitalEnergies[5] = tree.gaugeShift-0.1
     
 
 ### CARBON MONOXIDE MOLECULE ###    
@@ -160,11 +163,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
 #                                       -3.382974161584920147e-01])         
 
-    ## BERYLLIUM ATOM
-#     dftfeOrbitalEnergies = np.array( [0, 0])
+    # BERYLLIUM ATOM
+    dftfeOrbitalEnergies = np.array( [0, 0])
 
     ## H2 Molecule
-    dftfeOrbitalEnergies = np.array( [-7.5499497178953057e-01/2])
+#     dftfeOrbitalEnergies = np.array( [-7.5499497178953057e-01/2])
                         
     
     
@@ -254,9 +257,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 
                 
                 tree.importPhiOnLeaves(orbitals[:,m], m)
-                tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
-                print('Before orthonormalization:  Orbital %i error:        %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
-                print('Orthonormalizing.')
+#                 tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+#                 print('Before orthonormalization:  Orbital %i error:        %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
+#                 print('Orthonormalizing.')
                 tree.orthonormalizeOrbitals(targetOrbital=m)
                 tempOrbital = tree.extractPhi(m)
                 orbitals[:,m] = tempOrbital[:,3]
@@ -280,8 +283,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyEigenvalues']
 #                 header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyEigenvalues', 'energyErrors']
         
-                myData = [eigensolveCount, residuals,
-                          tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
+                myData = [m, eigensolveCount, residuals,
+                          tree.orbitalEnergies-tree.gaugeShift]
 #                 myData = [m, eigensolveCount, residuals,
 #                           tree.orbitalEnergies-tree.gaugeShift,
 #                           tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift]
@@ -315,6 +318,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
 #         tree.orthonormalizeOrbitals()
         oldDensity = tree.extractLeavesDensity()
+#         print('Fix occupations to [2, 2, 2/3, 2/3, 2/3]')
+#         tree.occupations = np.array([2,2,4/3,4/3,4/3])
+
         tree.updateDensityAtQuadpoints()
         tree.normalizeDensity()
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
@@ -330,7 +336,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         V_coulombNew = np.zeros((len(targets)))
         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
 #         print('Using singularity subtraction for the Poisson solve!')
-#         gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,10)  # call the GPU convolution 
+#         gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)  # call the GPU convolution 
         tree.importVcoulombOnLeaves(V_coulombNew)
         tree.updateVxcAndVeffAtQuadpoints()
         CoulombConvolutionTime = timer() - startCoulombConvolutionTime
@@ -345,12 +351,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
               %(tree.totalBandEnergy, tree.totalBandEnergy-Eband))
         print('Total Energy without computing orbitals energies with new Veff: %.10f H, %.10e H' %(tree.E, tree.E-Etrue))
 
-        tree.updateOrbitalEnergies() # should I be doing this?
+        tree.updateOrbitalEnergies(sortByEnergy=False) # should I be doing this?
         
 #         tree.updateOrbitalEnergies(correctPositiveEnergies=False, sortByEnergy=False) 
         tree.updateTotalEnergy() 
         print('Band energies after Veff update: %1.6f H, %1.2e H'
               %(tree.totalBandEnergy, tree.totalBandEnergy-Eband))
+        print('Orbital Energy Errors after Veff Update: ', tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift)
         
 #         print('Using DFT-FE results from after first SCF...')
         for m in range(tree.nOrbitals):

@@ -64,8 +64,10 @@ def setUpTree():
 #     nOrbitals = 7  # hard code this in for Carbon Monoxide
 #     print('Hard coding nOrbitals to 7')
 
-    nOrbitals = 1  # hard code this in for Carbon Monoxide
-    print('Hard coding nOrbitals to 7')
+#     nOrbitals = 6
+#     print('Hard coding nOrbitals to 6 to give oxygen one extra')
+#     nOrbitals = 1
+#     print('Hard coding nOrbitals to 1')
     
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
@@ -106,22 +108,26 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
               'divideCriterion','divideParameter','energyTolerance',
               'GreenSingSubtracted', 
-              'computedE', 'computedHOMO', 'errorE','errorHOMO']
+              'orbitalEnergies', 'ExchangePotential', 'CorrelationPotential','BandEnergy','ExchangeEnergy','CorrelationEnergy','TotalEnergy']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,
               divideCriterion,divideParameter,energyTolerance,
               subtractSingularity,
-              tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
+              tree.orbitalEnergies, tree.totalVx, tree.totalVc, 
+                      tree.totalBandEnergy, tree.totalEx, tree.totalEc, tree.E]
+#               tree.E, tree.
+#               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     
 
-    if not os.path.isfile(outFile):
-        myFile = open(outFile, 'a')
+    runComparisonFile = '/home/njvaughn/BerylliumIterationResults/runComparison.csv'
+    if not os.path.isfile(runComparisonFile):
+        myFile = open(runComparisonFile, 'a')
         with myFile:
             writer = csv.writer(myFile)
             writer.writerow(header) 
         
     
-    myFile = open(outFile, 'a')
+    myFile = open(runComparisonFile, 'a')
     with myFile:
         writer = csv.writer(myFile)
         writer.writerow(myData)    

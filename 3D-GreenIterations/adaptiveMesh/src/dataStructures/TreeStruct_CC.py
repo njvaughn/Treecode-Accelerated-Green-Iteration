@@ -133,12 +133,13 @@ class Tree(object):
         
     def computeOccupations(self):
         
-        self.T = 50
+        self.T = 0.1
         KB = 8.6173303e-5/27.211386
         self.sigma = self.T*KB
         
         
         
+#         eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
         eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1)
         print('Fermi energy: ', eF)
         exponentialArg = (self.orbitalEnergies-eF)/self.sigma
@@ -285,10 +286,10 @@ class Tree(object):
         orbitalIndex=0
         
         
-#         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
-        print('Hard coding nAtomicOrbitals to 0 for the second hydrogen atom.')
-#         self.atoms[1].nAtomicOrbitals = 2
-        self.atoms[1].nAtomicOrbitals = 0
+# #         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
+#         print('Hard coding nAtomicOrbitals to 0 for the second hydrogen atom.')
+# #         self.atoms[1].nAtomicOrbitals = 2
+#         self.atoms[1].nAtomicOrbitals = 0
     
         for atom in self.atoms:
             
@@ -950,7 +951,6 @@ class Tree(object):
     def sortOrbitalsAndEnergies(self):
         newOrder = np.argsort(self.orbitalEnergies)
         print('New order: ', newOrder)
-        phiNew = np.zeros_like(self.orbitalEnergies)
         for _,cell in self.masterList:
             if cell.leaf==True:
                 for i,j,k in self.PxByPyByPz:

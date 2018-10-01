@@ -1,11 +1,11 @@
 #!/bin/bash
 DOMAIN=20
 MINDEPTH=3
-MAXDEPTH=20
+MAXDEPTH=5
 SMOOTHINGN=0
 SMOOTHINGEPS=0.0
 INTRASCFTOLERANCE=1e-2
-INTERSCFTOLERANCE=1e-7
+INTERSCFTOLERANCE=1e-6
 SINGSUBT=1
 
 
@@ -22,9 +22,10 @@ INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.cs
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 
-OUTPUTFILE='/home/njvaughn/H2IterationResults/LW3_800.csv'
+OUTPUTFILE='/home/njvaughn/H2IterationResults/test.csv'
+
 MESHTYPE='LW3'
-MESHPARAM=800
+MESHPARAM=500
 ORDER=4
 
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
