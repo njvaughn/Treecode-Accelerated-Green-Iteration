@@ -671,6 +671,32 @@ class Tree(object):
                     timer.elapsedTime))
     
 
+    def uniformlyRefine(self):
+        
+        cellCounter = 0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                cellCounter += 1
+                cell.divideFlag = True
+        
+        print('Uniformly refining all %i cells.' %cellCounter)
+        
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+#                 print('Dividing cell ', cell.uniqueID)
+                if  cell.divideFlag == True:
+#                     print('Dividing cell ', cell.uniqueID)
+                    cell.divide(cell.xmid, cell.ymid, cell.zmid)
+                    for i,j,k in TwoByTwoByTwo:
+                        cell.children[i,j,k].divideFlag = False
+                    cell.divideFlag = False
+                    
+        cellCounter = 0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                cellCounter += 1
+        print('Now there are %i cells.' %cellCounter)
+    
     def refineOnTheFly(self, divideTolerance):
         counter = 0
         for _,cell in self.masterList:
