@@ -35,8 +35,8 @@ def setUp():
                 r = sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
                 
                 """ test case 1 """
-#                     gp.rho = exp(-sqrt(4*pi)*r)/r
-#                     gp.trueV = -exp(-sqrt(4*pi)*r)/r
+                gp.rho = exp(-sqrt(4*pi)*r)/r
+                gp.trueV = -exp(-sqrt(4*pi)*r)/r
 
                 """ test case 2 """
 #                 gp.rho = sqrt(36*pi)*alpha**2 / ( 4*pi*r**2 + alpha**2 )**(5/2)
@@ -44,9 +44,9 @@ def setUp():
                 
                 
                 """ test case 3 """
-                sigma = 0.05
-                gp.rho = 1/(sigma**3*(2*pi)**(3/2))*exp(-r**2/(2*sigma**2))
-                gp.trueV = (1/r)*erf(r/(sqrt(2)*sigma))
+#                 sigma = 0.05
+#                 gp.rho = 1/(sigma**3*(2*pi)**(3/2))*exp(-r**2/(2*sigma**2))
+#                 gp.trueV = (1/r)*erf(r/(sqrt(2)*sigma))
 
     
     print('Number of Cells:  ', tree.numberOfCells)

@@ -1,0 +1,72 @@
+####  PBS preamble
+
+#PBS -N OxygenSweep
+
+#PBS -A lsa_fluxg
+#PBS -l qos=flux
+#PBS -q fluxg
+
+#PBS -l nodes=1:gpus=1:titanv,mem=8gb
+#PBS -l walltime=36:00:00
+#PBS -j oe
+#PBS -V
+
+####  End PBS preamble
+
+if [ -s "$PBS_NODEFILE" ] ; then
+    echo "Running on"
+    uniq -c $PBS_NODEFILE
+fi
+
+
+if [ -d "$PBS_O_WORKDIR" ] ; then
+    cd $PBS_O_WORKDIR
+    echo "Running from $PBS_O_WORKDIR"
+fi
+
+
+#  Put your job commands after this line
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
+DOMAIN=20
+MINDEPTH=3
+MAXDEPTH=20
+SINGSUBT=1
+SMOOTHINGN=0
+SMOOTHINGEPS=0.0
+INTRASCFTOLERANCE=1e-2
+INTERSCFTOLERANCE=1e-6
+
+
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+
+ORDER=4
+MESHTYPE='LW3'
+
+
+
+	
+MESHPARAM=3000
+OUTPUTFILE='/home/njvaughn/BerylliumIterationResults/LW3_3000.csv'
+python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
+	
+	
+MESHPARAM=4000
+OUTPUTFILE='/home/njvaughn/BerylliumIterationResults/LW3_4000.csv'
+python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
+
+	
+MESHPARAM=5000
+OUTPUTFILE='/home/njvaughn/BerylliumIterationResults/LW3_5000.csv'
+python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR

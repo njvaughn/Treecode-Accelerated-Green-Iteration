@@ -46,6 +46,8 @@ class Atom(object):
         else:
             print('Not ready for > 30 atomic number.  Revisit atom.setNumberOfOrbitalsToInitialize()')
         
+        print('Atom with Z=%i will get %i atomic orbitals initialized.' %(self.atomicNumber, self.nAtomicOrbitals))
+        
         
     def orbitalInterpolators(self):
         

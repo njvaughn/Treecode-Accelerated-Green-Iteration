@@ -851,34 +851,37 @@ class Cell(object):
 #             print('dy = ', dy)
 #             print('dz = ', dz)
             
-#             # locate shortest dimension.  Divide, then check aspect ratio of children.  
-#             if (dx <= min(dy,dz)): # x is shortest dimension.
-#                 self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
-#             elif (dy <= min(dx,dz)): # y is shortest dimension
-#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
-#             elif (dz <= max(dx,dy)): # z is shortest dimension
-#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
-#              
-#             if hasattr(self, "children"):
-#                 (ii,jj,kk) = np.shape(self.children)
-#                 for i in range(ii):
-#                     for j in range(jj):
-#                         for k in range(kk):
-#                             self.children[i,j,k].divideIfAspectRatioExceeds(tolerance)
+            # locate shortest dimension.  Divide, then check aspect ratio of children.  
+            if (dx <= min(dy,dz)): # x is shortest dimension.
+                self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
+            elif (dy <= min(dx,dz)): # y is shortest dimension
+                self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
+            elif (dz <= max(dx,dy)): # z is shortest dimension
+                self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
+               
+#               Should I divide children?  Maybe it's okay if a child still has a bad aspect ratio because
+#               at least no one side  
+ 
+            if hasattr(self, "children"):
+                (ii,jj,kk) = np.shape(self.children)
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+                            self.children[i,j,k].divideIfAspectRatioExceeds(tolerance)
                 
-            # locate longest dimension.  Divide, then check aspect ratio of children.  
-            if (dx >= max(dy,dz)): # x is longest dimension.
-                self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
-            elif (dy >= max(dx,dz)): # y is longest dimension
-                self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
-            elif (dz >= max(dx,dy)): # z is longest dimension
-                self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
+#             locate longest dimension.  Divide, then check aspect ratio of children.  
+#             if (dx >= max(dy,dz)): # x is longest dimension.
+#                 self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
+#             elif (dy >= max(dx,dz)): # y is longest dimension
+#                 self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
+#             elif (dz >= max(dx,dy)): # z is longest dimension
+#                 self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
              
     def divideButJustReturnChildren(self):
         '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
@@ -917,33 +920,53 @@ class Cell(object):
     """
     HAMILTONIAN FUNCTIONS
     """
-    def computeOrbitalPotentials(self):
+    def computeOrbitalPotentials(self,targetEnergy=None):
         
         phi = np.empty((self.px,self.py,self.pz))
         pot = np.empty((self.px,self.py,self.pz))
-        
-        for m in range(self.tree.nOrbitals):
+        if targetEnergy!=None:
             for i,j,k in self.PxByPyByPz:
                 gp = self.gridpoints[i,j,k]
-                phi[i,j,k] = gp.phi[m]
+                phi[i,j,k] = gp.phi[targetEnergy]
                 pot[i,j,k] = gp.v_eff
                 
-            self.orbitalPE[m] = np.sum( self.w * phi**2 * pot)
+            self.orbitalPE[targetEnergy] = np.sum( self.w * phi**2 * pot)
+        else:   
+            for m in range(self.tree.nOrbitals):
+                if self.tree.occupations[m] > -1e-10: #otherwise dont update energy
+                    for i,j,k in self.PxByPyByPz:
+                        gp = self.gridpoints[i,j,k]
+                        phi[i,j,k] = gp.phi[m]
+                        pot[i,j,k] = gp.v_eff
+                        
+                    self.orbitalPE[m] = np.sum( self.w * phi**2 * pot)
 
-    def computeOrbitalKinetics(self):
+    def computeOrbitalKinetics(self,targetEnergy=None):
         
         phi = np.empty((self.px,self.py,self.pz))
         
-        for m in range(self.tree.nOrbitals):
+        if targetEnergy!=None:
             for i,j,k in self.PxByPyByPz:
                 gp = self.gridpoints[i,j,k]
-                phi[i,j,k] = gp.phi[m]
-            
+                phi[i,j,k] = gp.phi[targetEnergy]
+        
             gradPhi = ChebGradient3D(self.DopenX, self.DopenY, self.DopenZ, self.px, phi)
-#             gradPhi = ChebGradient3D(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.px,phi) 
+#                gradPhi = ChebGradient3D(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.px,phi) 
             gradPhiSq = gradPhi[0]**2 + gradPhi[1]**2 + gradPhi[2]**2
             
-            self.orbitalKE[m] = 1/2*np.sum( self.w * gradPhiSq )
+            self.orbitalKE[targetEnergy] = 1/2*np.sum( self.w * gradPhiSq )
+        else:
+            for m in range(self.tree.nOrbitals):
+                if self.tree.occupations[m] > -1e-10: #otherwise dont update energy
+                    for i,j,k in self.PxByPyByPz:
+                        gp = self.gridpoints[i,j,k]
+                        phi[i,j,k] = gp.phi[m]
+                
+                    gradPhi = ChebGradient3D(self.DopenX, self.DopenY, self.DopenZ, self.px, phi)
+    #                gradPhi = ChebGradient3D(self.xmin,self.xmax,self.ymin,self.ymax,self.zmin,self.zmax,self.px,phi) 
+                    gradPhiSq = gradPhi[0]**2 + gradPhi[1]**2 + gradPhi[2]**2
+                    
+                    self.orbitalKE[m] = 1/2*np.sum( self.w * gradPhiSq )
     
     def computeDerivativeMatrices(self):
         self.DopenX = computeDerivativeMatrix(self.xmin, self.xmax, self.px)

@@ -1,0 +1,1978 @@
+Running on
+      1 nyx7509
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+Hard coding nOrbitals to 7
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/iterationResults/CO_LW3_1600_simpleMixing.csv', 14, 7, -112.47266168377607, -11.997129303382843, -0.94214592330574143, -62.899667088532567, -0.0]
+Gauge shift  -0.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  556288
+Hard coding nAtomicOrbitals to 2 for the oxygen atom.
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+Orbital index = 5
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            1.60e+03 
+Total Number of Cells:       9985 
+Total Number of Leaf Cells:  8692 
+Total Number of Gridpoints:  556288 
+Minimum Depth                3 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  4 
+Construction time:           11.3 seconds.
+Closest gridpoint to origin:  [-0.01014124443176817, -0.01189382304511144, -0.01189382304511144]
+For a distance of:  0.019641051190853222
+Part of a cell centered at:  [-0.13322624999999999, -0.15625, -0.15625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    556288
+Threads per block:    512
+Blocks per grid:      1087
+[-112.47266168377607, -11.997129303382843, -0.94214592330574143, -62.899667088532567]
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [5 0 6 1 2 3 4]
+Orbital Energy:            [-18.90562342 -10.01761355  -1.08409888  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Scrambling valence orbitals
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.01761355  -1.08409888  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 0 error:        -1.659e-01
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.08409888  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 1 error:        -1.014e-01
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.10211793  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -2.679e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.12989861  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -5.457e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.14750556  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -7.218e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.15937639  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -8.405e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.16771349  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -9.239e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.17371684  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -9.839e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.17810085  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -1.028e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1813253   -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -1.060e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.18370415  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -1.084e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.18546045  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -1.101e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.18675649  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -1.114e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.18771186  -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -1.124e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.72213749  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 2 error:        -1.131e-01
+Used 13 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.40280934  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        1.187e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.42788874  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        9.365e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.44046112  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        8.108e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.44996268  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        7.158e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.45904646  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        6.250e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.46803389  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        5.351e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.47711141  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        4.443e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.48634357  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        3.520e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.49573359  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        2.581e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.50523882  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        1.630e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.51478269  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        6.759e-03
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.52426408  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -2.722e-03
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.5335662   -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -1.202e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.54256571  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -2.102e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.55114199  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -2.960e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.55918628  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -3.764e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.56660964  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -4.507e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.57334883  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -5.181e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.57936941  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -5.783e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.5846656   -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -6.312e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.58925751  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -6.772e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.5931861   -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -7.164e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.59650724  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -7.497e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.59928557  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -7.774e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60158906  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -8.005e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60348468  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -8.194e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60503534  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -8.349e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60629797  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -8.476e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60732263  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -8.578e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60815238  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -8.661e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60882351  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -8.728e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60936625  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -8.782e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.65864756
+  -0.27797621  -0.27797621]
+Orbital 3 error:        -8.826e-02
+Used 33 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.19253422
+  -0.27797621  -0.27797621]
+Orbital 4 error:        2.530e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.29788217
+  -0.27797621  -0.27797621]
+Orbital 4 error:        1.477e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.36314923
+  -0.27797621  -0.27797621]
+Orbital 4 error:        8.240e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.38762045
+  -0.27797621  -0.27797621]
+Orbital 4 error:        5.793e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39570446
+  -0.27797621  -0.27797621]
+Orbital 4 error:        4.985e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39769758
+  -0.27797621  -0.27797621]
+Orbital 4 error:        4.786e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39839405
+  -0.27797621  -0.27797621]
+Orbital 4 error:        4.716e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.27797621  -0.27797621]
+Orbital 4 error:        4.691e-02
+Used 8 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+   0.05725195  -0.27797621]
+Orbital 5 error:        5.028e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+   0.18932039  -0.27797621]
+Orbital 5 error:        6.349e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+   0.40529812  -0.27797621]
+Orbital 5 error:        8.509e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+   0.52075873  -0.27797621]
+Orbital 5 error:        9.663e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+   0.41789919  -0.27797621]
+Orbital 5 error:        8.635e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+   0.20636279  -0.27797621]
+Orbital 5 error:        6.519e-01
+Using singularity subtraction
+Orbital Energy:            [ -1.88854625e+01  -1.00085583e+01  -1.18841520e+00  -6.09805410e-01
+  -3.98644058e-01   7.24781182e-03  -2.77976212e-01]
+Orbital 5 error:        4.528e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.15215144  -0.27797621]
+Orbital 5 error:        2.934e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.32339804  -0.27797621]
+Orbital 5 error:        1.222e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.39674025  -0.27797621]
+Orbital 5 error:        4.881e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.44152601  -0.27797621]
+Orbital 5 error:        4.027e-03
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.47101834  -0.27797621]
+Orbital 5 error:        -2.547e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.48999623  -0.27797621]
+Orbital 5 error:        -4.444e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.50211142  -0.27797621]
+Orbital 5 error:        -5.656e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.50978964  -0.27797621]
+Orbital 5 error:        -6.424e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.51465568  -0.27797621]
+Orbital 5 error:        -6.910e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.51775426  -0.27797621]
+Orbital 5 error:        -7.220e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.51974314  -0.27797621]
+Orbital 5 error:        -7.419e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.5210323   -0.27797621]
+Orbital 5 error:        -7.548e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.27797621]
+Orbital 5 error:        -7.632e-02
+Used 20 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.05975437]
+Orbital 6 error:        3.949e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.19713739]
+Orbital 6 error:        5.323e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.42720374]
+Orbital 6 error:        7.623e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.63204521]
+Orbital 6 error:        9.672e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.71470375]
+Orbital 6 error:        1.050e+00
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.69731155]
+Orbital 6 error:        1.032e+00
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.65691886]
+Orbital 6 error:        9.921e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.62037142]
+Orbital 6 error:        9.555e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.58707215]
+Orbital 6 error:        9.222e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.55174159]
+Orbital 6 error:        8.869e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.5099754 ]
+Orbital 6 error:        8.451e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.45863548]
+Orbital 6 error:        7.938e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.39563056]
+Orbital 6 error:        7.308e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.32000617]
+Orbital 6 error:        6.551e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.23235196]
+Orbital 6 error:        5.675e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.13524507]
+Orbital 6 error:        4.704e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   0.03330062]
+Orbital 6 error:        3.684e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.06751585]
+Orbital 6 error:        2.676e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  66.40766955]
+Orbital 6 error:        6.674e+01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693   1.53190654]
+Orbital 6 error:        1.867e+00
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.28957367]
+Orbital 6 error:        4.557e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.37371072]
+Orbital 6 error:        -3.857e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.42280374]
+Orbital 6 error:        -8.766e-02
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.44843418]
+Orbital 6 error:        -1.133e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.46717517]
+Orbital 6 error:        -1.320e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.48110949]
+Orbital 6 error:        -1.460e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.49156937]
+Orbital 6 error:        -1.564e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.49942971]
+Orbital 6 error:        -1.643e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.50534689]
+Orbital 6 error:        -1.702e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.50980888]
+Orbital 6 error:        -1.747e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.51317868]
+Orbital 6 error:        -1.780e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.51572667]
+Orbital 6 error:        -1.806e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.51765478]
+Orbital 6 error:        -1.825e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.51911445]
+Orbital 6 error:        -1.840e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.52021962]
+Orbital 6 error:        -1.851e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.52105628]
+Orbital 6 error:        -1.859e-01
+Using singularity subtraction
+Orbital Energy:            [-18.88546249 -10.00855834  -1.1884152   -0.60980541  -0.39864406
+  -0.52187693  -0.52168948]
+Orbital 6 error:        -1.865e-01
+Used 37 iterations for orbital 6.
+
+
+Density Residual  0.114447814347
+Computing Vcoulomb and updating Veff took:    30.3289 seconds. 
+Band energies before Veff update: -64.268904 H, -1.37e+00 H
+Total Energy without computing orbitals energies with new Veff: -113.7417402561 H, -1.2690785723e+00 H
+Need to re-order orbitals.
+New order:  [0 1 2 3 6 5 4]
+Orbital Energy:            [-18.73008247  -9.90283098  -1.0896846   -0.53224065  -0.44996195
+  -0.44954366  -0.34081746]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.990324 H, -9.07e-02 H
+Orbital 0 error: -1.055e-02
+Orbital 1 error: 4.357e-03
+Orbital 2 error: -1.436e-02
+Orbital 3 error: -1.070e-02
+Orbital 4 error: -4.409e-03
+Orbital 5 error: -3.991e-03
+Orbital 6 error: -5.676e-03
+Orbital Energies:  [-18.73008247  -9.90283098  -1.0896846   -0.53224065  -0.44996195
+  -0.44954366  -0.34081746]
+Updated V_coulomb:                      152.1978327272 Hartree
+Updated V_x:                           -15.9953702713 Hartree
+Updated V_c:                           -1.0505505727 Hartree
+Updated E_x:                           -11.9965277035 H, 6.0159989394e-04 H
+Updated E_c:                           -0.9413980677 H, 7.4785564853e-04 H
+Updated Band Energy:                   -62.9903235570 H, -9.0656468451e-02 H
+Total Energy:                          -112.4631600108 H, 9.5016729381e-03 H
+Energy Residual:                        -1.120e+02
+Density Residual:                      1.144e-01
+
+
+
+
+
+SCF Count  2
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90283098  -1.0896846   -0.53224065  -0.44996195
+  -0.44954366  -0.34081746]
+Orbital 0 error:        -1.063e-02
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.0896846   -0.53224065  -0.44996195
+  -0.44954366  -0.34081746]
+Orbital 1 error:        4.273e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.09060296  -0.53224065  -0.44996195
+  -0.44954366  -0.34081746]
+Orbital 2 error:        -1.528e-02
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.09081725  -0.53224065  -0.44996195
+  -0.44954366  -0.34081746]
+Orbital 2 error:        -1.549e-02
+Used 2 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.09081725  -0.53281198  -0.44996195
+  -0.44954366  -0.34081746]
+Orbital 3 error:        -1.127e-02
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.09081725  -0.53300132  -0.44996195
+  -0.44954366  -0.34081746]
+Orbital 3 error:        -1.146e-02
+Used 2 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.09081725  -0.53300132  -0.45112816
+  -0.44954366  -0.34081746]
+Orbital 4 error:        -5.575e-03
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.09081725  -0.53300132  -0.45140805
+  -0.44954366  -0.34081746]
+Orbital 4 error:        -5.855e-03
+Used 2 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.09081725  -0.53300132  -0.45140805
+  -0.45086624  -0.34081746]
+Orbital 5 error:        -5.313e-03
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.09081725  -0.53300132  -0.45140805
+  -0.45122172  -0.34081746]
+Orbital 5 error:        -5.669e-03
+Used 2 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.09081725  -0.53300132  -0.45140805
+  -0.45122172  -0.34120367]
+Orbital 6 error:        -6.062e-03
+Using singularity subtraction
+Orbital Energy:            [-18.73016267  -9.90291509  -1.09081725  -0.53300132  -0.45140805
+  -0.45122172  -0.34145004]
+Orbital 6 error:        -6.308e-03
+Used 2 iterations for orbital 6.
+
+
+Density Residual  0.0439934583469
+Computing Vcoulomb and updating Veff took:    30.4143 seconds. 
+Band energies before Veff update: -63.001952 H, -1.02e-01 H
+Total Energy without computing orbitals energies with new Veff: -112.6188549719 H, -1.4619328814e-01 H
+Orbital Energy:            [-18.71653623  -9.89381852  -1.07640292  -0.52204653  -0.44334287
+  -0.44307498  -0.33254565]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.855535 H, 4.41e-02 H
+Orbital 0 error: 2.995e-03
+Orbital 1 error: 1.337e-02
+Orbital 2 error: -1.078e-03
+Orbital 3 error: -5.045e-04
+Orbital 4 error: 2.210e-03
+Orbital 5 error: 2.478e-03
+Orbital 6 error: 2.596e-03
+Orbital Energies:  [-18.71653623  -9.89381852  -1.07640292  -0.52204653  -0.44334287
+  -0.44307498  -0.33254565]
+Updated V_coulomb:                      152.4959387796 Hartree
+Updated V_x:                           -16.0149947107 Hartree
+Updated V_c:                           -1.0516777435 Hartree
+Updated E_x:                           -12.0112460330 H, -1.4116729649e-02 H
+Updated E_c:                           -0.9424445726 H, -2.9864927627e-04 H
+Updated Band Energy:                   -62.8555353941 H, 4.4131694401e-02 H
+Total Energy:                          -112.4724380984 H, 2.2358533757e-04 H
+Energy Residual:                        -9.278e-03
+Density Residual:                      4.399e-02
+
+
+
+
+
+SCF Count  3
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.71653128  -9.89381852  -1.07640292  -0.52204653  -0.44334287
+  -0.44307498  -0.33254565]
+Orbital 0 error:        3.000e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.71653128  -9.89382222  -1.07640292  -0.52204653  -0.44334287
+  -0.44307498  -0.33254565]
+Orbital 1 error:        1.337e-02
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.71653128  -9.89382222  -1.07654634  -0.52204653  -0.44334287
+  -0.44307498  -0.33254565]
+Orbital 2 error:        -1.222e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.71653128  -9.89382222  -1.07654634  -0.52204891  -0.44334287
+  -0.44307498  -0.33254565]
+Orbital 3 error:        -5.069e-04
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.71653128  -9.89382222  -1.07654634  -0.52204891  -0.44352053
+  -0.44307498  -0.33254565]
+Orbital 4 error:        2.032e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.71653128  -9.89382222  -1.07654634  -0.52204891  -0.44352053
+  -0.4432909   -0.33254565]
+Orbital 5 error:        2.262e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.71653128  -9.89382222  -1.07654634  -0.52204891  -0.44352053
+  -0.4432909   -0.33252705]
+Orbital 6 error:        2.615e-03
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.0213444188435
+Computing Vcoulomb and updating Veff took:    30.4455 seconds. 
+Band energies before Veff update: -62.856574 H, 4.31e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4500299414 H, 2.2631742330e-02 H
+Orbital Energy:            [-18.72234575  -9.89831283  -1.07609287  -0.52185302  -0.4446582
+  -0.44443575  -0.33211979]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.879636 H, 2.00e-02 H
+Orbital 0 error: -2.814e-03
+Orbital 1 error: 8.875e-03
+Orbital 2 error: -7.684e-04
+Orbital 3 error: -3.110e-04
+Orbital 4 error: 8.946e-04
+Orbital 5 error: 1.117e-03
+Orbital 6 error: 3.022e-03
+Orbital Energies:  [-18.72234575  -9.89831283  -1.07609287  -0.52185302  -0.4446582
+  -0.44443575  -0.33211979]
+Updated V_coulomb:                      152.4465038791 Hartree
+Updated V_x:                           -16.0098793623 Hartree
+Updated V_c:                           -1.0516741361 Hartree
+Updated E_x:                           -12.0074095217 H, -1.0280218315e-02 H
+Updated E_c:                           -0.9424323628 H, -2.8643954364e-04 H
+Updated Band Energy:                   -62.8796364336 H, 2.0030654940e-02 H
+Total Energy:                          -112.4730919225 H, -4.3023867723e-04 H
+Energy Residual:                        -6.538e-04
+Density Residual:                      2.134e-02
+
+
+
+
+
+SCF Count  4
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72234283  -9.89831283  -1.07609287  -0.52185302  -0.4446582
+  -0.44443575  -0.33211979]
+Orbital 0 error:        -2.811e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72234283  -9.89831167  -1.07609287  -0.52185302  -0.4446582
+  -0.44443575  -0.33211979]
+Orbital 1 error:        8.876e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72234283  -9.89831167  -1.07614993  -0.52185302  -0.4446582
+  -0.44443575  -0.33211979]
+Orbital 2 error:        -8.254e-04
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72234283  -9.89831167  -1.07614993  -0.52185866  -0.4446582
+  -0.44443575  -0.33211979]
+Orbital 3 error:        -3.167e-04
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72234283  -9.89831167  -1.07614993  -0.52185866  -0.44473983
+  -0.44443575  -0.33211979]
+Orbital 4 error:        8.129e-04
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72234283  -9.89831167  -1.07614993  -0.52185866  -0.44473983
+  -0.44452851  -0.33211979]
+Orbital 5 error:        1.024e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72234283  -9.89831167  -1.07614993  -0.52185866  -0.44473983
+  -0.44452851  -0.33216334]
+Orbital 6 error:        2.979e-03
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.0106930919908
+Computing Vcoulomb and updating Veff took:    30.2924 seconds. 
+Band energies before Veff update: -62.880190 H, 1.95e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4325559665 H, 4.0105717248e-02 H
+Orbital Energy:            [-18.72878242  -9.90388678  -1.07794598  -0.52323695  -0.44673983
+  -0.44655736  -0.33344025]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.921179 H, -2.15e-02 H
+Orbital 0 error: -9.251e-03
+Orbital 1 error: 3.301e-03
+Orbital 2 error: -2.621e-03
+Orbital 3 error: -1.695e-03
+Orbital 4 error: -1.187e-03
+Orbital 5 error: -1.005e-03
+Orbital 6 error: 1.702e-03
+Orbital Energies:  [-18.72878242  -9.90388678  -1.07794598  -0.52323695  -0.44673983
+  -0.44655736  -0.33344025]
+Updated V_coulomb:                      152.3606923486 Hartree
+Updated V_x:                           -16.0026343963 Hartree
+Updated V_c:                           -1.0514970628 Hartree
+Updated E_x:                           -12.0019757972 H, -4.8464938125e-03 H
+Updated E_c:                           -0.9422607630 H, -1.1483974245e-04 H
+Updated Band Energy:                   -62.9211791560 H, -2.1512067453e-02 H
+Total Energy:                          -112.4735455945 H, -8.8391077162e-04 H
+Energy Residual:                        -4.537e-04
+Density Residual:                      1.069e-02
+
+
+
+
+
+SCF Count  5
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.7287796   -9.90388678  -1.07794598  -0.52323695  -0.44673983
+  -0.44655736  -0.33344025]
+Orbital 0 error:        -9.248e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.7287796   -9.90388489  -1.07794598  -0.52323695  -0.44673983
+  -0.44655736  -0.33344025]
+Orbital 1 error:        3.303e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.7287796   -9.90388489  -1.07797433  -0.52323695  -0.44673983
+  -0.44655736  -0.33344025]
+Orbital 2 error:        -2.650e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.7287796   -9.90388489  -1.07797433  -0.52323582  -0.44673983
+  -0.44655736  -0.33344025]
+Orbital 3 error:        -1.694e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.7287796   -9.90388489  -1.07797433  -0.52323582  -0.44678996
+  -0.44655736  -0.33344025]
+Orbital 4 error:        -1.237e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.7287796   -9.90388489  -1.07797433  -0.52323582  -0.44678996
+  -0.44660452  -0.33344025]
+Orbital 5 error:        -1.052e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.7287796   -9.90388489  -1.07797433  -0.52323582  -0.44678996
+  -0.44660452  -0.33344944]
+Orbital 6 error:        1.692e-03
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.0053313437009
+Computing Vcoulomb and updating Veff took:    30.3196 seconds. 
+Band energies before Veff update: -62.921437 H, -2.18e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4550306188 H, 1.7631065007e-02 H
+Orbital Energy:            [-18.73126698  -9.90724687  -1.07869439  -0.52366324  -0.44752756
+  -0.44737204  -0.33432204]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.940186 H, -4.05e-02 H
+Orbital 0 error: -1.174e-02
+Orbital 1 error: -5.876e-05
+Orbital 2 error: -3.370e-03
+Orbital 3 error: -2.121e-03
+Orbital 4 error: -1.975e-03
+Orbital 5 error: -1.819e-03
+Orbital 6 error: 8.199e-04
+Orbital Energies:  [-18.73126698  -9.90724687  -1.07869439  -0.52366324  -0.44752756
+  -0.44737204  -0.33432204]
+Updated V_coulomb:                      152.3214601159 Hartree
+Updated V_x:                           -15.9992697108 Hartree
+Updated V_c:                           -1.0514198575 Hartree
+Updated E_x:                           -11.9994522831 H, -2.3229797158e-03 H
+Updated E_c:                           -0.9421855636 H, -3.9640301340e-05 H
+Updated Band Energy:                   -62.9401862514 H, -4.0519162888e-02 H
+Total Energy:                          -112.4737797509 H, -1.1180670864e-03 H
+Energy Residual:                        -2.342e-04
+Density Residual:                      5.331e-03
+
+
+
+
+
+SCF Count  6
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.73126573  -9.90724687  -1.07869439  -0.52366324  -0.44752756
+  -0.44737204  -0.33432204]
+Orbital 0 error:        -1.173e-02
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.73126573  -9.9072456   -1.07869439  -0.52366324  -0.44752756
+  -0.44737204  -0.33432204]
+Orbital 1 error:        -5.749e-05
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.73126573  -9.9072456   -1.07871334  -0.52366324  -0.44752756
+  -0.44737204  -0.33432204]
+Orbital 2 error:        -3.389e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.73126573  -9.9072456   -1.07871334  -0.52365668  -0.44752756
+  -0.44737204  -0.33432204]
+Orbital 3 error:        -2.115e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.73126573  -9.9072456   -1.07871334  -0.52365668  -0.44756222
+  -0.44737204  -0.33432204]
+Orbital 4 error:        -2.009e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.73126573  -9.9072456   -1.07871334  -0.52365668  -0.44756222
+  -0.44739859  -0.33432204]
+Orbital 5 error:        -1.846e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.73126573  -9.9072456   -1.07871334  -0.52365668  -0.44756222
+  -0.44739859  -0.33432926]
+Orbital 6 error:        8.127e-04
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.00293356155235
+Computing Vcoulomb and updating Veff took:    30.4772 seconds. 
+Band energies before Veff update: -62.940343 H, -4.07e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4711589010 H, 1.5027828127e-03 H
+Orbital Energy:            [-18.73121437  -9.90885542  -1.07857108  -0.52340502  -0.44746313
+  -0.44732722  -0.33472041]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.943113 H, -4.34e-02 H
+Orbital 0 error: -1.168e-02
+Orbital 1 error: -1.667e-03
+Orbital 2 error: -3.247e-03
+Orbital 3 error: -1.863e-03
+Orbital 4 error: -1.910e-03
+Orbital 5 error: -1.774e-03
+Orbital 6 error: 4.215e-04
+Orbital Energies:  [-18.73121437  -9.90885542  -1.07857108  -0.52340502  -0.44746313
+  -0.44732722  -0.33472041]
+Updated V_coulomb:                      152.3155937322 Hartree
+Updated V_x:                           -15.9986415523 Hartree
+Updated V_c:                           -1.0514198159 Hartree
+Updated E_x:                           -11.9989811643 H, -1.8518608752e-03 H
+Updated E_c:                           -0.9421842341 H, -3.8310830558e-05 H
+Updated Band Energy:                   -62.9431133068 H, -4.3446218314e-02 H
+Total Energy:                          -112.4739293662 H, -1.2676824616e-03 H
+Energy Residual:                        -1.496e-04
+Density Residual:                      2.934e-03
+
+
+
+
+
+SCF Count  7
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.73121422  -9.90885542  -1.07857108  -0.52340502  -0.44746313
+  -0.44732722  -0.33472041]
+Orbital 0 error:        -1.168e-02
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.73121422  -9.90885475  -1.07857108  -0.52340502  -0.44746313
+  -0.44732722  -0.33472041]
+Orbital 1 error:        -1.667e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.73121422  -9.90885475  -1.07858514  -0.52340502  -0.44746313
+  -0.44732722  -0.33472041]
+Orbital 2 error:        -3.261e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.73121422  -9.90885475  -1.07858514  -0.52339657  -0.44746313
+  -0.44732722  -0.33472041]
+Orbital 3 error:        -1.855e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.73121422  -9.90885475  -1.07858514  -0.52339657  -0.44748715
+  -0.44732722  -0.33472041]
+Orbital 4 error:        -1.934e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.73121422  -9.90885475  -1.07858514  -0.52339657  -0.44748715
+  -0.4473423   -0.33472041]
+Orbital 5 error:        -1.790e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.73121422  -9.90885475  -1.07858514  -0.52339657  -0.44748715
+  -0.4473423   -0.33472102]
+Orbital 6 error:        4.209e-04
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.00197954501869
+Computing Vcoulomb and updating Veff took:    30.2643 seconds. 
+Band energies before Veff update: -62.943202 H, -4.35e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4762564169 H, -3.5947331314e-03 H
+Orbital Energy:            [-18.73045719  -9.90960536  -1.07823911  -0.52303576  -0.44718624
+  -0.44706686  -0.33488995]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.940961 H, -4.13e-02 H
+Orbital 0 error: -1.093e-02
+Orbital 1 error: -2.417e-03
+Orbital 2 error: -2.915e-03
+Orbital 3 error: -1.494e-03
+Orbital 4 error: -1.633e-03
+Orbital 5 error: -1.514e-03
+Orbital 6 error: 2.520e-04
+Orbital Energies:  [-18.73045719  -9.90960536  -1.07823911  -0.52303576  -0.44718624
+  -0.44706686  -0.33488995]
+Updated V_coulomb:                      152.3202118836 Hartree
+Updated V_x:                           -15.9989180722 Hartree
+Updated V_c:                           -1.0514401174 Hartree
+Updated E_x:                           -11.9991885541 H, -2.0592507458e-03 H
+Updated E_c:                           -0.9422026646 H, -5.6741316749e-05 H
+Updated Band Energy:                   -62.9409609342 H, -4.1293845709e-02 H
+Total Energy:                          -112.4740150684 H, -1.3533845865e-03 H
+Energy Residual:                        -8.570e-05
+Density Residual:                      1.980e-03
+
+
+
+
+
+SCF Count  8
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.73045741  -9.90960536  -1.07823911  -0.52303576  -0.44718624
+  -0.44706686  -0.33488995]
+Orbital 0 error:        -1.093e-02
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.73045741  -9.90960502  -1.07823911  -0.52303576  -0.44718624
+  -0.44706686  -0.33488995]
+Orbital 1 error:        -2.417e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.73045741  -9.90960502  -1.07824964  -0.52303576  -0.44718624
+  -0.44706686  -0.33488995]
+Orbital 2 error:        -2.925e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.73045741  -9.90960502  -1.07824964  -0.5230285   -0.44718624
+  -0.44706686  -0.33488995]
+Orbital 3 error:        -1.487e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.73045741  -9.90960502  -1.07824964  -0.5230285   -0.44720306
+  -0.44706686  -0.33488995]
+Orbital 4 error:        -1.650e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.73045741  -9.90960502  -1.07824964  -0.5230285   -0.44720306
+  -0.44707548  -0.33488995]
+Orbital 5 error:        -1.523e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.73045741  -9.90960502  -1.07824964  -0.5230285   -0.44720306
+  -0.44707548  -0.33489004]
+Orbital 6 error:        2.519e-04
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.00150509224358
+Computing Vcoulomb and updating Veff took:    30.2956 seconds. 
+Band energies before Veff update: -62.941018 H, -4.14e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4761632123 H, -3.5015285368e-03 H
+Orbital Energy:            [-18.72983179  -9.91000451  -1.07799687  -0.52279468  -0.44697576
+  -0.44687122  -0.33498811]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.938926 H, -3.93e-02 H
+Orbital 0 error: -1.030e-02
+Orbital 1 error: -2.816e-03
+Orbital 2 error: -2.672e-03
+Orbital 3 error: -1.253e-03
+Orbital 4 error: -1.423e-03
+Orbital 5 error: -1.318e-03
+Orbital 6 error: 1.538e-04
+Orbital Energies:  [-18.72983179  -9.91000451  -1.07799687  -0.52279468  -0.44697576
+  -0.44687122  -0.33498811]
+Updated V_coulomb:                      152.3245474442 Hartree
+Updated V_x:                           -15.9992210309 Hartree
+Updated V_c:                           -1.0514550805 Hartree
+Updated E_x:                           -11.9994157732 H, -2.2864697948e-03 H
+Updated E_c:                           -0.9422163683 H, -7.0444950116e-05 H
+Updated Band Energy:                   -62.9389258674 H, -3.9258778915e-02 H
+Total Energy:                          -112.4740707827 H, -1.4090989386e-03 H
+Energy Residual:                        -5.571e-05
+Density Residual:                      1.505e-03
+
+
+
+
+
+SCF Count  9
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72983201  -9.91000451  -1.07799687  -0.52279468  -0.44697576
+  -0.44687122  -0.33498811]
+Orbital 0 error:        -1.030e-02
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72983201  -9.91000433  -1.07799687  -0.52279468  -0.44697576
+  -0.44687122  -0.33498811]
+Orbital 1 error:        -2.816e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72983201  -9.91000433  -1.07800463  -0.52279468  -0.44697576
+  -0.44687122  -0.33498811]
+Orbital 2 error:        -2.680e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72983201  -9.91000433  -1.07800463  -0.52278955  -0.44697576
+  -0.44687122  -0.33498811]
+Orbital 3 error:        -1.248e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72983201  -9.91000433  -1.07800463  -0.52278955  -0.44698775
+  -0.44687122  -0.33498811]
+Orbital 4 error:        -1.435e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72983201  -9.91000433  -1.07800463  -0.52278955  -0.44698775
+  -0.44687616  -0.33498811]
+Orbital 5 error:        -1.323e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72983201  -9.91000433  -1.07800463  -0.52278955  -0.44698775
+  -0.44687616  -0.33498711]
+Orbital 6 error:        1.548e-04
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.00119273562003
+Computing Vcoulomb and updating Veff took:    30.2866 seconds. 
+Band energies before Veff update: -62.938963 H, -3.93e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4751213928 H, -2.4597090506e-03 H
+Orbital Energy:            [-18.72947008  -9.91025434  -1.07787027  -0.52268342  -0.44686272
+  -0.44677148  -0.33506212]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.937949 H, -3.83e-02 H
+Orbital 0 error: -9.939e-03
+Orbital 1 error: -3.066e-03
+Orbital 2 error: -2.546e-03
+Orbital 3 error: -1.141e-03
+Orbital 4 error: -1.310e-03
+Orbital 5 error: -1.219e-03
+Orbital 6 error: 7.981e-05
+Orbital Energies:  [-18.72947008  -9.91025434  -1.07787027  -0.52268342  -0.44686272
+  -0.44677148  -0.33506212]
+Updated V_coulomb:                      152.3266497953 Hartree
+Updated V_x:                           -15.9993697092 Hartree
+Updated V_c:                           -1.0514617772 Hartree
+Updated E_x:                           -11.9995272819 H, -2.3979785398e-03 H
+Updated E_c:                           -0.9422224417 H, -7.6518439502e-05 H
+Updated Band Energy:                   -62.9379488541 H, -3.8281765607e-02 H
+Total Energy:                          -112.4741071522 H, -1.4454684389e-03 H
+Energy Residual:                        -3.637e-05
+Density Residual:                      1.193e-03
+
+
+
+
+
+SCF Count  10
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72947022  -9.91025434  -1.07787027  -0.52268342  -0.44686272
+  -0.44677148  -0.33506212]
+Orbital 0 error:        -9.939e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72947022  -9.91025424  -1.07787027  -0.52268342  -0.44686272
+  -0.44677148  -0.33506212]
+Orbital 1 error:        -3.066e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72947022  -9.91025424  -1.0778759   -0.52268342  -0.44686272
+  -0.44677148  -0.33506212]
+Orbital 2 error:        -2.551e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72947022  -9.91025424  -1.0778759   -0.52268016  -0.44686272
+  -0.44677148  -0.33506212]
+Orbital 3 error:        -1.138e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72947022  -9.91025424  -1.0778759   -0.52268016  -0.44687142
+  -0.44677148  -0.33506212]
+Orbital 4 error:        -1.319e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72947022  -9.91025424  -1.0778759   -0.52268016  -0.44687142
+  -0.44677431  -0.33506212]
+Orbital 5 error:        -1.222e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72947022  -9.91025424  -1.0778759   -0.52268016  -0.44687142
+  -0.44677431  -0.3350609 ]
+Orbital 6 error:        8.103e-05
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.000962770683229
+Computing Vcoulomb and updating Veff took:    30.3348 seconds. 
+Band energies before Veff update: -62.937974 H, -3.83e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4744932289 H, -1.8315451733e-03 H
+Orbital Energy:            [-18.72927336  -9.9104296   -1.07780741  -0.52264099  -0.44680573
+  -0.44672625  -0.33512327]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.937613 H, -3.79e-02 H
+Orbital 0 error: -9.742e-03
+Orbital 1 error: -3.241e-03
+Orbital 2 error: -2.483e-03
+Orbital 3 error: -1.099e-03
+Orbital 4 error: -1.253e-03
+Orbital 5 error: -1.173e-03
+Orbital 6 error: 1.866e-05
+Orbital Energies:  [-18.72927336  -9.9104296   -1.07780741  -0.52264099  -0.44680573
+  -0.44672625  -0.33512327]
+Updated V_coulomb:                      152.3273951067 Hartree
+Updated V_x:                           -15.9994168554 Hartree
+Updated V_c:                           -1.0514638045 Hartree
+Updated E_x:                           -11.9995626415 H, -2.4333381355e-03 H
+Updated E_c:                           -0.9422241959 H, -7.8272561395e-05 H
+Updated Band Energy:                   -62.9376132195 H, -3.7946130987e-02 H
+Total Energy:                          -112.4741321135 H, -1.4704297515e-03 H
+Energy Residual:                        -2.496e-05
+Density Residual:                      9.628e-04
+
+
+
+
+
+SCF Count  11
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72927344  -9.9104296   -1.07780741  -0.52264099  -0.44680573
+  -0.44672625  -0.33512327]
+Orbital 0 error:        -9.742e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72927344  -9.91042953  -1.07780741  -0.52264099  -0.44680573
+  -0.44672625  -0.33512327]
+Orbital 1 error:        -3.241e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72927344  -9.91042953  -1.07781147  -0.52264099  -0.44680573
+  -0.44672625  -0.33512327]
+Orbital 2 error:        -2.487e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72927344  -9.91042953  -1.07781147  -0.52263902  -0.44680573
+  -0.44672625  -0.33512327]
+Orbital 3 error:        -1.097e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72927344  -9.91042953  -1.07781147  -0.52263902  -0.44681215
+  -0.44672625  -0.33512327]
+Orbital 4 error:        -1.259e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72927344  -9.91042953  -1.07781147  -0.52263902  -0.44681215
+  -0.44672788  -0.33512327]
+Orbital 5 error:        -1.175e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72927344  -9.91042953  -1.07781147  -0.52263902  -0.44681215
+  -0.44672788  -0.33512174]
+Orbital 6 error:        2.019e-05
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.000785337944799
+Computing Vcoulomb and updating Veff took:    30.2445 seconds. 
+Band energies before Veff update: -62.937630 H, -3.80e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4742858276 H, -1.6241438727e-03 H
+Orbital Energy:            [-18.72914545  -9.91056405  -1.07776789  -0.52262266  -0.44677061
+  -0.44670142  -0.33517477]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.937494 H, -3.78e-02 H
+Orbital 0 error: -9.614e-03
+Orbital 1 error: -3.376e-03
+Orbital 2 error: -2.443e-03
+Orbital 3 error: -1.081e-03
+Orbital 4 error: -1.218e-03
+Orbital 5 error: -1.149e-03
+Orbital 6 error: -3.284e-05
+Orbital Energies:  [-18.72914545  -9.91056405  -1.07776789  -0.52262266  -0.44677061
+  -0.44670142  -0.33517477]
+Updated V_coulomb:                      152.3276729248 Hartree
+Updated V_x:                           -15.9994262098 Hartree
+Updated V_c:                           -1.0514641325 Hartree
+Updated E_x:                           -11.9995696573 H, -2.4403539670e-03 H
+Updated E_c:                           -0.9422243949 H, -7.8471610116e-05 H
+Updated Band Energy:                   -62.9374937213 H, -3.7826632743e-02 H
+Total Energy:                          -112.4741490568 H, -1.4873729787e-03 H
+Energy Residual:                        -1.694e-05
+Density Residual:                      7.853e-04
+
+
+
+
+
+SCF Count  12
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72914551  -9.91056405  -1.07776789  -0.52262266  -0.44677061
+  -0.44670142  -0.33517477]
+Orbital 0 error:        -9.614e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72914551  -9.91056401  -1.07776789  -0.52262266  -0.44677061
+  -0.44670142  -0.33517477]
+Orbital 1 error:        -3.376e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72914551  -9.91056401  -1.07777083  -0.52262266  -0.44677061
+  -0.44670142  -0.33517477]
+Orbital 2 error:        -2.446e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72914551  -9.91056401  -1.07777083  -0.52262151  -0.44677061
+  -0.44670142  -0.33517477]
+Orbital 3 error:        -1.080e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72914551  -9.91056401  -1.07777083  -0.52262151  -0.44677539
+  -0.44670142  -0.33517477]
+Orbital 4 error:        -1.223e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72914551  -9.91056401  -1.07777083  -0.52262151  -0.44677539
+  -0.44670237  -0.33517477]
+Orbital 5 error:        -1.150e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72914551  -9.91056401  -1.07777083  -0.52262151  -0.44677539
+  -0.44670237  -0.33517322]
+Orbital 6 error:        -3.129e-05
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.000645509394591
+Computing Vcoulomb and updating Veff took:    30.2211 seconds. 
+Band energies before Veff update: -62.937506 H, -3.78e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4742506603 H, -1.5889764905e-03 H
+Orbital Energy:            [-18.72904153  -9.91067562  -1.07773556  -0.52260998  -0.44674299
+  -0.44668283  -0.33521938]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.937416 H, -3.77e-02 H
+Orbital 0 error: -9.510e-03
+Orbital 1 error: -3.488e-03
+Orbital 2 error: -2.411e-03
+Orbital 3 error: -1.068e-03
+Orbital 4 error: -1.190e-03
+Orbital 5 error: -1.130e-03
+Orbital 6 error: -7.745e-05
+Orbital Energies:  [-18.72904153  -9.91067562  -1.07773556  -0.52260998  -0.44674299
+  -0.44668283  -0.33521938]
+Updated V_coulomb:                      152.3278523066 Hartree
+Updated V_x:                           -15.9994260290 Hartree
+Updated V_c:                           -1.0514639831 Hartree
+Updated E_x:                           -11.9995695217 H, -2.4402183338e-03 H
+Updated E_c:                           -0.9422241706 H, -7.8247291618e-05 H
+Updated Band Energy:                   -62.9374157898 H, -3.7748701254e-02 H
+Total Energy:                          -112.4741607865 H, -1.4991027186e-03 H
+Energy Residual:                        -1.173e-05
+Density Residual:                      6.455e-04
+
+
+
+
+
+SCF Count  13
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72904157  -9.91067562  -1.07773556  -0.52260998  -0.44674299
+  -0.44668283  -0.33521938]
+Orbital 0 error:        -9.510e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72904157  -9.91067559  -1.07773556  -0.52260998  -0.44674299
+  -0.44668283  -0.33521938]
+Orbital 1 error:        -3.487e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72904157  -9.91067559  -1.07773768  -0.52260998  -0.44674299
+  -0.44668283  -0.33521938]
+Orbital 2 error:        -2.413e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72904157  -9.91067559  -1.07773768  -0.52260934  -0.44674299
+  -0.44668283  -0.33521938]
+Orbital 3 error:        -1.067e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72904157  -9.91067559  -1.07773768  -0.52260934  -0.44674659
+  -0.44668283  -0.33521938]
+Orbital 4 error:        -1.194e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72904157  -9.91067559  -1.07773768  -0.52260934  -0.44674659
+  -0.44668339  -0.33521938]
+Orbital 5 error:        -1.131e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72904157  -9.91067559  -1.07773768  -0.52260934  -0.44674659
+  -0.44668339  -0.33521787]
+Orbital 6 error:        -7.594e-05
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.000534171742073
+Computing Vcoulomb and updating Veff took:    30.4239 seconds. 
+Band energies before Veff update: -62.937424 H, -3.78e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4742432883 H, -1.5816045729e-03 H
+Orbital Energy:            [-18.72895019  -9.91077239  -1.07770739  -0.52259908  -0.44671976
+  -0.44666751  -0.3352585 ]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.937350 H, -3.77e-02 H
+Orbital 0 error: -9.419e-03
+Orbital 1 error: -3.584e-03
+Orbital 2 error: -2.383e-03
+Orbital 3 error: -1.057e-03
+Orbital 4 error: -1.167e-03
+Orbital 5 error: -1.115e-03
+Orbital 6 error: -1.166e-04
+Orbital Energies:  [-18.72895019  -9.91077239  -1.07770739  -0.52259908  -0.44671976
+  -0.44666751  -0.3352585 ]
+Updated V_coulomb:                      152.3279991488 Hartree
+Updated V_x:                           -15.9994225413 Hartree
+Updated V_c:                           -1.0514636349 Hartree
+Updated E_x:                           -11.9995669060 H, -2.4376025886e-03 H
+Updated E_c:                           -0.9422237730 H, -7.7849654914e-05 H
+Updated Band Energy:                   -62.9373496530 H, -3.7682564483e-02 H
+Total Energy:                          -112.4741688932 H, -1.5072094414e-03 H
+Energy Residual:                        -8.107e-06
+Density Residual:                      5.342e-04
+
+
+
+
+
+SCF Count  14
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72895023  -9.91077239  -1.07770739  -0.52259908  -0.44671976
+  -0.44666751  -0.3352585 ]
+Orbital 0 error:        -9.419e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72895023  -9.91077236  -1.07770739  -0.52259908  -0.44671976
+  -0.44666751  -0.3352585 ]
+Orbital 1 error:        -3.584e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72895023  -9.91077236  -1.07770893  -0.52259908  -0.44671976
+  -0.44666751  -0.3352585 ]
+Orbital 2 error:        -2.384e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72895023  -9.91077236  -1.07770893  -0.52259877  -0.44671976
+  -0.44666751  -0.3352585 ]
+Orbital 3 error:        -1.057e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72895023  -9.91077236  -1.07770893  -0.52259877  -0.44672247
+  -0.44666751  -0.3352585 ]
+Orbital 4 error:        -1.170e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72895023  -9.91077236  -1.07770893  -0.52259877  -0.44672247
+  -0.44666784  -0.3352585 ]
+Orbital 5 error:        -1.115e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72895023  -9.91077236  -1.07770893  -0.52259877  -0.44672247
+  -0.44666784  -0.33525711]
+Orbital 6 error:        -1.152e-04
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.000444823254363
+Computing Vcoulomb and updating Veff took:    30.2770 seconds. 
+Band energies before Veff update: -62.937355 H, -3.77e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4742260622 H, -1.5643784728e-03 H
+Orbital Energy:            [-18.72887152  -9.91085682  -1.07768388  -0.52259053  -0.44670098
+  -0.44665569  -0.33529255]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.937304 H, -3.76e-02 H
+Orbital 0 error: -9.340e-03
+Orbital 1 error: -3.669e-03
+Orbital 2 error: -2.359e-03
+Orbital 3 error: -1.049e-03
+Orbital 4 error: -1.148e-03
+Orbital 5 error: -1.103e-03
+Orbital 6 error: -1.506e-04
+Orbital Energies:  [-18.72887152  -9.91085682  -1.07768388  -0.52259053  -0.44670098
+  -0.44665569  -0.33529255]
+Updated V_coulomb:                      152.3280985351 Hartree
+Updated V_x:                           -15.9994156611 Hartree
+Updated V_c:                           -1.0514631316 Hartree
+Updated E_x:                           -11.9995617458 H, -2.4324424571e-03 H
+Updated E_c:                           -0.9422232399 H, -7.7316635888e-05 H
+Updated Band Energy:                   -62.9373039490 H, -3.7636860444e-02 H
+Total Energy:                          -112.4741745727 H, -1.5128889553e-03 H
+Energy Residual:                        -5.680e-06
+Density Residual:                      4.448e-04
+
+
+
+
+
+SCF Count  15
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72887155  -9.91085682  -1.07768388  -0.52259053  -0.44670098
+  -0.44665569  -0.33529255]
+Orbital 0 error:        -9.340e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72887155  -9.9108568   -1.07768388  -0.52259053  -0.44670098
+  -0.44665569  -0.33529255]
+Orbital 1 error:        -3.669e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72887155  -9.9108568   -1.077685    -0.52259053  -0.44670098
+  -0.44665569  -0.33529255]
+Orbital 2 error:        -2.360e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72887155  -9.9108568   -1.077685    -0.52259044  -0.44670098
+  -0.44665569  -0.33529255]
+Orbital 3 error:        -1.048e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72887155  -9.9108568   -1.077685    -0.52259044  -0.44670305
+  -0.44665569  -0.33529255]
+Orbital 4 error:        -1.150e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72887155  -9.9108568   -1.077685    -0.52259044  -0.44670305
+  -0.44665589  -0.33529255]
+Orbital 5 error:        -1.103e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72887155  -9.9108568   -1.077685    -0.52259044  -0.44670305
+  -0.44665589  -0.33529129]
+Orbital 6 error:        -1.494e-04
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.000372626473399
+Computing Vcoulomb and updating Veff took:    30.2430 seconds. 
+Band energies before Veff update: -62.937308 H, -3.76e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4742039133 H, -1.5422295239e-03 H
+Orbital Energy:            [-18.72880621  -9.91092936  -1.07766518  -0.52258489  -0.44668664
+  -0.44664744  -0.33532161]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.937283 H, -3.76e-02 H
+Orbital 0 error: -9.275e-03
+Orbital 1 error: -3.741e-03
+Orbital 2 error: -2.341e-03
+Orbital 3 error: -1.043e-03
+Orbital 4 error: -1.134e-03
+Orbital 5 error: -1.095e-03
+Orbital 6 error: -1.797e-04
+Orbital Energies:  [-18.72880621  -9.91092936  -1.07766518  -0.52258489  -0.44668664
+  -0.44664744  -0.33532161]
+Updated V_coulomb:                      152.3281440604 Hartree
+Updated V_x:                           -15.9994055232 Hartree
+Updated V_c:                           -1.0514625064 Hartree
+Updated E_x:                           -11.9995541424 H, -2.4248390379e-03 H
+Updated E_c:                           -0.9422226010 H, -7.6677688290e-05 H
+Updated Band Energy:                   -62.9372826478 H, -3.7615559311e-02 H
+Total Energy:                          -112.4741785549 H, -1.5168711344e-03 H
+Energy Residual:                        -3.982e-06
+Density Residual:                      3.726e-04
+
+
+
+
+
+SCF Count  16
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72880624  -9.91092936  -1.07766518  -0.52258489  -0.44668664
+  -0.44664744  -0.33532161]
+Orbital 0 error:        -9.275e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72880624  -9.91092934  -1.07766518  -0.52258489  -0.44668664
+  -0.44664744  -0.33532161]
+Orbital 1 error:        -3.741e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72880624  -9.91092934  -1.07766599  -0.52258489  -0.44668664
+  -0.44664744  -0.33532161]
+Orbital 2 error:        -2.341e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72880624  -9.91092934  -1.07766599  -0.52258494  -0.44668664
+  -0.44664744  -0.33532161]
+Orbital 3 error:        -1.043e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72880624  -9.91092934  -1.07766599  -0.52258494  -0.44668822
+  -0.44664744  -0.33532161]
+Orbital 4 error:        -1.135e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72880624  -9.91092934  -1.07766599  -0.52258494  -0.44668822
+  -0.44664756  -0.33532161]
+Orbital 5 error:        -1.095e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72880624  -9.91092934  -1.07766599  -0.52258494  -0.44668822
+  -0.44664756  -0.33532046]
+Orbital 6 error:        -1.785e-04
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.000313920470817
+Computing Vcoulomb and updating Veff took:    30.2369 seconds. 
+Band energies before Veff update: -62.937285 H, -3.76e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4741858285 H, -1.5241446985e-03 H
+Orbital Energy:            [-18.72875319  -9.91099055  -1.07765066  -0.52258191  -0.44667607
+  -0.44664221  -0.33534592]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.937281 H, -3.76e-02 H
+Orbital 0 error: -9.222e-03
+Orbital 1 error: -3.802e-03
+Orbital 2 error: -2.326e-03
+Orbital 3 error: -1.040e-03
+Orbital 4 error: -1.123e-03
+Orbital 5 error: -1.089e-03
+Orbital 6 error: -2.040e-04
+Orbital Energies:  [-18.72875319  -9.91099055  -1.07765066  -0.52258191  -0.44667607
+  -0.44664221  -0.33534592]
+Updated V_coulomb:                      152.3281467779 Hartree
+Updated V_x:                           -15.9993932453 Hartree
+Updated V_c:                           -1.0514618215 Hartree
+Updated E_x:                           -11.9995449340 H, -2.4156305711e-03 H
+Updated E_c:                           -0.9422219141 H, -7.5990796970e-05 H
+Updated Band Energy:                   -62.9372810201 H, -3.7613931547e-02 H
+Total Energy:                          -112.4741813534 H, -1.5196696699e-03 H
+Energy Residual:                        -2.799e-06
+Density Residual:                      3.139e-04
+
+
+
+
+
+SCF Count  17
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72875321  -9.91099055  -1.07765066  -0.52258191  -0.44667607
+  -0.44664221  -0.33534592]
+Orbital 0 error:        -9.222e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72875321  -9.91099053  -1.07765066  -0.52258191  -0.44667607
+  -0.44664221  -0.33534592]
+Orbital 1 error:        -3.802e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72875321  -9.91099053  -1.07765125  -0.52258191  -0.44667607
+  -0.44664221  -0.33534592]
+Orbital 2 error:        -2.327e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72875321  -9.91099053  -1.07765125  -0.52258205  -0.44667607
+  -0.44664221  -0.33534592]
+Orbital 3 error:        -1.040e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72875321  -9.91099053  -1.07765125  -0.52258205  -0.44667729
+  -0.44664221  -0.33534592]
+Orbital 4 error:        -1.125e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72875321  -9.91099053  -1.07765125  -0.52258205  -0.44667729
+  -0.44664228  -0.33534592]
+Orbital 5 error:        -1.090e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72875321  -9.91099053  -1.07765125  -0.52258205  -0.44667729
+  -0.44664228  -0.33534488]
+Orbital 6 error:        -2.030e-04
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.000265872785622
+Computing Vcoulomb and updating Veff took:    30.2495 seconds. 
+Band energies before Veff update: -62.937283 H, -3.76e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4741748634 H, -1.5131795971e-03 H
+Orbital Energy:            [-18.72871026  -9.9110416   -1.07763938  -0.52258088  -0.4466684
+  -0.44663918  -0.33536602]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.937291 H, -3.76e-02 H
+Orbital 0 error: -9.179e-03
+Orbital 1 error: -3.853e-03
+Orbital 2 error: -2.315e-03
+Orbital 3 error: -1.039e-03
+Orbital 4 error: -1.116e-03
+Orbital 5 error: -1.086e-03
+Orbital 6 error: -2.241e-04
+Orbital Energies:  [-18.72871026  -9.9110416   -1.07763938  -0.52258088  -0.4466684
+  -0.44663918  -0.33536602]
+Updated V_coulomb:                      152.3281232835 Hartree
+Updated V_x:                           -15.9993801610 Hartree
+Updated V_c:                           -1.0514611275 Hartree
+Updated E_x:                           -11.9995351208 H, -2.4058173684e-03 H
+Updated E_c:                           -0.9422212252 H, -7.5301900423e-05 H
+Updated Band Energy:                   -62.9372914383 H, -3.7624349764e-02 H
+Total Energy:                          -112.4741833006 H, -1.5216168312e-03 H
+Energy Residual:                        -1.947e-06
+Density Residual:                      2.659e-04
+
+
+
+
+
+SCF Count  18
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72871028  -9.9110416   -1.07763938  -0.52258088  -0.4466684
+  -0.44663918  -0.33536602]
+Orbital 0 error:        -9.179e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72871028  -9.91104158  -1.07763938  -0.52258088  -0.4466684
+  -0.44663918  -0.33536602]
+Orbital 1 error:        -3.853e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72871028  -9.91104158  -1.07763981  -0.52258088  -0.4466684
+  -0.44663918  -0.33536602]
+Orbital 2 error:        -2.315e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72871028  -9.91104158  -1.07763981  -0.52258108  -0.4466684
+  -0.44663918  -0.33536602]
+Orbital 3 error:        -1.039e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72871028  -9.91104158  -1.07763981  -0.52258108  -0.44666935
+  -0.44663918  -0.33536602]
+Orbital 4 error:        -1.117e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72871028  -9.91104158  -1.07763981  -0.52258108  -0.44666935
+  -0.44663922  -0.33536602]
+Orbital 5 error:        -1.086e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72871028  -9.91104158  -1.07763981  -0.52258108  -0.44666935
+  -0.44663922  -0.33536509]
+Orbital 6 error:        -2.232e-04
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.000226267431471
+Computing Vcoulomb and updating Veff took:    30.2684 seconds. 
+Band energies before Veff update: -62.937293 H, -3.76e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4741698083 H, -1.5081244828e-03 H
+Orbital Energy:            [-18.72867513  -9.91108407  -1.0776305   -0.52258108  -0.4466628
+  -0.44663763  -0.33538261]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.  2.  2.  2.  2.  2.]
+Band energies after Veff update: -62.937308 H, -3.76e-02 H
+Orbital 0 error: -9.144e-03
+Orbital 1 error: -3.896e-03
+Orbital 2 error: -2.306e-03
+Orbital 3 error: -1.039e-03
+Orbital 4 error: -1.110e-03
+Orbital 5 error: -1.085e-03
+Orbital 6 error: -2.407e-04
+Orbital Energies:  [-18.72867513  -9.91108407  -1.0776305   -0.52258108  -0.4466628
+  -0.44663763  -0.33538261]
+Updated V_coulomb:                      152.3280871155 Hartree
+Updated V_x:                           -15.9993672711 Hartree
+Updated V_c:                           -1.0514604568 Hartree
+Updated E_x:                           -11.9995254533 H, -2.3961499301e-03 H
+Updated E_c:                           -0.9422205627 H, -7.4639395517e-05 H
+Updated Band Energy:                   -62.9373076237 H, -3.7640535188e-02 H
+Total Energy:                          -112.4741846327 H, -1.5229489426e-03 H
+Energy Residual:                        -1.332e-06
+Density Residual:                      2.263e-04
+
+
+
+
+
+SCF Count  19
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-18.72867514  -9.91108407  -1.0776305   -0.52258108  -0.4466628
+  -0.44663763  -0.33538261]
+Orbital 0 error:        -9.144e-03
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-18.72867514  -9.91108405  -1.0776305   -0.52258108  -0.4466628
+  -0.44663763  -0.33538261]
+Orbital 1 error:        -3.896e-03
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-18.72867514  -9.91108405  -1.07763081  -0.52258108  -0.4466628
+  -0.44663763  -0.33538261]
+Orbital 2 error:        -2.306e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-18.72867514  -9.91108405  -1.07763081  -0.52258131  -0.4466628
+  -0.44663763  -0.33538261]
+Orbital 3 error:        -1.039e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-18.72867514  -9.91108405  -1.07763081  -0.52258131  -0.44666354
+  -0.44663763  -0.33538261]
+Orbital 4 error:        -1.111e-03
+Used 1 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Orbital Energy:            [-18.72867514  -9.91108405  -1.07763081  -0.52258131  -0.44666354
+  -0.44663765  -0.33538261]
+Orbital 5 error:        -1.085e-03
+Used 1 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Orbital Energy:            [-18.72867514  -9.91108405  -1.07763081  -0.52258131  -0.44666354
+  -0.44663765  -0.33538177]
+Orbital 6 error:        -2.398e-04
+Used 1 iterations for orbital 6.
+
+
+Density Residual  0.000193375606594
+Computing Vcoulomb and updating Veff took:    30.2761 seconds. 
+Band energies before Veff update: -62.937309 H, -3.76e-02 H
+Total Energy without computing orbitals energies with new Veff: -112.4741683560 H, -1.5066722458e-03 H
+Orbital Energy:            [-18.72864594  -9.91111954  -1.07762338  -0.52258198  -0.44665868
+  -0.44663701  -0.33539633]
+New order:  [0 1 2 3 4 5 6]
+Fermi energy: 

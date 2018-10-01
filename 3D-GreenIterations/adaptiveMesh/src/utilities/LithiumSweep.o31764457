@@ -1,0 +1,3914 @@
+Running on
+      1 nyx7511
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/lithiumAtom.csv', '/home/njvaughn/LithiumIterationResults/LW3_500.csv', 3, 2, -7.3340536782581447, -1.4916149721121696, -0.15971669832262905, -3.8616389456972078, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/lithiumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z3/singleAtomData/
+Atom with Z=3 will get 2 atomic orbitals initialized.
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 3 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  143872
+Initializing orbitals for atom Z = 3 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       2569 
+Total Number of Leaf Cells:  2248 
+Total Number of Gridpoints:  143872 
+Minimum Depth                3 levels 
+Maximum Depth:               10 levels 
+Cell Order:                  4 
+Construction time:           2.33 seconds.
+Closest gridpoint to origin:  [-0.00148672788063893, -0.00148672788063893, -0.00148672788063893]
+For a distance of:  0.002575088226295824
+Part of a cell centered at:  [-0.01953125, -0.01953125, -0.01953125]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    143872
+Threads per block:    512
+Blocks per grid:      281
+[-7.3340536782581447, -1.4916149721121696, -0.15971669832262905, -3.8616389456972078]
+Computing Vcoulomb took:    0.5411 seconds. 
+Update orbital energies after computing the initial Veff.
+Orbital Energy:            [-2.88402492 -1.10616014]
+New order:  [0 1]
+Fermi energy:  -1.1061601395570604
+Occupations:  [ 2.  1.]
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88164623 -1.10616014]
+Orbital 0 error:        -1.882e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88164623 -1.10564124]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000821143855691
+Computing Vcoulomb and updating Veff took:    0.9897 seconds. 
+Band energies before Veff update: -3.868934 H, -7.29e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3366784650 H, -2.6247867541e-03 H
+Orbital Energy:            [-2.88122039 -1.10562881]
+New order:  [0 1]
+Fermi energy:  -1.1056288056291756
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.868070 H, -6.43e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88122039 -0.10562881]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.056e-01
+Orbital Energies:                      -2.8812203865 H, -1.1056288056 H
+Updated V_coulomb:                      7.9715876463 Hartree
+Updated V_x:                           -1.9891791906 Hartree
+Updated V_c:                           -0.1804672509 Hartree
+Updated E_x:                           -1.4918843930 H, -2.6942085803e-04 H
+Updated E_c:                           -0.1597129857 H, 3.7126476264e-06 H
+Updated Band Energy:                   -3.8680695786 H, -6.4306329023e-03 H
+Total Energy:                          -7.3358143389 H, -1.7606606326e-03 H
+Energy Residual:                        -5.836e+00
+Density Residual:                      8.211e-04
+
+
+
+
+
+SCF Count  2
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8812422  -1.10562881]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8812422  -1.10570338]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000441771002342
+Computing Vcoulomb and updating Veff took:    1.0092 seconds. 
+Band energies before Veff update: -3.868188 H, -6.55e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3363955099 H, -2.3418316380e-03 H
+Orbital Energy:            [-2.88101215 -1.10570047]
+New order:  [0 1]
+Fermi energy:  -1.1057004666035382
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867725 H, -6.09e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88101215 -0.10570047]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8810121458 H, -1.1057004666 H
+Updated V_coulomb:                      7.9726679006 Hartree
+Updated V_x:                           -1.9894864139 Hartree
+Updated V_c:                           -0.1804746253 Hartree
+Updated E_x:                           -1.4921148104 H, -4.9983833569e-04 H
+Updated E_c:                           -0.1597200063 H, -3.3079436518e-06 H
+Updated Band Energy:                   -3.8677247581 H, -6.0858124486e-03 H
+Total Energy:                          -7.3359324859 H, -1.8788076427e-03 H
+Energy Residual:                        -1.181e-04
+Density Residual:                      4.418e-04
+
+
+
+
+
+SCF Count  3
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88101276 -1.10570047]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88101276 -1.1056913 ]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000218343230146
+Computing Vcoulomb and updating Veff took:    1.0092 seconds. 
+Band energies before Veff update: -3.867717 H, -6.08e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3361336935 H, -2.0800152527e-03 H
+Orbital Energy:            [-2.88090697 -1.10569374]
+New order:  [0 1]
+Fermi energy:  -1.105693739953712
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867508 H, -5.87e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88090697 -0.10569374]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8809069679 H, -1.1056937400 H
+Updated V_coulomb:                      7.9731606142 Hartree
+Updated V_x:                           -1.9896349131 Hartree
+Updated V_c:                           -0.1804775125 Hartree
+Updated E_x:                           -1.4922261848 H, -6.1121270717e-04 H
+Updated E_c:                           -0.1597228052 H, -6.1068498367e-06 H
+Updated Band Energy:                   -3.8675076757 H, -5.8687299565e-03 H
+Total Energy:                          -7.3359245471 H, -1.8708688260e-03 H
+Energy Residual:                        7.939e-06
+Density Residual:                      2.183e-04
+
+
+
+
+
+SCF Count  4
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88090734 -1.10569374]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88090734 -1.10569957]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  9.65683407924e-05
+Computing Vcoulomb and updating Veff took:    1.0119 seconds. 
+Band energies before Veff update: -3.867514 H, -5.88e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359986277 H, -1.9449494649e-03 H
+Orbital Energy:            [-2.88087102 -1.10570472]
+New order:  [0 1]
+Fermi energy:  -1.1057047200094492
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867447 H, -5.81e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88087102 -0.10570472]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8808710229 H, -1.1057047200 H
+Updated V_coulomb:                      7.9733254248 Hartree
+Updated V_x:                           -1.9896947516 Hartree
+Updated V_c:                           -0.1804779344 Hartree
+Updated E_x:                           -1.4922710637 H, -6.5609161533e-04 H
+Updated E_c:                           -0.1597232793 H, -6.5809908261e-06 H
+Updated Band Energy:                   -3.8674467658 H, -5.8078201442e-03 H
+Total Energy:                          -7.3359311353 H, -1.8774570133e-03 H
+Energy Residual:                        -6.588e-06
+Density Residual:                      9.657e-05
+
+
+
+
+
+SCF Count  5
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88087121 -1.10570472]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88087121 -1.10570274]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.7132566603e-05
+Computing Vcoulomb and updating Veff took:    1.0141 seconds. 
+Band energies before Veff update: -3.867445 H, -5.81e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359283530 H, -1.8746747244e-03 H
+Orbital Energy:            [-2.88086872 -1.1057089 ]
+New order:  [0 1]
+Fermi energy:  -1.10570889647141
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867446 H, -5.81e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88086872 -0.1057089 ]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8808687249 H, -1.1057088965 H
+Updated V_coulomb:                      7.9733309717 Hartree
+Updated V_x:                           -1.9897110158 Hartree
+Updated V_c:                           -0.1804772038 Hartree
+Updated E_x:                           -1.4922832619 H, -6.6828975158e-04 H
+Updated E_c:                           -0.1597226622 H, -5.9638624051e-06 H
+Updated Band Energy:                   -3.8674463463 H, -5.8074006046e-03 H
+Total Energy:                          -7.3359295366 H, -1.8758583305e-03 H
+Energy Residual:                        1.599e-06
+Density Residual:                      3.713e-05
+
+
+
+
+
+SCF Count  6
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88086882 -1.1057089 ]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88086882 -1.10571044]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.24772250847e-05
+Computing Vcoulomb and updating Veff took:    1.0177 seconds. 
+Band energies before Veff update: -3.867448 H, -5.81e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359017393 H, -1.8480610087e-03 H
+Orbital Energy:            [-2.88088045 -1.10571668]
+New order:  [0 1]
+Fermi energy:  -1.1057166840081398
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867478 H, -5.84e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88088045 -0.10571668]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8808804517 H, -1.1057166840 H
+Updated V_coulomb:                      7.9732704515 Hartree
+Updated V_x:                           -1.9897085745 Hartree
+Updated V_c:                           -0.1804760407 Hartree
+Updated E_x:                           -1.4922814309 H, -6.6645875005e-04 H
+Updated E_c:                           -0.1597216308 H, -4.9325097900e-06 H
+Updated Band Energy:                   -3.8674775875 H, -5.8386417817e-03 H
+Total Energy:                          -7.3359312598 H, -1.8775815076e-03 H
+Energy Residual:                        -1.723e-06
+Density Residual:                      1.248e-05
+
+
+
+
+
+SCF Count  7
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88088049 -1.10571668]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88088049 -1.10571595]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  6.62098074366e-06
+Computing Vcoulomb and updating Veff took:    1.0259 seconds. 
+Band energies before Veff update: -3.867477 H, -5.84e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3358928082 H, -1.8391299019e-03 H
+Orbital Energy:            [-2.88089645 -1.10572183]
+New order:  [0 1]
+Fermi energy:  -1.105721830420509
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867515 H, -5.88e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88089645 -0.10572183]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8808964497 H, -1.1057218304 H
+Updated V_coulomb:                      7.9731901637 Hartree
+Updated V_x:                           -1.9896997019 Hartree
+Updated V_c:                           -0.1804748004 Hartree
+Updated E_x:                           -1.4922747764 H, -6.5980430323e-04 H
+Updated E_c:                           -0.1597205200 H, -3.8216326501e-06 H
+Updated Band Energy:                   -3.8675147299 H, -5.8757841793e-03 H
+Total Energy:                          -7.3359306058 H, -1.8769275664e-03 H
+Energy Residual:                        6.539e-07
+Density Residual:                      6.621e-06
+
+
+
+
+
+SCF Count  8
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88089647 -1.10572183]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88089647 -1.10572234]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  6.13689637845e-06
+Computing Vcoulomb and updating Veff took:    1.0110 seconds. 
+Band energies before Veff update: -3.867515 H, -5.88e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3358937496 H, -1.8400713258e-03 H
+Orbital Energy:            [-2.88091249 -1.10572768]
+New order:  [0 1]
+Fermi energy:  -1.1057276758244583
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867553 H, -5.91e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88091249 -0.10572768]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8809124935 H, -1.1057276758 H
+Updated V_coulomb:                      7.9731101451 Hartree
+Updated V_x:                           -1.9896897160 Hartree
+Updated V_c:                           -0.1804736328 Hartree
+Updated E_x:                           -1.4922672870 H, -6.5231490006e-04 H
+Updated E_c:                           -0.1597194710 H, -2.7726992138e-06 H
+Updated Band Energy:                   -3.8675526628 H, -5.9137171182e-03 H
+Total Energy:                          -7.3359311445 H, -1.8774662727e-03 H
+Energy Residual:                        -5.387e-07
+Density Residual:                      6.137e-06
+
+
+
+
+
+SCF Count  9
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8809125  -1.10572768]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8809125  -1.10572737]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  5.29486019324e-06
+Computing Vcoulomb and updating Veff took:    1.0161 seconds. 
+Band energies before Veff update: -3.867552 H, -5.91e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3358970158 H, -1.8433375636e-03 H
+Orbital Energy:            [-2.88092704 -1.10573212]
+New order:  [0 1]
+Fermi energy:  -1.1057321233295168
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867586 H, -5.95e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88092704 -0.10573212]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8809270390 H, -1.1057321233 H
+Updated V_coulomb:                      7.9730376929 Hartree
+Updated V_x:                           -1.9896805666 Hartree
+Updated V_c:                           -0.1804725890 Hartree
+Updated E_x:                           -1.4922604250 H, -6.4545287186e-04 H
+Updated E_c:                           -0.1597185326 H, -1.8342459982e-06 H
+Updated Band Energy:                   -3.8675862013 H, -5.9472555594e-03 H
+Total Energy:                          -7.3359308496 H, -1.8771713429e-03 H
+Energy Residual:                        2.949e-07
+Density Residual:                      5.295e-06
+
+
+
+
+
+SCF Count  10
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88092704 -1.10573212]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88092704 -1.10573228]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  4.2867034573e-06
+Computing Vcoulomb and updating Veff took:    1.0059 seconds. 
+Band energies before Veff update: -3.867586 H, -5.95e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359013978 H, -1.8477195201e-03 H
+Orbital Energy:            [-2.88093975 -1.10573647]
+New order:  [0 1]
+Fermi energy:  -1.1057364692561487
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867616 H, -5.98e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88093975 -0.10573647]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8809397491 H, -1.1057364693 H
+Updated V_coulomb:                      7.9729743688 Hartree
+Updated V_x:                           -1.9896727231 Hartree
+Updated V_c:                           -0.1804716749 Hartree
+Updated E_x:                           -1.4922545424 H, -6.3957024292e-04 H
+Updated E_c:                           -0.1597177107 H, -1.0124173005e-06 H
+Updated Band Energy:                   -3.8676159674 H, -5.9770216913e-03 H
+Total Energy:                          -7.3359310069 H, -1.8773286207e-03 H
+Energy Residual:                        -1.573e-07
+Density Residual:                      4.287e-06
+
+
+
+
+
+SCF Count  11
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88093975 -1.10573647]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88093975 -1.10573633]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.45069243701e-06
+Computing Vcoulomb and updating Veff took:    1.0128 seconds. 
+Band energies before Veff update: -3.867616 H, -5.98e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359052338 H, -1.8515555239e-03 H
+Orbital Energy:            [-2.88095073 -1.10574   ]
+New order:  [0 1]
+Fermi energy:  -1.1057400018014174
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867641 H, -6.00e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88095073 -0.10574   ]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8809507256 H, -1.1057400018 H
+Updated V_coulomb:                      7.9729196483 Hartree
+Updated V_x:                           -1.9896661211 Hartree
+Updated V_c:                           -0.1804708803 Hartree
+Updated E_x:                           -1.4922495909 H, -6.3461874868e-04 H
+Updated E_c:                           -0.1597169966 H, -2.9829758005e-07 H
+Updated Band Energy:                   -3.8676414530 H, -6.0025073006e-03 H
+Total Energy:                          -7.3359308632 H, -1.8771849548e-03 H
+Energy Residual:                        1.437e-07
+Density Residual:                      3.451e-06
+
+
+
+
+
+SCF Count  12
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88095072 -1.10574   ]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88095072 -1.10574004]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.83829898411e-06
+Computing Vcoulomb and updating Veff took:    1.0076 seconds. 
+Band energies before Veff update: -3.867641 H, -6.00e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359087292 H, -1.8550509500e-03 H
+Orbital Energy:            [-2.8809602  -1.10574325]
+New order:  [0 1]
+Fermi energy:  -1.1057432482282472
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867664 H, -6.02e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8809602  -0.10574325]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8809601991 H, -1.1057432482 H
+Updated V_coulomb:                      7.9728723962 Hartree
+Updated V_x:                           -1.9896605515 Hartree
+Updated V_c:                           -0.1804701905 Hartree
+Updated E_x:                           -1.4922454137 H, -6.3044153792e-04 H
+Updated E_c:                           -0.1597163769 H, 3.2142759046e-07 H
+Updated Band Energy:                   -3.8676636464 H, -6.0247006780e-03 H
+Total Energy:                          -7.3359308930 H, -1.8772146921e-03 H
+Energy Residual:                        -2.974e-08
+Density Residual:                      2.838e-06
+
+
+
+
+
+SCF Count  13
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8809602  -1.10574325]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8809602  -1.10574318]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.39011815793e-06
+Computing Vcoulomb and updating Veff took:    1.0064 seconds. 
+Band energies before Veff update: -3.867664 H, -6.02e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359116095 H, -1.8579312726e-03 H
+Orbital Energy:            [-2.8809684  -1.10574598]
+New order:  [0 1]
+Fermi energy:  -1.1057459795602615
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867683 H, -6.04e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8809684  -0.10574598]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8809683966 H, -1.1057459796 H
+Updated V_coulomb:                      7.9728314950 Hartree
+Updated V_x:                           -1.9896558126 Hartree
+Updated V_c:                           -0.1804695915 Hartree
+Updated E_x:                           -1.4922418595 H, -6.2688734044e-04 H
+Updated E_c:                           -0.1597158388 H, 8.5956446069e-07 H
+Updated Band Energy:                   -3.8676827728 H, -6.0438271358e-03 H
+Total Energy:                          -7.3359308145 H, -1.8771362454e-03 H
+Energy Residual:                        7.845e-08
+Density Residual:                      2.390e-06
+
+
+
+
+
+SCF Count  14
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88096839 -1.10574598]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88096839 -1.10574598]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.04665144247e-06
+Computing Vcoulomb and updating Veff took:    1.0069 seconds. 
+Band energies before Veff update: -3.867683 H, -6.04e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359141189 H, -1.8604406192e-03 H
+Orbital Energy:            [-2.88097551 -1.10574842]
+New order:  [0 1]
+Fermi energy:  -1.1057484210495336
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867699 H, -6.06e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88097551 -0.10574842]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8809755129 H, -1.1057484210 H
+Updated V_coulomb:                      7.9727959849 Hartree
+Updated V_x:                           -1.9896517437 Hartree
+Updated V_c:                           -0.1804690706 Hartree
+Updated E_x:                           -1.4922388078 H, -6.2383567766e-04 H
+Updated E_c:                           -0.1597153709 H, 1.3274214257e-06 H
+Updated Band Energy:                   -3.8676994469 H, -6.0605012439e-03 H
+Total Energy:                          -7.3359308038 H, -1.8771255098e-03 H
+Energy Residual:                        1.074e-08
+Density Residual:                      2.047e-06
+
+
+
+
+
+SCF Count  15
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88097551 -1.10574842]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88097551 -1.10574838]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.76925117063e-06
+Computing Vcoulomb and updating Veff took:    1.0205 seconds. 
+Band energies before Veff update: -3.867699 H, -6.06e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359162330 H, -1.8625547715e-03 H
+Orbital Energy:            [-2.8809817  -1.10575051]
+New order:  [0 1]
+Fermi energy:  -1.105750511429679
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867714 H, -6.07e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8809817  -0.10575051]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8809817047 H, -1.1057505114 H
+Updated V_coulomb:                      7.9727650896 Hartree
+Updated V_x:                           -1.9896482266 Hartree
+Updated V_c:                           -0.1804686174 Hartree
+Updated E_x:                           -1.4922361700 H, -6.2119784835e-04 H
+Updated E_c:                           -0.1597149638 H, 1.7345136157e-06 H
+Updated Band Energy:                   -3.8677139207 H, -6.0749750453e-03 H
+Total Energy:                          -7.3359307553 H, -1.8770770578e-03 H
+Energy Residual:                        4.845e-08
+Density Residual:                      1.769e-06
+
+
+
+
+
+SCF Count  16
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8809817  -1.10575051]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8809817 -1.1057505]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.53716181639e-06
+Computing Vcoulomb and updating Veff took:    1.0065 seconds. 
+Band energies before Veff update: -3.867714 H, -6.07e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359180797 H, -1.8644014655e-03 H
+Orbital Energy:            [-2.8809871  -1.10575236]
+New order:  [0 1]
+Fermi energy:  -1.1057523552184336
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867727 H, -6.09e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8809871  -0.10575236]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8809870996 H, -1.1057523552 H
+Updated V_coulomb:                      7.9727381733 Hartree
+Updated V_x:                           -1.9896451732 Hartree
+Updated V_c:                           -0.1804682228 Hartree
+Updated E_x:                           -1.4922338799 H, -6.1890776083e-04 H
+Updated E_c:                           -0.1597146094 H, 2.0889220729e-06 H
+Updated Band Energy:                   -3.8677265545 H, -6.0876087626e-03 H
+Total Energy:                          -7.3359307344 H, -1.8770561319e-03 H
+Energy Residual:                        2.093e-08
+Density Residual:                      1.537e-06
+
+
+
+
+
+SCF Count  17
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8809871  -1.10575236]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8809871  -1.10575233]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.33863607851e-06
+Computing Vcoulomb and updating Veff took:    1.0158 seconds. 
+Band energies before Veff update: -3.867727 H, -6.09e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359196693 H, -1.8659910247e-03 H
+Orbital Energy:            [-2.8809918  -1.10575395]
+New order:  [0 1]
+Fermi energy:  -1.1057539473303355
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867738 H, -6.10e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8809918  -0.10575395]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8809918031 H, -1.1057539473 H
+Updated V_coulomb:                      7.9727147107 Hartree
+Updated V_x:                           -1.9896425162 Hartree
+Updated V_c:                           -0.1804678793 Hartree
+Updated E_x:                           -1.4922318871 H, -6.1691502869e-04 H
+Updated E_c:                           -0.1597143008 H, 2.3975081321e-06 H
+Updated Band Energy:                   -3.8677375536 H, -6.0986078947e-03 H
+Total Energy:                          -7.3359307014 H, -1.8770231525e-03 H
+Energy Residual:                        3.298e-08
+Density Residual:                      1.339e-06
+
+
+
+
+
+SCF Count  18
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8809918  -1.10575395]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8809918  -1.10575393]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.16689871243e-06
+Computing Vcoulomb and updating Veff took:    1.0236 seconds. 
+Band energies before Veff update: -3.867738 H, -6.10e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359210621 H, -1.8673838499e-03 H
+Orbital Energy:            [-2.8809959  -1.10575534]
+New order:  [0 1]
+Fermi energy:  -1.1057553422030106
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867747 H, -6.11e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8809959  -0.10575534]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8809959044 H, -1.1057553422 H
+Updated V_coulomb:                      7.9726942559 Hartree
+Updated V_x:                           -1.9896402018 Hartree
+Updated V_c:                           -0.1804675802 Hartree
+Updated E_x:                           -1.4922301513 H, -6.1517922797e-04 H
+Updated E_c:                           -0.1597140321 H, 2.6661883428e-06 H
+Updated Band Energy:                   -3.8677471510 H, -6.1082053316e-03 H
+Total Energy:                          -7.3359306805 H, -1.8770022256e-03 H
+Energy Residual:                        2.093e-08
+Density Residual:                      1.167e-06
+
+
+
+
+
+SCF Count  19
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8809959  -1.10575534]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8809959  -1.10575532]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.0174039604e-06
+Computing Vcoulomb and updating Veff took:    1.0229 seconds. 
+Band energies before Veff update: -3.867747 H, -6.11e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359222725 H, -1.8685942144e-03 H
+Orbital Energy:            [-2.88099948 -1.10575655]
+New order:  [0 1]
+Fermi energy:  -1.1057565514337788
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867756 H, -6.12e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88099948 -0.10575655]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8809994800 H, -1.1057565514 H
+Updated V_coulomb:                      7.9726764265 Hartree
+Updated V_x:                           -1.9896381853 Hartree
+Updated V_c:                           -0.1804673199 Hartree
+Updated E_x:                           -1.4922286390 H, -6.1366686388e-04 H
+Updated E_c:                           -0.1597137982 H, 2.9000803802e-06 H
+Updated Band Energy:                   -3.8677555114 H, -6.1165656604e-03 H
+Total Energy:                          -7.3359306566 H, -1.8769783887e-03 H
+Energy Residual:                        2.384e-08
+Density Residual:                      1.017e-06
+
+
+
+
+
+SCF Count  20
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88099948 -1.10575655]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction../src/dataStructures/TreeStruct_CC.py:130: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+
+Orbital Energy:            [-2.88099948 -1.10575654]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  8.86958306988e-07
+Computing Vcoulomb and updating Veff took:    1.0266 seconds. 
+Band energies before Veff update: -3.867755 H, -6.12e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359233324 H, -1.8696541150e-03 H
+Orbital Energy:            [-2.8810026  -1.10575761]
+New order:  [0 1]
+Fermi energy:  -1.105757607113575
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867763 H, -6.12e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8810026  -0.10575761]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8810025963 H, -1.1057576071 H
+Updated V_coulomb:                      7.9726608894 Hartree
+Updated V_x:                           -1.9896364286 Hartree
+Updated V_c:                           -0.1804670933 Hartree
+Updated E_x:                           -1.4922273214 H, -6.1234930650e-04 H
+Updated E_c:                           -0.1597135947 H, 3.1036446151e-06 H
+Updated Band Energy:                   -3.8677627998 H, -6.1238540541e-03 H
+Total Energy:                          -7.3359306387 H, -1.8769604518e-03 H
+Energy Residual:                        1.794e-08
+Density Residual:                      8.870e-07
+
+
+
+Convergence to a tolerance of 0.000001 took 21 iterations
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/lithiumAtom.csv', '/home/njvaughn/LithiumIterationResults/LW3_500.csv', 3, 2, -7.3340536782581447, -1.4916149721121696, -0.15971669832262905, -3.8616389456972078, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/lithiumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z3/singleAtomData/
+Atom with Z=3 will get 2 atomic orbitals initialized.
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 3 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  183296
+Initializing orbitals for atom Z = 3 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            8.00e+02 
+Total Number of Cells:       3273 
+Total Number of Leaf Cells:  2864 
+Total Number of Gridpoints:  183296 
+Minimum Depth                3 levels 
+Maximum Depth:               10 levels 
+Cell Order:                  4 
+Construction time:           3.13 seconds.
+Closest gridpoint to origin:  [-0.00148672788063893, -0.00148672788063893, -0.00148672788063893]
+For a distance of:  0.002575088226295824
+Part of a cell centered at:  [-0.01953125, -0.01953125, -0.01953125]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    183296
+Threads per block:    512
+Blocks per grid:      358
+[-7.3340536782581447, -1.4916149721121696, -0.15971669832262905, -3.8616389456972078]
+Computing Vcoulomb took:    0.6405 seconds. 
+Update orbital energies after computing the initial Veff.
+Orbital Energy:            [-2.88352899 -1.10610568]
+New order:  [0 1]
+Fermi energy:  -1.106105680107207
+Occupations:  [ 2.  1.]
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8812924  -1.10610568]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8812924  -1.10563649]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000953716422028
+Computing Vcoulomb and updating Veff took:    1.3055 seconds. 
+Band energies before Veff update: -3.868221 H, -6.58e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3367444650 H, -2.6907867850e-03 H
+Orbital Energy:            [-2.88084539 -1.10562498]
+New order:  [0 1]
+Fermi energy:  -1.1056249800590119
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.867316 H, -5.68e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88084539 -0.10562498]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.056e-01
+Orbital Energies:                      -2.8808453936 H, -1.1056249801 H
+Updated V_coulomb:                      7.9731705570 Hartree
+Updated V_x:                           -1.9892316284 Hartree
+Updated V_c:                           -0.1804677603 Hartree
+Updated E_x:                           -1.4919237213 H, -3.0874917870e-04 H
+Updated E_c:                           -0.1597135570 H, 3.1413237479e-06 H
+Updated Band Energy:                   -3.8673157674 H, -5.6768216543e-03 H
+Total Energy:                          -7.3358389355 H, -1.7852572084e-03 H
+Energy Residual:                        -5.836e+00
+Density Residual:                      9.537e-04
+
+
+
+
+
+SCF Count  2
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88085939 -1.10562498]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88085939 -1.10569599]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000593674301863
+Computing Vcoulomb and updating Veff took:    1.3227 seconds. 
+Band energies before Veff update: -3.867415 H, -5.78e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3364682878 H, -2.4146095271e-03 H
+Orbital Energy:            [-2.88059522 -1.10569386]
+New order:  [0 1]
+Fermi energy:  -1.1056938640483807
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866884 H, -5.25e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88059522 -0.10569386]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8805952220 H, -1.1056938640 H
+Updated V_coulomb:                      7.9744140893 Hartree
+Updated V_x:                           -1.9895957567 Hartree
+Updated V_c:                           -0.1804759695 Hartree
+Updated E_x:                           -1.4921968175 H, -5.8184542343e-04 H
+Updated E_c:                           -0.1597213861 H, -4.6877922091e-06 H
+Updated Band Energy:                   -3.8668843079 H, -5.2453622512e-03 H
+Total Energy:                          -7.3359378300 H, -1.8841517576e-03 H
+Energy Residual:                        -9.889e-05
+Density Residual:                      5.937e-04
+
+
+
+
+
+SCF Count  3
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88059549 -1.10569386]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88059549 -1.10568468]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000331522584436
+Computing Vcoulomb and updating Veff took:    1.3191 seconds. 
+Band energies before Veff update: -3.866876 H, -5.24e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3361913132 H, -2.1376349674e-03 H
+Orbital Energy:            [-2.88046274 -1.10568802]
+New order:  [0 1]
+Fermi energy:  -1.1056880204762822
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866614 H, -4.97e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88046274 -0.10568802]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8804627402 H, -1.1056880205 H
+Updated V_coulomb:                      7.9750352310 Hartree
+Updated V_x:                           -1.9897890834 Hartree
+Updated V_c:                           -0.1804794953 Hartree
+Updated E_x:                           -1.4923418126 H, -7.2684045721e-04 H
+Updated E_c:                           -0.1597248069 H, -8.1085573238e-06 H
+Updated Band Energy:                   -3.8666135008 H, -4.9745551429e-03 H
+Total Energy:                          -7.3359291570 H, -1.8754787734e-03 H
+Energy Residual:                        8.673e-06
+Density Residual:                      3.315e-04
+
+
+
+
+
+SCF Count  4
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88046301 -1.10568802]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88046301 -1.10569379]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000167257939095
+Computing Vcoulomb and updating Veff took:    1.3025 seconds. 
+Band energies before Veff update: -3.866620 H, -4.98e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3360341259 H, -1.9804476748e-03 H
+Orbital Energy:            [-2.88041059 -1.10569998]
+New order:  [0 1]
+Fermi energy:  -1.1056999790364204
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866521 H, -4.88e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88041059 -0.10569998]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8804105900 H, -1.1056999790 H
+Updated V_coulomb:                      7.9752763530 Hartree
+Updated V_x:                           -1.9898769127 Hartree
+Updated V_c:                           -0.1804802350 Hartree
+Updated E_x:                           -1.4924076845 H, -7.9271239775e-04 H
+Updated E_c:                           -0.1597255982 H, -8.8998484235e-06 H
+Updated Band Energy:                   -3.8665211591 H, -4.8822133811e-03 H
+Total Energy:                          -7.3359354705 H, -1.8817922880e-03 H
+Energy Residual:                        -6.314e-06
+Density Residual:                      1.673e-04
+
+
+
+
+
+SCF Count  5
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88041074 -1.10569998]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88041074 -1.10569797]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  7.62584782714e-05
+Computing Vcoulomb and updating Veff took:    1.3114 seconds. 
+Band energies before Veff update: -3.866519 H, -4.88e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359462981 H, -1.8926198033e-03 H
+Orbital Energy:            [-2.88040083 -1.10570525]
+New order:  [0 1]
+Fermi energy:  -1.105705246438018
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866507 H, -4.87e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88040083 -0.10570525]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8804008332 H, -1.1057052464 H
+Updated V_coulomb:                      7.9753166801 Hartree
+Updated V_x:                           -1.9899079137 Hartree
+Updated V_c:                           -0.1804795655 Hartree
+Updated E_x:                           -1.4924309352 H, -8.1596313582e-04 H
+Updated E_c:                           -0.1597250538 H, -8.3554864643e-06 H
+Updated Band Energy:                   -3.8665069129 H, -4.8679671616e-03 H
+Total Energy:                          -7.3359337628 H, -1.8800845555e-03 H
+Energy Residual:                        1.708e-06
+Density Residual:                      7.626e-05
+
+
+
+
+
+SCF Count  6
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88040091 -1.10570525]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88040091 -1.10570677]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.10596403598e-05
+Computing Vcoulomb and updating Veff took:    1.3048 seconds. 
+Band energies before Veff update: -3.866509 H, -4.87e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359087873 H, -1.8551090395e-03 H
+Orbital Energy:            [-2.88041055 -1.10571414]
+New order:  [0 1]
+Fermi energy:  -1.1057141380697502
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866535 H, -4.90e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88041055 -0.10571414]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8804105475 H, -1.1057141381 H
+Updated V_coulomb:                      7.9752650624 Hartree
+Updated V_x:                           -1.9899118673 Hartree
+Updated V_c:                           -0.1804783082 Hartree
+Updated E_x:                           -1.4924339004 H, -8.1892833317e-04 H
+Updated E_c:                           -0.1597239471 H, -7.2487886764e-06 H
+Updated Band Energy:                   -3.8665352330 H, -4.8962873054e-03 H
+Total Energy:                          -7.3359354363 H, -1.8817580327e-03 H
+Energy Residual:                        -1.673e-06
+Density Residual:                      3.106e-05
+
+
+
+
+
+SCF Count  7
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88041058 -1.10571414]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88041058 -1.10571339]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.16769760008e-05
+Computing Vcoulomb and updating Veff took:    1.3062 seconds. 
+Band energies before Veff update: -3.866535 H, -4.90e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3358942263 H, -1.8405480376e-03 H
+Orbital Energy:            [-2.88042737 -1.10572034]
+New order:  [0 1]
+Fermi energy:  -1.1057203368061255
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866575 H, -4.94e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88042737 -0.10572034]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8804273717 H, -1.1057203368 H
+Updated V_coulomb:                      7.9751802076 Hartree
+Updated V_x:                           -1.9899048723 Hartree
+Updated V_c:                           -0.1804769005 Hartree
+Updated E_x:                           -1.4924286542 H, -8.1368208872e-04 H
+Updated E_c:                           -0.1597226901 H, -5.9917737278e-06 H
+Updated Band Energy:                   -3.8665750801 H, -4.9361344525e-03 H
+Total Energy:                          -7.3359347555 H, -1.8810772688e-03 H
+Energy Residual:                        6.808e-07
+Density Residual:                      1.168e-05
+
+
+
+
+
+SCF Count  8
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88042739 -1.10572034]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88042739 -1.10572083]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  6.0267247375e-06
+Computing Vcoulomb and updating Veff took:    1.3027 seconds. 
+Band energies before Veff update: -3.866576 H, -4.94e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3358928423 H, -1.8391640474e-03 H
+Orbital Energy:            [-2.88044544 -1.10572715]
+New order:  [0 1]
+Fermi energy:  -1.1057271489544962
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866618 H, -4.98e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88044544 -0.10572715]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8804454437 H, -1.1057271490 H
+Updated V_coulomb:                      7.9750899446 Hartree
+Updated V_x:                           -1.9898946430 Hartree
+Updated V_c:                           -0.1804755430 Hartree
+Updated E_x:                           -1.4924209823 H, -8.0601016651e-04 H
+Updated E_c:                           -0.1597214725 H, -4.7742183331e-06 H
+Updated Band Energy:                   -3.8666180363 H, -4.9790905824e-03 H
+Total Energy:                          -7.3359352773 H, -1.8815990797e-03 H
+Energy Residual:                        -5.218e-07
+Density Residual:                      6.027e-06
+
+
+
+
+
+SCF Count  9
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88044545 -1.10572715]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88044545 -1.10572683]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  5.16303333304e-06
+Computing Vcoulomb and updating Veff took:    1.3002 seconds. 
+Band energies before Veff update: -3.866618 H, -4.98e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3358955521 H, -1.8418738837e-03 H
+Orbital Energy:            [-2.88046234 -1.10573246]
+New order:  [0 1]
+Fermi energy:  -1.1057324635566959
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866657 H, -5.02e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88046234 -0.10573246]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8804623405 H, -1.1057324636 H
+Updated V_coulomb:                      7.9750057555 Hartree
+Updated V_x:                           -1.9898844320 Hartree
+Updated V_c:                           -0.1804743135 Hartree
+Updated E_x:                           -1.4924133240 H, -7.9835188081e-04 H
+Updated E_c:                           -0.1597203683 H, -3.6699433557e-06 H
+Updated Band Energy:                   -3.8666571446 H, -5.0181989438e-03 H
+Total Energy:                          -7.3359349691 H, -1.8812908629e-03 H
+Energy Residual:                        3.082e-07
+Density Residual:                      5.163e-06
+
+
+
+
+
+SCF Count  10
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88046234 -1.10573246]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88046234 -1.10573261]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  4.57589959201e-06
+Computing Vcoulomb and updating Veff took:    1.2983 seconds. 
+Band energies before Veff update: -3.866657 H, -5.02e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359001881 H, -1.8465098427e-03 H
+Orbital Energy:            [-2.88047732 -1.10573758]
+New order:  [0 1]
+Fermi energy:  -1.1057375777813685
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866692 H, -5.05e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88047732 -0.10573758]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8804773201 H, -1.1057375778 H
+Updated V_coulomb:                      7.9749311309 Hartree
+Updated V_x:                           -1.9898753321 Hartree
+Updated V_c:                           -0.1804732293 Hartree
+Updated E_x:                           -1.4924064991 H, -7.9152699397e-04 H
+Updated E_c:                           -0.1597193943 H, -2.6959591151e-06 H
+Updated Band Energy:                   -3.8666922180 H, -5.0532722864e-03 H
+Total Energy:                          -7.3359351154 H, -1.8814371430e-03 H
+Energy Residual:                        -1.463e-07
+Density Residual:                      4.576e-06
+
+
+
+
+
+SCF Count  11
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88047732 -1.10573758]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88047732 -1.10573743]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.90034298215e-06
+Computing Vcoulomb and updating Veff took:    1.3011 seconds. 
+Band energies before Veff update: -3.866692 H, -5.05e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359045706 H, -1.8508923603e-03 H
+Orbital Energy:            [-2.88049033 -1.10574179]
+New order:  [0 1]
+Fermi energy:  -1.105741786364898
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866722 H, -5.08e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88049033 -0.10574179]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8804903346 H, -1.1057417864 H
+Updated V_coulomb:                      7.9748662574 Hartree
+Updated V_x:                           -1.9898675354 Hartree
+Updated V_c:                           -0.1804722834 Hartree
+Updated E_x:                           -1.4924006515 H, -7.8567940103e-04 H
+Updated E_c:                           -0.1597185448 H, -1.8465069730e-06 H
+Updated Band Energy:                   -3.8667224556 H, -5.0835099271e-03 H
+Total Energy:                          -7.3359349619 H, -1.8812836462e-03 H
+Energy Residual:                        1.535e-07
+Density Residual:                      3.900e-06
+
+
+
+
+
+SCF Count  12
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88049033 -1.10574179]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88049033 -1.10574181]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.29429102149e-06
+Computing Vcoulomb and updating Veff took:    1.3110 seconds. 
+Band energies before Veff update: -3.866722 H, -5.08e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359086616 H, -1.8549833625e-03 H
+Orbital Energy:            [-2.88050159 -1.10574563]
+New order:  [0 1]
+Fermi energy:  -1.1057456265023176
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866749 H, -5.11e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88050159 -0.10574563]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8805015858 H, -1.1057456265 H
+Updated V_coulomb:                      7.9748101350 Hartree
+Updated V_x:                           -1.9898609125 Hartree
+Updated V_c:                           -0.1804714607 Hartree
+Updated E_x:                           -1.4923956844 H, -7.8071223824e-04 H
+Updated E_c:                           -0.1597178062 H, -1.1078907576e-06 H
+Updated Band Energy:                   -3.8667487981 H, -5.1098524019e-03 H
+Total Energy:                          -7.3359349830 H, -1.8813047898e-03 H
+Energy Residual:                        -2.114e-08
+Density Residual:                      3.294e-06
+
+
+
+
+
+SCF Count  13
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88050158 -1.10574563]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88050158 -1.10574555]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.80077141457e-06
+Computing Vcoulomb and updating Veff took:    1.3025 seconds. 
+Band energies before Veff update: -3.866749 H, -5.11e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359120899 H, -1.8584116343e-03 H
+Orbital Energy:            [-2.88051132 -1.10574888]
+New order:  [0 1]
+Fermi energy:  -1.1057488789929104
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866772 H, -5.13e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88051132 -0.10574888]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8805113200 H, -1.1057488790 H
+Updated V_coulomb:                      7.9747615522 Hartree
+Updated V_x:                           -1.9898552682 Hartree
+Updated V_c:                           -0.1804707450 Hartree
+Updated E_x:                           -1.4923914512 H, -7.7647907326e-04 H
+Updated E_c:                           -0.1597171639 H, -4.6561904377e-07 H
+Updated Band Energy:                   -3.8667715189 H, -5.1325732226e-03 H
+Total Energy:                          -7.3359348969 H, -1.8812186546e-03 H
+Energy Residual:                        8.614e-08
+Density Residual:                      2.801e-06
+
+
+
+
+
+SCF Count  14
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88051132 -1.10574888]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88051132 -1.10574887]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.40408031095e-06
+Computing Vcoulomb and updating Veff took:    1.3420 seconds. 
+Band energies before Veff update: -3.866772 H, -5.13e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359150730 H, -1.8613947476e-03 H
+Orbital Energy:            [-2.88051976 -1.10575178]
+New order:  [0 1]
+Fermi energy:  -1.105751778536919
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866791 H, -5.15e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88051976 -0.10575178]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8805197647 H, -1.1057517785 H
+Updated V_coulomb:                      7.9747193893 Hartree
+Updated V_x:                           -1.9898504240 Hartree
+Updated V_c:                           -0.1804701218 Hartree
+Updated E_x:                           -1.4923878180 H, -7.7284587030e-04 H
+Updated E_c:                           -0.1597166048 H, 9.3561292352e-08 H
+Updated Band Energy:                   -3.8667913078 H, -5.1523621443e-03 H
+Total Energy:                          -7.3359348794 H, -1.8812011838e-03 H
+Energy Residual:                        1.747e-08
+Density Residual:                      2.404e-06
+
+
+
+
+
+SCF Count  15
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88051976 -1.10575178]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88051976 -1.10575173]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.07852056529e-06
+Computing Vcoulomb and updating Veff took:    1.3057 seconds. 
+Band energies before Veff update: -3.866791 H, -5.15e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359175883 H, -1.8639100848e-03 H
+Orbital Energy:            [-2.88052711 -1.10575427]
+New order:  [0 1]
+Fermi energy:  -1.1057542720273617
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866808 H, -5.17e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88052711 -0.10575427]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8805271090 H, -1.1057542720 H
+Updated V_coulomb:                      7.9746827118 Hartree
+Updated V_x:                           -1.9898462392 Hartree
+Updated V_c:                           -0.1804695785 Hartree
+Updated E_x:                           -1.4923846794 H, -7.6970731031e-04 H
+Updated E_c:                           -0.1597161174 H, 5.8096038569e-07 H
+Updated Band Energy:                   -3.8668084901 H, -5.1695443831e-03 H
+Total Energy:                          -7.3359348250 H, -1.8811467687e-03 H
+Energy Residual:                        5.442e-08
+Density Residual:                      2.079e-06
+
+
+
+
+
+SCF Count  16
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88052711 -1.10575427]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88052711 -1.10575425]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.80539909317e-06
+Computing Vcoulomb and updating Veff took:    1.3045 seconds. 
+Band energies before Veff update: -3.866808 H, -5.17e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359197742 H, -1.8660959405e-03 H
+Orbital Energy:            [-2.88053351 -1.10575647]
+New order:  [0 1]
+Fermi energy:  -1.1057564712005443
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866823 H, -5.18e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88053351 -0.10575647]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8805335087 H, -1.1057564712 H
+Updated V_coulomb:                      7.9746507485 Hartree
+Updated V_x:                           -1.9898426066 Hartree
+Updated V_c:                           -0.1804691045 Hartree
+Updated E_x:                           -1.4923819549 H, -7.6698280655e-04 H
+Updated E_c:                           -0.1597156921 H, 1.0061927160e-06 H
+Updated Band Energy:                   -3.8668234886 H, -5.1845429021e-03 H
+Total Energy:                          -7.3359347989 H, -1.8811206247e-03 H
+Energy Residual:                        2.614e-08
+Density Residual:                      1.805e-06
+
+
+
+
+
+SCF Count  17
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88053351 -1.10575647]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88053351 -1.10575644]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.57221380356e-06
+Computing Vcoulomb and updating Veff took:    1.3121 seconds. 
+Band energies before Veff update: -3.866823 H, -5.18e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359216522 H, -1.8679739086e-03 H
+Orbital Energy:            [-2.88053909 -1.10575838]
+New order:  [0 1]
+Fermi energy:  -1.1057583770837016
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866837 H, -5.20e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88053909 -0.10575838]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8805390915 H, -1.1057583771 H
+Updated V_coulomb:                      7.9746228635 Hartree
+Updated V_x:                           -1.9898394436 Hartree
+Updated V_c:                           -0.1804686906 Hartree
+Updated E_x:                           -1.4923795827 H, -7.6461058238e-04 H
+Updated E_c:                           -0.1597153209 H, 1.3773979826e-06 H
+Updated Band Energy:                   -3.8668365602 H, -5.1976144561e-03 H
+Total Energy:                          -7.3359347613 H, -1.8810830511e-03 H
+Energy Residual:                        3.757e-08
+Density Residual:                      1.572e-06
+
+
+
+
+
+SCF Count  18
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88053909 -1.10575838]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88053909 -1.10575836]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.37104092345e-06
+Computing Vcoulomb and updating Veff took:    1.3077 seconds. 
+Band energies before Veff update: -3.866837 H, -5.20e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359232922 H, -1.8696139640e-03 H
+Orbital Energy:            [-2.88054396 -1.10576005]
+New order:  [0 1]
+Fermi energy:  -1.105760049421753
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866848 H, -5.21e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88054396 -0.10576005]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8805439650 H, -1.1057600494 H
+Updated V_coulomb:                      7.9745985214 Hartree
+Updated V_x:                           -1.9898366848 Hartree
+Updated V_c:                           -0.1804683292 Hartree
+Updated E_x:                           -1.4923775136 H, -7.6254149630e-04 H
+Updated E_c:                           -0.1597149968 H, 1.7015578940e-06 H
+Updated Band Energy:                   -3.8668479793 H, -5.2090336391e-03 H
+Total Energy:                          -7.3359347364 H, -1.8810581043e-03 H
+Energy Residual:                        2.495e-08
+Density Residual:                      1.371e-06
+
+
+
+
+
+SCF Count  19
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88054396 -1.10576005]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88054396 -1.10576003]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.19634626047e-06
+Computing Vcoulomb and updating Veff took:    1.3036 seconds. 
+Band energies before Veff update: -3.866848 H, -5.21e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359247161 H, -1.8710378005e-03 H
+Orbital Energy:            [-2.88054822 -1.1057615 ]
+New order:  [0 1]
+Fermi energy:  -1.1057615043364575
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866858 H, -5.22e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88054822 -0.1057615 ]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8805482203 H, -1.1057615043 H
+Updated V_coulomb:                      7.9745772663 Hartree
+Updated V_x:                           -1.9898342766 Hartree
+Updated V_c:                           -0.1804680135 Hartree
+Updated E_x:                           -1.4923757074 H, -7.6073530809e-04 H
+Updated E_c:                           -0.1597147136 H, 1.9846858546e-06 H
+Updated Band Energy:                   -3.8668579449 H, -5.2189992073e-03 H
+Total Energy:                          -7.3359347090 H, -1.8810307404e-03 H
+Energy Residual:                        2.736e-08
+Density Residual:                      1.196e-06
+
+
+
+
+
+SCF Count  20
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88054822 -1.1057615 ]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction../src/dataStructures/TreeStruct_CC.py:130: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+
+Orbital Energy:            [-2.88054822 -1.10576149]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.04417307603e-06
+Computing Vcoulomb and updating Veff took:    1.3007 seconds. 
+Band energies before Veff update: -3.866858 H, -5.22e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359259614 H, -1.8722831025e-03 H
+Orbital Energy:            [-2.88055194 -1.10576278]
+New order:  [0 1]
+Fermi energy:  -1.1057627778454309
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866867 H, -5.23e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88055194 -0.10576278]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8805519363 H, -1.1057627778 H
+Updated V_coulomb:                      7.9745587046 Hartree
+Updated V_x:                           -1.9898321735 Hartree
+Updated V_c:                           -0.1804677378 Hartree
+Updated E_x:                           -1.4923741301 H, -7.5915802329e-04 H
+Updated E_c:                           -0.1597144663 H, 2.2320042583e-06 H
+Updated Band Energy:                   -3.8668666505 H, -5.2277047967e-03 H
+Total Energy:                          -7.3359346880 H, -1.8810097189e-03 H
+Energy Residual:                        2.102e-08
+Density Residual:                      1.044e-06
+
+
+
+
+
+SCF Count  21
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.88055193 -1.10576278]
+Orbital 0 error:        -1.881e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.88055193 -1.10576276]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  9.11399304204e-07
+Computing Vcoulomb and updating Veff took:    1.3030 seconds. 
+Band energies before Veff update: -3.866867 H, -5.23e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3359270466 H, -1.8733683790e-03 H
+Orbital Energy:            [-2.88055518 -1.10576389]
+New order:  [0 1]
+Fermi energy:  -1.1057638879496228
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.866874 H, -5.24e-03 H
+Orbital Energy Errors after Veff Update:  [-1.88055518 -0.10576389]
+Orbital 0 error: -1.881e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8805551815 H, -1.1057638879 H
+Updated V_coulomb:                      7.9745424948 Hartree
+Updated V_x:                           -1.9898303368 Hartree
+Updated V_c:                           -0.1804674969 Hartree
+Updated E_x:                           -1.4923727526 H, -7.5778047412e-04 H
+Updated E_c:                           -0.1597142503 H, 2.4480563953e-06 H
+Updated Band Energy:                   -3.8668742507 H, -5.2353050518e-03 H
+Total Energy:                          -7.3359346674 H, -1.8809891219e-03 H
+Energy Residual:                        2.060e-08
+Density Residual:                      9.114e-07
+
+
+
+Convergence to a tolerance of 0.000001 took 22 iterations
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/lithiumAtom.csv', '/home/njvaughn/LithiumIterationResults/LW3_500.csv', 3, 2, -7.3340536782581447, -1.4916149721121696, -0.15971669832262905, -3.8616389456972078, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/lithiumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z3/singleAtomData/
+Atom with Z=3 will get 2 atomic orbitals initialized.
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 3 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  254976
+Initializing orbitals for atom Z = 3 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       4553 
+Total Number of Leaf Cells:  3984 
+Total Number of Gridpoints:  254976 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  4 
+Construction time:           4.21 seconds.
+Closest gridpoint to origin:  [-0.00074336394031946501, -0.00074336394031946501, -0.00074336394031946501]
+For a distance of:  0.001287544113147912
+Part of a cell centered at:  [-0.009765625, -0.009765625, -0.009765625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    254976
+Threads per block:    512
+Blocks per grid:      498
+[-7.3340536782581447, -1.4916149721121696, -0.15971669832262905, -3.8616389456972078]
+Computing Vcoulomb took:    1.0013 seconds. 
+Update orbital energies after computing the initial Veff.
+Orbital Energy:            [-2.88147332 -1.10597209]
+New order:  [0 1]
+Fermi energy:  -1.105972092362457
+Occupations:  [ 2.  1.]
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87973451 -1.10597209]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87973451 -1.10560552]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.00038621406033
+Computing Vcoulomb and updating Veff took:    2.0937 seconds. 
+Band energies before Veff update: -3.865075 H, -3.44e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3345349358 H, -4.8125755117e-04 H
+Orbital Energy:            [-2.87950763 -1.10560158]
+New order:  [0 1]
+Fermi energy:  -1.1056015847910576
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864617 H, -2.98e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87950763 -0.10560158]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.056e-01
+Orbital Energies:                      -2.8795076349 H, -1.1056015848 H
+Updated V_coulomb:                      7.9748965590 Hartree
+Updated V_x:                           -1.9889365016 Hartree
+Updated V_c:                           -0.1804602822 Hartree
+Updated E_x:                           -1.4917023762 H, -8.7404117908e-05 H
+Updated E_c:                           -0.1597065325 H, 1.0165804663e-05 H
+Updated Band Energy:                   -3.8646168545 H, -2.9779088328e-03 H
+Total Energy:                          -7.3340772589 H, -2.3580667655e-05 H
+Energy Residual:                        -5.834e+00
+Density Residual:                      3.862e-04
+
+
+
+
+
+SCF Count  2
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87951968 -1.10560158]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87951968 -1.10564511]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000133969017447
+Computing Vcoulomb and updating Veff took:    2.1115 seconds. 
+Band energies before Veff update: -3.864684 H, -3.05e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3342982135 H, -2.4453522454e-04 H
+Orbital Energy:            [-2.87944069 -1.10564978]
+New order:  [0 1]
+Fermi energy:  -1.1056497754070216
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864531 H, -2.89e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87944069 -0.10564978]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.056e-01
+Orbital Energies:                      -2.8794406869 H, -1.1056497754 H
+Updated V_coulomb:                      7.9752570543 Hartree
+Updated V_x:                           -1.9890442259 Hartree
+Updated V_c:                           -0.1804618992 Hartree
+Updated E_x:                           -1.4917831694 H, -1.6819733347e-04 H
+Updated E_c:                           -0.1597081725 H, 8.5258291318e-06 H
+Updated Band Energy:                   -3.8645311492 H, -2.8922035409e-03 H
+Total Energy:                          -7.3341448931 H, -9.1214890329e-05 H
+Energy Residual:                        -6.763e-05
+Density Residual:                      1.340e-04
+
+
+
+
+
+SCF Count  3
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87944105 -1.10564978]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87944105 -1.10564153]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  5.02208220923e-05
+Computing Vcoulomb and updating Veff took:    2.0840 seconds. 
+Band energies before Veff update: -3.864524 H, -2.88e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341471000 H, -9.3421719130e-05 H
+Orbital Energy:            [-2.87943192 -1.10565007]
+New order:  [0 1]
+Fermi energy:  -1.1056500749319862
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864514 H, -2.87e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87943192 -0.10565007]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8794319238 H, -1.1056500749 H
+Updated V_coulomb:                      7.9752873807 Hartree
+Updated V_x:                           -1.9890667249 Hartree
+Updated V_c:                           -0.1804608699 Hartree
+Updated E_x:                           -1.4918000436 H, -1.8507153323e-04 H
+Updated E_c:                           -0.1597073300 H, 9.3683238578e-06 H
+Updated Band Energy:                   -3.8645139225 H, -2.8749767723e-03 H
+Total Energy:                          -7.3341373917 H, -8.3713416928e-05 H
+Energy Residual:                        7.501e-06
+Density Residual:                      5.022e-05
+
+
+
+
+
+SCF Count  4
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8794321  -1.10565007]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8794321  -1.10565461]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.50768614897e-05
+Computing Vcoulomb and updating Veff took:    2.0874 seconds. 
+Band energies before Veff update: -3.864519 H, -2.88e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340937439 H, -4.0065656645e-05 H
+Orbital Energy:            [-2.87945142 -1.10566453]
+New order:  [0 1]
+Fermi energy:  -1.1056645300452492
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864567 H, -2.93e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87945142 -0.10566453]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8794514214 H, -1.1056645300 H
+Updated V_coulomb:                      7.9751843365 Hartree
+Updated V_x:                           -1.9890557942 Hartree
+Updated V_c:                           -0.1804588063 Hartree
+Updated E_x:                           -1.4917918456 H, -1.7687352882e-04 H
+Updated E_c:                           -0.1597055114 H, 1.1186966364e-05 H
+Updated Band Energy:                   -3.8645673728 H, -2.9284270593e-03 H
+Total Energy:                          -7.3341422975 H, -8.8619226578e-05 H
+Energy Residual:                        -4.906e-06
+Density Residual:                      3.508e-05
+
+
+
+
+
+SCF Count  5
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8794515  -1.10566453]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8794515  -1.10566229]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.85146132572e-05
+Computing Vcoulomb and updating Veff took:    2.1091 seconds. 
+Band energies before Veff update: -3.864565 H, -2.93e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340748001 H, -2.1121841550e-05 H
+Orbital Energy:            [-2.87947923 -1.10567225]
+New order:  [0 1]
+Fermi energy:  -1.1056722461987176
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864631 H, -2.99e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87947923 -0.10567225]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8794792345 H, -1.1056722462 H
+Updated V_coulomb:                      7.9750428131 Hartree
+Updated V_x:                           -1.9890354213 Hartree
+Updated V_c:                           -0.1804565043 Hartree
+Updated E_x:                           -1.4917765660 H, -1.6159389916e-04 H
+Updated E_c:                           -0.1597034603 H, 1.3237984424e-05 H
+Updated Band Energy:                   -3.8646307151 H, -2.9917694198e-03 H
+Total Energy:                          -7.3341402224 H, -8.6544116102e-05 H
+Energy Residual:                        2.075e-06
+Density Residual:                      2.851e-05
+
+
+
+
+
+SCF Count  6
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87947927 -1.10567225]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87947927 -1.10567358]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.08041668067e-05
+Computing Vcoulomb and updating Veff took:    2.0925 seconds. 
+Band energies before Veff update: -3.864632 H, -2.99e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340763274 H, -2.2649108271e-05 H
+Orbital Energy:            [-2.87950722 -1.10568299]
+New order:  [0 1]
+Fermi energy:  -1.1056829939342743
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864697 H, -3.06e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87950722 -0.10568299]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8795072189 H, -1.1056829939 H
+Updated V_coulomb:                      7.9749014923 Hartree
+Updated V_x:                           -1.9890149403 Hartree
+Updated V_c:                           -0.1804542938 Hartree
+Updated E_x:                           -1.4917612052 H, -1.4623309911e-04 H
+Updated E_c:                           -0.1597014855 H, 1.5212806750e-05 H
+Updated Band Energy:                   -3.8646974316 H, -3.0584859254e-03 H
+Total Energy:                          -7.3341416344 H, -8.7956142973e-05 H
+Energy Residual:                        -1.412e-06
+Density Residual:                      2.080e-05
+
+
+
+
+
+SCF Count  7
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87950723 -1.10568299]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87950723 -1.10568215]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.41543978752e-05
+Computing Vcoulomb and updating Veff took:    2.0097 seconds. 
+Band energies before Veff update: -3.864697 H, -3.06e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340814144 H, -2.7736189705e-05 H
+Orbital Energy:            [-2.87953262 -1.10569076]
+New order:  [0 1]
+Fermi energy:  -1.1056907634943232
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864756 H, -3.12e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87953262 -0.10569076]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8795326229 H, -1.1056907635 H
+Updated V_coulomb:                      7.9747733793 Hartree
+Updated V_x:                           -1.9889971594 Hartree
+Updated V_c:                           -0.1804522887 Hartree
+Updated E_x:                           -1.4917478696 H, -1.3289745590e-04 H
+Updated E_c:                           -0.1596996936 H, 1.7004722053e-05 H
+Updated Band Energy:                   -3.8647560092 H, -3.1170635324e-03 H
+Total Energy:                          -7.3341408139 H, -8.7135690419e-05 H
+Energy Residual:                        8.205e-07
+Density Residual:                      1.415e-05
+
+
+
+
+
+SCF Count  8
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87953263 -1.10569076]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87953263 -1.10569119]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  9.56269031375e-06
+Computing Vcoulomb and updating Veff took:    2.0799 seconds. 
+Band energies before Veff update: -3.864756 H, -3.12e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340887857 H, -3.5107395552e-05 H
+Orbital Energy:            [-2.87955497 -1.10569897]
+New order:  [0 1]
+Fermi energy:  -1.1056989685730094
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864809 H, -3.17e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87955497 -0.10569897]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8795549708 H, -1.1056989686 H
+Updated V_coulomb:                      7.9746606516 Hartree
+Updated V_x:                           -1.9889823205 Hartree
+Updated V_c:                           -0.1804505069 Hartree
+Updated E_x:                           -1.4917367404 H, -1.2176828674e-04 H
+Updated E_c:                           -0.1596981018 H, 1.8596549742e-05 H
+Updated Band Energy:                   -3.8648089101 H, -3.1699643928e-03 H
+Total Energy:                          -7.3341412507 H, -8.7572394088e-05 H
+Energy Residual:                        -4.367e-07
+Density Residual:                      9.563e-06
+
+
+
+
+
+SCF Count  9
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87955497 -1.10569897]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87955497 -1.10569861]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  6.79602246946e-06
+Computing Vcoulomb and updating Veff took:    2.0772 seconds. 
+Band energies before Veff update: -3.864809 H, -3.17e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340948544 H, -4.1176156639e-05 H
+Orbital Energy:            [-2.87957451 -1.10570556]
+New order:  [0 1]
+Fermi energy:  -1.105705564999063
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864855 H, -3.22e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87957451 -0.10570556]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8795745074 H, -1.1057055650 H
+Updated V_coulomb:                      7.9745620587 Hartree
+Updated V_x:                           -1.9889699387 Hartree
+Updated V_c:                           -0.1804489342 Hartree
+Updated E_x:                           -1.4917274540 H, -1.1248189607e-04 H
+Updated E_c:                           -0.1596966973 H, 2.0001002536e-05 H
+Updated Band Energy:                   -3.8648545799 H, -3.2156341607e-03 H
+Total Energy:                          -7.3341408877 H, -8.7209413079e-05 H
+Energy Residual:                        3.630e-07
+Density Residual:                      6.796e-06
+
+
+
+
+
+SCF Count  10
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8795745  -1.10570556]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8795745  -1.10570568]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  5.23710039359e-06
+Computing Vcoulomb and updating Veff took:    2.0872 seconds. 
+Band energies before Veff update: -3.864855 H, -3.22e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341005161 H, -4.6837863077e-05 H
+Orbital Energy:            [-2.87959165 -1.10571188]
+New order:  [0 1]
+Fermi energy:  -1.1057118797246566
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864895 H, -3.26e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87959165 -0.10571188]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8795916457 H, -1.1057118797 H
+Updated V_coulomb:                      7.9744755542 Hartree
+Updated V_x:                           -1.9889594497 Hartree
+Updated V_c:                           -0.1804475469 Hartree
+Updated E_x:                           -1.4917195873 H, -1.0461518514e-04 H
+Updated E_c:                           -0.1596954588 H, 2.1239520460e-05 H
+Updated Band Energy:                   -3.8648951712 H, -3.2562254575e-03 H
+Total Energy:                          -7.3341409977 H, -8.7319443077e-05 H
+Energy Residual:                        -1.100e-07
+Density Residual:                      5.237e-06
+
+
+
+
+
+SCF Count  11
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87959164 -1.10571188]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87959164 -1.10571171]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  4.3197367127e-06
+Computing Vcoulomb and updating Veff took:    2.0789 seconds. 
+Band energies before Veff update: -3.864895 H, -3.26e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341050976 H, -5.1419382719e-05 H
+Orbital Energy:            [-2.87960675 -1.10571722]
+New order:  [0 1]
+Fermi energy:  -1.1057172151403225
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864931 H, -3.29e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87960675 -0.10571722]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796067480 H, -1.1057172151 H
+Updated V_coulomb:                      7.9743993360 Hartree
+Updated V_x:                           -1.9889504193 Hartree
+Updated V_c:                           -0.1804463224 Hartree
+Updated E_x:                           -1.4917128145 H, -9.7842356001e-05 H
+Updated E_c:                           -0.1596943658 H, 2.2332566481e-05 H
+Updated Band Energy:                   -3.8649307112 H, -3.2917654916e-03 H
+Total Energy:                          -7.3341408178 H, -8.7139528183e-05 H
+Energy Residual:                        1.799e-07
+Density Residual:                      4.320e-06
+
+
+
+
+
+SCF Count  12
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87960674 -1.10571722]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87960674 -1.10571722]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.70768091414e-06
+Computing Vcoulomb and updating Veff took:    2.1171 seconds. 
+Band energies before Veff update: -3.864931 H, -3.29e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341092105 H, -5.5532211163e-05 H
+Orbital Energy:            [-2.87962011 -1.10572211]
+New order:  [0 1]
+Fermi energy:  -1.1057221108579045
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864962 H, -3.32e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87962011 -0.10572211]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796201054 H, -1.1057221109 H
+Updated V_coulomb:                      7.9743319482 Hartree
+Updated V_x:                           -1.9889425439 Hartree
+Updated V_c:                           -0.1804452404 Hartree
+Updated E_x:                           -1.4917069080 H, -9.1935848967e-05 H
+Updated E_c:                           -0.1596934000 H, 2.3298274623e-05 H
+Updated Band Energy:                   -3.8649623217 H, -3.3233759944e-03 H
+Total Energy:                          -7.3341408194 H, -8.7141183273e-05 H
+Energy Residual:                        -1.655e-09
+Density Residual:                      3.708e-06
+
+
+
+
+
+SCF Count  13
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8796201  -1.10572211]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8796201  -1.10572202]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.24180820405e-06
+Computing Vcoulomb and updating Veff took:    2.0719 seconds. 
+Band energies before Veff update: -3.864962 H, -3.32e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341127100 H, -5.9031750943e-05 H
+Orbital Energy:            [-2.87963194 -1.10572635]
+New order:  [0 1]
+Fermi energy:  -1.1057263463715004
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864990 H, -3.35e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87963194 -0.10572635]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796319407 H, -1.1057263464 H
+Updated V_coulomb:                      7.9742722662 Hartree
+Updated V_x:                           -1.9889356218 Hartree
+Updated V_c:                           -0.1804442840 Hartree
+Updated E_x:                           -1.4917017163 H, -8.6744210992e-05 H
+Updated E_c:                           -0.1596925464 H, 2.4151908287e-05 H
+Updated Band Energy:                   -3.8649902278 H, -3.3512820534e-03 H
+Total Energy:                          -7.3341407178 H, -8.7039536365e-05 H
+Energy Residual:                        1.016e-07
+Density Residual:                      3.242e-06
+
+
+
+
+
+SCF Count  14
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87963194 -1.10572635]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87963194 -1.10572632]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.85705894331e-06
+Computing Vcoulomb and updating Veff took:    2.1072 seconds. 
+Band energies before Veff update: -3.864990 H, -3.35e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341158608 H, -6.2182525597e-05 H
+Orbital Energy:            [-2.87964243 -1.10573016]
+New order:  [0 1]
+Fermi energy:  -1.1057301568364601
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.865015 H, -3.38e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87964243 -0.10573016]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796424342 H, -1.1057301568 H
+Updated V_coulomb:                      7.9742193751 Hartree
+Updated V_x:                           -1.9889295113 Hartree
+Updated V_c:                           -0.1804434385 Hartree
+Updated E_x:                           -1.4916971335 H, -8.2161376140e-05 H
+Updated E_c:                           -0.1596917917 H, 2.4906655141e-05 H
+Updated Band Energy:                   -3.8650150251 H, -3.3760794027e-03 H
+Total Energy:                          -7.3341406880 H, -8.7009731200e-05 H
+Energy Residual:                        2.981e-08
+Density Residual:                      2.857e-06
+
+
+
+
+
+SCF Count  15
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87964243 -1.10573016]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87964243 -1.1057301 ]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.52529139548e-06
+Computing Vcoulomb and updating Veff took:    2.0747 seconds. 
+Band energies before Veff update: -3.865015 H, -3.38e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341186227 H, -6.4944398102e-05 H
+Orbital Energy:            [-2.87965174 -1.10573349]
+New order:  [0 1]
+Fermi energy:  -1.1057334900297706
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.865037 H, -3.40e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87965174 -0.10573349]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796517355 H, -1.1057334900 H
+Updated V_coulomb:                      7.9741725117 Hartree
+Updated V_x:                           -1.9889241083 Hartree
+Updated V_c:                           -0.1804426909 Hartree
+Updated E_x:                           -1.4916930812 H, -7.8109088560e-05 H
+Updated E_c:                           -0.1596911244 H, 2.5573912976e-05 H
+Updated Band Energy:                   -3.8650369610 H, -3.3980153303e-03 H
+Total Energy:                          -7.3341406233 H, -8.6945044736e-05 H
+Energy Residual:                        6.469e-08
+Density Residual:                      2.525e-06
+
+
+
+
+
+SCF Count  16
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87965173 -1.10573349]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87965173 -1.10573346]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.23387200031e-06
+Computing Vcoulomb and updating Veff took:    2.0768 seconds. 
+Band energies before Veff update: -3.865037 H, -3.40e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341211034 H, -6.7425128557e-05 H
+Orbital Energy:            [-2.87965998 -1.10573646]
+New order:  [0 1]
+Fermi energy:  -1.1057364603068185
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.865056 H, -3.42e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87965998 -0.10573646]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796599757 H, -1.1057364603 H
+Updated V_coulomb:                      7.9741310094 Hartree
+Updated V_x:                           -1.9889193286 Hartree
+Updated V_c:                           -0.1804420301 Hartree
+Updated E_x:                           -1.4916894964 H, -7.4524305794e-05 H
+Updated E_c:                           -0.1596905346 H, 2.6163746936e-05 H
+Updated Band Energy:                   -3.8650564116 H, -3.4174659271e-03 H
+Total Energy:                          -7.3341405887 H, -8.6910395528e-05 H
+Energy Residual:                        3.465e-08
+Density Residual:                      2.234e-06
+
+
+
+
+
+SCF Count  17
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87965997 -1.10573646]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87965997 -1.10573642]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.97574218392e-06
+Computing Vcoulomb and updating Veff took:    2.0784 seconds. 
+Band energies before Veff update: -3.865056 H, -3.42e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341232978 H, -6.9619584775e-05 H
+Orbital Energy:            [-2.87966727 -1.10573907]
+New order:  [0 1]
+Fermi energy:  -1.1057390718530258
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.865074 H, -3.43e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87966727 -0.10573907]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796672705 H, -1.1057390719 H
+Updated V_coulomb:                      7.9740942783 Hartree
+Updated V_x:                           -1.9889151012 Hartree
+Updated V_c:                           -0.1804414461 Hartree
+Updated E_x:                           -1.4916863259 H, -7.1353797887e-05 H
+Updated E_c:                           -0.1596900133 H, 2.6685047342e-05 H
+Updated Band Energy:                   -3.8650736128 H, -3.4346671153e-03 H
+Total Energy:                          -7.3341405438 H, -8.6865590726e-05 H
+Energy Residual:                        4.480e-08
+Density Residual:                      1.976e-06
+
+
+
+
+
+SCF Count  18
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87966727 -1.10573907]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87966727 -1.10573905]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.74662434103e-06
+Computing Vcoulomb and updating Veff took:    2.0825 seconds. 
+Band energies before Veff update: -3.865074 H, -3.43e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341252575 H, -7.1579273939e-05 H
+Orbital Energy:            [-2.87967372 -1.10574139]
+New order:  [0 1]
+Fermi energy:  -1.1057413883625216
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.865089 H, -3.45e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87967372 -0.10574139]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796737243 H, -1.1057413884 H
+Updated V_coulomb:                      7.9740617882 Hartree
+Updated V_x:                           -1.9889113638 Hartree
+Updated V_c:                           -0.1804409300 Hartree
+Updated E_x:                           -1.4916835228 H, -6.8550736397e-05 H
+Updated E_c:                           -0.1596895526 H, 2.7145726803e-05 H
+Updated Band Energy:                   -3.8650888370 H, -3.4498912819e-03 H
+Total Energy:                          -7.3341405128 H, -8.6834519709e-05 H
+Energy Residual:                        3.107e-08
+Density Residual:                      1.747e-06
+
+
+
+
+
+SCF Count  19
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87967372 -1.10574139]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87967372 -1.10574136]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.54321975547e-06
+Computing Vcoulomb and updating Veff took:    2.0825 seconds. 
+Band energies before Veff update: -3.865089 H, -3.45e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341269926 H, -7.3314337235e-05 H
+Orbital Energy:            [-2.87967943 -1.10574343]
+New order:  [0 1]
+Fermi energy:  -1.1057434300438314
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.865102 H, -3.46e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87967943 -0.10574343]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796794310 H, -1.1057434300 H
+Updated V_coulomb:                      7.9740330636 Hartree
+Updated V_x:                           -1.9889080608 Hartree
+Updated V_c:                           -0.1804404738 Hartree
+Updated E_x:                           -1.4916810456 H, -6.6073520915e-05 H
+Updated E_c:                           -0.1596891455 H, 2.7552807661e-05 H
+Updated Band Energy:                   -3.8651022919 H, -3.4633461910e-03 H
+Total Energy:                          -7.3341404801 H, -8.6801885542e-05 H
+Energy Residual:                        3.263e-08
+Density Residual:                      1.543e-06
+
+
+
+
+
+SCF Count  20
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87967943 -1.10574343]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction../src/dataStructures/TreeStruct_CC.py:130: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+
+Orbital Energy:            [-2.87967943 -1.10574341]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.36285845405e-06
+Computing Vcoulomb and updating Veff took:    2.0827 seconds. 
+Band energies before Veff update: -3.865102 H, -3.46e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341285343 H, -7.4856013521e-05 H
+Orbital Energy:            [-2.87968447 -1.10574524]
+New order:  [0 1]
+Fermi energy:  -1.1057452371814889
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.865114 H, -3.48e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87968447 -0.10574524]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796844748 H, -1.1057452372 H
+Updated V_coulomb:                      7.9740076771 Hartree
+Updated V_x:                           -1.9889051427 Hartree
+Updated V_c:                           -0.1804400708 Hartree
+Updated E_x:                           -1.4916788570 H, -6.3884901434e-05 H
+Updated E_c:                           -0.1596887858 H, 2.7912530210e-05 H
+Updated Band Energy:                   -3.8651141867 H, -3.4752409594e-03 H
+Total Energy:                          -7.3341404546 H, -8.6776335216e-05 H
+Energy Residual:                        2.555e-08
+Density Residual:                      1.363e-06
+
+
+
+
+
+SCF Count  21
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87968447 -1.10574524]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87968447 -1.10574522]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.20311525192e-06
+Computing Vcoulomb and updating Veff took:    2.0817 seconds. 
+Band energies before Veff update: -3.865114 H, -3.48e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341298978 H, -7.6219517321e-05 H
+Orbital Energy:            [-2.87968893 -1.10574683]
+New order:  [0 1]
+Fermi energy:  -1.105746831927092
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.865125 H, -3.49e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87968893 -0.10574683]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796889314 H, -1.1057468319 H
+Updated V_coulomb:                      7.9739852468 Hartree
+Updated V_x:                           -1.9889025650 Hartree
+Updated V_c:                           -0.1804397145 Hartree
+Updated E_x:                           -1.4916769237 H, -6.1951630720e-05 H
+Updated E_c:                           -0.1596884679 H, 2.8230423767e-05 H
+Updated Band Energy:                   -3.8651246946 H, -3.4857489491e-03 H
+Total Energy:                          -7.3341404302 H, -8.6751921819e-05 H
+Energy Residual:                        2.441e-08
+Density Residual:                      1.203e-06
+
+
+
+
+
+SCF Count  22
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87968893 -1.10574683]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87968893 -1.10574681]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.06181346886e-06
+Computing Vcoulomb and updating Veff took:    2.0762 seconds. 
+Band energies before Veff update: -3.865125 H, -3.49e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341311053 H, -7.7427065063e-05 H
+Orbital Energy:            [-2.87969287 -1.10574824]
+New order:  [0 1]
+Fermi energy:  -1.105748242225552
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.865134 H, -3.50e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87969287 -0.10574824]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796928684 H, -1.1057482422 H
+Updated V_coulomb:                      7.9739654314 Hartree
+Updated V_x:                           -1.9889002882 Hartree
+Updated V_c:                           -0.1804393996 Hartree
+Updated E_x:                           -1.4916752162 H, -6.0244058238e-05 H
+Updated E_c:                           -0.1596881869 H, 2.8511385979e-05 H
+Updated Band Energy:                   -3.8651339790 H, -3.4950332899e-03 H
+Total Energy:                          -7.3341404099 H, -8.6731664164e-05 H
+Energy Residual:                        2.026e-08
+Density Residual:                      1.062e-06
+
+
+
+
+
+SCF Count  23
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87969287 -1.10574824]
+Orbital 0 error:        -1.880e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87969287 -1.10574823]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  9.36943129641e-07
+Computing Vcoulomb and updating Veff took:    2.0844 seconds. 
+Band energies before Veff update: -3.865134 H, -3.50e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341321722 H, -7.8493902647e-05 H
+Orbital Energy:            [-2.87969635 -1.10574949]
+New order:  [0 1]
+Fermi energy:  -1.10574948774458
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.865142 H, -3.50e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87969635 -0.10574949]
+Orbital 0 error: -1.880e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8796963460 H, -1.1057494877 H
+Updated V_coulomb:                      7.9739479273 Hartree
+Updated V_x:                           -1.9888982773 Hartree
+Updated V_c:                           -0.1804391212 Hartree
+Updated E_x:                           -1.4916737080 H, -5.8735843263e-05 H
+Updated E_c:                           -0.1596879386 H, 2.8759746693e-05 H
+Updated Band Energy:                   -3.8651421797 H, -3.5032340312e-03 H
+Total Energy:                          -7.3341403914 H, -8.6713154160e-05 H
+Energy Residual:                        1.851e-08
+Density Residual:                      9.369e-07
+
+
+
+Convergence to a tolerance of 0.000001 took 24 iterations
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/lithiumAtom.csv', '/home/njvaughn/LithiumIterationResults/LW3_500.csv', 3, 2, -7.3340536782581447, -1.4916149721121696, -0.15971669832262905, -3.8616389456972078, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/lithiumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z3/singleAtomData/
+Atom with Z=3 will get 2 atomic orbitals initialized.
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 3 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  344576
+Initializing orbitals for atom Z = 3 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            1.50e+03 
+Total Number of Cells:       6153 
+Total Number of Leaf Cells:  5384 
+Total Number of Gridpoints:  344576 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  4 
+Construction time:           5.67 seconds.
+Closest gridpoint to origin:  [-0.00074336394031946501, -0.00074336394031946501, -0.00074336394031946501]
+For a distance of:  0.001287544113147912
+Part of a cell centered at:  [-0.009765625, -0.009765625, -0.009765625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    344576
+Threads per block:    512
+Blocks per grid:      673
+[-7.3340536782581447, -1.4916149721121696, -0.15971669832262905, -3.8616389456972078]
+Computing Vcoulomb took:    1.4249 seconds. 
+Update orbital energies after computing the initial Veff.
+Orbital Energy:            [-2.88067072 -1.10593907]
+New order:  [0 1]
+Fermi energy:  -1.1059390699488434
+Occupations:  [ 2.  1.]
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87921983 -1.10593907]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87921983 -1.1056095 ]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000371138500347
+Computing Vcoulomb and updating Veff took:    2.8440 seconds. 
+Band energies before Veff update: -3.864049 H, -2.41e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3343735532 H, -3.1987492333e-04 H
+Orbital Energy:            [-2.87902017 -1.1056073 ]
+New order:  [0 1]
+Fermi energy:  -1.1056072994179824
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863648 H, -2.01e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87902017 -0.1056073 ]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.056e-01
+Orbital Energies:                      -2.8790201712 H, -1.1056072994 H
+Updated V_coulomb:                      7.9766065632 Hartree
+Updated V_x:                           -1.9889001214 Hartree
+Updated V_c:                           -0.1804588530 Hartree
+Updated E_x:                           -1.4916750911 H, -6.0118940318e-05 H
+Updated E_c:                           -0.1597050001 H, 1.1698221441e-05 H
+Updated Band Energy:                   -3.8636476418 H, -2.0086961420e-03 H
+Total Energy:                          -7.3339720402 H, 8.1638101087e-05 H
+Energy Residual:                        -5.834e+00
+Density Residual:                      3.711e-04
+
+
+
+
+
+SCF Count  2
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87902699 -1.1056073 ]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87902699 -1.10564903]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000149338118098
+Computing Vcoulomb and updating Veff took:    2.8389 seconds. 
+Band energies before Veff update: -3.863703 H, -2.06e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3341674223 H, -1.1374402764e-04 H
+Orbital Energy:            [-2.87895401 -1.10565496]
+New order:  [0 1]
+Fermi energy:  -1.105654959812257
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863563 H, -1.92e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87895401 -0.10565496]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8789540138 H, -1.1056549598 H
+Updated V_coulomb:                      7.9769397273 Hartree
+Updated V_x:                           -1.9890065523 Hartree
+Updated V_c:                           -0.1804600775 Hartree
+Updated E_x:                           -1.4917549142 H, -1.3994212840e-04 H
+Updated E_c:                           -0.1597062774 H, 1.0420901072e-05 H
+Updated Band Energy:                   -3.8635629873 H, -1.9240416379e-03 H
+Total Energy:                          -7.3340274129 H, 2.6265381984e-05 H
+Energy Residual:                        -5.537e-05
+Density Residual:                      1.493e-04
+
+
+
+
+
+SCF Count  3
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87895422 -1.10565496]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87895422 -1.10564671]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  5.17579023362e-05
+Computing Vcoulomb and updating Veff took:    2.8324 seconds. 
+Band energies before Veff update: -3.863555 H, -1.92e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340298258 H, 2.3852444474e-05 H
+Orbital Energy:            [-2.87894433 -1.10565625]
+New order:  [0 1]
+Fermi energy:  -1.1056562512420582
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863545 H, -1.91e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87894433 -0.10565625]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8789443312 H, -1.1056562512 H
+Updated V_coulomb:                      7.9769742292 Hartree
+Updated V_x:                           -1.9890353599 Hartree
+Updated V_c:                           -0.1804589192 Hartree
+Updated E_x:                           -1.4917765199 H, -1.6154780463e-04 H
+Updated E_c:                           -0.1597053215 H, 1.1376811763e-05 H
+Updated Band Energy:                   -3.8635449136 H, -1.9059679061e-03 H
+Total Energy:                          -7.3340195905 H, 3.4087754311e-05 H
+Energy Residual:                        7.822e-06
+Density Residual:                      5.176e-05
+
+
+
+
+
+SCF Count  4
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87894443 -1.10565625]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87894443 -1.10566076]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.75000830418e-05
+Computing Vcoulomb and updating Veff took:    2.8690 seconds. 
+Band energies before Veff update: -3.863550 H, -1.91e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339782536 H, 7.5424688100e-05 H
+Orbital Energy:            [-2.87896209 -1.10567152]
+New order:  [0 1]
+Fermi energy:  -1.10567151806485
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863596 H, -1.96e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87896209 -0.10567152]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8789620855 H, -1.1056715181 H
+Updated V_coulomb:                      7.9768792040 Hartree
+Updated V_x:                           -1.9890305431 Hartree
+Updated V_c:                           -0.1804567886 Hartree
+Updated E_x:                           -1.4917729073 H, -1.5793520749e-04 H
+Updated E_c:                           -0.1597034476 H, 1.3250758025e-05 H
+Updated Band Energy:                   -3.8635956891 H, -1.9567434023e-03 H
+Total Energy:                          -7.3340243142 H, 2.9364025594e-05 H
+Energy Residual:                        -4.724e-06
+Density Residual:                      1.750e-05
+
+
+
+
+
+SCF Count  5
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87896213 -1.10567152]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87896213 -1.10566926]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.37702833302e-05
+Computing Vcoulomb and updating Veff took:    2.8482 seconds. 
+Band energies before Veff update: -3.863594 H, -1.95e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339575432 H, 9.6135023617e-05 H
+Orbital Energy:            [-2.87898908 -1.10567996]
+New order:  [0 1]
+Fermi energy:  -1.1056799594425073
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863658 H, -2.02e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87898908 -0.10567996]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8789890842 H, -1.1056799594 H
+Updated V_coulomb:                      7.9767412404 Hartree
+Updated V_x:                           -1.9890140759 Hartree
+Updated V_c:                           -0.1804544126 Hartree
+Updated E_x:                           -1.4917605569 H, -1.4558482583e-04 H
+Updated E_c:                           -0.1597013341 H, 1.5364245524e-05 H
+Updated Band Energy:                   -3.8636581278 H, -2.0191821212e-03 H
+Total Energy:                          -7.3340221505 H, 3.1527763042e-05 H
+Energy Residual:                        2.164e-06
+Density Residual:                      1.377e-05
+
+
+
+
+
+SCF Count  6
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8789891  -1.10567996]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8789891  -1.10568128]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.27069470914e-05
+Computing Vcoulomb and updating Veff took:    2.8543 seconds. 
+Band energies before Veff update: -3.863659 H, -2.02e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339570987 H, 9.6579568814e-05 H
+Orbital Energy:            [-2.87901728 -1.10569136]
+New order:  [0 1]
+Fermi energy:  -1.105691358775187
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863726 H, -2.09e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87901728 -0.10569136]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8790172750 H, -1.1056913588 H
+Updated V_coulomb:                      7.9765986125 Hartree
+Updated V_x:                           -1.9889954706 Hartree
+Updated V_c:                           -0.1804521108 Hartree
+Updated E_x:                           -1.4917466029 H, -1.3163082603e-04 H
+Updated E_c:                           -0.1596992798 H, 1.7418557423e-05 H
+Updated Band Energy:                   -3.8637259088 H, -2.0869631173e-03 H
+Total Energy:                          -7.3340235164 H, 3.0161887635e-05 H
+Energy Residual:                        -1.366e-06
+Density Residual:                      1.271e-05
+
+
+
+
+
+SCF Count  7
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87901728 -1.10569136]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87901728 -1.1056905 ]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.03563810234e-05
+Computing Vcoulomb and updating Veff took:    2.8557 seconds. 
+Band energies before Veff update: -3.863725 H, -2.09e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339609368 H, 9.2741438326e-05 H
+Orbital Energy:            [-2.87904354 -1.10569971]
+New order:  [0 1]
+Fermi energy:  -1.105699710883678
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863787 H, -2.15e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87904354 -0.10569971]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8790435414 H, -1.1056997109 H
+Updated V_coulomb:                      7.9764660812 Hartree
+Updated V_x:                           -1.9889782335 Hartree
+Updated V_c:                           -0.1804500048 Hartree
+Updated E_x:                           -1.4917336751 H, -1.1870300758e-04 H
+Updated E_c:                           -0.1596973986 H, 1.9299691377e-05 H
+Updated Band Energy:                   -3.8637867937 H, -2.1478480243e-03 H
+Total Energy:                          -7.3340226698 H, 3.1008491704e-05 H
+Energy Residual:                        8.466e-07
+Density Residual:                      1.036e-05
+
+
+
+
+
+SCF Count  8
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87904354 -1.10569971]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87904354 -1.10570013]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  8.097212802e-06
+Computing Vcoulomb and updating Veff took:    2.8826 seconds. 
+Band energies before Veff update: -3.863787 H, -2.15e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339677754 H, 8.5902904853e-05 H
+Orbital Energy:            [-2.87906705 -1.10570843]
+New order:  [0 1]
+Fermi energy:  -1.105708433218206
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863843 H, -2.20e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87906705 -0.10570843]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8790670479 H, -1.1057084332 H
+Updated V_coulomb:                      7.9763475444 Hartree
+Updated V_x:                           -1.9889632218 Hartree
+Updated V_c:                           -0.1804481218 Hartree
+Updated E_x:                           -1.4917224164 H, -1.0744426307e-04 H
+Updated E_c:                           -0.1596957167 H, 2.0981669882e-05 H
+Updated Band Energy:                   -3.8638425290 H, -2.2035833190e-03 H
+Total Energy:                          -7.3340230906 H, 3.0587635401e-05 H
+Energy Residual:                        -4.209e-07
+Density Residual:                      8.097e-06
+
+
+
+
+
+SCF Count  9
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87906705 -1.10570843]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87906705 -1.10570806]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  6.43124885824e-06
+Computing Vcoulomb and updating Veff took:    2.8450 seconds. 
+Band energies before Veff update: -3.863842 H, -2.20e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339737821 H, 7.9896184141e-05 H
+Orbital Energy:            [-2.8790878  -1.10571549]
+New order:  [0 1]
+Fermi energy:  -1.1057154852566395
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863891 H, -2.25e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8790878  -0.10571549]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8790878020 H, -1.1057154853 H
+Updated V_coulomb:                      7.9762428850 Hartree
+Updated V_x:                           -1.9889503532 Hartree
+Updated V_c:                           -0.1804464537 Hartree
+Updated E_x:                           -1.4917127649 H, -9.7792771215e-05 H
+Updated E_c:                           -0.1596942270 H, 2.2471342433e-05 H
+Updated Band Energy:                   -3.8638910892 H, -2.2521434849e-03 H
+Total Energy:                          -7.3340227167 H, 3.0961577035e-05 H
+Energy Residual:                        3.739e-07
+Density Residual:                      6.431e-06
+
+
+
+
+
+SCF Count  10
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8790878  -1.10571549]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8790878  -1.10571559]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  5.30387859741e-06
+Computing Vcoulomb and updating Veff took:    2.8806 seconds. 
+Band energies before Veff update: -3.863891 H, -2.25e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339796259 H, 7.4052370846e-05 H
+Orbital Energy:            [-2.87910609 -1.1057222 ]
+New order:  [0 1]
+Fermi energy:  -1.105722199817628
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863934 H, -2.30e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87910609 -0.1057222 ]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8791060919 H, -1.1057221998 H
+Updated V_coulomb:                      7.9761506501 Hartree
+Updated V_x:                           -1.9889392851 Hartree
+Updated V_c:                           -0.1804449797 Hartree
+Updated E_x:                           -1.4917044638 H, -8.9491699306e-05 H
+Updated E_c:                           -0.1596929110 H, 2.3787344124e-05 H
+Updated Band Energy:                   -3.8639343836 H, -2.2954379461e-03 H
+Total Energy:                          -7.3340228187 H, 3.0859589494e-05 H
+Energy Residual:                        -1.020e-07
+Density Residual:                      5.304e-06
+
+
+
+
+
+SCF Count  11
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87910609 -1.1057222 ]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87910609 -1.10572202]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  4.51665002949e-06
+Computing Vcoulomb and updating Veff took:    2.9007 seconds. 
+Band energies before Veff update: -3.863934 H, -2.30e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339844846 H, 6.9193652289e-05 H
+Orbital Energy:            [-2.87912223 -1.10572789]
+New order:  [0 1]
+Fermi energy:  -1.1057278851768082
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863972 H, -2.33e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87912223 -0.10572789]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8791222297 H, -1.1057278852 H
+Updated V_coulomb:                      7.9760692774 Hartree
+Updated V_x:                           -1.9889296880 Hartree
+Updated V_c:                           -0.1804436780 Hartree
+Updated E_x:                           -1.4916972660 H, -8.2293884649e-05 H
+Updated E_c:                           -0.1596917489 H, 2.4949384451e-05 H
+Updated Band Energy:                   -3.8639723446 H, -2.3333989525e-03 H
+Total Energy:                          -7.3340226322 H, 3.1046021036e-05 H
+Energy Residual:                        1.864e-07
+Density Residual:                      4.517e-06
+
+
+
+
+
+SCF Count  12
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87912223 -1.10572789]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87912223 -1.10572789]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.92398689773e-06
+Computing Vcoulomb and updating Veff took:    2.8548 seconds. 
+Band energies before Veff update: -3.863972 H, -2.33e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339888895 H, 6.4788728888e-05 H
+Orbital Energy:            [-2.8791365  -1.10573309]
+New order:  [0 1]
+Fermi energy:  -1.1057330872692364
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864006 H, -2.37e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8791365  -0.10573309]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8791364963 H, -1.1057330873 H
+Updated V_coulomb:                      7.9759973581 Hartree
+Updated V_x:                           -1.9889212989 Hartree
+Updated V_c:                           -0.1804425280 Hartree
+Updated E_x:                           -1.4916909742 H, -7.6002055501e-05 H
+Updated E_c:                           -0.1596907224 H, 2.5975934930e-05 H
+Updated Band Energy:                   -3.8640060798 H, -2.3671341038e-03 H
+Total Energy:                          -7.3340226285 H, 3.1049737669e-05 H
+Energy Residual:                        3.717e-09
+Density Residual:                      3.924e-06
+
+
+
+
+
+SCF Count  13
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87913649 -1.10573309]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87913649 -1.10573299]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.44373283415e-06
+Computing Vcoulomb and updating Veff took:    2.8550 seconds. 
+Band energies before Veff update: -3.864006 H, -2.37e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339926600 H, 6.1018303254e-05 H
+Orbital Energy:            [-2.87914912 -1.10573759]
+New order:  [0 1]
+Fermi energy:  -1.1057375911642886
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864036 H, -2.40e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87914912 -0.10573759]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8791491223 H, -1.1057375912 H
+Updated V_coulomb:                      7.9759337286 Hartree
+Updated V_x:                           -1.9889139251 Hartree
+Updated V_c:                           -0.1804415118 Hartree
+Updated E_x:                           -1.4916854439 H, -7.0471742062e-05 H
+Updated E_c:                           -0.1596898153 H, 2.6883050139e-05 H
+Updated Band Energy:                   -3.8640358357 H, -2.3968899940e-03 H
+Total Energy:                          -7.3340225222 H, 3.1156035656e-05 H
+Energy Residual:                        1.063e-07
+Density Residual:                      3.444e-06
+
+
+
+
+
+SCF Count  14
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87914912 -1.10573759]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87914912 -1.10573756]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.0367819313e-06
+Computing Vcoulomb and updating Veff took:    2.8516 seconds. 
+Band energies before Veff update: -3.864036 H, -2.40e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339960487 H, 5.7629608081e-05 H
+Orbital Energy:            [-2.8791603  -1.10574164]
+New order:  [0 1]
+Fermi energy:  -1.105741637173758
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864062 H, -2.42e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8791603  -0.10574164]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8791603022 H, -1.1057416372 H
+Updated V_coulomb:                      7.9758774046 Hartree
+Updated V_x:                           -1.9889074219 Hartree
+Updated V_c:                           -0.1804406135 Hartree
+Updated E_x:                           -1.4916805664 H, -6.5594276466e-05 H
+Updated E_c:                           -0.1596890135 H, 2.7684817045e-05 H
+Updated Band Energy:                   -3.8640622416 H, -2.4232958774e-03 H
+Total Energy:                          -7.3340224884 H, 3.1189854455e-05 H
+Energy Residual:                        3.382e-08
+Density Residual:                      3.037e-06
+
+
+
+
+
+SCF Count  15
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8791603  -1.10574164]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8791603  -1.10574157]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.68289156854e-06
+Computing Vcoulomb and updating Veff took:    2.8435 seconds. 
+Band energies before Veff update: -3.864062 H, -2.42e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339990148 H, 5.4663419658e-05 H
+Orbital Energy:            [-2.8791702  -1.10574518]
+New order:  [0 1]
+Fermi energy:  -1.1057451774211622
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864086 H, -2.45e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8791702  -0.10574518]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8791702006 H, -1.1057451774 H
+Updated V_coulomb:                      7.9758275510 Hartree
+Updated V_x:                           -1.9889016773 Hartree
+Updated V_c:                           -0.1804398195 Hartree
+Updated E_x:                           -1.4916762580 H, -6.1285849843e-05 H
+Updated E_c:                           -0.1596883048 H, 2.8393483806e-05 H
+Updated Band Energy:                   -3.8640855786 H, -2.4466329475e-03 H
+Total Energy:                          -7.3340224202 H, 3.1258085203e-05 H
+Energy Residual:                        6.823e-08
+Density Residual:                      2.683e-06
+
+
+
+
+
+SCF Count  16
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8791702  -1.10574518]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8791702  -1.10574514]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.37156494505e-06
+Computing Vcoulomb and updating Veff took:    2.8753 seconds. 
+Band energies before Veff update: -3.864086 H, -2.45e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340016700 H, 5.2008276449e-05 H
+Orbital Energy:            [-2.87917896 -1.10574833]
+New order:  [0 1]
+Fermi energy:  -1.1057483300784092
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864106 H, -2.47e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87917896 -0.10574833]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.057e-01
+Orbital Energies:                      -2.8791789616 H, -1.1057483301 H
+Updated V_coulomb:                      7.9757834366 Hartree
+Updated V_x:                           -1.9888965997 Hartree
+Updated V_c:                           -0.1804391177 Hartree
+Updated E_x:                           -1.4916724498 H, -5.7477687769e-05 H
+Updated E_c:                           -0.1596876785 H, 2.9019863191e-05 H
+Updated Band Energy:                   -3.8641062533 H, -2.4673075965e-03 H
+Total Energy:                          -7.3340223824 H, 3.1295845326e-05 H
+Energy Residual:                        3.776e-08
+Density Residual:                      2.372e-06
+
+
+
+
+
+SCF Count  17
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87917896 -1.10574833]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87917896 -1.10574829]
+Orbital 1 error:        -1.057e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  2.09608582833e-06
+Computing Vcoulomb and updating Veff took:    2.8496 seconds. 
+Band energies before Veff update: -3.864106 H, -2.47e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340040135 H, 4.9664714870e-05 H
+Orbital Energy:            [-2.87918671 -1.1057511 ]
+New order:  [0 1]
+Fermi energy:  -1.10575110253528
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864125 H, -2.49e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87918671 -0.1057511 ]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8791867122 H, -1.1057511025 H
+Updated V_coulomb:                      7.9757444165 Hartree
+Updated V_x:                           -1.9888921116 Hartree
+Updated V_c:                           -0.1804384974 Hartree
+Updated E_x:                           -1.4916690837 H, -5.4111573107e-05 H
+Updated E_c:                           -0.1596871248 H, 2.9573484081e-05 H
+Updated Band Energy:                   -3.8641245270 H, -2.4855813304e-03 H
+Total Energy:                          -7.3340223349 H, 3.1343405907e-05 H
+Energy Residual:                        4.756e-08
+Density Residual:                      2.096e-06
+
+
+
+
+
+SCF Count  18
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87918671 -1.1057511 ]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87918671 -1.10575107]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.85198489397e-06
+Computing Vcoulomb and updating Veff took:    2.8469 seconds. 
+Band energies before Veff update: -3.864124 H, -2.49e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340061013 H, 4.7576955442e-05 H
+Orbital Energy:            [-2.87919357 -1.10575356]
+New order:  [0 1]
+Fermi energy:  -1.1057535612617384
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864141 H, -2.50e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87919357 -0.10575356]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8791935661 H, -1.1057535613 H
+Updated V_coulomb:                      7.9757099151 Hartree
+Updated V_x:                           -1.9888881449 Hartree
+Updated V_c:                           -0.1804379491 Hartree
+Updated E_x:                           -1.4916661087 H, -5.1136577273e-05 H
+Updated E_c:                           -0.1596866355 H, 3.0062800485e-05 H
+Updated Band Energy:                   -3.8641406936 H, -2.5017478632e-03 H
+Total Energy:                          -7.3340223013 H, 3.1376909446e-05 H
+Energy Residual:                        3.350e-08
+Density Residual:                      1.852e-06
+
+
+
+
+
+SCF Count  19
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87919356 -1.10575356]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87919356 -1.10575353]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.63564674867e-06
+Computing Vcoulomb and updating Veff took:    2.8260 seconds. 
+Band energies before Veff update: -3.864141 H, -2.50e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340079469 H, 4.5731318900e-05 H
+Orbital Energy:            [-2.87919962 -1.10575573]
+New order:  [0 1]
+Fermi energy:  -1.1057557288202975
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864155 H, -2.52e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87919962 -0.10575573]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8791996248 H, -1.1057557288 H
+Updated V_coulomb:                      7.9756794190 Hartree
+Updated V_x:                           -1.9888846398 Hartree
+Updated V_c:                           -0.1804374644 Hartree
+Updated E_x:                           -1.4916634799 H, -4.8507769790e-05 H
+Updated E_c:                           -0.1596862030 H, 3.0495294870e-05 H
+Updated Band Energy:                   -3.8641549784 H, -2.5160326888e-03 H
+Total Energy:                          -7.3340222666 H, 3.1411698139e-05 H
+Energy Residual:                        3.479e-08
+Density Residual:                      1.636e-06
+
+
+
+
+
+SCF Count  20
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87919962 -1.10575573]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction../src/dataStructures/TreeStruct_CC.py:130: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+
+Orbital Energy:            [-2.87919962 -1.1057557 ]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.44409365547e-06
+Computing Vcoulomb and updating Veff took:    2.8685 seconds. 
+Band energies before Veff update: -3.864155 H, -2.52e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340095845 H, 4.4093718182e-05 H
+Orbital Energy:            [-2.87920498 -1.10575765]
+New order:  [0 1]
+Fermi energy:  -1.105757647534622
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864168 H, -2.53e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87920498 -0.10575765]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8792049790 H, -1.1057576475 H
+Updated V_coulomb:                      7.9756524691 Hartree
+Updated V_x:                           -1.9888815430 Hartree
+Updated V_c:                           -0.1804370359 Hartree
+Updated E_x:                           -1.4916611573 H, -4.6185172708e-05 H
+Updated E_c:                           -0.1596858207 H, 3.0877601075e-05 H
+Updated Band Energy:                   -3.8641676055 H, -2.5286597957e-03 H
+Total Energy:                          -7.3340222391 H, 3.1439152657e-05 H
+Energy Residual:                        2.745e-08
+Density Residual:                      1.444e-06
+
+
+
+
+
+SCF Count  21
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87920498 -1.10575765]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87920498 -1.10575762]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.27463608723e-06
+Computing Vcoulomb and updating Veff took:    2.8370 seconds. 
+Band energies before Veff update: -3.864168 H, -2.53e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340110316 H, 4.2646670791e-05 H
+Orbital Energy:            [-2.87920971 -1.10575934]
+New order:  [0 1]
+Fermi energy:  -1.1057593413041076
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864179 H, -2.54e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87920971 -0.10575934]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8792097098 H, -1.1057593413 H
+Updated V_coulomb:                      7.9756286566 Hartree
+Updated V_x:                           -1.9888788072 Hartree
+Updated V_c:                           -0.1804366571 Hartree
+Updated E_x:                           -1.4916591054 H, -4.4133269855e-05 H
+Updated E_c:                           -0.1596854827 H, 3.1215587297e-05 H
+Updated Band Energy:                   -3.8641787608 H, -2.5398151151e-03 H
+Total Energy:                          -7.3340222130 H, 3.1465250639e-05 H
+Energy Residual:                        2.610e-08
+Density Residual:                      1.275e-06
+
+
+
+
+
+SCF Count  22
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87920971 -1.10575934]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87920971 -1.10575932]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  1.12487865072e-06
+Computing Vcoulomb and updating Veff took:    2.8290 seconds. 
+Band energies before Veff update: -3.864179 H, -2.54e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340123121 H, 4.1366131065e-05 H
+Orbital Energy:            [-2.87921389 -1.10576084]
+New order:  [0 1]
+Fermi energy:  -1.1057608395931378
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864189 H, -2.55e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87921389 -0.10576084]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8792138893 H, -1.1057608396 H
+Updated V_coulomb:                      7.9756076175 Hartree
+Updated V_x:                           -1.9888763901 Hartree
+Updated V_c:                           -0.1804363220 Hartree
+Updated E_x:                           -1.4916572926 H, -4.2320493737e-05 H
+Updated E_c:                           -0.1596851839 H, 3.1514444783e-05 H
+Updated Band Energy:                   -3.8641886182 H, -2.5496724980e-03 H
+Total Energy:                          -7.3340221913 H, 3.1486998492e-05 H
+Energy Residual:                        2.175e-08
+Density Residual:                      1.125e-06
+
+
+
+
+
+SCF Count  23
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87921389 -1.10576084]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87921389 -1.10576082]
+Orbital 1 error:        -1.058e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  9.92630724215e-07
+Computing Vcoulomb and updating Veff took:    2.8508 seconds. 
+Band energies before Veff update: -3.864189 H, -2.55e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340134429 H, 4.0235354299e-05 H
+Orbital Energy:            [-2.87921758 -1.10576216]
+New order:  [0 1]
+Fermi energy:  -1.1057621633839976
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.864197 H, -2.56e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87921758 -0.10576216]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.058e-01
+Orbital Energies:                      -2.8792175818 H, -1.1057621634 H
+Updated V_coulomb:                      7.9755890286 Hartree
+Updated V_x:                           -1.9888742546 Hartree
+Updated V_c:                           -0.1804360257 Hartree
+Updated E_x:                           -1.4916556910 H, -4.0718864115e-05 H
+Updated E_c:                           -0.1596849196 H, 3.1778758943e-05 H
+Updated Band Energy:                   -3.8641973269 H, -2.5583811984e-03 H
+Total Energy:                          -7.3340221714 H, 3.1506825668e-05 H
+Energy Residual:                        1.983e-08
+Density Residual:                      9.926e-07
+
+
+
+Convergence to a tolerance of 0.000001 took 24 iterations
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/lithiumAtom.csv', '/home/njvaughn/LithiumIterationResults/LW3_500.csv', 3, 2, -7.3340536782581447, -1.4916149721121696, -0.15971669832262905, -3.8616389456972078, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/lithiumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z3/singleAtomData/
+Atom with Z=3 will get 2 atomic orbitals initialized.
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 3 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  477184
+Initializing orbitals for atom Z = 3 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            2.00e+03 
+Total Number of Cells:       8521 
+Total Number of Leaf Cells:  7456 
+Total Number of Gridpoints:  477184 
+Minimum Depth                3 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  4 
+Construction time:           8.06 seconds.
+Closest gridpoint to origin:  [-0.00037168197015973251, -0.00037168197015973251, -0.00037168197015973251]
+For a distance of:  0.000643772056573956
+Part of a cell centered at:  [-0.0048828125, -0.0048828125, -0.0048828125]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    477184
+Threads per block:    512
+Blocks per grid:      932
+[-7.3340536782581447, -1.4916149721121696, -0.15971669832262905, -3.8616389456972078]
+Computing Vcoulomb took:    2.4507 seconds. 
+Update orbital energies after computing the initial Veff.
+Orbital Energy:            [-2.88029184 -1.10589085]
+New order:  [0 1]
+Fermi energy:  -1.1058908547141963
+Occupations:  [ 2.  1.]
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87901644 -1.10589085]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87901644 -1.1055954 ]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  0.000270977013052
+Computing Vcoulomb and updating Veff took:    4.5104 seconds. 
+Band energies before Veff update: -3.863628 H, -1.99e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3340964810 H, -4.2802755612e-05 H
+Orbital Energy:            [-2.8788499  -1.10559342]
+New order:  [0 1]
+Fermi energy:  -1.105593420091851
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863293 H, -1.65e-03 H
+Orbital Energy Errors after Veff Update:  [-1.8788499  -0.10559342]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.056e-01
+Orbital Energies:                      -2.8788499025 H, -1.1055934201 H
+Updated V_coulomb:                      7.9768695738 Hartree
+Updated V_x:                           -1.9888511596 Hartree
+Updated V_c:                           -0.1804577702 Hartree
+Updated E_x:                           -1.4916383697 H, -2.3397591331e-05 H
+Updated E_c:                           -0.1597039833 H, 1.2715050165e-05 H
+Updated Band Energy:                   -3.8632932251 H, -1.6542793625e-03 H
+Total Energy:                          -7.3337614351 H, 2.9224312609e-04 H
+Energy Residual:                        -5.834e+00
+Density Residual:                      2.710e-04
+
+
+
+
+
+SCF Count  2
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87885568 -1.10559342]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87885568 -1.10562622]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  9.40121527737e-05
+Computing Vcoulomb and updating Veff took:    4.4622 seconds. 
+Band energies before Veff update: -3.863338 H, -1.70e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3339037079 H, 1.4997038936e-04 H
+Orbital Energy:            [-2.87880402 -1.10563164]
+New order:  [0 1]
+Fermi energy:  -1.1056316423542372
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863240 H, -1.60e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87880402 -0.10563164]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.056e-01
+Orbital Energies:                      -2.8788040184 H, -1.1056316424 H
+Updated V_coulomb:                      7.9771004913 Hartree
+Updated V_x:                           -1.9889216751 Hartree
+Updated V_c:                           -0.1804582912 Hartree
+Updated E_x:                           -1.4916912563 H, -7.6284177217e-05 H
+Updated E_c:                           -0.1597045981 H, 1.2100188767e-05 H
+Updated Band Energy:                   -3.8632396791 H, -1.6007334478e-03 H
+Total Energy:                          -7.3338058130 H, 2.4786529522e-04 H
+Energy Residual:                        -4.438e-05
+Density Residual:                      9.401e-05
+
+
+
+
+
+SCF Count  3
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.8788042  -1.10563164]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.8788042  -1.10562266]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  4.86297458038e-05
+Computing Vcoulomb and updating Veff took:    4.4429 seconds. 
+Band energies before Veff update: -3.863231 H, -1.59e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3337851307 H, 2.6854756783e-04 H
+Orbital Energy:            [-2.87880586 -1.10563142]
+New order:  [0 1]
+Fermi energy:  -1.1056314177391253
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863243 H, -1.60e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87880586 -0.10563142]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.056e-01
+Orbital Energies:                      -2.8788058565 H, -1.1056314177 H
+Updated V_coulomb:                      7.9770792817 Hartree
+Updated V_x:                           -1.9889283938 Hartree
+Updated V_c:                           -0.1804567437 Hartree
+Updated E_x:                           -1.4916962954 H, -8.1323266230e-05 H
+Updated E_c:                           -0.1597032780 H, 1.3420356415e-05 H
+Updated Band Energy:                   -3.8632431307 H, -1.6041849667e-03 H
+Total Energy:                          -7.3337972073 H, 2.5647098522e-04 H
+Energy Residual:                        8.606e-06
+Density Residual:                      4.863e-05
+
+
+
+
+
+SCF Count  4
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-2.87880594 -1.10563142]
+Orbital 0 error:        -1.879e+00
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-2.87880594 -1.10563608]
+Orbital 1 error:        -1.056e-01
+Used 1 iterations for orbital 1.
+
+
+Density Residual  3.87542214867e-05
+Computing Vcoulomb and updating Veff took:    4.4224 seconds. 
+Band energies before Veff update: -3.863248 H, -1.61e-03 H
+Total Energy without computing orbitals energies with new Veff: -7.3337475375 H, 3.0614077876e-04 H
+Orbital Energy:            [-2.87882824 -1.105646  ]
+New order:  [0 1]
+Fermi energy:  -1.1056460037965596
+Occupations:  [ 2.  1.]
+Band energies after Veff update: -3.863302 H, -1.66e-03 H
+Orbital Energy Errors after Veff Update:  [-1.87882824 -0.105646  ]
+Orbital 0 error: -1.879e+00
+Orbital 1 error: -1.056e-01
+Orbital Energies:                      -2.8788282363 H, -1.1056460038 H
+Updated V_coulomb:                      7.9769614783 Hartree

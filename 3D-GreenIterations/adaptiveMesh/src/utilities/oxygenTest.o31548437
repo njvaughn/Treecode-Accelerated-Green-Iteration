@@ -1,0 +1,197 @@
+Running on
+      1 nyx7508
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/iterationResults/Oxygen_LW3_800.csv', 8, 5, -74.469012607372008, -7.219342444412435, -0.54455323198374961, -40.613156367497737, 0.0]
+Gauge shift  0.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  183296
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            8.00e+02 
+Total Number of Cells:       3273 
+Total Number of Leaf Cells:  2864 
+Total Number of Gridpoints:  183296 
+Minimum Depth                3 levels 
+Maximum Depth:               10 levels 
+Cell Order:                  4 
+Construction time:           3.14 seconds.
+Closest gridpoint to origin:  [-0.00148672788063893, -0.00148672788063893, -0.00148672788063893]
+For a distance of:  0.002575088226295824
+Part of a cell centered at:  [-0.01953125, -0.01953125, -0.01953125]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    183296
+Threads per block:    512
+Blocks per grid:      358
+[-74.469012607372008, -7.219342444412435, -0.54455323198374961, -40.613156367497737]
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [0 1 4 3 2]
+Orbital Energy:            [-18.85237253  -0.8793879   -0.3425857   -0.3425857   -0.3425857 ]
+New order:  [0 1 2 3 4]
+Fermi energy:  -0.3423661929127169
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Scrambling last 3 orbitals
+
+
+
+SCF Count  1
+Working on orbital 0
+Orbital Energy:            [-18.95321665  -0.8793879   -0.3425857   -0.3425857   -0.3425857 ]
+Orbital 0 error:        -1.944e-01
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Orbital Energy:            [-18.95321665  -0.88427136  -0.3425857   -0.3425857   -0.3425857 ]
+Orbital 1 error:        -1.307e-02
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Orbital Energy:            [-18.95321665  -0.88427136  -0.33188776  -0.3425857   -0.3425857 ]
+Orbital 2 error:        6.410e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Orbital Energy:            [-18.95321665  -0.88427136  -0.33188776  -0.33188776  -0.3425857 ]
+Orbital 3 error:        6.410e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Orbital Energy:            [-18.95321665  -0.88427136  -0.33188776  -0.33188776   0.19852406]
+Orbital 4 error:        5.368e-01
+Resetting orbital %i energy to 1/2 gauge shift
+Orbital Energy:            [ -1.89532167e+01  -8.84271362e-01  -3.31887763e-01  -3.31887763e-01
+  -3.27345079e-03]
+Orbital 4 error:        3.350e-01
+Orbital Energy:            [ -1.89532167e+01  -8.84271362e-01  -3.31887763e-01  -3.31887763e-01
+  -4.98069576e-03]
+Orbital 4 error:        3.333e-01
+Orbital Energy:            [ -1.89532167e+01  -8.84271362e-01  -3.31887763e-01  -3.31887763e-01
+  -5.04130822e-03]
+Orbital 4 error:        3.333e-01
+Orbital Energy:            [ -1.89532167e+01  -8.84271362e-01  -3.31887763e-01  -3.31887763e-01
+  -5.04366177e-03]
+Orbital 4 error:        3.333e-01
+Used 5 iterations for orbital 4.
+
+
+Density Residual  0.0225367877569
+Computing Vcoulomb and updating Veff took:    3.8951 seconds. 
+Band energies before Veff update: -40.566735 H, 4.64e-02 H
+Total Energy without computing orbitals energies with new Veff: -74.3596901858 H, 1.0932242159e-01 H
+Need to re-order orbitals.
+New order:  [0 1 3 2 4]
+Orbital Energy:            [ -1.89561105e+01  -8.86083405e-01  -3.33604713e-01  -3.33604711e-01
+  -5.32020516e-03]
+New order:  [0 1 2 3 4]
+Fermi energy:  -0.10867280697412718
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   3.66349324e-142]
+Band energies after Veff update: -41.018807 H, -4.06e-01 H
+Orbital 0 error: -1.973e-01
+Orbital 1 error: -1.488e-02
+Orbital 2 error: 4.693e-03
+Orbital 3 error: 4.693e-03
+Orbital 4 error: 3.330e-01
+Orbital Energies:  [ -1.89561105e+01  -8.86083405e-01  -3.33604713e-01  -3.33604711e-01
+  -5.32020516e-03]
+Updated V_coulomb:                      72.5232671730 Hartree
+Updated V_x:                           -9.6239950112 Hartree
+Updated V_c:                           -0.6070930691 Hartree
+Updated E_x:                           -7.2179962584 H, 1.3461860025e-03 H
+Updated E_c:                           -0.5444134796 H, 1.3975242112e-04 H
+Updated Band Energy:                   -41.0188067097 H, -4.0565034218e-01 H
+Total Energy:                          -74.8117619538 H, -3.4274934645e-01 H
+Energy Residual:                        7.431e+01
+Density Residual:                      2.254e-02
+
+
+
+
+
+SCF Count  2
+Working on orbital 0
+Orbital Energy:            [ -1.89554965e+01  -8.86083405e-01  -3.33604713e-01  -3.33604711e-01
+  -5.32020516e-03]
+Orbital 0 error:        -1.967e-01
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Orbital Energy:            [ -1.89554965e+01  -8.85978959e-01  -3.33604713e-01  -3.33604711e-01
+  -5.32020516e-03]
+Orbital 1 error:        -1.478e-02
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Orbital Energy:            [ -1.89554965e+01  -8.85978959e-01  -3.33751130e-01  -3.33604711e-01
+  -5.32020516e-03]
+Orbital 2 error:        4.546e-03
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Orbital Energy:            [ -1.89554965e+01  -8.85978959e-01  -3.33751130e-01  -3.33751128e-01
+  -5.32020516e-03]
+Orbital 3 error:        4.546e-03
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Orbital Energy:            [ -1.89554965e+01  -8.85978959e-01  -3.33751130e-01  -3.33751128e-01
+  -5.30038220e-03]
+Orbital 4 error:        3.330e-01
+Used 1 iterations for orbital 4.
+
+
+Density Residual  0.0173706391203
+Computing Vcoulomb and updating Veff took:    3.8831 seconds. 
+Band energies before Veff update: -41.017955 H, -4.05e-01 H
+Total Energy without computing orbitals energies with new Veff: -74.8275790362 H, -3.5856642884e-01 H
+Orbital Energy:            [ -1.89525333e+01  -8.84151317e-01  -3.31973914e-01  -3.31973914e-01
+  -5.01991146e-03]
+New order:  [0 1 2 3 4]
+Fermi energy:  -0.1084740733812728
+Occupations:  [  2.00000000e+000   2.00000000e+000   2.00000000e+000   2.00000000e+000
+   2.65837645e-142]
+Band energies after Veff update: -41.001265 H, -3.88e-01 H
+Orbital 0 error: -1.937e-01
+Orbital 1 error: -1.295e-02
+Orbital 2 error: 6.324e-03
+Orbital 3 error: 6.324e-03
+Orbital 4 error: 3.333e-01
+Orbital Energies:  [ -1.89525333e+01  -8.84151317e-01  -3.31973914e-01  -3.31973914e-01
+  -5.01991146e-03]
+Updated V_coulomb:                      72.5579225499 Hartree
+Updated V_x:                           -9.6265822503 Hartree
+Updated V_c:                           -0.6072553084 Hartree
+Updated E_x:                           -7.2199366877 H, -5.9424328957e-04 H
+Updated E_c:                           -0.5445632403 H, -1.0008356285e-05 H
+Updated Band Energy:                   -41.0012649313 H, -3.8810856378e-01 H
+Total Energy:                          -74.8108885756 H, -3.4187596821e-01 H
+Energy Residual:                        8.734e-04
+Density Residual:                      1.737e-02
+
+
+
+
+
+SCF Count  3
+Working on orbital 0
+Orbital Energy:           

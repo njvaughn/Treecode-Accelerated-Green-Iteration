@@ -36,14 +36,16 @@ divideCriterion     = str(sys.argv[8])
 divideParameter     = float(sys.argv[9])
 energyTolerance     = float(sys.argv[10])
 scfTolerance        = float(sys.argv[11])
-inputFile           = str(sys.argv[12])
+outputFile          = str(sys.argv[12])
+inputFile           = str(sys.argv[13])
+
 # coordinateFile      = str(sys.argv[12])
 # auxiliaryFile      = str(sys.argv[13])
 # nElectrons          = int(sys.argv[14])
 # nOrbitals          = int(sys.argv[15])
 # outFile             = str(sys.argv[16])
 # vtkFileBase         = str(sys.argv[17])
-vtkFileBase='/home/njvaughn/onTheFly/meshes'
+vtkFileBase='/home/njvaughn/results_CO/orbitals'
 
 def setUpTree():
     '''
@@ -54,16 +56,27 @@ def setUpTree():
 #     [coordinateFile, outputFile, nElectrons, nOrbitals] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[0:4]
 #     [coordinateFile, outputFile, nElectrons, nOrbitals, 
 #      Etrue, ExTrue, EcTrue, Eband, gaugeShift] = np.genfromtxt(inputFile,delimiter=',',dtype=[("|U100","|U100",int,int,float,float,float,float,float)])
-    [coordinateFile, outputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+    [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
     [nElectrons, nOrbitals, Etrue, ExTrue, EcTrue, Eband, gaugeShift] = np.genfromtxt(inputFile)[2:]
     nElectrons = int(nElectrons)
     nOrbitals = int(nOrbitals)
+    
+#     nOrbitals = 7  # hard code this in for Carbon Monoxide
+#     print('Hard coding nOrbitals to 7')
+
+#     nOrbitals = 6
+#     print('Hard coding nOrbitals to 6 to give oxygen one extra')
+#     nOrbitals = 1
+#     print('Hard coding nOrbitals to 1')
+    
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
      Etrue, ExTrue, EcTrue, Eband, gaugeShift])
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
 
+    
+    
     print('max depth ', maxDepth)
     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
 #     for element in tree.masterList:
@@ -72,6 +85,8 @@ def setUpTree():
 #         for i,j,k in tree.PxByPyByPz:
 #             element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
             
+#     for m in range(4,tree.nOrbitals):
+#         tree.scrambleOrbital(m)
     return tree
     
     
@@ -82,7 +97,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
     greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
-                                smoothingN, smoothingEps,inputFile=inputFile, 
+                                smoothingN, smoothingEps,inputFile=inputFile,outputFile=outputFile, 
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
 #     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
@@ -93,22 +108,26 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
               'divideCriterion','divideParameter','energyTolerance',
               'GreenSingSubtracted', 
-              'computedE', 'computedHOMO', 'errorE','errorHOMO']
+              'orbitalEnergies', 'ExchangePotential', 'CorrelationPotential','BandEnergy','ExchangeEnergy','CorrelationEnergy','TotalEnergy']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,
               divideCriterion,divideParameter,energyTolerance,
               subtractSingularity,
-              tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
+              tree.orbitalEnergies, tree.totalVx, tree.totalVc, 
+                      tree.totalBandEnergy, tree.totalEx, tree.totalEc, tree.E]
+#               tree.E, tree.
+#               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     
 
-    if not os.path.isfile(outFile):
-        myFile = open(outFile, 'a')
+    runComparisonFile = '/home/njvaughn/BerylliumIterationResults/runComparison.csv'
+    if not os.path.isfile(runComparisonFile):
+        myFile = open(runComparisonFile, 'a')
         with myFile:
             writer = csv.writer(myFile)
             writer.writerow(header) 
         
     
-    myFile = open(outFile, 'a')
+    myFile = open(runComparisonFile, 'a')
     with myFile:
         writer = csv.writer(myFile)
         writer.writerow(myData)    
