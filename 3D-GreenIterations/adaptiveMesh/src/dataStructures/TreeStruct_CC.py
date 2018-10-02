@@ -79,7 +79,7 @@ class Tree(object):
         self.nOrbitals = nOrbitals
         self.gaugeShift = gaugeShift
         
-        self.mixingParameter=0.5
+        self.mixingParameter=0.5  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
 #         self.occupations = np.ones(nOrbitals)
 #         self.computeOccupations()
@@ -692,10 +692,71 @@ class Tree(object):
                     cell.divideFlag = False
                     
         cellCounter = 0
+        self.numberOfGridpoints = 0
+        self.numberOfCells = 0
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cellCounter += 1
-        print('Now there are %i cells.' %cellCounter)
+                self.numberOfCells += 1
+                self.numberOfGridpoints += self.px * self.py * self.pz
+                
+        print('Now there are %i cells and %i gridpoints.' %(self.numberOfCells, self.numberOfGridpoints) )
+        
+        self.computeDerivativeMatrices()
+
+        ### INITIALIZE ORBTIALS AND DENSITY ####
+        self.initializeOrbitalsFromAtomicData()            
+        self.initializeDensityFromAtomicData()
+        self.normalizeDensity()
+        
+        self.maxDepthAchieved += 1
+        self.minDepthAchieved += 1
+        
+    def uniformlyRefineWithinRadius(self,R):
+        
+        cellCounter = 0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for atom in self.atoms:
+                    r = np.sqrt( (cell.xmid - atom.x)**2 + (cell.ymid - atom.y)**2 + (cell.zmid - atom.z)**2)
+                    if r < R:
+                        cellCounter += 1
+                        cell.divideFlag = True
+        
+        print('Uniformly refining %i cells within radius %1.2f.' %(cellCounter,R))
+        
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+#                 print('Dividing cell ', cell.uniqueID)
+                if  cell.divideFlag == True:
+#                     print('Dividing cell ', cell.uniqueID)
+                    cell.divide(cell.xmid, cell.ymid, cell.zmid)
+                    for i,j,k in TwoByTwoByTwo:
+                        cell.children[i,j,k].divideFlag = False
+                    cell.divideFlag = False
+                    
+        cellCounter = 0
+        self.numberOfGridpoints = 0
+        self.numberOfCells = 0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                self.maxDepthAchieved = max(self.maxDepthAchieved, cell.level)
+                self.numberOfCells += 1
+                self.numberOfGridpoints += self.px * self.py * self.pz
+                
+        print('Now there are %i cells and %i gridpoints.' %(self.numberOfCells, self.numberOfGridpoints) )
+        print('Maxlimum depth ', self.maxDepthAchieved)
+        
+        self.computeDerivativeMatrices()
+
+        ### INITIALIZE ORBTIALS AND DENSITY ####
+        self.initializeOrbitalsFromAtomicData()            
+        self.initializeDensityFromAtomicData()
+        self.normalizeDensity()
+        
+        self.maxDepthAchieved += 1
+        self.minDepthAchieved += 1
+        
+        
     
     def refineOnTheFly(self, divideTolerance):
         counter = 0
@@ -747,7 +808,7 @@ class Tree(object):
             if cell.leaf == True:
                 CellupdateVxcAndVeff(cell,self.exchangeFunctional, self.correlationFunctional)
 
-    def updateDensityAtQuadpoints(self, mixingScheme='Simple'):
+    def updateDensityAtQuadpoints(self, mixingScheme='None'):
         def CellUpdateDensity(cell,mixingScheme):
             for i,j,k in self.PxByPyByPz:
                 newRho = 0

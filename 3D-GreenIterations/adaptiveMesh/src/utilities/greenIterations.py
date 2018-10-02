@@ -210,7 +210,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             tree.orthonormalizeOrbitals(targetOrbital=m)
         
             print('Working on orbital %i' %m)
-            while ( ( orbitalResidual > intraScfTolerance ) and ( eigensolveCount < max_scfCount) ):
+#             while ( ( orbitalResidual > intraScfTolerance ) and ( eigensolveCount < max_scfCount) ):
+            while ( ( orbitalResidual > intraScfTolerance ) ):
             
 #                 print('Iteration %i' %eigensolveCount)
                 orbitalResidual = 0.0
@@ -236,7 +237,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
 #                 else:
                 elif subtractSingularity==1:
-                    if tree.orbitalEnergies[m] < -0.0:
+                    if tree.orbitalEnergies[m] < -0.4:
                         print('Using singularity subtraction')
                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
                     else:
@@ -402,7 +403,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalBandEnergy, tree.totalBandEnergy-Eband) )
         print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etrue))
         print('Energy Residual:                        %.3e' %energyResidual)
-        print('Density Residual:                      %.3e\n\n'%densityResidual)
+        print('Density Residual:                       %.3e\n\n'%densityResidual)
 
 #         if vtkExport != False:
 #             tree.exportGreenIterationOrbital(vtkExport,greenIterationCounter)

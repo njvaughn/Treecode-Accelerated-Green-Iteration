@@ -17,7 +17,7 @@ file='runComparison.csv'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/'
 
 #### Beryllium
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
 
 #### H2
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
@@ -25,6 +25,7 @@ resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Berylliu
 
 #### Oxygen
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/'
 
 df = pd.read_csv(resultsDir+file, header=0)
 
@@ -46,7 +47,8 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Bery
 
 
 
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/':
+##if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/':
+if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/':
     TotalEnergy = -7.4469012607372008e+01
     ExchangeEnergy = -7.2193424444124350e+00
     CorrelationEnergy = -5.4455323198374961e-01
