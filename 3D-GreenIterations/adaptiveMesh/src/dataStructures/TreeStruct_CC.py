@@ -803,6 +803,7 @@ class Tree(object):
         self.totalVx = V_x
         self.totalVc = V_c
         self.totalVcoulomb = V_coulomb
+        self.totalElectrostatic = -1/2*V_coulomb - V_x - V_c + self.nuclearNuclear + self.totalOrbitalPotential
         self.totalEx = E_x
         self.totalEc = E_c
 #         print('Total V_xc : ')
@@ -832,6 +833,8 @@ class Tree(object):
             if cell.leaf == True:
                 cell.computeOrbitalPotentials(targetEnergy)
                 self.orbitalPotential += cell.orbitalPE
+                
+        self.totalOrbitalPotential = np.sum( (self.orbitalPotential - self.gaugeShift) * self.occupations)
                        
     def computeOrbitalKinetics(self,targetEnergy=None):
 
@@ -840,6 +843,8 @@ class Tree(object):
             if cell.leaf == True:
                 cell.computeOrbitalKinetics(targetEnergy)
                 self.orbitalKinetic += cell.orbitalKE
+        
+        self.totalKinetic = np.sum(self.occupations*self.orbitalKinetic)
             
         
     def scrambleOrbital(self,m):

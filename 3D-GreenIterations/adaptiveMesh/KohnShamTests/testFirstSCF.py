@@ -55,9 +55,9 @@ def setUpTree():
     xmax = ymax = zmax = domainSize
 #     [coordinateFile, outputFile, nElectrons, nOrbitals] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[0:4]
 #     [coordinateFile, outputFile, nElectrons, nOrbitals, 
-#      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift] = np.genfromtxt(inputFile,delimiter=',',dtype=[("|U100","|U100",int,int,float,float,float,float,float)])
+#      Etrue, ExTrue, EcTrue, Eband, gaugeShift] = np.genfromtxt(inputFile,delimiter=',',dtype=[("|U100","|U100",int,int,float,float,float,float,float)])
     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
-    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+    [nElectrons, nOrbitals, Etrue, ExTrue, EcTrue, Eband, gaugeShift] = np.genfromtxt(inputFile)[2:]
     nElectrons = int(nElectrons)
     nOrbitals = int(nOrbitals)
     
@@ -71,7 +71,7 @@ def setUpTree():
     
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
-     Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+     Etrue, ExTrue, EcTrue, Eband, gaugeShift])
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
 
@@ -87,11 +87,10 @@ def setUpTree():
             
 #     for m in range(4,tree.nOrbitals):
 #         tree.scrambleOrbital(m)
-    tree.normalizeDensity()
     return tree
     
     
-def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
+def testFirstSCF(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
     
     tree.E = -1.0 # set initial energy guess
 
@@ -108,18 +107,19 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
 
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
               'divideCriterion','divideParameter','energyTolerance',
-              'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
-              'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy']
+              'GreenSingSubtracted', 
+              'orbitalEnergies', 'ExchangePotential', 'CorrelationPotential','BandEnergy','ExchangeEnergy','CorrelationEnergy','TotalEnergy']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,
               divideCriterion,divideParameter,energyTolerance,
               subtractSingularity,
-              tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
+              tree.orbitalEnergies, tree.totalVx, tree.totalVc, 
+                      tree.totalBandEnergy, tree.totalEx, tree.totalEc, tree.E]
 #               tree.E, tree.
 #               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     
 
-    runComparisonFile = '/home/njvaughn/OxygenFirstSCF/runComparison.csv'
+    runComparisonFile = '/home/njvaughn/OxygenFirstSCFresults/runComparison.csv'
     if not os.path.isfile(runComparisonFile):
         myFile = open(runComparisonFile, 'a')
         with myFile:
@@ -143,10 +143,8 @@ if __name__ == "__main__":
     print('='*70)
     print('='*70)
     print('='*70,'\n')
-    startTime = timer()
     tree = setUpTree()
-#     testGreenIterationsGPU(tree,vtkExport=vtkFile)
-#     testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False)
-    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
+
+    testFirstSCF(tree)
     
     
