@@ -2,8 +2,15 @@
 /home/njvaughn/results_Oxygen/results.csv
 8
 5
--7.4469012607372008e+01
--7.2193424444124350e+00
--5.4455323198374961e-01
--4.0613156367497737e+01
--1
+#-7.4469012607372008e+01
+#-7.2193424444124350e+00
+#-5.4455323198374961e-01
+#-4.0613156367497737e+01
+#-1
+-4.0613086299670258e+01 # Band energy after first SCF
+ 7.4112265375596365e+01 # Kinetic energy after first SCF
+-7.2193295915891582e+00 # Exchange energy after first SCF
+-5.4455267145166231e-01 # Correlation Energy after first SCF
+-1.4081739574277032e+02 # Electrostatic Energy after first SCF
+-7.4469012630225393e+01 # Total Energy after first SCF
+-0

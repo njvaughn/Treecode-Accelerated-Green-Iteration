@@ -6,16 +6,16 @@ Note: the current implementation does not use shared memory, which would provide
 speedup.  -- 03/19/2018 NV 
 """
 # from numba import cuda
-from math import sqrt,exp,factorial,pi
-import math
+# from math import sqrt,exp,factorial,pi
+# import math
 import numpy as np
 import os
-import shutil
+# import shutil
 import csv
-from timeit import default_timer as timer
-from numpy import float32, float64
+# from timeit import default_timer as timer
+# from numpy import float32, float64
 
-from hydrogenAtom import trueEnergy, trueWavefunction
+# from hydrogenAtom import trueEnergy, trueWavefunction
 # from convolution import gpuPoissonConvolution,gpuHelmholtzConvolutionSubractSingularity, cpuHelmholtzSingularitySubtract,cpuHelmholtzSingularitySubtract_allNumerical
 from convolution import *
 
@@ -87,8 +87,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     Eold = -0.5 + tree.gaugeShift
 
 #     [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[4:8]
-    [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile)[4:8]
-    print([Etrue, ExTrue, EcTrue, Eband])
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[4:10]
+    print([Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal])
 
     ### COMPUTE THE INITIAL HAMILTONIAN ###
     targets = tree.extractLeavesDensity()  
@@ -159,9 +159,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
                                       -3.382974161584920147e-01]) 
-#     dftfeOrbitalEnergiesFirstSCF = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
-#                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
-#                                       -3.382974161584920147e-01])         
+    
+    ## OXYGEN AFTER FIRST SCF ##
+#     dftfeOrbitalEnergies = np.array( [-1.875875893002984895e+01, -8.711960263841991292e-01,
+#                                       -3.382940967105963481e-01, -3.382940967105849128e-01,
+#                                       -3.382940967105836916e-01])         
 
     # BERYLLIUM ATOM
 #     dftfeOrbitalEnergies = np.array( [0, 0])
@@ -178,7 +180,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         tree.exportGridpoints(filename)
         
     
-    oldOrbitalEnergies = 10
+#     oldOrbitalEnergies = 10
 #     tree.nOrbitals = 5
 #     tree.occupations = [2,2,2,2,2]
     residuals = np.ones_like(tree.orbitalEnergies)
@@ -321,10 +323,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         oldDensity = tree.extractLeavesDensity()
 #         print('Fix occupations to [2, 2, 2/3, 2/3, 2/3]')
 #         tree.occupations = np.array([2,2,4/3,4/3,4/3])
-
+#         print('NOT UPDATING DENSITY AT END OF FIRST SCF.  JUST COMPUTING ENERGIES.')
+        
+        
+        
         tree.updateDensityAtQuadpoints()
 #         tree.normalizeDensity()  # Don't normalize the density.  Just print it
-        
+         
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = np.copy(sources)
         newDensity = sources[:,3]
@@ -332,6 +337,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
         print('Integrated density: ', integratedDensity)
         print('Density Residual ', densityResidual)
+        
+        
  
         """ 
         Compute new electron-electron potential and update pointwise potential values 
@@ -349,12 +356,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         """ 
         Compute the new orbital and total energies 
         """
-        startEnergyTime = timer()
+#         startEnergyTime = timer()
         tree.updateTotalEnergy()
         print('Band energies before Veff update: %1.6f H, %1.2e H'
               %(tree.totalBandEnergy, tree.totalBandEnergy-Eband))
-        print('Total Energy without computing orbitals energies with new Veff: %.10f H, %.10e H' %(tree.E, tree.E-Etrue))
-
+        print('Total Energy without computing orbitals energies with new Veff: %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
+        print('Orbital energies before recomputing with new Veff: ', tree.orbitalEnergies)
+        print('Now recompute orbital energies with new Veff...')
         tree.updateOrbitalEnergies(sortByEnergy=False) # should I be doing this?
         
 #         tree.updateOrbitalEnergies(correctPositiveEnergies=False, sortByEnergy=False) 
@@ -395,13 +403,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         else: 
             print('Orbital Energies: ', tree.orbitalEnergies) 
 
-        print('Updated V_coulomb:                      %.10f Hartree' %tree.totalVcoulomb)
         print('Updated V_x:                           %.10f Hartree' %tree.totalVx)
         print('Updated V_c:                           %.10f Hartree' %tree.totalVc)
-        print('Updated E_x:                           %.10f H, %.10e H' %(tree.totalEx, tree.totalEx-ExTrue) )
-        print('Updated E_c:                           %.10f H, %.10e H' %(tree.totalEc, tree.totalEc-EcTrue) )
+        
         print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalBandEnergy, tree.totalBandEnergy-Eband) )
-        print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etrue))
+        print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Ekinetic) )
+        print('Updated E_x:                           %.10f H, %.10e H' %(tree.totalEx, tree.totalEx-Eexchange) )
+        print('Updated E_c:                           %.10f H, %.10e H' %(tree.totalEc, tree.totalEc-Ecorrelation) )
+        print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
+        print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
         print('Energy Residual:                        %.3e' %energyResidual)
         print('Density Residual:                       %.3e\n\n'%densityResidual)
 
@@ -425,11 +435,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         SCFiterationOutFile = 'iterationConvergenceLi_smoothingBoth.csv'
 #         SCFiterationOutFile = 'iterationConvergenceBe_LW3_1200_perturbed.csv'
         if printEachIteration==True:
-            header = ['Iteration', 'densityResidual', 'orbitalEnergies', 'exchangePotential', 'correlationPotential', 
-                      'bandEnergy','exchangeEnergy', 'correlationEnergy', 'totalEnergy']
+            header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
+                      'exchangeEnergy', 'correlationEnergy', 'electrostaticEnergy', 'totalEnergy']
         
-            myData = [greenIterationCounter, densityResidual, tree.orbitalEnergies, tree.totalVx, tree.totalVc, 
-                      tree.totalBandEnergy, tree.totalEx, tree.totalEc, tree.E]
+            myData = [greenIterationCounter, densityResidual, tree.orbitalEnergies, tree.totalBandEnergy, tree.totalKinetic, 
+                      tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
             
         
             if not os.path.isfile(SCFiterationOutFile):
@@ -458,6 +468,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             tree.E = -0.5
             
         greenIterationCounter+=1
+        print('Setting density residual to -1 to exit after the first SCF')
+        densityResidual = -1 
 
         
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, greenIterationCounter))
