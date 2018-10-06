@@ -72,7 +72,7 @@ def setUpTree():
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,gaugeShift=gaugeShift,
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
 
     
@@ -119,12 +119,14 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False):
 #               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     
 
-    runComparisonFile = '/home/njvaughn/OxygenFirstSCF/runComparison.csv'
+    runComparisonFile = os.path.split(outputFile)[0] + '/runComparison.csv'
+    
     if not os.path.isfile(runComparisonFile):
         myFile = open(runComparisonFile, 'a')
         with myFile:
             writer = csv.writer(myFile)
             writer.writerow(header) 
+        
         
     
     myFile = open(runComparisonFile, 'a')

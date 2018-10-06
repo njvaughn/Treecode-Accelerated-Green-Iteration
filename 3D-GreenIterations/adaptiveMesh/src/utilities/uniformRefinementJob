@@ -1,32 +1,24 @@
 #!/bin/bash
-DOMAIN=15
+DOMAIN=20
 MINDEPTH=3
 MAXDEPTH=20
 SMOOTHINGN=0
 SMOOTHINGEPS=0.0
-INTRASCFTOLERANCE=1e-2
+INTRASCFTOLERANCE=1e-5
 INTERSCFTOLERANCE=1e-5
 SINGSUBT=1
 
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-
-
 INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
-
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 
-OUTPUTFILE='/home/njvaughn/OxygenResults/uniformRefinement_LW3_800_'
+OUTPUTFILE='/home/njvaughn/OxygenFirstSCF/LW3_2000_order5_oneRefinement_p05'
 
 MESHTYPE='LW3'
-MESHPARAM=800
-ORDER=4
+MESHPARAM=2000
+ORDER=5
 
 python testUniformRefinement.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

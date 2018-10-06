@@ -16,13 +16,14 @@ class Test(unittest.TestCase):
 
 #     @unittest.skip('Skipping the plotting of radial data')
     def testReadingRadialData(self):
-        atomicNumber = 6
+        atomicNumber = 8
         AtomicDataPath = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atomicNumber)+'/singleAtomData/'
         print(AtomicDataPath)
         print(os.listdir(AtomicDataPath))
         
         plt.figure()
-
+        data = np.genfromtxt(AtomicDataPath+'density.inp')
+        plt.plot(data[:,0],data[:,1],label='Density')
         for orbital in os.listdir(AtomicDataPath):
             if orbital[:3]=='psi':
 #             if orbital[:5]=='psi32':

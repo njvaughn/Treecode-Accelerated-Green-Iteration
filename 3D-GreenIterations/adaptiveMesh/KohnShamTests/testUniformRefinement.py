@@ -53,25 +53,15 @@ def setUpTree():
     '''
     xmin = ymin = zmin = -domainSize
     xmax = ymax = zmax = domainSize
-#     [coordinateFile, outputFile, nElectrons, nOrbitals] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[0:4]
-#     [coordinateFile, outputFile, nElectrons, nOrbitals, 
-#      Etrue, ExTrue, EcTrue, Eband, gaugeShift] = np.genfromtxt(inputFile,delimiter=',',dtype=[("|U100","|U100",int,int,float,float,float,float,float)])
+
     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
-    [nElectrons, nOrbitals, Etrue, ExTrue, EcTrue, Eband, gaugeShift] = np.genfromtxt(inputFile)[2:]
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
     nElectrons = int(nElectrons)
     nOrbitals = int(nOrbitals)
     
-#     nOrbitals = 7  # hard code this in for Carbon Monoxide
-#     print('Hard coding nOrbitals to 7')
 
-#     nOrbitals = 6
-#     print('Hard coding nOrbitals to 6 to give oxygen one extra')
-#     nOrbitals = 1
-#     print('Hard coding nOrbitals to 1')
-    
-    
     print([coordinateFile, outputFileBase, nElectrons, nOrbitals, 
-     Etrue, ExTrue, EcTrue, Eband, gaugeShift])
+     Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
 
@@ -79,14 +69,9 @@ def setUpTree():
     
     print('max depth ', maxDepth)
     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True)
-#     for element in tree.masterList:
-#         
-# #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
-#         for i,j,k in tree.PxByPyByPz:
-#             element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
-            
-#     for m in range(4,tree.nOrbitals):
-#         tree.scrambleOrbital(m)
+
+
+    tree.normalizeDensity()
     return tree
     
     
@@ -155,8 +140,8 @@ def testManualRefinement(tree,refinementLevels,R,vtkExport=vtkFileBase,onTheFlyR
 
 #     for i in range(refinementLevels):
     tree.uniformlyRefineWithinRadius(R)
-    tree.uniformlyRefineWithinRadius(R/2)
-    tree.uniformlyRefineWithinRadius(R/4)
+#     tree.uniformlyRefineWithinRadius(R/2)
+#     tree.uniformlyRefineWithinRadius(R/4)
     refinementCounter = 0
     while refinementCounter < refinementLevels:
         
@@ -175,20 +160,20 @@ def testManualRefinement(tree,refinementLevels,R,vtkExport=vtkFileBase,onTheFlyR
     
     
         header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
-                  'divideCriterion','divideParameter','energyTolerance',
-                  'GreenSingSubtracted', 
-                  'orbitalEnergies', 'ExchangePotential', 'CorrelationPotential','BandEnergy','ExchangeEnergy','CorrelationEnergy','TotalEnergy']
-        
+              'divideCriterion','divideParameter','energyTolerance',
+              'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
+              'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy']
+    
         myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,
-                  divideCriterion,divideParameter,energyTolerance,
-                  subtractSingularity,
-                  tree.orbitalEnergies, tree.totalVx, tree.totalVc, 
-                          tree.totalBandEnergy, tree.totalEx, tree.totalEc, tree.E]
+              divideCriterion,divideParameter,energyTolerance,
+              subtractSingularity,
+              tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
     #               tree.E, tree.
     #               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
         
+        runComparisonFile = os.path.split(outputFile)[0] + '/runComparison.csv'
     
-        runComparisonFile = '/home/njvaughn/OxygenResults/runComparison_manualRefine.csv'
+#         runComparisonFile = '/home/njvaughn/OxygenFirstSCF/runComparison_manualRefine.csv'
         if not os.path.isfile(runComparisonFile):
             myFile = open(runComparisonFile, 'a')
             with myFile:
@@ -225,7 +210,7 @@ if __name__ == "__main__":
     startTime = timer()
     tree = setUpTree()
     
-    testUniformRefinement(tree,refinementLevels=2,R=None,vtkExport=False,onTheFlyRefinement=False)
-#     testManualRefinement(tree,refinementLevels=2,R=0.5,vtkExport=False,onTheFlyRefinement=False)
+#     testUniformRefinement(tree,refinementLevels=2,R=None,vtkExport=False,onTheFlyRefinement=False)
+    testManualRefinement(tree,refinementLevels=1,R=0.05,vtkExport=False,onTheFlyRefinement=False)
     
     

@@ -1,50 +1,49 @@
 #!/bin/bash
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
+
 DOMAIN=20
 MINDEPTH=3
-MAXDEPTH=20
+SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0.0
-INTRASCFTOLERANCE=1e-2
+INTRASCFTOLERANCE=1e-4
 INTERSCFTOLERANCE=1e-6
-SINGSUBT=1
-
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-
-
 INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
+ORDER=5
+MESHTYPE='LW5'	
+MESHPARAM=2000
 
-cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
-
-MESHTYPE='LW3'
-ORDER=4
-
-OUTPUTFILE='/home/njvaughn/OxygenFirstSCF/LW3_1000.csv'
-MESHPARAM=1000
-python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
-
-OUTPUTFILE='/home/njvaughn/OxygenFirstSCF/LW3_3000.csv'
-MESHPARAM=3000
+MAXDEPTH=15
+OUTPUTFILE='/home/njvaughn/Oxygen_MeshBuilding/LW3_2000_maxDepth15_zeroW.csv'
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
 	
-OUTPUTFILE='/home/njvaughn/OxygenFirstSCF/LW3_3500.csv'
-MESHPARAM=3500
+MAXDEPTH=18
+OUTPUTFILE='/home/njvaughn/Oxygen_MeshBuilding/LW3_2000_maxDepth18_zeroW.csv'
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
 
-OUTPUTFILE='/home/njvaughn/OxygenFirstSCF/LW3_4000.csv'
-MESHPARAM=4000
+MAXDEPTH=12
+OUTPUTFILE='/home/njvaughn/Oxygen_MeshBuilding/LW3_2000_maxDepth12_zeroW.csv'
 python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
 	
+MAXDEPTH=13
+OUTPUTFILE='/home/njvaughn/Oxygen_MeshBuilding/LW3_2000_maxDepth13_zeroW.csv'
+python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
+
+	
+

@@ -55,7 +55,7 @@ class Tree(object):
     """
     
     
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,gaugeShift=0.0,
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,maxDepthAtAtoms,gaugeShift=0.0,
                  coordinateFile='',inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
                  printTreeProperties = True):
@@ -78,6 +78,7 @@ class Tree(object):
         self.nElectrons = nElectrons
         self.nOrbitals = nOrbitals
         self.gaugeShift = gaugeShift
+        self.maxDepthAtAtoms = maxDepthAtAtoms
         
         self.mixingParameter=0.5  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
@@ -150,7 +151,7 @@ class Tree(object):
             
     def initialDivideBasedOnNuclei(self, coordinateFile,maxLevels=15):
             
-        def refineToMaxDepth(self,Atom,Cell,maxLevels=15):
+        def refineToMaxDepth(self,Atom,Cell):
             if hasattr(Cell, "children"):
                 (ii,jj,kk) = np.shape(Cell.children)
                 for i in range(ii):
@@ -158,11 +159,12 @@ class Tree(object):
                         for k in range(kk):
                             if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
                                 if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
-                                    if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ):                                            
+                                    if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
+#                                         print('Calling refine on cell ',Cell.children[i,j,k].uniqueID)                                           
                                         refineToMaxDepth(self, Atom, Cell.children[i,j,k])
             
-            else:
-                if Cell.level < maxLevels:
+            else:  # cell is a leaf
+                if Cell.level < self.maxDepthAtAtoms:
                     xdiv = Cell.xmid
                     ydiv = Cell.ymid
                     zdiv = Cell.zmid
@@ -173,8 +175,15 @@ class Tree(object):
 #                     if ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ):
 #                         zdiv = None
                     Cell.divide(xdiv, ydiv, zdiv)
-#                     print('Dividing cell at depth ', Cell.level)
+#                     print('Dividing cell ', Cell.uniqueID, ' at depth ', Cell.level)
                     refineToMaxDepth(self,Atom,Cell)
+                
+                else: 
+                    # This nucleus is at the corner of this cell, but this cell is already at max depth.  Try things here
+                    # such as setting the weights to zero for this cell.  
+                    print('Setting weights to zero for cell ', Cell.uniqueID)
+                    Cell.w = np.zeros( (Cell.px,Cell.py,Cell.pz) )
+                    
                     
             
         
@@ -242,7 +251,8 @@ class Tree(object):
         for _,cell in self.masterList:
             if cell.leaf==True:
                 cell.level = 0
-            
+        
+#         print('Dividing adjacent to nuclei')  
 #         for atom in self.atoms:
 #             refineToMaxDepth(self,atom,self.root)
                 
@@ -453,7 +463,8 @@ class Tree(object):
                     Cell.divideFlag = True 
 #                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
                 else:  
-                    if (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3'):
+                    if ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or 
+                         (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') ):
 #                         print('checking divide criterion for cell ', Cell.uniqueID)
                         Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
                     else:                        
@@ -808,7 +819,7 @@ class Tree(object):
             if cell.leaf == True:
                 CellupdateVxcAndVeff(cell,self.exchangeFunctional, self.correlationFunctional)
 
-    def updateDensityAtQuadpoints(self, mixingScheme='None'):
+    def updateDensityAtQuadpoints(self, mixingScheme='Simple'):
         def CellUpdateDensity(cell,mixingScheme):
             for i,j,k in self.PxByPyByPz:
                 newRho = 0

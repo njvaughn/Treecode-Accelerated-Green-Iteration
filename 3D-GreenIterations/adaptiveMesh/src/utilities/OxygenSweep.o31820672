@@ -1,0 +1,451 @@
+Running on
+      1 nyx7511
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/OxygenFirstSCF_LW1/LW1_500_order5.csv', 8, 5, -74.469012630225393, -7.2193295915891582, -0.54455267145166231, -40.613086299670258, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  484000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW1 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       4425 
+Total Number of Leaf Cells:  3872 
+Total Number of Gridpoints:  484000 
+Minimum Depth                3 levels 
+Maximum Depth:               9 levels 
+Cell Order:                  5 
+Construction time:           7.55 seconds.
+Closest gridpoint to origin:  [-0.0019118548322205609, -0.0019118548322205609, -0.0019118548322205609]
+For a distance of:  0.003311429706102083
+Part of a cell centered at:  [-0.0390625, -0.0390625, -0.0390625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    484000
+Threads per block:    512
+Blocks per grid:      946
+[-40.613086299670258, 74.112265375596365, -7.2193295915891582, -0.54455267145166231, -140.81739574277032, -74.469012630225393]
+Computing Vcoulomb took:    2.5584 seconds. 
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [0 1 3 4 2]
+Orbital Energy:            [-19.87853877  -1.8799362   -1.34088013  -1.34088013  -1.34088013]
+New order:  [0 1 2 3 4]
+Fermi energy:  -1.3408799060460495
+Occupations:  [ 2.          2.          1.33333338  1.33333338  1.33333337]
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-19.84059754  -1.8799362   -1.34088013  -1.34088013  -1.34088013]
+Orbital 0 error:        -8.181e-02
+Using singularity subtraction
+Orbital Energy:            [-19.83085733  -1.8799362   -1.34088013  -1.34088013  -1.34088013]
+Orbital 0 error:        -7.207e-02
+Using singularity subtraction
+Orbital Energy:            [-19.82853526  -1.8799362   -1.34088013  -1.34088013  -1.34088013]
+Orbital 0 error:        -6.975e-02
+Using singularity subtraction
+Orbital Energy:            [-19.82794264  -1.8799362   -1.34088013  -1.34088013  -1.34088013]
+Orbital 0 error:        -6.916e-02
+Using singularity subtraction
+Orbital Energy:            [-19.82777013  -1.8799362   -1.34088013  -1.34088013  -1.34088013]
+Orbital 0 error:        -6.899e-02
+Using singularity subtraction
+Orbital Energy:            [-19.8277135   -1.8799362   -1.34088013  -1.34088013  -1.34088013]
+Orbital 0 error:        -6.893e-02
+Using singularity subtraction
+Orbital Energy:            [-19.8276931   -1.8799362   -1.34088013  -1.34088013  -1.34088013]
+Orbital 0 error:        -6.891e-02
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.8799362   -1.34088013  -1.34088013  -1.34088013]
+Orbital 0 error:        -6.890e-02
+Used 8 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87764917  -1.34088013  -1.34088013  -1.34088013]
+Orbital 1 error:        -6.450e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87717701  -1.34088013  -1.34088013  -1.34088013]
+Orbital 1 error:        -5.977e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87706578  -1.34088013  -1.34088013  -1.34088013]
+Orbital 1 error:        -5.866e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87703834  -1.34088013  -1.34088013  -1.34088013]
+Orbital 1 error:        -5.839e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87703077  -1.34088013  -1.34088013  -1.34088013]
+Orbital 1 error:        -5.831e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702848  -1.34088013  -1.34088013  -1.34088013]
+Orbital 1 error:        -5.829e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702772  -1.34088013  -1.34088013  -1.34088013]
+Orbital 1 error:        -5.828e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702746  -1.34088013  -1.34088013  -1.34088013]
+Orbital 1 error:        -5.828e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702736  -1.34088013  -1.34088013  -1.34088013]
+Orbital 1 error:        -5.828e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34088013  -1.34088013  -1.34088013]
+Orbital 1 error:        -5.828e-03
+Used 10 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34029706  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.000e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030584  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030548  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030579  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030571  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030577  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030575  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030576  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030575  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030575  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030575  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030575  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34088013  -1.34088013]
+Orbital 2 error:        -2.008e-03
+Used 13 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34029706  -1.34088013]
+Orbital 3 error:        -2.000e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030584  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030548  -1.34088013]../src/dataStructures/TreeStruct_CC.py:130: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030579  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030571  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030577  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030575  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030576  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030575  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030575  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030575  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030575  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34088013]
+Orbital 3 error:        -2.008e-03
+Used 13 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34029706]
+Orbital 4 error:        -2.000e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030584]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030548]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030579]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030571]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030577]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030575]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030576]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030575]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030575]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030575]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030575]
+Orbital 4 error:        -2.008e-03
+Using singularity subtraction
+Orbital Energy:            [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030574]
+Orbital 4 error:        -2.008e-03
+Used 13 iterations for orbital 4.
+
+
+Integrated density:  8.00000012974
+Density Residual  0.12906726143
+Computing Vcoulomb and updating Veff took:    4.4090 seconds. 
+Band energies before Veff update: -40.770648 H, -1.58e-01 H
+Total Energy without computing orbitals energies with new Veff: -74.6711484440 H, -2.0213581379e-01 H
+Orbital energies before recomputing with new Veff:  [-19.82768527  -1.87702732  -1.34030574  -1.34030574  -1.34030574]
+Now recompute orbital energies with new Veff...
+Orbital Energy:            [-19.80062246  -1.87206749  -1.33579432  -1.33579432  -1.33579432]
+Band energies after Veff update: -40.688557 H, -7.55e-02 H
+Orbital Energy Errors after Veff Update:  [-0.04183876 -0.00086784  0.0025031   0.0025031   0.0025031 ]
+Orbital 0 error: -4.184e-02
+Orbital 1 error: -8.678e-04
+Orbital 2 error: 2.503e-03
+Orbital 3 error: 2.503e-03
+Orbital 4 error: 2.503e-03
+Orbital Energies:  [-19.80062246  -1.87206749  -1.33579432  -1.33579432  -1.33579432]
+Updated V_x:                           -9.6572533577 Hartree
+Updated V_c:                           -0.6077289304 Hartree
+Updated Band Energy:                   -40.6885572209 H, -7.5470921212e-02 H
+Updated Kinetic Energy:                 75.2474354502 H, 1.1351700746e+00 H
+Updated E_x:                           -7.2429400183 H, -2.3610426688e-02 H
+Updated E_c:                           -0.5450151819 H, -4.6251046720e-04 H
+Updated totalElectrostatic:            -142.0485377195 H, -1.2311419767e+00 H
+Total Energy:                          -74.5890574695 H, -1.2004483927e-01 H
+Energy Residual:                        -7.309e+01
+Density Residual:                       1.291e-01
+
+
+Setting density residual to -1 to exit after the first SCF
+
+Convergence to a tolerance of 0.000001 took 2 iterations
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/OxygenFirstSCF_LW1/LW1_800_order5.csv', 8, 5, -74.469012630225393, -7.2193295915891582, -0.54455267145166231, -40.613086299670258, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  701000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW1 
+Divide Parameter:            8.00e+02 
+Total Number of Cells:       6409 
+Total Number of Leaf Cells:  5608 
+Total Number of Gridpoints:  701000 
+Minimum Depth                3 levels 
+Maximum Depth:               10 levels 
+Cell Order:                  5 
+Construction time:           11 seconds.
+Closest gridpoint to origin:  [-0.00095592741611028043, -0.00095592741611028043, -0.00095592741611028043]
+For a distance of:  0.0016557148530510415
+Part of a cell centered at:  [-0.01953125, -0.01953125, -0.01953125]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    701000
+Threads per block:    512
+Blocks per grid:      1370
+[-40.613086299670258, 74.112265375596365, -7.2193295915891582, -0.54455267145166231, -140.81739574277032, -74.469012630225393]
+Computing Vcoulomb took:    5.2177 seconds. 
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [0 1 3 2 4]
+Orbital Energy:            [-19.79940002  -1.87493361  -1.34020713  -1.34020713  -1.34020713]
+New order:  [0 1 2 3 4]
+Fermi energy:  -1.3402069138458028
+Occupations:  [ 2.          2.          1.33333331  1.33333331  1.33333331]
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-19.79094706  -1.87493361  -1.34020713  -1.34020713  -1.34020713]
+Orbital 0 error:        -3.216e-02
+Using singularity subtraction
+Orbital Energy:            [-19.79037854  -1.87493361  -1.34020713  -1.34020713  -1.34020713]
+Orbital 0 error:        -3.159e-02
+Using singularity subtraction
+Orbital Energy:            [-19.79029808  -1.87493361  -1.34020713  -1.34020713  -1.34020713]
+Orbital 0 error:        -3.151e-02
+Using singularity subtraction
+Orbital Energy:            [-19.79028426  -1.87493361  -1.34020713  -1.34020713  -1.34020713]
+Orbital 0 error:        -3.150e-02
+Using singularity subtraction
+Orbital Energy:            [-19.79028075  -1.87493361  -1.34020713  -1.34020713  -1.34020713]
+Orbital 0 error:        -3.150e-02
+Using singularity subtraction
+Orbital Energy:            [-19.79027957  -1.87493361  -1.34020713  -1.34020713  -1.34020713]
+Orbital 0 error:        -3.150e-02
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87493361  -1.34020713  -1.34020713  -1.34020713]
+Orbital 0 error:        -3.150e-02
+Used 7 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87434642  -1.34020713  -1.34020713  -1.34020713]
+Orbital 1 error:        -3.147e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87433154  -1.34020713  -1.34020713  -1.34020713]
+Orbital 1 error:        -3.132e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432933  -1.34020713  -1.34020713  -1.34020713]
+Orbital 1 error:        -3.130e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432904  -1.34020713  -1.34020713  -1.34020713]
+Orbital 1 error:        -3.129e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432898  -1.34020713  -1.34020713  -1.34020713]
+Orbital 1 error:        -3.129e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432896  -1.34020713  -1.34020713  -1.34020713]
+Orbital 1 error:        -3.129e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432895  -1.34020713  -1.34020713  -1.34020713]
+Orbital 1 error:        -3.129e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.34020713  -1.34020713  -1.34020713]
+Orbital 1 error:        -3.129e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.34020713  -1.34020713  -1.34020713]
+Orbital 1 error:        -3.129e-03
+Used 9 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.33973401  -1.34020713  -1.34020713]
+Orbital 2 error:        -1.437e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.33973946  -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.33973907  -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.33973935  -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.33973926  -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.33973932  -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.33973929  -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.33973931  -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.3397393   -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.3397393   -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.3397393   -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.3397393   -1.34020713  -1.34020713]
+Orbital 2 error:        -1.442e-03
+Used 12 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.3397393   -1.33973401  -1.34020713]
+Orbital 3 error:        -1.437e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.3397393   -1.33973946  -1.34020713]
+Orbital 3 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.3397393   -1.33973907  -1.34020713]
+Orbital 3 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.3397393   -1.33973935  -1.34020713]
+Orbital 3 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:            [-19.79027912  -1.87432894  -1.3397393   -1.33973926  -1.34020713]
+Orbital 3 error:        -1.442e-03
+Using singularity subtraction
+Orbital Energy:           

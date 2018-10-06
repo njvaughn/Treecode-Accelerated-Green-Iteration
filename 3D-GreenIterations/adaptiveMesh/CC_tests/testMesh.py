@@ -20,7 +20,7 @@ def exportMeshForParaview(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,minLevels, maxL
 #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/hydrogenMolecule')
     
     tree = Tree(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons=14,nOrbitals=10,coordinateFile=coordinateFile)
-    tree.buildTree( minLevels, maxLevels, divideCriterion, divideParameter, printTreeProperties=True)
+#     tree.buildTree( minLevels, maxLevels, divideCriterion, divideParameter, printTreeProperties=True)
     tree.exportGridpoints('/Users/nathanvaughn/Desktop/carbonMonoxide_max14')
 
     print('Mesh Exported.')
@@ -36,7 +36,7 @@ if __name__ == "__main__":
                           minLevels=3, maxLevels=20, divideCriterion='LW3', 
 #                           divideParameter=100,coordinateFile='../src/utilities/molecularConfigurations/hydrogenMolecule.csv')
 #                           divideParameter=100,coordinateFile='../src/utilities/molecularConfigurations/berylliumAtom.csv')
-                          divideParameter=1,coordinateFile='../src/utilities/molecularConfigurations/carbonMonoxide.csv')
+                          divideParameter=1,coordinateFile='../src/utilities/molecularConfigurations/oxygenAtom.csv')
     
     
 #     exportMeshForParaview(xmin=-10, xmax=10,px=4,

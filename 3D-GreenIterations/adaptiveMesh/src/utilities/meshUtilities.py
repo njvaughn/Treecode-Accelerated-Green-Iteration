@@ -5,7 +5,7 @@ Mesh utilities for the adaptive mesh refinement.
 '''
 from numpy import pi, cos, arccos, sin, sqrt, exp
 import numpy as np
-from scipy.special import factorial
+from scipy.special import factorial, comb
 import vtk
 
 def meshDensity(r,divideParameter,divideCriterion):
@@ -28,9 +28,42 @@ def meshDensity(r,divideParameter,divideCriterion):
         # for order = 3 
         return divideParameter/648.82*(exp(-2*r)* (52 - 102/r + 363/r**2 + 1416/r**3 + 4164/r**4 + 5184/r**5 + 2592/r**6) )**(3/9)
     
+    elif divideCriterion == 'LW4':
+        # for order = 3 
+        return divideParameter/1798*(exp(-2*r)* (423 - 1286/r + 2875/r**2 + 16506/r**3 + 79293/r**4 + 292512/r**5 + 611136/r**6
+                                                 + 697320/r**7 + 348660/r**8) )**(3/11)
+    
+    elif divideCriterion == 'LW5':
+        # for order = 3 
+        return divideParameter/3697.1*(exp(-2*r)* (2224 - 9018/r + 16789/r**2 + 117740/r**3 + 733430/r**4 + 3917040/r**5 + 16879920/r**6
+                                                   + 49186500/r**7 + 91604250/r**8 + 100516500/r**9 + 50258250/r**10) )**(3/13)
+    
     elif divideCriterion == 'LW3_modified':
         # for order = 3 
         return divideParameter/648.82*(exp(-5*r)* (52 - 102/r + 363/r**2 + 1416/r**3 + 4164/r**4 + 5184/r**5 + 2592/r**6) )**(3/9)
+    
+    elif divideCriterion == 'Phani':
+        N = 8
+        eta = np.sqrt(2*0.34)
+        k = 5
+        return phaniMeshDensity(divideParameter, N, eta,k, r)
+    else:
+        print('Invalid Mesh type...')
+        return
+    
+def phaniMeshDensity(A, N,eta,k,r):
+    innersum = 0
+    for n in range(k+2): #sum from 0, through k+1
+        innersum += comb(k+1,n) * 2**n * eta**n * factorial(k+1-n) / r**(k-n+2)
+        
+        
+    h = A * (  N/pi * eta**(2*k+5) * exp(-2*eta*r)  +  N**2*exp(-4*eta*r) * (
+        eta**(k+2) * 2**(k+1) * innersum 
+        ) **2
+        ) ** (-1/(2*k+3))
+#     print(h)
+    return h**(-3)
+
     
 
 
@@ -243,4 +276,29 @@ def mkVtkIdList(it):
 
  
 if __name__=="__main__":
-        pass
+    import matplotlib.pyplot as plt
+    
+    r = np.linspace(0.1,10,500)
+    print(r)
+    N = 8
+    eta = np.sqrt(2*0.3)
+    A = 5
+    k=5
+#     for k in range(3,6):
+#         D = phaniMeshDensity(A,N,eta,k,r)
+#     
+#         plt.plot(r,D,label='k=%i'%k)
+        
+    D = meshDensity(r,500,'LW1')
+    plt.plot(r,D,label='LW1')
+    D = meshDensity(r,500,'LW2')
+    plt.plot(r,D,label='LW2')
+    D = meshDensity(r,1000,'LW3')
+    plt.plot(r,D,label='LW3')
+    D = meshDensity(r,1000,'LW4')
+    plt.plot(r,D,label='LW4')
+    D = meshDensity(r,1000,'LW5')
+    plt.plot(r,D,label='LW5')
+    plt.legend()
+    plt.show()
+    

@@ -26,8 +26,10 @@ import numpy as np
 ##file='LW3_1000_GREEN_.csv'
 
 ## Oxygen
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
-file='LW3_1500_GREEN_.csv'
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
+##file='LW3_1500_GREEN_.csv'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenOrder5/'
+file='LW3_1000_GREEN_.csv'
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
     TotalEnergy = -7.3340536782581447
@@ -46,11 +48,20 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Bery
 
 
 
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/':
-    TotalEnergy = -7.4469012607372008e+01
-    ExchangeEnergy = -7.2193424444124350e+00
-    CorrelationEnergy = -5.4455323198374961e-01
-    BandEnergy = -4.0613156367497737e+01
+##if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/':
+if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenOrder5/':
+    BandEnergy = -4.0613161867355522e+01
+    KineticEnergy = 7.4112356154762352e+01
+    ExchangeEnergy = -7.2193342430668448e+00
+    CorrelationEnergy = -5.4455279159404091e-01
+    ElectrostaticEnergy = -1.4081748175072624e+02
+    TotalEnergy = -7.4469012630624775e+01
+
+    psi0 = -1.875879493052850933e+01
+    psi1 = -8.711989839502347621e-01
+    psi2 = -3.382966064098608672e-01
+    psi3 = -3.382966063773331644e-01
+    psi4 = -3.382966063244193800e-01
 
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/':
@@ -76,11 +87,7 @@ print(df.shape)
 ##                              -3.351144822320292205e-01])
 
 ## OXYGEN
-referenceEnergies = np.array([-1.875878370505640547e+01,
-                              -8.711996463756719322e-01,
-                              -3.382974161584920147e-01,
-                              -3.382974161584920147e-01,
-                              -3.382974161584920147e-01])
+referenceEnergies = np.array([psi0,psi1,psi2,psi3,psi4])
 
 ## H2
 ##referenceEnergies = np.array([-0.3774974859])
@@ -161,12 +168,14 @@ def plotFirstSCF(df):
 ##    df.plot(y='errors9',ax=ax1,logy=True,label='Phi9')
     ax1.set_xlabel('Iteration Number')
     ax1.set_ylabel('Energy Error (Hartree)')
+##    ax1.set_ylim([1e-4,2e-2])
     ax1.set_title('Orbital Errors')
 
 ##    plt.suptitle('Using Singularity Skipping, LW3-800')
 ##    plt.suptitle('Using Singularity Subtraction, LW3-800, minDepth 3')
 ##    plt.suptitle(file)
-    plt.suptitle('Convergence of Green Iterations for Oxygen -- Coarse')
+##    plt.suptitle('Convergence of Green Iterations for Oxygen -- Coarse')
+    plt.suptitle('Convergence of Green Iterations for Oxygen')
 
 ##    try:
 ##        f1, (ax2,ax3) = plt.subplots(1,2, figsize=(12,6))

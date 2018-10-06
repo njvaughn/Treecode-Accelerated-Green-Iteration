@@ -1,0 +1,1107 @@
+Running on
+      1 nyx7506
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/OxygenFirstSCF/LW3_500_order5_mindepth2.csv', 8, 5, -74.469012630225393, -7.2193295915891582, -0.54455267145166231, -40.613086299670258, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  232000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       2121 
+Total Number of Leaf Cells:  1856 
+Total Number of Gridpoints:  232000 
+Minimum Depth                2 levels 
+Maximum Depth:               10 levels 
+Cell Order:                  5 
+Construction time:           3.73 seconds.
+Closest gridpoint to origin:  [-0.00095592741611028043, -0.00095592741611028043, -0.00095592741611028043]
+For a distance of:  0.0016557148530510415
+Part of a cell centered at:  [-0.01953125, -0.01953125, -0.01953125]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    232000
+Threads per block:    512
+Blocks per grid:      454
+[-40.613086299670258, 74.112265375596365, -7.2193295915891582, -0.54455267145166231, -140.81739574277032, -74.469012630225393]
+Computing Vcoulomb took:    5.2802 seconds. 
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [0 1 4 3 2]
+Orbital Energy:            [-19.80508131  -1.87732438  -1.34264949  -1.34264949  -1.34264949]
+New order:  [0 1 2 3 4]
+Fermi energy:  -1.3426492716684155
+Occupations:  [ 2.          2.          1.33333366  1.33333365  1.33333365]
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-19.80492248  -1.87732438  -1.34264949  -1.34264949  -1.34264949]
+Orbital 0 error:        -4.614e-02
+Using singularity subtraction
+Orbital Energy:            [-19.8044533   -1.87732438  -1.34264949  -1.34264949  -1.34264949]
+Orbital 0 error:        -4.567e-02
+Using singularity subtraction
+Orbital Energy:            [-19.80437573  -1.87732438  -1.34264949  -1.34264949  -1.34264949]
+Orbital 0 error:        -4.559e-02
+Using singularity subtraction
+Orbital Energy:            [-19.80436242  -1.87732438  -1.34264949  -1.34264949  -1.34264949]
+Orbital 0 error:        -4.558e-02
+Using singularity subtraction
+Orbital Energy:            [-19.80435905  -1.87732438  -1.34264949  -1.34264949  -1.34264949]
+Orbital 0 error:        -4.558e-02
+Using singularity subtraction
+Orbital Energy:            [-19.80435793  -1.87732438  -1.34264949  -1.34264949  -1.34264949]
+Orbital 0 error:        -4.557e-02
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87732438  -1.34264949  -1.34264949  -1.34264949]
+Orbital 0 error:        -4.557e-02
+Used 7 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87724894  -1.34264949  -1.34264949  -1.34264949]
+Orbital 1 error:        -6.049e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723435  -1.34264949  -1.34264949  -1.34264949]
+Orbital 1 error:        -6.035e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723098  -1.34264949  -1.34264949  -1.34264949]
+Orbital 1 error:        -6.031e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723051  -1.34264949  -1.34264949  -1.34264949]
+Orbital 1 error:        -6.031e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723042  -1.34264949  -1.34264949  -1.34264949]
+Orbital 1 error:        -6.031e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723039  -1.34264949  -1.34264949  -1.34264949]
+Orbital 1 error:        -6.031e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723038  -1.34264949  -1.34264949  -1.34264949]
+Orbital 1 error:        -6.031e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34264949  -1.34264949  -1.34264949]
+Orbital 1 error:        -6.031e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34264949  -1.34264949  -1.34264949]
+Orbital 1 error:        -6.031e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34264949  -1.34264949  -1.34264949]
+Orbital 1 error:        -6.031e-03
+Used 10 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34184422  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.547e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34186046  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.563e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34186081  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.563e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34186098  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.564e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34186104  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.564e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34186104  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.564e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34186097  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.564e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34186076  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.563e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34185993  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.563e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34185702  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.560e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.3418453   -1.34264949  -1.34264949]
+Orbital 2 error:        -3.548e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34179778  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.500e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34159801  -1.34264949  -1.34264949]
+Orbital 2 error:        -3.301e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.34074856  -1.34264949  -1.34264949]
+Orbital 2 error:        -2.451e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.33709367  -1.34264949  -1.34264949]
+Orbital 2 error:        1.204e-03
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.32131086  -1.34264949  -1.34264949]
+Orbital 2 error:        1.699e-02
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -1.2535518   -1.34264949  -1.34264949]
+Orbital 2 error:        8.475e-02
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  -0.97506981  -1.34264949  -1.34264949]
+Orbital 2 error:        3.632e-01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037   0.30421837  -1.34264949  -1.34264949]
+Orbital 2 error:        1.643e+00
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037   4.96586632  -1.34264949  -1.34264949]
+Orbital 2 error:        6.304e+00
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  14.75582327  -1.34264949  -1.34264949]
+Orbital 2 error:        1.609e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  22.92692675  -1.34264949  -1.34264949]
+Orbital 2 error:        2.427e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  25.95331485  -1.34264949  -1.34264949]
+Orbital 2 error:        2.729e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.7217682   -1.34264949  -1.34264949]
+Orbital 2 error:        2.806e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.89725298  -1.34264949  -1.34264949]
+Orbital 2 error:        2.824e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.93660133  -1.34264949  -1.34264949]
+Orbital 2 error:        2.827e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94553631  -1.34264949  -1.34264949]
+Orbital 2 error:        2.828e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94766096  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94822734  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.9484151   -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94849721  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94854178  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94856887  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94858613  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94859736  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94860472  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94860959  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861282  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861498  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861643  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861742  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861809  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861856  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861888  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861911  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861928  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.9486194   -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861948  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861955  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.9486196   -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861963  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861966  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861968  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.9486197   -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861971  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861972  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861973  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861973  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861974  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861974  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861975  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861975  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861975  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861975  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861975  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861975  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
+Orbital 2 error:        2.829e+01
+Using singularity subtraction
+Orbital Energy:            [-19.8043575   -1.87723037  26.94861976  -1.34264949  -1.34264949]
