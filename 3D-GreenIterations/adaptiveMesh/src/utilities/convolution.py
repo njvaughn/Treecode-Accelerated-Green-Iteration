@@ -235,7 +235,7 @@ def gpuPoissonConvolution(targets,sources,V_coulomb_new):
         x_t, y_t, z_t = targets[globalID][0:3] # set the x, y, and z values of the target
         V_coulomb_new[globalID] = 0.0
         for i in range(len(sources)):  # loop through all source midpoints
-            x_s, y_s, z_s, rho_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            x_s, y_s, z_s, rho_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
 #             if not ( abs(x_s-x_t) and (y_s==y_t) and (z_s==z_t) ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
             r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
             if r > 1e-12:
@@ -255,22 +255,32 @@ def gpuPoissonConvolutionSingularitySubtract(targets,sources,V_coulomb_new,k):
             if r > 1e-12:
                 V_coulomb_new[globalID] += weight_s*(rho_s - rho_t*exp(-k*r) )/r # increment the new wavefunction value
 
-@cuda.jit
-def gpuPoissonConvolutionSmoothing(targets,sources,V_coulomb_new,epsilon):
-    
+
+               
+
+@cuda.jit('void(float64[:,:], float64[:,:], float64[:], int64, float64, float64[:])')
+def gpuPoissonConvolutionSmoothing(targets,sources,V_coulomb_new,n,epsilon, coefficients):
     globalID = cuda.grid(1)  # identify the global ID of the thread
+    
+                    
     if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
         x_t, y_t, z_t = targets[globalID][0:3] # set the x, y, and z values of the target
         V_coulomb_new[globalID] = 0.0
         for i in range(len(sources)):  # loop through all source midpoints
-            x_s, y_s, z_s, rho_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
-            scaledEpsilon = epsilon * weight_s
-            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 + scaledEpsilon**2) # compute the distance between target and source
-#             if r > 1e-12:
-            V_coulomb_new[globalID] += weight_s*rho_s/r # increment the new wavefunction value
+            x_s, y_s, z_s, rho_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            scaledEpsilon = epsilon * volume_s**(1/3)
+                ## COMPUTE CHRISTLIEB KERNEL APPROXIMATION ##
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            Gvalue = 0.0
+            for ii in range(n+1):
+#                 coefficient = 1.0
+#                 for jj in range(ii):
+#                     coefficient /= (jj+1) # this is replacing the 1/factorial(i)
+#                     coefficient *= ((-1/2)-jj)
+                 
+                Gvalue += coefficients[ii]* (-scaledEpsilon**2)**ii * (r**2 + scaledEpsilon**2)**(-1/2-ii)
+            V_coulomb_new[globalID] += weight_s*rho_s*Gvalue#/4/pi # increment the new wavefunction value
 
-
-               
 @cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64, int32, float64)')
 def gpuConvolutionSmoothing(targets,sources,psiNew,k,n,epsilon):
     globalID = cuda.grid(1)  # identify the global ID of the thread

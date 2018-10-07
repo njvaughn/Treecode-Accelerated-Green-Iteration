@@ -1338,7 +1338,7 @@ class Tree(object):
             if element[1].leaf == True:
                 for i,j,k in self.PxByPyByPz:
                     gridpt = element[1].gridpoints[i,j,k]
-                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.rho, element[1].w[i,j,k] ] )
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.rho, element[1].w[i,j,k], element[1].volume ] )
                             
         return np.array(leaves)
                 

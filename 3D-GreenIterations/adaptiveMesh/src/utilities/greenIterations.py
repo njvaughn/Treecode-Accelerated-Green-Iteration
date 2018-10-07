@@ -71,6 +71,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
      
     greenIterationOutFile = outputFile[:-4]+'_GREEN_'+outputFile[-4:]
     SCFiterationOutFile = outputFile[:-4]+'_SCF_'+outputFile[-4:]
+    
+    coefficients = np.zeros(smoothingN+1)
+    for ii in range(smoothingN+1):
+        coefficients[ii] = 1.0
+        for jj in range(ii):
+            coefficients[ii] /= (jj+1) # this is replacing the 1/factorial(i)
+            coefficients[ii] *= ((-1/2)-jj)
 
 
 
@@ -97,8 +104,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     V_coulombNew = np.zeros((len(targets)))
     startCoulombConvolutionTime = timer()
 #     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-    print('Using singularity subtraction for initial Poisson solve')
-    gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
+#     print('Using singularity subtraction for initial Poisson solve')
+#     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
+    print('Using smoothed version for Poisson Convolution')
+    gpuPoissonConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
     CoulombConvolutionTime = timer() - startCoulombConvolutionTime
     print('Computing Vcoulomb took:    %.4f seconds. ' %CoulombConvolutionTime)
     tree.importVcoulombOnLeaves(V_coulombNew)
@@ -112,6 +121,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     print('In the above energies, first 5 are for the carbon, next 5 for the oxygen.')
     print('Update orbital energies after computing the initial Veff.')
     tree.updateOrbitalEnergies(sortByEnergy=True)
+    print('Kinetic:   ', tree.orbitalKinetic)
+    print('Potential: ', tree.orbitalPotential)
     
 #     print('Setting the three highest energy orbitals to gauge shift.  They wont be updated')
 #     tree.orbitalEnergies[-1] = tree.gaugeShift
@@ -346,8 +357,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         startCoulombConvolutionTime = timer()
         V_coulombNew = np.zeros((len(targets)))
 #         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-        print('Using singularity subtraction for the Poisson solve!')
-        gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)  # call the GPU convolution 
+#         print('Using singularity subtraction for the Poisson solve!')
+#         gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)  # call the GPU convolution 
+        print('Using smoothed version for Poisson Convolution')
+        gpuPoissonConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
+        
         tree.importVcoulombOnLeaves(V_coulombNew)
         tree.updateVxcAndVeffAtQuadpoints()
         CoulombConvolutionTime = timer() - startCoulombConvolutionTime
@@ -384,7 +398,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
 #         energyUpdateTime = timer() - startEnergyTime
 #         print('Energy Update took:                     %.4f seconds. ' %energyUpdateTime)
-        energyResidual = tree.E - Eold  # Compute the densityResidual for determining convergence
+        energyResidual = abs( tree.E - Eold )  # Compute the densityResidual for determining convergence
 #         energyResidual = -10 # STOP AFTER FIRST SCF
         Eold = np.copy(tree.E)
         
@@ -423,17 +437,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             tree.exportGridpoints(filename)
 
         printEachIteration=True
-#         SCFiterationOutFile = 'iterationConvergenceCO_LW1_1000.csv'
-#         SCFiterationOutFile = 'iterationConvergenceCO_LW1_800.csv'
-#         SCFiterationOutFile = 'iterationConvergenceCO_LW1_800.csv'
-#         SCFiterationOutFile = 'tempTesting.csv'
-#         SCFiterationOutFile = '/home/njvaughn/CO_LW3_1200_skip_SCFiterations_tighter.csv'
-#         SCFiterationOutFile = '/home/njvaughn/CO_LW3_400_atomicCore_7orb.csv'
-#         SCFiterationOutFile = 'iterationConvergenceCO_800_domain15.csv'
-#         SCFiterationOutFile = 'iterationConvergenceCO_800_order5.csv'
-#         SCFiterationOutFile = 'iterationConvergenceLi_1200_domain24.csv'
-#         SCFiterationOutFile = 'iterationConvergenceLi_smoothingBoth.csv'
-#         SCFiterationOutFile = 'iterationConvergenceBe_LW3_1200_perturbed.csv'
+
         if printEachIteration==True:
             header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
                       'exchangeEnergy', 'correlationEnergy', 'electrostaticEnergy', 'totalEnergy']
@@ -468,8 +472,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             tree.E = -0.5
             
         greenIterationCounter+=1
-        print('Setting density residual to -1 to exit after the first SCF')
-        densityResidual = -1 
+        
+        print('Setting density residual to min of density residual and energy residual, just for testing purposes')
+        densityResidual = min(densityResidual, energyResidual)
+#         print('Setting density residual to -1 to exit after the first SCF')
+#         densityResidual = -1 
 
         
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, greenIterationCounter))
