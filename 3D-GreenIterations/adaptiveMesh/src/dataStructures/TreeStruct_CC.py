@@ -91,6 +91,20 @@ class Tree(object):
         
         self.orbitalEnergies = -np.ones(nOrbitals)
         
+        print('Reading atomic coordinates from: ', coordinateFile)
+        atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+#         print(np.shape(atomData))
+#         print(len(atomData))
+        if np.shape(atomData)==(4,):
+            self.atoms = np.empty((1,),dtype=object)
+            atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3])
+            self.atoms[0] = atom
+        else:
+            self.atoms = np.empty((len(atomData),),dtype=object)
+            for i in range(len(atomData)):
+                atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3])
+                self.atoms[i] = atom
+        
         # generate gridpoint objects.  
         xvec = ChebyshevPoints(self.xmin,self.xmax,self.px)
         yvec = ChebyshevPoints(self.ymin,self.ymax,self.py)
@@ -98,7 +112,7 @@ class Tree(object):
         gridpoints = np.empty((px,py,pz),dtype=object)
 
         for i, j, k in self.PxByPyByPz:
-            gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k],self.nOrbitals)
+            gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k],self.nOrbitals, self.gaugeShift, self.atoms)
         
         # generate root cell from the gridpoint objects  
         self.root = Cell( self.xmin, self.xmax, self.px, 
@@ -221,19 +235,19 @@ class Tree(object):
                     
                 Cell.divide(xdiv, ydiv, zdiv)
         
-        print('Reading atomic coordinates from: ', coordinateFile)
-        atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
-#         print(np.shape(atomData))
-#         print(len(atomData))
-        if np.shape(atomData)==(4,):
-            self.atoms = np.empty((1,),dtype=object)
-            atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3])
-            self.atoms[0] = atom
-        else:
-            self.atoms = np.empty((len(atomData),),dtype=object)
-            for i in range(len(atomData)):
-                atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3])
-                self.atoms[i] = atom
+#         print('Reading atomic coordinates from: ', coordinateFile)
+#         atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+# #         print(np.shape(atomData))
+# #         print(len(atomData))
+#         if np.shape(atomData)==(4,):
+#             self.atoms = np.empty((1,),dtype=object)
+#             atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3])
+#             self.atoms[0] = atom
+#         else:
+#             self.atoms = np.empty((len(atomData),),dtype=object)
+#             for i in range(len(atomData)):
+#                 atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3])
+#                 self.atoms[i] = atom
 #                 self.atoms[i] = atom
         
         self.computeNuclearNuclearEnergy()
@@ -362,7 +376,8 @@ class Tree(object):
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
 
-        
+        for m in range(self.nOrbitals):
+            self.normalizeOrbital(m)
     
 
         
@@ -501,7 +516,7 @@ class Tree(object):
                     if not hasattr(cell.gridpoints[i,j,k], "counted"):
                         self.numberOfGridpoints += 1
                         cell.gridpoints[i,j,k].counted = True
-                        cell.gridpoints[i,j,k].setExternalPotential(self.atoms, self.gaugeShift)
+#                         cell.gridpoints[i,j,k].setExternalPotential(self.atoms, self.gaugeShift)
                         gp = cell.gridpoints[i,j,k]
                         r = np.sqrt( gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
                         if r < closestToOrigin:
@@ -890,6 +905,7 @@ class Tree(object):
         V_coulomb = 0.0
         E_x = 0.0
         E_c = 0.0
+        E_electronNucleus = 0.0
         
         for _,cell in self.masterList:
             if cell.leaf == True:
@@ -898,17 +914,25 @@ class Tree(object):
                 V_coulomb += integrateCellDensityAgainst__(cell,'v_coulomb')
                 E_x += integrateCellDensityAgainst__(cell,'epsilon_x')
                 E_c += integrateCellDensityAgainst__(cell,'epsilon_c')
+                E_electronNucleus += integrateCellDensityAgainst__(cell,'v_ext')
+                
         self.totalVx = V_x
         self.totalVc = V_c
         self.totalVcoulomb = V_coulomb
-        self.totalElectrostatic = -1/2*V_coulomb - V_x - V_c + self.nuclearNuclear + self.totalOrbitalPotential
+#         self.totalElectrostatic = -1/2*V_coulomb - V_x - V_c + self.nuclearNuclear + self.totalOrbitalPotential
+        self.totalElectrostatic = 1/2*V_coulomb + self.nuclearNuclear + E_electronNucleus
         self.totalEx = E_x
         self.totalEc = E_c
 #         print('Total V_xc : ')
-
+        
+        print('Electrostatic Energies:')
+        print('Hartree:         ', 1/2*V_coulomb)
+        print('External:        ', E_electronNucleus)
+        print('Nuclear-Nuclear: ', self.nuclearNuclear)
         
 #         self.totalPotential = -1/2*V_coulomb + E_xc - V_xc 
-        self.totalPotential = -1/2*V_coulomb + E_x + E_c - V_x - V_c + self.nuclearNuclear
+#         self.totalPotential = -1/2*V_coulomb + E_x + E_c - V_x - V_c + self.nuclearNuclear
+        self.totalPotential = self.totalElectrostatic +  E_x + E_c # - V_x - V_c 
                 
         
        
@@ -922,7 +946,8 @@ class Tree(object):
     def updateTotalEnergy(self):
         self.computeBandEnergy()
         self.computeTotalPotential()
-        self.E = self.totalBandEnergy + self.totalPotential
+#         self.E = self.totalBandEnergy + self.totalPotential
+        self.E = self.totalKinetic + self.totalPotential
     
     def computeOrbitalPotentials(self,targetEnergy=None): 
         

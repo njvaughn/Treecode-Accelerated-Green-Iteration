@@ -9,7 +9,7 @@ class GridPoint(object):
     '''
     The gridpoint object for the quadrature points.  Will contain the coordinates, potential values, etc.
     '''
-    def __init__(self, x,y,z, Norbitals):
+    def __init__(self, x,y,z, Norbitals, gaugeShift, atoms):
         '''
         Gridpoint Constructor.  For minimal example, a gridpoint simply has x and y values.
         '''
@@ -17,7 +17,7 @@ class GridPoint(object):
         self.y = y
         self.z = z
         self.phi = np.zeros(Norbitals)  # intialize to zero before using the isngle atom data.
-        
+        self.gaugeShift = gaugeShift
         
         self.rho = 0
 
@@ -27,14 +27,15 @@ class GridPoint(object):
         self.v_c = 0.0
         self.v_ext = 0.0
         
+        self.setExternalPotential(atoms)
         self.updateVeff()
 
-    def setExternalPotential(self, atoms, gaugeShift):
+    def setExternalPotential(self, atoms):
         self.v_ext = 0.0
         for atom in atoms:
             self.v_ext += atom.V(self.x,self.y,self.z)
-        self.v_ext += gaugeShift  # add the gauge shift to external potential.
-        self.updateVeff()
+#         self.v_ext += gaugeShift  # add the gauge shift to external potential.
+#         self.updateVeff()
         
     def sortOrbitals(self, newOrder):
         tempPhi = np.zeros_like(self.phi)
@@ -50,7 +51,7 @@ class GridPoint(object):
 #             # zero out v_coulomb and v_xc for testing purposes
 #             self.v_coulomb = 0.0
 #             self.v_xc = 0.0
-            self.v_eff = self.v_coulomb + self.v_x + self.v_c + self.v_ext # v_gauge
+            self.v_eff = self.v_coulomb + self.v_x + self.v_c + self.v_ext + self.gaugeShift # v_gauge
            
     def setPhi(self, phi, orbitalNumber):
         self.phi[orbitalNumber] = phi

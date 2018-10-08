@@ -28,8 +28,10 @@ import numpy as np
 ## Oxygen
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
 ##file='LW3_1500_GREEN_.csv'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenOrder5/'
-file='LW3_1000_GREEN_.csv'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Oxygen_SmoothingTests_LW5/'
+file = 'LW5_4000_N3_EPSp25_GREEN_.csv'
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenOrder5/'
+##file='LW3_1000_GREEN_.csv'
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
     TotalEnergy = -7.3340536782581447
@@ -49,19 +51,19 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Bery
 
 
 ##if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/':
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenOrder5/':
-    BandEnergy = -4.0613161867355522e+01
-    KineticEnergy = 7.4112356154762352e+01
-    ExchangeEnergy = -7.2193342430668448e+00
-    CorrelationEnergy = -5.4455279159404091e-01
-    ElectrostaticEnergy = -1.4081748175072624e+02
-    TotalEnergy = -7.4469012630624775e+01
+##if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenOrder5/':
+BandEnergy = -4.0613161867355522e+01
+KineticEnergy = 7.4112356154762352e+01
+ExchangeEnergy = -7.2193342430668448e+00
+CorrelationEnergy = -5.4455279159404091e-01
+ElectrostaticEnergy = -1.4081748175072624e+02
+TotalEnergy = -7.4469012630624775e+01
 
-    psi0 = -1.875879493052850933e+01
-    psi1 = -8.711989839502347621e-01
-    psi2 = -3.382966064098608672e-01
-    psi3 = -3.382966063773331644e-01
-    psi4 = -3.382966063244193800e-01
+psi0 = -1.875879493052850933e+01
+psi1 = -8.711989839502347621e-01
+psi2 = -3.382966064098608672e-01
+psi3 = -3.382966063773331644e-01
+psi4 = -3.382966063244193800e-01
 
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/':

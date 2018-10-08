@@ -103,11 +103,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     V_coulombNew = np.zeros((len(targets)))
     startCoulombConvolutionTime = timer()
-#     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
+    if smoothingN==0:
+        gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
 #     print('Using singularity subtraction for initial Poisson solve')
 #     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
-    print('Using smoothed version for Poisson Convolution')
-    gpuPoissonConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
+    else:
+        print('Using smoothed version for Poisson Convolution: (n, epsilon) = (%i, %2.3f)' %(smoothingN, smoothingEps))
+        gpuPoissonConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
     CoulombConvolutionTime = timer() - startCoulombConvolutionTime
     print('Computing Vcoulomb took:    %.4f seconds. ' %CoulombConvolutionTime)
     tree.importVcoulombOnLeaves(V_coulombNew)
@@ -115,7 +117,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     #manually set the initial occupations, otherwise oxygen P shell gets none.
 #     tree.occupations = np.array([2,2,2,2,2,2,2])
-    tree.occupations = np.array([2,2,2/3,2/3,2/3])
+    tree.occupations = np.array([2,2,4/3,4/3,4/3])
 
 #     tree.updateOrbitalEnergies(sortByEnergy=False)
 #     print('In the above energies, first 5 are for the carbon, next 5 for the oxygen.')
@@ -123,7 +125,31 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     tree.updateOrbitalEnergies(sortByEnergy=True)
     print('Kinetic:   ', tree.orbitalKinetic)
     print('Potential: ', tree.orbitalPotential)
+    tree.updateTotalEnergy()
+    """
+    Print results before SCF 1
+    """
+#         print('Orbital Kinetic:   ', tree.orbitalKinetic)
+#         print('Orbital Potential: ', tree.orbitalPotential)
+    if tree.nOrbitals ==1:
+        print('Orbital Energy:                        %.10f H' %(tree.orbitalEnergies) )
+#         print('Orbital Energy:                         %.10f H, %.10e H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
+    elif tree.nOrbitals==2:
+        print('Orbital Energies:                      %.10f H, %.10f H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
+    else: 
+        print('Orbital Energies: ', tree.orbitalEnergies) 
+
+    print('Updated V_x:                           %.10f Hartree' %tree.totalVx)
+    print('Updated V_c:                           %.10f Hartree' %tree.totalVc)
     
+    print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalBandEnergy, tree.totalBandEnergy-Eband) )
+    print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Ekinetic) )
+    print('Updated E_x:                           %.10f H, %.10e H' %(tree.totalEx, tree.totalEx-Eexchange) )
+    print('Updated E_c:                           %.10f H, %.10e H' %(tree.totalEc, tree.totalEc-Ecorrelation) )
+    print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
+    print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
+    
+#     return
 #     print('Setting the three highest energy orbitals to gauge shift.  They wont be updated')
 #     tree.orbitalEnergies[-1] = tree.gaugeShift
 #     tree.orbitalEnergies[-2] = tree.gaugeShift
@@ -250,7 +276,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
 #                 else:
                 elif subtractSingularity==1:
-                    if tree.orbitalEnergies[m] < -0.4:
+                    if tree.orbitalEnergies[m] < -0.2:
                         print('Using singularity subtraction')
                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
                     else:
@@ -283,7 +309,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 if normDiff > orbitalResidual:
                     orbitalResidual = np.copy(normDiff) 
                 tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
-                print('Orbital %i error:        %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
+                print('Orbital %i kinetic and potential: %2.8e and %2.8e ' %(m,tree.orbitalKinetic[m], tree.orbitalPotential[m]-tree.gaugeShift ))
+                print('Orbital %i error and residual:   %1.3e and %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift, orbitalResidual))
 #                 print()
 
   
@@ -356,11 +383,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         """
         startCoulombConvolutionTime = timer()
         V_coulombNew = np.zeros((len(targets)))
-#         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
+        if smoothingN==0:
+            gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
 #         print('Using singularity subtraction for the Poisson solve!')
 #         gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)  # call the GPU convolution 
-        print('Using smoothed version for Poisson Convolution')
-        gpuPoissonConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
+        else:
+            print('Using smoothed version for Poisson Convolution: (n, epsilon) = (%i, %2.3f)' %(smoothingN, smoothingEps))
+            gpuPoissonConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
         
         tree.importVcoulombOnLeaves(V_coulombNew)
         tree.updateVxcAndVeffAtQuadpoints()
@@ -473,10 +502,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
         greenIterationCounter+=1
         
-        print('Setting density residual to min of density residual and energy residual, just for testing purposes')
-        densityResidual = min(densityResidual, energyResidual)
-#         print('Setting density residual to -1 to exit after the first SCF')
-#         densityResidual = -1 
+#         print('Setting density residual to min of density residual and energy residual, just for testing purposes')
+#         densityResidual = min(densityResidual, energyResidual)
+        print('Setting density residual to -1 to exit after the first SCF')
+        densityResidual = -1 
 
         
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, greenIterationCounter))

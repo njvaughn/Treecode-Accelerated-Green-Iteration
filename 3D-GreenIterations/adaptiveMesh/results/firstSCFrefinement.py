@@ -13,9 +13,10 @@ import numpy as np
 file='runComparison.csv'
 ##file='runComparison_3levels_initial344.csv'
 #### Oxygen
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Oxygen_SmoothingTests_LW5/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Oxygen_MeshBuilding/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenFirstSCF_LWtest_singSub2/'
-##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenFirstSCF/'
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenFirstSCF_LWtest_singSub2/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenFirstSCF/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults_uniformRefinement/'
 
 
@@ -46,12 +47,16 @@ df['CorrelationEnergyError'] = abs( df['CorrelationEnergy'] - CorrelationEnergy)
 df['ElectrostaticEnergyError'] = abs( df['ElectrostaticEnergy'] - ElectrostaticEnergy)
 df['TotalEnergyError'] = abs( df['TotalEnergy'] - TotalEnergy)
 
-df2 = df[df['divideCriterion']=='LW2']
-df3 = df[df['divideCriterion']=='LW3']
-df4 = df[df['divideCriterion']=='LW4']
-df5 = df[df['divideCriterion']=='LW5']
+##df2 = df[df['divideCriterion']=='LW2']
+##df3 = df[df['divideCriterion']=='LW3']
+##df4 = df[df['divideCriterion']=='LW4']
+##df5 = df[df['divideCriterion']=='LW5']
 ##df6 = df[df['divideCriterion']==6]
 
+df3 = df[df['order']==3]
+df4 = df[df['order']==4]
+df5 = df[df['order']==5]
+df6 = df[df['order']==6]
 
 
 
@@ -73,7 +78,7 @@ def energyErrors(dataframe):
     dataframe.plot(x='numberOfPoints', y='KineticEnergyError', style='o', ax=ax, loglog=True)
     dataframe.plot(x='numberOfPoints', y='ExchangeEnergyError', style='o', ax=ax, loglog=True)
     dataframe.plot(x='numberOfPoints', y='CorrelationEnergyError', style='o', ax=ax, loglog=True)
-    dataframe.plot(x='numberOfPoints', y='ElectrostaticEnergyError', style='.', ax=ax, loglog=True)
+    dataframe.plot(x='numberOfPoints', y='ElectrostaticEnergyError', style='o', ax=ax, loglog=True)
     dataframe.plot(x='numberOfPoints', y='TotalEnergyError', style='o', ax=ax, loglog=True)
   
     plt.legend(loc = 'lower left')
