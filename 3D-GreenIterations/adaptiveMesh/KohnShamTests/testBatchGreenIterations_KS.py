@@ -87,7 +87,7 @@ def setUpTree():
             
 #     for m in range(4,tree.nOrbitals):
 #         tree.scrambleOrbital(m)
-    tree.normalizeDensity()
+#     tree.normalizeDensity()
     return tree
     
     

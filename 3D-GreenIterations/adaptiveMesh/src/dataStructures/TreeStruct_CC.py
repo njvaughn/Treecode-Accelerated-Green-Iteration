@@ -118,7 +118,7 @@ class Tree(object):
         self.root = Cell( self.xmin, self.xmax, self.px, 
                           self.ymin, self.ymax, self.py, 
                           self.zmin, self.zmax, self.pz, 
-                          gridpoints, self )
+                          gridpoints, densityPoints=None, tree=self )
         self.root.level = 0
         self.root.uniqueID = ''
         self.masterList = [[self.root.uniqueID, self.root]]
@@ -293,6 +293,21 @@ class Tree(object):
                             gp.rho += atom.interpolators['density'](r)
                         except ValueError:
                             gp.rho += 0.0   # if outside the interpolation range, assume 0.
+                
+#                 if hasattr(cell, 'densityPoints'):
+                for i,j,k in cell.PxByPyByPz_density:
+                    dp = cell.densityPoints[i,j,k]
+                    dp.rho = 0.0
+                    for atom in self.atoms:
+                        r = np.sqrt( (dp.x-atom.x)**2 + (dp.y-atom.y)**2 + (dp.z-atom.z)**2 )
+                        try:
+                            dp.rho += atom.interpolators['density'](r)
+                        except ValueError:
+                            dp.rho += 0.0   # if outside the interpolation range, assume 0.
+        
+#         self.normalizeDensity()
+        self.integrateDensityBothMeshes()
+                            
                         
     
     def initializeOrbitalsFromAtomicData(self):
@@ -537,7 +552,7 @@ class Tree(object):
         print('Number of gridpoints: ', self.numberOfGridpoints)
 
         self.computeDerivativeMatrices()
-
+        self.initializeDensityFromAtomicData()
         ### INITIALIZE ORBTIALS AND DENSITY ####
         if initializationType=='atomic':
             self.initializeOrbitalsFromAtomicData()
@@ -545,8 +560,8 @@ class Tree(object):
             self.initializeOrbitalsRandomly()
 #         self.orthonormalizeOrbitals()
             
-        self.initializeDensityFromAtomicData()
-        self.normalizeDensity()
+        
+#         self.normalizeDensity()
         
             
             
@@ -730,9 +745,9 @@ class Tree(object):
         self.computeDerivativeMatrices()
 
         ### INITIALIZE ORBTIALS AND DENSITY ####
-        self.initializeOrbitalsFromAtomicData()            
         self.initializeDensityFromAtomicData()
-        self.normalizeDensity()
+        self.initializeOrbitalsFromAtomicData()            
+#         self.normalizeDensity()
         
         self.maxDepthAchieved += 1
         self.minDepthAchieved += 1
@@ -777,7 +792,7 @@ class Tree(object):
         ### INITIALIZE ORBTIALS AND DENSITY ####
         self.initializeOrbitalsFromAtomicData()            
         self.initializeDensityFromAtomicData()
-        self.normalizeDensity()
+#         self.normalizeDensity()
         
         self.maxDepthAchieved += 1
         self.minDepthAchieved += 1
@@ -864,22 +879,72 @@ class Tree(object):
             
             return np.sum( cell.w * rho )
         
+        def integrateDensity_secondaryMesh(cell):
+            rho = np.empty((cell.pxd,cell.pyd,cell.pzd))
+                        
+            for i,j,k in cell.PxByPyByPz_density:
+                dp = cell.densityPoints[i,j,k]
+                rho[i,j,k] = dp.rho
+            
+            return np.sum( cell.w_density * rho )
+        
+        print('Normalizing density... are you sure?')
+        A = 0.0
         B = 0.0
         for _,cell in self.masterList:
             if cell.leaf == True:
-                B += integrateDensity(cell)
+                A += integrateDensity(cell)
+                B += integrateDensity_secondaryMesh(cell)
         if B==0.0:
             print('Warning, integrated density to 0')
 #         print('Raw computed density ', B)
         for _,cell in self.masterList:
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
-                    cell.gridpoints[i,j,k].rho/=(B/self.nElectrons)
+                    cell.gridpoints[i,j,k].rho/=(A/self.nElectrons)
+                for i,j,k in cell.PxByPyByPz_density:
+                    cell.densityPoints[i,j,k].rho/=(B/self.nElectrons)
+                    
 #         B = 0.0
 #         for id,cell in self.masterList:
 #             if cell.leaf == True:
 #                 B += integrateDensity(cell)
 #         print('Integrated density after normalization ', B)
+
+    def integrateDensityBothMeshes(self):            
+        def integrateDensity(cell):
+            rho = np.empty((cell.px,cell.py,cell.pz))
+                        
+            for i,j,k in cell.PxByPyByPz:
+                gp = cell.gridpoints[i,j,k]
+                rho[i,j,k] = gp.rho
+            
+            return np.sum( cell.w * rho )
+        
+        def integrateDensity_secondaryMesh(cell):
+            rho = np.empty((cell.pxd,cell.pyd,cell.pzd))
+                        
+            for i,j,k in cell.PxByPyByPz_density:
+                dp = cell.densityPoints[i,j,k]
+                rho[i,j,k] = dp.rho
+            
+            return np.sum( cell.w_density * rho )
+        A = 0.0
+        B = 0.0
+        C = 0.0
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                A += integrateDensity(cell)
+                B += integrateDensity_secondaryMesh(cell)
+                
+                C += (integrateDensity(cell) - integrateDensity_secondaryMesh(cell))**2 * cell.volume
+        
+        C = np.sqrt(C)
+
+        print('Original mesh computed density  ', A)
+        print('Secondary mesh computed density ', B)
+        print('L2 norm of the difference (cell averaged) : ', C)
+
     
                 
             
@@ -1359,11 +1424,26 @@ class Tree(object):
 #         print('Extracting the gridpoints from all leaves...')
         leaves = []
                 
-        for element in self.masterList:
-            if element[1].leaf == True:
-                for i,j,k in self.PxByPyByPz:
-                    gridpt = element[1].gridpoints[i,j,k]
-                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.rho, element[1].w[i,j,k], element[1].volume ] )
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.rho, cell.w[i,j,k], cell.volume ] )
+                            
+        return np.array(leaves)
+    
+    def extractDenstiySecondaryMesh(self):
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        leaves = []
+                
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz_density:
+                    densityPoint = cell.densityPoints[i,j,k]
+                    leaves.append( [densityPoint.x, densityPoint.y, densityPoint.z, densityPoint.rho, cell.w_density[i,j,k], cell.volume ] )
                             
         return np.array(leaves)
                 

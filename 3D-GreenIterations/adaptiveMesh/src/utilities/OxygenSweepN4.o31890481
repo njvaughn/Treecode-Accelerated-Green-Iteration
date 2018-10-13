@@ -1,0 +1,383 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/StaggeredGridTests/LW5_800.csv', 8, 5, -74.469012630225393, -7.2193295915891582, -0.54455267145166231, -40.613086299670449, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Warning, evaluating potential at singularity!
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  365000
+Original mesh computed density  8.0
+Secondary mesh computed density  8.0
+L2 norm of the difference (cell averaged) :  9.30845647091e-08
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-15.0, 15.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            8.00e+02 
+Total Number of Cells:       3337 
+Total Number of Leaf Cells:  2920 
+Total Number of Gridpoints:  365000 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  5 
+Construction time:           6.87 seconds.
+Closest gridpoint to origin:  [-0.00035847278104135516, -0.00035847278104135516, -0.00035847278104135516]
+For a distance of:  0.0006208930698941406
+Part of a cell centered at:  [-0.00732421875, -0.00732421875, -0.00732421875]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    365000
+Threads per block:    512
+Blocks per grid:      713
+[-40.613086299670449, 74.112265375596365, -7.2193295915891582, -0.54455267145166231, -140.81739574277032, -74.469012630225393]
+Computing Vcoulomb took:    2.9022 seconds. 
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [0 1 4 3 2]
+Orbital Energy:            [-18.7676292   -0.87262567  -0.33943202  -0.33943202  -0.33943202]
+New order:  [0 1 2 3 4]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.33943179688855624
+Occupations:  [ 2.          2.          1.33333334  1.33333334  1.33333334]
+Kinetic:    [ 28.75760942   3.19607102   2.55204446   2.55204446   2.55204446]
+Potential:  [-47.52523861  -4.0686967   -2.89147647  -2.89147647  -2.89147647]
+Electrostatic Energies:
+Hartree:          36.3151331448
+External:         -177.150886426
+Nuclear-Nuclear:  0.0
+Orbital Energies:  [-18.7676292   -0.87262567  -0.33943202  -0.33943202  -0.33943202]
+Updated V_x:                           -9.6258043295 Hartree
+Updated V_c:                           -0.6072443723 Hartree
+Updated Band Energy:                   -40.6382378112 H, -2.5151511543e-02 H
+Updated Kinetic Energy:                 74.1155387060 H, 3.2733304026e-03 H
+Updated E_x:                           -7.2193532471 H, -2.3655536769e-05 H
+Updated E_c:                           -0.5445524449 H, 2.2651323961e-07 H
+Updated totalElectrostatic:            -140.8357532812 H, -1.8357538452e-02 H
+Total Energy:                          -74.4841202673 H, -1.5107637062e-02 H
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 152, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
+  File "testBatchGreenIterations_KS.py", line 102, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
+  File "../src/utilities/greenIterations.py", line 165, in greenIterations_KohnSham_SCF
+    myFile = open(SCFiterationOutFile, 'a')
+FileNotFoundError: [Errno 2] No such file or directory: '/home/njvaughn/StaggeredGridTests/LW5_800_SCF_.csv'
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/StaggeredGridTests/LW5_1000.csv', 8, 5, -74.469012630225393, -7.2193295915891582, -0.54455267145166231, -40.613086299670449, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Warning, evaluating potential at singularity!
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  393000
+Original mesh computed density  8.0
+Secondary mesh computed density  8.0
+L2 norm of the difference (cell averaged) :  9.25591043762e-08
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-15.0, 15.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       3593 
+Total Number of Leaf Cells:  3144 
+Total Number of Gridpoints:  393000 
+Minimum Depth                3 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  5 
+Construction time:           7.61 seconds.
+Closest gridpoint to origin:  [-0.00017923639052067758, -0.00017923639052067758, -0.00017923639052067758]
+For a distance of:  0.0003104465349470703
+Part of a cell centered at:  [-0.003662109375, -0.003662109375, -0.003662109375]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    393000
+Threads per block:    512
+Blocks per grid:      768
+[-40.613086299670449, 74.112265375596365, -7.2193295915891582, -0.54455267145166231, -140.81739574277032, -74.469012630225393]
+Computing Vcoulomb took:    3.1192 seconds. 
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [0 1 4 3 2]
+Orbital Energy:            [-18.763208    -0.87244476  -0.33938654  -0.33938654  -0.33938654]
+New order:  [0 1 2 3 4]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.3393863231120409
+Occupations:  [ 2.          2.          1.33333298  1.33333297  1.33333296]
+Kinetic:    [ 28.75703389   3.19603592   2.55204908   2.55204908   2.55204908]
+Potential:  [-47.52024189  -4.06848069  -2.89143562  -2.89143562  -2.89143562]
+Electrostatic Energies:
+Hartree:          36.3173694569
+External:         -177.144740096
+Nuclear-Nuclear:  0.0
+Orbital Energies:  [-18.763208    -0.87244476  -0.33938654  -0.33938654  -0.33938654]
+Updated V_x:                           -9.6257959201 Hartree
+Updated V_c:                           -0.6072443016 Hartree
+Updated Band Energy:                   -40.6288513231 H, -1.5765023476e-02 H
+Updated Kinetic Energy:                 74.1143359543 H, 2.0705787474e-03 H
+Updated E_x:                           -7.2193469401 H, -1.7348466388e-05 H
+Updated E_c:                           -0.5445523765 H, 2.9496219789e-07 H
+Updated totalElectrostatic:            -140.8273706396 H, -9.9748968294e-03 H
+Total Energy:                          -74.4769340018 H, -7.9213715755e-03 H
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 152, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
+  File "testBatchGreenIterations_KS.py", line 102, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
+  File "../src/utilities/greenIterations.py", line 165, in greenIterations_KohnSham_SCF
+    myFile = open(SCFiterationOutFile, 'a')
+FileNotFoundError: [Errno 2] No such file or directory: '/home/njvaughn/StaggeredGridTests/LW5_1000_SCF_.csv'
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/StaggeredGridTests/LW5_1500.csv', 8, 5, -74.469012630225393, -7.2193295915891582, -0.54455267145166231, -40.613086299670449, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Warning, evaluating potential at singularity!
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  666000
+Original mesh computed density  8.0
+Secondary mesh computed density  8.0
+L2 norm of the difference (cell averaged) :  5.00129651948e-08
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-15.0, 15.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.50e+03 
+Total Number of Cells:       6089 
+Total Number of Leaf Cells:  5328 
+Total Number of Gridpoints:  666000 
+Minimum Depth                3 levels 
+Maximum Depth:               13 levels 
+Cell Order:                  5 
+Construction time:           13 seconds.
+Closest gridpoint to origin:  [-8.961819526033879e-05, -8.961819526033879e-05, -8.961819526033879e-05]
+For a distance of:  0.00015522326747353514
+Part of a cell centered at:  [-0.0018310546875, -0.0018310546875, -0.0018310546875]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    666000
+Threads per block:    512
+Blocks per grid:      1301
+[-40.613086299670449, 74.112265375596365, -7.2193295915891582, -0.54455267145166231, -140.81739574277032, -74.469012630225393]
+Computing Vcoulomb took:    9.3039 seconds. 
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [0 1 4 2 3]
+Orbital Energy:            [-18.76169707  -0.87204903  -0.33907651  -0.33907651  -0.33907651]
+New order:  [0 1 2 3 4]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.3390762866749984
+Occupations:  [ 2.          2.          1.33333334  1.33333334  1.33333333]
+Kinetic:    [ 28.75665079   3.19598641   2.55203108   2.55203108   2.55203108]
+Potential:  [-47.51834786  -4.06803543  -2.89110758  -2.89110758  -2.89110758]
+Electrostatic Energies:
+Hartree:          36.3195757147
+External:         -177.143201602
+Nuclear-Nuclear:  0.0
+Orbital Energies:  [-18.76169707  -0.87204903  -0.33907651  -0.33907651  -0.33907651]
+Updated V_x:                           -9.6257956821 Hartree
+Updated V_c:                           -0.6072439043 Hartree
+Updated Band Energy:                   -40.6237982167 H, -1.0711917039e-02 H
+Updated Kinetic Energy:                 74.1133987157 H, 1.1333400565e-03 H
+Updated E_x:                           -7.2193467616 H, -1.7170009700e-05 H
+Updated E_c:                           -0.5445526226 H, 4.8801663821e-08 H
+Updated totalElectrostatic:            -140.8236258874 H, -6.2301446267e-03 H
+Total Energy:                          -74.4741265560 H, -5.1139257676e-03 H
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 152, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
+  File "testBatchGreenIterations_KS.py", line 102, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
+  File "../src/utilities/greenIterations.py", line 165, in greenIterations_KohnSham_SCF
+    myFile = open(SCFiterationOutFile, 'a')
+FileNotFoundError: [Errno 2] No such file or directory: '/home/njvaughn/StaggeredGridTests/LW5_1500_SCF_.csv'
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/StaggeredGridTests/LW5_2000.csv', 8, 5, -74.469012630225393, -7.2193295915891582, -0.54455267145166231, -40.613086299670449, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Warning, evaluating potential at singularity!
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  778000
+Original mesh computed density  8.0
+Secondary mesh computed density  8.0
+L2 norm of the difference (cell averaged) :  2.77366016998e-08
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-15.0, 15.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            2.00e+03 
+Total Number of Cells:       7113 
+Total Number of Leaf Cells:  6224 
+Total Number of Gridpoints:  778000 
+Minimum Depth                3 levels 
+Maximum Depth:               13 levels 
+Cell Order:                  5 
+Construction time:           15.7 seconds.
+Closest gridpoint to origin:  [-8.961819526033879e-05, -8.961819526033879e-05, -8.961819526033879e-05]
+For a distance of:  0.00015522326747353514
+Part of a cell centered at:  [-0.0018310546875, -0.0018310546875, -0.0018310546875]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    778000
+Threads per block:    512
+Blocks per grid:      1520
+[-40.613086299670449, 74.112265375596365, -7.2193295915891582, -0.54455267145166231, -140.81739574277032, -74.469012630225393]
+Computing Vcoulomb took:    11.9869 seconds. 
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [0 1 4 3 2]
+Orbital Energy:            [-18.76161304  -0.87196389  -0.33895523  -0.33895523  -0.33895523]
+New order:  [0 1 2 3 4]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.3389550063148668
+Occupations:  [ 2.          2.          1.333334    1.33333399  1.33333398]
+Kinetic:    [ 28.75639651   3.1959663    2.55203082   2.55203082   2.55203082]
+Potential:  [-47.51800955  -4.06793018  -2.89098604  -2.89098604  -2.89098604]
+Electrostatic Energies:
+Hartree:          36.3202871614
+External:         -177.143253259
+Nuclear-Nuclear:  0.0
+Orbital Energies:  [-18.76161304  -0.87196389  -0.33895523  -0.33895523  -0.33895523]
+Updated V_x:                           -9.6257986503 Hartree
+Updated V_c:                           -0.6072439383 Hartree
+Updated Band Energy:                   -40.6229754218 H, -9.8891221458e-03 H
+Updated Kinetic Energy:                 74.1128488775 H, 5.8350194715e-04 H
+Updated E_x:                           -7.2193489877 H, -1.9396101989e-05 H
+Updated E_c:                           -0.5445526555 H, 1.5939018216e-08 H
+Updated totalElectrostatic:            -140.8229660977 H, -5.5703549792e-03 H
+Total Energy:                          -74.4740188634 H, -5.0062331844e-03 H
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 152, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
+  File "testBatchGreenIterations_KS.py", line 102, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
+  File "../src/utilities/greenIterations.py", line 165, in greenIterations_KohnSham_SCF
+    myFile = open(SCFiterationOutFile, 'a')
+FileNotFoundError: [Errno 2] No such file or directory: '/home/njvaughn/StaggeredGridTests/LW5_2000_SCF_.csv'
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/StaggeredGridTests/LW5_2500.csv', 8, 5, -74.469012630225393, -7.2193295915891582, -0.54455267145166231, -40.613086299670449, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Warning, evaluating potential at singularity!
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  1065000
+Original mesh computed density  8.0
+Secondary mesh computed density  8.0
+L2 norm of the difference (cell averaged) :  2.20867933037e-08
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 

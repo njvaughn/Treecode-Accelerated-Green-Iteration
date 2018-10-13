@@ -10,7 +10,7 @@ import bisect
 
 from hydrogenAtom import potential
 from meshUtilities import meshDensity, weights3D, unscaledWeights, ChebGradient3D, ChebyshevPoints,computeDerivativeMatrix
-from GridpointStruct import GridPoint
+from GridpointStruct import GridPoint, DensityPoint
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 TwoByTwoByTwo = [element for element in itertools.product(range(2),range(2),range(2))]
@@ -26,7 +26,7 @@ class Cell(object):
     """
     INITIALIZATION FUNCTIONS
     """
-    def __init__(self, xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, gridpoints=None, tree=None):
+    def __init__(self, xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, gridpoints=None, densityPoints=None, tree=None):
         '''
         Cell Constructor.  Cell composed of gridpoint objects
         '''
@@ -35,6 +35,9 @@ class Cell(object):
         self.px = px
         self.py = py
         self.pz = pz
+        self.pxd = self.px+1 # Points for the density
+        self.pyd = self.py+1 # Points for the density secondary mesh
+        self.pzd = self.pz+1
         self.xmin = xmin
         self.xmax = xmax
         self.ymin = ymin
@@ -42,10 +45,14 @@ class Cell(object):
         self.zmin = zmin
         self.zmax = zmax
         self.gridpoints = gridpoints
+        self.densityPoints = densityPoints
         self.leaf = True
         W = unscaledWeights(px)  # assumed px=py=pz
+        W_density = unscaledWeights(self.pxd)  # assumed px=py=pz
         self.w = weights3D(xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, W)
+        self.w_density = weights3D(xmin, xmax, self.pxd, ymin, ymax, self.pyd, zmin, zmax, self.pzd, W_density)
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
+        self.PxByPyByPz_density = [element for element in itertools.product(range(self.pxd),range(self.pyd),range(self.pzd))]
         self.setCellMidpointAndVolume()
         
         if hasattr(self, "tree"):
@@ -55,6 +62,9 @@ class Cell(object):
 
     def setGridpoints(self,gridpoints):
         self.gridpoints = gridpoints
+    
+    def setDensityPoints(self,densityPoints):
+        self.densityPoints = densityPoints
              
     def setCellMidpointAndVolume(self):
 
@@ -521,6 +531,10 @@ class Cell(object):
             y = [ChebyshevPoints(cell.ymin,float(ydiv),cell.py), ChebyshevPoints(float(ydiv),cell.ymax,cell.py)]
             z = [ChebyshevPoints(cell.zmin,float(zdiv),cell.pz), ChebyshevPoints(float(zdiv),cell.zmax,cell.pz)]
             
+            x_density = [ChebyshevPoints(cell.xmin,float(xdiv),cell.pxd), ChebyshevPoints(float(xdiv),cell.xmax,cell.pxd)]
+            y_density = [ChebyshevPoints(cell.ymin,float(ydiv),cell.pyd), ChebyshevPoints(float(ydiv),cell.ymax,cell.pyd)]
+            z_density = [ChebyshevPoints(cell.zmin,float(zdiv),cell.pzd), ChebyshevPoints(float(zdiv),cell.zmax,cell.pzd)]
+            
             xbounds = np.array([cell.xmin, float(xdiv), cell.xmax])
             ybounds = np.array([cell.ymin, float(ydiv), cell.ymax])
             zbounds = np.array([cell.zmin, float(zdiv), cell.zmax])
@@ -544,7 +558,7 @@ class Cell(object):
                     if hasattr(cell.tree, 'masterList'):
                         cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
     
-            '''create new gridpoints wherever necessary'''
+            '''create new gridpoints wherever necessary.  Also create density points. '''
             newGridpointCount=0
             for ii,jj,kk in TwoByTwoByTwo:
                 xOct = x[ii]
@@ -557,11 +571,20 @@ class Cell(object):
                     if interpolate == True:
                         for m in range(self.nOrbitals):
                             gridpoints[i,j,k].setPhi(interpolators[m](xOct[i],yOct[j],zOct[k]),m)
-#                     if hasattr(cell, "tree"):
-#                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                 children[ii,jj,kk].setGridpoints(gridpoints)
                 if hasattr(cell,'level'):
                     children[ii,jj,kk].level = cell.level+1
+                    
+                    
+            for ii,jj,kk in TwoByTwoByTwo:
+                xOct = x_density[ii]
+                yOct = y_density[jj]
+                zOct = z_density[kk]   
+                densityPoints = np.empty((cell.pxd,cell.pyd,cell.pzd),dtype=object)
+                for i, j, k in cell.PxByPyByPz_density:
+                    densityPoints[i,j,k] = DensityPoint(xOct[i],yOct[j],zOct[k])
+                children[ii,jj,kk].setDensityPoints(densityPoints)
+                
             
             if printNumberOfCells == True: print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, cell.uniqueID))
     

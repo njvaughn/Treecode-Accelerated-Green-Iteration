@@ -99,7 +99,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     ### COMPUTE THE INITIAL HAMILTONIAN ###
     targets = tree.extractLeavesDensity()  
-    sources = tree.extractLeavesDensity() 
+    sources = tree.extractLeavesDensity()   # extract density on secondary mesh
+#     sources = tree.extractDenstiySecondaryMesh()   # extract density on secondary mesh
 
     V_coulombNew = np.zeros((len(targets)))
     startCoulombConvolutionTime = timer()
@@ -109,7 +110,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
     else:
         print('Using smoothed version for Poisson Convolution: (n, epsilon) = (%i, %2.3f)' %(smoothingN, smoothingEps))
-        gpuPoissonConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
+        gpuPoissonConvolutionChristliebSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
     CoulombConvolutionTime = timer() - startCoulombConvolutionTime
     print('Computing Vcoulomb took:    %.4f seconds. ' %CoulombConvolutionTime)
     tree.importVcoulombOnLeaves(V_coulombNew)
@@ -149,11 +150,31 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
     print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
     
-#     return
-#     print('Setting the three highest energy orbitals to gauge shift.  They wont be updated')
-#     tree.orbitalEnergies[-1] = tree.gaugeShift
-#     tree.orbitalEnergies[-2] = tree.gaugeShift
-#     tree.orbitalEnergies[-3] = tree.gaugeShift
+    
+    printInitialEnergies=True
+
+    if printInitialEnergies==True:
+        header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
+                  'exchangeEnergy', 'correlationEnergy', 'electrostaticEnergy', 'totalEnergy']
+    
+        myData = [0, 10, tree.orbitalEnergies, tree.totalBandEnergy, tree.totalKinetic, 
+                  tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
+        
+    
+        if not os.path.isfile(SCFiterationOutFile):
+            myFile = open(SCFiterationOutFile, 'a')
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(header) 
+            
+        
+        myFile = open(SCFiterationOutFile, 'a')
+        with myFile:
+            writer = csv.writer(myFile)
+            writer.writerow(myData)
+    return
+
+
     
 # #     if tree.nOrbitals==7:
 #     print('Scrambling valence orbitals')
@@ -389,7 +410,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)  # call the GPU convolution 
         else:
             print('Using smoothed version for Poisson Convolution: (n, epsilon) = (%i, %2.3f)' %(smoothingN, smoothingEps))
-            gpuPoissonConvolutionSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
+            gpuPoissonConvolutionChristliebSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
         
         tree.importVcoulombOnLeaves(V_coulombNew)
         tree.updateVxcAndVeffAtQuadpoints()

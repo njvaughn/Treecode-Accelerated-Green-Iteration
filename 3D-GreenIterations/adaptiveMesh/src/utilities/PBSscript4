@@ -29,12 +29,13 @@ fi
 #  Put your job commands after this line
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
-DOMAIN=20
-MINDEPTH=3
+DOMAIN=15
 MAXDEPTH=20
+MINDEPTH=3
 SINGSUBT=1
-
-INTRASCFTOLERANCE=1e-6
+SMOOTHINGN=0
+SMOOTHINGEPS=0
+INTRASCFTOLERANCE=1e-3
 INTERSCFTOLERANCE=1e-5
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
@@ -44,29 +45,13 @@ INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
+
 ORDER=5
-MESHTYPE='LW3'
+MESHTYPE='LW5'	
 
-SMOOTHINGN=0
 
-SMOOTHINGEPS=0
-	
-MESHPARAM=1000
-OUTPUTFILE='/home/njvaughn/Oxygen_SmoothingTests/testTightTolerance_1000.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
-	
-MESHPARAM=2000
-OUTPUTFILE='/home/njvaughn/Oxygen_SmoothingTests/testTightTolerance_2000.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
-	
 MESHPARAM=3000
-OUTPUTFILE='/home/njvaughn/Oxygen_SmoothingTests/testTightTolerance_3000.csv'
+OUTPUTFILE='/home/njvaughn/RegularizingVext/LW5_3000_VextEps0p0000001.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
-	
-

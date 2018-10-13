@@ -14,9 +14,12 @@ file='runComparison.csv'
 ##file='runComparison_3levels_initial344.csv'
 #### Oxygen
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Oxygen_SmoothingTests_LW5/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenSmoothingPreSCF/'
+
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Oxygen_MeshBuilding/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenFirstSCF_LWtest_singSub2/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenFirstSCF/'
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenFirstSCF/'
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/StaggeredGridTests/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults_uniformRefinement/'
 
 
@@ -47,18 +50,30 @@ df['CorrelationEnergyError'] = abs( df['CorrelationEnergy'] - CorrelationEnergy)
 df['ElectrostaticEnergyError'] = abs( df['ElectrostaticEnergy'] - ElectrostaticEnergy)
 df['TotalEnergyError'] = abs( df['TotalEnergy'] - TotalEnergy)
 
-##df2 = df[df['divideCriterion']=='LW2']
-##df3 = df[df['divideCriterion']=='LW3']
-##df4 = df[df['divideCriterion']=='LW4']
-##df5 = df[df['divideCriterion']=='LW5']
-##df6 = df[df['divideCriterion']==6]
+df_smoothing = df
 
-df3 = df[df['order']==3]
-df4 = df[df['order']==4]
 df5 = df[df['order']==5]
-df6 = df[df['order']==6]
 
+##df_double = df.loc[0:6]
+##
+resultsDir_baseline = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BaselineNoStaggerNoSmooth/'
+df_single = pd.read_csv(resultsDir_baseline+file, header=0)
+df_single['BandEnergyError'] = abs( df_single['BandEnergy'] - BandEnergy)
+df_single['KineticEnergyError'] = abs( df_single['KineticEnergy'] - KineticEnergy)
+df_single['ExchangeEnergyError'] = abs( df_single['ExchangeEnergy'] - ExchangeEnergy)
+df_single['CorrelationEnergyError'] = abs( df_single['CorrelationEnergy'] - CorrelationEnergy)
+df_single['ElectrostaticEnergyError'] = abs( df_single['ElectrostaticEnergy'] - ElectrostaticEnergy)
+df_single['TotalEnergyError'] = abs( df_single['TotalEnergy'] - TotalEnergy)
 
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/StaggeredGridTests/'
+df2 = pd.read_csv(resultsDir+file, header=0)
+df2['BandEnergyError'] = abs( df2['BandEnergy'] - BandEnergy)
+df2['KineticEnergyError'] = abs( df2['KineticEnergy'] - KineticEnergy)
+df2['ExchangeEnergyError'] = abs( df2['ExchangeEnergy'] - ExchangeEnergy)
+df2['CorrelationEnergyError'] = abs( df2['CorrelationEnergy'] - CorrelationEnergy)
+df2['ElectrostaticEnergyError'] = abs( df2['ElectrostaticEnergy'] - ElectrostaticEnergy)
+df2['TotalEnergyError'] = abs( df2['TotalEnergy'] - TotalEnergy)
+df_double = df2.loc[0:6]
 
 
 wavfunctionErrors = np.zeros((df.shape[0],5))
@@ -74,12 +89,12 @@ def energyErrors(dataframe):
     fig.suptitle("Oxygen Atom: Energy Errors")
 ##    fig.suptitle("Beryllium Atom: Energy Errors")
 ##    fig.suptitle("Hydrogen Molecule: Energy Errors")
-    dataframe.plot(x='numberOfPoints', y='BandEnergyError', style='o', ax=ax, loglog=True)
+##    dataframe.plot(x='numberOfPoints', y='BandEnergyError', style='o', ax=ax, loglog=True)
     dataframe.plot(x='numberOfPoints', y='KineticEnergyError', style='o', ax=ax, loglog=True)
     dataframe.plot(x='numberOfPoints', y='ExchangeEnergyError', style='o', ax=ax, loglog=True)
     dataframe.plot(x='numberOfPoints', y='CorrelationEnergyError', style='o', ax=ax, loglog=True)
     dataframe.plot(x='numberOfPoints', y='ElectrostaticEnergyError', style='o', ax=ax, loglog=True)
-    dataframe.plot(x='numberOfPoints', y='TotalEnergyError', style='o', ax=ax, loglog=True)
+    dataframe.plot(x='numberOfPoints', y='TotalEnergyError', style='^', ax=ax, loglog=True)
   
     plt.legend(loc = 'lower left')
     plt.xlabel('Number of Gridpoints')
@@ -118,10 +133,46 @@ def kineticEnergyErrors(dataframe):
 ##    plt.suptitle('Oxygen Atom Kinetic Energy Errors')
     plt.tight_layout(pad=2.0)
     plt.show()
-    
+
+
+def compareSingleToDoubleMesh(df_single, df_double):
+    fig, ax = plt.subplots(figsize=(8,6))
+    fig.suptitle("Oxygen Atom: Energy Errors")
+    df_single.plot(x='numberOfPoints', y='ElectrostaticEnergyError', label='Electrostatic: Single Mesh', style='o', ax=ax, loglog=True)
+    df_single.plot(x='numberOfPoints', y='TotalEnergyError', style='^', label='Total Error: Single Mesh', ax=ax, loglog=True)
+
+    df_double.plot(x='numberOfPoints', y='ElectrostaticEnergyError', label='Electrostatic: Double Mesh', style='o', ax=ax, loglog=True)
+    df_double.plot(x='numberOfPoints', y='TotalEnergyError', style='^', label='Total Error: Double Mesh', ax=ax, loglog=True)
+  
+    plt.legend(loc = 'lower left')
+    plt.xlabel('Number of Gridpoints')
+    plt.ylabel('Energy Error (Hartree)')
+
+    plt.ylim([1e-3, 1e-1])
+    plt.show()
+
+def compareSingleToDoubleMeshToSmoothing(df_single, df_double, df_smoothing):
+    fig, ax = plt.subplots(figsize=(8,6))
+    fig.suptitle("Oxygen Atom: Energy Errors")
+    df_single.plot(x='numberOfPoints', y='ElectrostaticEnergyError', label='Electrostatic: Single Mesh', style='o', ax=ax, loglog=True)
+
+    df_double.plot(x='numberOfPoints', y='ElectrostaticEnergyError', label='Electrostatic: Double Mesh', style='o', ax=ax, loglog=True)
+
+    df_smoothing.plot(x='numberOfPoints', y='ElectrostaticEnergyError', label='Electrostatic: Regularized', style='o', ax=ax, loglog=True)
+  
+    plt.legend(loc = 'lower left')
+    plt.xlabel('Number of Gridpoints')
+    plt.ylabel('Energy Error (Hartree)')
+
+    plt.ylim([1e-3, 1e-1])
+    plt.show()
+
 
 
 if __name__=="__main__":
 ##    pass
-    energyErrors(df)
+##    energyErrors(df5)
 ##    kineticEnergyErrors(df4)
+##    compareSingleToDoubleMesh(df_single,df_double)
+##    compareSingleToDoubleMesh(df_single,df_smoothing)
+    compareSingleToDoubleMeshToSmoothing(df_single, df_double, df_smoothing)

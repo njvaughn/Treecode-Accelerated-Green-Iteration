@@ -227,19 +227,31 @@ def gpuHelmholtzConvolutionSubractSingularity_Kahan(targets,sources,psiNew,k):
                 
         psiNew[globalID] += tempsum # increment the new wavefunction value
 
-@cuda.jit
-def gpuPoissonConvolution(targets,sources,V_coulomb_new):
+@cuda.jit('void(float64[:,:], float64[:,:], float64[:])')
+def gpuPoissonConvolution(targets,sources,V_hartree):
     
     globalID = cuda.grid(1)  # identify the global ID of the thread
     if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
         x_t, y_t, z_t = targets[globalID][0:3] # set the x, y, and z values of the target
-        V_coulomb_new[globalID] = 0.0
+        V_hartree[globalID] = 0.0
         for i in range(len(sources)):  # loop through all source midpoints
             x_s, y_s, z_s, rho_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
 #             if not ( abs(x_s-x_t) and (y_s==y_t) and (z_s==z_t) ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
             r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
-            if r > 1e-12:
-                V_coulomb_new[globalID] += weight_s*rho_s/r # increment the new wavefunction value
+            if r > 1e-14:
+                V_hartree[globalID] += weight_s*rho_s/r # increment the new wavefunction value
+                
+@cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64)')
+def gpuPoissonConvolutionRegularized(targets,sources,V_hartree, epsilon):
+    
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t = targets[globalID][0:3] # set the x, y, and z values of the target
+        V_hartree[globalID] = 0.0
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, rho_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            r = sqrt( epsilon**2 + (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            V_hartree[globalID] += weight_s*rho_s/r # increment the new wavefunction value
                 
 @cuda.jit
 def gpuPoissonConvolutionSingularitySubtract(targets,sources,V_coulomb_new,k):
@@ -259,7 +271,7 @@ def gpuPoissonConvolutionSingularitySubtract(targets,sources,V_coulomb_new,k):
                
 
 @cuda.jit('void(float64[:,:], float64[:,:], float64[:], int64, float64, float64[:])')
-def gpuPoissonConvolutionSmoothing(targets,sources,V_coulomb_new,n,epsilon, coefficients):
+def gpuPoissonConvolutionChristliebSmoothing(targets,sources,V_coulomb_new,n,epsilon, coefficients):
     globalID = cuda.grid(1)  # identify the global ID of the thread
     
                     
@@ -307,6 +319,33 @@ def gpuConvolutionSmoothing(targets,sources,psiNew,k,n,epsilon):
 #                     Gvalue += coefficient* (-epsilon**2)**ii * (r**2 + epsilon**2)**(-1/2-ii)
                 Gvalue += coefficient* (-scaledEpsilon**2)**ii * (r**2 + scaledEpsilon**2)**(-1/2-ii)
             psiNew[globalID] += -2*V_s*weight_s*psi_s*exp(-k*r)*Gvalue/4/pi # increment the new wavefunction value
+            
+@cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64)')
+def gpuHartreeIterativeSubractSingularity(targets,sources,V_Hartree_new,beta):
+
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t, rho_minus_betasq_Vold_t = targets[globalID][0:4] # set the x, y, and z values of the target
+        V_Hartree_new[globalID] = -rho_minus_betasq_Vold_t/beta**2
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, rho_minus_betasq_Vold_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            if r > 1e-12:
+                V_Hartree_new[globalID] -= weight_s * (rho_minus_betasq_Vold_s - rho_minus_betasq_Vold_t) * exp(-beta*r)/(4*pi*r) # increment the new wavefunction value
+    
+@cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64)')
+def gpuHartreeIterative(targets,sources,V_Hartree_new,beta):
+
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t, rho_minus_betasq_Vold_t = targets[globalID][0:4] # set the x, y, and z values of the target
+        V_Hartree_new[globalID] = 0.0
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, rho_minus_betasq_Vold_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            if r > 1e-12:
+                V_Hartree_new[globalID] -= weight_s*(rho_minus_betasq_Vold_s)*exp(-beta*r)/(4*pi*r) # increment the new wavefunction value
+#                 V_Hartree_new[globalID] += weight_s*(rho_minus_betasq_Vold_s)*exp(-alpha*r)/(4*pi*r) # increment the new wavefunction value
 
 
 def dummyConvolutionToTestImportExport(targets,sources,psiNew,k):

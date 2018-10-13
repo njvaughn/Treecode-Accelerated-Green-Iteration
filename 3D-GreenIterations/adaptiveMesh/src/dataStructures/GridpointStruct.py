@@ -55,6 +55,26 @@ class GridPoint(object):
            
     def setPhi(self, phi, orbitalNumber):
         self.phi[orbitalNumber] = phi
+        
+        
+class DensityPoint(object):
+    '''
+    The gridpoint object for the secondary quadrature points that will be used in the Hartree convolution.  Will contain the coordinates, potential values, etc.
+    '''
+    def __init__(self, x,y,z):
+        '''
+        Gridpoint Constructor.  For minimal example, a gridpoint simply has x and y values.
+        '''
+        self.x = x
+        self.y = y
+        self.z = z
+        self.rho = 0.0
+        
+    def setRho(self, rho):
+        self.rho = rho
+
+
+
     
 
         
