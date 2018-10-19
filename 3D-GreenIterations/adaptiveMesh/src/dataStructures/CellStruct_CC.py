@@ -9,7 +9,8 @@ import itertools
 import bisect
 
 from hydrogenAtom import potential
-from meshUtilities import meshDensity, weights3D, unscaledWeights, ChebGradient3D, ChebyshevPoints,computeDerivativeMatrix
+from meshUtilities import meshDensity, weights3D, unscaledWeights, ChebGradient3D, ChebyshevPoints,computeDerivativeMatrix,\
+    computeLaplacianMatrix, ChebLaplacian3D
 from GridpointStruct import GridPoint, DensityPoint
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -87,8 +88,13 @@ class Cell(object):
             print()
             
         
-        if abs(np.sum(self.w) - self.volume) > 1e-10:
-            print('warning, cell weights dont sum to cell volume.')
+        if abs(np.sum(self.w) - self.volume) / self.volume > 1e-10:
+            try:
+                print('warning, cell weights dont sum to cell volume for cell ', self.uniqueID)
+            except:
+                print('warning, cell weights dont sum to cell volume, no uniqueID')
+            print('Volume: ', self.volume)
+            print('Weights: ', self.w)
 
     def getAspectRatio(self):
         
@@ -995,6 +1001,13 @@ class Cell(object):
         self.DopenX = computeDerivativeMatrix(self.xmin, self.xmax, self.px)
         self.DopenY = computeDerivativeMatrix(self.ymin, self.ymax, self.py)
         self.DopenZ = computeDerivativeMatrix(self.zmin, self.zmax, self.pz)
+        
+    def computeLaplacianAndInverse(self):
+        self.laplacian = computeLaplacianMatrix(self.xmin, self.xmax, self.px,
+                                                self.ymin, self.ymax, self.py,
+                                                self.zmin, self.zmax, self.pz)
+        
+        self.inverseLaplacian = np.linalg.inv(self.laplacian)
 
 
         

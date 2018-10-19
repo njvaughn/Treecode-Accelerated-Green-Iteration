@@ -7,6 +7,7 @@ from numpy import pi, cos, arccos, sin, sqrt, exp
 import numpy as np
 from scipy.special import factorial, comb
 import vtk
+from blaze.compute.tests.test_dask import dx
 
 def meshDensity(r,divideParameter,divideCriterion):
     '''
@@ -138,6 +139,19 @@ def computeDerivativeMatrix(xlow, xhigh, N):
     D = 2/(xhigh - xlow) * np.dot(Tp,Lambda)
     return D
 
+def computeLaplacianMatrix(xlow,xhigh,px,ylow,yhigh,py,zlow,zhigh,pz):
+    Dx = computeDerivativeMatrix(xlow, xhigh, px)
+    Dy = computeDerivativeMatrix(ylow, yhigh, py)
+    Dz = computeDerivativeMatrix(zlow, zhigh, pz)
+    
+    D2x = np.dot(Dx,Dx)
+    D2y = np.dot(Dy,Dy)
+    D2z = np.dot(Dz,Dz)
+    
+    laplacian = D2x + D2y + D2z
+    
+    return laplacian
+
 # def ChebDerivative(xlow, xhigh, N, f,Dopen=None):
 def ChebDerivative(f,Dopen):
 #     if not Dopen:
@@ -169,6 +183,21 @@ def ChebGradient3D(DopenX,DopenY,DopenZ,N,F):
             DFDY[i,:,j] = -np.dot(DopenY,F[i,:,j]) #ChebDerivative(F[i,:,j],DopenY)
             DFDZ[i,j,:] = -np.dot(DopenZ,F[i,j,:]) #ChebDerivative(F[i,j,:],DopenZ)
     return [DFDX,DFDY,DFDZ]
+
+def ChebLaplacian3D(DopenX,DopenY,DopenZ,N,F):
+ 
+    D2FDX2 = np.zeros_like(F)
+    D2FDY2 = np.zeros_like(F)
+    D2FDZ2 = np.zeros_like(F)
+    for i in range(N):  # assumes Nx=Ny=Nz
+        for j in range(N):
+            temp = -np.dot(DopenX,F[:,i,j])
+            D2FDX2[:,i,j] = -np.dot(DopenX,temp) #ChebDerivative(F[:,i,j],DopenX)
+            temp = -np.dot(DopenY,F[i,:,j])
+            D2FDY2[i,:,j] = -np.dot(DopenY,temp) #ChebDerivative(F[i,:,j],DopenY)
+            temp = -np.dot(DopenZ,F[i,j,:])
+            D2FDZ2[i,j,:] = -np.dot(DopenZ,temp) #ChebDerivative(F[i,j,:],DopenZ)
+    return D2FDX2 + D2FDY2 + D2FDZ2
 
 def interpolator1Dchebyshev(x,f):
     n = len(x)

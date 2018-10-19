@@ -1,6 +1,6 @@
 ####  PBS preamble
 
-#PBS -N OxygenSweepN4
+#PBS -N hartreeTest_domain250
 
 #PBS -A krasny_fluxg
 #PBS -l qos=flux
@@ -27,7 +27,11 @@ fi
 
 
 #  Put your job commands after this line
-cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/CC_tests
+python -m unittest testHartreeEnergy.py
+
+#cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 DOMAIN=15
 MAXDEPTH=20
@@ -52,6 +56,6 @@ MESHTYPE='LW5'
 
 MESHPARAM=3000
 OUTPUTFILE='/home/njvaughn/RegularizingVext/LW5_3000_VextEps0p0000001.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
+#python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+#	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+#	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
