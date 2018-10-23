@@ -14,7 +14,8 @@ file='runComparison.csv'
 ##file='runComparison_3levels_initial344.csv'
 #### Oxygen
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Oxygen_SmoothingTests_LW5/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenSmoothingPreSCF/'
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenSmoothingPreSCF/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenPreSCF_GaussianSS/'
 
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Oxygen_MeshBuilding/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenFirstSCF_LWtest_singSub2/'
@@ -171,8 +172,8 @@ def compareSingleToDoubleMeshToSmoothing(df_single, df_double, df_smoothing):
 
 if __name__=="__main__":
 ##    pass
-##    energyErrors(df5)
+    energyErrors(df5)
 ##    kineticEnergyErrors(df4)
 ##    compareSingleToDoubleMesh(df_single,df_double)
 ##    compareSingleToDoubleMesh(df_single,df_smoothing)
-    compareSingleToDoubleMeshToSmoothing(df_single, df_double, df_smoothing)
+##    compareSingleToDoubleMeshToSmoothing(df_single, df_double, df_smoothing)

@@ -371,7 +371,18 @@ def gpuHartreeShiftedPoisson_singularitySubtract(targets,sources,V_Hartree_new,a
             if r > 1e-14:
                 V_Hartree_new[globalID] += weight_s*(rho_s-rho_t)*exp(-alpha*r)/r # increment the new wavefunction value
                 
-                
+@cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64)')
+def gpuHartreeGaussianSingularitySubract(targets,sources,V_Hartree_new,alphasq):
+
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t, rho_t = targets[globalID][0:4] # set the x, y, and z values of the target
+        V_Hartree_new[globalID] = rho_t* (4*pi)* alphasq/2
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, rho_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            if r > 1e-14:
+                V_Hartree_new[globalID] += weight_s * (rho_s -   rho_t * exp(- r*r / alphasq )   ) / r  # increment the new wavefunction value                
 
 
 def dummyConvolutionToTestImportExport(targets,sources,psiNew,k):

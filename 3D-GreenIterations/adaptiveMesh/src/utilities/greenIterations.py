@@ -104,13 +104,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     V_coulombNew = np.zeros((len(targets)))
     startCoulombConvolutionTime = timer()
-    if smoothingN==0:
-        gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-#     print('Using singularity subtraction for initial Poisson solve')
-#     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
-    else:
-        print('Using smoothed version for Poisson Convolution: (n, epsilon) = (%i, %2.3f)' %(smoothingN, smoothingEps))
-        gpuPoissonConvolutionChristliebSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
+    alpha = 1
+    alphasq=alpha*alpha
+    print('Using Gaussian singularity subtraction, alpha = ', alpha)
+    gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+#     if smoothingN==0:
+#         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
+# #     print('Using singularity subtraction for initial Poisson solve')
+# #     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
+#     else:
+#         print('Using smoothed version for Poisson Convolution: (n, epsilon) = (%i, %2.3f)' %(smoothingN, smoothingEps))
+#         gpuPoissonConvolutionChristliebSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
     CoulombConvolutionTime = timer() - startCoulombConvolutionTime
     print('Computing Vcoulomb took:    %.4f seconds. ' %CoulombConvolutionTime)
     tree.importVcoulombOnLeaves(V_coulombNew)

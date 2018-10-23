@@ -15,7 +15,7 @@ from scipy.special import erf
 
 
 from TreeStruct_CC import Tree
-from convolution import gpuPoissonConvolution, gpuPoissonConvolutionRegularized, gpuHartreeIterativeSubractSingularity, gpuHartreeIterative, gpuHartreeShiftedPoisson, gpuHartreeShiftedPoisson_singularitySubtract
+from convolution import gpuPoissonConvolution, gpuPoissonConvolutionRegularized, gpuHartreeIterativeSubractSingularity, gpuHartreeIterative, gpuHartreeShiftedPoisson, gpuHartreeShiftedPoisson_singularitySubtract, gpuHartreeGaussianSingularitySubract
 from meshUtilities import ChebLaplacian3D
 
 def gaussianDensity(r,alpha):
@@ -193,12 +193,12 @@ class TestEnergyComputation(unittest.TestCase):
 #         inputFile ='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
         xmin = ymin = zmin = -20
         xmax = ymax = zmax =  20
-        order=4
+        order=5
         minDepth=3
         maxDepth=20
         divideCriterion='LW5'
         divideParameter=1000
-        self.alpha = 2
+        self.alpha = 2  # alpha for the Gaussian charge density.  NOT THE SAME AS THE ALPHA FOR THE SINGULARITY SUBTRACTION OR THE POISSON-REGULARIZATION
         
         
         [coordinateFile, outputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
@@ -236,7 +236,7 @@ class TestEnergyComputation(unittest.TestCase):
         self.assertAlmostEqual(TrueHartreeEnergy, HartreeEnergyFromAnalyticPotential, 3, 
                                "Analytic Energy and Energy computed from analytic potential not agreeing well enough")
 
-    @unittest.skip('Skipping single and staggered mesh comparison')
+#     @unittest.skip('Skipping single and staggered mesh comparison')
     def testHartreeSolve_staggeredMesh(self):
         print()
         targets = self.tree.extractLeavesDensity()  
@@ -246,8 +246,12 @@ class TestEnergyComputation(unittest.TestCase):
         threadsPerBlock = 512
         blocksPerGrid = (self.tree.numberOfGridpoints + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
     
+    
         V_HartreeNew = np.zeros((len(targets)))
-        gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew)  # call the GPU convolution
+        alpha = 1.5 # for the Gaussian singularity subtraction 
+        alphasq = alpha*alpha
+        print('Using Gaussian singularity subtraction, alpha = ', alpha)
+        gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, alphasq)  # call the GPU convolution
         self.tree.importVcoulombOnLeaves(V_HartreeNew)
         self.tree.updateVxcAndVeffAtQuadpoints()
         
@@ -532,7 +536,8 @@ class TestEnergyComputation(unittest.TestCase):
 #         print('Computing laplacians took ', (end-start), ' seconds.')
                 
         computedRho = evaluateLaplacianOfPhi(self.tree)
-        
+
+    @unittest.skip('Skipping the alpha-regularization test')       
     def testAlphaRegularization(self):
         """ Idea: Instead of Poisson, solve the Helmholtz equation with a sequence of alphas approaching zero """
         
