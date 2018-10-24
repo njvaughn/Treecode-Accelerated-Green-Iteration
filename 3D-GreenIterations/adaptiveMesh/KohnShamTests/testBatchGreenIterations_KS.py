@@ -61,8 +61,8 @@ def setUpTree():
     nElectrons = int(nElectrons)
     nOrbitals = int(nOrbitals)
     
-#     nOrbitals = 7  # hard code this in for Carbon Monoxide
-#     print('Hard coding nOrbitals to 7')
+    nOrbitals = 7  # hard code this in for Carbon Monoxide
+    print('Hard coding nOrbitals to 7')
 
 #     nOrbitals = 6
 #     print('Hard coding nOrbitals to 6 to give oxygen one extra')

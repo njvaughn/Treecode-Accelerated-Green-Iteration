@@ -122,7 +122,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     #manually set the initial occupations, otherwise oxygen P shell gets none.
 #     tree.occupations = np.array([2,2,2,2,2,2,2])
-    tree.occupations = np.array([2,2,4/3,4/3,4/3])
+#     tree.occupations = np.array([2,2,4/3,4/3,4/3])
+    tree.occupations = np.array([2,2,2,2,4/3,4/3,4/3])
 
 #     tree.updateOrbitalEnergies(sortByEnergy=False)
 #     print('In the above energies, first 5 are for the carbon, next 5 for the oxygen.')
@@ -176,14 +177,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         with myFile:
             writer = csv.writer(myFile)
             writer.writerow(myData)
-    return
+#     return
 
 
     
 # #     if tree.nOrbitals==7:
-#     print('Scrambling valence orbitals')
-#     for m in range(5,tree.nOrbitals):
-#         tree.scrambleOrbital(m)
+    print('Scrambling valence orbitals')
+    for m in range(4,tree.nOrbitals):
+        tree.scrambleOrbital(m)
 #     tree.orbitalEnergies[5] = tree.gaugeShift-0.1
     
 
@@ -200,11 +201,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                       -3.959879088687816573e-01, -7.423877195920526584e-02,
 #                                       -7.325760563979200057e-02,  1.721054880813185223e-02] )
                                       
-#     dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
-#                                       -1.075324514852165958e+00, -5.215419985881135645e-01,
-#                                       -4.455527567163568570e-01, -4.455527560478895199e-01,
-#                                       -3.351419327004790394e-01])#, -8.275071966753577701e-02,
-# #                                      8.273399296312561324e-02,  7.959071929649078059e-03] )
+    dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
+                                      -1.075324514852165958e+00, -5.215419985881135645e-01,
+                                      -4.455527567163568570e-01, -4.455527560478895199e-01,
+                                      -3.351419327004790394e-01])#, -8.275071966753577701e-02,
+#                                      8.273399296312561324e-02,  7.959071929649078059e-03] )
 
  
 
@@ -218,9 +219,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                     #7.325760563979200057e-02,  1.721054880813185223e-02] )
                                       
 #     ## OXYGEN ATOM     
-    dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
-                                      -3.382974161584920147e-01, -3.382974161584920147e-01,
-                                      -3.382974161584920147e-01]) 
+#     dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
+#                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
+#                                       -3.382974161584920147e-01]) 
     
     ## OXYGEN AFTER FIRST SCF ##
 #     dftfeOrbitalEnergies = np.array( [-1.875875893002984895e+01, -8.711960263841991292e-01,
@@ -408,13 +409,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         """
         startCoulombConvolutionTime = timer()
         V_coulombNew = np.zeros((len(targets)))
-        if smoothingN==0:
-            gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-#         print('Using singularity subtraction for the Poisson solve!')
-#         gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)  # call the GPU convolution 
-        else:
-            print('Using smoothed version for Poisson Convolution: (n, epsilon) = (%i, %2.3f)' %(smoothingN, smoothingEps))
-            gpuPoissonConvolutionChristliebSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
+        gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+        
+        
+#         if smoothingN==0:
+#             gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
+# #         print('Using singularity subtraction for the Poisson solve!')
+# #         gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)  # call the GPU convolution 
+#         else:
+#             print('Using smoothed version for Poisson Convolution: (n, epsilon) = (%i, %2.3f)' %(smoothingN, smoothingEps))
+#             gpuPoissonConvolutionChristliebSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
         
         tree.importVcoulombOnLeaves(V_coulombNew)
         tree.updateVxcAndVeffAtQuadpoints()
@@ -529,8 +533,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
 #         print('Setting density residual to min of density residual and energy residual, just for testing purposes')
 #         densityResidual = min(densityResidual, energyResidual)
-        print('Setting density residual to -1 to exit after the first SCF')
-        densityResidual = -1 
+#         print('Setting density residual to -1 to exit after the first SCF')
+#         densityResidual = -1 
 
         
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, greenIterationCounter))

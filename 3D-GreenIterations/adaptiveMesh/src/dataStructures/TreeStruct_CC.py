@@ -295,18 +295,18 @@ class Tree(object):
                             gp.rho += 0.0   # if outside the interpolation range, assume 0.
                 
 #                 if hasattr(cell, 'densityPoints'):
-                for i,j,k in cell.PxByPyByPz_density:
-                    dp = cell.densityPoints[i,j,k]
-                    dp.rho = 0.0
-                    for atom in self.atoms:
-                        r = np.sqrt( (dp.x-atom.x)**2 + (dp.y-atom.y)**2 + (dp.z-atom.z)**2 )
-                        try:
-                            dp.rho += atom.interpolators['density'](r)
-                        except ValueError:
-                            dp.rho += 0.0   # if outside the interpolation range, assume 0.
-        
-#         self.normalizeDensity()
-        self.integrateDensityBothMeshes()
+#                     for i,j,k in cell.PxByPyByPz_density:
+#                         dp = cell.densityPoints[i,j,k]
+#                         dp.rho = 0.0
+#                         for atom in self.atoms:
+#                             r = np.sqrt( (dp.x-atom.x)**2 + (dp.y-atom.y)**2 + (dp.z-atom.z)**2 )
+#                             try:
+#                                 dp.rho += atom.interpolators['density'](r)
+#                             except ValueError:
+#                                 dp.rho += 0.0   # if outside the interpolation range, assume 0.
+#         
+# #         self.normalizeDensity()
+#         self.integrateDensityBothMeshes()
                             
                         
     
@@ -325,9 +325,9 @@ class Tree(object):
         orbitalIndex=0
         
         
-# #         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
+        print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
 #         print('Hard coding nAtomicOrbitals to 0 for the second hydrogen atom.')
-# #         self.atoms[1].nAtomicOrbitals = 2
+        self.atoms[1].nAtomicOrbitals = 2
 #         self.atoms[1].nAtomicOrbitals = 0
     
         for atom in self.atoms:
