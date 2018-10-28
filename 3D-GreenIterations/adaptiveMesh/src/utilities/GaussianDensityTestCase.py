@@ -33,11 +33,12 @@ def setDensityToGaussian(tree,alpha):
                 r = sqrt( gp.x**2 + gp.y**2 + gp.z**2 )
                 gp.rho = gaussianDensity(r,alpha)
             
-            # set density on the secondary mesh 
-            for i,j,k in cell.PxByPyByPz_density:
-                dp = cell.densityPoints[i,j,k]
-                r = sqrt( dp.x**2 + dp.y**2 + dp.z**2 )
-                dp.rho = gaussianDensity(r,alpha)
+#             # set density on the secondary mesh
+#             if hasattr(cell, "densityPoints"):
+#                 for i,j,k in cell.PxByPyByPz_density:
+#                     dp = cell.densityPoints[i,j,k]
+#                     r = sqrt( dp.x**2 + dp.y**2 + dp.z**2 )
+#                     dp.rho = gaussianDensity(r,alpha)
 
 def setTrueHartree(tree,alpha):
     

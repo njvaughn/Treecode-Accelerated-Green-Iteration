@@ -118,12 +118,12 @@ def HartreeCalculation(tree):
     
     
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
-              'divideCriterion','divideParameter',
+              'divideCriterion','divideParameter','GaussianAlpha',
               'trueHartreeEnergy', 'EnergyErrorFromAnalytic', 'EnergyErrorFromNumerical',
               'L2Error','LinfError']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,
-              divideCriterion,divideParameter,
+              divideCriterion,divideParameter,gaussianSubtractionAlpha,
               trueHartreeEnergy, abs(computedFromAnalyticPotential-trueHartreeEnergy), abs(computedFromNumericalPotential-trueHartreeEnergy),
               L2Error, LinfError]
               

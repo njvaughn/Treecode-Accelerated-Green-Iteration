@@ -10,16 +10,12 @@ speedup.  -- 03/19/2018 NV
 # import math
 import numpy as np
 import os
-# import shutil
 import csv
-# from timeit import default_timer as timer
-# from numpy import float32, float64
-
-# from hydrogenAtom import trueEnergy, trueWavefunction
+from numba import jit
 # from convolution import gpuPoissonConvolution,gpuHelmholtzConvolutionSubractSingularity, cpuHelmholtzSingularitySubtract,cpuHelmholtzSingularitySubtract_allNumerical
 from convolution import *
 
-
+@jit(nopython=True,parallel=True)
 def modifiedGramSchrmidt(V,weights):
     n,k = np.shape(V)
     U = np.zeros_like(V)
@@ -122,8 +118,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     #manually set the initial occupations, otherwise oxygen P shell gets none.
 #     tree.occupations = np.array([2,2,2,2,2,2,2])
-#     tree.occupations = np.array([2,2,4/3,4/3,4/3])
-    tree.occupations = np.array([2,2,2,2,4/3,4/3,4/3])
+    tree.occupations = np.array([2,2,4/3,4/3,4/3])
+#     tree.occupations = np.array([2,2,2,2,4/3,4/3,4/3])
 
 #     tree.updateOrbitalEnergies(sortByEnergy=False)
 #     print('In the above energies, first 5 are for the carbon, next 5 for the oxygen.')
@@ -182,9 +178,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     
 # #     if tree.nOrbitals==7:
-    print('Scrambling valence orbitals')
-    for m in range(4,tree.nOrbitals):
-        tree.scrambleOrbital(m)
+#     print('Scrambling valence orbitals')
+#     for m in range(4,tree.nOrbitals):
+#         tree.scrambleOrbital(m)
 #     tree.orbitalEnergies[5] = tree.gaugeShift-0.1
     
 
@@ -201,11 +197,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                       -3.959879088687816573e-01, -7.423877195920526584e-02,
 #                                       -7.325760563979200057e-02,  1.721054880813185223e-02] )
                                       
-    dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
-                                      -1.075324514852165958e+00, -5.215419985881135645e-01,
-                                      -4.455527567163568570e-01, -4.455527560478895199e-01,
-                                      -3.351419327004790394e-01])#, -8.275071966753577701e-02,
-#                                      8.273399296312561324e-02,  7.959071929649078059e-03] )
+#     dftfeOrbitalEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
+#                                       -1.075324514852165958e+00, -5.215419985881135645e-01,
+#                                       -4.455527567163568570e-01, -4.455527560478895199e-01,
+#                                       -3.351419327004790394e-01])#, -8.275071966753577701e-02,
+# #                                      8.273399296312561324e-02,  7.959071929649078059e-03] )
 
  
 
@@ -218,10 +214,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                       -3.959879088687816573e-01]) #, -7.423877195920526584e-02,
 #                                     #7.325760563979200057e-02,  1.721054880813185223e-02] )
                                       
-#     ## OXYGEN ATOM     
-#     dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
-#                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
-#                                       -3.382974161584920147e-01]) 
+    ## OXYGEN ATOM     
+    dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
+                                      -3.382974161584920147e-01, -3.382974161584920147e-01,
+                                      -3.382974161584920147e-01]) 
     
     ## OXYGEN AFTER FIRST SCF ##
 #     dftfeOrbitalEnergies = np.array( [-1.875875893002984895e+01, -8.711960263841991292e-01,

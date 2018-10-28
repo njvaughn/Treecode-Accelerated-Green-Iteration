@@ -9,10 +9,10 @@ SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
 INTRASCFTOLERANCE=1e-2
-INTERSCFTOLERANCE=1e-5
+INTERSCFTOLERANCE=1e-7
 
-INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
@@ -24,8 +24,8 @@ MESHTYPE='LW5'
 
 
 
-MESHPARAM=1000
-OUTPUTFILE='/home/njvaughn/CO_Gaussian/LW5_1000.csv'
+MESHPARAM=3000
+OUTPUTFILE='/home/njvaughn/O_Gaussian/LW5_1000.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR

@@ -11,7 +11,7 @@ import os
 import numpy as np
 
 file='runComparison.csv'
-resultsDir = '/Users/nathanvaughn/Desktop/HartreeTests/GaussianSingularitySubtraction/GaussianDensity/'
+resultsDir = '/Users/nathanvaughn/Desktop/HartreeTests/GaussianSingularitySubtraction/GaussianDensity_alpha2/'
 
 
 df = pd.read_csv(resultsDir+file, header=0)
@@ -72,5 +72,5 @@ def hartreeEnergyErrors_colorBy(dataframe,B='order'):
 if __name__=="__main__":
 ##    pass
 ##    hartreeEnergyErrors(df)
-    hartreeEnergyErrors_colorBy(df,B='order')
+    hartreeEnergyErrors_colorBy(df5,B='GaussianAlpha')
 

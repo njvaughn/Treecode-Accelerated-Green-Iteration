@@ -325,9 +325,9 @@ class Tree(object):
         orbitalIndex=0
         
         
-        print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
-#         print('Hard coding nAtomicOrbitals to 0 for the second hydrogen atom.')
-        self.atoms[1].nAtomicOrbitals = 2
+#         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
+# #         print('Hard coding nAtomicOrbitals to 0 for the second hydrogen atom.')
+#         self.atoms[1].nAtomicOrbitals = 2
 #         self.atoms[1].nAtomicOrbitals = 0
     
         for atom in self.atoms:

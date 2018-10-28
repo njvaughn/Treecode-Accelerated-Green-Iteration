@@ -582,14 +582,14 @@ class Cell(object):
                     children[ii,jj,kk].level = cell.level+1
                     
                     
-            for ii,jj,kk in TwoByTwoByTwo:
-                xOct = x_density[ii]
-                yOct = y_density[jj]
-                zOct = z_density[kk]   
-                densityPoints = np.empty((cell.pxd,cell.pyd,cell.pzd),dtype=object)
-                for i, j, k in cell.PxByPyByPz_density:
-                    densityPoints[i,j,k] = DensityPoint(xOct[i],yOct[j],zOct[k])
-                children[ii,jj,kk].setDensityPoints(densityPoints)
+#             for ii,jj,kk in TwoByTwoByTwo:
+#                 xOct = x_density[ii]
+#                 yOct = y_density[jj]
+#                 zOct = z_density[kk]   
+#                 densityPoints = np.empty((cell.pxd,cell.pyd,cell.pzd),dtype=object)
+#                 for i, j, k in cell.PxByPyByPz_density:
+#                     densityPoints[i,j,k] = DensityPoint(xOct[i],yOct[j],zOct[k])
+#                 children[ii,jj,kk].setDensityPoints(densityPoints)
                 
             
             if printNumberOfCells == True: print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, cell.uniqueID))
