@@ -13,9 +13,11 @@ import numpy as np
 
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+#resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
+resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
 plotsDir = resultsDir+'plots/'
+file='LW5_1500_manySCF_SCF_.csv'
 
 
 ## Carbon Monoxide
@@ -29,7 +31,7 @@ plotsDir = resultsDir+'plots/'
 
 
 ## Beryllium
-file='LW3_1500_SCF_.csv'
+#file='LW3_1500_SCF_.csv'
 
 ## H2
 ##file='LW3_2500_SCF_.csv'
@@ -62,6 +64,8 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeExchangeEnergy = -7.2193424444124350e+00
         dftfeCorrelationEnergy = -5.4455323198374961e-01
         dftfeBandEnergy = -4.0613156367497737e+01
+        dftfeKineticEnergy = 7.4112265375596365e+01
+        dftfeElectrostaticEnergy = -1.4081739574277032e+02
         
     if system == "carbonMonoxide":
         # these taken from mesh size 0.125 run
@@ -72,6 +76,8 @@ def plotSCFconvergence(df, system = 'H2'):
 
 
     df['bandEnergyError']=abs(df['bandEnergy']-dftfeBandEnergy)
+    df['kineticEnergyError']=abs(df['kineticEnergy']-dftfeKineticEnergy)
+    df['electrostaticEnergyError']=abs(df['electrostaticEnergy']-dftfeElectrostaticEnergy)
     df['exchangeEnergyError']=abs(df['exchangeEnergy']-dftfeExchangeEnergy)
     df['correlationEnergyError']=abs(df['correlationEnergy']-dftfeCorrelationEnergy)
     df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/2
@@ -89,12 +95,14 @@ def plotSCFconvergence(df, system = 'H2'):
     
 # Combined error plot
     f2, ax2 = plt.subplots(1, 1, figsize=(10,6))
-    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='bo-')
-    df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='go-')
-    df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='mo-')
-    df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='ro-')
+    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='o-')
+    df.plot(x='Iteration', y='kineticEnergyError', logy=True,ax=ax2, style='o-')
+    df.plot(x='Iteration', y='electrostaticEnergyError', logy=True,ax=ax2, style='o-')
+    df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='o-')
+    df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='o-')
+    df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='o-')
     
-    ax2.legend(loc='upper right')
+    ax2.legend(loc='lower left')
 ##    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='bo')
 ##    df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='go')
 ##    df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='mo')
@@ -114,8 +122,8 @@ def plotSCFconvergence(df, system = 'H2'):
 if __name__=="__main__":
     
 ##    plotSCFconvergence(df_CO, system="carbonMonoxide")    
-    plotSCFconvergence(df, system="Beryllium")    
-##    plotSCFconvergence(df, system="Oxygen")    
+#    plotSCFconvergence(df, system="Beryllium")    
+    plotSCFconvergence(df, system="Oxygen")    
 
 
 

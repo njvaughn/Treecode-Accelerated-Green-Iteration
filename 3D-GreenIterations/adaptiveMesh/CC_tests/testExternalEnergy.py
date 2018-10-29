@@ -40,10 +40,10 @@ def setDensityToExponential(tree,alpha):
                 gp.rho = exponentialDensity(r,alpha)
             
             # set density on the secondary mesh 
-            for i,j,k in cell.PxByPyByPz_density:
-                dp = cell.densityPoints[i,j,k]
-                r = sqrt( dp.x**2 + dp.y**2 + dp.z**2 )
-                dp.rho = exponentialDensity(r,alpha)
+#             for i,j,k in cell.PxByPyByPz_density:
+#                 dp = cell.densityPoints[i,j,k]
+#                 r = sqrt( dp.x**2 + dp.y**2 + dp.z**2 )
+#                 dp.rho = exponentialDensity(r,alpha)
                 
 def setExternalPotential(tree,Z):
     
@@ -84,16 +84,16 @@ class TestEnergyComputation(unittest.TestCase):
         setUp() gets called before doing the tests below.
         '''
         inputFile ='../src/utilities/molecularConfigurations/dummyAtomAuxiliary.csv'
-#         inputFile ='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+#        inputFile ='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #         inputFile ='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #         inputFile ='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-        xmin = ymin = zmin = -20
-        xmax = ymax = zmax = 20
+        xmin = ymin = zmin = -30
+        xmax = ymax = zmax = 30
         order=5
         minDepth=3
         maxDepth=20
         divideCriterion='LW5'
-        divideParameter=3000
+        divideParameter=1500
         self.alpha = 2
         self.Z = 8
         

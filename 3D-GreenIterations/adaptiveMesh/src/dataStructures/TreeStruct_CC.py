@@ -80,7 +80,7 @@ class Tree(object):
         self.gaugeShift = gaugeShift
         self.maxDepthAtAtoms = maxDepthAtAtoms
         
-        self.mixingParameter=0.5  # (1-mixingParam)*rhoNew
+        self.mixingParameter=0.4  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
 #         self.occupations = np.ones(nOrbitals)
 #         self.computeOccupations()
@@ -520,6 +520,13 @@ class Tree(object):
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
         timer.stop()
         
+#         refineRadius = 0.01
+#         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
+#         self.uniformlyRefineWithinRadius(refineRadius)
+#         refineRadius /= 2
+#         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
+#         self.uniformlyRefineWithinRadius(refineRadius)
+        
         """ Count the number of unique leaf cells and gridpoints and set initial external potential """
         self.numberOfGridpoints = 0
         self.numberOfCells = 0
@@ -763,7 +770,7 @@ class Tree(object):
                         cellCounter += 1
                         cell.divideFlag = True
         
-        print('Uniformly refining %i cells within radius %1.2f.' %(cellCounter,R))
+        print('Uniformly refining %i cells within radius %1.2e.' %(cellCounter,R))
         
         for _,cell in self.masterList:
             if cell.leaf==True:
@@ -785,13 +792,13 @@ class Tree(object):
                 self.numberOfGridpoints += self.px * self.py * self.pz
                 
         print('Now there are %i cells and %i gridpoints.' %(self.numberOfCells, self.numberOfGridpoints) )
-        print('Maxlimum depth ', self.maxDepthAchieved)
+        print('Maximum depth ', self.maxDepthAchieved)
         
         self.computeDerivativeMatrices()
 
         ### INITIALIZE ORBTIALS AND DENSITY ####
-        self.initializeOrbitalsFromAtomicData()            
-        self.initializeDensityFromAtomicData()
+#         self.initializeOrbitalsFromAtomicData()            
+#         self.initializeDensityFromAtomicData()
 #         self.normalizeDensity()
         
         self.maxDepthAchieved += 1
@@ -837,7 +844,7 @@ class Tree(object):
             VRHO_exchange = np.reshape(exchangeOutput['vrho'],np.shape(rho))
             VRHO_correlation = np.reshape(correlationOutput['vrho'],np.shape(rho))
             
-            for i,j,k in self.PxByPyByPz:
+            for i,j,k in cell.PxByPyByPz:
                 cell.gridpoints[i,j,k].epsilon_x = epsilon_exchange[i,j,k]
                 cell.gridpoints[i,j,k].epsilon_c = epsilon_correlation[i,j,k]
                 cell.gridpoints[i,j,k].v_x = VRHO_exchange[i,j,k]
@@ -849,7 +856,7 @@ class Tree(object):
             if cell.leaf == True:
                 CellupdateVxcAndVeff(cell,self.exchangeFunctional, self.correlationFunctional)
 
-    def updateDensityAtQuadpoints(self, mixingScheme='Simple'):
+    def updateDensityAtQuadpoints(self, mixingScheme='None'):
         def CellUpdateDensity(cell,mixingScheme):
             for i,j,k in self.PxByPyByPz:
                 newRho = 0
@@ -994,6 +1001,9 @@ class Tree(object):
         print('Hartree:         ', 1/2*V_coulomb)
         print('External:        ', E_electronNucleus)
         print('Nuclear-Nuclear: ', self.nuclearNuclear)
+#         print('Sanity check...')
+#         print('Band minus kinetic: ', self.totalBandEnergy - self.totalKinetic)
+#         print('Electrostatic minus external and Nuclear plus V_x and V_c: ', self.totalElectrostatic - self.nuclearNuclear - E_electronNucleus + self.totalVc + self.totalVx)
         
 #         self.totalPotential = -1/2*V_coulomb + E_xc - V_xc 
 #         self.totalPotential = -1/2*V_coulomb + E_x + E_c - V_x - V_c + self.nuclearNuclear
@@ -1013,6 +1023,11 @@ class Tree(object):
         self.computeTotalPotential()
 #         self.E = self.totalBandEnergy + self.totalPotential
         self.E = self.totalKinetic + self.totalPotential
+        
+        alternativeE = self.totalBandEnergy - 1/2 * self.totalVcoulomb + self.totalEx + self.totalEc - self.totalVx - self.totalVc
+        
+        print('Updated Energy, method 1: ', self.E)
+        print('Updated Energy, method 2: ', alternativeE)
     
     def computeOrbitalPotentials(self,targetEnergy=None): 
         
@@ -1134,12 +1149,13 @@ class Tree(object):
         #             self.orthonormalizeOrbitals()
         #             self.updateOrbitalEnergies()
         
-                if newOccupations==True:
-                    self.computeOccupations()
+                
         else: 
             print('Orbital Energy:           ', self.orbitalEnergies)
 #                 print()
-#         print('Occupations: ', self.occupations)
+        if newOccupations==True:
+            self.computeOccupations()
+#             print('Occupations: ', self.occupations)
 
     def sortOrbitalsAndEnergies(self):
         newOrder = np.argsort(self.orbitalEnergies)

@@ -85,9 +85,11 @@ def setUpTree():
 #         for i,j,k in tree.PxByPyByPz:
 #             element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
             
-#     for m in range(4,tree.nOrbitals):
+#     for m in range(5,tree.nOrbitals):
 #         tree.scrambleOrbital(m)
 #     tree.normalizeDensity()
+
+    
     return tree
     
     

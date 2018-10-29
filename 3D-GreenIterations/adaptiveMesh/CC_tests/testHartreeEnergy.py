@@ -236,7 +236,7 @@ class TestEnergyComputation(unittest.TestCase):
         self.assertAlmostEqual(TrueHartreeEnergy, HartreeEnergyFromAnalyticPotential, 3, 
                                "Analytic Energy and Energy computed from analytic potential not agreeing well enough")
 
-    @unittest.skip('Skipping single and staggered mesh comparison')
+#     @unittest.skip('Skipping single and staggered mesh comparison')
     def testHartreeSolve_staggeredMesh(self):
         print()
         targets = self.tree.extractLeavesDensity()  

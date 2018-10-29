@@ -15,7 +15,8 @@ file='runComparison.csv'
 #### Oxygen
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Oxygen_SmoothingTests_LW5/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenSmoothingPreSCF/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenPreSCF_GaussianSS/'
+##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenPreSCF_GaussianSS/'
+resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
 
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Oxygen_MeshBuilding/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenFirstSCF_LWtest_singSub2/'
@@ -57,24 +58,24 @@ df5 = df[df['order']==5]
 
 ##df_double = df.loc[0:6]
 ##
-resultsDir_baseline = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BaselineNoStaggerNoSmooth/'
-df_single = pd.read_csv(resultsDir_baseline+file, header=0)
-df_single['BandEnergyError'] = abs( df_single['BandEnergy'] - BandEnergy)
-df_single['KineticEnergyError'] = abs( df_single['KineticEnergy'] - KineticEnergy)
-df_single['ExchangeEnergyError'] = abs( df_single['ExchangeEnergy'] - ExchangeEnergy)
-df_single['CorrelationEnergyError'] = abs( df_single['CorrelationEnergy'] - CorrelationEnergy)
-df_single['ElectrostaticEnergyError'] = abs( df_single['ElectrostaticEnergy'] - ElectrostaticEnergy)
-df_single['TotalEnergyError'] = abs( df_single['TotalEnergy'] - TotalEnergy)
+#resultsDir_baseline = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BaselineNoStaggerNoSmooth/'
+#df_single = pd.read_csv(resultsDir_baseline+file, header=0)
+#df_single['BandEnergyError'] = abs( df_single['BandEnergy'] - BandEnergy)
+#df_single['KineticEnergyError'] = abs( df_single['KineticEnergy'] - KineticEnergy)
+#df_single['ExchangeEnergyError'] = abs( df_single['ExchangeEnergy'] - ExchangeEnergy)
+#df_single['CorrelationEnergyError'] = abs( df_single['CorrelationEnergy'] - CorrelationEnergy)
+#df_single['ElectrostaticEnergyError'] = abs( df_single['ElectrostaticEnergy'] - ElectrostaticEnergy)
+#df_single['TotalEnergyError'] = abs( df_single['TotalEnergy'] - TotalEnergy)
 
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/StaggeredGridTests/'
-df2 = pd.read_csv(resultsDir+file, header=0)
-df2['BandEnergyError'] = abs( df2['BandEnergy'] - BandEnergy)
-df2['KineticEnergyError'] = abs( df2['KineticEnergy'] - KineticEnergy)
-df2['ExchangeEnergyError'] = abs( df2['ExchangeEnergy'] - ExchangeEnergy)
-df2['CorrelationEnergyError'] = abs( df2['CorrelationEnergy'] - CorrelationEnergy)
-df2['ElectrostaticEnergyError'] = abs( df2['ElectrostaticEnergy'] - ElectrostaticEnergy)
-df2['TotalEnergyError'] = abs( df2['TotalEnergy'] - TotalEnergy)
-df_double = df2.loc[0:6]
+#resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/StaggeredGridTests/'
+#df2 = pd.read_csv(resultsDir+file, header=0)
+#df2['BandEnergyError'] = abs( df2['BandEnergy'] - BandEnergy)
+#df2['KineticEnergyError'] = abs( df2['KineticEnergy'] - KineticEnergy)
+#df2['ExchangeEnergyError'] = abs( df2['ExchangeEnergy'] - ExchangeEnergy)
+#df2['CorrelationEnergyError'] = abs( df2['CorrelationEnergy'] - CorrelationEnergy)
+#df2['ElectrostaticEnergyError'] = abs( df2['ElectrostaticEnergy'] - ElectrostaticEnergy)
+#df2['TotalEnergyError'] = abs( df2['TotalEnergy'] - TotalEnergy)
+#df_double = df2.loc[0:6]
 
 
 wavfunctionErrors = np.zeros((df.shape[0],5))
