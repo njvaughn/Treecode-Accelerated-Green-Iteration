@@ -22,7 +22,18 @@ def setUp():
     xmin = ymin = zmin = -domainSize
     xmax = ymax = zmax =  domainSize
     printTreeProperties=False
-    coordinateFile = '../src/utilities/molecularConfigurations/hydrogenAtom.csv'
+    
+    inputFile = '../src/utilities/molecularConfigurations/dummyAtomAuxiliary.csv'
+    [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+    
+    print('Coordinate file: ')
+    print(coordinateFile)
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+    nElectrons = int(nElectrons)
+    nOrbitals = int(nOrbitals)
+    
+    
+    
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,1,1,coordinateFile, printTreeProperties=printTreeProperties)
 
     tree.buildTree( minLevels, maxLevels, divideCriterion, divideParameter, printTreeProperties=printTreeProperties)

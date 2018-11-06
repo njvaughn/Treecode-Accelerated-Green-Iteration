@@ -5,29 +5,29 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 DOMAIN=20
 MAXDEPTH=20
 MINDEPTH=3
-SINGSUBT=0
+SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
-INTRASCFTOLERANCE=1e-4
-INTERSCFTOLERANCE=1e-5
+INTRASCFTOLERANCE=1e-8
+INTERSCFTOLERANCE=1e-6
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 
-ORDER=3
-MESHTYPE='LW5'	
+ORDER=5
 
+
+MESHTYPE='LW5'	
+#MESHTYPE='Phani'
 
 
 MESHPARAM=1000
-#OUTPUTFILE='/home/njvaughn/O_Gaussian/LW5_2000_noSmoothingVext.csv'
-#OUTPUTFILE='/home/njvaughn/O_Gaussian/LW5_2000_manySCF_single_additional_refinement.csv'
-OUTPUTFILE='/home/njvaughn/O_Gaussian/testing.csv'
+OUTPUTFILE='/home/njvaughn/Be_Gaussian/LW5_1500.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR

@@ -32,13 +32,17 @@ def setDensityToGaussian(tree,alpha):
                 gp = cell.gridpoints[i,j,k]
                 r = sqrt( gp.x**2 + gp.y**2 + gp.z**2 )
                 gp.rho = gaussianDensity(r,alpha)
-            
-#             # set density on the secondary mesh
-#             if hasattr(cell, "densityPoints"):
-#                 for i,j,k in cell.PxByPyByPz_density:
-#                     dp = cell.densityPoints[i,j,k]
-#                     r = sqrt( dp.x**2 + dp.y**2 + dp.z**2 )
-#                     dp.rho = gaussianDensity(r,alpha)
+                
+        
+def setIntegrand(tree,helmholtzShift):
+    
+    for _,cell in tree.masterList:
+        if cell.leaf == True:
+            # set density on the primary mesh
+            for i,j,k in cell.PxByPyByPz:
+                gp = cell.gridpoints[i,j,k]
+                gp.f = gp.rho +  (helmholtzShift**2/(4*pi)) *gp.trueHartree
+                
 
 def setTrueHartree(tree,alpha):
     
@@ -55,7 +59,8 @@ def integrateCellDensityAgainst__(cell,integrand):
             
             for i,j,k in cell.PxByPyByPz:
                 gp = cell.gridpoints[i,j,k]
-                rho[i,j,k] = gp.rho
+                rho[i,j,k] = gp.rho  
+                
                 pot[i,j,k] = getattr(gp,integrand)
             
             return np.sum( cell.w * rho * pot)

@@ -148,14 +148,14 @@ class Tree(object):
         
     def computeOccupations(self):
         
-        self.T = 0.1
+        self.T = 1
         KB = 8.6173303e-5/27.211386
         self.sigma = self.T*KB
         
         
         
-#         eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
-        eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1)
+        eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
+#         eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1)
         print('Fermi energy: ', eF)
         exponentialArg = (self.orbitalEnergies-eF)/self.sigma
         self.occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
@@ -310,7 +310,7 @@ class Tree(object):
                             
                         
     
-    def initializeOrbitalsFromAtomicData(self):
+    def initializeOrbitalsFromAtomicData(self,onlyFillOne=False):
         
         aufbauList = ['10',                                     # n+ell = 1
                       '20',                                     # n+ell = 2
@@ -331,13 +331,19 @@ class Tree(object):
 #         self.atoms[1].nAtomicOrbitals = 0
     
         for atom in self.atoms:
+            if onlyFillOne == True:
+                print('Setting number of orbitals equal to 1 for oxygen, just for testing the deep state without initializing everything')
+                nAtomicOrbitals = 1
+            else:
+                nAtomicOrbitals = atom.nAtomicOrbitals
             
             print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
                       %(atom.atomicNumber, atom.x,atom.y,atom.z))
             print('Orbital index = %i'%orbitalIndex)            
             singleAtomOrbitalCount=0
             for nell in aufbauList:
-                if singleAtomOrbitalCount< atom.nAtomicOrbitals:  
+                
+                if singleAtomOrbitalCount< nAtomicOrbitals:  
                     n = int(nell[0])
                     ell = int(nell[1])
                     psiID = 'psi'+str(n)+str(ell)
@@ -467,7 +473,7 @@ class Tree(object):
         print('Initialization from single atom data took %f.3 seconds.' %timer.elapsedTime)
         
         
-    def buildTree(self,minLevels,maxLevels, divideCriterion, divideParameter, initializationType='atomic',printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
+    def buildTree(self,minLevels,maxLevels, divideCriterion, divideParameter, initializationType='atomic',printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         # N is roughly the number of grid points.  It is used to generate the density function.
@@ -518,7 +524,6 @@ class Tree(object):
         timer.start()
         levelCounter=0
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
-        timer.stop()
         
 #         refineRadius = 0.01
 #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
@@ -562,7 +567,10 @@ class Tree(object):
         self.initializeDensityFromAtomicData()
         ### INITIALIZE ORBTIALS AND DENSITY ####
         if initializationType=='atomic':
-            self.initializeOrbitalsFromAtomicData()
+            if onlyFillOne == True:
+                self.initializeOrbitalsFromAtomicData(onlyFillOne=True)
+            else:
+                self.initializeOrbitalsFromAtomicData()
         elif initializationType=='random':
             self.initializeOrbitalsRandomly()
 #         self.orthonormalizeOrbitals()
@@ -577,7 +585,7 @@ class Tree(object):
 #         self.orthonormalizeOrbitals()
         
         
-        
+        timer.stop()
                     
         if printTreeProperties == True: 
             print("Tree build completed. \n"
@@ -596,6 +604,8 @@ class Tree(object):
             print('Closest gridpoint to origin: ', closestCoords)
             print('For a distance of: ', closestToOrigin)
             print('Part of a cell centered at: ', closestMidpoint) 
+
+
                  
     def buildTreeOneCondition(self,minLevels,maxLevels,divideTolerance,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
@@ -856,7 +866,7 @@ class Tree(object):
             if cell.leaf == True:
                 CellupdateVxcAndVeff(cell,self.exchangeFunctional, self.correlationFunctional)
 
-    def updateDensityAtQuadpoints(self, mixingScheme='None'):
+    def updateDensityAtQuadpoints(self, mixingScheme='Simple'):
         def CellUpdateDensity(cell,mixingScheme):
             for i,j,k in self.PxByPyByPz:
                 newRho = 0
@@ -1029,23 +1039,27 @@ class Tree(object):
         print('Updated Energy, method 1: ', self.E)
         print('Updated Energy, method 2: ', alternativeE)
     
-    def computeOrbitalPotentials(self,targetEnergy=None): 
+    def computeOrbitalPotentials(self,targetEnergy=None, saveAsReference=False): 
         
         self.orbitalPotential = np.zeros(self.nOrbitals)  
         for _,cell in self.masterList:
             if cell.leaf == True:
                 cell.computeOrbitalPotentials(targetEnergy)
                 self.orbitalPotential += cell.orbitalPE
+                if saveAsReference == True:
+                    cell.referencePotential = np.copy(cell.orbitalPE[0])
                 
         self.totalOrbitalPotential = np.sum( (self.orbitalPotential - self.gaugeShift) * self.occupations)
                        
-    def computeOrbitalKinetics(self,targetEnergy=None):
+    def computeOrbitalKinetics(self,targetEnergy=None, saveAsReference=False):
 
         self.orbitalKinetic = np.zeros(self.nOrbitals)
         for _,cell in self.masterList:
             if cell.leaf == True:
                 cell.computeOrbitalKinetics(targetEnergy)
                 self.orbitalKinetic += cell.orbitalKE
+                if saveAsReference == True:
+                    cell.referenceKinetic = np.copy(cell.orbitalKE[0])
         
         self.totalKinetic = np.sum(self.occupations*self.orbitalKinetic)
             
@@ -1090,15 +1104,47 @@ class Tree(object):
                 for i,j,k in self.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     gp.phi[m] = gp.phi[n]
+                    
+    def compareToReferenceEnergies(self, refineFraction = 0.0):
+        
+        cellErrorsList = []
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                kineticError = abs(cell.orbitalKE[0] - cell.referenceKinetic)
+                potentialError = abs(cell.orbitalPE[0] - cell.referencePotential)
+#                 print(kineticError)
+#                 print(potentialError)
+                totalError = potentialError + kineticError
+                radius = np.sqrt(cell.xmid**2 + cell.ymid**2 + cell.zmid**2)
+                cellErrorsList.append( [cell.level, radius, float(kineticError), float(potentialError), float(totalError), cell ] )
+        
+#         sortedByKinetic = sorted(cellErrorsList,key=lambda x:x[2], reverse=True)
+        sortedByPotential = sorted(cellErrorsList,key=lambda x:x[3], reverse=True)
+        sortedByTotal = sorted(cellErrorsList,key=lambda x:x[4], reverse=True)
+        
+#         print(cellErrorsList)
+#         print('Twenty worst cells for kinetic: ',sortedByKinetic[:20])
+#         print('Twenty worst cells for potential: ',sortedByPotential[:20])
+        
+        if refineFraction > 0:
+            numToDivide = int(np.ceil(len(sortedByTotal)*refineFraction))
+            print('Refining worst ', numToDivide, 'cells in terms of deepest orbital energy errors. ' )
+            for i in range(numToDivide):
+#                 cell = sortedByTotal[i][5]
+                cell = sortedByPotential[i][5]
+                cell.divide(cell.xmid,cell.ymid,cell.zmid)
+        
+        
+        return
     
     
-    def updateOrbitalEnergies(self,newOccupations=True,correctPositiveEnergies=True,sortByEnergy=True,targetEnergy=None):
+    def updateOrbitalEnergies(self,newOccupations=True,correctPositiveEnergies=True,sortByEnergy=True,targetEnergy=None, saveAsReference=False):
 #         print()
         start = time.time()
-        self.computeOrbitalKinetics(targetEnergy)
+        self.computeOrbitalKinetics(targetEnergy, saveAsReference)
         kinTime = time.time()-start
         start=time.time()
-        self.computeOrbitalPotentials(targetEnergy)
+        self.computeOrbitalPotentials(targetEnergy, saveAsReference)
         potTime = time.time()-start
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
 #         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
@@ -1281,28 +1327,28 @@ class Tree(object):
 #                         maxPhi = max(maxPhi,abs(element[1].gridpoints[i,j,k].phi))
            
          
-    def orthogonalizeWavefunction(self,n):
-        """ Orthgononalizes phi against wavefunction n """
-        B = 0.0
-        for _,cell in self.masterList:
-            if cell.leaf == True:
-                midpoint = cell.gridpoints[1,1,1]
-                B += midpoint.phi*midpoint.finalWavefunction[n]*element[1].volume
-                
-        """ Initialize the orthogonalization flag for each gridpoint """        
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
-                    cell.gridpoints[i,j,k].orthogonalized = False
-        
-        """ Subtract the projection, flip the flag """
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
-                    gridpoint = cell.gridpoints[i,j,k]
-                    if gridpoint.orthogonalized == False:
-                        gridpoint.phi -= B*gridpoint.finalWavefunction[n]
-                        gridpoint.orthogonalized = True
+#     def orthogonalizeWavefunction(self,n):
+#         """ Orthgononalizes phi against wavefunction n """
+#         B = 0.0
+#         for _,cell in self.masterList:
+#             if cell.leaf == True:
+#                 midpoint = cell.gridpoints[1,1,1]
+#                 B += midpoint.phi*midpoint.finalWavefunction[n]*element[1].volume
+#                 
+#         """ Initialize the orthogonalization flag for each gridpoint """        
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 for i,j,k in self.PxByPyByPz:
+#                     cell.gridpoints[i,j,k].orthogonalized = False
+#         
+#         """ Subtract the projection, flip the flag """
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 for i,j,k in self.PxByPyByPz:
+#                     gridpoint = cell.gridpoints[i,j,k]
+#                     if gridpoint.orthogonalized == False:
+#                         gridpoint.phi -= B*gridpoint.finalWavefunction[n]
+#                         gridpoint.orthogonalized = True
                         
     def orthonormalizeOrbitals(self, targetOrbital=None):
         
@@ -1367,21 +1413,21 @@ class Tree(object):
     """
     IMPORT/EXPORT FUNCTIONS
     """                   
-    def extractLeavesMidpointsOnly(self):
-        '''
-        Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
-        '''
-#         leaves = np.empty((self.numberOfGridpoints,4))
-        leaves = []
-        counter=0
-        for element in self.masterList:
-            if element[1].leaf == True:
-                midpoint =  element[1].gridpoints[1,1,1]
-                leaves.append( [midpoint.x, midpoint.y, midpoint.z, midpoint.phi, potential(midpoint.x, midpoint.y, midpoint.z), element[1].volume ] )
-                counter+=1 
-                
-        print('Warning: extracting midpoints even tho this is a non-uniform mesh.')
-        return np.array(leaves)
+#     def extractLeavesMidpointsOnly(self):
+#         '''
+#         Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
+#         '''
+# #         leaves = np.empty((self.numberOfGridpoints,4))
+#         leaves = []
+#         counter=0
+#         for element in self.masterList:
+#             if element[1].leaf == True:
+#                 midpoint =  element[1].gridpoints[1,1,1]
+#                 leaves.append( [midpoint.x, midpoint.y, midpoint.z, midpoint.phi, potential(midpoint.x, midpoint.y, midpoint.z), element[1].volume ] )
+#                 counter+=1 
+#                 
+#         print('Warning: extracting midpoints even tho this is a non-uniform mesh.')
+#         return np.array(leaves)
     
     def extractLeavesAllGridpoints(self):
         '''
@@ -1444,7 +1490,22 @@ class Tree(object):
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
-                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.rho, cell.w[i,j,k], cell.volume ] )
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.rho, cell.w[i,j,k] ] )
+                            
+        return np.array(leaves)
+    
+    def extractConvolutionIntegrand(self): 
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        leaves = []
+                
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.f, cell.w[i,j,k] ] )
                             
         return np.array(leaves)
     
@@ -1567,6 +1628,7 @@ class Tree(object):
                 for i in range(8):
 #                     scalars.InsertTuple1(pointcounter+i,cell.level)
 #                     scalars.InsertTuple1(pointcounter+i,interpolators[0](cell.xmid, cell.ymid, cell.zmid))
+                    print('Warning: using gridpoints[1,1,1] as midpoint')
                     scalars.InsertTuple1(pointcounter+i,cell.gridpoints[1,1,1].phi)
                 
                 faces.append((pointcounter+0,pointcounter+1,pointcounter+2,pointcounter+3))

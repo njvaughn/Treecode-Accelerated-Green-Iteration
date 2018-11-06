@@ -21,7 +21,7 @@ class Atom(object):
         self.orbitalInterpolators()
         self.setNumberOfOrbitalsToInitialize()
        
-    def V(self,x,y,z,epsilon=0.000):
+    def V(self,x,y,z,epsilon=0.0):
         r = np.sqrt( epsilon**2 + (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         if r ==0.0:
             print('Warning, evaluating potential at singularity!')

@@ -3,7 +3,7 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 
 
-DOMAIN=5
+DOMAIN=10
 MAXDEPTH=20
 MINDEPTH=3
 SINGSUBT=1
@@ -15,12 +15,14 @@ INPUTFILE='../src/utilities/molecularConfigurations/dummyAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/noAtomsAuxiliary.csv'
 OUTPUTFILE='/home/njvaughn/HartreeTests/GaussianSingularitySubtraction/GaussianDensity_alpha2_domain5/runComparison.csv'
 GAUSSIANDENSITYALPHA=2
-GAUSSIANSUBTRACTIONALPHA=1
+GAUSSIANSUBTRACTIONALPHA=2
 MESHTYPE='LW5'	
-ORDER=7
+ORDER=5
+HELMHOLTZSHIFT=5  # if k=0, solving the Poisson equation.  If k>0, solving the Helmholtz equation
 
 
-MESHPARAM=1500
+MESHPARAM=2000
 python -u testGaussianSingularitySubtraction.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GAUSSIANDENSITYALPHA $GAUSSIANSUBTRACTIONALPHA
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GAUSSIANDENSITYALPHA $GAUSSIANSUBTRACTIONALPHA $HELMHOLTZSHIFT
+

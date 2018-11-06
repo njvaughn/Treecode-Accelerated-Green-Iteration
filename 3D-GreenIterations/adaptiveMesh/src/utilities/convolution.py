@@ -6,7 +6,7 @@ Note: the current implementation does not use shared memory, which would provide
 speedup.  -- 03/19/2018 NV 
 """
 from numba import cuda
-from math import sqrt,exp,factorial,pi
+from math import sqrt,exp,factorial,pi, erfc
 import math
 import numpy as np
 import os
@@ -43,22 +43,20 @@ def gpuHelmholtzConvolution_skip_generic(targets,sources,psiNew,k):
         for i in range(len(sources)):  
             x_s, y_s, z_s, f_s, weight_s = sources[i] 
             r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) 
-            if r > 1e-12:
-#             if not ( (x_s==x_t) and (y_s==y_t) and (z_s==z_t) ): 
-#                 r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) 
-                psiNew[globalID] -= weight_s*f_s*exp(-k*r)/(4*pi*r) 
+            if r > 1e-14:
+                psiNew[globalID] += weight_s*f_s*exp(-k*r)/(r) 
 
 @cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64)')
 def gpuHelmholtzConvolution_subtract_generic(targets,sources,psiNew,k):
     globalID = cuda.grid(1)  
     if globalID < len(targets):  
         x_t, y_t, z_t, f_t = targets[globalID][0:4]  
-        psiNew[globalID] = -f_t/k**2
+        psiNew[globalID] = 4*pi*f_t/k**2
         for i in range(len(sources)):  
             x_s, y_s, z_s, f_s, weight_s = sources[i]  
             r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) 
-            if r > 1e-12: 
-                psiNew[globalID] += weight_s*(f_s-f_t)*exp(-k*r)/(4*pi*r)
+            if r > 1e-14: 
+                psiNew[globalID] += weight_s*(f_s-f_t)*exp(-k*r)/(r)
 
 def cpuConvolution(targets,sources,psiNew,k):
     for j in range(len(targets)):
@@ -140,18 +138,90 @@ def gpuHelmholtzConvolutionSubractSingularity(targets,sources,psiNew,k):
     if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
         x_t, y_t, z_t, psi_t, V_t, weights_t, volume_t = targets[globalID]  # set the x, y, and z values of the target
         f_t = 2*psi_t*V_t
-        psiNew[globalID] = -f_t/k**2
+        psiNew[globalID] = -4*pi*f_t/k**2
 #         psiNew[globalID] = 0
 #         correction = 0.0
         for i in range(len(sources)):  # loop through all source midpoints
             x_s, y_s, z_s, psi_s, V_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
             r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+#             if (r > 1e-12 ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+            if  globalID != i:  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+                f_s = 2*V_s*psi_s
+                psiNew[globalID] -= weight_s*(f_s-f_t)*exp(-k*r)/r # increment the new wavefunction value
+#                 correction += weight_s*f_t*exp(-k*r)/(4*pi*r)
+        psiNew[globalID] /= 4*pi
+
+@cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64, float64)')
+def gpuHelmholtzConvolutionSubractSingularity_gaussian(targets,sources,psiNew,k,a):
+
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t, psi_t, V_t, weights_t, volume_t = targets[globalID]  # set the x, y, and z values of the target
+        f_t = -2*psi_t*V_t
+        psiNew[globalID] = f_t*(2*pi/a - (pi/a)**(3/2) * k*exp(k**2/(4*a)) * erfc( k/(2*sqrt(a)) )  )/(4*pi)
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, psi_s, V_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            if (r > 1e-14 ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+                f_s = -2*V_s*psi_s
+                psiNew[globalID] += weight_s*(f_s-f_t*exp(-a*r**2))*exp(-k*r)/(4*pi*r) # increment the new wavefunction value
+                
+@cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64, float64)')
+def gpuHelmholtzConvolutionSubractSingularity_gaussian_no_cusp(targets,sources,psiNew,k,a):
+
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t, f_t = targets[globalID][0:4]  # set the x, y, and z values of the target
+        psiNew[globalID] = 4*pi*f_t/(2*a)
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, f_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            if (r > 1e-14 ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+                psiNew[globalID] += weight_s*(   f_s*exp(-k*r)-f_t*exp(-a*r**2)   )/(r) # increment the new wavefunction value
+                
+@cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64, float64)')
+def gpuHelmholtzConvolutionHybridSubractSingularity_gaussian_no_cusp(targets,sources,psiNew,k,a):
+
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t, f_t = targets[globalID][0:4]  # set the x, y, and z values of the target
+        if x_t**2 + y_t**2 + z_t**2 < 2:
+            psiNew[globalID] = 4*pi*f_t/(2*a)
+        else:
+            psiNew[globalID] = 0
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, f_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            if (r > 1e-14 ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+                if x_t**2 + y_t**2 + z_t**2 < 2:
+                    psiNew[globalID] += weight_s*(   f_s*exp(-k*r)-f_t*exp(-a*r**2)   )/(r) # increment the new wavefunction value
+                else:
+                    psiNew[globalID] += weight_s*(   f_s*exp(-k*r)   )/(r) # increment the new wavefunction value
+
+
+
+@cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64)')
+def gpuHelmholtzConvolutionSubractSingularity_multDivbyr(targets,sources,psiNew,k):
+
+    globalID = cuda.grid(1)  # identify the global ID of the thread
+    if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+        x_t, y_t, z_t, psi_t, V_t, weights_t, volume_t = targets[globalID]  # set the x, y, and z values of the target
+        r_t = sqrt( (x_t)**2 + (y_t)**2 + (z_t)**2 ) # compute the distance between target and nucleus
+        f_t = 2*psi_t*V_t
+        psiNew[globalID] = -f_t/k**2
+#         psiNew[globalID] = 0
+#         correction = 0.0
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, psi_s, V_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            r_s = sqrt( (x_s)**2 + (y_s)**2 + (z_s)**2 )
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
             if (r > 1e-12 ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
 #             if  globalID != i:  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
                 f_s = 2*V_s*psi_s
-                psiNew[globalID] -= weight_s*(f_s-f_t)*exp(-k*r)/(4*pi*r) # increment the new wavefunction value
+                psiNew[globalID] -= weight_s*(f_s*r_t*r_s-f_t*r_t*r_s)/(r_t*r_s)*exp(-k*r)/(4*pi*r) # increment the new wavefunction value
 #                 correction += weight_s*f_t*exp(-k*r)/(4*pi*r)
 #         psiNew[globalID] -= correction
+#         psiNew[globalID] /= r_t
 
 
 @cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64, float64)')
@@ -234,7 +304,7 @@ def gpuPoissonConvolution(targets,sources,V_hartree):
         x_t, y_t, z_t = targets[globalID][0:3] # set the x, y, and z values of the target
         V_hartree[globalID] = 0.0
         for i in range(len(sources)):  # loop through all source midpoints
-            x_s, y_s, z_s, rho_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            x_s, y_s, z_s, rho_s, weight_s = sources[i][0:5]  # set the coordinates, psi value, external potential, and volume for this source cell
 #             if not ( abs(x_s-x_t) and (y_s==y_t) and (z_s==z_t) ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
             r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
             if r > 1e-14:
@@ -379,7 +449,7 @@ def gpuHartreeGaussianSingularitySubract(targets,sources,V_Hartree_new,alphasq):
         x_t, y_t, z_t, rho_t = targets[globalID][0:4] # set the x, y, and z values of the target
         V_Hartree_new[globalID] = rho_t* (4*pi)* alphasq/2
         for i in range(len(sources)):  # loop through all source midpoints
-            x_s, y_s, z_s, rho_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            x_s, y_s, z_s, rho_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
             r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
             if r > 1e-14:
                 V_Hartree_new[globalID] += weight_s * (rho_s -   rho_t * exp(- r*r / alphasq )   ) / r  # increment the new wavefunction value                
