@@ -190,7 +190,7 @@ if __name__ == "__main__":
     """ Normal Run """
     tree = setUpTree()
     startTime = timer()
-    tree = setUpTree()
+#     tree = setUpTree()
     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=None)
     
 

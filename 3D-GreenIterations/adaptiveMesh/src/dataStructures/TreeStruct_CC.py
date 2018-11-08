@@ -112,7 +112,7 @@ class Tree(object):
         gridpoints = np.empty((px,py,pz),dtype=object)
 
         for i, j, k in self.PxByPyByPz:
-            gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k],self.nOrbitals, self.gaugeShift, self.atoms)
+            gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k],self.nOrbitals, self.gaugeShift, self.atoms,initPotential=False)
         
         # generate root cell from the gridpoint objects  
         self.root = Cell( self.xmin, self.xmax, self.px, 
@@ -1506,6 +1506,57 @@ class Tree(object):
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
                     leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.f, cell.w[i,j,k] ] )
+                            
+        return np.array(leaves)
+    
+    
+    def computeSelfCellInterations(self,k):
+        print("Computing interaction of each point with its own cell..")
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    gp_t = cell.gridpoints[i,j,k]
+                    
+                    tempW = np.copy(cell.w)
+                    tempW[i,j,k] = 0  # set the weight at the target point equal to zero
+                    tempW *= cell.volume / np.sum(tempW)  # renormalize so that sum of weights = volume 
+                    if abs(np.sum(tempW) - cell.volume)>1e-12:
+                        print('Warning: temporary weights not summing to cell volume.')
+                    # simple skipping    
+                    gp_t.selfCellContribution = 0.0
+                    
+#                     # simple singularity subtraction
+#                     gp_t.selfCellContribution = 4*pi*f_t/k**2
+                    
+                    for ii,jj,kk in cell.PxByPyByPz:
+                        gp_s = cell.gridpoints[ii,jj,kk]
+                        if gp_s != gp_t:
+                            r = np.sqrt( (gp_t.x - gp_s.x)**2 +  (gp_t.y - gp_s.y)**2 + (gp_t.z - gp_s.z)**2   )
+                            
+                            # put whatever the integrand is:
+                            
+                            # simple skipping
+#                             gp_t.selfCellContribution += tempW[ii,jj,kk] * gp_s.f *exp(-k*r)/(r)
+                            
+                            # simple singularity subtraction
+                            gp_t.selfCellContribution += tempW[ii,jj,kk] * (gp_s.f - gp_t.f) *exp(-k*r)/(r)
+        print('Done.')
+                        
+                        
+
+    def extractConvolutionIntegrand_selfCell(self): 
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        leaves = []
+        cellID = 0  
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.f, cell.w[i,j,k], gridpt.selfCellContribution, cellID ] )
+                cellID += 1
                             
         return np.array(leaves)
     

@@ -137,14 +137,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     V_coulombNew = np.zeros((len(targets)))
     startCoulombConvolutionTime = timer()
-    alpha = 1
+    alpha = 1/2
     alphasq=alpha*alpha
-    print('Using Gaussian singularity subtraction, alpha = ', alpha)
-    gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+    
+#     print('Using Gaussian singularity subtraction, alpha = ', alpha)
+#     gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+    
+    
 #     if smoothingN==0:
-#         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
-# #     print('Using singularity subtraction for initial Poisson solve')
-# #     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
+#     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
+#     print('Using singularity subtraction for initial Poisson solve')
+    gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
 #     else:
 #         print('Using smoothed version for Poisson Convolution: (n, epsilon) = (%i, %2.3f)' %(smoothingN, smoothingEps))
 #         gpuPoissonConvolutionChristliebSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
@@ -292,9 +295,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     z = np.copy(initialWaveData[:,2])
     
     
-#     print('Scrambling orbitals...')
-#     tree.scrambleOrbital(0)
-#     tree.scrambleOrbital(1)
+    print('Scrambling orbitals...')
+    tree.scrambleOrbital(0)
+    tree.scrambleOrbital(1)
     
     residuals = np.ones_like(tree.orbitalEnergies)
     while ( densityResidual > interScfTolerance ):
@@ -362,9 +365,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         print('Using singularity subtraction')
 #                         gpuHelmholtzConvolutionSubractSingularity_multDivbyr[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
 #                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-#                         gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,2)
-                        print('Using singularity subtraction with Gaussian, a=0.1')
-                        gpuHelmholtzConvolutionSubractSingularity_gaussian_no_cusp[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,0.1)
+                        gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,2)
+#                         print('Using singularity subtraction with Gaussian, a=0.1')
+#                         gpuHelmholtzConvolutionSubractSingularity_gaussian_no_cusp[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,0.1)
                     else:
                         print('Using singularity skipping because energy too close to 0')
                         gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)

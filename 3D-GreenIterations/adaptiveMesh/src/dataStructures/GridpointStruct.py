@@ -9,7 +9,7 @@ class GridPoint(object):
     '''
     The gridpoint object for the quadrature points.  Will contain the coordinates, potential values, etc.
     '''
-    def __init__(self, x,y,z, Norbitals, gaugeShift, atoms):
+    def __init__(self, x,y,z, Norbitals, gaugeShift, atoms, initPotential=True):
         '''
         Gridpoint Constructor.  For minimal example, a gridpoint simply has x and y values.
         '''
@@ -27,7 +27,8 @@ class GridPoint(object):
         self.v_c = 0.0
         self.v_ext = 0.0
         
-        self.setExternalPotential(atoms)
+        if initPotential==True:
+            self.setExternalPotential(atoms)
         self.updateVeff()
 
     def setExternalPotential(self, atoms):

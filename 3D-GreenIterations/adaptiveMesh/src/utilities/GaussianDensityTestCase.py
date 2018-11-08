@@ -12,11 +12,11 @@ import vtk
 
 
 def gaussianDensity(r,alpha):
-        return alpha**3 / pi**(3/2) * exp(-alpha**2 * r**2)
+    return alpha**3 / pi**(3/2) * exp(-alpha**2 * r**2)
     
     
 def gaussianHartree(r,alpha):
-        return erf(alpha*r)/r
+    return erf(alpha*r)/r
 
 def hartreeEnergy(alpha):
     return sqrt(2/pi)*alpha
@@ -54,22 +54,31 @@ def setTrueHartree(tree,alpha):
                 gp.trueHartree = gaussianHartree(r,alpha)
                 
 def integrateCellDensityAgainst__(cell,integrand):
-            rho = np.empty((cell.px,cell.py,cell.pz))
-            pot = np.empty((cell.px,cell.py,cell.pz))
-            
-            for i,j,k in cell.PxByPyByPz:
-                gp = cell.gridpoints[i,j,k]
-                rho[i,j,k] = gp.rho  
-                
-                pot[i,j,k] = getattr(gp,integrand)
-            
-            return np.sum( cell.w * rho * pot)
+    rho = np.empty((cell.px,cell.py,cell.pz))
+    pot = np.empty((cell.px,cell.py,cell.pz))
+    
+    for i,j,k in cell.PxByPyByPz:
+        gp = cell.gridpoints[i,j,k]
+        rho[i,j,k] = gp.rho  
+        
+        pot[i,j,k] = getattr(gp,integrand)
+    
+    return np.sum( cell.w * rho * pot)
         
 def computeHartreeEnergyFromAnalyticPotential(tree):
+    arr = np.zeros((tree.numberOfCells,))
+    counter = 0
     E = 0.0
     for _,cell in tree.masterList:
         if cell.leaf == True:
             E += integrateCellDensityAgainst__(cell,'trueHartree') 
+#             arr[counter] = integrateCellDensityAgainst__(cell,'trueHartree') 
+#             counter+=1
+#     sorted = np.sort(arr)
+#     print('First element of sorted array: ', sorted[0])
+#     print('Last element of sorted array: ', sorted[-1])
+#     for i in range(tree.numberOfCells):
+#         E += arr[i]
     return E
 
 def computeHartreeEnergyFromNumericalPotential(tree):

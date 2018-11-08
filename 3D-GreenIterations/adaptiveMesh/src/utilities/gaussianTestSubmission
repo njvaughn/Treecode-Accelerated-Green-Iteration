@@ -14,15 +14,21 @@ INTERSCFTOLERANCE=1e-5
 INPUTFILE='../src/utilities/molecularConfigurations/dummyAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/noAtomsAuxiliary.csv'
 OUTPUTFILE='/home/njvaughn/HartreeTests/GaussianSingularitySubtraction/GaussianDensity_alpha2_domain5/runComparison.csv'
-GAUSSIANDENSITYALPHA=2
-GAUSSIANSUBTRACTIONALPHA=2
+DENSITYPARAMETER=0.1
 MESHTYPE='LW5'	
 ORDER=5
-HELMHOLTZSHIFT=5  # if k=0, solving the Poisson equation.  If k>0, solving the Helmholtz equation
+HELMHOLTZSHIFT=0  # if k=0, solving the Poisson equation.  If k>0, solving the Helmholtz equation
+TESTCASE='Hydrogenic'
+#TESTCASE='Gaussian'
 
 
-MESHPARAM=2000
+GAUSSIANSUBTRACTIONALPHA=1
+MESHPARAM=1000
+
+
+
 python -u testGaussianSingularitySubtraction.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GAUSSIANDENSITYALPHA $GAUSSIANSUBTRACTIONALPHA $HELMHOLTZSHIFT
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $DENSITYPARAMETER $GAUSSIANSUBTRACTIONALPHA $HELMHOLTZSHIFT $TESTCASE
+
 
