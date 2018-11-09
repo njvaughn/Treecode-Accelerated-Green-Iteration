@@ -188,16 +188,16 @@ if __name__ == "__main__":
     print('='*70,'\n')
     
     """ Normal Run """
-    tree = setUpTree()
-    startTime = timer()
 #     tree = setUpTree()
-    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=None)
+#     startTime = timer()
+#     tree = setUpTree()
+#     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
     
 
 
     """ Refinement based on deepest state """
-#     tree = setUpTree(onlyFillOne=True)    
-#     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
+    tree = setUpTree(onlyFillOne=True)    
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
 #     
 #     print('\n\n\n\nNow refine based on errors in each cell, the re-initialize: ')
 #     tree.compareToReferenceEnergies(refineFraction = 0.1 )

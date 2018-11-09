@@ -82,16 +82,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     '''
     
 #     ## OXYGEN ATOM     
-#     dftfeOrbitalEnergies = np.array( [-1.875890295968488530e+01, -8.712069894624057120e-01,
-#                                       -3.382944529486854868e-01, -3.382944529460307215e-01,
-#                                       -3.382944529419588120e-01])#, -0.1])   # order 5
+    dftfeOrbitalEnergies = np.array( [-1.875890295968488530e+01, -8.712069894624057120e-01,
+                                      -3.382944529486854868e-01, -3.382944529460307215e-01,
+                                      -3.382944529419588120e-01])#, -0.1])   # DFTFE order 5
 
 #     dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
 #                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
 #                                       -3.382974161584920147e-01])#, -0.1]) 
 
     ## BERYLLIUM ATOM     
-    dftfeOrbitalEnergies = np.array( [-3.855615417517944898e+00, -2.059998705089633453e-01 ] ) 
+#     dftfeOrbitalEnergies = np.array( [-3.855615417517944898e+00, -2.059998705089633453e-01 ] ) 
 #     dftfeOrbitalEnergies = np.array( [-3.855605920292163535e+00, -2.059995800202487071e-01 ] ) 
     
                                     
@@ -137,17 +137,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     V_coulombNew = np.zeros((len(targets)))
     startCoulombConvolutionTime = timer()
-    alpha = 1/2
+    alpha = 1
     alphasq=alpha*alpha
     
-#     print('Using Gaussian singularity subtraction, alpha = ', alpha)
-#     gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+    print('Using Gaussian singularity subtraction, alpha = ', alpha)
+    gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
     
     
 #     if smoothingN==0:
 #     gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew)  # call the GPU convolution 
 #     print('Using singularity subtraction for initial Poisson solve')
-    gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
+#     gpuPoissonConvolutionSingularitySubtract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,5)
 #     else:
 #         print('Using smoothed version for Poisson Convolution: (n, epsilon) = (%i, %2.3f)' %(smoothingN, smoothingEps))
 #         gpuPoissonConvolutionChristliebSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,smoothingN,smoothingEps,coefficients)
@@ -295,9 +295,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     z = np.copy(initialWaveData[:,2])
     
     
-    print('Scrambling orbitals...')
-    tree.scrambleOrbital(0)
-    tree.scrambleOrbital(1)
+#     print('Scrambling orbitals...')
+#     tree.scrambleOrbital(0)
+#     tree.scrambleOrbital(1)
     
     residuals = np.ones_like(tree.orbitalEnergies)
     while ( densityResidual > interScfTolerance ):
@@ -345,6 +345,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                 oldOrbitalL2 = np.sqrt( np.sum( weights*( oldOrbitals[:,m]**2 )) )
 #                 print("L2 norm of old orbital: ", oldOrbitalL2)
 
+                sources = tree.extractGreenIterationIntegrand(m)
+                targets = np.copy(sources)
+
                 if tree.orbitalEnergies[m] > tree.gaugeShift:
                     print('Wanrning: Orbital energy greater than gauge shift.')
 #                     print('Resetting orbital %i energy to 1/2 gauge shift')
@@ -365,7 +368,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         print('Using singularity subtraction')
 #                         gpuHelmholtzConvolutionSubractSingularity_multDivbyr[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
 #                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-                        gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,2)
+                        gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,0.1)
 #                         print('Using singularity subtraction with Gaussian, a=0.1')
 #                         gpuHelmholtzConvolutionSubractSingularity_gaussian_no_cusp[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,0.1)
                     else:
@@ -375,7 +378,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     print('Invalid option for singularitySubtraction, should be 0 or 1.')
                     return
 
-
+#                 idx = np.argmax(phiNew)
+#                 phiAtBoundary=phiNew[idx]
+#                 print('Phi at boundary: ', phiAtBoundary,'. Shifting wavefunction down by that amount before computing energy.')
+#                 print('Location: ', targets[idx][0:3])
+#                 phiNew -= phiAtBoundary
+                
                 orbitals[:,m] = np.copy(phiNew)
 
 

@@ -122,9 +122,10 @@ def HartreeCalculation(tree):
         gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, alphasq)  # call the GPU convolution
     else:
         print('helmholtzShift=',helmholtzShift,', using a Helmholtz convolution. ')
-#         gpuHelmholtzConvolution_skip_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+#         return
+        gpuHelmholtzConvolution_skip_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
 #         gpuHelmholtzConvolution_subtract_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
-        gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift, alphasq)  # call the GPU convolution
+#         gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift, alphasq)  # call the GPU convolution
 #         gpuHelmholtzConvolutionHybridSubractSingularity_gaussian_no_cusp[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift, alphasq)  # call the GPU convolution
          
 #         gpuHelmholtzConvolution_skip_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution

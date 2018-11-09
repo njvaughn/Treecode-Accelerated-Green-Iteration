@@ -1509,6 +1509,22 @@ class Tree(object):
                             
         return np.array(leaves)
     
+    def extractGreenIterationIntegrand(self,m): 
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        leaves = []
+                
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    f = -2*gridpt.phi[m]*gridpt.v_eff
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, f, cell.w[i,j,k] ] )
+                            
+        return np.array(leaves)
+    
     
     def computeSelfCellInterations(self,k):
         print("Computing interaction of each point with its own cell..")

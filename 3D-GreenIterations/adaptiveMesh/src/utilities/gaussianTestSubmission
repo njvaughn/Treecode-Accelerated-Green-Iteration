@@ -5,7 +5,7 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 DOMAIN=10
 MAXDEPTH=20
-MINDEPTH=3
+MINDEPTH=4
 SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
@@ -17,14 +17,13 @@ OUTPUTFILE='/home/njvaughn/HartreeTests/GaussianSingularitySubtraction/GaussianD
 DENSITYPARAMETER=0.1
 MESHTYPE='LW5'	
 ORDER=5
-HELMHOLTZSHIFT=0  # if k=0, solving the Poisson equation.  If k>0, solving the Helmholtz equation
+HELMHOLTZSHIFT=1  # if k=0, solving the Poisson equation.  If k>0, solving the Helmholtz equation
 TESTCASE='Hydrogenic'
 #TESTCASE='Gaussian'
 
 
-GAUSSIANSUBTRACTIONALPHA=1
+GAUSSIANSUBTRACTIONALPHA=5.5
 MESHPARAM=1000
-
 
 
 python -u testGaussianSingularitySubtraction.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
