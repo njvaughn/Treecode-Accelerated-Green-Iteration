@@ -22,8 +22,8 @@ import vtk
 #     return -k/2
 
 
-def hydrogenicDensity(r,alpha):
-    return alpha**2  * exp(-sqrt(4*pi*alpha**2) * r)/r
+def hydrogenicDensity(r,alpha, epsilon=0.0):
+    return alpha**2  * exp(-sqrt(4*pi*alpha**2) * r)/np.sqrt( r*r + epsilon*epsilon)
     
     
 def hydrogenicHartreePotential(r,alpha):
@@ -34,7 +34,7 @@ def hydrogenicHartreeEnergy(alpha):
 
 
 
-def setDensityToHydrogenic(tree,alpha):
+def setDensityToHydrogenic(tree,alpha,epsilon):
     
     for _,cell in tree.masterList:
         if cell.leaf == True:
@@ -42,7 +42,7 @@ def setDensityToHydrogenic(tree,alpha):
             for i,j,k in cell.PxByPyByPz:
                 gp = cell.gridpoints[i,j,k]
                 r = sqrt( gp.x**2 + gp.y**2 + gp.z**2 )
-                gp.rho = hydrogenicDensity(r,alpha)
+                gp.rho = hydrogenicDensity(r,alpha,epsilon)
                 
                 
 def setTrueHydrogenicHartree(tree,alpha):

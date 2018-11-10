@@ -83,7 +83,9 @@ def setUpTree():
 
     elif testCase == 'Hydrogenic':
         print('Setting density and true Hartree to the Hydrogenic test case functions, helmholtzShift =',helmholtzShift)
-        setDensityToHydrogenic(tree,densityParameter)
+        epsilon = 0.001
+        print('Regularizing with epsilon = ',epsilon)
+        setDensityToHydrogenic(tree,densityParameter,epsilon)
         setTrueHydrogenicHartree(tree,densityParameter)
         setIntegrand(tree,helmholtzShift)
         tree.trueHartreeEnergy = hydrogenicHartreeEnergy(densityParameter)
@@ -123,8 +125,8 @@ def HartreeCalculation(tree):
     else:
         print('helmholtzShift=',helmholtzShift,', using a Helmholtz convolution. ')
 #         return
-        gpuHelmholtzConvolution_skip_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
-#         gpuHelmholtzConvolution_subtract_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+#         gpuHelmholtzConvolution_skip_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+        gpuHelmholtzConvolution_subtract_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
 #         gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift, alphasq)  # call the GPU convolution
 #         gpuHelmholtzConvolutionHybridSubractSingularity_gaussian_no_cusp[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift, alphasq)  # call the GPU convolution
          
