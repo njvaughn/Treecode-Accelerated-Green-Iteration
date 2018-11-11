@@ -1557,21 +1557,92 @@ class Tree(object):
                             # simple singularity subtraction
                             gp_t.selfCellContribution += tempW[ii,jj,kk] * (gp_s.f - gp_t.f) *exp(-k*r)/(r)
         print('Done.')
+        
+        
+    def computeSelfCellInterations_GaussianIntegralIdentity(self,containing=None):
+
+        print("Computing interaction of each point with its own cell using Gaussian Integral Identity..")
+        counter=0
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                counter += 1
+                if (   (containing==None)  or   
+                    (  
+                           ( (cell.xmin<containing[0]) and (cell.xmax>containing[0]) )  and 
+                           ( (cell.ymin<containing[1]) and (cell.ymax>containing[1]) )  and  
+                           ( (cell.zmin<containing[2]) and (cell.zmax>containing[2]) ) )
+                    ):
+                    if containing != None:
+                        print('Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid)
+                    
+                    # determine an appropriate time discretization, based on the gridpoint spacing
+                    maxDist = np.sqrt( (cell.xmax-cell.xmin)**2 + (cell.ymax-cell.ymin)**2 + (cell.zmax-cell.zmin)**2 )
+                    gp1 = cell.gridpoints[0,0,0]
+                    gp2 = cell.gridpoints[1,1,1]  # these should be tied for closest grid points within this cell
+                    minDist = np.sqrt( (gp1.x-gp2.x)**2 + (gp1.y-gp2.y)**2 + (gp1.z-gp2.z)**2)
+                    
+                    tmax = 10/minDist
+    #                 timeIntervals = int( np.ceil(5*(maxDist/minDist)) )
+#                     timeIntervals = 200
+                    
+                    timeIntervals = int(np.ceil(tmax/0.05))
+                    tvec = np.linspace(0,tmax,timeIntervals+1)
+                    print('Cell ', counter, ' of ', self.numberOfCells)
+                    print('tmax = ', tmax)
+                    print('dt = ', tvec[1]-tvec[0])
+                    print('timeIntervals   = ', timeIntervals)
+                    print()
+                
+                
+                    # for each target point in cell...
+                    for i,j,k in cell.PxByPyByPz:
+                        gp_t = cell.gridpoints[i,j,k]
+                        gp_t.selfCellContribution = 0.0
+                    
+                        # integrate over time (midpoint or trapezoid)
+                        for ell in range(timeIntervals+1):
+#                             dt = tvec[ell+1]-tvec[ell]
+#                             t = (tvec[ell+1]+tvec[ell])/2
+                            dt = tvec[1]-tvec[0]
+                            t = tvec[ell]
+                            if ( (ell==0) or (ell==timeIntervals)):
+                                dt /=2
+                        
+                            # integrate over space
+                            for ii,jj,kk in cell.PxByPyByPz:
+                                gp_s = cell.gridpoints[ii,jj,kk]
+                                r = np.sqrt( (gp_t.x - gp_s.x)**2 +  (gp_t.y - gp_s.y)**2 + (gp_t.z - gp_s.z)**2   )
+                                    
+                                gp_t.selfCellContribution += cell.w[ii,jj,kk] * dt * gp_s.rho * np.exp(-t**2 * r**2)  
+                                
+                        gp_t.selfCellContribution *= 2/np.sqrt(np.pi)
+                
+                else: # not the target cell we care about, set selfCellContribution equal to zero
+                    for i,j,k in cell.PxByPyByPz:
+                        gp_t = cell.gridpoints[i,j,k]
+                        gp_t.selfCellContribution = 0.0 
+        print('Done.')
                         
                         
 
-    def extractConvolutionIntegrand_selfCell(self): 
+    def extractConvolutionIntegrand_selfCell(self, containing=None): 
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
         '''
-#         print('Extracting the gridpoints from all leaves...')
+        
         leaves = []
         cellID = 0  
         for _,cell in self.masterList:
             if cell.leaf == True:
-                for i,j,k in cell.PxByPyByPz:
-                    gridpt = cell.gridpoints[i,j,k]
-                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.f, cell.w[i,j,k], gridpt.selfCellContribution, cellID ] )
+                if (   (containing==None)  or   
+                    (  
+                           ( (cell.xmin<containing[0]) and (cell.xmax>containing[0]) )  and 
+                           ( (cell.ymin<containing[1]) and (cell.ymax>containing[1]) )  and  
+                           ( (cell.zmin<containing[2]) and (cell.zmax>containing[2]) ) )
+                    ):
+                    for i,j,k in cell.PxByPyByPz:
+                        gridpt = cell.gridpoints[i,j,k]
+                        leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.f, cell.w[i,j,k], gridpt.selfCellContribution, cellID ] )
                 cellID += 1
                             
         return np.array(leaves)

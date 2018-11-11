@@ -19,7 +19,7 @@ from scipy.special import erf
 from TreeStruct_CC import Tree
 from convolution import gpuPoissonConvolution, gpuHartreeGaussianSingularitySubract, gpuHelmholtzConvolutionHybridSubractSingularity_gaussian_no_cusp
 from convolution import gpuHelmholtzConvolution_skip_generic, gpuHelmholtzConvolution_subtract_generic, gpuHelmholtzConvolutionSubractSingularity_gaussian
-from convolution_selfCell import gpuHelmholtzConvolution_skip_generic_selfCell, gpuHelmholtzConvolution_subtract_generic_selfCell
+from convolution_selfCell import gpuHelmholtzConvolution_skip_generic_selfCell, gpuHelmholtzConvolution_subtract_generic_selfCell, gpuPoisson_selfCell
 from meshUtilities import ChebLaplacian3D
 from GaussianDensityTestCase import *
 from HydrogenicDensityTestCase import *
@@ -96,6 +96,7 @@ def setUpTree():
         print('Invalid test case option: choose Hydrogenic or Gaussian.')
         return
 #     tree.computeSelfCellInterations(helmholtzShift)
+#     tree.computeSelfCellInterations_GaussianIntegralIdentity()
     print()
     print()
     
@@ -109,8 +110,8 @@ def HartreeCalculation(tree):
     sources = targets
     weights = np.copy(targets[:,4])   
     
-#     targets_selfCell =  tree.extractConvolutionIntegrand_selfCell()
-#     sources_selfCell =  targets_selfCell
+    targets_selfCell =  tree.extractConvolutionIntegrand_selfCell()
+    sources_selfCell =  targets_selfCell
     
     threadsPerBlock = 512
     blocksPerGrid = (tree.numberOfGridpoints + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
@@ -121,7 +122,9 @@ def HartreeCalculation(tree):
     if helmholtzShift==0:
         print('Using Gaussian singularity subtraction, alpha = ', gaussianSubtractionAlpha)
 #         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew)  # call the GPU convolution
-        gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, alphasq)  # call the GPU convolution
+#         gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, alphasq)  # call the GPU convolution
+        gpuPoisson_selfCell[blocksPerGrid, threadsPerBlock](targets_selfCell,sources_selfCell,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+
     else:
         print('helmholtzShift=',helmholtzShift,', using a Helmholtz convolution. ')
 #         return
@@ -199,6 +202,122 @@ def HartreeCalculation(tree):
 #     with myFile:
 #         writer = csv.writer(myFile)
 #         writer.writerow(myData)  
+
+
+def HartreeCalculation_selectedTargets(tree, loc=[0,0,0]):
+    
+    
+    
+
+    print()
+    print('Focusing on target cell containing ', loc)
+    tree.computeSelfCellInterations_GaussianIntegralIdentity(containing=loc)
+#     targets = tree.extractConvolutionIntegrand() 
+#     sources = targets
+#     weights = np.copy(targets[:,4])   
+    
+    targets_selfCell =  tree.extractConvolutionIntegrand_selfCell(containing=loc)
+    sources_selfCell =  tree.extractConvolutionIntegrand_selfCell()
+    weights = np.copy(targets_selfCell[:,4])   
+    
+    threadsPerBlock = 512
+    blocksPerGrid = (tree.numberOfGridpoints + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
+
+
+    V_HartreeNew = np.zeros((len(targets_selfCell)))
+    alphasq = gaussianSubtractionAlpha*gaussianSubtractionAlpha
+    if helmholtzShift==0:
+#         print('Using Gaussian singularity subtraction, alpha = ', gaussianSubtractionAlpha)
+#         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew)  # call the GPU convolution
+#         gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, alphasq)  # call the GPU convolution
+        gpuPoisson_selfCell[blocksPerGrid, threadsPerBlock](targets_selfCell,sources_selfCell,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+        
+
+    else:
+        print('helmholtzShift=',helmholtzShift,', using a Helmholtz convolution. ')
+#         return
+#         gpuHelmholtzConvolution_skip_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+        gpuHelmholtzConvolution_subtract_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+#         gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift, alphasq)  # call the GPU convolution
+#         gpuHelmholtzConvolutionHybridSubractSingularity_gaussian_no_cusp[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift, alphasq)  # call the GPU convolution
+         
+#         gpuHelmholtzConvolution_skip_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+#         gpuHelmholtzConvolution_skip_generic_selfCell[blocksPerGrid, threadsPerBlock](targets_selfCell,sources_selfCell,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+#         gpuHelmholtzConvolution_subtract_generic_selfCell[blocksPerGrid, threadsPerBlock](targets_selfCell,sources_selfCell,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+         
+ 
+#     tree.importVcoulombOnLeaves(V_HartreeNew)
+#     tree.updateVxcAndVeffAtQuadpoints()
+#      
+#     computedFromNumericalPotential = computeHartreeEnergyFromNumericalPotential(tree)
+#     computedFromAnalyticPotential = computeHartreeEnergyFromAnalyticPotential(tree)
+
+    r = np.sqrt(targets_selfCell[:,0]**2 + targets_selfCell[:,1]**2 + targets_selfCell[:,2]**2)
+    V_HartreeTrue = gaussianHartree(r,densityParameter)
+    err =  V_HartreeNew - V_HartreeTrue
+    
+    
+    for i in range(len(V_HartreeNew)):
+        print( abs(err[i]),V_HartreeNew[i], V_HartreeTrue[i], targets_selfCell[i,0], targets_selfCell[i,1], targets_selfCell[i,2] )
+    
+#     for i in range(4):
+#         print()
+#         for j in range(4):
+#             print(V_HartreeNew[4*i + 4*j: (4*i+4) + 4*j ])
+#     print('\n\n')
+#              
+#     for i in range(4):
+#         print()
+#         for j in range(4):
+#             print(V_HartreeTrue[4*i + 4*j: (4*i+4) + 4*j ])
+#     print('\n\n')
+#              
+#          
+#     for i in range(4):
+#         print()
+#         for j in range(4):
+#             print(err[4*i + 4*j: (4*i+4) + 4*j])
+    
+    L2Err = np.sqrt( np.sum(  err**2*weights )  )
+    LinfErr = np.max(np.abs(err)) 
+            
+    print('L2 norm:   ', L2Err)
+    print('Linf norm: ', LinfErr)
+    print()
+    print()
+     
+    # Compute relative L2 error and Linf error
+#     L2Error = np.sqrt( np.sum( (V_HartreeNew - tree.V_HartreeTrue)**2 * weights  )  ) / np.sqrt( np.sum( (tree.V_HartreeTrue)**2 * weights  )  )
+#     LinfError = np.max(   np.abs( V_HartreeNew - tree.V_HartreeTrue )/np.abs( tree.V_HartreeTrue )  ) 
+#     idx = np.argmax(   np.abs( V_HartreeNew - tree.V_HartreeTrue )/np.abs( tree.V_HartreeTrue )  ) 
+#     
+#     
+#     print('True Hartree Energy:                       ', tree.trueHartreeEnergy)
+#     print('Computed from Analytic Potential:          ', computedFromAnalyticPotential)
+#     print('Computed from Numerical Potential:         ', computedFromNumericalPotential)
+#     print()
+#     print('Error for Analytic Potential:         %1.3e' %(computedFromAnalyticPotential - tree.trueHartreeEnergy))
+#     print('Error for Computed Potential:         %1.3e' %(computedFromNumericalPotential - tree.trueHartreeEnergy))
+#     print()
+#     print('L2 Error:                             %1.3e' %L2Error)
+#     print('Linf Error:                           %1.3e' %LinfError)
+#     print('Located at:                           ', targets[idx][0:3])
+#     print('Analytic value:                       ', tree.V_HartreeTrue[idx])
+#     print('Computed value:                       ', V_HartreeNew[idx])
+#     print()
+#     print()
+#     
+#     
+#     idx = np.argmax( tree.V_HartreeTrue )
+#     print('Max value of true VH is     ', tree.V_HartreeTrue[idx],' located at ', targets[idx][0:3])
+#     idx = np.argmax( V_HartreeNew )
+#     print('Max value of computed VH is ', V_HartreeNew[idx],' located at ', targets[idx][0:3])
+#     idx = np.argmin( tree.V_HartreeTrue )
+#     print('Min value of true VH is     ', tree.V_HartreeTrue[idx],' located at ', targets[idx][0:3])
+#     idx = np.argmin( V_HartreeNew )
+#     print('Min value of computed VH is ', V_HartreeNew[idx],' located at ', targets[idx][0:3])
+
+
         
        
         
@@ -210,7 +329,10 @@ if __name__ == "__main__":
     print('='*70)
     print('='*70,'\n')
     tree = setUpTree()
-    HartreeCalculation(tree)
+#     HartreeCalculation(tree)
+    HartreeCalculation_selectedTargets(tree,loc = [0.2,0.2,0.2])
+#     HartreeCalculation_selectedTargets(tree,loc = [1.2,1.2,1.2])
+#     HartreeCalculation_selectedTargets(tree,loc = [2.2,2.2,2.2])
     
     
     
