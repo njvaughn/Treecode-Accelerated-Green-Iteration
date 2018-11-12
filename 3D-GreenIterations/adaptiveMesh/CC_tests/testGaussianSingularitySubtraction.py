@@ -211,9 +211,11 @@ def HartreeCalculation_selectedTargets(tree, loc=[0,0,0]):
 
     print()
     print('Focusing on target cell containing ', loc)
-    tree.computeSelfCellInterations_GaussianIntegralIdentity(containing=loc)
-#     targets = tree.extractConvolutionIntegrand() 
-#     sources = targets
+#     tree.computeSelfCellInterations_GaussianIntegralIdentity(containing=loc)
+    tree.computeSelfCellInterations_GaussianIntegralIdentity_3intervals(t_lin=50, t_log=1000, timeIntervals=500,containing=loc)
+#     tree.computeSelfCellInterations_GaussianIntegralIdentity_t_inner(containing=loc)
+    targets = tree.extractConvolutionIntegrand(containing=loc) 
+    sources = tree.extractConvolutionIntegrand() 
 #     weights = np.copy(targets[:,4])   
     
     targets_selfCell =  tree.extractConvolutionIntegrand_selfCell(containing=loc)
@@ -223,14 +225,15 @@ def HartreeCalculation_selectedTargets(tree, loc=[0,0,0]):
     threadsPerBlock = 512
     blocksPerGrid = (tree.numberOfGridpoints + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
 
-
-    V_HartreeNew = np.zeros((len(targets_selfCell)))
+    V_HartreeNew_GII = np.zeros((len(targets_selfCell)))
+    V_HartreeNew_skip = np.zeros((len(targets_selfCell)))
+    V_HartreeNew_subtract = np.zeros((len(targets_selfCell)))
     alphasq = gaussianSubtractionAlpha*gaussianSubtractionAlpha
     if helmholtzShift==0:
 #         print('Using Gaussian singularity subtraction, alpha = ', gaussianSubtractionAlpha)
-#         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew)  # call the GPU convolution
-#         gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, alphasq)  # call the GPU convolution
-        gpuPoisson_selfCell[blocksPerGrid, threadsPerBlock](targets_selfCell,sources_selfCell,V_HartreeNew, helmholtzShift)  # call the GPU convolution
+        gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew_skip)  # call the GPU convolution
+        gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew_subtract, alphasq)  # call the GPU convolution
+        gpuPoisson_selfCell[blocksPerGrid, threadsPerBlock](targets_selfCell,sources_selfCell,V_HartreeNew_GII, helmholtzShift)  # call the GPU convolution
         
 
     else:
@@ -254,36 +257,53 @@ def HartreeCalculation_selectedTargets(tree, loc=[0,0,0]):
 
     r = np.sqrt(targets_selfCell[:,0]**2 + targets_selfCell[:,1]**2 + targets_selfCell[:,2]**2)
     V_HartreeTrue = gaussianHartree(r,densityParameter)
-    err =  V_HartreeNew - V_HartreeTrue
+    err_GII =  V_HartreeNew_GII - V_HartreeTrue
+    err_skip =  V_HartreeNew_skip - V_HartreeTrue
+    err_subtract =  V_HartreeNew_subtract - V_HartreeTrue
     
     
-    for i in range(len(V_HartreeNew)):
-        print( abs(err[i]),V_HartreeNew[i], V_HartreeTrue[i], targets_selfCell[i,0], targets_selfCell[i,1], targets_selfCell[i,2] )
+#     for i in range(len(V_HartreeNew)):
+#         print( abs(err[i]),V_HartreeNew[i], V_HartreeTrue[i], targets_selfCell[i,0], targets_selfCell[i,1], targets_selfCell[i,2] )
     
-#     for i in range(4):
-#         print()
-#         for j in range(4):
-#             print(V_HartreeNew[4*i + 4*j: (4*i+4) + 4*j ])
-#     print('\n\n')
-#              
-#     for i in range(4):
-#         print()
-#         for j in range(4):
-#             print(V_HartreeTrue[4*i + 4*j: (4*i+4) + 4*j ])
-#     print('\n\n')
-#              
-#          
-#     for i in range(4):
-#         print()
-#         for j in range(4):
-#             print(err[4*i + 4*j: (4*i+4) + 4*j])
+# #     for i in range(4):
+# #         print()
+# #         for j in range(4):
+# #             print(V_HartreeNew[4*i + 4*j: (4*i+4) + 4*j ])
+# #     print('\n\n')
+# #              
+# #     for i in range(4):
+# #         print()
+# #         for j in range(4):
+# #             print(V_HartreeTrue[4*i + 4*j: (4*i+4) + 4*j ])
+# #     print('\n\n')
+# #              
+# #          
+# #     for i in range(4):
+# #         print()
+# #         for j in range(4):
+# #             print(err[4*i + 4*j: (4*i+4) + 4*j])
+#     
+    L2Err_GII = np.sqrt( np.sum(  err_GII**2*weights )  ) / np.sqrt( np.sum(  V_HartreeTrue**2*weights )  )
+    LinfErr_GII = np.max(np.abs(err_GII/V_HartreeTrue)) 
     
-    L2Err = np.sqrt( np.sum(  err**2*weights )  )
-    LinfErr = np.max(np.abs(err)) 
-            
-    print('L2 norm:   ', L2Err)
-    print('Linf norm: ', LinfErr)
+    L2Err_skip = np.sqrt( np.sum(  err_skip**2*weights )  ) / np.sqrt( np.sum(  V_HartreeTrue**2*weights )  )
+    LinfErr_skip = np.max(np.abs(err_skip/V_HartreeTrue)) 
+    
+    L2Err_subtract = np.sqrt( np.sum(  err_subtract**2*weights )  ) / np.sqrt( np.sum(  V_HartreeTrue**2*weights )  )
+    LinfErr_subtract = np.max(np.abs(err_subtract/V_HartreeTrue)) 
+    
+    
+    print('Gaussian Integral Identity:')    
+    print('L2 norm:   ', L2Err_GII)
+    print('Linf norm: ', LinfErr_GII)
     print()
+    print('Simple skipping:')
+    print('L2 norm:   ', L2Err_skip)
+    print('Linf norm: ', LinfErr_skip)
+    print()
+    print('Sing. Subt.:')
+    print('L2 norm:   ', L2Err_subtract)
+    print('Linf norm: ', LinfErr_subtract)
     print()
      
     # Compute relative L2 error and Linf error
@@ -330,8 +350,9 @@ if __name__ == "__main__":
     print('='*70,'\n')
     tree = setUpTree()
 #     HartreeCalculation(tree)
+    HartreeCalculation_selectedTargets(tree,loc = [0.02,0.02,0.02])
     HartreeCalculation_selectedTargets(tree,loc = [0.2,0.2,0.2])
-#     HartreeCalculation_selectedTargets(tree,loc = [1.2,1.2,1.2])
+    HartreeCalculation_selectedTargets(tree,loc = [1.2,1.2,1.2])
 #     HartreeCalculation_selectedTargets(tree,loc = [2.2,2.2,2.2])
     
     

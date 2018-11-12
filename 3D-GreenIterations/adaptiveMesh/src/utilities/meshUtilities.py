@@ -109,6 +109,7 @@ def ChebyshevPoints(xlow, xhigh, N):
     '''
     endpoints = np.linspace(np.pi,0,N+1)
     theta = (endpoints[1:] + endpoints[:-1])/2
+#     print(theta)
     u = np.cos(theta)
     x = xlow + (xhigh-xlow)/2*(u+1)
     return x
@@ -305,29 +306,34 @@ def mkVtkIdList(it):
 
  
 if __name__=="__main__":
-    import matplotlib.pyplot as plt
-    
-    r = np.linspace(0.1,10,500)
-    print(r)
-    N = 8
-    eta = np.sqrt(2*0.3)
-    A = 5
-    k=5
-#     for k in range(3,6):
-#         D = phaniMeshDensity(A,N,eta,k,r)
+#     import matplotlib.pyplot as plt
 #     
-#         plt.plot(r,D,label='k=%i'%k)
-        
-    D = meshDensity(r,500,'LW1')
-    plt.plot(r,D,label='LW1')
-    D = meshDensity(r,500,'LW2')
-    plt.plot(r,D,label='LW2')
-    D = meshDensity(r,1000,'LW3')
-    plt.plot(r,D,label='LW3')
-    D = meshDensity(r,1000,'LW4')
-    plt.plot(r,D,label='LW4')
-    D = meshDensity(r,1000,'LW5')
-    plt.plot(r,D,label='LW5')
-    plt.legend()
-    plt.show()
+#     r = np.linspace(0.1,10,500)
+#     print(r)
+#     N = 8
+#     eta = np.sqrt(2*0.3)
+#     A = 5
+#     k=5
+# #     for k in range(3,6):
+# #         D = phaniMeshDensity(A,N,eta,k,r)
+# #     
+# #         plt.plot(r,D,label='k=%i'%k)
+#         
+#     D = meshDensity(r,500,'LW1')
+#     plt.plot(r,D,label='LW1')
+#     D = meshDensity(r,500,'LW2')
+#     plt.plot(r,D,label='LW2')
+#     D = meshDensity(r,1000,'LW3')
+#     plt.plot(r,D,label='LW3')
+#     D = meshDensity(r,1000,'LW4')
+#     plt.plot(r,D,label='LW4')
+#     D = meshDensity(r,1000,'LW5')
+#     plt.plot(r,D,label='LW5')
+#     plt.legend()
+#     plt.show()
+
+    x = ChebyshevPoints(-1, 1, 4)
+    print(x)
+
+    
     

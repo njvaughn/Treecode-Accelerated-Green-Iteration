@@ -15,7 +15,7 @@ INPUTFILE='../src/utilities/molecularConfigurations/dummyAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/noAtomsAuxiliary.csv'
 OUTPUTFILE='/home/njvaughn/HartreeTests/GaussianSingularitySubtraction/GaussianDensity_alpha2_domain5/runComparison.csv'
 DENSITYPARAMETER=2
-MESHTYPE='LW5'	
+MESHTYPE='LW3'	
 ORDER=4
 HELMHOLTZSHIFT=0  # if k=0, solving the Poisson equation.  If k>0, solving the Helmholtz equation
 #TESTCASE='Hydrogenic'
