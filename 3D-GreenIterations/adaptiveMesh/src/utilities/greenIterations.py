@@ -198,6 +198,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
     
     
+    print('Computing L2 residual for initialized orbitals...')
+    for m in range(tree.nOrbitals):
+        tree.computeWavefunctionResidual(m)
+    
+    print('Compute residual again after setting eigenvalue to the true value...')
+    tree.orbitalEnergies[0] = dftfeOrbitalEnergies[0]
+    tree.computeWavefunctionResidual(0)
+#     return
+    
     printInitialEnergies=True
 
     if printInitialEnergies==True:
@@ -368,7 +377,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         print('Using singularity subtraction')
 #                         gpuHelmholtzConvolutionSubractSingularity_multDivbyr[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
 #                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-                        gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,0.1)
+                        gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)
+#                         gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,1)
 #                         print('Using singularity subtraction with Gaussian, a=0.1')
 #                         gpuHelmholtzConvolutionSubractSingularity_gaussian_no_cusp[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,0.1)
                     else:
@@ -378,6 +388,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     print('Invalid option for singularitySubtraction, should be 0 or 1.')
                     return
 
+
 #                 idx = np.argmax(phiNew)
 #                 phiAtBoundary=phiNew[idx]
 #                 print('Phi at boundary: ', phiAtBoundary,'. Shifting wavefunction down by that amount before computing energy.')
@@ -386,13 +397,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 
                 orbitals[:,m] = np.copy(phiNew)
 
-
                 # normalize
 #                 print('Not normalizing...')
 #                 orbitals[:,m] /= np.sqrt( np.dot(orbitals[:,m],orbitals[:,m]*weights) )
 #                 normalizedOrbitals = normalizeOrbitals(orbitals,weights)  # could optimize this to only normalize the current orbital
                 
-                
+            
                 tree.importPhiOnLeaves(orbitals[:,m], m)
 #                 tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
 #                 print('Before orthonormalization:  Orbital %i error:        %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
@@ -406,6 +416,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 if normDiff > orbitalResidual:
                     orbitalResidual = np.copy(normDiff) 
                 tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+                print('Computing L2 residual for orbitals after Green Iterations...')
+                tree.computeWavefunctionResidual(m)
+                print('Compute residual again after setting eigenvalue to the true value...')
+                tree.orbitalEnergies[0] = dftfeOrbitalEnergies[0]
+                tree.computeWavefunctionResidual(0)
+                
                 
 #                 if maxOrbitals==1:
                 if m==0:
@@ -456,12 +472,21 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 eigensolveCount += 1
                 if orbitalResidual < intraScfTolerance:
                     print('Used %i iterations for orbital %i.' %(eigensolveCount,m))
+            
+            
 
  
 
         print()
         print()
-            
+        print('Computing L2 residual for orbitals after Green Iterations...')
+        for m in range(tree.nOrbitals):
+            tree.computeWavefunctionResidual(m)
+        
+    #     print('Compute residual again after setting eigenvalue to the true value...')
+    #     tree.orbitalEnergies[0] = dftfeOrbitalEnergies[0]
+    #     tree.computeWavefunctionResidual(0)
+        return
 
         
 

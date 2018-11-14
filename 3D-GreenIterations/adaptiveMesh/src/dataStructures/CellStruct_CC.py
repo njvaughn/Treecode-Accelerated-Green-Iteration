@@ -1008,6 +1008,13 @@ class Cell(object):
                                                 self.zmin, self.zmax, self.pz)
         
         self.inverseLaplacian = np.linalg.inv(self.laplacian)
+        
+    def computeLaplacian(self):
+        self.laplacian = computeLaplacianMatrix(self.xmin, self.xmax, self.px,
+                                                self.ymin, self.ymax, self.py,
+                                                self.zmin, self.zmax, self.pz)
+        
+#         self.inverseLaplacian = np.linalg.inv(self.laplacian)
 
 
         

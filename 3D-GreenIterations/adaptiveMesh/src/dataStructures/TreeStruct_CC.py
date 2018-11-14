@@ -499,7 +499,7 @@ class Tree(object):
                     Cell.divideFlag = True 
 #                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
                 else:  
-                    if ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or 
+                    if ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or (divideCriterion == 'LW3_modified') or 
                          (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') ):
 #                         print('checking divide criterion for cell ', Cell.uniqueID)
                         Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
@@ -1297,6 +1297,61 @@ class Tree(object):
         self.L2NormError = np.sum(errors)
         self.maxCellError = np.max(errors)
         self.maxPointwiseError = maxErr
+        
+    
+    def computeWavefunctionResidual(self,energyLevel):
+        energyEigenvalue = self.orbitalEnergies[energyLevel]
+        kinetic = self.orbitalKinetic[energyLevel]
+        potential = self.orbitalPotential[energyLevel]
+        print('Energy Eigenvalue: ', energyEigenvalue)
+#         print('kinetic part:      ', kinetic)
+#         print('potential part:    ', potential)
+        needToPrint=False
+        
+        L2residual = 0.0
+        kineticResidual = 0.0
+        potentialResidual = 0.0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+#                 if not hasattr(cell, 'laplacian'):
+#                     cell.computeLaplacian()
+                phi = np.zeros((cell.px,cell.py,cell.pz))
+                VeffPhi = np.zeros((cell.px,cell.py,cell.pz))
+                
+                for i,j,k in cell.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    phi[i,j,k] = gp.phi[energyLevel]
+                    VeffPhi[i,j,k] = gp.v_eff*gp.phi[energyLevel]
+                
+                laplacianPhi = ChebLaplacian3D(cell.DopenX, cell.DopenY, cell.DopenZ, cell.px, phi)
+                Hphi = -1/2*laplacianPhi + VeffPhi
+                
+                L2residual += np.sum( (Hphi - energyEigenvalue*phi)**2 * cell.w )
+                kineticResidual += np.sum( (-1/2*laplacianPhi - kinetic*phi)**2 * cell.w )
+                potentialResidual += np.sum( (VeffPhi - potential*phi)**2 * cell.w )
+
+                if ((needToPrint==True) and (cell.level>8) ):
+                    print(energyEigenvalue*phi)
+                    print()
+                    print(-1/2*laplacianPhi)
+                    print()
+                    print(VeffPhi)
+                    print()
+                    print(Hphi - energyEigenvalue*phi)
+                    
+                    needToPrint=False
+#                     return
+        L2residual = np.sqrt( L2residual )
+        
+        print('L2 norm of wavefunction residual (H*psi-lambda*psi):   ', L2residual)
+#         print('Kinetic portion:                                       ', kineticResidual)
+#         print('Potential portion:                                     ', potentialResidual)
+                
+                
+#             self.orbitalKE[targetEnergy] = 1/2*np.sum( self.w * gradPhiSq )
+                    
+                
+        return
         
     def normalizeOrbital(self, n):
         """ Enforce integral phi*2 dxdydz == 1 for the nth orbital"""

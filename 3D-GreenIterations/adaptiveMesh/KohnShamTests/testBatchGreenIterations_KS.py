@@ -90,6 +90,8 @@ def setUpTree(onlyFillOne=False):
 #     tree.normalizeDensity()
 
     
+
+    
     return tree
     
     
@@ -196,7 +198,10 @@ if __name__ == "__main__":
 
 
     """ Refinement based on deepest state """
-    tree = setUpTree(onlyFillOne=True)    
+    tree = setUpTree(onlyFillOne=True)  
+#     tree = setUpTree()  
+    
+    
     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
 #     
 #     print('\n\n\n\nNow refine based on errors in each cell, the re-initialize: ')
