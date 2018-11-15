@@ -1643,7 +1643,7 @@ class Tree(object):
                     minDist = np.sqrt( (gp1.x-gp2.x)**2 + (gp1.y-gp2.y)**2 + (gp1.z-gp2.z)**2)
                     
                     tmax = 3/minDist   # this is picked to satisfy the closest points, which need the largest t
-                    dt = (6/maxDist)/40              # this is picked to satisfy the farthet points, which need the smallest dt.  (40 intervals to cover first t=10/dist
+                    dt = (6/maxDist)/20              # this is picked to satisfy the farthet points, which need the smallest dt.  (40 intervals to cover first t=10/dist
                     
                     timeIntervals = int( np.ceil( tmax/dt ) )
     #                 timeIntervals = int( np.ceil(5*(maxDist/minDist)) )
@@ -1681,6 +1681,78 @@ class Tree(object):
                                 r = np.sqrt( (gp_t.x - gp_s.x)**2 +  (gp_t.y - gp_s.y)**2 + (gp_t.z - gp_s.z)**2   )
                                     
                                 gp_t.selfCellContribution += cell.w[ii,jj,kk] * dt * gp_s.rho * np.exp(-t**2 * r**2)  
+                                
+                        gp_t.selfCellContribution *= 2/np.sqrt(np.pi)
+                        
+#                         gp_t.selfCellContribution += np.pi/tmax**2 * gp_t.rho  # corrction for truncation in t.  Should be good if tmax is large enough.
+                
+                else: # not the target cell we care about, set selfCellContribution equal to zero
+                    for i,j,k in cell.PxByPyByPz:
+                        gp_t = cell.gridpoints[i,j,k]
+                        gp_t.selfCellContribution = 0.0 
+        print('Done.')
+        
+    def computeSelfCellInterations_GaussianIntegralIdentity_singularitySubtraction(self,alpha,containing=None):
+
+        print("Computing interaction of each point with its own cell using Gaussian Integral Identity..")
+        counter=0
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                counter += 1
+                if (   (containing==None)  or   
+                    (  
+                           ( (cell.xmin<containing[0]) and (cell.xmax>containing[0]) )  and 
+                           ( (cell.ymin<containing[1]) and (cell.ymax>containing[1]) )  and  
+                           ( (cell.zmin<containing[2]) and (cell.zmax>containing[2]) ) )
+                    ):
+                    if containing != None:
+                        print('Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid, ' at a depth of ', cell.level)
+                    
+                    # determine an appropriate time discretization, based on the gridpoint spacing
+                    maxDist = np.sqrt( (cell.xmax-cell.xmin)**2 + (cell.ymax-cell.ymin)**2 + (cell.zmax-cell.zmin)**2 )
+                    gp1 = cell.gridpoints[0,0,0]
+                    gp2 = cell.gridpoints[1,0,0]  # these should be tied for closest grid points within this cell
+                    minDist = np.sqrt( (gp1.x-gp2.x)**2 + (gp1.y-gp2.y)**2 + (gp1.z-gp2.z)**2)
+                    
+                    tmax = 5/minDist   # this is picked to satisfy the closest points, which need the largest t
+                    dt = (6/maxDist)/5             # this is picked to satisfy the farthet points, which need the smallest dt.  (40 intervals to cover first t=10/dist
+                    
+                    timeIntervals = int( np.ceil( tmax/dt ) )
+    #                 timeIntervals = int( np.ceil(5*(maxDist/minDist)) )
+#                     timeIntervals = 200
+                    
+#                     timeIntervals = int(np.ceil(tmax/0.5))
+                    tvec = np.linspace(0,tmax,timeIntervals+1)
+                    print('Cell ', counter, ' of ', self.numberOfCells)
+                    print('Closest points: ', minDist)
+                    print('Corner to corner: ',maxDist)
+                    print('tmax = ', tmax)
+                    print('dt = ', tvec[1]-tvec[0])
+                    print('timeIntervals   = ', timeIntervals)
+                    print()
+                
+                
+                    # for each target point in cell...
+#                     maxApproxError = 0
+                    for i,j,k in cell.PxByPyByPz:
+                        gp_t = cell.gridpoints[i,j,k]
+                        gp_t.selfCellContribution = 0.0
+                    
+                        # integrate over time (midpoint or trapezoid)
+                        for ell in range(timeIntervals+1):
+#                             dt = tvec[ell+1]-tvec[ell]
+#                             t = (tvec[ell+1]+tvec[ell])/2
+                            dt = tvec[1]-tvec[0]
+                            t = tvec[ell]
+                            if ( (ell==0) or (ell==timeIntervals)):
+                                dt /=2
+                        
+                            # integrate over space
+                            for ii,jj,kk in cell.PxByPyByPz:
+                                gp_s = cell.gridpoints[ii,jj,kk]
+                                r = np.sqrt( (gp_t.x - gp_s.x)**2 +  (gp_t.y - gp_s.y)**2 + (gp_t.z - gp_s.z)**2   )
+                                    
+                                gp_t.selfCellContribution += cell.w[ii,jj,kk] * dt * ( gp_s.rho - gp_t.rho*np.exp(-alpha**2*r**2) ) * np.exp(-t**2 * r**2)  
                                 
                         gp_t.selfCellContribution *= 2/np.sqrt(np.pi)
                         

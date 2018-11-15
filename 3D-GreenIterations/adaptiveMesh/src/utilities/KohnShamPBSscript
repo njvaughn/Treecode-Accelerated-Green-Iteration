@@ -30,35 +30,38 @@ fi
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
-
 DOMAIN=20
 MAXDEPTH=20
 MINDEPTH=3
 SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
-INTRASCFTOLERANCE=1e-6
+INTRASCFTOLERANCE=1e-7
 INTERSCFTOLERANCE=1e-6
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 
 ORDER=5
 
-
 MESHTYPE='LW5'	
+#MESHTYPE='LW3_modified'	
+#MESHTYPE='Phani'
 
 
-MESHPARAM=1000
-OUTPUTFILE='/home/njvaughn/Be_Gaussian/LW5_1000.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+MESHPARAM=3000
+OUTPUTFILE='/home/njvaughn/O_Gaussian/HarrisonSmoothing_LW5_3000_order5.csv'
+python -u -i testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
+
+
+
 	
 	
 	

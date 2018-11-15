@@ -158,10 +158,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     #manually set the initial occupations, otherwise oxygen P shell gets none.
 #     tree.occupations = np.array([2,2,2,2,2,2,2])
-#     tree.occupations = np.array([2,2,4/3,4/3,4/3])
+    tree.occupations = np.array([2,2,4/3,4/3,4/3])
 #     tree.occupations = np.array([2,2,2,2,4/3,4/3,4/3])
 
-    tree.occupations = 2*np.ones(tree.nOrbitals)
+#     tree.occupations = 2*np.ones(tree.nOrbitals)
 
 #     tree.updateOrbitalEnergies(sortByEnergy=False)
 #     print('In the above energies, first 5 are for the carbon, next 5 for the oxygen.')
@@ -376,8 +376,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     if tree.orbitalEnergies[m] < -0.2:
                         print('Using singularity subtraction')
 #                         gpuHelmholtzConvolutionSubractSingularity_multDivbyr[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-#                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-                        gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)
+                        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+#                         gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)
 #                         gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,1)
 #                         print('Using singularity subtraction with Gaussian, a=0.1')
 #                         gpuHelmholtzConvolutionSubractSingularity_gaussian_no_cusp[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,0.1)
@@ -406,6 +406,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 tree.importPhiOnLeaves(orbitals[:,m], m)
 #                 tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
 #                 print('Before orthonormalization:  Orbital %i error:        %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
+#                 tree.computeWavefunctionResidual(m)
 #                 print('Orthonormalizing.')
                 tree.orthonormalizeOrbitals(targetOrbital=m)
                 tempOrbital = tree.extractPhi(m)
@@ -415,12 +416,19 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 residuals[m] = normDiff
                 if normDiff > orbitalResidual:
                     orbitalResidual = np.copy(normDiff) 
+                    
+                    
+#                 oldEnergy = tree.orbitalEnergies[0]
                 tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+#                 tree.orbitalEnergies[0] = oldEnergy
+#                 print('NOT UPDATING ORBITAL ENERGY')
+                
+                
                 print('Computing L2 residual for orbitals after Green Iterations...')
                 tree.computeWavefunctionResidual(m)
-                print('Compute residual again after setting eigenvalue to the true value...')
-                tree.orbitalEnergies[0] = dftfeOrbitalEnergies[0]
-                tree.computeWavefunctionResidual(0)
+#                 print('Compute residual again after setting eigenvalue to the true value...')
+#                 tree.orbitalEnergies[0] = dftfeOrbitalEnergies[0]
+#                 tree.computeWavefunctionResidual(0)
                 
                 
 #                 if maxOrbitals==1:
@@ -486,7 +494,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     #     print('Compute residual again after setting eigenvalue to the true value...')
     #     tree.orbitalEnergies[0] = dftfeOrbitalEnergies[0]
     #     tree.computeWavefunctionResidual(0)
-        return
+#         return
 
         
 

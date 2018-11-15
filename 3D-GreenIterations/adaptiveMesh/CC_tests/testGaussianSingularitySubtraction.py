@@ -19,7 +19,7 @@ from scipy.special import erf
 from TreeStruct_CC import Tree
 from convolution import gpuPoissonConvolution, gpuHartreeGaussianSingularitySubract, gpuHelmholtzConvolutionHybridSubractSingularity_gaussian_no_cusp
 from convolution import gpuHelmholtzConvolution_skip_generic, gpuHelmholtzConvolution_subtract_generic, gpuHelmholtzConvolutionSubractSingularity_gaussian
-from convolution_selfCell import gpuHelmholtzConvolution_skip_generic_selfCell, gpuHelmholtzConvolution_subtract_generic_selfCell, gpuPoisson_selfCell
+from convolution_selfCell import gpuHelmholtzConvolution_skip_generic_selfCell, gpuHelmholtzConvolution_subtract_generic_selfCell, gpuPoisson_selfCell, gpuPoisson_selfCell_gaussianSingularitySubtraction
 from meshUtilities import ChebLaplacian3D
 from GaussianDensityTestCase import *
 from HydrogenicDensityTestCase import *
@@ -211,21 +211,27 @@ def HartreeCalculation_selectedTargets(tree, loc=[0,0,0]):
 
     print()
     print('Focusing on target cell containing ', loc)
-#     tree.computeSelfCellInterations_GaussianIntegralIdentity(containing=loc)
-    tree.computeSelfCellInterations_GaussianIntegralIdentity_3intervals(t_lin=50, t_log=1000, timeIntervals=500,containing=loc)
-#     tree.computeSelfCellInterations_GaussianIntegralIdentity_t_inner(containing=loc)
+    tree.computeSelfCellInterations_GaussianIntegralIdentity(containing=loc)
+    
     targets = tree.extractConvolutionIntegrand(containing=loc) 
     sources = tree.extractConvolutionIntegrand() 
-#     weights = np.copy(targets[:,4])   
-    
     targets_selfCell =  tree.extractConvolutionIntegrand_selfCell(containing=loc)
     sources_selfCell =  tree.extractConvolutionIntegrand_selfCell()
+    
+    tree.computeSelfCellInterations_GaussianIntegralIdentity_singularitySubtraction(gaussianSubtractionAlpha,containing=loc)
+#     tree.computeSelfCellInterations_GaussianIntegralIdentity_3intervals(t_lin=50, t_log=1000, timeIntervals=500,containing=loc)
+#     tree.computeSelfCellInterations_GaussianIntegralIdentity_t_inner(containing=loc)
+    targets_selfcell_singsubt = tree.extractConvolutionIntegrand_selfCell(containing=loc)
+    sources_selfcell_singsubt = tree.extractConvolutionIntegrand_selfCell() 
+#     weights = np.copy(targets[:,4])   
+    
     weights = np.copy(targets_selfCell[:,4])   
     
     threadsPerBlock = 512
     blocksPerGrid = (tree.numberOfGridpoints + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
 
     V_HartreeNew_GII = np.zeros((len(targets_selfCell)))
+    V_HartreeNew_GII_subtract = np.zeros((len(targets_selfCell)))
     V_HartreeNew_skip = np.zeros((len(targets_selfCell)))
     V_HartreeNew_subtract = np.zeros((len(targets_selfCell)))
     alphasq = gaussianSubtractionAlpha*gaussianSubtractionAlpha
@@ -233,11 +239,14 @@ def HartreeCalculation_selectedTargets(tree, loc=[0,0,0]):
 #         print('Using Gaussian singularity subtraction, alpha = ', gaussianSubtractionAlpha)
         gpuPoissonConvolution[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew_skip)  # call the GPU convolution
         gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew_subtract, alphasq)  # call the GPU convolution
-        gpuPoisson_selfCell[blocksPerGrid, threadsPerBlock](targets_selfCell,sources_selfCell,V_HartreeNew_GII, helmholtzShift)  # call the GPU convolution
+        gpuPoisson_selfCell[blocksPerGrid, threadsPerBlock](targets_selfCell,sources_selfCell,V_HartreeNew_GII)  # call the GPU convolution
+        gpuPoisson_selfCell_gaussianSingularitySubtraction[blocksPerGrid, threadsPerBlock](targets_selfcell_singsubt,sources_selfCell,V_HartreeNew_GII_subtract, alphasq)  # call the GPU convolution
         
 
     else:
         print('helmholtzShift=',helmholtzShift,', using a Helmholtz convolution. ')
+        print('Not set up for k!=0, returning...')
+        return
 #         return
 #         gpuHelmholtzConvolution_skip_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
         gpuHelmholtzConvolution_subtract_generic[blocksPerGrid, threadsPerBlock](targets,sources,V_HartreeNew, helmholtzShift)  # call the GPU convolution
@@ -258,6 +267,7 @@ def HartreeCalculation_selectedTargets(tree, loc=[0,0,0]):
     r = np.sqrt(targets_selfCell[:,0]**2 + targets_selfCell[:,1]**2 + targets_selfCell[:,2]**2)
     V_HartreeTrue = gaussianHartree(r,densityParameter)
     err_GII =  V_HartreeNew_GII - V_HartreeTrue
+    err_GII_singsubt =  V_HartreeNew_GII_subtract - V_HartreeTrue
     err_skip =  V_HartreeNew_skip - V_HartreeTrue
     err_subtract =  V_HartreeNew_subtract - V_HartreeTrue
     
@@ -284,7 +294,10 @@ def HartreeCalculation_selectedTargets(tree, loc=[0,0,0]):
 # #             print(err[4*i + 4*j: (4*i+4) + 4*j])
 #     
     L2Err_GII = np.sqrt( np.sum(  err_GII**2*weights )  ) / np.sqrt( np.sum(  V_HartreeTrue**2*weights )  )
-    LinfErr_GII = np.max(np.abs(err_GII/V_HartreeTrue)) 
+    LinfErr_GII = np.max(np.abs(err_GII/V_HartreeTrue))
+    
+    L2Err_GII_subtract = np.sqrt( np.sum(  err_GII_singsubt**2*weights )  ) / np.sqrt( np.sum(  V_HartreeTrue**2*weights )  )
+    LinfErr_GII_subtract = np.max(np.abs(err_GII_singsubt/V_HartreeTrue)) 
     
     L2Err_skip = np.sqrt( np.sum(  err_skip**2*weights )  ) / np.sqrt( np.sum(  V_HartreeTrue**2*weights )  )
     LinfErr_skip = np.max(np.abs(err_skip/V_HartreeTrue)) 
@@ -296,6 +309,10 @@ def HartreeCalculation_selectedTargets(tree, loc=[0,0,0]):
     print('Gaussian Integral Identity:')    
     print('L2 norm:   ', L2Err_GII)
     print('Linf norm: ', LinfErr_GII)
+    print()
+    print('Gaussian Integral Identity with singularity subtraction:')    
+    print('L2 norm:   ', L2Err_GII_subtract)
+    print('Linf norm: ', LinfErr_GII_subtract)
     print()
     print('Simple skipping:')
     print('L2 norm:   ', L2Err_skip)
