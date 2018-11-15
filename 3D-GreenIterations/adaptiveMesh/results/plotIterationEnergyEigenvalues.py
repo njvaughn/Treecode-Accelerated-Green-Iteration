@@ -28,8 +28,8 @@ import numpy as np
 ## Oxygen
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
 ##file='LW3_1500_GREEN_.csv'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Oxygen_SmoothingTests_LW5/'
-file = 'LW5_4000_N3_EPSp25_GREEN_.csv'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
+file = 'HarrisonGradientFree_LW5_3000_order5_GREEN_.csv'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenOrder5/'
 ##file='LW3_1000_GREEN_.csv'
 

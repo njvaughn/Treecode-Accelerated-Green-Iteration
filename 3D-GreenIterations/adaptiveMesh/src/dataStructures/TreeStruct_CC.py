@@ -1028,16 +1028,20 @@ class Tree(object):
             self.totalBandEnergy += self.occupations[i]*(self.orbitalEnergies[i] - self.gaugeShift)  # +1 due to the gauge potential
         
     
+    
     def updateTotalEnergy(self):
         self.computeBandEnergy()
         self.computeTotalPotential()
 #         self.E = self.totalBandEnergy + self.totalPotential
-        self.E = self.totalKinetic + self.totalPotential
+#         self.E = self.totalKinetic + self.totalPotential
         
         alternativeE = self.totalBandEnergy - 1/2 * self.totalVcoulomb + self.totalEx + self.totalEc - self.totalVx - self.totalVc
+        print('Updating total energy without explicit kinetic evaluation.')
         
-        print('Updated Energy, method 1: ', self.E)
-        print('Updated Energy, method 2: ', alternativeE)
+        self.E = alternativeE
+        
+#         print('Updated Energy, method 1: ', self.E)
+#         print('Updated Energy, method 2: ', alternativeE)
     
     def computeOrbitalPotentials(self,targetEnergy=None, saveAsReference=False): 
         
@@ -1052,7 +1056,7 @@ class Tree(object):
         self.totalOrbitalPotential = np.sum( (self.orbitalPotential - self.gaugeShift) * self.occupations)
                        
     def computeOrbitalKinetics(self,targetEnergy=None, saveAsReference=False):
-
+        print('Computing orbital kinetics using Gradients')
         self.orbitalKinetic = np.zeros(self.nOrbitals)
         for _,cell in self.masterList:
             if cell.leaf == True:
@@ -1199,6 +1203,38 @@ class Tree(object):
         else: 
             print('Orbital Energy:           ', self.orbitalEnergies)
 #                 print()
+        if newOccupations==True:
+            self.computeOccupations()
+#             print('Occupations: ', self.occupations)
+
+    def updateOrbitalEnergies_NoGradients(self,targetEnergy,newOccupations=True):
+        
+        deltaE = 0.0
+        normSqOfPsiNew = 0.0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                phi = np.zeros((cell.px,cell.py,cell.pz))
+                phiNew = np.zeros((cell.px,cell.py,cell.pz))
+                potential = np.zeros((cell.px,cell.py,cell.pz))
+                for i,j,k in cell.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    phi[i,j,k] = gp.phi[targetEnergy]
+                    phiNew[i,j,k] = gp.phiNew
+                    potential[i,j,k] = gp.v_eff
+                
+                deltaE -= np.sum( phi*potential*(phi-phiNew)*cell.w ) 
+                normSqOfPsiNew += np.sum( phiNew**2 * cell.w)
+        deltaE /= np.sqrt(normSqOfPsiNew)
+        
+        
+#         print('Previous orbital energy: ', self.orbitalEnergies[targetEnergy])
+        self.orbitalEnergies[targetEnergy] += deltaE
+#         print('Updated orbital energy:  ', self.orbitalEnergies[targetEnergy])
+#         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
+#         print('Orbital Potential Energy: ', self.orbitalPotential)
+#         print('Orbital Energy:           ', self.orbitalEnergies)
+        ### CHECK IF NEED TO RE-ORDER ORBITALS ###
+        
         if newOccupations==True:
             self.computeOccupations()
 #             print('Occupations: ', self.occupations)
@@ -1976,6 +2012,31 @@ class Tree(object):
                     gridpt = cell.gridpoints[i,j,k]
 #                     if gridpt.phiImported == False:
                     gridpt.phi[orbitalNumber] = phiNew[importIndex]
+#                         gridpt.phiImported = True
+                    importIndex += 1
+                    
+#         for _,cell in self.masterList:
+#             for i,j,k in self.PxByPyByPz:
+#                 cell.gridpoints[i,j,k].phiImported = None
+        if importIndex != len(phiNew):
+            print('Warning: import index not equal to len(phiNew)')
+            print(importIndex)
+            print(len(phiNew))
+            
+    def importPhiNewOnLeaves(self,phiNew):
+        '''
+        Import phi difference values, apply to leaves
+        '''
+#         for _,cell in self.masterList:
+#             for i,j,k in self.PxByPyByPz:
+#                 cell.gridpoints[i,j,k].phiImported = False
+        importIndex = 0        
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+#                     if gridpt.phiImported == False:
+                    gridpt.phiNew = phiNew[importIndex]
 #                         gridpt.phiImported = True
                     importIndex += 1
                     
