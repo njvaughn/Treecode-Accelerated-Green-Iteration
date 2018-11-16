@@ -12,25 +12,26 @@ INTRASCFTOLERANCE=1e-5
 INTERSCFTOLERANCE=1e-6
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+$INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 
-ORDER=5
+ORDER=4
 
 MESHTYPE='LW5'	
 #MESHTYPE='LW3_modified'	
 #MESHTYPE='Phani'
 
+GRADIENTFREE='True'
 
 MESHPARAM=1000
 OUTPUTFILE='/home/njvaughn/Be_Gaussian/LW5_1000_alpha_p5.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
 
 
 

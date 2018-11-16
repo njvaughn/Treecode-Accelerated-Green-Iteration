@@ -80,7 +80,7 @@ class Tree(object):
         self.gaugeShift = gaugeShift
         self.maxDepthAtAtoms = maxDepthAtAtoms
         
-        self.mixingParameter=0.4  # (1-mixingParam)*rhoNew
+        self.mixingParameter=0.  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
 #         self.occupations = np.ones(nOrbitals)
 #         self.computeOccupations()
@@ -148,7 +148,7 @@ class Tree(object):
         
     def computeOccupations(self):
         
-        self.T = 1
+        self.T = 100
         KB = 8.6173303e-5/27.211386
         self.sigma = self.T*KB
         
@@ -989,6 +989,7 @@ class Tree(object):
         E_c = 0.0
         E_electronNucleus = 0.0
         
+        
         for _,cell in self.masterList:
             if cell.leaf == True:
                 V_x += integrateCellDensityAgainst__(cell,'v_x')
@@ -1005,6 +1006,7 @@ class Tree(object):
         self.totalElectrostatic = 1/2*V_coulomb + self.nuclearNuclear + E_electronNucleus
         self.totalEx = E_x
         self.totalEc = E_c
+        self.totalVext = E_electronNucleus
 #         print('Total V_xc : ')
         
         print('Electrostatic Energies:')
@@ -1029,19 +1031,24 @@ class Tree(object):
         
     
     
-    def updateTotalEnergy(self):
+    def updateTotalEnergy(self,gradientFree):
         self.computeBandEnergy()
         self.computeTotalPotential()
-#         self.E = self.totalBandEnergy + self.totalPotential
-#         self.E = self.totalKinetic + self.totalPotential
+        self.totalKinetic = self.totalBandEnergy - self.totalVcoulomb - self.totalVx - self.totalVc - self.totalVext
         
-        alternativeE = self.totalBandEnergy - 1/2 * self.totalVcoulomb + self.totalEx + self.totalEc - self.totalVx - self.totalVc
-        print('Updating total energy without explicit kinetic evaluation.')
+        if gradientFree==True:
+            self.E = self.totalBandEnergy - 1/2 * self.totalVcoulomb + self.totalEx + self.totalEc - self.totalVx - self.totalVc + self.nuclearNuclear
+            print('Updating total energy without explicit kinetic evaluation.')
+        elif gradientFree==False:
+            print('Updating total energy WITH explicit kinetic evaluation.')
+            self.E = self.totalKinetic + self.totalPotential
+        else:
+            print('Invalid option for gradientFree.')
+            print('gradientFree = ', gradientFree)
+            print('type: ', type(gradientFree))
+            return
         
-        self.E = alternativeE
-        
-#         print('Updated Energy, method 1: ', self.E)
-#         print('Updated Energy, method 2: ', alternativeE)
+
     
     def computeOrbitalPotentials(self,targetEnergy=None, saveAsReference=False): 
         
