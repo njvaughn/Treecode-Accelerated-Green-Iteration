@@ -40,9 +40,9 @@ INTRASCFTOLERANCE=1e-5
 INTERSCFTOLERANCE=1e-6
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -55,78 +55,47 @@ GRADIENTFREE='True'
 
 
 
-ORDER=5
+ORDER=6
 
 MESHPARAM=500
-OUTPUTFILE='/home/njvaughn/O_firstSCF_gradientFree/LW5_500_order5_gradientFree.csv'
+OUTPUTFILE='/home/njvaughn/Be_gradientFree/LW5_500_order6_gradientFree.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
 	
-MESHPARAM=1500
-OUTPUTFILE='/home/njvaughn/O_firstSCF_gradientFree/LW5_1500_order5_gradientFree.csv'
+MESHPARAM=1000
+OUTPUTFILE='/home/njvaughn/Be_gradientFree/LW5_1000_order6_gradientFree.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
 	
-	
-MESHPARAM=2500
-OUTPUTFILE='/home/njvaughn/O_firstSCF_gradientFree/LW5_2500_order5_gradientFree.csv'
+MESHPARAM=2000
+OUTPUTFILE='/home/njvaughn/Be_gradientFree/LW5_2000_order6_gradientFree.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
-
-
+	
 
 GRADIENTFREE='False'
 
-ORDER=4
+ORDER=6
 
 MESHPARAM=500
-OUTPUTFILE='/home/njvaughn/O_firstSCF_gradientFree/LW5_500_order4_gradient.csv'
+OUTPUTFILE='/home/njvaughn/Be_gradientFree/LW5_500_order6_gradient.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
 	
-MESHPARAM=1500
-OUTPUTFILE='/home/njvaughn/O_firstSCF_gradientFree/LW5_1500_order4_gradient.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
-	
-	
-	
-MESHPARAM=2500
-OUTPUTFILE='/home/njvaughn/O_firstSCF_gradientFree/LW5_2500_order4_gradient.csv'
+MESHPARAM=1000
+OUTPUTFILE='/home/njvaughn/Be_gradientFree/LW5_1000_order6_gradient.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
 
-
-
-
-
-ORDER=5
-
-MESHPARAM=500
-OUTPUTFILE='/home/njvaughn/O_firstSCF_gradientFree/LW5_500_order5_gradient.csv'
+MESHPARAM=2000
+OUTPUTFILE='/home/njvaughn/Be_gradientFree/LW5_2000_order6_gradient.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE	
 	
-
-MESHPARAM=1500
-OUTPUTFILE='/home/njvaughn/O_firstSCF_gradientFree/LW5_1500_order5_gradient.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
-	
-	
-MESHPARAM=2500
-OUTPUTFILE='/home/njvaughn/O_firstSCF_gradientFree/LW5_2500_order5_gradient.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
-
-
 	

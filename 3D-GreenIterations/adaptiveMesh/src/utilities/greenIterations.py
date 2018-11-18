@@ -81,18 +81,31 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
     
-#     ## OXYGEN ATOM     
-    dftfeOrbitalEnergies = np.array( [-1.875890295968488530e+01, -8.712069894624057120e-01,
-                                      -3.382944529486854868e-01, -3.382944529460307215e-01,
-                                      -3.382944529419588120e-01])#, -0.1])   # DFTFE order 5
+#     ## OXYGEN ATOM  
+     
+    if tree.nOrbitals == 5:
+        print('Assuming this is the oxygen atom test case...')  
+        dftfeOrbitalEnergies = np.array( [-1.875890295968488530e+01, -8.712069894624057120e-01,
+                                          -3.382944529486854868e-01, -3.382944529460307215e-01,
+                                          -3.382944529419588120e-01])#, -0.1])   # DFTFE order 5
+        tree.occupations = np.array([2,2,4/3,4/3,4/3])
+
 
 #     dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
 #                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
 #                                       -3.382974161584920147e-01])#, -0.1]) 
 
     ## BERYLLIUM ATOM     
-#     dftfeOrbitalEnergies = np.array( [-3.855615417517944898e+00, -2.059998705089633453e-01 ] ) 
+    elif tree.nOrbitals == 2:
+        print('Assuming this is the Beryllium test case...')
+        dftfeOrbitalEnergies = np.array( [-3.855615417517944898e+00, -2.059998705089633453e-01 ] ) 
 #     dftfeOrbitalEnergies = np.array( [-3.855605920292163535e+00, -2.059995800202487071e-01 ] ) 
+        tree.occupations = np.array([2,2])
+    
+    else:
+        print('Not sure which test case this is..., nOrbitals = ', tree.nOrbitals)
+        
+        return
     
                                     
     
@@ -158,7 +171,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     #manually set the initial occupations, otherwise oxygen P shell gets none.
 #     tree.occupations = np.array([2,2,2,2,2,2,2])
-    tree.occupations = np.array([2,2,4/3,4/3,4/3])
+#     tree.occupations = np.array([2,2,4/3,4/3,4/3])
 #     tree.occupations = np.array([2,2])
 #     tree.occupations = np.array([2,2,2,2,4/3,4/3,4/3])
 
@@ -368,8 +381,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     print('Wanrning: Orbital energy greater than gauge shift.')
 #                     print('Resetting orbital %i energy to 1/2 gauge shift')
 #                     tree.orbitalEnergies[m] = tree.gaugeShift
-#                     tree.orbitalEnergies[m] = tree.gaugeShift-1/2
+                    tree.orbitalEnergies[m] = tree.gaugeShift-1
 #                     print('Setting orbital %i energy to zero' %m)
+
                     
                 k = np.sqrt(-2*tree.orbitalEnergies[m])
                 phiNew = np.zeros((len(targets)))
@@ -685,11 +699,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
         greenIterationCounter+=1
         
+        if greenIterationCounter >= 20:
+            print('Setting density residual to -1 to exit after the 20th SCF')
+            densityResidual = -1
+        
 #         print('Setting density residual to min of density residual and energy residual, just for testing purposes')
 #         densityResidual = min(densityResidual, energyResidual)
         if maxSCFIterations == 1:
             print('Setting density residual to -1 to exit after the first SCF')
             densityResidual = -1 
+    
+     
 
         
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, greenIterationCounter))

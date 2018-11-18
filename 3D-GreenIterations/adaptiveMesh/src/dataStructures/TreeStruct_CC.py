@@ -80,7 +80,7 @@ class Tree(object):
         self.gaugeShift = gaugeShift
         self.maxDepthAtAtoms = maxDepthAtAtoms
         
-        self.mixingParameter=0.  # (1-mixingParam)*rhoNew
+        self.mixingParameter=0.75  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
 #         self.occupations = np.ones(nOrbitals)
 #         self.computeOccupations()
@@ -251,8 +251,10 @@ class Tree(object):
 #                 self.atoms[i] = atom
         
         self.computeNuclearNuclearEnergy()
+        self.nAtoms = 0
         for atom in self.atoms:
             recursiveDivideByAtom(self,atom,self.root)
+            self.nAtoms += 1
         
         
         
@@ -1231,8 +1233,9 @@ class Tree(object):
                 
                 deltaE -= np.sum( phi*potential*(phi-phiNew)*cell.w ) 
                 normSqOfPsiNew += np.sum( phiNew**2 * cell.w)
-        deltaE /= np.sqrt(normSqOfPsiNew)
-        
+#         deltaE /= np.sqrt(normSqOfPsiNew)
+        deltaE /= (normSqOfPsiNew)
+        print('Norm of psiNew = ', np.sqrt(normSqOfPsiNew))
         
 #         print('Previous orbital energy: ', self.orbitalEnergies[targetEnergy])
         self.orbitalEnergies[targetEnergy] += deltaE
