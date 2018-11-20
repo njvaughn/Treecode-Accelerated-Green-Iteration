@@ -318,7 +318,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     z = np.copy(initialWaveData[:,2])
     
     
-    print('Scrambling orbitals...')
+#     print('Scrambling orbitals...')
 #     tree.scrambleOrbital(0)
 #     tree.scrambleOrbital(1)
 #     tree.scrambleOrbital(2)
@@ -414,11 +414,40 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 # update the energy first
                 tree.importPhiNewOnLeaves(phiNew)
                 if gradientFree==True:
+                    
+                    storedEnergies = np.copy(tree.orbitalEnergies)
+                    print('First compute eigenvalue with gradients, just to compare.')
+                    tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+                    gradientEnergy = tree.orbitalEnergies[m]
+                    tree.orbitalEnergies = np.copy(storedEnergies)
+                    
+                    
                     tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
                     print('Orbital energy after Harrison update: ', tree.orbitalEnergies[m])
+                    gradientFreeEnergy = tree.orbitalEnergies[m]
+                    print('Gradient Energy:      ', gradientEnergy)
+                    print('Gradient-free energy: ', gradientFreeEnergy)
+                    print('Discrepancy:          ', gradientEnergy-gradientFreeEnergy)
+                    print('stored orbital energy: ', tree.orbitalEnergies[m])
+                    
                 elif gradientFree==False:
+                    # first compute without gradient, for comparison
+                    storedEnergies = np.copy(tree.orbitalEnergies)
+                    print('First compute eigenvalue without gradients, just to compare.')
+                    tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+                    gradientFreeEnergy = tree.orbitalEnergies[m]
+                    tree.orbitalEnergies = np.copy(storedEnergies)
+                    
                     tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+                    gradientEnergy = tree.orbitalEnergies[m]
                     print('Orbital energy after gradient update: ', tree.orbitalEnergies[m])
+                    
+                    print('Gradient Energy:      ', gradientEnergy)
+                    print('Gradient-free energy: ', gradientFreeEnergy)
+                    print('Discrepancy:          ', gradientEnergy-gradientFreeEnergy)
+                    print('stored orbital energy: ', tree.orbitalEnergies[m])
+                    
+                    
                 else:
                     print('Invalid option for gradientFree, which is set to: ', gradientFree)
                     print('type: ', type(gradientFree))

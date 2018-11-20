@@ -212,8 +212,8 @@ if __name__ == "__main__":
     tree = setUpTree()  
     
 #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
-    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
-#     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
+#     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
     
 #     
 #     print('\n\n\n\nNow refine based on errors in each cell, the re-initialize: ')

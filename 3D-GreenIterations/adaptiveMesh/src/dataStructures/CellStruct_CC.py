@@ -996,6 +996,8 @@ class Cell(object):
                     gradPhiSq = gradPhi[0]**2 + gradPhi[1]**2 + gradPhi[2]**2
                     
                     self.orbitalKE[m] = 1/2*np.sum( self.w * gradPhiSq )
+                else:
+                    print('Not updating orbital kinetics because occupation < -1e-10')
     
     def computeDerivativeMatrices(self):
         self.DopenX = computeDerivativeMatrix(self.xmin, self.xmax, self.px)

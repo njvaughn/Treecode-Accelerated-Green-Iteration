@@ -24,14 +24,20 @@ import numpy as np
 #### Beryllium
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/'
 ##file='LW3_1000_GREEN_.csv'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/'
+# file = 'LW5_3000_order5_gradient_GREEN_.csv'
+
 
 ## Oxygen
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
 ##file='LW3_1500_GREEN_.csv'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
-file = 'HarrisonGradientFree_LW5_3000_order5_GREEN_.csv'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
+# file = 'HarrisonGradientFree_LW5_3000_order5_GREEN_.csv'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenOrder5/'
 ##file='LW3_1000_GREEN_.csv'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
+# file = 'LW5_2000_order5_gradient_GREEN_.csv'
+file = 'LW5_2000_order6_gradientFree_GREEN_.csv'
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
     TotalEnergy = -7.3340536782581447
@@ -45,8 +51,16 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Bery
     ExchangeEnergy = -2.2902495359115198e+00
     CorrelationEnergy = -2.2341044592808737e-01
     BandEnergy = -8.1239182420318166e+00
+    
+if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/':
 
-    df = df.drop([6,7,8,9,10])  #because I accidentally wrote to the same file again
+    TotalEnergy = -7.4469337501098821e+01
+    ExchangeEnergy = -7.2193700828939980e+00
+    CorrelationEnergy = -5.4455323568788838e-01
+    BandEnergy = -4.0613397710076626e+01
+    KineticEnergy =  7.4112730191157425e+01
+    ElectrostaticEnergy = -1.4081814437367436e+02
+
 
 
 

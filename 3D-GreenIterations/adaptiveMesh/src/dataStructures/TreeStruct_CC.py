@@ -148,7 +148,7 @@ class Tree(object):
         
     def computeOccupations(self):
         
-        self.T = 100
+        self.T = 200
         KB = 8.6173303e-5/27.211386
         self.sigma = self.T*KB
         
@@ -1027,9 +1027,10 @@ class Tree(object):
        
     def computeBandEnergy(self):
         # sum over the kinetic energies of all orbitals
+        print('Computing band energy.  Current orbital energies are: ', self.orbitalEnergies)
         self.totalBandEnergy = 0.0
         for i in range(self.nOrbitals):
-            self.totalBandEnergy += self.occupations[i]*(self.orbitalEnergies[i] - self.gaugeShift)  # +1 due to the gauge potential
+            self.totalBandEnergy += self.occupations[i]*(self.orbitalEnergies[i] - self.gaugeShift) 
         
     
     

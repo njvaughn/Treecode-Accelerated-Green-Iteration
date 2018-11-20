@@ -8,7 +8,7 @@ MINDEPTH=3
 SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
-INTRASCFTOLERANCE=1e-5
+INTRASCFTOLERANCE=1e-6
 INTERSCFTOLERANCE=1e-6
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
@@ -22,13 +22,11 @@ INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 ORDER=5
 
 MESHTYPE='LW5'	
-#MESHTYPE='LW3_modified'	
-#MESHTYPE='Phani'
 
 GRADIENTFREE='True'
 
-MESHPARAM=500
-OUTPUTFILE='/home/njvaughn/testing/LW5_1000_alpha_p5.csv'
+MESHPARAM=1000
+OUTPUTFILE='/home/njvaughn/testing/computeEnergiesBothWays.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
