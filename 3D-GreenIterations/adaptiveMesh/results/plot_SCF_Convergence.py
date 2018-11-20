@@ -15,9 +15,10 @@ import numpy as np
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
 #resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
-resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
+#resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
 plotsDir = resultsDir+'plots/'
-file='LW5_1500_manySCF_SCF_.csv'
+file='HarrisonGradientFree_LW5_3000_order5_SCF_.csv'
 
 
 ## Carbon Monoxide
@@ -60,12 +61,20 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeBandEnergy = -8.1239182420318166e+00
 
     if system == "Oxygen":
-        dftfeTotalEnergy = -7.4469012607372008e+01
-        dftfeExchangeEnergy = -7.2193424444124350e+00
-        dftfeCorrelationEnergy = -5.4455323198374961e-01
-        dftfeBandEnergy = -4.0613156367497737e+01
-        dftfeKineticEnergy = 7.4112265375596365e+01
-        dftfeElectrostaticEnergy = -1.4081739574277032e+02
+#         dftfeTotalEnergy = -7.4469012607372008e+01
+#         dftfeExchangeEnergy = -7.2193424444124350e+00
+#         dftfeCorrelationEnergy = -5.4455323198374961e-01
+#         dftfeBandEnergy = -4.0613156367497737e+01
+#         dftfeKineticEnergy = 7.4112265375596365e+01
+#         dftfeElectrostaticEnergy = -1.4081739574277032e+02
+
+        # Final converged values
+        dftfeTotalEnergy = -7.4469337501098821e+01
+        dftfeExchangeEnergy = -7.2193700828939980e+00
+        dftfeCorrelationEnergy = -5.4455323568788838e-01
+        dftfeBandEnergy = -4.0613397710076626e+01
+        dftfeKineticEnergy =  7.4112730191157425e+01
+        dftfeElectrostaticEnergy = -1.4081814437367436e+02
         
     if system == "carbonMonoxide":
         # these taken from mesh size 0.125 run

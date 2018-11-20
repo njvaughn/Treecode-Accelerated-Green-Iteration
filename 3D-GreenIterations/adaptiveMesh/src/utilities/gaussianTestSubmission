@@ -3,7 +3,8 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 
 
-DOMAIN=20
+DOMAIN=10
+
 MAXDEPTH=20
 MINDEPTH=3
 SINGSUBT=1
@@ -22,8 +23,8 @@ HELMHOLTZSHIFT=0  # if k=0, solving the Poisson equation.  If k>0, solving the H
 TESTCASE='Gaussian'
 
 
-GAUSSIANSUBTRACTIONALPHA=2
-MESHPARAM=500
+GAUSSIANSUBTRACTIONALPHA=1
+MESHPARAM=2000
 
 
 python -u testGaussianSingularitySubtraction.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \

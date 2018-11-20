@@ -80,7 +80,7 @@ class Tree(object):
         self.gaugeShift = gaugeShift
         self.maxDepthAtAtoms = maxDepthAtAtoms
         
-        self.mixingParameter=0.4  # (1-mixingParam)*rhoNew
+        self.mixingParameter=0.75  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
 #         self.occupations = np.ones(nOrbitals)
 #         self.computeOccupations()
@@ -148,7 +148,7 @@ class Tree(object):
         
     def computeOccupations(self):
         
-        self.T = 1
+        self.T = 200
         KB = 8.6173303e-5/27.211386
         self.sigma = self.T*KB
         
@@ -251,8 +251,10 @@ class Tree(object):
 #                 self.atoms[i] = atom
         
         self.computeNuclearNuclearEnergy()
+        self.nAtoms = 0
         for atom in self.atoms:
             recursiveDivideByAtom(self,atom,self.root)
+            self.nAtoms += 1
         
         
         
@@ -327,7 +329,9 @@ class Tree(object):
         
 #         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
 # #         print('Hard coding nAtomicOrbitals to 0 for the second hydrogen atom.')
-#         self.atoms[1].nAtomicOrbitals = 2
+        print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+        self.atoms[1].nAtomicOrbitals = 2
+        self.nOrbitals = 7
 #         self.atoms[1].nAtomicOrbitals = 0
     
         for atom in self.atoms:
@@ -336,6 +340,8 @@ class Tree(object):
                 nAtomicOrbitals = 1
             else:
                 nAtomicOrbitals = atom.nAtomicOrbitals
+                
+            
             
             print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
                       %(atom.atomicNumber, atom.x,atom.y,atom.z))
@@ -499,7 +505,7 @@ class Tree(object):
                     Cell.divideFlag = True 
 #                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
                 else:  
-                    if ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or 
+                    if ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or (divideCriterion == 'LW3_modified') or 
                          (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') ):
 #                         print('checking divide criterion for cell ', Cell.uniqueID)
                         Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
@@ -989,6 +995,7 @@ class Tree(object):
         E_c = 0.0
         E_electronNucleus = 0.0
         
+        
         for _,cell in self.masterList:
             if cell.leaf == True:
                 V_x += integrateCellDensityAgainst__(cell,'v_x')
@@ -1005,6 +1012,7 @@ class Tree(object):
         self.totalElectrostatic = 1/2*V_coulomb + self.nuclearNuclear + E_electronNucleus
         self.totalEx = E_x
         self.totalEc = E_c
+        self.totalVext = E_electronNucleus
 #         print('Total V_xc : ')
         
         print('Electrostatic Energies:')
@@ -1023,21 +1031,31 @@ class Tree(object):
        
     def computeBandEnergy(self):
         # sum over the kinetic energies of all orbitals
+        print('Computing band energy.  Current orbital energies are: ', self.orbitalEnergies)
         self.totalBandEnergy = 0.0
         for i in range(self.nOrbitals):
-            self.totalBandEnergy += self.occupations[i]*(self.orbitalEnergies[i] - self.gaugeShift)  # +1 due to the gauge potential
+            self.totalBandEnergy += self.occupations[i]*(self.orbitalEnergies[i] - self.gaugeShift) 
         
     
-    def updateTotalEnergy(self):
+    
+    def updateTotalEnergy(self,gradientFree):
         self.computeBandEnergy()
         self.computeTotalPotential()
-#         self.E = self.totalBandEnergy + self.totalPotential
-        self.E = self.totalKinetic + self.totalPotential
+        self.totalKinetic = self.totalBandEnergy - self.totalVcoulomb - self.totalVx - self.totalVc - self.totalVext
         
-        alternativeE = self.totalBandEnergy - 1/2 * self.totalVcoulomb + self.totalEx + self.totalEc - self.totalVx - self.totalVc
+        if gradientFree==True:
+            self.E = self.totalBandEnergy - 1/2 * self.totalVcoulomb + self.totalEx + self.totalEc - self.totalVx - self.totalVc + self.nuclearNuclear
+            print('Updating total energy without explicit kinetic evaluation.')
+        elif gradientFree==False:
+            print('Updating total energy WITH explicit kinetic evaluation.')
+            self.E = self.totalKinetic + self.totalPotential
+        else:
+            print('Invalid option for gradientFree.')
+            print('gradientFree = ', gradientFree)
+            print('type: ', type(gradientFree))
+            return
         
-        print('Updated Energy, method 1: ', self.E)
-        print('Updated Energy, method 2: ', alternativeE)
+
     
     def computeOrbitalPotentials(self,targetEnergy=None, saveAsReference=False): 
         
@@ -1052,7 +1070,7 @@ class Tree(object):
         self.totalOrbitalPotential = np.sum( (self.orbitalPotential - self.gaugeShift) * self.occupations)
                        
     def computeOrbitalKinetics(self,targetEnergy=None, saveAsReference=False):
-
+        print('Computing orbital kinetics using Gradients')
         self.orbitalKinetic = np.zeros(self.nOrbitals)
         for _,cell in self.masterList:
             if cell.leaf == True:
@@ -1203,6 +1221,39 @@ class Tree(object):
             self.computeOccupations()
 #             print('Occupations: ', self.occupations)
 
+    def updateOrbitalEnergies_NoGradients(self,targetEnergy,newOccupations=True):
+        
+        deltaE = 0.0
+        normSqOfPsiNew = 0.0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                phi = np.zeros((cell.px,cell.py,cell.pz))
+                phiNew = np.zeros((cell.px,cell.py,cell.pz))
+                potential = np.zeros((cell.px,cell.py,cell.pz))
+                for i,j,k in cell.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    phi[i,j,k] = gp.phi[targetEnergy]
+                    phiNew[i,j,k] = gp.phiNew
+                    potential[i,j,k] = gp.v_eff
+                
+                deltaE -= np.sum( phi*potential*(phi-phiNew)*cell.w ) 
+                normSqOfPsiNew += np.sum( phiNew**2 * cell.w)
+#         deltaE /= np.sqrt(normSqOfPsiNew)
+        deltaE /= (normSqOfPsiNew)
+        print('Norm of psiNew = ', np.sqrt(normSqOfPsiNew))
+        
+#         print('Previous orbital energy: ', self.orbitalEnergies[targetEnergy])
+        self.orbitalEnergies[targetEnergy] += deltaE
+#         print('Updated orbital energy:  ', self.orbitalEnergies[targetEnergy])
+#         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
+#         print('Orbital Potential Energy: ', self.orbitalPotential)
+#         print('Orbital Energy:           ', self.orbitalEnergies)
+        ### CHECK IF NEED TO RE-ORDER ORBITALS ###
+        
+        if newOccupations==True:
+            self.computeOccupations()
+#             print('Occupations: ', self.occupations)
+
     def sortOrbitalsAndEnergies(self):
         newOrder = np.argsort(self.orbitalEnergies)
         print('New order: ', newOrder)
@@ -1297,6 +1348,61 @@ class Tree(object):
         self.L2NormError = np.sum(errors)
         self.maxCellError = np.max(errors)
         self.maxPointwiseError = maxErr
+        
+    
+    def computeWavefunctionResidual(self,energyLevel):
+        energyEigenvalue = self.orbitalEnergies[energyLevel]
+        kinetic = self.orbitalKinetic[energyLevel]
+        potential = self.orbitalPotential[energyLevel]
+        print('Energy Eigenvalue: ', energyEigenvalue)
+#         print('kinetic part:      ', kinetic)
+#         print('potential part:    ', potential)
+        needToPrint=False
+        
+        L2residual = 0.0
+        kineticResidual = 0.0
+        potentialResidual = 0.0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+#                 if not hasattr(cell, 'laplacian'):
+#                     cell.computeLaplacian()
+                phi = np.zeros((cell.px,cell.py,cell.pz))
+                VeffPhi = np.zeros((cell.px,cell.py,cell.pz))
+                
+                for i,j,k in cell.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    phi[i,j,k] = gp.phi[energyLevel]
+                    VeffPhi[i,j,k] = gp.v_eff*gp.phi[energyLevel]
+                
+                laplacianPhi = ChebLaplacian3D(cell.DopenX, cell.DopenY, cell.DopenZ, cell.px, phi)
+                Hphi = -1/2*laplacianPhi + VeffPhi
+                
+                L2residual += np.sum( (Hphi - energyEigenvalue*phi)**2 * cell.w )
+                kineticResidual += np.sum( (-1/2*laplacianPhi - kinetic*phi)**2 * cell.w )
+                potentialResidual += np.sum( (VeffPhi - potential*phi)**2 * cell.w )
+
+                if ((needToPrint==True) and (cell.level>8) ):
+                    print(energyEigenvalue*phi)
+                    print()
+                    print(-1/2*laplacianPhi)
+                    print()
+                    print(VeffPhi)
+                    print()
+                    print(Hphi - energyEigenvalue*phi)
+                    
+                    needToPrint=False
+#                     return
+        L2residual = np.sqrt( L2residual )
+        
+        print('L2 norm of wavefunction residual (H*psi-lambda*psi):   ', L2residual)
+#         print('Kinetic portion:                                       ', kineticResidual)
+#         print('Potential portion:                                     ', potentialResidual)
+                
+                
+#             self.orbitalKE[targetEnergy] = 1/2*np.sum( self.w * gradPhiSq )
+                    
+                
+        return
         
     def normalizeOrbital(self, n):
         """ Enforce integral phi*2 dxdydz == 1 for the nth orbital"""
@@ -1588,7 +1694,7 @@ class Tree(object):
                     minDist = np.sqrt( (gp1.x-gp2.x)**2 + (gp1.y-gp2.y)**2 + (gp1.z-gp2.z)**2)
                     
                     tmax = 3/minDist   # this is picked to satisfy the closest points, which need the largest t
-                    dt = (6/maxDist)/40              # this is picked to satisfy the farthet points, which need the smallest dt.  (40 intervals to cover first t=10/dist
+                    dt = (6/maxDist)/20              # this is picked to satisfy the farthet points, which need the smallest dt.  (40 intervals to cover first t=10/dist
                     
                     timeIntervals = int( np.ceil( tmax/dt ) )
     #                 timeIntervals = int( np.ceil(5*(maxDist/minDist)) )
@@ -1626,6 +1732,78 @@ class Tree(object):
                                 r = np.sqrt( (gp_t.x - gp_s.x)**2 +  (gp_t.y - gp_s.y)**2 + (gp_t.z - gp_s.z)**2   )
                                     
                                 gp_t.selfCellContribution += cell.w[ii,jj,kk] * dt * gp_s.rho * np.exp(-t**2 * r**2)  
+                                
+                        gp_t.selfCellContribution *= 2/np.sqrt(np.pi)
+                        
+#                         gp_t.selfCellContribution += np.pi/tmax**2 * gp_t.rho  # corrction for truncation in t.  Should be good if tmax is large enough.
+                
+                else: # not the target cell we care about, set selfCellContribution equal to zero
+                    for i,j,k in cell.PxByPyByPz:
+                        gp_t = cell.gridpoints[i,j,k]
+                        gp_t.selfCellContribution = 0.0 
+        print('Done.')
+        
+    def computeSelfCellInterations_GaussianIntegralIdentity_singularitySubtraction(self,alpha,containing=None):
+
+        print("Computing interaction of each point with its own cell using Gaussian Integral Identity..")
+        counter=0
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                counter += 1
+                if (   (containing==None)  or   
+                    (  
+                           ( (cell.xmin<containing[0]) and (cell.xmax>containing[0]) )  and 
+                           ( (cell.ymin<containing[1]) and (cell.ymax>containing[1]) )  and  
+                           ( (cell.zmin<containing[2]) and (cell.zmax>containing[2]) ) )
+                    ):
+                    if containing != None:
+                        print('Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid, ' at a depth of ', cell.level)
+                    
+                    # determine an appropriate time discretization, based on the gridpoint spacing
+                    maxDist = np.sqrt( (cell.xmax-cell.xmin)**2 + (cell.ymax-cell.ymin)**2 + (cell.zmax-cell.zmin)**2 )
+                    gp1 = cell.gridpoints[0,0,0]
+                    gp2 = cell.gridpoints[1,0,0]  # these should be tied for closest grid points within this cell
+                    minDist = np.sqrt( (gp1.x-gp2.x)**2 + (gp1.y-gp2.y)**2 + (gp1.z-gp2.z)**2)
+                    
+                    tmax = 5/minDist   # this is picked to satisfy the closest points, which need the largest t
+                    dt = (6/maxDist)/5             # this is picked to satisfy the farthet points, which need the smallest dt.  (40 intervals to cover first t=10/dist
+                    
+                    timeIntervals = int( np.ceil( tmax/dt ) )
+    #                 timeIntervals = int( np.ceil(5*(maxDist/minDist)) )
+#                     timeIntervals = 200
+                    
+#                     timeIntervals = int(np.ceil(tmax/0.5))
+                    tvec = np.linspace(0,tmax,timeIntervals+1)
+                    print('Cell ', counter, ' of ', self.numberOfCells)
+                    print('Closest points: ', minDist)
+                    print('Corner to corner: ',maxDist)
+                    print('tmax = ', tmax)
+                    print('dt = ', tvec[1]-tvec[0])
+                    print('timeIntervals   = ', timeIntervals)
+                    print()
+                
+                
+                    # for each target point in cell...
+#                     maxApproxError = 0
+                    for i,j,k in cell.PxByPyByPz:
+                        gp_t = cell.gridpoints[i,j,k]
+                        gp_t.selfCellContribution = 0.0
+                    
+                        # integrate over time (midpoint or trapezoid)
+                        for ell in range(timeIntervals+1):
+#                             dt = tvec[ell+1]-tvec[ell]
+#                             t = (tvec[ell+1]+tvec[ell])/2
+                            dt = tvec[1]-tvec[0]
+                            t = tvec[ell]
+                            if ( (ell==0) or (ell==timeIntervals)):
+                                dt /=2
+                        
+                            # integrate over space
+                            for ii,jj,kk in cell.PxByPyByPz:
+                                gp_s = cell.gridpoints[ii,jj,kk]
+                                r = np.sqrt( (gp_t.x - gp_s.x)**2 +  (gp_t.y - gp_s.y)**2 + (gp_t.z - gp_s.z)**2   )
+                                    
+                                gp_t.selfCellContribution += cell.w[ii,jj,kk] * dt * ( gp_s.rho - gp_t.rho*np.exp(-alpha**2*r**2) ) * np.exp(-t**2 * r**2)  
                                 
                         gp_t.selfCellContribution *= 2/np.sqrt(np.pi)
                         
@@ -1849,6 +2027,31 @@ class Tree(object):
                     gridpt = cell.gridpoints[i,j,k]
 #                     if gridpt.phiImported == False:
                     gridpt.phi[orbitalNumber] = phiNew[importIndex]
+#                         gridpt.phiImported = True
+                    importIndex += 1
+                    
+#         for _,cell in self.masterList:
+#             for i,j,k in self.PxByPyByPz:
+#                 cell.gridpoints[i,j,k].phiImported = None
+        if importIndex != len(phiNew):
+            print('Warning: import index not equal to len(phiNew)')
+            print(importIndex)
+            print(len(phiNew))
+            
+    def importPhiNewOnLeaves(self,phiNew):
+        '''
+        Import phi difference values, apply to leaves
+        '''
+#         for _,cell in self.masterList:
+#             for i,j,k in self.PxByPyByPz:
+#                 cell.gridpoints[i,j,k].phiImported = False
+        importIndex = 0        
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+#                     if gridpt.phiImported == False:
+                    gridpt.phiNew = phiNew[importIndex]
 #                         gridpt.phiImported = True
                     importIndex += 1
                     

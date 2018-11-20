@@ -74,25 +74,50 @@ def wavefunctionErrors(wave1, wave2, weights, x,y,z):
 
 
 
-def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, 
+def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree,
                                 subtractSingularity, smoothingN, smoothingEps, inputFile='',outputFile='',
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None): 
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
     
-#     ## OXYGEN ATOM     
-    dftfeOrbitalEnergies = np.array( [-1.875890295968488530e+01, -8.712069894624057120e-01,
-                                      -3.382944529486854868e-01, -3.382944529460307215e-01,
-                                      -3.382944529419588120e-01])#, -0.1])   # DFTFE order 5
+#     ## OXYGEN ATOM  
+     
+    if tree.nOrbitals == 5:
+        print('Assuming this is the oxygen atom test case...')  
+        dftfeOrbitalEnergies = np.array( [-1.875890295968488530e+01, -8.712069894624057120e-01,
+                                          -3.382944529486854868e-01, -3.382944529460307215e-01,
+                                          -3.382944529419588120e-01])#, -0.1])   # DFTFE order 5
+        tree.occupations = np.array([2,2,4/3,4/3,4/3])
+        
+#     ## Carbon Monoxide   
+     
+    elif tree.nOrbitals == 7:
+        print('Assuming this is the carbon monoxide test case...')  
+        dftfeOrbitalEnergies = np.array( [-1.871914961754098883e+01, -9.907098561099513034e+00,
+                                          -1.075307096649917860e+00, -5.215348395483176969e-01,
+                                          -4.455546114762743981e-01, -4.455543309534727436e-01,
+                                          -3.351421635719918912e-01]) 
+        tree.occupations = np.array([2,2,2,2,2,2,2])
+
 
 #     dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
 #                                       -3.382974161584920147e-01, -3.382974161584920147e-01,
 #                                       -3.382974161584920147e-01])#, -0.1]) 
 
     ## BERYLLIUM ATOM     
-#     dftfeOrbitalEnergies = np.array( [-3.855615417517944898e+00, -2.059998705089633453e-01 ] ) 
+    elif tree.nOrbitals == 2:
+        print('Assuming this is the Beryllium test case...')
+        dftfeOrbitalEnergies = np.array( [-3.855615417517944898e+00, -2.059998705089633453e-01 ] ) 
 #     dftfeOrbitalEnergies = np.array( [-3.855605920292163535e+00, -2.059995800202487071e-01 ] ) 
+        tree.occupations = np.array([2,2])
+    
+    else:
+        print('Not sure which test case this is..., nOrbitals = ', tree.nOrbitals)
+        
+        return
+    
+    
     
                                     
     
@@ -159,19 +184,20 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     #manually set the initial occupations, otherwise oxygen P shell gets none.
 #     tree.occupations = np.array([2,2,2,2,2,2,2])
 #     tree.occupations = np.array([2,2,4/3,4/3,4/3])
+#     tree.occupations = np.array([2,2])
 #     tree.occupations = np.array([2,2,2,2,4/3,4/3,4/3])
 
-    tree.occupations = 2*np.ones(tree.nOrbitals)
+#     tree.occupations = 2*np.ones(tree.nOrbitals)
 
 #     tree.updateOrbitalEnergies(sortByEnergy=False)
 #     print('In the above energies, first 5 are for the carbon, next 5 for the oxygen.')
     print('Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell')
-    tree.updateOrbitalEnergies(sortByEnergy=False, saveAsReference=True)
+    tree.updateOrbitalEnergies(sortByEnergy=True, saveAsReference=True)
 #     print('Kinetic:   ', tree.orbitalKinetic)
 #     print('Potential: ', tree.orbitalPotential)
     print('Kinetic Errors:   ', tree.orbitalKinetic - deepestKinetic)
     print('Potential Errors: ', tree.orbitalPotential - deepestPotential - tree.gaugeShift)
-    tree.updateTotalEnergy()
+    tree.updateTotalEnergy(gradientFree=False)
     """
     Print results before SCF 1
     """
@@ -184,7 +210,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         print('Orbital Energies:                      %.10f H, %.10f H' %(tree.orbitalEnergies[0],tree.orbitalEnergies[1]) )
     else: 
         print('Orbital Energies: ', tree.orbitalEnergies) 
-    
+
     print('Orbital Energy Errors after initialization: ', tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift)
 
     print('Updated V_x:                           %.10f Hartree' %tree.totalVx)
@@ -197,6 +223,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
     print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
     
+    
+    print('Computing L2 residual for initialized orbitals...')
+    for m in range(tree.nOrbitals):
+        tree.computeWavefunctionResidual(m)
+    
+#     print('Compute residual again after setting eigenvalue to the true value...')
+#     tree.orbitalEnergies[0] = dftfeOrbitalEnergies[0]
+#     tree.computeWavefunctionResidual(0)
+#     return
     
     printInitialEnergies=True
 
@@ -298,6 +333,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     print('Scrambling orbitals...')
 #     tree.scrambleOrbital(0)
 #     tree.scrambleOrbital(1)
+#     tree.scrambleOrbital(2)
+#     tree.scrambleOrbital(3)
+#     tree.scrambleOrbital(4)
+#     tree.orbitalEnergies[2]=-1
+#     tree.orbitalEnergies[3]=-1
+#     tree.orbitalEnergies[4]=-1
     
     residuals = np.ones_like(tree.orbitalEnergies)
     while ( densityResidual > interScfTolerance ):
@@ -352,8 +393,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     print('Wanrning: Orbital energy greater than gauge shift.')
 #                     print('Resetting orbital %i energy to 1/2 gauge shift')
 #                     tree.orbitalEnergies[m] = tree.gaugeShift
-#                     tree.orbitalEnergies[m] = tree.gaugeShift-1/2
+                    tree.orbitalEnergies[m] = tree.gaugeShift-1
 #                     print('Setting orbital %i energy to zero' %m)
+
                     
                 k = np.sqrt(-2*tree.orbitalEnergies[m])
                 phiNew = np.zeros((len(targets)))
@@ -367,8 +409,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     if tree.orbitalEnergies[m] < -0.2:
                         print('Using singularity subtraction')
 #                         gpuHelmholtzConvolutionSubractSingularity_multDivbyr[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-#                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-                        gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,0.1)
+                        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+#                         gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)
+#                         gpuHelmholtzConvolutionSubractSingularity_gaussian[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,1)
 #                         print('Using singularity subtraction with Gaussian, a=0.1')
 #                         gpuHelmholtzConvolutionSubractSingularity_gaussian_no_cusp[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k,0.1)
                     else:
@@ -377,7 +420,68 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 else:
                     print('Invalid option for singularitySubtraction, should be 0 or 1.')
                     return
+                
+                """ Method where you dont compute kinetics, from Harrison """
+                
+                # update the energy first
+                tree.importPhiNewOnLeaves(phiNew)
+                if gradientFree==True:
+                    
+#                     storedEnergies = np.copy(tree.orbitalEnergies)
+#                     print('First compute eigenvalue with gradients, just to compare.')
+#                     tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+#                     gradientEnergy = tree.orbitalEnergies[m]
+#                     tree.orbitalEnergies = np.copy(storedEnergies)
+                    
+                    
+                    tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+                    print('Orbital energy after Harrison update: ', tree.orbitalEnergies[m])
+                    if tree.orbitalEnergies[m]>0:
+                        tree.orbitalEnergies[m] = -1
+                        print('setting eigenvalue to -1 because it was positive')
+#                     gradientFreeEnergy = tree.orbitalEnergies[m]
+#                     print('Gradient Energy:      ', gradientEnergy)
+#                     print('Gradient-free energy: ', gradientFreeEnergy)
+#                     print('Discrepancy:          ', gradientEnergy-gradientFreeEnergy)
+#                     print('stored orbital energy: ', tree.orbitalEnergies[m])
+                    
+                elif gradientFree==False:
+                    # first compute without gradient, for comparison
+                    storedEnergies = np.copy(tree.orbitalEnergies)
+                    print('First compute eigenvalue without gradients, just to compare.')
+                    tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+                    gradientFreeEnergy = tree.orbitalEnergies[m]
+                    tree.orbitalEnergies = np.copy(storedEnergies)
+                    
+                    tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+                    gradientEnergy = tree.orbitalEnergies[m]
+                    print('Orbital energy after gradient update: ', tree.orbitalEnergies[m])
+                    
+                    print('Gradient Energy:      ', gradientEnergy)
+                    print('Gradient-free energy: ', gradientFreeEnergy)
+                    print('Discrepancy:          ', gradientEnergy-gradientFreeEnergy)
+                    print('stored orbital energy: ', tree.orbitalEnergies[m])
+                    
+                    
+                else:
+                    print('Invalid option for gradientFree, which is set to: ', gradientFree)
+                    print('type: ', type(gradientFree))
 
+                # now update the orbital
+                orbitals[:,m] = np.copy(phiNew)
+                tree.importPhiOnLeaves(orbitals[:,m], m)
+                tree.orthonormalizeOrbitals(targetOrbital=m)
+                
+                # Compute norms
+                tempOrbital = tree.extractPhi(m)
+                orbitals[:,m] = tempOrbital[:,3]
+                normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
+                residuals[m] = normDiff
+                if normDiff > orbitalResidual:
+                    orbitalResidual = np.copy(normDiff) 
+
+
+                """  Method where you compute kinetics explicitly
 #                 idx = np.argmax(phiNew)
 #                 phiAtBoundary=phiNew[idx]
 #                 print('Phi at boundary: ', phiAtBoundary,'. Shifting wavefunction down by that amount before computing energy.')
@@ -386,16 +490,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 
                 orbitals[:,m] = np.copy(phiNew)
 
-
                 # normalize
 #                 print('Not normalizing...')
 #                 orbitals[:,m] /= np.sqrt( np.dot(orbitals[:,m],orbitals[:,m]*weights) )
 #                 normalizedOrbitals = normalizeOrbitals(orbitals,weights)  # could optimize this to only normalize the current orbital
                 
-                
+            
                 tree.importPhiOnLeaves(orbitals[:,m], m)
 #                 tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
 #                 print('Before orthonormalization:  Orbital %i error:        %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift))
+#                 tree.computeWavefunctionResidual(m)
 #                 print('Orthonormalizing.')
                 tree.orthonormalizeOrbitals(targetOrbital=m)
                 tempOrbital = tree.extractPhi(m)
@@ -405,16 +509,29 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 residuals[m] = normDiff
                 if normDiff > orbitalResidual:
                     orbitalResidual = np.copy(normDiff) 
+                    
+                    
+#                 oldEnergy = tree.orbitalEnergies[0]
                 tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+#                 tree.orbitalEnergies[0] = oldEnergy
+#                 print('NOT UPDATING ORBITAL ENERGY')
+                """
                 
+                print('Computing L2 residual for orbitals after Green Iterations...')
+                tree.computeWavefunctionResidual(m)
+#                 print('Compute residual again after setting eigenvalue to the true value...')
+#                 tree.orbitalEnergies[0] = dftfeOrbitalEnergies[0]
+#                 tree.computeWavefunctionResidual(0)
+                
+            
 #                 if maxOrbitals==1:
                 if m==0:
                     tree.compareToReferenceEnergies()
     #                 print('Orbital %i kinetic and potential: %2.8e and %2.8e ' %(m,tree.orbitalKinetic[m], tree.orbitalPotential[m]-tree.gaugeShift ))
     #                 print('Orbital %i kinetic and potential errors: %2.8e and %2.8e ' %(m,tree.orbitalKinetic[m] - deepestKinetic, tree.orbitalPotential[m]-tree.gaugeShift - deepestPotential ))
                     print("~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~")
-                    print('kinetic error:             %2.8e' %(tree.orbitalKinetic[m] - deepestKinetic) )
-                    print('potential errors:          %2.8e' %(tree.orbitalPotential[m]-tree.gaugeShift - deepestPotential ))
+#                     print('kinetic error:             %2.8e' %(tree.orbitalKinetic[m] - deepestKinetic) )
+#                     print('potential errors:          %2.8e' %(tree.orbitalPotential[m]-tree.gaugeShift - deepestPotential ))
                     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
                     wavefunctionErrors(orbitals[:,m], initialPsi0, weights, x, y, z)
                 print('Orbital %i error and residual:   %1.3e and %1.3e' %(m, tree.orbitalEnergies[m]-dftfeOrbitalEnergies[m]-tree.gaugeShift, orbitalResidual))
@@ -456,12 +573,26 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 eigensolveCount += 1
                 if orbitalResidual < intraScfTolerance:
                     print('Used %i iterations for orbital %i.' %(eigensolveCount,m))
+            
+        
+        
+        # now compute new occupations
+        tree.computeOccupations()
+            
+            
 
  
 
         print()
         print()
-            
+        print('Computing L2 residual for orbitals after Green Iterations...')
+        for m in range(tree.nOrbitals):
+            tree.computeWavefunctionResidual(m)
+        
+    #     print('Compute residual again after setting eigenvalue to the true value...')
+    #     tree.orbitalEnergies[0] = dftfeOrbitalEnergies[0]
+    #     tree.computeWavefunctionResidual(0)
+#         return
 
         
 
@@ -471,7 +602,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             return
         
 #         tree.orthonormalizeOrbitals()
-        tree.updateOrbitalEnergies(sortByEnergy=True)
+#         print('Not updating orbital energies ')
+#         tree.updateOrbitalEnergies(sortByEnergy=True)
         oldDensity = tree.extractLeavesDensity()
 #         print('NOT UPDATING DENSITY AT END OF FIRST SCF.  JUST COMPUTING ENERGIES.')
         
@@ -526,7 +658,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         tree.updateOrbitalEnergies(sortByEnergy=False) # should I be doing this?
         
 #         tree.updateOrbitalEnergies(correctPositiveEnergies=False, sortByEnergy=False) 
-        tree.updateTotalEnergy() 
+        tree.updateTotalEnergy(gradientFree=gradientFree) 
         print('Band energies after Veff update: %1.6f H, %1.2e H'
               %(tree.totalBandEnergy, tree.totalBandEnergy-Eband))
         print('Orbital Energy Errors after Veff Update: ', tree.orbitalEnergies-dftfeOrbitalEnergies-tree.gaugeShift)
@@ -611,11 +743,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
         greenIterationCounter+=1
         
+        if greenIterationCounter >= 20:
+            print('Setting density residual to -1 to exit after the 20th SCF')
+            densityResidual = -1
+        
 #         print('Setting density residual to min of density residual and energy residual, just for testing purposes')
 #         densityResidual = min(densityResidual, energyResidual)
         if maxSCFIterations == 1:
             print('Setting density residual to -1 to exit after the first SCF')
             densityResidual = -1 
+    
+     
 
         
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, greenIterationCounter))

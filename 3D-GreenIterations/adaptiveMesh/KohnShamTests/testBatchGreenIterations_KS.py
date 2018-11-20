@@ -38,6 +38,16 @@ energyTolerance     = float(sys.argv[10])
 scfTolerance        = float(sys.argv[11])
 outputFile          = str(sys.argv[12])
 inputFile           = str(sys.argv[13])
+noGradients         = str(sys.argv[14])
+
+print('gradientFree = ', noGradients)
+
+if noGradients=='True':
+    gradientFree=True
+elif noGradients=='False':
+    gradientFree=False
+else:
+    print('Warning, not correct input for gradientFree')
 
 # coordinateFile      = str(sys.argv[12])
 # auxiliaryFile      = str(sys.argv[13])
@@ -90,6 +100,8 @@ def setUpTree(onlyFillOne=False):
 #     tree.normalizeDensity()
 
     
+
+    
     return tree
     
     
@@ -99,7 +111,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False, 
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
+    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, subtractSingularity, 
                                 smoothingN, smoothingEps,inputFile=inputFile,outputFile=outputFile, 
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
 
@@ -108,12 +120,12 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False, 
 #                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
 
-    header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints',
+    header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints','gradientFree',
               'divideCriterion','divideParameter','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy']
     
-    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,
+    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
               divideCriterion,divideParameter,energyTolerance,
               subtractSingularity,
               tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
@@ -196,8 +208,13 @@ if __name__ == "__main__":
 
 
     """ Refinement based on deepest state """
-    tree = setUpTree(onlyFillOne=True)    
-    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
+#     tree = setUpTree(onlyFillOne=True)  
+    tree = setUpTree()  
+    
+#     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
+#     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
+    
 #     
 #     print('\n\n\n\nNow refine based on errors in each cell, the re-initialize: ')
 #     tree.compareToReferenceEnergies(refineFraction = 0.1 )

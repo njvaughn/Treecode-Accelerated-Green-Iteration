@@ -41,7 +41,7 @@ def meshDensity(r,divideParameter,divideCriterion):
     
     elif divideCriterion == 'LW3_modified':
         # for order = 3 
-        return divideParameter/648.82*(exp(-5*r)* (52 - 102/r + 363/r**2 + 1416/r**3 + 4164/r**4 + 5184/r**5 + 2592/r**6) )**(3/9)
+        return divideParameter/20*(exp(-8*r)* (52 - 102/r + 363/r**2 + 1416/r**3 + 4164/r**4 + 5184/r**5 + 2592/r**6) )**(3/9)
     
     elif divideCriterion == 'Phani':
         N = 8

@@ -1,0 +1,2373 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  True
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_firstSCF_gradientFree/LW5_500_order5_gradientFree.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  267000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       2441 
+Total Number of Leaf Cells:  2136 
+Total Number of Gridpoints:  267000 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  5 
+Construction time:           87.8 seconds.
+Closest gridpoint to origin:  [-0.00047796370805514021, -0.00047796370805514021, -0.00047796370805514021]
+For a distance of:  0.0008278574265255207
+Part of a cell centered at:  [-0.009765625, -0.009765625, -0.009765625]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    267000
+Threads per block:    512
+Blocks per grid:      522
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    1.7030 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.76370467  -0.87138678  -0.33819614  -0.33819614  -0.33819614]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.3379766297900805
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  1.85213744e-03  -2.55601460e+01  -2.62041630e+01  -2.62041630e+01
+  -2.62041630e+01]
+Potential Errors:  [ -6.77052052e-03   4.34475455e+01   4.46247532e+01   4.46247532e+01
+   4.46247532e+01]
+Electrostatic Energies:
+Hartree:          36.3255508211
+External:         -177.158454263
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.76370467  -0.87138678  -0.33819614  -0.33819614  -0.33819614]
+Orbital Energy Errors after initialization:  [ -4.80170733e-03  -1.79794869e-04   9.83165814e-05   9.83165788e-05
+   9.83165747e-05]
+Updated V_x:                           -9.6259183474 Hartree
+Updated V_c:                           -0.6072496853 Hartree
+Updated Band Energy:                   -40.6229674482 H, -9.5697380812e-03 H
+Updated Kinetic Energy:                 74.1175532051 H, 4.8230139691e-03 H
+Updated E_x:                           -7.2194387606 H, -6.8677680821e-05 H
+Updated E_c:                           -0.5445573141 H, -4.0784541996e-06 H
+Updated totalElectrostatic:            -140.8329034417 H, -1.4759068062e-02 H
+Total Energy:                          -74.4793463113 H, -1.0008810228e-02 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.763704667
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.1516726089
+Energy Eigenvalue:  -0.871386784331
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.97165044763
+Energy Eigenvalue:  -0.338196136367
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0486572251937
+Energy Eigenvalue:  -0.338196136367
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0486572251937
+Energy Eigenvalue:  -0.338196136367
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0486572251937
+Scrambling orbitals...
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  0.00214184894456
+Orbital energy after Harrison update:  415.977003291
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  415.977003291
+L2 norm of wavefunction residual (H*psi-lambda*psi):    423.954053438
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.82312662963
+Linf Error:            14.8606925832
+LinfRel Error:         5.2182804492
+Located at:            -0.000477963708055 0.000477963708055 0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   4.347e+02 and 1.382e+00
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  2.77527837119
+Orbital energy after Harrison update:  -3.51921563272
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -3.51921563272
+L2 norm of wavefunction residual (H*psi-lambda*psi):    13.1453433416
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.81376814451
+Linf Error:            14.5349125069
+LinfRel Error:         5.76317069238
+Located at:            -0.000477963708055 -0.000477963708055 0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.524e+01 and 2.411e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.46788510207
+Orbital energy after Harrison update:  -7.46817073604
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -7.46817073604
+L2 norm of wavefunction residual (H*psi-lambda*psi):    15.4888659664
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.88898260043
+Linf Error:            15.6370147424
+LinfRel Error:         4.31468732731
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.129e+01 and 2.776e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.14338940681
+Orbital energy after Harrison update:  -12.0023277142
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -12.0023277142
+L2 norm of wavefunction residual (H*psi-lambda*psi):    17.91702138
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.94860619914
+Linf Error:            17.3933981645
+LinfRel Error:         3.23266138414
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   6.757e+00 and 2.445e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.01186818353
+Orbital energy after Harrison update:  -15.6262918816
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -15.6262918816
+L2 norm of wavefunction residual (H*psi-lambda*psi):    20.4400309026
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.98122358364
+Linf Error:            19.4352604713
+LinfRel Error:         2.6184667579
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.133e+00 and 1.892e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.967867561362
+Orbital energy after Harrison update:  -17.6216203082
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -17.6216203082
+L2 norm of wavefunction residual (H*psi-lambda*psi):    23.4486176838
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99454847022
+Linf Error:            21.2976863598
+LinfRel Error:         2.29382090273
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.137e+00 and 1.289e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.96615070881
+Orbital energy after Harrison update:  -18.4252988843
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.4252988843
+L2 norm of wavefunction residual (H*psi-lambda*psi):    26.3638334723
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99870165249
+Linf Error:            22.6495094995
+LinfRel Error:         2.12938753712
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.336e-01 and 7.614e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.977286600286
+Orbital energy after Harrison update:  -18.6808669722
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.6808669722
+L2 norm of wavefunction residual (H*psi-lambda*psi):    28.4672366266
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99973407035
+Linf Error:            23.4617720599
+LinfRel Error:         2.04926108584
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   7.804e-02 and 3.956e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.98762282779
+Orbital energy after Harrison update:  -18.7480204383
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7480204383
+L2 norm of wavefunction residual (H*psi-lambda*psi):    29.686933066
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99995104281
+Linf Error:            23.8871219861
+LinfRel Error:         2.01167527031
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.088e-02 and 1.865e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.994034752971
+Orbital energy after Harrison update:  -18.7631995504
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7631995504
+L2 norm of wavefunction residual (H*psi-lambda*psi):    30.3030912819
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999168704
+Linf Error:            24.0902902783
+LinfRel Error:         1.99465669542
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.297e-03 and 8.234e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.997322189571
+Orbital energy after Harrison update:  -18.7662817454
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7662817454
+L2 norm of wavefunction residual (H*psi-lambda*psi):    30.5901595268
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999871843
+Linf Error:            24.18202114
+LinfRel Error:         1.98715898433
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -7.379e-03 and 3.508e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998841514767
+Orbital energy after Harrison update:  -18.766867112
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.766867112
+L2 norm of wavefunction residual (H*psi-lambda*psi):    30.7179882822
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999983749
+Linf Error:            24.2221383702
+LinfRel Error:         1.98391537377
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -7.964e-03 and 1.471e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999507262763
+Orbital energy after Harrison update:  -18.7669743045
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7669743045
+L2 norm of wavefunction residual (H*psi-lambda*psi):    30.773520298
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999998449
+Linf Error:            24.2393834195
+LinfRel Error:         1.98252759622
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -8.071e-03 and 6.147e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999791881768
+Orbital energy after Harrison update:  -18.7669935867
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7669935867
+L2 norm of wavefunction residual (H*psi-lambda*psi):    30.7973211612
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999998994
+Linf Error:            24.2467285484
+LinfRel Error:         1.98193769264
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -8.091e-03 and 2.570e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999912319095
+Orbital energy after Harrison update:  -18.7669970272
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7669970272
+L2 norm of wavefunction residual (H*psi-lambda*psi):    30.8074458633
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999998242
+Linf Error:            24.2498414847
+LinfRel Error:         1.98168789949
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -8.094e-03 and 1.076e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999963087786
+Orbital energy after Harrison update:  -18.7669976389
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7669976389
+L2 norm of wavefunction residual (H*psi-lambda*psi):    30.8117345471
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999997754
+Linf Error:            24.2511571481
+LinfRel Error:         1.98158236416
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -8.095e-03 and 4.515e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999984462527
+Orbital energy after Harrison update:  -18.7669977475
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7669977475
+L2 norm of wavefunction residual (H*psi-lambda*psi):    30.8135467403
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999997519
+Linf Error:            24.2517123421
+LinfRel Error:         1.98153783633
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -8.095e-03 and 1.897e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999993459396
+Orbital energy after Harrison update:  -18.7669977668
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7669977668
+L2 norm of wavefunction residual (H*psi-lambda*psi):    30.8143113789
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999997414
+Linf Error:            24.2519464185
+LinfRel Error:         1.98151906409
+Located at:            -0.000477963708055 -0.000477963708055 0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -8.095e-03 and 7.975e-06
+
+
+Used 18 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Norm of psiNew =  1.0000852941
+Orbital energy after Harrison update:  -0.871514061503
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871514061503
+L2 norm of wavefunction residual (H*psi-lambda*psi):    6.78821987254
+Orbital 1 error and residual:   -3.071e-04 and 1.826e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00004184721
+Orbital energy after Harrison update:  -0.871514712337
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871514712337
+L2 norm of wavefunction residual (H*psi-lambda*psi):    6.84810420723
+Orbital 1 error and residual:   -3.077e-04 and 7.779e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00006827321
+Orbital energy after Harrison update:  -0.871514695917
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871514695917
+L2 norm of wavefunction residual (H*psi-lambda*psi):    6.85139567465
+Orbital 1 error and residual:   -3.077e-04 and 2.672e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00007764823
+Orbital energy after Harrison update:  -0.871514684286
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871514684286
+L2 norm of wavefunction residual (H*psi-lambda*psi):    6.85181616245
+Orbital 1 error and residual:   -3.077e-04 and 9.544e-06
+
+
+Used 4 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Norm of psiNew =  1.00005980241
+Orbital energy after Harrison update:  -0.338303728696
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303728696
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122384784102
+Orbital 2 error and residual:   -9.276e-06 and 1.270e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999967466037
+Orbital energy after Harrison update:  -0.338303721594
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303721594
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122872970679
+Orbital 2 error and residual:   -9.269e-06 and 4.653e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999985524197
+Orbital energy after Harrison update:  -0.338303723424
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303723424
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122890571821
+Orbital 2 error and residual:   -9.270e-06 and 1.609e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999992953104
+Orbital energy after Harrison update:  -0.338303723888
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303723888
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122896635383
+Orbital 2 error and residual:   -9.271e-06 and 6.869e-06
+
+
+Used 4 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Norm of psiNew =  1.00005980241
+Orbital energy after Harrison update:  -0.338303728696
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303728696
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122384784107
+Orbital 3 error and residual:   -9.276e-06 and 1.270e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999967466037
+Orbital energy after Harrison update:  -0.338303721594
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303721594
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122872970674
+Orbital 3 error and residual:   -9.269e-06 and 4.653e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999985524197
+Orbital energy after Harrison update:  -0.338303723424
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303723424
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122890571859
+Orbital 3 error and residual:   -9.270e-06 and 1.609e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999992953104
+Orbital energy after Harrison update:  -0.338303723888
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303723888
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122896635398
+Orbital 3 error and residual:   -9.271e-06 and 6.869e-06
+
+
+Used 4 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Norm of psiNew =  1.00005980241
+Orbital energy after Harrison update:  -0.338303728696
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303728696
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122384784078
+Orbital 4 error and residual:   -9.276e-06 and 1.270e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999967466037
+Orbital energy after Harrison update:  -0.338303721594
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303721594
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122872970647
+Orbital 4 error and residual:   -9.269e-06 and 4.653e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999985524197
+Orbital energy after Harrison update:  -0.338303723424
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303723424
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122890571854
+Orbital 4 error and residual:   -9.270e-06 and 1.609e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999992953104
+Orbital energy after Harrison update:  -0.338303723888
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338303723888
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122896635371
+Orbital 4 error and residual:   -9.271e-06 and 6.869e-06
+
+
+Used 4 iterations for orbital 4.
+
+
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7669977668
+L2 norm of wavefunction residual (H*psi-lambda*psi):    30.8143113789
+Energy Eigenvalue:  -0.871514684286
+L2 norm of wavefunction residual (H*psi-lambda*psi):    6.85181616245
+Energy Eigenvalue:  -0.338303723888
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122896635383
+Energy Eigenvalue:  -0.338303723888
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122896635398
+Energy Eigenvalue:  -0.338303723888
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.122896635371
+Integrated density:  8.00004690848
+Density Residual  0.00163521073378
+Computing Vcoulomb and updating Veff took:    2.8401 seconds. 
+Electrostatic Energies:
+Hartree:          36.3268513405
+External:         -177.172417911
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.630240 H, -1.68e-02 H
+Orbital Energy Errors after Veff Update:  [ -8.09480712e-03  -3.07694823e-04  -9.27093910e-06  -9.27094175e-06
+  -9.27094583e-06]
+Orbital 0 error: -8.095e-03
+Orbital 1 error: -3.077e-04
+Orbital 2 error: -9.271e-06
+Orbital 3 error: -9.271e-06
+Orbital 4 error: -9.271e-06
+Orbital Energies:  [-18.76699777  -0.87151468  -0.33830372  -0.33830372  -0.33830372]
+Updated V_x:                           -9.6264205395 Hartree
+Updated V_c:                           -0.6072555740 Hartree
+Updated Band Energy:                   -40.6302397977 H, -1.6842087657e-02 H
+Updated Kinetic Energy:                 74.1221515459 H, 9.4213547188e-03 H
+Updated E_x:                           -7.2198154046 H, -4.4532174496e-04 H
+Updated E_c:                           -0.5445630216 H, -9.7858793084e-06 H
+Updated totalElectrostatic:            -140.8455665706 H, -2.7422196943e-02 H
+Total Energy:                          -74.4877934509 H, -1.8455949849e-02 H
+Energy Residual:                        7.399e+01
+Density Residual:                       1.635e-03
+
+
+Setting density residual to -1 to exit after the first SCF
+
+Convergence to a tolerance of 0.000001 took 2 iterations
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  True
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_firstSCF_gradientFree/LW5_1500_order5_gradientFree.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  666000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.50e+03 
+Total Number of Cells:       6089 
+Total Number of Leaf Cells:  5328 
+Total Number of Gridpoints:  666000 
+Minimum Depth                3 levels 
+Maximum Depth:               13 levels 
+Cell Order:                  5 
+Construction time:           227 seconds.
+Closest gridpoint to origin:  [-0.00011949092701378505, -0.00011949092701378505, -0.00011949092701378505]
+For a distance of:  0.00020696435663138018
+Part of a cell centered at:  [-0.00244140625, -0.00244140625, -0.00244140625]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    666000
+Threads per block:    512
+Blocks per grid:      1301
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    9.2340 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.7589603   -0.87116566  -0.33824951  -0.33824951  -0.33824951]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.33802999905376485
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  2.30595675e-04  -2.55602741e+01  -2.62042137e+01  -2.62042137e+01
+  -2.62042137e+01]
+Potential Errors:  [ -4.04609329e-04   4.34478947e+01   4.46247505e+01   4.46247505e+01
+   4.46247505e+01]
+Electrostatic Energies:
+Hartree:          36.3255245289
+External:         -177.144931667
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.7589603   -0.87116566  -0.33824951  -0.33824951  -0.33824951]
+Orbital Energy Errors after initialization:  [ -5.73379108e-05   4.13259486e-05   4.49473177e-05   4.49473151e-05
+   4.49473110e-05]
+Updated V_x:                           -9.6258924828 Hartree
+Updated V_c:                           -0.6072488282 Hartree
+Updated Band Energy:                   -40.6132499447 H, 1.4776533393e-04 H
+Updated Kinetic Energy:                 74.1137739755 H, 1.0437843517e-03 H
+Updated E_x:                           -7.2194193621 H, -4.9279181042e-05 H
+Updated E_c:                           -0.5445569326 H, -3.6969371076e-06 H
+Updated totalElectrostatic:            -140.8194071381 H, -1.2627644634e-03 H
+Total Energy:                          -74.4696094573 H, -2.7195622978e-04 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.7589602976
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.5711120102
+Energy Eigenvalue:  -0.871165663514
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.48431038972
+Energy Eigenvalue:  -0.338249505631
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0166575509359
+Energy Eigenvalue:  -0.338249505631
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0166575509359
+Energy Eigenvalue:  -0.338249505631
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0166575509359
+Scrambling orbitals...
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  0.00214601768585
+Orbital energy after Harrison update:  397.653953036
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  397.653953036
+L2 norm of wavefunction residual (H*psi-lambda*psi):    406.364027131
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.83547001874
+Linf Error:            15.1441874177
+LinfRel Error:         4.93030538843
+Located at:            0.000119490927014 -0.000119490927014 -0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   4.164e+02 and 1.384e+00
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  2.84281460165
+Orbital energy after Harrison update:  -3.56067747849
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -3.56067747849
+L2 norm of wavefunction residual (H*psi-lambda*psi):    12.5788722369
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.81643406797
+Linf Error:            14.6274308591
+LinfRel Error:         5.72525388077
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.520e+01 and 2.162e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.46742392472
+Orbital energy after Harrison update:  -7.54168395909
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -7.54168395909
+L2 norm of wavefunction residual (H*psi-lambda*psi):    14.2241582972
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.89044374047
+Linf Error:            15.7134981896
+LinfRel Error:         4.31575239516
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.122e+01 and 2.748e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.14090109145
+Orbital energy after Harrison update:  -12.0769842417
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -12.0769842417
+L2 norm of wavefunction residual (H*psi-lambda*psi):    14.9036943249
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.94942410871
+Linf Error:            17.4607808497
+LinfRel Error:         3.24053122239
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   6.682e+00 and 2.432e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.0105525978
+Orbital energy after Harrison update:  -15.6730212778
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -15.6730212778
+L2 norm of wavefunction residual (H*psi-lambda*psi):    14.2436097499
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.98158956453
+Linf Error:            19.4836920734
+LinfRel Error:         2.62896742126
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.086e+00 and 1.881e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.96758362964
+Orbital energy after Harrison update:  -17.6389601882
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -17.6389601882
+L2 norm of wavefunction residual (H*psi-lambda*psi):    13.4758771117
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99466959215
+Linf Error:            21.3174706714
+LinfRel Error:         2.30585371806
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.120e+00 and 1.278e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.966322279456
+Orbital energy after Harrison update:  -18.4264804908
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.4264804908
+L2 norm of wavefunction residual (H*psi-lambda*psi):    13.5533450151
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99873060545
+Linf Error:            22.6405477949
+LinfRel Error:         2.14236554704
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.324e-01 and 7.529e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.97752327376
+Orbital energy after Harrison update:  -18.6757976785
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.6757976785
+L2 norm of wavefunction residual (H*psi-lambda*psi):    14.0889532891
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99973853654
+Linf Error:            23.4316620006
+LinfRel Error:         2.0628047177
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   8.311e-02 and 3.903e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.98779127353
+Orbital energy after Harrison update:  -18.7410587088
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7410587088
+L2 norm of wavefunction residual (H*psi-lambda*psi):    14.5521064412
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99995098099
+Linf Error:            23.8444051953
+LinfRel Error:         2.02554085181
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.784e-02 and 1.836e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.99412822199
+Orbital energy after Harrison update:  -18.7557645475
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7557645475
+L2 norm of wavefunction residual (H*psi-lambda*psi):    14.8227998992
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999127065
+Linf Error:            24.0410226075
+LinfRel Error:         2.00869334485
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.138e-03 and 8.099e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.997367588418
+Orbital energy after Harrison update:  -18.7587437347
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7587437347
+L2 norm of wavefunction residual (H*psi-lambda*psi):    14.9566485956
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999848365
+Linf Error:            24.1296277547
+LinfRel Error:         2.00128066091
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.592e-04 and 3.448e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998862074228
+Orbital energy after Harrison update:  -18.7593086087
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7593086087
+L2 norm of wavefunction residual (H*psi-lambda*psi):    15.0177539751
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999974088
+Linf Error:            24.1683263993
+LinfRel Error:         1.9980772159
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.056e-04 and 1.446e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999516267007
+Orbital energy after Harrison update:  -18.7594119263
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7594119263
+L2 norm of wavefunction residual (H*psi-lambda*psi):    15.044573739
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999995672
+Linf Error:            24.1849456324
+LinfRel Error:         1.99670777116
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.090e-04 and 6.038e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999795768865
+Orbital energy after Harrison update:  -18.7594304944
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7594304944
+L2 norm of wavefunction residual (H*psi-lambda*psi):    15.0561149026
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999999293
+Linf Error:            24.1920190508
+LinfRel Error:         1.99612605244
+Located at:            0.000119490927014 -0.000119490927014 -0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.275e-04 and 2.523e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999913987704
+Orbital energy after Harrison update:  -18.7594338048
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7594338048
+L2 norm of wavefunction residual (H*psi-lambda*psi):    15.0610311477
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999999863
+Linf Error:            24.1950150891
+LinfRel Error:         1.99587986259
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.308e-04 and 1.056e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999963802625
+Orbital energy after Harrison update:  -18.759434393
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.759434393
+L2 norm of wavefunction residual (H*psi-lambda*psi):    15.063114213
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999999937
+Linf Error:            24.1962807246
+LinfRel Error:         1.9957758996
+Located at:            0.000119490927014 -0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.314e-04 and 4.431e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999984768564
+Orbital energy after Harrison update:  -18.7594344973
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7594344973
+L2 norm of wavefunction residual (H*psi-lambda*psi):    15.0639942922
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999999938
+Linf Error:            24.1968145765
+LinfRel Error:         1.99573205395
+Located at:            -0.000119490927014 -0.000119490927014 -0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.315e-04 and 1.861e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999993590386
+Orbital energy after Harrison update:  -18.7594345158
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7594345158
+L2 norm of wavefunction residual (H*psi-lambda*psi):    15.0643655245
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999999933
+Linf Error:            24.1970395659
+LinfRel Error:         1.99571357656
+Located at:            -0.000119490927014 0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.316e-04 and 7.821e-06
+
+
+Used 18 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Norm of psiNew =  1.00001702106
+Orbital energy after Harrison update:  -0.871191302303
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871191302303
+L2 norm of wavefunction residual (H*psi-lambda*psi):    3.19824976953
+Orbital 1 error and residual:   1.569e-05 and 3.793e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00000067284
+Orbital energy after Harrison update:  -0.871191310989
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871191310989
+L2 norm of wavefunction residual (H*psi-lambda*psi):    3.20290643427
+Orbital 1 error and residual:   1.568e-05 and 7.636e-06
+
+
+Used 2 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Norm of psiNew =  1.00001217716
+Orbital energy after Harrison update:  -0.338268488697
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338268488697
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0679567534664
+Orbital 2 error and residual:   2.596e-05 and 4.100e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999994641516
+Orbital energy after Harrison update:  -0.338268486255
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338268486255
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0680868692331
+Orbital 2 error and residual:   2.597e-05 and 7.080e-06
+
+
+Used 2 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Norm of psiNew =  1.00001217716
+Orbital energy after Harrison update:  -0.338268488697
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338268488697
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0679567534076
+Orbital 3 error and residual:   2.596e-05 and 4.100e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999994641516
+Orbital energy after Harrison update:  -0.338268486255
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338268486255
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0680868692369
+Orbital 3 error and residual:   2.597e-05 and 7.080e-06
+
+
+Used 2 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Norm of psiNew =  1.00001217716
+Orbital energy after Harrison update:  -0.338268488697
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338268488697
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0679567533437
+Orbital 4 error and residual:   2.596e-05 and 4.100e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999994641516
+Orbital energy after Harrison update:  -0.338268486255
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338268486255
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0680868692187
+Orbital 4 error and residual:   2.597e-05 and 7.080e-06
+
+
+Used 2 iterations for orbital 4.
+
+
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7594345158
+L2 norm of wavefunction residual (H*psi-lambda*psi):    15.0643655245
+Energy Eigenvalue:  -0.871191310989
+L2 norm of wavefunction residual (H*psi-lambda*psi):    3.20290643427
+Energy Eigenvalue:  -0.338268486255
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0680868692331
+Energy Eigenvalue:  -0.338268486255
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0680868692369
+Energy Eigenvalue:  -0.338268486255
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0680868692187
+Integrated density:  8.00004386476
+Density Residual  0.000189418377496
+Computing Vcoulomb and updating Veff took:    12.2210 seconds. 
+Electrostatic Energies:
+Hartree:          36.3254542691
+External:         -177.145397077
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.614326 H, -9.28e-04 H
+Orbital Energy Errors after Veff Update:  [ -5.31556152e-04   1.56784733e-05   2.59666940e-05   2.59666913e-05
+   2.59666872e-05]
+Orbital 0 error: -5.316e-04
+Orbital 1 error: 1.568e-05
+Orbital 2 error: 2.597e-05
+Orbital 3 error: 2.597e-05
+Orbital 4 error: 2.597e-05
+Orbital Energies:  [-18.75943452  -0.87119131  -0.33826849  -0.33826849  -0.33826849]
+Updated V_x:                           -9.6258959413 Hartree
+Updated V_c:                           -0.6072478584 Hartree
+Updated Band Energy:                   -40.6143255987 H, -9.2788859496e-04 H
+Updated Kinetic Energy:                 74.1133067401 H, 5.7654898927e-04 H
+Updated E_x:                           -7.2194219560 H, -5.1873083889e-05 H
+Updated E_c:                           -0.5445560737 H, -2.8380463758e-06 H
+Updated totalElectrostatic:            -140.8199428082 H, -1.7984345374e-03 H
+Total Energy:                          -74.4706140978 H, -1.2765966784e-03 H
+Energy Residual:                        7.397e+01
+Density Residual:                       1.894e-04
+
+
+Setting density residual to -1 to exit after the first SCF
+
+Convergence to a tolerance of 0.000001 took 2 iterations
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  True
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_firstSCF_gradientFree/LW5_2500_order5_gradientFree.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  1086000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            2.50e+03 
+Total Number of Cells:       9929 
+Total Number of Leaf Cells:  8688 
+Total Number of Gridpoints:  1086000 
+Minimum Depth                3 levels 
+Maximum Depth:               14 levels 
+Cell Order:                  5 
+Construction time:           378 seconds.
+Closest gridpoint to origin:  [-5.9745463506892527e-05, -5.9745463506892527e-05, -5.9745463506892527e-05]
+For a distance of:  0.00010348217831569009
+Part of a cell centered at:  [-0.001220703125, -0.001220703125, -0.001220703125]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    1086000
+Threads per block:    512
+Blocks per grid:      2122
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    23.2823 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.7587749   -0.87115718  -0.33825394  -0.33825394  -0.33825394]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.33803443671548444
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  1.11775365e-04  -2.55602820e+01  -2.62042172e+01  -2.62042172e+01
+  -2.62042172e+01]
+Potential Errors:  [ -1.00387271e-04   4.34479111e+01   4.46247496e+01   4.46247496e+01
+   4.46247496e+01]
+Electrostatic Energies:
+Hartree:          36.3255064531
+External:         -177.144239302
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.7587749   -0.87115718  -0.33825394  -0.33825394  -0.33825394]
+Orbital Energy Errors after initialization:  [  1.28063837e-04   4.98080502e-05   4.05096560e-05   4.05096534e-05
+   4.05096493e-05]
+Updated V_x:                           -9.6258904892 Hartree
+Updated V_c:                           -0.6072488200 Hartree
+Updated Band Energy:                   -40.6128799277 H, 5.1778238576e-04 H
+Updated Kinetic Energy:                 74.1134857771 H, 7.5558596851e-04 H
+Updated E_x:                           -7.2194178669 H, -4.7784016775e-05 H
+Updated E_c:                           -0.5445569270 H, -3.6913046609e-06 H
+Updated totalElectrostatic:            -140.8187328487 H, -5.8847500989e-04 H
+Total Energy:                          -74.4692218655 H, 1.1563563719e-04 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.7587748958
+L2 norm of wavefunction residual (H*psi-lambda*psi):    7.55954207043
+Energy Eigenvalue:  -0.871157181412
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.77652973989
+Energy Eigenvalue:  -0.338253943293
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.010672078809
+Energy Eigenvalue:  -0.338253943293
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.010672078809
+Energy Eigenvalue:  -0.338253943293
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.010672078809
+Scrambling orbitals...
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  0.00216149662345
+Orbital energy after Harrison update:  374.857118555
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  374.857118555
+L2 norm of wavefunction residual (H*psi-lambda*psi):    383.847386685
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.83819428152
+Linf Error:            15.2341042536
+LinfRel Error:         4.83462106303
+Located at:            5.97454635069e-05 -5.97454635069e-05 -5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.936e+02 and 1.385e+00
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  2.8626815308
+Orbital energy after Harrison update:  -3.57042959146
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -3.57042959146
+L2 norm of wavefunction residual (H*psi-lambda*psi):    12.4826019357
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.8169393097
+Linf Error:            14.6543810343
+LinfRel Error:         5.69916460189
+Located at:            5.97454635069e-05 -5.97454635069e-05 -5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.519e+01 and 2.002e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.46718884158
+Orbital energy after Harrison update:  -7.5610258123
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -7.5610258123
+L2 norm of wavefunction residual (H*psi-lambda*psi):    14.0118802852
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.89081962693
+Linf Error:            15.7343759774
+LinfRel Error:         4.30923444255
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.120e+01 and 2.746e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.14032580895
+Orbital energy after Harrison update:  -12.0985071344
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -12.0985071344
+L2 norm of wavefunction residual (H*psi-lambda*psi):    14.3639266684
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.94965628674
+Linf Error:            17.4790018697
+LinfRel Error:         3.23928662272
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   6.660e+00 and 2.430e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.01020922296
+Orbital energy after Harrison update:  -15.6876392352
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -15.6876392352
+L2 norm of wavefunction residual (H*psi-lambda*psi):    12.9809721767
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.98169837949
+Linf Error:            19.498213863
+LinfRel Error:         2.62950905471
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.071e+00 and 1.878e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.967501590674
+Orbital energy after Harrison update:  -17.6454565972
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -17.6454565972
+L2 norm of wavefunction residual (H*psi-lambda*psi):    11.0825563336
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99470751331
+Linf Error:            21.3264271847
+LinfRel Error:         2.30721414351
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.113e+00 and 1.275e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.966368907328
+Orbital energy after Harrison update:  -18.4284690227
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.4284690227
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.1135280741
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99874067676
+Linf Error:            22.6437416992
+LinfRel Error:         2.14415533383
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.304e-01 and 7.505e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.977588790923
+Orbital energy after Harrison update:  -18.6760606923
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.6760606923
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.0633030669
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.9997406761
+Linf Error:            23.4305613604
+LinfRel Error:         2.06482122367
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   8.284e-02 and 3.888e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.987837525444
+Orbital energy after Harrison update:  -18.7408062579
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7408062579
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.271381471
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99995134974
+Linf Error:            23.8407439008
+LinfRel Error:         2.0276735096
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   1.810e-02 and 1.828e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.994153581515
+Orbital energy after Harrison update:  -18.7553850206
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7553850206
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.4367552197
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999131547
+Linf Error:            24.0360388702
+LinfRel Error:         2.01088276052
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.518e-03 and 8.061e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.997379745566
+Orbital energy after Harrison update:  -18.758336954
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.758336954
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.5267786254
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999848217
+Linf Error:            24.1240187153
+LinfRel Error:         2.00349652893
+Located at:            5.97454635069e-05 -5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   5.660e-04 and 3.431e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998867505865
+Orbital energy after Harrison update:  -18.7588964859
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7588964859
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.5694426333
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999973687
+Linf Error:            24.1624363527
+LinfRel Error:         2.00030497622
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   6.474e-06 and 1.439e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999518613534
+Orbital energy after Harrison update:  -18.7589988082
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7589988082
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.5884626536
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999995466
+Linf Error:            24.1789327826
+LinfRel Error:         1.99894075378
+Located at:            5.97454635069e-05 -5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -9.585e-05 and 6.008e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999796768046
+Orbital energy after Harrison update:  -18.7590171955
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7590171955
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.5967027031
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999999221
+Linf Error:            24.1859533533
+LinfRel Error:         1.99836129447
+Located at:            -5.97454635069e-05 -5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.142e-04 and 2.511e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999914410794
+Orbital energy after Harrison update:  -18.7590204735
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7590204735
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.6002224338
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999999857
+Linf Error:            24.1889268343
+LinfRel Error:         1.99811607383
+Located at:            -5.97454635069e-05 -5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.175e-04 and 1.051e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999963981437
+Orbital energy after Harrison update:  -18.7590210558
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7590210558
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.6017157691
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999999959
+Linf Error:            24.1901828925
+LinfRel Error:         1.99801252389
+Located at:            -5.97454635069e-05 5.97454635069e-05 -5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.181e-04 and 4.409e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999984844097
+Orbital energy after Harrison update:  -18.7590211591
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7590211591
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.6023471959
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999999973
+Linf Error:            24.1907126852
+LinfRel Error:         1.997968854
+Located at:            -5.97454635069e-05 -5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.182e-04 and 1.852e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999993622292
+Orbital energy after Harrison update:  -18.7590211775
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7590211775
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.6026135176
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              1.99999999974
+Linf Error:            24.1909359588
+LinfRel Error:         1.9979504511
+Located at:            -5.97454635069e-05 -5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.182e-04 and 7.783e-06
+
+
+Used 18 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Norm of psiNew =  1.00001038343
+Orbital energy after Harrison update:  -0.871175500925
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871175500925
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.16182497864
+Orbital 1 error and residual:   3.149e-05 and 2.252e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999996708976
+Orbital energy after Harrison update:  -0.871175503449
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871175503449
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.16285158579
+Orbital 1 error and residual:   3.149e-05 and 3.542e-06
+
+
+Used 2 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Norm of psiNew =  1.00000920094
+Orbital energy after Harrison update:  -0.338275417918
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338275417918
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0549082595178
+Orbital 2 error and residual:   1.904e-05 and 2.545e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999991453249
+Orbital energy after Harrison update:  -0.338275410539
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338275410539
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0550007569755
+Orbital 2 error and residual:   1.904e-05 and 9.822e-06
+
+
+Used 2 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Norm of psiNew =  1.00000920094
+Orbital energy after Harrison update:  -0.338275417918
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338275417918
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0549082596839
+Orbital 3 error and residual:   1.904e-05 and 2.545e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999991453249
+Orbital energy after Harrison update:  -0.338275410539
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338275410539
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0550007567776
+Orbital 3 error and residual:   1.904e-05 and 9.822e-06
+
+
+Used 2 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Norm of psiNew =  1.00000920094
+Orbital energy after Harrison update:  -0.338275417918
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338275417918
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0549082594931
+Orbital 4 error and residual:   1.904e-05 and 2.545e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999991453249
+Orbital energy after Harrison update:  -0.338275410539
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.338275410539
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0550007569117
+Orbital 4 error and residual:   1.904e-05 and 9.822e-06
+
+
+Used 2 iterations for orbital 4.
+
+
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7590211775
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.6026135176
+Energy Eigenvalue:  -0.871175503449
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.16285158579
+Energy Eigenvalue:  -0.338275410539
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0550007569755
+Energy Eigenvalue:  -0.338275410539
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0550007567776
+Energy Eigenvalue:  -0.338275410539
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0550007569117
+Integrated density:  8.00004331035
+Density Residual  9.46208022133e-05
+Computing Vcoulomb and updating Veff took:    28.2484 seconds. 
+Electrostatic Energies:
+Hartree:          36.3254070006
+External:         -177.144079176
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.613495 H, -9.73e-05 H
+Orbital Energy Errors after Veff Update:  [ -1.18217778e-04   3.14860132e-05   1.90424094e-05   1.90424067e-05
+   1.90424026e-05]
+Orbital 0 error: -1.182e-04
+Orbital 1 error: 3.149e-05
+Orbital 2 error: 1.904e-05
+Orbital 3 error: 1.904e-05
+Orbital 4 error: 1.904e-05
+Orbital Energies:  [-18.75902118  -0.8711755   -0.33827541  -0.33827541  -0.33827541]
+Updated V_x:                           -9.6258751695 Hartree
+Updated V_c:                           -0.6072477537 Hartree
+Updated Band Energy:                   -40.6134950040 H, -9.7293905533e-05 H
+Updated Kinetic Energy:                 74.1128930945 H, 1.6290331619e-04 H
+Updated E_x:                           -7.2194063771 H, -3.6294209658e-05 H
+Updated E_c:                           -0.5445559711 H, -2.7353831217e-06 H
+Updated totalElectrostatic:            -140.8186721759 H, -5.2780218743e-04 H
+Total Energy:                          -74.4697414296 H, -4.0392846401e-04 H
+Energy Residual:                        7.397e+01
+Density Residual:                       9.462e-05
+
+
+Setting density residual to -1 to exit after the first SCF
+
+Convergence to a tolerance of 0.000001 took 2 iterations
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  False
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_firstSCF_gradientFree/LW5_500_order4_gradient.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  136704
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       2441 
+Total Number of Leaf Cells:  2136 
+Total Number of Gridpoints:  136704 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  4 
+Construction time:           48.2 seconds.
+Closest gridpoint to origin:  [-0.00074336394031946501, -0.00074336394031946501, -0.00074336394031946501]
+For a distance of:  0.001287544113147912
+Part of a cell centered at:  [-0.009765625, -0.009765625, -0.009765625]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    136704
+Threads per block:    512
+Blocks per grid:      267
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    0.4583 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.76590075  -0.87061482  -0.33710439  -0.33710439  -0.33710439]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.3368848883072305
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  1.56786291e-02  -2.55584236e+01  -2.62032235e+01  -2.62032235e+01
+  -2.62032235e+01]
+Potential Errors:  [ -2.27930946e-02   4.34465951e+01   4.46249054e+01   4.46249054e+01
+   4.46249054e+01]
+Electrostatic Energies:
+Hartree:          36.3288638243
+External:         -177.204021853
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.76590075  -0.87061482  -0.33710439  -0.33710439  -0.33710439]
+Orbital Energy Errors after initialization:  [-0.00699779  0.00059217  0.00119006  0.00119006  0.00119006]
+Updated V_x:                           -9.6268224181 Hartree
+Updated V_c:                           -0.6072711711 Hartree
+Updated Band Energy:                   -40.6214487199 H, -8.0510097874e-03 H
+Updated Kinetic Energy:                 74.1589390740 H, 4.6208882863e-02 H
+Updated E_x:                           -7.2201168135 H, -7.4673065532e-04 H
+Updated E_c:                           -0.5445777453 H, -2.4509631420e-05 H
+Updated totalElectrostatic:            -140.8751580290 H, -5.7013655314e-02 H
+Total Energy:                          -74.4809135138 H, -1.1576012738e-02 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.7659007495
+L2 norm of wavefunction residual (H*psi-lambda*psi):    27.5068294749
+Energy Eigenvalue:  -0.870614820694
+L2 norm of wavefunction residual (H*psi-lambda*psi):    6.47201350457
+Energy Eigenvalue:  -0.337104394884
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.246097302674
+Energy Eigenvalue:  -0.337104394884
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.246097302674
+Energy Eigenvalue:  -0.337104394884
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.246097302674
+Scrambling orbitals...
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-0.00193876 -0.87061482 -0.33710439 -0.33710439 -0.33710439]
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 216, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
+  File "testBatchGreenIterations_KS.py", line 116, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 420, in greenIterations_KohnSham_SCF
+    tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+  File "../src/dataStructures/TreeStruct_CC.py", line 1216, in updateOrbitalEnergies
+    self.computeOccupations()
+  File "../src/dataStructures/TreeStruct_CC.py", line 157, in computeOccupations
+    eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/scipy/optimize/zeros.py", line 442, in brentq
+    r = _zeros._brentq(f,a,b,xtol,rtol,maxiter,args,full_output,disp)
+ValueError: f(a) and f(b) must have different signs
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  False
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_firstSCF_gradientFree/LW5_1500_order4_gradient.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  340992
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.50e+03 
+Total Number of Cells:       6089 
+Total Number of Leaf Cells:  5328 
+Total Number of Gridpoints:  340992 
+Minimum Depth                3 levels 
+Maximum Depth:               13 levels 
+Cell Order:                  4 
+Construction time:           117 seconds.
+Closest gridpoint to origin:  [-0.00018584098507986625, -0.00018584098507986625, -0.00018584098507986625]
+For a distance of:  0.000321886028286978
+Part of a cell centered at:  [-0.00244140625, -0.00244140625, -0.00244140625]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    340992
+Threads per block:    512
+Blocks per grid:      666
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    2.6543 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.75767111  -0.87090153  -0.33798917  -0.33798917  -0.33798917]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.3377696631346126
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  3.77778182e-03  -2.55599120e+01  -2.62039809e+01  -2.62039809e+01
+  -2.62039809e+01]
+Potential Errors:  [ -2.66260450e-03   4.34477968e+01   4.46247780e+01   4.46247780e+01
+   4.46247780e+01]
+Electrostatic Energies:
+Hartree:          36.3248965348
+External:         -177.149634885
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.75767111  -0.87090153  -0.33798917  -0.33798917  -0.33798917]
+Orbital Energy Errors after initialization:  [ 0.00123185  0.00030546  0.00030528  0.00030528  0.00030528]
+Updated V_x:                           -9.6259700894 Hartree
+Updated V_c:                           -0.6072538047 Hartree
+Updated Band Energy:                   -40.6091019505 H, 4.2957595591e-03 H
+Updated Kinetic Energy:                 74.1239637593 H, 1.1233568140e-02 H
+Updated E_x:                           -7.2194775670 H, -1.0748414700e-04 H
+Updated E_c:                           -0.5445612805 H, -8.0448291929e-06 H
+Updated totalElectrostatic:            -140.8247383505 H, -6.5939768298e-03 H
+Total Energy:                          -74.4648134388 H, 4.5240623340e-03 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.7576711066
+L2 norm of wavefunction residual (H*psi-lambda*psi):    13.8922642944
+Energy Eigenvalue:  -0.870901529213
+L2 norm of wavefunction residual (H*psi-lambda*psi):    3.26908661532
+Energy Eigenvalue:  -0.337989169712
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.11442626643
+Energy Eigenvalue:  -0.337989169712
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.11442626643
+Energy Eigenvalue:  -0.337989169712
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.11442626643
+Scrambling orbitals...
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-0.00198126 -0.87090153 -0.33798917 -0.33798917 -0.33798917]
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 216, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
+  File "testBatchGreenIterations_KS.py", line 116, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 420, in greenIterations_KohnSham_SCF
+    tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+  File "../src/dataStructures/TreeStruct_CC.py", line 1216, in updateOrbitalEnergies
+    self.computeOccupations()
+  File "../src/dataStructures/TreeStruct_CC.py", line 157, in computeOccupations
+    eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/scipy/optimize/zeros.py", line 442, in brentq
+    r = _zeros._brentq(f,a,b,xtol,rtol,maxiter,args,full_output,disp)
+ValueError: f(a) and f(b) must have different signs
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  False
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_firstSCF_gradientFree/LW5_2500_order4_gradient.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  556032
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            2.50e+03 
+Total Number of Cells:       9929 
+Total Number of Leaf Cells:  8688 
+Total Number of Gridpoints:  556032 
+Minimum Depth                3 levels 
+Maximum Depth:               14 levels 
+Cell Order:                  4 
+Construction time:           196 seconds.
+Closest gridpoint to origin:  [-9.2920492539933126e-05, -9.2920492539933126e-05, -9.2920492539933126e-05]
+For a distance of:  0.000160943014143489
+Part of a cell centered at:  [-0.001220703125, -0.001220703125, -0.001220703125]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    556032
+Threads per block:    512
+Blocks per grid:      1086
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    6.0673 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.75756486  -0.87097143  -0.33811078  -0.33811078  -0.33811078]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.3378912772350763
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  2.14528065e-03  -2.55600484e+01  -2.62040874e+01  -2.62040874e+01
+  -2.62040874e+01]
+Potential Errors:  [ -9.23860704e-04   4.34478632e+01   4.46247629e+01   4.46247629e+01
+   4.46247629e+01]
+Electrostatic Energies:
+Hartree:          36.3254601254
+External:         -177.146545626
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.75756486  -0.87097143  -0.33811078  -0.33811078  -0.33811078]
+Orbital Energy Errors after initialization:  [ 0.0013381   0.00023556  0.00018367  0.00018367  0.00018367]
+Updated V_x:                           -9.6259593683 Hartree
+Updated V_c:                           -0.6072519768 Hartree
+Updated Band Energy:                   -40.6095157163 H, 3.8819937667e-03 H
+Updated Kinetic Energy:                 74.1193210035 H, 6.5908123876e-03 H
+Updated E_x:                           -7.2194695262 H, -9.9443334440e-05 H
+Updated E_c:                           -0.5445596757 H, -6.4400405023e-06 H
+Updated totalElectrostatic:            -140.8210855001 H, -2.9411264712e-03 H
+Total Energy:                          -74.4657936986 H, 3.5438025414e-03 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.757564864
+L2 norm of wavefunction residual (H*psi-lambda*psi):    9.81834218894
+Energy Eigenvalue:  -0.870971426536
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.31046845166
+Energy Eigenvalue:  -0.338110783812
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.084170406926
+Energy Eigenvalue:  -0.338110783812
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.084170406926
+Energy Eigenvalue:  -0.338110783812
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.084170406926
+Scrambling orbitals...
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-0.00210349 -0.87097143 -0.33811078 -0.33811078 -0.33811078]
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 216, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
+  File "testBatchGreenIterations_KS.py", line 116, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 420, in greenIterations_KohnSham_SCF
+    tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+  File "../src/dataStructures/TreeStruct_CC.py", line 1216, in updateOrbitalEnergies
+    self.computeOccupations()
+  File "../src/dataStructures/TreeStruct_CC.py", line 157, in computeOccupations
+    eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/scipy/optimize/zeros.py", line 442, in brentq
+    r = _zeros._brentq(f,a,b,xtol,rtol,maxiter,args,full_output,disp)
+ValueError: f(a) and f(b) must have different signs
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  False
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_firstSCF_gradientFree/LW5_500_order5_gradient.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  267000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       2441 
+Total Number of Leaf Cells:  2136 
+Total Number of Gridpoints:  267000 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  5 
+Construction time:           85.6 seconds.
+Closest gridpoint to origin:  [-0.00047796370805514021, -0.00047796370805514021, -0.00047796370805514021]
+For a distance of:  0.0008278574265255207
+Part of a cell centered at:  [-0.009765625, -0.009765625, -0.009765625]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    267000
+Threads per block:    512
+Blocks per grid:      522
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    1.6978 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.76370467  -0.87138678  -0.33819614  -0.33819614  -0.33819614]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.3379766297900805
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  1.85213744e-03  -2.55601460e+01  -2.62041630e+01  -2.62041630e+01
+  -2.62041630e+01]
+Potential Errors:  [ -6.77052052e-03   4.34475455e+01   4.46247532e+01   4.46247532e+01
+   4.46247532e+01]
+Electrostatic Energies:
+Hartree:          36.3255508211
+External:         -177.158454263
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.76370467  -0.87138678  -0.33819614  -0.33819614  -0.33819614]
+Orbital Energy Errors after initialization:  [ -4.80170733e-03  -1.79794869e-04   9.83165814e-05   9.83165788e-05
+   9.83165747e-05]
+Updated V_x:                           -9.6259183474 Hartree
+Updated V_c:                           -0.6072496853 Hartree
+Updated Band Energy:                   -40.6229674482 H, -9.5697380812e-03 H
+Updated Kinetic Energy:                 74.1175532051 H, 4.8230139691e-03 H
+Updated E_x:                           -7.2194387606 H, -6.8677680821e-05 H
+Updated E_c:                           -0.5445573141 H, -4.0784541996e-06 H
+Updated totalElectrostatic:            -140.8329034417 H, -1.4759068062e-02 H
+Total Energy:                          -74.4793463113 H, -1.0008810228e-02 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.763704667
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.1516726089
+Energy Eigenvalue:  -0.871386784331
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.97165044763
+Energy Eigenvalue:  -0.338196136367
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0486572251937
+Energy Eigenvalue:  -0.338196136367
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0486572251937
+Energy Eigenvalue:  -0.338196136367
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0486572251937
+Scrambling orbitals...
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-0.0020518  -0.87138678 -0.33819614 -0.33819614 -0.33819614]
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 216, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
+  File "testBatchGreenIterations_KS.py", line 116, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 420, in greenIterations_KohnSham_SCF
+    tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+  File "../src/dataStructures/TreeStruct_CC.py", line 1216, in updateOrbitalEnergies
+    self.computeOccupations()
+  File "../src/dataStructures/TreeStruct_CC.py", line 157, in computeOccupations
+    eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/scipy/optimize/zeros.py", line 442, in brentq
+    r = _zeros._brentq(f,a,b,xtol,rtol,maxiter,args,full_output,disp)
+ValueError: f(a) and f(b) must have different signs
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  False
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_firstSCF_gradientFree/LW5_1500_order5_gradient.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  666000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.50e+03 
+Total Number of Cells:       6089 
+Total Number of Leaf Cells:  5328 
+Total Number of Gridpoints:  666000 
+Minimum Depth                3 levels 
+Maximum Depth:               13 levels 
+Cell Order:                  5 
+Construction time:           228 seconds.
+Closest gridpoint to origin:  [-0.00011949092701378505, -0.00011949092701378505, -0.00011949092701378505]
+For a distance of:  0.00020696435663138018
+Part of a cell centered at:  [-0.00244140625, -0.00244140625, -0.00244140625]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    666000
+Threads per block:    512
+Blocks per grid:      1301
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    9.2429 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.7589603   -0.87116566  -0.33824951  -0.33824951  -0.33824951]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.33802999905376485
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  2.30595675e-04  -2.55602741e+01  -2.62042137e+01  -2.62042137e+01
+  -2.62042137e+01]
+Potential Errors:  [ -4.04609329e-04   4.34478947e+01   4.46247505e+01   4.46247505e+01
+   4.46247505e+01]
+Electrostatic Energies:
+Hartree:          36.3255245289
+External:         -177.144931667
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.7589603   -0.87116566  -0.33824951  -0.33824951  -0.33824951]
+Orbital Energy Errors after initialization:  [ -5.73379108e-05   4.13259486e-05   4.49473177e-05   4.49473151e-05
+   4.49473110e-05]
+Updated V_x:                           -9.6258924828 Hartree
+Updated V_c:                           -0.6072488282 Hartree
+Updated Band Energy:                   -40.6132499447 H, 1.4776533393e-04 H
+Updated Kinetic Energy:                 74.1137739755 H, 1.0437843517e-03 H
+Updated E_x:                           -7.2194193621 H, -4.9279181042e-05 H
+Updated E_c:                           -0.5445569326 H, -3.6969371076e-06 H
+Updated totalElectrostatic:            -140.8194071381 H, -1.2627644634e-03 H
+Total Energy:                          -74.4696094573 H, -2.7195622978e-04 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.7589602976
+L2 norm of wavefunction residual (H*psi-lambda*psi):    10.5711120102
+Energy Eigenvalue:  -0.871165663514
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.48431038972
+Energy Eigenvalue:  -0.338249505631
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0166575509359
+Energy Eigenvalue:  -0.338249505631
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0166575509359
+Energy Eigenvalue:  -0.338249505631
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.0166575509359
+Scrambling orbitals...
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-0.00188172 -0.87116566 -0.33824951 -0.33824951 -0.33824951]
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 216, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
+  File "testBatchGreenIterations_KS.py", line 116, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 420, in greenIterations_KohnSham_SCF
+    tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+  File "../src/dataStructures/TreeStruct_CC.py", line 1216, in updateOrbitalEnergies
+    self.computeOccupations()
+  File "../src/dataStructures/TreeStruct_CC.py", line 157, in computeOccupations
+    eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/scipy/optimize/zeros.py", line 442, in brentq
+    r = _zeros._brentq(f,a,b,xtol,rtol,maxiter,args,full_output,disp)
+ValueError: f(a) and f(b) must have different signs
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  False
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_firstSCF_gradientFree/LW5_2500_order5_gradient.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  1086000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            2.50e+03 
+Total Number of Cells:       9929 
+Total Number of Leaf Cells:  8688 
+Total Number of Gridpoints:  1086000 
+Minimum Depth                3 levels 
+Maximum Depth:               14 levels 
+Cell Order:                  5 
+Construction time:           362 seconds.
+Closest gridpoint to origin:  [-5.9745463506892527e-05, -5.9745463506892527e-05, -5.9745463506892527e-05]
+For a distance of:  0.00010348217831569009
+Part of a cell centered at:  [-0.001220703125, -0.001220703125, -0.001220703125]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    1086000
+Threads per block:    512
+Blocks per grid:      2122
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    23.3656 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.7587749   -0.87115718  -0.33825394  -0.33825394  -0.33825394]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.33803443671548444
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  1.11775365e-04  -2.55602820e+01  -2.62042172e+01  -2.62042172e+01
+  -2.62042172e+01]
+Potential Errors:  [ -1.00387271e-04   4.34479111e+01   4.46247496e+01   4.46247496e+01
+   4.46247496e+01]
+Electrostatic Energies:
+Hartree:          36.3255064531
+External:         -177.144239302
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.7587749   -0.87115718  -0.33825394  -0.33825394  -0.33825394]
+Orbital Energy Errors after initialization:  [  1.28063837e-04   4.98080502e-05   4.05096560e-05   4.05096534e-05
+   4.05096493e-05]
+Updated V_x:                           -9.6258904892 Hartree
+Updated V_c:                           -0.6072488200 Hartree
+Updated Band Energy:                   -40.6128799277 H, 5.1778238576e-04 H
+Updated Kinetic Energy:                 74.1134857771 H, 7.5558596851e-04 H
+Updated E_x:                           -7.2194178669 H, -4.7784016775e-05 H
+Updated E_c:                           -0.5445569270 H, -3.6913046609e-06 H
+Updated totalElectrostatic:            -140.8187328487 H, -5.8847500989e-04 H
+Total Energy:                          -74.4692218655 H, 1.1563563719e-04 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.7587748958
+L2 norm of wavefunction residual (H*psi-lambda*psi):    7.55954207043
+Energy Eigenvalue:  -0.871157181412
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.77652973989
+Energy Eigenvalue:  -0.338253943293
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.010672078809
+Energy Eigenvalue:  -0.338253943293
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.010672078809
+Energy Eigenvalue:  -0.338253943293
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.010672078809
+Scrambling orbitals...
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-0.00199335 -0.87115718 -0.33825394 -0.33825394 -0.33825394]
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 216, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
+  File "testBatchGreenIterations_KS.py", line 116, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 420, in greenIterations_KohnSham_SCF
+    tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+  File "../src/dataStructures/TreeStruct_CC.py", line 1216, in updateOrbitalEnergies
+    self.computeOccupations()
+  File "../src/dataStructures/TreeStruct_CC.py", line 157, in computeOccupations
+    eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/scipy/optimize/zeros.py", line 442, in brentq
+    r = _zeros._brentq(f,a,b,xtol,rtol,maxiter,args,full_output,disp)
+ValueError: f(a) and f(b) must have different signs

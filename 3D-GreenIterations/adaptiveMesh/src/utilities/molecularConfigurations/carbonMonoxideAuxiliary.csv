@@ -1,12 +1,12 @@
 ../src/utilities/molecularConfigurations/carbonMonoxide.csv
 /home/njvaughn/results_CO/results.csv
-14
-10
--6.2898649220361037e+01 # Band energy 
- 0 						# Kinetic energy 
--1.1997052574614749e+01 # Exchange energy 
--9.4214501809750550e-01 # Correlation Energy 
-0 						# Electrostatic Energy
--1.1247167888813128e+02 # Total Energy 
--1
+14  # nElectrons
+7	# nOrbitals
+-6.2898682441673358e+01 # Band energy 
+ 1.1185061770418731e+02 # Kinetic energy 
+-1.1997011069615391e+01 # Exchange energy 
+-9.4214407530225852e-01 # Correlation Energy 
+-2.1138290579726365e+02 # Electrostatic Energy
+-1.1247144323799400e+02 # Total Energy 
+-0.5 # Gauge Shift	
 

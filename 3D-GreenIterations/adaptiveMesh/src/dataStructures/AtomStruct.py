@@ -3,14 +3,18 @@
 '''
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.special import erf
 import os
+
+def u(r):
+    return erf(r)/r + 1/(3*np.sqrt(np.pi)) * ( np.exp(-r**2) + 16*np.exp(-4*r**2))
 
 class Atom(object):
     '''
     The gridpoint object.  Will contain the coordinates, wavefunction value, and any other metadata such as
     whether or not the wavefunction has been updated, which cells the gridpoint belongs to, etc.
     '''
-    def __init__(self, x,y,z,atomicNumber):
+    def __init__(self, x,y,z,atomicNumber,smoothingEpsilon=0.0):
         '''
         Atom Constructor
         '''
@@ -20,13 +24,26 @@ class Atom(object):
         self.atomicNumber = int(atomicNumber)
         self.orbitalInterpolators()
         self.setNumberOfOrbitalsToInitialize()
+        self.smoothingEpsilon = smoothingEpsilon
+        if self.smoothingEpsilon != 0.0:
+            print('Warning: smoothing epsilon for atom is set to ', self.smoothingEpsilon,'. Is that intentional?')
+        
        
-    def V(self,x,y,z,epsilon=0.0):
-        r = np.sqrt( epsilon**2 + (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
+    def V(self,x,y,z):
+        r = np.sqrt( self.smoothingEpsilon**2 + (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         if r ==0.0:
             print('Warning, evaluating potential at singularity!')
             return 0.0
         return -self.atomicNumber/r
+
+#     def V(self,x,y,z,c=0.01):  # a smoothed potential coming from the Harrison paper
+#         
+#         
+#         r = np.sqrt(  (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2 )
+#         if r ==0.0:
+#             print('Warning, evaluating potential at singularity!')
+#             return 0.0
+#         return -self.atomicNumber*u(r/c)/c
     
     def setNumberOfOrbitalsToInitialize(self):
         if self.atomicNumber <=2:       

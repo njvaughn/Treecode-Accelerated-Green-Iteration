@@ -18,6 +18,7 @@ file='runComparison.csv'
 
 #### Beryllium
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/'
 
 #### H2
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
@@ -25,7 +26,9 @@ file='runComparison.csv'
 
 #### Oxygen
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/'
 
 df = pd.read_csv(resultsDir+file, header=0)
 
@@ -37,22 +40,31 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Lith
     BandEnergy = -3.8616389456972078
 
 
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/':
-    TotalEnergy = -1.4446182766680081e+01
-    ExchangeEnergy = -2.2902495359115198e+00
-    CorrelationEnergy = -2.2341044592808737e-01
-    BandEnergy = -8.1239182420318166e+00
+# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/':
+if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/':
+    TotalEnergy = -1.4446201118081863e+01
+    ExchangeEnergy = -2.2903921833555341e+00
+    CorrelationEnergy = -2.2343205529440757e-01
+    BandEnergy = -8.1232305760491457e+00
+    KineticEnergy =   1.4309060170370618e+01
+    ElectrostaticEnergy = -2.6241437049802535e+01
+    
+    df.drop(df.index[24], inplace=True)  # 24th row is bad in Beryllium gradient free data
 
-    df = df.drop([6,7,8,9,10])  #because I accidentally wrote to the same file again
 
 
 
 ##if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/':
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/':
-    TotalEnergy = -7.4469012607372008e+01
-    ExchangeEnergy = -7.2193424444124350e+00
-    CorrelationEnergy = -5.4455323198374961e-01
-    BandEnergy = -4.0613156367497737e+01
+# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/':
+if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/':
+# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/':
+
+    TotalEnergy = -7.4469337501098821e+01
+    ExchangeEnergy = -7.2193700828939980e+00
+    CorrelationEnergy = -5.4455323568788838e-01
+    BandEnergy = -4.0613397710076626e+01
+    KineticEnergy =  7.4112730191157425e+01
+    ElectrostaticEnergy = -1.4081814437367436e+02
 
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/':
@@ -66,9 +78,11 @@ df['BandEnergyError'] = abs( df['BandEnergy'] - BandEnergy)
 df['ExchangeEnergyError'] = abs( df['ExchangeEnergy'] - ExchangeEnergy)
 df['CorrelationEnergyError'] = abs( df['CorrelationEnergy'] - CorrelationEnergy)
 df['TotalEnergyError'] = abs( df['TotalEnergy'] - TotalEnergy)
+df['KineticEnergyError'] = abs( df['KineticEnergy'] - KineticEnergy)
+df['ElectrostaticEnergyError'] = abs( df['ElectrostaticEnergy'] - ElectrostaticEnergy)
 
 
-
+print(df)
 
 def energyAndHOMO():
     nwchemEnergy  = -1.1372499
@@ -274,8 +288,8 @@ def logAandBversusLogCcolorbyD(df,A,B,C,D,save=False):
 
 def energyErrors():
     fig, ax = plt.subplots(figsize=(8,6))
-##    fig.suptitle("Oxygen Atom: Energy Errors")
-    fig.suptitle("Beryllium Atom: Energy Errors")
+#    fig.suptitle("Oxygen Atom: Energy Errors")
+#     fig.suptitle("Beryllium Atom: Energy Errors")
 ##    fig.suptitle("Hydrogen Molecule: Energy Errors")
     df.plot(x='numberOfPoints', y='BandEnergyError', style='o', ax=ax, loglog=True)
     df.plot(x='numberOfPoints', y='ExchangeEnergyError', style='o', ax=ax, loglog=True)
@@ -287,7 +301,110 @@ def energyErrors():
     plt.ylabel('Energy Error (Hartree)')
 
     plt.show()
+    
+    
+def energyErrors_splitByGradientHandling(order=None):
+    if order==None:
+        df_gradient = df.loc[df['gradientFree']==False]
+        df_free = df.loc[df['gradientFree']==True]
+
+    else:
+        df5 = df.loc[df['order']==5]
+        df_gradient = df5.loc[df5['gradientFree']==False]
+        df_free = df5.loc[df5['gradientFree']==True]
+    
+    print('df_gradient: ', df_gradient.head(5))
+    print('df_free: ', df_free.head(5))
+    fig, ax1 = plt.subplots(figsize=(8,6))
+    fig, ax2 = plt.subplots(figsize=(8,6))
+#    fig.suptitle("Oxygen Atom: Energy Errors")
+#     fig.suptitle("Beryllium Atom: Energy Errors")
+##    fig.suptitle("Hydrogen Molecule: Energy Errors")
+    df_gradient.plot(x='numberOfPoints', y='BandEnergyError', style='o', ax=ax1, loglog=True)
+    df_gradient.plot(x='numberOfPoints', y='KineticEnergyError', style='o', ax=ax1, loglog=True)
+    df_gradient.plot(x='numberOfPoints', y='ExchangeEnergyError', style='o', ax=ax1, loglog=True)
+    df_gradient.plot(x='numberOfPoints', y='CorrelationEnergyError', style='o', ax=ax1, loglog=True)
+    df_gradient.plot(x='numberOfPoints', y='ElectrostaticEnergyError', style='o', ax=ax1, loglog=True)
+    df_gradient.plot(x='numberOfPoints', y='TotalEnergyError', style='o', ax=ax1, loglog=True)
+    
+    
+    df_free.plot(x='numberOfPoints', y='BandEnergyError', style='o', ax=ax2, loglog=True)
+    df_free.plot(x='numberOfPoints', y='KineticEnergyError', style='o', ax=ax2, loglog=True)
+    df_free.plot(x='numberOfPoints', y='ExchangeEnergyError', style='o', ax=ax2, loglog=True)
+    df_free.plot(x='numberOfPoints', y='CorrelationEnergyError', style='o', ax=ax2, loglog=True)
+    df_free.plot(x='numberOfPoints', y='ElectrostaticEnergyError', style='o', ax=ax2, loglog=True)
+    df_free.plot(x='numberOfPoints', y='TotalEnergyError', style='o', ax=ax2, loglog=True)
+  
+    ax1.legend(loc = 'best')
+    ax1.set_xlabel('Number of Gridpoints')
+    ax1.set_ylabel('Energy Error (Hartree)')
+    ax2.legend(loc = 'best')
+    ax2.set_xlabel('Number of Gridpoints')
+    ax2.set_ylabel('Energy Error (Hartree)')
+    
+    ax1.set_title('Beryllium Errors: With Gradients')
+    ax2.set_title('Beryllium Errors: Gradient-Free')
+
+    plt.show()
+    
+def totalEnergyErrors_splitByGradientHandling():
+    df6 = df.loc[df['order']==6]
+    df5 = df.loc[df['order']==5]
+    df4 = df.loc[df['order']==4]
+    df4_gradient = df4.loc[df4['gradientFree']==False]
+    df4_free = df4.loc[df4['gradientFree']==True]
+    
+    df6_gradient = df6.loc[df6['gradientFree']==False]
+    df6_free = df6.loc[df6['gradientFree']==True]
+    
+    
+    df5_gradient = df5.loc[df5['gradientFree']==False]
+    df5_free = df5.loc[df5['gradientFree']==True]
+    
+    
+    fig, ax1 = plt.subplots(figsize=(8,6))
+    fig, ax2 = plt.subplots(figsize=(8,6))
+#    fig.suptitle("Oxygen Atom: Energy Errors")
+#     fig.suptitle("Beryllium Atom: Energy Errors")
+##    fig.suptitle("Hydrogen Molecule: Energy Errors")
+
+    df4_gradient.plot(x='numberOfPoints', y='TotalEnergyError', style='ro', ax=ax1, loglog=True, label='Order 4')
+    df4_free.plot(x='numberOfPoints', y='TotalEnergyError', style='rx', ax=ax1, loglog=True, label='Order 4, Gradient Free')
+    
+    df5_gradient.plot(x='numberOfPoints', y='TotalEnergyError', style='bo', ax=ax1, loglog=True, label='Order 5')
+    df5_free.plot(x='numberOfPoints', y='TotalEnergyError', style='bx', ax=ax1, loglog=True, label='Order 5, Gradient Free')
+    
+#     df6_gradient.plot(x='numberOfPoints', y='TotalEnergyError', style='go', ax=ax1, loglog=True, label='Order 6')
+#     df6_free.plot(x='numberOfPoints', y='TotalEnergyError', style='gx', ax=ax1, loglog=True, label='Order 6, Gradient Free')
+    
+    
+
+  
+    ax1.legend(loc = 'best')
+    ax1.set_xlabel('Number of Gridpoints')
+    ax1.set_ylabel('Energy Error (Hartree)')
+    ax1.set_title('Oxygen Atom: Total Energy Error')
+    
+    df4_gradient.plot(x='numberOfCells', y='TotalEnergyError', style='ro', ax=ax2, loglog=True, label='Order 4')
+    df4_free.plot(x='numberOfCells', y='TotalEnergyError', style='rx', ax=ax2, loglog=True, label='Order 4, Gradient Free')
+    df5_gradient.plot(x='numberOfCells', y='TotalEnergyError', style='bo', ax=ax2, loglog=True, label='Order 5')
+    df5_free.plot(x='numberOfCells', y='TotalEnergyError', style='bx', ax=ax2, loglog=True, label='Order 5, Gradient Free')
+#     df6_gradient.plot(x='numberOfCells', y='TotalEnergyError', style='go', ax=ax2, loglog=True, label='Order 6')
+#     df6_free.plot(x='numberOfCells', y='TotalEnergyError', style='gx', ax=ax2, loglog=True, label='Order 6, Gradient Free')
+
+    ax2.legend(loc = 'best')
+    ax2.set_xlabel('Number of Cells')
+    ax2.set_ylabel('Energy Error (Hartree)')
+    ax2.set_title('Oxygen Atom: Total Energy Error')
+    plt.show()
 
 
 if __name__=="__main__":
-    energyErrors()
+#     energyErrors()
+
+    totalEnergyErrors_splitByGradientHandling()
+#     energyErrors_splitByGradientHandling(order=5)
+    
+    
+    
+    

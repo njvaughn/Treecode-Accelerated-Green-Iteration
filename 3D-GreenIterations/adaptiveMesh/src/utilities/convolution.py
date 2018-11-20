@@ -25,14 +25,15 @@ def gpuHelmholtzConvolution(targets,sources,psiNew,k):
         x_t, y_t, z_t = targets[globalID][0:3]  # set the x, y, and z values of the target
         psiNew[globalID] = 0.0
         for i in range(len(sources)):  # loop through all source midpoints
-            x_s, y_s, z_s, psi_s, V_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
-            if not ( (x_s==x_t) and (y_s==y_t) and (z_s==z_t) ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
-#             if  globalID != i:  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+            x_s, y_s, z_s, f_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+#             if not ( (x_s==x_t) and (y_s==y_t) and (z_s==z_t) ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+            if  globalID != i:  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
                 r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
-                increment = -2*V_s*weight_s*psi_s*exp(-k*r)/(4*pi*r)
+#                 increment = -2*V_s*weight_s*psi_s*exp(-k*r)/(4*pi*r)
 #                 if abs(increment) < 1e1:
-                psiNew[globalID] += increment # increment the new wavefunction value
-#                 psiNew[globalID] = targets[globalID][3] # increment the new wavefunction value
+                psiNew[globalID] = f_s*exp(-k*r)/(r)*weight_s #increment # increment the new wavefunction value
+                
+        psiNew[globalID] /= 4*pi
 
 @cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64)')
 def gpuHelmholtzConvolution_skip_generic(targets,sources,psiNew,k):
@@ -131,23 +132,42 @@ def cpuHelmholtzSingularitySubtract_allNumerical(targets,sources,psiNew,k):
             
     return psiNew
 
+# @cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64)')
+# def gpuHelmholtzConvolutionSubractSingularity(targets,sources,psiNew,k):
+# 
+#     globalID = cuda.grid(1)  # identify the global ID of the thread
+#     if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
+#         x_t, y_t, z_t, psi_t, V_t, weights_t, volume_t = targets[globalID]  # set the x, y, and z values of the target
+#         f_t = 2*psi_t*V_t
+#         psiNew[globalID] = -4*pi*f_t/k**2
+# #         psiNew[globalID] = 0
+# #         correction = 0.0
+#         for i in range(len(sources)):  # loop through all source midpoints
+#             x_s, y_s, z_s, psi_s, V_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+#             r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+# #             if (r > 1e-12 ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+#             if  globalID != i:  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+#                 f_s = 2*V_s*psi_s
+#                 psiNew[globalID] -= weight_s*(f_s-f_t)*exp(-k*r)/r # increment the new wavefunction value
+# #                 correction += weight_s*f_t*exp(-k*r)/(4*pi*r)
+#         psiNew[globalID] /= 4*pi
+
+
 @cuda.jit('void(float64[:,:], float64[:,:], float64[:], float64)')
 def gpuHelmholtzConvolutionSubractSingularity(targets,sources,psiNew,k):
 
     globalID = cuda.grid(1)  # identify the global ID of the thread
     if globalID < len(targets):  # check that this global ID doesn't excede the number of targets
-        x_t, y_t, z_t, psi_t, V_t, weights_t, volume_t = targets[globalID]  # set the x, y, and z values of the target
-        f_t = 2*psi_t*V_t
-        psiNew[globalID] = -4*pi*f_t/k**2
+        x_t, y_t, z_t, f_t = targets[globalID][0:4]  # set the x, y, and z values of the target
+        psiNew[globalID] = 4*pi*f_t/k**2
 #         psiNew[globalID] = 0
 #         correction = 0.0
         for i in range(len(sources)):  # loop through all source midpoints
-            x_s, y_s, z_s, psi_s, V_s, weight_s, volume_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            x_s, y_s, z_s, f_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
             r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
-#             if (r > 1e-12 ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
-            if  globalID != i:  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
-                f_s = 2*V_s*psi_s
-                psiNew[globalID] -= weight_s*(f_s-f_t)*exp(-k*r)/r # increment the new wavefunction value
+            if (r > 1e-12 ):  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+#             if  globalID != i:  # skip the convolutions when the target gridpoint = source midpoint, as G(r=r') is singular
+                psiNew[globalID] += weight_s*(f_s-f_t)*exp(-k*r)/r # increment the new wavefunction value
 #                 correction += weight_s*f_t*exp(-k*r)/(4*pi*r)
         psiNew[globalID] /= 4*pi
 

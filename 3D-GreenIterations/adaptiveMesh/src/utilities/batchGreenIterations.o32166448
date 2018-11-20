@@ -1,0 +1,1705 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+/var/spool/torque/mom_priv/jobs/32166448.nyx.arc-ts.umich.edu.SC: line 45: ../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv=../src/utilities/molecularConfigurations/berylliumAuxiliary.csv: No such file or directory
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  True
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_gradientFree/LW5_1000_order4_gradientFree.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  247808
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       4425 
+Total Number of Leaf Cells:  3872 
+Total Number of Gridpoints:  247808 
+Minimum Depth                3 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  4 
+Construction time:           70.9 seconds.
+Closest gridpoint to origin:  [-0.00037168197015973251, -0.00037168197015973251, -0.00037168197015973251]
+For a distance of:  0.000643772056573956
+Part of a cell centered at:  [-0.0048828125, -0.0048828125, -0.0048828125]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    247808
+Threads per block:    512
+Blocks per grid:      484
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    1.4238 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.75698165  -0.87066698  -0.33782126  -0.33782126  -0.33782126]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.33760175708529117
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  1.05075344e-02  -2.55593401e+01  -2.62037897e+01  -2.62037897e+01
+  -2.62037897e+01]
+Potential Errors:  [ -8.70290198e-03   4.34474594e+01   4.46247547e+01   4.46247547e+01
+   4.46247547e+01]
+Electrostatic Energies:
+Hartree:          36.3246124794
+External:         -177.161353005
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.75698165  -0.87066698  -0.33782126  -0.33782126  -0.33782126]
+Orbital Energy Errors after initialization:  [ 0.00192131  0.00054001  0.00047319  0.00047319  0.00047319]
+Updated V_x:                           -9.6260153979 Hartree
+Updated V_c:                           -0.6072531411 Hartree
+Updated Band Energy:                   -40.6065823223 H, 6.8153878040e-03 H
+Updated Kinetic Energy:                 74.1388142625 H, 2.6084071352e-02 H
+Updated E_x:                           -7.2195115484 H, -1.4146554851e-04 H
+Updated E_c:                           -0.5445607420 H, -7.5062782361e-06 H
+Updated totalElectrostatic:            -140.8367405252 H, -1.8596151515e-02 H
+Total Energy:                          -74.4619985531 H, 7.3389480107e-03 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.7569816515
+L2 norm of wavefunction residual (H*psi-lambda*psi):    19.5366727591
+Energy Eigenvalue:  -0.870666982308
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.59822042587
+Energy Eigenvalue:  -0.337821263662
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.157912864386
+Energy Eigenvalue:  -0.337821263662
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.157912864386
+Energy Eigenvalue:  -0.337821263662
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.157912864386
+Scrambling orbitals...
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7640401161
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7640401161
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.4945212696
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000158009511422
+Linf Error:            0.0169099225929
+LinfRel Error:         -0.00143506229843
+Located at:            -0.00037168197016 -0.00037168197016 -0.0030142410529
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.137e-03 and 1.580e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7640434433
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7640434433
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5174567916
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000188742408526
+Linf Error:            0.0164701050458
+LinfRel Error:         -0.0013976849688
+Located at:            -0.00037168197016 -0.0030142410529 -0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.140e-03 and 9.053e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7640436822
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7640436822
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5186052959
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000208423051826
+Linf Error:            0.015965482566
+LinfRel Error:         -0.0013548037121
+Located at:            0.00037168197016 -0.0030142410529 0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.141e-03 and 3.290e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7640437204
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7640437204
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5190727572
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000216808206878
+Linf Error:            0.0157068308517
+LinfRel Error:         -0.00133282571344
+Located at:            0.00037168197016 0.0030142410529 -0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.141e-03 and 1.262e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.764043727
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.764043727
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.519286775
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000220248683371
+Linf Error:            -0.015677603893
+LinfRel Error:         0.00130145573591
+Located at:            0.00037168197016 0.00037168197016 -0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -5.141e-03 and 5.018e-06
+
+
+Used 5 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.869308334306
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.869308334306
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.97064698123
+Orbital 1 error and residual:   1.899e-03 and 1.669e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.869325006107
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.869325006107
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.16755892032
+Orbital 1 error and residual:   1.882e-03 and 3.569e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.869327141335
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.869327141335
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.19917114072
+Orbital 1 error and residual:   1.880e-03 and 9.440e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.869327811976
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.869327811976
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.19404336911
+Orbital 1 error and residual:   1.879e-03 and 2.905e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.86932805041
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.86932805041
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.19346486887
+Orbital 1 error and residual:   1.879e-03 and 9.701e-06
+
+
+Used 5 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337490756074
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337490756074
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187819945545
+Orbital 2 error and residual:   8.037e-04 and 3.262e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337490709695
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337490709695
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187808415622
+Orbital 2 error and residual:   8.037e-04 and 3.198e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491048937
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491048937
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187318475897
+Orbital 2 error and residual:   8.034e-04 and 1.464e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491150486
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491150486
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187275914437
+Orbital 2 error and residual:   8.033e-04 and 7.560e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491181242
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491181242
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187186906436
+Orbital 2 error and residual:   8.033e-04 and 4.078e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491190608
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491190608
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187164868676
+Orbital 2 error and residual:   8.033e-04 and 2.235e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491193465
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491193465
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187143229707
+Orbital 2 error and residual:   8.033e-04 and 1.232e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491194336
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491194336
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187134971653
+Orbital 2 error and residual:   8.033e-04 and 6.807e-06
+
+
+Used 8 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337490756074
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337490756074
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187819945551
+Orbital 3 error and residual:   8.037e-04 and 3.262e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337490709695
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337490709695
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187808415493
+Orbital 3 error and residual:   8.037e-04 and 3.198e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491048937
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491048937
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187318475859
+Orbital 3 error and residual:   8.034e-04 and 1.464e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491150486
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491150486
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187275914372
+Orbital 3 error and residual:   8.033e-04 and 7.560e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491181242
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491181242
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187186906473
+Orbital 3 error and residual:   8.033e-04 and 4.078e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491190608
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491190608
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187164868724
+Orbital 3 error and residual:   8.033e-04 and 2.235e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491193465
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491193465
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187143229748
+Orbital 3 error and residual:   8.033e-04 and 1.232e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491194336
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491194336
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187134971696
+Orbital 3 error and residual:   8.033e-04 and 6.807e-06
+
+
+Used 8 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337490756074
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337490756074
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187819945548
+Orbital 4 error and residual:   8.037e-04 and 3.262e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337490709695
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337490709695
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187808415563
+Orbital 4 error and residual:   8.037e-04 and 3.198e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491048937
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491048937
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187318475923
+Orbital 4 error and residual:   8.034e-04 and 1.464e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491150486
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491150486
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187275914382
+Orbital 4 error and residual:   8.033e-04 and 7.560e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491181242
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491181242
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187186906412
+Orbital 4 error and residual:   8.033e-04 and 4.078e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491190608
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491190608
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187164868716
+Orbital 4 error and residual:   8.033e-04 and 2.235e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491193465
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491193465
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187143229734
+Orbital 4 error and residual:   8.033e-04 and 1.232e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.337491194336
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.337491194336
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187134971686
+Orbital 4 error and residual:   8.033e-04 and 6.807e-06
+
+
+Used 8 iterations for orbital 4.
+
+
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.764043727
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.519286775
+Energy Eigenvalue:  -0.86932805041
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.19346486887
+Energy Eigenvalue:  -0.337491194336
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187134971653
+Energy Eigenvalue:  -0.337491194336
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187134971696
+Energy Eigenvalue:  -0.337491194336
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187134971686
+Integrated density:  7.99999999999
+Density Residual  0.00413601337353
+Computing Vcoulomb and updating Veff took:    2.6540 seconds. 
+Electrostatic Energies:
+Hartree:          36.3019443078
+External:         -177.117307259
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.616708 H, -3.31e-03 H
+Orbital Energy Errors after Veff Update:  [-0.00514077  0.00187894  0.00080326  0.00080326  0.00080326]
+Orbital 0 error: -5.141e-03
+Orbital 1 error: 1.879e-03
+Orbital 2 error: 8.033e-04
+Orbital 3 error: 8.033e-04
+Orbital 4 error: 8.033e-04
+Orbital Energies:  [-18.76404373  -0.86932805  -0.33749119  -0.33749119  -0.33749119]
+Updated V_x:                           -9.6222794160 Hartree
+Updated V_c:                           -0.6071136409 Hartree
+Updated Band Energy:                   -40.6167083322 H, -3.3106220860e-03 H
+Updated Kinetic Energy:                 74.1261033687 H, 1.3373177521e-02 H
+Updated E_x:                           -7.2167095620 H, 2.6605208659e-03 H
+Updated E_c:                           -0.5444301380 H, 1.2309765159e-04 H
+Updated totalElectrostatic:            -140.8153629517 H, 2.7814219922e-03 H
+Total Energy:                          -74.4503992831 H, 1.8938218031e-02 H
+Energy Residual:                        7.395e+01
+Density Residual:                       4.136e-03
+
+
+
+
+
+SCF Count  2
+Working on orbital 0
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7691844804
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7691844804
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5174315616
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000189760518228
+Linf Error:            0.0166081031164
+LinfRel Error:         -0.00140941225729
+Located at:            0.0030142410529 -0.00037168197016 -0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.028e-02 and 4.907e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7691855025
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7691855025
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.519731127
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000216450925981
+Linf Error:            0.0159200485327
+LinfRel Error:         -0.00135094304877
+Located at:            0.00037168197016 0.00037168197016 0.0030142410529
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.028e-02 and 4.452e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7691855541
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7691855541
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5203076677
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000227330440002
+Linf Error:            -0.0156728280006
+LinfRel Error:         0.00130105978728
+Located at:            0.00037168197016 -0.00037168197016 -0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.028e-02 and 1.565e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7691855627
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7691855627
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5205538677
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000231621186099
+Linf Error:            -0.0158118568781
+LinfRel Error:         0.00131258594292
+Located at:            0.00037168197016 -0.00037168197016 -0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.028e-02 and 5.964e-06
+
+
+Used 4 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871263608931
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871263608931
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.18461550724
+Orbital 1 error and residual:   -5.662e-05 and 4.103e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871268265875
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871268265875
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.17097556954
+Orbital 1 error and residual:   -6.128e-05 and 4.669e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871267711957
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871267711957
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.17366936563
+Orbital 1 error and residual:   -6.072e-05 and 1.317e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871267421903
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871267421903
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.17401590055
+Orbital 1 error and residual:   -6.043e-05 and 4.095e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871267300832
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871267300832
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.17418654914
+Orbital 1 error and residual:   -6.031e-05 and 1.352e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871267253038
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871267253038
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.17425063718
+Orbital 1 error and residual:   -6.026e-05 and 4.617e-06
+
+
+Used 6 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33938402433
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33938402433
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186880723893
+Orbital 2 error and residual:   -1.090e-03 and 1.697e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339391340044
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339391340044
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186960001375
+Orbital 2 error and residual:   -1.097e-03 and 9.472e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339391996453
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339391996453
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187090603168
+Orbital 2 error and residual:   -1.098e-03 and 3.229e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392146219
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392146219
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187177417034
+Orbital 2 error and residual:   -1.098e-03 and 1.324e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392187021
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392187021
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18722923604
+Orbital 2 error and residual:   -1.098e-03 and 6.093e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392198911
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392198911
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187260298115
+Orbital 2 error and residual:   -1.098e-03 and 3.005e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392202472
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392202472
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187278100678
+Orbital 2 error and residual:   -1.098e-03 and 1.547e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33939220355
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33939220355
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187288286582
+Orbital 2 error and residual:   -1.098e-03 and 8.177e-06
+
+
+Used 8 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33938402433
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33938402433
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186880723886
+Orbital 3 error and residual:   -1.090e-03 and 1.697e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339391340044
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339391340044
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186960001447
+Orbital 3 error and residual:   -1.097e-03 and 9.472e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339391996453
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339391996453
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187090603112
+Orbital 3 error and residual:   -1.098e-03 and 3.229e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392146219
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392146219
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187177416968
+Orbital 3 error and residual:   -1.098e-03 and 1.324e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392187021
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392187021
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187229236072
+Orbital 3 error and residual:   -1.098e-03 and 6.093e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392198911
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392198911
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187260298113
+Orbital 3 error and residual:   -1.098e-03 and 3.005e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392202472
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392202472
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187278100626
+Orbital 3 error and residual:   -1.098e-03 and 1.547e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33939220355
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33939220355
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187288286543
+Orbital 3 error and residual:   -1.098e-03 and 8.177e-06
+
+
+Used 8 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33938402433
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33938402433
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186880723912
+Orbital 4 error and residual:   -1.090e-03 and 1.697e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339391340045
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339391340045
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186960001404
+Orbital 4 error and residual:   -1.097e-03 and 9.472e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339391996454
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339391996454
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187090603158
+Orbital 4 error and residual:   -1.098e-03 and 3.229e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392146219
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392146219
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187177417093
+Orbital 4 error and residual:   -1.098e-03 and 1.324e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392187021
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392187021
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187229236048
+Orbital 4 error and residual:   -1.098e-03 and 6.093e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392198911
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392198911
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187260298065
+Orbital 4 error and residual:   -1.098e-03 and 3.005e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339392202472
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339392202472
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187278100694
+Orbital 4 error and residual:   -1.098e-03 and 1.547e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33939220355
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33939220355
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187288286515
+Orbital 4 error and residual:   -1.098e-03 and 8.177e-06
+
+
+Used 8 iterations for orbital 4.
+
+
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7691855627
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5205538677
+Energy Eigenvalue:  -0.871267253038
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.17425063718
+Energy Eigenvalue:  -0.33939220355
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187288286582
+Energy Eigenvalue:  -0.33939220355
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187288286543
+Energy Eigenvalue:  -0.33939220355
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187288286515
+Integrated density:  7.99999999999
+Density Residual  0.00255554226016
+Computing Vcoulomb and updating Veff took:    2.6112 seconds. 
+Electrostatic Energies:
+Hartree:          36.3298996153
+External:         -177.172300226
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.638474 H, -2.51e-02 H
+Orbital Energy Errors after Veff Update:  [ -1.02826030e-02  -6.02635758e-05  -1.09775060e-03  -1.09775060e-03
+  -1.09775061e-03]
+Orbital 0 error: -1.028e-02
+Orbital 1 error: -6.026e-05
+Orbital 2 error: -1.098e-03
+Orbital 3 error: -1.098e-03
+Orbital 4 error: -1.098e-03
+Orbital Energies:  [-18.76918556  -0.87126725  -0.3393922   -0.3393922   -0.3393922 ]
+Updated V_x:                           -9.6272905640 Hartree
+Updated V_c:                           -0.6072970575 Hartree
+Updated Band Energy:                   -40.6384744457 H, -2.5076735629e-02 H
+Updated Kinetic Energy:                 74.1086141711 H, -4.1160200588e-03 H
+Updated E_x:                           -7.2204679230 H, -1.0978401226e-03 H
+Updated E_c:                           -0.5446024735 H, -4.9237826806e-05 H
+Updated totalElectrostatic:            -140.8424006106 H, -2.4256236942e-02 H
+Total Energy:                          -74.4988568360 H, -2.9519334950e-02 H
+Energy Residual:                        4.846e-02
+Density Residual:                       2.556e-03
+
+
+
+
+
+SCF Count  3
+Working on orbital 0
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7630953469
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7630953469
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5229126559
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000280182227375
+Linf Error:            -0.0171491533552
+LinfRel Error:         0.00142344059977
+Located at:            0.00037168197016 0.00037168197016 0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.192e-03 and 6.234e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7630940569
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7630940569
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5202534297
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000240748728052
+Linf Error:            -0.0163179256488
+LinfRel Error:         0.00135453920592
+Located at:            0.00037168197016 0.00037168197016 0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.191e-03 and 5.122e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7630941235
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7630941235
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5195981492
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000227689903596
+Linf Error:            -0.0159578487257
+LinfRel Error:         0.00132468907555
+Located at:            0.00037168197016 0.00037168197016 0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.191e-03 and 1.792e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7630941347
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7630941347
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5193184286
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000222871064861
+Linf Error:            -0.0157998844327
+LinfRel Error:         0.00131159338068
+Located at:            0.00037168197016 0.00037168197016 0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.191e-03 and 6.812e-06
+
+
+Used 4 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.86879715643
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.86879715643
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.18505188083
+Orbital 1 error and residual:   2.410e-03 and 7.791e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.868792236649
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.868792236649
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.20271494679
+Orbital 1 error and residual:   2.415e-03 and 5.880e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.868793456623
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.868793456623
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.19927755225
+Orbital 1 error and residual:   2.414e-03 and 1.648e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.8687938792
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.8687938792
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.19884814225
+Orbital 1 error and residual:   2.413e-03 and 5.095e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.868794037597
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.868794037597
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.19863619597
+Orbital 1 error and residual:   2.413e-03 and 1.677e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.868794098133
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.868794098133
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.19855686652
+Orbital 1 error and residual:   2.413e-03 and 5.719e-06
+
+
+Used 6 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336995548658
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336995548658
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187646169349
+Orbital 2 error and residual:   1.299e-03 and 2.537e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336988263917
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336988263917
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187540523931
+Orbital 2 error and residual:   1.306e-03 and 1.184e-03
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989196756
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989196756
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18737453884
+Orbital 2 error and residual:   1.305e-03 and 4.001e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989421041
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989421041
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187265766314
+Orbital 2 error and residual:   1.305e-03 and 1.626e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989481772
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989481772
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187201636582
+Orbital 2 error and residual:   1.305e-03 and 7.447e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33698949942
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33698949942
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187163454334
+Orbital 2 error and residual:   1.305e-03 and 3.667e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989504699
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989504699
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187141697405
+Orbital 2 error and residual:   1.305e-03 and 1.886e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989506297
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989506297
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187129281749
+Orbital 2 error and residual:   1.305e-03 and 9.964e-06
+
+
+Used 8 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336995548658
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336995548658
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187646169304
+Orbital 3 error and residual:   1.299e-03 and 2.537e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336988263917
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336988263917
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18754052398
+Orbital 3 error and residual:   1.306e-03 and 1.184e-03
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989196756
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989196756
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187374538773
+Orbital 3 error and residual:   1.305e-03 and 4.001e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989421041
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989421041
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187265766269
+Orbital 3 error and residual:   1.305e-03 and 1.626e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989481772
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989481772
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187201636583
+Orbital 3 error and residual:   1.305e-03 and 7.447e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33698949942
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33698949942
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187163454364
+Orbital 3 error and residual:   1.305e-03 and 3.667e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989504699
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989504699
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18714169738
+Orbital 3 error and residual:   1.305e-03 and 1.886e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989506297
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989506297
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187129281699
+Orbital 3 error and residual:   1.305e-03 and 9.964e-06
+
+
+Used 8 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336995548658
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336995548658
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187646169327
+Orbital 4 error and residual:   1.299e-03 and 2.537e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336988263918
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336988263918
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187540523923
+Orbital 4 error and residual:   1.306e-03 and 1.184e-03
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989196757
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989196757
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18737453882
+Orbital 4 error and residual:   1.305e-03 and 4.001e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989421041
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989421041
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187265766187
+Orbital 4 error and residual:   1.305e-03 and 1.626e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989481772
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989481772
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.1872016366
+Orbital 4 error and residual:   1.305e-03 and 7.447e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989499421
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989499421
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18716345432
+Orbital 4 error and residual:   1.305e-03 and 3.667e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989504699
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989504699
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187141697423
+Orbital 4 error and residual:   1.305e-03 and 1.886e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336989506297
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336989506297
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18712928172
+Orbital 4 error and residual:   1.305e-03 and 9.964e-06
+
+
+Used 8 iterations for orbital 4.
+
+
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7630941347
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5193184286
+Energy Eigenvalue:  -0.868794098133
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.19855686652
+Energy Eigenvalue:  -0.336989506297
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187129281749
+Energy Eigenvalue:  -0.336989506297
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187129281699
+Energy Eigenvalue:  -0.336989506297
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18712928172
+Integrated density:  7.99999999999
+Density Residual  0.00302841474049
+Computing Vcoulomb and updating Veff took:    2.6095 seconds. 
+Electrostatic Energies:
+Hartree:          36.2963829893
+External:         -177.107409615
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.611734 H, 1.66e-03 H
+Orbital Energy Errors after Veff Update:  [-0.00419118  0.00241289  0.00130495  0.00130495  0.00130495]
+Orbital 0 error: -4.191e-03
+Orbital 1 error: 2.413e-03
+Orbital 2 error: 1.305e-03
+Orbital 3 error: 1.305e-03
+Orbital 4 error: 1.305e-03
+Orbital Energies:  [-18.76309413  -0.8687941   -0.33698951  -0.33698951  -0.33698951]
+Updated V_x:                           -9.6213057731 Hartree
+Updated V_c:                           -0.6070757946 Hartree
+Updated Band Energy:                   -40.6117344909 H, 1.6632192122e-03 H
+Updated Kinetic Energy:                 74.1312907133 H, 1.8560522192e-02 H
+Updated E_x:                           -7.2159793298 H, 3.3907530647e-03 H
+Updated E_c:                           -0.5443945764 H, 1.5865930884e-04 H
+Updated totalElectrostatic:            -140.8110266259 H, 7.1177478029e-03 H
+Total Energy:                          -74.4401098187 H, 2.9227682368e-02 H
+Energy Residual:                        5.875e-02
+Density Residual:                       3.028e-03
+
+
+
+
+
+SCF Count  4
+Working on orbital 0
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7703555753
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7703555753
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5165052621
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000178905629088
+Linf Error:            0.0170085468096
+LinfRel Error:         -0.00144344413387
+Located at:            -0.00037168197016 0.00037168197016 0.0030142410529
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.145e-02 and 7.465e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.770356984
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.770356984
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5196728848
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000212522139622
+Linf Error:            0.0160799233236
+LinfRel Error:         -0.00136452821154
+Located at:            -0.0030142410529 -0.00037168197016 0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.145e-02 and 6.095e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7703570792
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7703570792
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5204531943
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000227207830367
+Linf Error:            0.015666563484
+LinfRel Error:         -0.00132940422556
+Located at:            -0.00037168197016 -0.0030142410529 -0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.145e-02 and 2.134e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7703570951
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7703570951
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.520786469
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000233058563085
+Linf Error:            -0.0158114996446
+LinfRel Error:         0.00131255632691
+Located at:            -0.00037168197016 0.00037168197016 0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.145e-02 and 8.115e-06
+
+
+Used 4 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871768556473
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871768556473
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.18551835022
+Orbital 1 error and residual:   -5.616e-04 and 9.662e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871776056892
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871776056892
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.16432534328
+Orbital 1 error and residual:   -5.691e-04 and 7.068e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871775386783
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871775386783
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.16840623448
+Orbital 1 error and residual:   -5.684e-04 and 1.985e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.87177497368
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.87177497368
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.16891543576
+Orbital 1 error and residual:   -5.680e-04 and 6.158e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871774795991
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871774795991
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.16916892004
+Orbital 1 error and residual:   -5.678e-04 and 2.029e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.871774725226
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.871774725226
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.16926401361
+Orbital 1 error and residual:   -5.677e-04 and 6.923e-06
+
+
+Used 6 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339871709507
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339871709507
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186734451845
+Orbital 2 error and residual:   -1.577e-03 and 3.100e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339883243791
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339883243791
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186839366044
+Orbital 2 error and residual:   -1.589e-03 and 1.421e-03
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33988467172
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33988467172
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187028882275
+Orbital 2 error and residual:   -1.590e-03 and 4.815e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33988499869
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33988499869
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18715551814
+Orbital 2 error and residual:   -1.591e-03 and 1.968e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885087521
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885087521
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187231375424
+Orbital 2 error and residual:   -1.591e-03 and 9.028e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885113377
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885113377
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18727696828
+Orbital 2 error and residual:   -1.591e-03 and 4.445e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885121116
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885121116
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187303147117
+Orbital 2 error and residual:   -1.591e-03 and 2.285e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885123459
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885123459
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187318142354
+Orbital 2 error and residual:   -1.591e-03 and 1.207e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885124172
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885124172
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187326564867
+Orbital 2 error and residual:   -1.591e-03 and 6.480e-06
+
+
+Used 9 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339871709507
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339871709507
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186734451828
+Orbital 3 error and residual:   -1.577e-03 and 3.100e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339883243791
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339883243791
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186839365946
+Orbital 3 error and residual:   -1.589e-03 and 1.421e-03
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33988467172
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33988467172
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187028882268
+Orbital 3 error and residual:   -1.590e-03 and 4.815e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33988499869
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33988499869
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18715551814
+Orbital 3 error and residual:   -1.591e-03 and 1.968e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885087521
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885087521
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.18723137549
+Orbital 3 error and residual:   -1.591e-03 and 9.028e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885113377
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885113377
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187276968256
+Orbital 3 error and residual:   -1.591e-03 and 4.445e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885121116
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885121116
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187303147131
+Orbital 3 error and residual:   -1.591e-03 and 2.285e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885123459
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885123459
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187318142345
+Orbital 3 error and residual:   -1.591e-03 and 1.207e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885124172
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885124172
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187326564897
+Orbital 3 error and residual:   -1.591e-03 and 6.480e-06
+
+
+Used 9 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339871709508
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339871709508
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186734451824
+Orbital 4 error and residual:   -1.577e-03 and 3.100e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339883243791
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339883243791
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.186839366001
+Orbital 4 error and residual:   -1.589e-03 and 1.421e-03
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33988467172
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33988467172
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187028882297
+Orbital 4 error and residual:   -1.590e-03 and 4.815e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33988499869
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33988499869
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187155518157
+Orbital 4 error and residual:   -1.591e-03 and 1.968e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885087521
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885087521
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187231375428
+Orbital 4 error and residual:   -1.591e-03 and 9.028e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885113377
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885113377
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187276968233
+Orbital 4 error and residual:   -1.591e-03 and 4.445e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885121116
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885121116
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187303147142
+Orbital 4 error and residual:   -1.591e-03 and 2.285e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.33988512346
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.33988512346
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187318142373
+Orbital 4 error and residual:   -1.591e-03 and 1.207e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.339885124173
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.339885124173
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187326564847
+Orbital 4 error and residual:   -1.591e-03 and 6.480e-06
+
+
+Used 9 iterations for orbital 4.
+
+
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7703570951
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.520786469
+Energy Eigenvalue:  -0.871774725226
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.16926401361
+Energy Eigenvalue:  -0.339885124172
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187326564867
+Energy Eigenvalue:  -0.339885124172
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187326564897
+Energy Eigenvalue:  -0.339885124173
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187326564847
+Integrated density:  7.99999999999
+Density Residual  0.00364208081415
+Computing Vcoulomb and updating Veff took:    2.6044 seconds. 
+Electrostatic Energies:
+Hartree:          36.336690697
+External:         -177.185413001
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.643804 H, -3.04e-02 H
+Orbital Energy Errors after Veff Update:  [-0.01145414 -0.00056774 -0.00159067 -0.00159067 -0.00159067]
+Orbital 0 error: -1.145e-02
+Orbital 1 error: -5.677e-04
+Orbital 2 error: -1.591e-03
+Orbital 3 error: -1.591e-03
+Orbital 4 error: -1.591e-03
+Orbital Energies:  [-18.7703571   -0.87177473  -0.33988512  -0.33988512  -0.33988512]
+Updated V_x:                           -9.6285016631 Hartree
+Updated V_c:                           -0.6073418576 Hartree
+Updated Band Energy:                   -40.6438041373 H, -3.0406427216e-02 H
+Updated Kinetic Energy:                 74.1040709902 H, -8.6592009389e-03 H
+Updated E_x:                           -7.2213762474 H, -2.0061644617e-03 H
+Updated E_c:                           -0.5446445695 H, -9.1333833048e-05 H
+Updated totalElectrostatic:            -140.8487223037 H, -3.0577930047e-02 H
+Total Energy:                          -74.5106721304 H, -4.1334629281e-02 H
+Energy Residual:                        7.056e-02
+Density Residual:                       3.642e-03
+
+
+
+
+
+SCF Count  5
+Working on orbital 0
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7616239927
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7616239927
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5241707555
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000304811338307
+Linf Error:            -0.0177298575535
+LinfRel Error:         0.00147157017902
+Located at:            -0.00037168197016 0.00037168197016 0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -2.721e-03 and 8.975e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7616221111
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7616221111
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5203583959
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000246655173897
+Linf Error:            -0.0165385642022
+LinfRel Error:         0.00137282910922
+Located at:            0.00037168197016 -0.00037168197016 -0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -2.719e-03 and 7.333e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.761622248
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.761622248
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5194194477
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000227793491406
+Linf Error:            -0.0160226382861
+LinfRel Error:         0.0013300602174
+Located at:            0.00037168197016 0.00037168197016 0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -2.719e-03 and 2.567e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -18.7616222709
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -18.7616222709
+L2 norm of wavefunction residual (H*psi-lambda*psi):    21.5190187392
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000220926185595
+Linf Error:            -0.0157963461927
+LinfRel Error:         0.00131130004646
+Located at:            0.00037168197016 -0.00037168197016 -0.00037168197016
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -2.719e-03 and 9.755e-06
+
+
+Used 4 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.868194869371
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.868194869371
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.18490043406
+Orbital 1 error and residual:   3.012e-03 and 1.162e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.868188102595
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.868188102595
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.21054634052
+Orbital 1 error and residual:   3.019e-03 and 8.512e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.868190058667
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.868190058667
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.20555812739
+Orbital 1 error and residual:   3.017e-03 and 2.383e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.868190692073
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.868190692073
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.20493692098
+Orbital 1 error and residual:   3.016e-03 and 7.363e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.868190923986
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.868190923986
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.2046305039
+Orbital 1 error and residual:   3.016e-03 and 2.422e-05
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.868191011939
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.868191011939
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.20451591567
+Orbital 1 error and residual:   3.016e-03 and 8.259e-06
+
+
+Used 6 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336411189592
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336411189592
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187850803118
+Orbital 2 error and residual:   1.883e-03 and 3.695e-04
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336401309192
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.336401309192
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.187691605653
+Orbital 2 error and residual:   1.893e-03 and 1.715e-03
+
+
+Using singularity subtraction
+Orbital energy after Harrison update:  -0.336403285423
