@@ -1,5 +1,38 @@
-#!/bin/bash
+####  PBS preamble
+
+#PBS -N batchGreenIterations_CO
+#PBS -M njvaughn@umich.edu
+#PBS -m a
+
+#PBS -A krasny_fluxg
+#PBS -l qos=flux
+#PBS -q fluxg
+
+
+#PBS -l nodes=1:gpus=1,mem=8gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+#PBS -V
+
+####  End PBS preamble
+
+if [ -s "$PBS_NODEFILE" ] ; then
+    echo "Running on"
+    uniq -c $PBS_NODEFILE
+fi
+
+if [ -d "$PBS_O_WORKDIR" ] ; then
+    cd $PBS_O_WORKDIR
+    echo "Running from $PBS_O_WORKDIR"
+fi
+
+
+
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
+
+###PBS -l nodes=1:gpus=1:titanv,mem=8gb
+
 
 
 DOMAIN=20
@@ -11,22 +44,29 @@ SMOOTHINGEPS=0
 INTRASCFTOLERANCE=1e-3
 INTERSCFTOLERANCE=1e-6
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 
-ORDER=5
-
 MESHTYPE='LW5'	
 
+	
 GRADIENTFREE='True'
 
-MESHPARAM=1000
-OUTPUTFILE='/home/njvaughn/testing/computeEnergiesBothWays.csv'
+
+
+MESHPARAM=1500
+
+
+ORDER=5
+
+OUTPUTFILE='/home/njvaughn/CO_gradientFree/LW5_1500_order5.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
+
+

@@ -329,7 +329,9 @@ class Tree(object):
         
 #         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
 # #         print('Hard coding nAtomicOrbitals to 0 for the second hydrogen atom.')
-#         self.atoms[1].nAtomicOrbitals = 2
+        print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+        self.atoms[1].nAtomicOrbitals = 2
+        self.nOrbitals = 7
 #         self.atoms[1].nAtomicOrbitals = 0
     
         for atom in self.atoms:
@@ -338,6 +340,8 @@ class Tree(object):
                 nAtomicOrbitals = 1
             else:
                 nAtomicOrbitals = atom.nAtomicOrbitals
+                
+            
             
             print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
                       %(atom.atomicNumber, atom.x,atom.y,atom.z))
