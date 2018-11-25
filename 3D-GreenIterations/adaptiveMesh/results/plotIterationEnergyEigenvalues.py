@@ -35,9 +35,16 @@ import numpy as np
 # file = 'HarrisonGradientFree_LW5_3000_order5_GREEN_.csv'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenOrder5/'
 ##file='LW3_1000_GREEN_.csv'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
+
 # file = 'LW5_2000_order5_gradient_GREEN_.csv'
-file = 'LW5_2000_order6_gradientFree_GREEN_.csv'
+# file = 'LW5_2000_order6_gradientFree_GREEN_.csv'
+
+
+
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/testingRandomInit/'
+file='LW5_1500_order5_GREEN_.csv'
+
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
     TotalEnergy = -7.3340536782581447

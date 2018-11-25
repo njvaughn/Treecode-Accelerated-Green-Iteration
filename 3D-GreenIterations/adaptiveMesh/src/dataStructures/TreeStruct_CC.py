@@ -148,8 +148,9 @@ class Tree(object):
         
     def computeOccupations(self):
         
-        self.T = 200
-        KB = 8.6173303e-5/27.211386
+        self.T = 20
+#         KB = 8.6173303e-5/27.211386
+        KB = 1/315774.6
         self.sigma = self.T*KB
         
         
@@ -160,6 +161,39 @@ class Tree(object):
         exponentialArg = (self.orbitalEnergies-eF)/self.sigma
         self.occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
         print('Occupations: ', self.occupations)
+    
+    
+    def computeOrbitalMoments(self):
+        for m in range(self.nOrbitals):
+            x1 = 0
+            y1 = 0
+            z1 = 0
+            x2 = 0
+            y2 = 0
+            z2 = 0
+            
+            for _,cell in self.masterList:
+                if cell.leaf == True:
+                    for i,j,k in cell.PxByPyByPz:
+                        gp = cell.gridpoints[i,j,k]
+                        
+                        x1 += gp.phi[m]*gp.x*cell.w[i,j,k]
+                        y1 += gp.phi[m]*gp.y*cell.w[i,j,k]
+                        z1 += gp.phi[m]*gp.z*cell.w[i,j,k]
+                        x2 += gp.phi[m]*gp.x**2*cell.w[i,j,k]
+                        y2 += gp.phi[m]*gp.y**2*cell.w[i,j,k]
+                        z2 += gp.phi[m]*gp.z**2*cell.w[i,j,k]
+            
+            print('\nOrbital ', m, ' moments:')
+            print('x1 = ', x1)
+            print('y1 = ', y1)
+            print('z1 = ', z1)
+            print('x2 = ', x2)
+            print('y2 = ', y2)
+            print('z2 = ', z2, '\n')
+            
+        return
+        
         
 
             
@@ -273,15 +307,28 @@ class Tree(object):
 #             refineToMaxDepth(self,atom,self.root)
                 
       
-    def initializeOrbitalsRandomly(self):
-        print('Initializing orbitals randomly...')
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
-                    for m in range(self.nOrbitals):
+    def initializeOrbitalsRandomly(self,targetOrbital=None):
+        if targetOrbital==None:
+            print('Initializing all orbitals randomly...')
+            for _,cell in self.masterList:
+                if cell.leaf==True:
+                    for i,j,k in self.PxByPyByPz:
+                        for m in range(self.nOrbitals):
+                            gp = cell.gridpoints[i,j,k]
+    #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
+                            gp.phi[m] = np.random.rand(1)
+                            
+        else:
+            print('Initializing orbital ',targetOrbital,' randomly...')
+            for _,cell in self.masterList:
+                if cell.leaf==True:
+                    for i,j,k in self.PxByPyByPz:
+#                         for m in range(self.nOrbitals):
                         gp = cell.gridpoints[i,j,k]
 #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
-                        gp.phi[m] = np.random.rand(1)
+                        gp.phi[targetOrbital] = np.random.rand(1)
+                        
+                            
         
     def initializeDensityFromAtomicData(self):
         for _,cell in self.masterList:
@@ -329,9 +376,9 @@ class Tree(object):
         
 #         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
 # #         print('Hard coding nAtomicOrbitals to 0 for the second hydrogen atom.')
-        print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
-        self.atoms[1].nAtomicOrbitals = 2
-        self.nOrbitals = 7
+#         print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+#         self.atoms[1].nAtomicOrbitals = 2
+#         self.nOrbitals = 7
 #         self.atoms[1].nAtomicOrbitals = 0
     
         for atom in self.atoms:
@@ -399,6 +446,10 @@ class Tree(object):
                         
         if orbitalIndex < self.nOrbitals:
             print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
+            print('Filling extra orbitals with random initial data.')
+            for ii in range(orbitalIndex, self.nOrbitals):
+                self.initializeOrbitalsRandomly(targetOrbital=ii)
+                self.orthonormalizeOrbitals(targetOrbital=ii)
         if orbitalIndex > self.nOrbitals:
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
@@ -872,7 +923,7 @@ class Tree(object):
             if cell.leaf == True:
                 CellupdateVxcAndVeff(cell,self.exchangeFunctional, self.correlationFunctional)
 
-    def updateDensityAtQuadpoints(self, mixingScheme='Simple'):
+    def updateDensityAtQuadpoints(self, mixingScheme='None'):
         def CellUpdateDensity(cell,mixingScheme):
             for i,j,k in self.PxByPyByPz:
                 newRho = 0
@@ -1254,8 +1305,14 @@ class Tree(object):
             self.computeOccupations()
 #             print('Occupations: ', self.occupations)
 
+
+
     def sortOrbitalsAndEnergies(self):
         newOrder = np.argsort(self.orbitalEnergies)
+        oldEnergies = np.copy(self.orbitalEnergies)
+        for m in range(self.nOrbitals):
+            self.orbitalEnergies[m] = oldEnergies[newOrder[m]]
+        print('Sorted eigenvalues: ', self.orbitalEnergies)
         print('New order: ', newOrder)
         for _,cell in self.masterList:
             if cell.leaf==True:
@@ -1478,13 +1535,13 @@ class Tree(object):
                         gridpoint = cell.gridpoints[i,j,k]
                         gridpoint.phi[m] -= B*gridpoint.phi[n]
             
-            B = 0.0
-            for _,cell in tree.masterList:
-                if cell.leaf == True:
-                    for i,j,k in self.PxByPyByPz:
-                        phi_m = cell.gridpoints[i,j,k].phi[m]
-                        phi_n = cell.gridpoints[i,j,k].phi[n]
-                        B += phi_m*phi_n*cell.w[i,j,k]
+#             B = 0.0
+#             for _,cell in tree.masterList:
+#                 if cell.leaf == True:
+#                     for i,j,k in self.PxByPyByPz:
+#                         phi_m = cell.gridpoints[i,j,k].phi[m]
+#                         phi_n = cell.gridpoints[i,j,k].phi[n]
+#                         B += phi_m*phi_n*cell.w[i,j,k]
 #             print('Overlap after orthogonalization: ', B)
         
         def normalizeOrbital(tree,m):
@@ -1508,11 +1565,11 @@ class Tree(object):
                 for n in range(m):
                     
                     orthogonalizeOrbitals(self,m,n)
-                normalizeOrbital(self,m)
+                    normalizeOrbital(self,m)
         else:
             for n in range(targetOrbital):
                 orthogonalizeOrbitals(self,targetOrbital,n)
-            normalizeOrbital(self,targetOrbital)
+                normalizeOrbital(self,targetOrbital)
             
             
     

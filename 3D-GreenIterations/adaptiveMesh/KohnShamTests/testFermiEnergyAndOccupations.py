@@ -47,17 +47,17 @@ class Test(unittest.TestCase):
 
 
         KB = 8.6173303e-5/27.211386  # Boltzmann factor in Hartree/Kelvin
-        self.nElectrons = 14 # number of electrons
+        self.nElectrons = 8 # number of electrons
 #         self.nOrbitals = 4
 #         self.orbitalEnergies = np.array([-5, -1, -0.3, -0.001])
 #         self.orbitalEnergies = np.array([-9.9669, -0.5035, -0.20122, -0.20122, -0.20122])
 #         self.orbitalEnergies = np.array([-3.85171675  -0.85216851  -0.38889536  -0.38889536  -0.038889536])
 #         self.orbitalEnergies = np.array([-3.85171675  -0.85216851  -0.38889536  -0.38889536  -0.038889536])
 
-        self.orbitalEnergies = np.array([-18.71236259, -10.01843142,  -0.72258439,  -0.6591846,   -0.41691493,
-                                         -0.35603646,  -0.35603646,  -0.27839483,  -0.27839483,  -0.11320702])
+        self.orbitalEnergies = np.array([-1.875890295968488530e+01, -8.712069894624057120e-01,  -3.382944529486854868e-01,
+                                         -3.382944529460307215e-01, -3.382944529419588120e-01])
         
-        self.T = 100
+        self.T = 500
         self.sigma = self.T*KB
     
 #     @unittest.skip('Not plotting right now')

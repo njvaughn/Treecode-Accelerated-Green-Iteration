@@ -10,7 +10,7 @@
 
 
 #PBS -l nodes=1:gpus=1:titanv,mem=8gb
-#PBS -l walltime=24:00:00
+#PBS -l walltime=12:00:00
 #PBS -j oe
 #PBS -V
 
@@ -36,8 +36,8 @@ MINDEPTH=3
 SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
-INTRASCFTOLERANCE=1e-4
-INTERSCFTOLERANCE=1e-6
+INTRASCFTOLERANCE=1e-5
+INTERSCFTOLERANCE=1e-7
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
@@ -47,18 +47,16 @@ INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 
+
+ORDER=5
+
 MESHTYPE='LW5'	
 
 GRADIENTFREE='True'
 
 
-	
-ORDER=5
-
-MESHPARAM=1500
-OUTPUTFILE='/home/njvaughn/O_gradientFree_testing/LW5_1500_order5_gradient.csv'
+MESHPARAM=500
+OUTPUTFILE='/home/njvaughn/CO_gradientFree_T20/LW5_500_order5_OrthBeforeUpdate.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE
-
-
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE	

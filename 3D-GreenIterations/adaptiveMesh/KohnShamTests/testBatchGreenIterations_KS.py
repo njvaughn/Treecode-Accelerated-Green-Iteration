@@ -99,6 +99,7 @@ def setUpTree(onlyFillOne=False):
 #         tree.scrambleOrbital(m)
 #     tree.normalizeDensity()
 
+    tree.computeOrbitalMoments()
     
 
     
