@@ -7,7 +7,6 @@ from numpy import pi, cos, arccos, sin, sqrt, exp
 import numpy as np
 from scipy.special import factorial, comb
 import vtk
-from blaze.compute.tests.test_dask import dx
 
 def meshDensity(r,divideParameter,divideCriterion):
     '''
