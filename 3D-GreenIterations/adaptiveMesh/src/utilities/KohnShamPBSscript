@@ -37,7 +37,7 @@ SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
 INTRASCFTOLERANCE=1e-5
-INTERSCFTOLERANCE=1e-7
+INTERSCFTOLERANCE=1e-8
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
@@ -55,8 +55,8 @@ MESHTYPE='LW5'
 GRADIENTFREE='True'
 
 
-MESHPARAM=500
-OUTPUTFILE='/home/njvaughn/CO_gradientFree_T20/LW5_500_order5_OrthBeforeUpdate.csv'
+MESHPARAM=2000
+OUTPUTFILE='/home/njvaughn/O_gradientFree_T200/LW5_2000_order5_fixedOccupation.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE	

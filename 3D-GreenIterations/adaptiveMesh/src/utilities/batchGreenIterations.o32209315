@@ -1,0 +1,887 @@
+Running on
+      1 nyx7506
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  True
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_gradientFree_T200/LW5_2500_order5.csv', 8, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.5]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.5
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  1086000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            2.50e+03 
+Total Number of Cells:       9929 
+Total Number of Leaf Cells:  8688 
+Total Number of Gridpoints:  1086000 
+Minimum Depth                3 levels 
+Maximum Depth:               14 levels 
+Cell Order:                  5 
+Construction time:           354 seconds.
+Closest gridpoint to origin:  [-5.9745463506892527e-05, -5.9745463506892527e-05, -5.9745463506892527e-05]
+For a distance of:  0.00010348217831569009
+Part of a cell centered at:  [-0.001220703125, -0.001220703125, -0.001220703125]
+
+Orbital  0  moments:
+x1 =  5.24630581078e-18
+y1 =  -4.18710306452e-18
+z1 =  5.78334006218e-18
+x2 =  -0.056804906663
+y2 =  -0.056804906663
+z2 =  -0.056804906663 
+
+
+Orbital  1  moments:
+x1 =  1.19557766954e-15
+y1 =  1.99010350787e-16
+z1 =  8.73305590381e-16
+x2 =  14.3440036806
+y2 =  14.3440036806
+z2 =  14.3440036806 
+
+
+Orbital  2  moments:
+x1 =  -18.0621751434
+y1 =  1.24117597793e-14
+z1 =  -1.66557090439e-13
+x2 =  2.46706011536e-15
+y2 =  -3.38548586985e-15
+z2 =  -5.18781845688e-16 
+
+
+Orbital  3  moments:
+x1 =  -1.72246051545e-13
+y1 =  -9.10201780313e-14
+z1 =  -18.0621751434
+x2 =  7.35689619305e-16
+y2 =  2.37000157455e-15
+z2 =  -4.42372909341e-16 
+
+
+Orbital  4  moments:
+x1 =  1.4426583816e-14
+y1 =  -18.0621751434
+z1 =  -9.01907312086e-14
+x2 =  6.5672581983e-17
+y2 =  -1.30890519032e-16
+z2 =  -1.7097209692e-15 
+
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    1086000
+Threads per block:    512
+Blocks per grid:      2122
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    172.0489 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Need to re-order orbitals.
+Sorted eigenvalues:  [-19.2587749   -1.37115718  -0.83825394  -0.83825394  -0.83825394]
+New order:  [0 1 4 3 2]
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-19.2587749   -1.37115718  -0.83825394  -0.83825394  -0.83825394]
+Sorted eigenvalues:  [-19.2587749   -1.37115718  -0.83825394  -0.83825394  -0.83825394]
+New order:  [0 1 2 3 4]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.8382100419035705
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Fermi energy:  -0.8382100419035705
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+Kinetic Errors:    [  1.11775365e-04  -2.55602820e+01  -2.62042172e+01  -2.62042172e+01
+  -2.62042172e+01]
+Potential Errors:  [ -1.00387271e-04   4.34479111e+01   4.46247496e+01   4.46247496e+01
+   4.46247496e+01]
+Computing band energy.  Current orbital energies are:  [-19.2587749   -1.37115718  -0.83825394  -0.83825394  -0.83825394]
+Electrostatic Energies:
+Hartree:          36.3255064531
+External:         -177.144239302
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-19.2587749   -1.37115718  -0.83825394  -0.83825394  -0.83825394]
+Orbital Energy Errors after initialization:  [  1.28063837e-04   4.98080502e-05   4.05096559e-05   4.05096533e-05
+   4.05096492e-05]
+Updated V_x:                           -9.6258904892 Hartree
+Updated V_c:                           -0.6072488200 Hartree
+Updated Band Energy:                   -40.6128799277 H, 5.1778238524e-04 H
+Updated Kinetic Energy:                 74.1134857771 H, 7.5558596799e-04 H
+Updated E_x:                           -7.2194178669 H, -4.7784016775e-05 H
+Updated E_c:                           -0.5445569270 H, -3.6913046609e-06 H
+Updated totalElectrostatic:            -140.8187328487 H, -5.8847500989e-04 H
+Total Energy:                          -74.4692218655 H, 1.1563563667e-04 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -19.2587748958
+L2 norm of wavefunction residual (H*psi-lambda*psi):    7.55954207043
+Energy Eigenvalue:  -1.37115718141
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.77652973989
+Energy Eigenvalue:  -0.838253943293
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.010672078809
+Energy Eigenvalue:  -0.838253943293
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.010672078809
+Energy Eigenvalue:  -0.838253943293
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.010672078809
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  1.00000365663
+Orbital energy after Harrison update:  -19.2590231232
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.28001860755e-05
+Linf Error:            -0.0246662518242
+LinfRel Error:         0.00203723234494
+Located at:            -5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.202e-04 and 3.280e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00000101149
+Orbital energy after Harrison update:  -19.259023158
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.3192197182e-05
+Linf Error:            -0.0249308624829
+LinfRel Error:         0.00205904203949
+Located at:            -5.97454635069e-05 -5.97454635069e-05 -5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.202e-04 and 4.538e-06
+
+
+Used 2 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Norm of psiNew =  1.0000097625
+Orbital energy after Harrison update:  -1.371179946
+Orbital 1 error and residual:   2.704e-05 and 2.821e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999998375284
+Orbital energy after Harrison update:  -1.37117994924
+Orbital 1 error and residual:   2.704e-05 and 2.682e-06
+
+
+Used 2 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Norm of psiNew =  1.00000515662
+Orbital energy after Harrison update:  -0.838262225522
+Orbital 2 error and residual:   3.223e-05 and 3.309e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  1.0000001594
+Orbital energy after Harrison update:  -0.838262228301
+Orbital 2 error and residual:   3.222e-05 and 1.723e-06
+
+
+Used 2 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Norm of psiNew =  1.00000515662
+Orbital energy after Harrison update:  -0.838262225522
+Orbital 3 error and residual:   3.223e-05 and 3.309e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  1.0000001594
+Orbital energy after Harrison update:  -0.838262228301
+Orbital 3 error and residual:   3.222e-05 and 1.723e-06
+
+
+Used 2 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Norm of psiNew =  1.00000515662
+Orbital energy after Harrison update:  -0.838262225522
+Orbital 4 error and residual:   3.223e-05 and 3.309e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  1.0000001594
+Orbital energy after Harrison update:  -0.838262228301
+Orbital 4 error and residual:   3.222e-05 and 1.723e-06
+
+
+Used 2 iterations for orbital 4.
+Fermi energy:  -0.8382183269122967
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+
+Orbital  0  moments:
+x1 =  3.15052850867e-15
+y1 =  1.49497307344e-15
+z1 =  9.03158532493e-16
+x2 =  -0.0568057961338
+y2 =  -0.0568057961338
+z2 =  -0.0568057961338 
+
+
+Orbital  1  moments:
+x1 =  -1.69357812405e-13
+y1 =  -8.60800820113e-14
+z1 =  -4.94235184686e-14
+x2 =  14.3439578373
+y2 =  14.3439578373
+z2 =  14.3439578373 
+
+
+Orbital  2  moments:
+x1 =  -2.02098637306e-14
+y1 =  -18.0626281313
+z1 =  2.87200440628e-14
+x2 =  9.50412868095e-13
+y2 =  1.42714904326e-12
+z2 =  1.0224590544e-12 
+
+
+Orbital  3  moments:
+x1 =  2.02321508781e-14
+y1 =  -5.10274605558e-14
+z1 =  -18.0626281313
+x2 =  5.25469076914e-13
+y2 =  5.3725830716e-13
+z2 =  7.75127664503e-13 
+
+
+Orbital  4  moments:
+x1 =  -18.0626281313
+y1 =  -1.22670876363e-13
+z1 =  2.93590140279e-14
+x2 =  2.94494230124e-12
+y2 =  2.12074943169e-12
+z2 =  2.14067880967e-12 
+
+
+
+Integrated density:  8.00000404597
+Density Residual  0.000387648014893
+Computing Vcoulomb and updating Veff took:    176.4443 seconds. 
+Computing band energy.  Current orbital energies are:  [-19.25902316  -1.37117995  -0.83826223  -0.83826223  -0.83826223]
+Electrostatic Energies:
+Hartree:          36.3250510669
+External:         -177.144024477
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.613455 H, -5.74e-05 H
+Orbital Energy Errors after Veff Update:  [ -1.20198276e-04   2.70402252e-05   3.22246472e-05   3.22246445e-05
+   3.22246405e-05]
+Orbital 0 error: -1.202e-04
+Orbital 1 error: 2.704e-05
+Orbital 2 error: 3.222e-05
+Orbital 3 error: 3.222e-05
+Orbital 4 error: 3.222e-05
+Orbital Energies:  [-19.25902316  -1.37117995  -0.83826223  -0.83826223  -0.83826223]
+Updated V_x:                           -9.6258346883 Hartree
+Updated V_c:                           -0.6072442393 Hartree
+Updated Band Energy:                   -40.6134551276 H, -5.7417524964e-05 H
+Updated Kinetic Energy:                 74.1135461436 H, 8.1595242861e-04 H
+Updated E_x:                           -7.2193760162 H, -5.9333545348e-06 H
+Updated E_c:                           -0.5445528004 H, 4.3533683880e-07 H
+Updated totalElectrostatic:            -140.8189734104 H, -8.2903677389e-04 H
+Total Energy:                          -74.4693560835 H, -1.8582362969e-05 H
+Energy Residual:                        7.347e+01
+Density Residual:                       3.876e-04
+
+
+Setting density residual to min of density residual and energy residual, just for testing purposes
+
+
+
+SCF Count  2
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  1.00000215609
+Orbital energy after Harrison update:  -19.2591018362
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.33534260281e-05
+Linf Error:            -0.0249702768411
+LinfRel Error:         0.00206229056142
+Located at:            -5.97454635069e-05 -5.97454635069e-05 -5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.989e-04 and 1.283e-06
+
+
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Norm of psiNew =  1.00002076384
+Orbital energy after Harrison update:  -1.37122796343
+Orbital 1 error and residual:   -2.097e-05 and 1.122e-06
+
+
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Norm of psiNew =  1.00001879421
+Orbital energy after Harrison update:  -0.838309126822
+Orbital 2 error and residual:   -1.467e-05 and 5.519e-06
+
+
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Norm of psiNew =  1.00001879421
+Orbital energy after Harrison update:  -0.838309126822
+Orbital 3 error and residual:   -1.467e-05 and 5.519e-06
+
+
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Norm of psiNew =  1.00001879421
+Orbital energy after Harrison update:  -0.838309126823
+Orbital 4 error and residual:   -1.467e-05 and 5.519e-06
+
+
+Used 1 iterations for orbital 4.
+Fermi energy:  -0.8382652254334471
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333334]
+
+Orbital  0  moments:
+x1 =  3.23389530469e-15
+y1 =  1.45750931544e-15
+z1 =  1.06037248914e-15
+x2 =  -0.0568057528898
+y2 =  -0.0568057528898
+z2 =  -0.0568057528898 
+
+
+Orbital  1  moments:
+x1 =  -3.61378732589e-13
+y1 =  -1.7718161283e-13
+z1 =  -9.5391627639e-14
+x2 =  14.343940153
+y2 =  14.343940153
+z2 =  14.343940153 
+
+
+Orbital  2  moments:
+x1 =  8.99500282417e-14
+y1 =  -18.0628048373
+z1 =  1.30595088655e-13
+x2 =  1.19096052044e-12
+y2 =  2.01717915332e-12
+z2 =  1.24583734046e-12 
+
+
+Orbital  3  moments:
+x1 =  1.1232965996e-13
+y1 =  1.10122168261e-13
+z1 =  -18.0628048373
+x2 =  7.16091025096e-13
+y2 =  6.64699080221e-13
+z2 =  1.02754879825e-12 
+
+
+Orbital  4  moments:
+x1 =  -18.0628048373
+y1 =  -1.18567197695e-13
+z1 =  1.82733804049e-13
+x2 =  4.44877570839e-12
+y2 =  2.78532317003e-12
+z2 =  2.78649850947e-12 
+
+
+
+Integrated density:  8.00000862438
+Density Residual  3.01538079466e-05
+Computing Vcoulomb and updating Veff took:    176.2674 seconds. 
+Computing band energy.  Current orbital energies are:  [-19.25910184  -1.37122796  -0.83830913  -0.83830913  -0.83830913]
+Electrostatic Energies:
+Hartree:          36.3250101086
+External:         -177.144145301
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.613896 H, -4.98e-04 H
+Orbital Energy Errors after Veff Update:  [ -1.98876554e-04  -2.09739644e-05  -1.46738737e-05  -1.46738764e-05
+  -1.46738811e-05]
+Orbital 0 error: -1.989e-04
+Orbital 1 error: -2.097e-05
+Orbital 2 error: -1.467e-05
+Orbital 3 error: -1.467e-05
+Orbital 4 error: -1.467e-05
+Orbital Energies:  [-19.25910184  -1.37122796  -0.83830913  -0.83830913  -0.83830913]
+Updated V_x:                           -9.6258337619 Hartree
+Updated V_c:                           -0.6072441000 Hartree
+Updated Band Energy:                   -40.6138961066 H, -4.9839654465e-04 H
+Updated Kinetic Energy:                 74.1133068391 H, 5.7664798842e-04 H
+Updated E_x:                           -7.2193753214 H, -5.2385283693e-06 H
+Updated E_c:                           -0.5445526589 H, 5.7677531029e-07 H
+Updated totalElectrostatic:            -140.8191351925 H, -9.9081883198e-04 H
+Total Energy:                          -74.4697563337 H, -4.1883259661e-04 H
+Energy Residual:                        4.003e-04
+Density Residual:                       3.015e-05
+
+
+Setting density residual to min of density residual and energy residual, just for testing purposes
+
+
+
+SCF Count  3
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  1.00000154995
+Orbital energy after Harrison update:  -19.2591083824
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.35193936467e-05
+Linf Error:            -0.0249868489519
+LinfRel Error:         0.00206365642449
+Located at:            -5.97454635069e-05 -5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -2.054e-04 and 1.206e-06
+
+
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Norm of psiNew =  0.999999810028
+Orbital energy after Harrison update:  -1.37123256441
+Orbital 1 error and residual:   -2.557e-05 and 7.233e-06
+
+
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Norm of psiNew =  0.999995519021
+Orbital energy after Harrison update:  -0.838313737656
+Orbital 2 error and residual:   -1.928e-05 and 9.138e-06
+
+
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Norm of psiNew =  0.999995519015
+Orbital energy after Harrison update:  -0.838313737641
+Orbital 3 error and residual:   -1.928e-05 and 9.138e-06
+
+
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Norm of psiNew =  0.999995518942
+Orbital energy after Harrison update:  -0.838313737464
+Orbital 4 error and residual:   -1.928e-05 and 9.138e-06
+
+
+Used 1 iterations for orbital 4.
+Fermi energy:  -0.8382698361976562
+Occupations:  [ 2.          2.          1.33333382  1.33333371  1.33333247]
+
+Orbital  0  moments:
+x1 =  7.3729064388e-16
+y1 =  9.69285962507e-16
+z1 =  6.57721104713e-16
+x2 =  -0.056805450103
+y2 =  -0.0568054501036
+z2 =  -0.0568054501036 
+
+
+Orbital  1  moments:
+x1 =  -5.04935923611e-13
+y1 =  -2.73948220422e-13
+z1 =  -1.1804238105e-13
+x2 =  14.3435392191
+y2 =  14.3435392197
+z2 =  14.3435392196 
+
+
+Orbital  2  moments:
+x1 =  -2.69635348322e-15
+y1 =  -18.0623345837
+z1 =  1.80117262685e-14
+x2 =  1.1297801853e-12
+y2 =  2.12156117905e-12
+z2 =  1.19954910891e-12 
+
+
+Orbital  3  moments:
+x1 =  1.57289237661e-13
+y1 =  1.45346510185e-13
+z1 =  -18.0623345837
+x2 =  7.02593139388e-13
+y2 =  6.94091794788e-13
+z2 =  1.16359856172e-12 
+
+
+Orbital  4  moments:
+x1 =  -18.062334584
+y1 =  -1.81018892372e-13
+z1 =  1.47021509956e-14
+x2 =  5.0207474878e-12
+y2 =  3.11995078439e-12
+z2 =  3.16343919131e-12 
+
+
+
+Integrated density:  8.00000619982
+Density Residual  2.31777083228e-05
+Computing Vcoulomb and updating Veff took:    176.1910 seconds. 
+Computing band energy.  Current orbital energies are:  [-19.25910838  -1.37123256  -0.83831374  -0.83831374  -0.83831374]
+Electrostatic Energies:
+Hartree:          36.3252030326
+External:         -177.144582123
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.613937 H, -5.39e-04 H
+Orbital Energy Errors after Veff Update:  [ -2.05422706e-04  -2.55749446e-05  -1.92847070e-05  -1.92846950e-05
+  -1.92845219e-05]
+Orbital 0 error: -2.054e-04
+Orbital 1 error: -2.557e-05
+Orbital 2 error: -1.928e-05
+Orbital 3 error: -1.928e-05
+Orbital 4 error: -1.928e-05
+Orbital Energies:  [-19.25910838  -1.37123256  -0.83831374  -0.83831374  -0.83831374]
+Updated V_x:                           -9.6258700401 Hartree
+Updated V_c:                           -0.6072452723 Hartree
+Updated Band Energy:                   -40.6139368439 H, -5.3913386611e-04 H
+Updated Kinetic Energy:                 74.1133545259 H, 6.2433471535e-04 H
+Updated E_x:                           -7.2194025301 H, -3.2447205329e-05 H
+Updated E_c:                           -0.5445537690 H, -5.3327632932e-07 H
+Updated totalElectrostatic:            -140.8193790900 H, -1.2347163274e-03 H
+Total Energy:                          -74.4699808632 H, -6.4336209367e-04 H
+Energy Residual:                        2.245e-04
+Density Residual:                       2.318e-05
+
+
+Setting density residual to min of density residual and energy residual, just for testing purposes
+
+
+
+SCF Count  4
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  1.00000000808
+Orbital energy after Harrison update:  -19.2590657426
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.36779852207e-05
+Linf Error:            -0.0249886213681
+LinfRel Error:         0.00206380250571
+Located at:            5.97454635069e-05 -5.97454635069e-05 -5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.628e-04 and 1.783e-06
+
+
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Norm of psiNew =  0.999993173826
+Orbital energy after Harrison update:  -1.37121579392
+Orbital 1 error and residual:   -8.804e-06 and 4.066e-06
+
+
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Norm of psiNew =  0.999990044283
+Orbital energy after Harrison update:  -0.838297475863
+Orbital 2 error and residual:   -3.023e-06 and 6.877e-06
+
+
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Norm of psiNew =  0.999990045946
+Orbital energy after Harrison update:  -0.838297479887
+Orbital 3 error and residual:   -3.027e-06 and 6.877e-06
+
+
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Norm of psiNew =  0.999990065988
+Orbital energy after Harrison update:  -0.838297528368
+Orbital 4 error and residual:   -3.075e-06 and 6.874e-06
+
+
+Used 1 iterations for orbital 4.
+Fermi energy:  -0.8382535933154874
+Occupations:  [ 2.          2.          1.33320111  1.33322935  1.33356954]
+
+Orbital  0  moments:
+x1 =  1.62601698056e-17
+y1 =  1.00328359568e-15
+z1 =  7.78038767604e-16
+x2 =  -0.0568051785908
+y2 =  -0.0568051784198
+z2 =  -0.0568051784329 
+
+
+Orbital  1  moments:
+x1 =  -5.94666269213e-13
+y1 =  -3.30227015539e-13
+z1 =  -1.56615216637e-13
+x2 =  14.3432967767
+y2 =  14.3432966217
+z2 =  14.3432966336 
+
+
+Orbital  2  moments:
+x1 =  1.73843350827e-13
+y1 =  -18.0619574048
+z1 =  -3.0631341274e-14
+x2 =  1.03369769348e-12
+y2 =  2.13325273311e-12
+z2 =  1.10676574838e-12 
+
+
+Orbital  3  moments:
+x1 =  6.96285060634e-14
+y1 =  6.94800855324e-14
+z1 =  -18.0619573979
+x2 =  6.6189533594e-13
+y2 =  6.59095684596e-13
+z2 =  1.24694573284e-12 
+
+
+Orbital  4  moments:
+x1 =  -18.0619573147
+y1 =  -4.10981631197e-13
+z1 =  -1.69702908797e-13
+x2 =  5.29874188572e-12
+y2 =  3.02352726274e-12
+z2 =  3.11659175551e-12 
+
+
+
+Integrated density:  8.00000003233
+Density Residual  8.108649603e-05
+Computing Vcoulomb and updating Veff took:    176.4460 seconds. 
+Computing band energy.  Current orbital energies are:  [-19.25906574  -1.37121579  -0.83829748  -0.83829748  -0.83829753]
+Electrostatic Energies:
+Hartree:          36.3252771861
+External:         -177.144672669
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.613753 H, -3.55e-04 H
+Orbital Energy Errors after Veff Update:  [ -1.62782889e-04  -8.80445949e-06  -3.02291449e-06  -3.02694131e-06
+  -3.07542606e-06]
+Orbital 0 error: -1.628e-04
+Orbital 1 error: -8.804e-06
+Orbital 2 error: -3.023e-06
+Orbital 3 error: -3.027e-06
+Orbital 4 error: -3.075e-06
+Orbital Energies:  [-19.25906574  -1.37121579  -0.83829748  -0.83829748  -0.83829753]
+Updated V_x:                           -9.6258814161 Hartree
+Updated V_c:                           -0.6072456149 Hartree
+Updated Band Energy:                   -40.6137530518 H, -3.5534175279e-04 H
+Updated Kinetic Energy:                 74.1134922760 H, 7.6208488387e-04 H
+Updated E_x:                           -7.2194110621 H, -4.0979178191e-05 H
+Updated E_c:                           -0.5445541087 H, -8.7297138607e-07 H
+Updated totalElectrostatic:            -140.8193954829 H, -1.2511092654e-03 H
+Total Energy:                          -74.4698683776 H, -5.3087653106e-04 H
+Energy Residual:                        1.125e-04
+Density Residual:                       8.109e-05
+
+
+Setting density residual to min of density residual and energy residual, just for testing purposes
+
+
+
+SCF Count  5
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  0.999999634898
+Orbital energy after Harrison update:  -19.2590510041
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.36885624182e-05
+Linf Error:            -0.024987078
+LinfRel Error:         0.00206367530247
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.480e-04 and 3.951e-07
+
+
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Norm of psiNew =  0.999999436773
+Orbital energy after Harrison update:  -1.37120869655
+Orbital 1 error and residual:   -1.707e-06 and 2.571e-06
+
+
+Used 1 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Norm of psiNew =  0.999999843509
+Orbital energy after Harrison update:  -0.838295743081
+Orbital 2 error and residual:   -1.290e-06 and 1.559e-06
+
+
+Used 1 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Norm of psiNew =  0.999999388186
+Orbital energy after Harrison update:  -0.838294641709
+Orbital 3 error and residual:   -1.888e-07 and 1.470e-06
+
+
+Used 1 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Norm of psiNew =  0.999993903322
+Orbital energy after Harrison update:  -0.838281374407
+Orbital 4 error and residual:   1.308e-05 and 2.042e-06
+
+
+Used 1 iterations for orbital 4.
+Fermi energy:  -0.8382465755044001
+Occupations:  [ 2.          2.          1.3697615   1.36223161  1.26800689]
+
+Orbital  0  moments:
+x1 =  -1.29977506485e-19
+y1 =  6.40421431786e-16
+z1 =  6.00558159318e-16
+x2 =  -0.0568051614407
+y2 =  -0.0568052082319
+z2 =  -0.0568052046453 
+
+
+Orbital  1  moments:
+x1 =  -6.29376169359e-13
+y1 =  -3.92498827786e-13
+z1 =  -1.7628506259e-13
+x2 =  14.3432876632
+y2 =  14.34333009
+z2 =  14.343326838 
+
+
+Orbital  2  moments:
+x1 =  9.14571452558e-14
+y1 =  -18.0619013845
+z1 =  1.20617438438e-13
+x2 =  8.13755630158e-13
+y2 =  2.01187405139e-12
+z2 =  9.00595590007e-13 
+
+
+Orbital  3  moments:
+x1 =  -1.35115799798e-14
+y1 =  1.37518604015e-13
+z1 =  -18.0619032749
+x2 =  6.13335887977e-13
+y2 =  5.8175245943e-13
+z2 =  1.15123314182e-12 
+
+
+Orbital  4  moments:
+x1 =  -18.0619260447
+y1 =  -1.55632044377e-13
+z1 =  -6.02110084139e-14
+x2 =  5.30660557667e-12
+y2 =  2.91228053531e-12
+z2 =  2.93669874217e-12 
+
+
+
+Integrated density:  7.99999853959
+Density Residual  0.0219916803628
+Computing Vcoulomb and updating Veff took:    176.7224 seconds. 
+Computing band energy.  Current orbital energies are:  [-19.259051    -1.3712087   -0.83829574  -0.83829464  -0.83828137]
+Electrostatic Energies:
+Hartree:          36.325498061
+External:         -177.144590365
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.613683 H, -2.85e-04 H
+Orbital Energy Errors after Veff Update:  [ -1.48044420e-04  -1.70708941e-06  -1.29013222e-06  -1.88763321e-07
+   1.30785353e-05]
+Orbital 0 error: -1.480e-04
+Orbital 1 error: -1.707e-06
+Orbital 2 error: -1.290e-06
+Orbital 3 error: -1.888e-07
+Orbital 4 error: 1.308e-05
+Orbital Energies:  [-19.259051    -1.3712087   -0.83829574  -0.83829464  -0.83828137]
+Updated V_x:                           -9.6260368004 Hartree
+Updated V_c:                           -0.6072502213 Hartree
+Updated Band Energy:                   -40.6136826537 H, -2.8494365919e-04 H
+Updated Kinetic Energy:                 74.1131986108 H, 4.6841965955e-04 H
+Updated E_x:                           -7.2195276003 H, -1.5751738170e-04 H
+Updated E_c:                           -0.5445584010 H, -5.1652730847e-06 H
+Updated totalElectrostatic:            -140.8190923039 H, -9.4793022302e-04 H
+Total Energy:                          -74.4699796943 H, -6.4219321824e-04 H
+Energy Residual:                        1.113e-04
+Density Residual:                       2.199e-02
+
+
+Setting density residual to min of density residual and energy residual, just for testing purposes
+
+
+
+SCF Count  6
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  0.999999777741
+Orbital energy after Harrison update:  -19.2590554351
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              4.32657200653e-05
+Linf Error:            -0.0249868606863
+LinfRel Error:         0.00206365739163
+Located at:            -5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.525e-04 and 2.726e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999766586
+Orbital energy after Harrison update:  -19.2590554455
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              4.72933391898e-05
+Linf Error:            -0.024986831758
+LinfRel Error:         0.00206365500738
+Located at:            -5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.525e-04 and 6.058e-06
+
+
+Used 2 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Norm of psiNew =  0.999997503704
+Orbital energy after Harrison update:  -1.37119935566

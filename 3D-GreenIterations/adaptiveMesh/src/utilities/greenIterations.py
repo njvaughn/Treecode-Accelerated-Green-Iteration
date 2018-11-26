@@ -594,12 +594,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         # sort by energy and compute new occupations
 #         tree.sortOrbitalsAndEnergies()
-        tree.computeOccupations()
-        tree.computeOrbitalMoments()
-            
-            
-
- 
+#         tree.computeOccupations()
+#         tree.computeOrbitalMoments()
+        
 
         print()
         print()
@@ -612,7 +609,6 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     #     tree.computeWavefunctionResidual(0)
 #         return
 
-        
 
         
         if maxOrbitals==1:
