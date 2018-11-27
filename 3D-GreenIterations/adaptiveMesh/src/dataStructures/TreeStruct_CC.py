@@ -80,7 +80,7 @@ class Tree(object):
         self.gaugeShift = gaugeShift
         self.maxDepthAtAtoms = maxDepthAtAtoms
         
-        self.mixingParameter=0.75  # (1-mixingParam)*rhoNew
+        self.mixingParameter=0.5  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
 #         self.occupations = np.ones(nOrbitals)
 #         self.computeOccupations()
@@ -931,9 +931,13 @@ class Tree(object):
                     newRho += cell.tree.occupations[m] * cell.gridpoints[i,j,k].phi[m]**2
                 if mixingScheme=='None':
                     cell.gridpoints[i,j,k].rho = newRho
-                elif mixingScheme=='Simple':
-                    cell.gridpoints[i,j,k].rho = ( self.mixingParameter*cell.gridpoints[i,j,k].rho + 
-                        (1-self.mixingParameter)*newRho )
+                    
+                    ## Mixing has been taken care of externally.  This function is now only supposed to update density from wavefunctions, not handle mixing as well
+                    
+                    
+#                 elif mixingScheme=='Simple':
+#                     cell.gridpoints[i,j,k].rho = ( self.mixingParameter*cell.gridpoints[i,j,k].rho + 
+#                         (1-self.mixingParameter)*newRho )
                 else: 
                     print('Not a valid density mixing scheme.')
                     return
@@ -2094,6 +2098,25 @@ class Tree(object):
             print('Warning: import index not equal to len(phiNew)')
             print(importIndex)
             print(len(phiNew))
+            
+    def importDensityOnLeaves(self,rho):
+        '''
+        Import density values, apply to leaves
+        '''
+
+        importIndex = 0        
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    gridpt.rho = rho[importIndex]
+                    importIndex += 1
+                    
+
+        if importIndex != len(rho):
+            print('Warning: import index not equal to len(rho)')
+            print(importIndex)
+            print(len(rho))
             
     def importPhiNewOnLeaves(self,phiNew):
         '''

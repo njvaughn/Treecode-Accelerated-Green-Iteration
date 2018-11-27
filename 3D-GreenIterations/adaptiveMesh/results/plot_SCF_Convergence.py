@@ -16,9 +16,9 @@ import numpy as np
 #resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
 #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
 plotsDir = resultsDir+'plots/'
-file='HarrisonGradientFree_LW5_3000_order5_SCF_.csv'
+file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
 
 
 ## Carbon Monoxide
@@ -110,6 +110,7 @@ def plotSCFconvergence(df, system = 'H2'):
     df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='o-')
     df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='o-')
     df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='o-')
+    df.plot(x='Iteration', y='densityResidual', logy=True,ax=ax2, style='o-')
     
     ax2.legend(loc='lower left')
 ##    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='bo')
@@ -124,7 +125,7 @@ def plotSCFconvergence(df, system = 'H2'):
     plt.savefig(plotsDir+system+'Errors_combined'+'.pdf', bbox_inches='tight',format='pdf')
 
 
-
+    
     plt.show()
     
 

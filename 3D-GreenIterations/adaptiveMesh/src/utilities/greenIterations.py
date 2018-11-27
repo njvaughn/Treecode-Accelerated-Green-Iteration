@@ -14,6 +14,7 @@ import csv
 from numba import jit
 # from convolution import gpuPoissonConvolution,gpuHelmholtzConvolutionSubractSingularity, cpuHelmholtzSingularitySubtract,cpuHelmholtzSingularitySubtract_allNumerical
 from convolution import *
+import densityMixingSchemes as densityMixing
 
 @jit(nopython=True,parallel=True)
 def modifiedGramSchrmidt(V,weights):
@@ -74,7 +75,7 @@ def wavefunctionErrors(wave1, wave2, weights, x,y,z):
 
 
 
-def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree,
+def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, mixingScheme, mixingParameter,
                                 subtractSingularity, smoothingN, smoothingEps, inputFile='',outputFile='',
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None): 
     '''
@@ -144,7 +145,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             coefficients[ii] /= (jj+1) # this is replacing the 1/factorial(i)
             coefficients[ii] *= ((-1/2)-jj)
 
-
+    # Initialize density history arrays
+    inputDensities = np.zeros((tree.numberOfGridpoints,1))
+    outputDensities = np.zeros((tree.numberOfGridpoints,1))
+    
+    
 
     threadsPerBlock = 512
     blocksPerGrid = (numberOfTargets + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
@@ -155,7 +160,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Blocks per grid:     ', blocksPerGrid)
     
     greenIterationCounter=1                                     # initialize the counter to counter the number of iterations required for convergence
-    densityResidual = 1                                    # initialize the densityResidual to something that fails the convergence tolerance
+    densityResidual = 10                                   # initialize the densityResidual to something that fails the convergence tolerance
     Eold = -0.5 + tree.gaugeShift
 
 #     [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[4:8]
@@ -348,12 +353,30 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     tree.orbitalEnergies[3]=-1
 #     tree.orbitalEnergies[4]=-1
     
-    residuals = np.ones_like(tree.orbitalEnergies)
+    residuals = 10*np.ones_like(tree.orbitalEnergies)
+    SCFcount=0
     while ( densityResidual > interScfTolerance ):
+        SCFcount += 1
         print()
         print()
-        print('\nSCF Count ', greenIterationCounter)
+        print('\nSCF Count ', SCFcount)
+        if SCFcount > 100:
+            return
         
+        
+        # fill in the inputDensities array...
+        targets = tree.extractLeavesDensity() 
+        if SCFcount==1:
+            inputDensities[:,0] = np.copy(targets[:,3])
+        else:
+            inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (tree.numberOfGridpoints,1))), axis=1)
+            
+#             diff = inputDensities[:,SCFcount-1] - andersonDensity
+#             if np.max(np.abs(diff)) > 1e-14: print('input density not the same as previously computed anderson density.  Why?')
+            
+#         print('max of targets[:,3] =          ', max(targets[:,3]))
+#         print(inputDensities)
+#         print('max of inputDensities column = ', max(inputDensities[:,SCFcount-1]))
         
         
         orbitals = np.zeros((len(targets),tree.nOrbitals))
@@ -369,11 +392,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             oldOrbitals[:,m] = np.copy(targets[:,3])
             orbitals[:,m] = np.copy(targets[:,3])
         
-#         print('Not updating the 1S and 2S orbitals, just the 2P orbitals.')
-#         for m in range(2,nOrbitals):
+
         for m in range(nOrbitals):
             
-#         for m in range(7):
 
             orbitalResidual = 10
             eigensolveCount = 0
@@ -595,7 +616,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         # sort by energy and compute new occupations
 #         tree.sortOrbitalsAndEnergies()
         tree.computeOccupations()
-        tree.computeOrbitalMoments()
+#         tree.computeOrbitalMoments()
             
             
 
@@ -628,22 +649,78 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         
         tree.updateDensityAtQuadpoints()
-#         tree.normalizeDensity()  # Don't normalize the density.  Just print it
          
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = np.copy(sources)
-        newDensity = sources[:,3]
+        newDensity = np.copy(sources[:,3])
+        
+        if SCFcount==1:
+            outputDensities[:,0] = np.copy(newDensity)
+        else:
+            outputDensities = np.concatenate( ( outputDensities, np.reshape(np.copy(newDensity), (tree.numberOfGridpoints,1)) ), axis=1)
+            
         integratedDensity = np.sum( newDensity*weights )
         densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
         print('Integrated density: ', integratedDensity)
         print('Density Residual ', densityResidual)
         
+        densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
+        print('Density Residual from arrays ', densityResidual)
+        print('Shape of density histories: ', np.shape(outputDensities), np.shape(inputDensities))
+#         print('top row of input: \n', inputDensities[0,:])
+#         print('top row of output: \n', outputDensities[0,:])
         
+        # Now compute new mixing with anderson scheme, then import onto tree. 
+      
+        
+        if mixingScheme == 'Simple':
+            print('Using simple mixing, from the input/output arrays')
+            simpleMixingDensity = mixingParameter*inputDensities[:,SCFcount-1] + (1-mixingParameter)*outputDensities[:,SCFcount-1]
+            integratedDensity = np.sum( simpleMixingDensity*weights )
+            print('Integrated simple mixing density: ', integratedDensity)
+            tree.importDensityOnLeaves(simpleMixingDensity)
+        
+        elif mixingScheme == 'Anderson':
+            print('Using anderson mixing.')
+            andersonDensity = densityMixing.computeNewDensity(inputDensities, outputDensities, mixingParameter,weights)
+            integratedDensity = np.sum( andersonDensity*weights )
+            print('Integrated anderson density: ', integratedDensity)
+            tree.importDensityOnLeaves(andersonDensity)
+        
+        elif mixingScheme == 'None':
+            pass # don't touch the density
+        
+        
+        else:
+            print('Mixing must be set to either Simple, Anderson, or None')
+            return
+            
+#             sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
+#             targets = np.copy(sources)
+#             newDensity = sources[:,3]
+#             integratedDensity = np.sum( newDensity*weights )
+#             densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
+#             print('Integrated density: ', integratedDensity)
+#             print('Density Residual ', densityResidual)
+#             if SCFcount==1:
+#                 # simple mixing
+#                 print('Using simple mixing after SCF 1')
+#                 simpleMixingDensity = mixingParameter*outputDensities[:,0] + (1-mixingParameter)*inputDensities[:,0]
+#                 tree.importDensityOnLeaves(simpleMixingDensity)
+#             elif SCFcount==2:
+#                 # simple mixing
+#                 print('Using simple mixing after SCF 2')
+#                 simpleMixingDensity = mixingParameter*outputDensities[:,1] + (1-mixingParameter)*inputDensities[:,1]
+#                 tree.importDensityOnLeaves(simpleMixingDensity)
+#             elif SCFcount>2:
+#                 tree.importDensityOnLeaves(andersonDensity)
  
         """ 
         Compute new electron-electron potential and update pointwise potential values 
         """
         startCoulombConvolutionTime = timer()
+        sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
+        targets = np.copy(sources)
         V_coulombNew = np.zeros((len(targets)))
         gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
         
@@ -765,8 +842,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
         
-        print('Setting density residual to min of density residual and energy residual, just for testing purposes')
-        densityResidual = min(densityResidual, energyResidual)
+#         print('Setting density residual to min of density residual and energy residual, just for testing purposes')
+#         densityResidual = min(densityResidual, energyResidual)
         
         if maxSCFIterations == 1:
             print('Setting density residual to -1 to exit after the first SCF')

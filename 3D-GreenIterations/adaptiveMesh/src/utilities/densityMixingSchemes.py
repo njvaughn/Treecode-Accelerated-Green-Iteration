@@ -18,7 +18,8 @@ def computeFarray(inputDensities, outputDensities):
     (M,n) = np.shape(F)
     
     for i in range(n):
-        F[:,i] = outputDensities[:,i] - inputDensities[:,i]
+        F[:,i] =  outputDensities[:,i] - inputDensities[:,i] 
+
     return F
 
 
@@ -29,7 +30,7 @@ def solveLinearSystem(F,weights):
     :param weights:
     '''
     (M,n) = np.shape(F)
-    print('F has shape ', np.shape(inputDensities))
+#     print('F has shape ', np.shape(F))
     
     linearSystem = np.zeros((n-1,n-1))
     rhs = np.zeros(n-1)
@@ -38,12 +39,12 @@ def solveLinearSystem(F,weights):
         rhs[m] = innerProduct(f, F[:,n-1], weights)
         for k in range(n-1): # k columns
             g = F[:,n-1] - F[:,n-2-k]
-            linearSystem[k,m] = innerProduct( f, g, weights)
+            linearSystem[m,k] = innerProduct( f, g, weights)
     
 #     print('\nLinear system: ', linearSystem)
 #     print('\nrhs: ', rhs)
     cvec = np.linalg.solve(linearSystem, rhs)
-    print('\nsolution: ', cvec)
+    print('\nAnderson weights: ', cvec[::-1] , 1-np.sum(cvec))
     return cvec
     
 
@@ -80,28 +81,99 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights):
     
     return mixingParameter*weightedOutputDensity + (1-mixingParameter)*weightedInputDensity
  
-if __name__=="__main__":
+
+def test1():
     mixingParameter = 0.5
     M = 100
-    n = 3
+    n = 4
     xvec = np.linspace(0,1,M)
     weights = (1/M)*np.ones(M)
-    inputDensities = np.zeros((M,n))
-    outputDensities = np.zeros((M,n))
+#     inputDensities = np.zeros((M,n))
+#     outputDensities = np.zeros((M,n))
+    
+    inputDensities = np.zeros((M,1))
+    outputDensities = np.zeros((M,1))
+    
+    print(np.shape(inputDensities))
     
     for i in range(n):
         if i==0:
-            inputDensities[:,i] = 1-xvec**(i+1)
-            outputDensities[:,i] = 0-xvec**(5*(i+1))
+            inputDensities[:,i] = xvec**(i+1) 
+            outputDensities[:,i] =  1.1*xvec**((i+1))
         else:   
-            inputDensities[:,i] = xvec**(i+1)
-            outputDensities[:,i] = xvec**(1.01*(i+1))
+#             print('shape of xvec**(i+1): ', np.shape(xvec**(i+1)))
+            v = np.reshape(xvec**(i+1), (M,1))
+            vv = np.reshape(1.1*xvec**(1*(i+1)), (M,1))
+            inputDensities= np.concatenate((inputDensities, v), axis=1)
+            outputDensities = np.concatenate((outputDensities,vv), axis=1)
+            
+#         print(np.shape(inputDensities))
         
 #         print(inputDensities[:,i])
 #         print(outputDensities[:,i])
+
+        nextDensity = computeNewDensity(inputDensities, outputDensities, mixingParameter,weights)
+        plt.plot(xvec,nextDensity,label='input after %i' %i)
         
         plt.plot(xvec,inputDensities[:,i],label='input   %i' %i)
         plt.plot(xvec,outputDensities[:,i],'-.',label='output %i' %i)
+        
+        
+
+    
+    
+#     target = n-1
+# #     outputDensities[:,target] = inputDensities[:,target] - 0.00
+# #     outputDensities[:,target+1] = inputDensities[:,target+1]+ 1.01
+#     nextDensity = computeNewDensity(inputDensities, outputDensities, mixingParameter,weights)
+# #     print('\nNext density: \n', nextDensity)
+# #     print('\nThe input=output density: \n', inputDensities[:,target])
+# #     print('\nThe input=output density: \n', inputDensities[:,target+1])
+#     
+# #     plt.figure()
+# #     plt.plot(xvec,outputDensities[:,target],'b')
+# #     plt.plot(xvec,inputDensities[:,target],'b-.')
+# #     plt.plot(xvec,outputDensities[:,target+1],'r')
+# #     plt.plot(xvec,inputDensities[:,target+1],'r-.')
+#     plt.plot(xvec,nextDensity,'k')
+    plt.legend()
+    plt.show()
+    
+    
+def test2():
+    mixingParameter = 0.5
+    M = 100
+    n = 2
+    xvec = np.linspace(0,1,M)
+    weights = (1/M)*np.ones(M)
+#     inputDensities = np.zeros((M,n))
+#     outputDensities = np.zeros((M,n))
+    
+    inputDensities = np.zeros((M,1))
+    outputDensities = np.zeros((M,1))
+    
+    print(np.shape(inputDensities))
+    
+    for i in range(n):
+        if i==0:
+            inputDensities[:,i] = xvec**(i+1) 
+            outputDensities[:,i] =  0.9*xvec**((i+1))
+        else:   
+#             print('shape of xvec**(i+1): ', np.shape(xvec**(i+1)))
+            v = np.reshape(xvec**(i+1), (M,1))
+            vv = np.reshape(1.4*xvec**(1*(i+1)), (M,1))
+            inputDensities= np.concatenate((inputDensities, v), axis=1)
+            outputDensities = np.concatenate((outputDensities,vv), axis=1)
+            
+#         print(np.shape(inputDensities))
+        
+#         print(inputDensities[:,i])
+#         print(outputDensities[:,i])
+
+        
+        plt.plot(xvec,inputDensities[:,i],label='input   %i' %i)
+        plt.plot(xvec,outputDensities[:,i],'-.',label='output %i' %i)
+        
         
 
     
@@ -113,7 +185,7 @@ if __name__=="__main__":
 #     print('\nNext density: \n', nextDensity)
 #     print('\nThe input=output density: \n', inputDensities[:,target])
 #     print('\nThe input=output density: \n', inputDensities[:,target+1])
-    
+     
 #     plt.figure()
 #     plt.plot(xvec,outputDensities[:,target],'b')
 #     plt.plot(xvec,inputDensities[:,target],'b-.')
@@ -122,8 +194,12 @@ if __name__=="__main__":
     plt.plot(xvec,nextDensity,'k')
     plt.legend()
     plt.show()
+
+
+if __name__=="__main__":
     
-    plt.close()
+    test2()
+    
 
     
     
