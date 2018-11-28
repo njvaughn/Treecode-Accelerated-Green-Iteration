@@ -10,7 +10,7 @@
 
 
 #PBS -l nodes=1:gpus=1:titanv,mem=8gb
-#PBS -l walltime=12:00:00
+#PBS -l walltime=16:00:00
 #PBS -j oe
 #PBS -V
 
@@ -48,7 +48,7 @@ GRADIENTFREE='True'
 
 ORDER=5
 MESHTYPE='LW5'
-MESHPARAM=1000
+MESHPARAM=2000
 
 
 MIXINGPARAMETER=0.5
@@ -59,15 +59,16 @@ INTERSCFTOLERANCE=1e-6
 
 MIXING='Anderson'	
 
-OUTPUTFILE='/home/njvaughn/oxygen_with_anderson/LW5_1000_andersonMixing_p5_1em76.csv'
+OUTPUTFILE='/home/njvaughn/oxygen_with_anderson/LW5_2000_andersonMixing_p5_1em76.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
 	
-MIXING='Simple'	
-
-OUTPUTFILE='/home/njvaughn/oxygen_with_anderson/LW5_1000_simpleMixing_p5_1em76.csv'
+MESHPARAM=2000	
+OUTPUTFILE='/home/njvaughn/oxygen_with_anderson/LW5_3000_andersonMixing_p5_1em76.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
+	
+
 	

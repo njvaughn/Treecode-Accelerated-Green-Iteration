@@ -100,13 +100,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
 #     ## Carbon Monoxide   
      
-    elif tree.nOrbitals == 7:
+    elif tree.nOrbitals == 10:
         print('Assuming this is the carbon monoxide test case...')  
         dftfeOrbitalEnergies = np.array( [-1.871914961754098883e+01, -9.907098561099513034e+00,
                                           -1.075307096649917860e+00, -5.215348395483176969e-01,
                                           -4.455546114762743981e-01, -4.455543309534727436e-01,
-                                          -3.351421635719918912e-01]) 
-        tree.occupations = np.array([2,2,2,2,2,2,2])
+                                          -3.351421635719918912e-01, -8.279124771292359353e-02,
+                                          -8.279124771292359353e-02, 1.290367676602023790e-02]) 
+        tree.occupations = np.array([2,2,2,2,4/3,3/3,3/3,4/3,2/3,2/3])  # these are just guesses
 
 
 #     dftfeOrbitalEnergies = np.array( [-1.875878370505640547e+01, -8.711996463756719322e-01,
@@ -352,6 +353,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     tree.orbitalEnergies[2]=-1
 #     tree.orbitalEnergies[3]=-1
 #     tree.orbitalEnergies[4]=-1
+
+    inputIntraSCFtolerance = np.copy(intraScfTolerance)
+
     
     residuals = 10*np.ones_like(tree.orbitalEnergies)
     SCFcount=0
@@ -363,6 +367,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         if SCFcount > 100:
             return
         
+#         if SCFcount == 1:
+#             print('setting loose tolerance for initial two SCFs')
+#             intraScfTolerance = 1e-3 # setting loose tolerance for initial SCF
+#         if SCFcount == 3:
+#             intraScfTolerance = inputIntraSCFtolerance  # set it back
+#         
         
         # fill in the inputDensities array...
         targets = tree.extractLeavesDensity() 
@@ -398,11 +408,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
             orbitalResidual = 10
             eigensolveCount = 0
-            max_scfCount = 555
+            max_scfCount = 10
             
             tree.orthonormalizeOrbitals(targetOrbital=m)
         
             print('Working on orbital %i' %m)
+            inputIntraSCFtolerance = np.copy(intraScfTolerance)
+            
             while ( ( orbitalResidual > intraScfTolerance ) and ( eigensolveCount < max_scfCount) ):
 #             while ( ( orbitalResidual > intraScfTolerance ) ):
             
@@ -468,14 +480,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                     gradientEnergy = tree.orbitalEnergies[m]
 #                     tree.orbitalEnergies = np.copy(storedEnergies)
                     
-                    
+                        
                     tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
                     print('Orbital energy after Harrison update: ', tree.orbitalEnergies[m])
                     if tree.orbitalEnergies[m]>0:
                         tree.orbitalEnergies[m] = -1
 #                         print('setting eigenvalue to -1 because it was positive')
-                        tree.orbitalEnergies[m] = tree.gaugeShift
-                        print('setting eigenvalue to gauge shift because it was positive')
+                        tree.orbitalEnergies[m] = tree.gaugeShift-0.5
+                        print('setting eigenvalue to gauge shift minus 0.5 because it was positive')
 #                     gradientFreeEnergy = tree.orbitalEnergies[m]
 #                     print('Gradient Energy:      ', gradientEnergy)
 #                     print('Gradient-free energy: ', gradientFreeEnergy)

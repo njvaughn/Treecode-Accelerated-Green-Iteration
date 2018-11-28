@@ -18,7 +18,8 @@ import numpy as np
 #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
 resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
 plotsDir = resultsDir+'plots/'
-file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
+file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
+# file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
 
 
 ## Carbon Monoxide
@@ -103,6 +104,7 @@ def plotSCFconvergence(df, system = 'H2'):
 
     
 # Combined error plot
+    f1, ax1 = plt.subplots(1, 1, figsize=(10,6))
     f2, ax2 = plt.subplots(1, 1, figsize=(10,6))
     df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='o-')
     df.plot(x='Iteration', y='kineticEnergyError', logy=True,ax=ax2, style='o-')
@@ -110,7 +112,7 @@ def plotSCFconvergence(df, system = 'H2'):
     df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='o-')
     df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='o-')
     df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='o-')
-    df.plot(x='Iteration', y='densityResidual', logy=True,ax=ax2, style='o-')
+    df.plot(x='Iteration', y='densityResidual', logy=True,ax=ax1, style='o-')
     
     ax2.legend(loc='lower left')
 ##    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='bo')
@@ -123,6 +125,9 @@ def plotSCFconvergence(df, system = 'H2'):
     ax2.set_ylabel('Energy (H)')
     ax2.set_xlabel('SCF Number')
     plt.savefig(plotsDir+system+'Errors_combined'+'.pdf', bbox_inches='tight',format='pdf')
+    
+    ax1.set_title('Oxygen Atom: Density Residual Norm')
+    ax1.set_ylabel('Density Residual Norm')
 
 
     
