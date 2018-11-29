@@ -1,0 +1,1445 @@
+Running on
+      1 nyx7506
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/CO_with_anderson/LW5_500_andersonMixing_p5_1em76.csv', 14, 10, -112.471443237994, -11.997011069615391, -0.94214407530225852, -62.898682441673358, -0.5]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.5
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  379500
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+Orbital index = 5
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Orbital 7 filled with (n,ell,m) = (2,1,-1) 
+Orbital 8 filled with (n,ell,m) = (2,1,0) 
+Orbital 9 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       3521 
+Total Number of Leaf Cells:  3036 
+Total Number of Gridpoints:  379500 
+Minimum Depth                3 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  5 
+Construction time:           184 seconds.
+Closest gridpoint to origin:  [-0.0065205567959327748, -0.0076474193288822434, -0.0076474193288822434]
+For a distance of:  0.012628685826819376
+Part of a cell centered at:  [-0.13322624999999999, -0.15625, -0.15625]
+
+Orbital  0  moments:
+x1 =  -1.21969855554
+y1 =  1.41694615297e-16
+z1 =  4.35395436002e-16
+x2 =  -1.4700672485
+y2 =  -0.170100520525
+z2 =  -0.170100520525 
+
+
+Orbital  1  moments:
+x1 =  -13.7571554875
+y1 =  4.35460248047e-14
+z1 =  -3.49431516166e-14
+x2 =  -56.1624074994
+y2 =  -41.4903354097
+z2 =  -41.4903354097 
+
+
+Orbital  2  moments:
+x1 =  -39.310997987
+y1 =  -1.19948755789e-13
+z1 =  5.01174622636e-14
+x2 =  -83.5249050329
+y2 =  -0.0265930979017
+z2 =  -0.026593097901 
+
+
+Orbital  3  moments:
+x1 =  3.95919191529e-14
+y1 =  2.1473315205e-14
+z1 =  -39.2859197147
+x2 =  2.44700093521e-14
+y2 =  -2.07777263277e-13
+z2 =  -9.71648434454e-14 
+
+
+Orbital  4  moments:
+x1 =  -1.94961234656e-15
+y1 =  -39.2859197147
+z1 =  2.11081288082e-14
+x2 =  4.72729494438e-14
+y2 =  3.92985774131e-13
+z2 =  -2.63494711076e-13 
+
+
+Orbital  5  moments:
+x1 =  0.765387386341
+y1 =  -1.64504192188e-16
+z1 =  1.27068244906e-15
+x2 =  -0.872562177642
+y2 =  -0.0568046270465
+z2 =  -0.0568046270465 
+
+
+Orbital  6  moments:
+x1 =  -8.62415643162
+y1 =  -1.44971156541e-14
+z1 =  -5.2217512483e-14
+x2 =  23.5357760231
+y2 =  14.3440394455
+z2 =  14.3440394455 
+
+
+Orbital  7  moments:
+x1 =  -18.0623590869
+y1 =  8.35327488499e-14
+z1 =  6.29600681672e-14
+x2 =  38.5027993163
+y2 =  0.000194177457367
+z2 =  0.000194177457356 
+
+
+Orbital  8  moments:
+x1 =  8.66027011528e-14
+y1 =  -5.30531245767e-14
+z1 =  -18.0623120466
+x2 =  -6.73665958644e-14
+y2 =  -7.27408353012e-14
+z2 =  2.68845457882e-14 
+
+
+Orbital  9  moments:
+x1 =  -6.1492023105e-14
+y1 =  -18.0623120466
+z1 =  -5.3089593256e-14
+x2 =  2.02444994389e-13
+y2 =  1.8746375708e-13
+z2 =  1.29811239801e-13 
+
+Assuming this is the carbon monoxide test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    379500
+Threads per block:    512
+Blocks per grid:      742
+[-62.898682441673358, 111.85061770418731, -11.997011069615391, -0.94214407530225852, -211.38290579726365, -112.471443237994]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    21.1319 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Need to re-order orbitals.
+Sorted eigenvalues:  [-19.36877284 -10.4968054   -1.57445899  -1.22270554  -1.2157037
+  -1.15220701  -0.95673233  -0.95673233  -0.77251627  -0.77251627]
+New order:  [5 0 6 7 1 2 8 9 3 4]
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-19.36877284 -10.4968054   -1.57445899  -1.22270554  -1.2157037
+  -1.15220701  -0.95673233  -0.95673233  -0.77251627  -0.77251627]
+Sorted eigenvalues:  [-19.36877284 -10.4968054   -1.57445899  -1.22270554  -1.2157037
+  -1.15220701  -0.95673233  -0.95673233  -0.77251627  -0.77251627]
+New order:  [0 1 2 3 4 5 6 7 8 9]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.9567323284380187
+../src/dataStructures/TreeStruct_CC.py:162: RuntimeWarning: overflow encountered in exp
+  self.occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
+Occupations:  [ 2.  2.  2.  2.  2.  2.  1.  1.  0.  0.]
+Fermi energy:  -0.9567323284380187
+Occupations:  [ 2.  2.  2.  2.  2.  2.  1.  1.  0.  0.]
+Kinetic Errors:    [  1.61323111e-03  -1.30415890e+01  -2.55601343e+01  -2.62041562e+01
+  -2.71094854e+01  -2.75230520e+01  -2.62041797e+01  -2.62041797e+01
+  -2.75230448e+01  -2.75230448e+01]
+Potential Errors:  [ -0.11159979  21.80356992  43.24446157  44.24023698  45.15256802
+  45.62963125  44.50623365  44.50623365  46.00931485  46.00931485]
+Computing band energy.  Current orbital energies are:  [-19.36877284 -10.4968054   -1.57445899  -1.22270554  -1.2157037
+  -1.15220701  -0.95673233  -0.95673233  -0.77251627  -0.77251627]
+Electrostatic Energies:
+Hartree:          74.9482453127
+External:         -308.664291601
+Nuclear-Nuclear:  22.5180848369
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-19.36877284 -10.4968054   -1.57445899  -1.22270554  -1.2157037
+  -1.15220701  -0.95673233  -0.95673233  -0.77251627  -0.77251627]
+Orbital Energy Errors after initialization:  [-0.14962323 -0.08970684  0.00084811 -0.2011707  -0.27014908 -0.20665268
+ -0.12159016 -0.37394108 -0.18972502 -0.28541995]
+Updated V_x:                           -15.8231707075 Hartree
+Updated V_c:                           -1.0434329487 Hartree
+Updated Band Energy:                   -64.9747716056 H, -2.0760891639e+00 H
+Updated Kinetic Energy:                 110.6596330258 H, -1.1909846783e+00 H
+Updated E_x:                           -11.8673780306 H, 1.2963303900e-01 H
+Updated E_c:                           -0.9346774579 H, 7.4666174208e-03 H
+Updated totalElectrostatic:            -211.1979614511 H, 1.8494434616e-01 H
+Total Energy:                          -113.3403839137 H, -8.6894067575e-01 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -19.3687728437
+L2 norm of wavefunction residual (H*psi-lambda*psi):    20.7302714844
+Energy Eigenvalue:  -10.4968053976
+L2 norm of wavefunction residual (H*psi-lambda*psi):    9.95943073511
+Energy Eigenvalue:  -1.57445898826
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.91242888589
+Energy Eigenvalue:  -1.22270553883
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.17489970823
+Energy Eigenvalue:  -1.21570369509
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.52168305923
+Energy Eigenvalue:  -1.15220701092
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.82941009994
+Energy Eigenvalue:  -0.956732328438
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.201545738853
+Energy Eigenvalue:  -0.956732328438
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.201545738853
+Energy Eigenvalue:  -0.772516268443
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.230258673047
+Energy Eigenvalue:  -0.772516268443
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.230258673047
+
+
+
+SCF Count  1
+setting loose tolerance for initial two SCFs
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  1.0000172794
+Orbital energy after Harrison update:  -19.3715851096
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000985624150464
+Linf Error:            -0.190918748761
+LinfRel Error:         0.0156424664927
+Located at:            -1.06626249278 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -1.524e-01 and 9.856e-04
+
+
+Used 1 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Norm of psiNew =  1.00022623933
+Orbital energy after Harrison update:  -10.4982050093
+Orbital 1 error and residual:   -9.111e-02 and 2.119e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00004818699
+Orbital energy after Harrison update:  -10.4982383815
+Orbital 1 error and residual:   -9.114e-02 and 6.572e-04
+
+
+Used 2 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Norm of psiNew =  0.9925979205
+Orbital energy after Harrison update:  -1.56893691639
+Orbital 2 error and residual:   6.370e-03 and 8.501e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.01086890108
+Orbital energy after Harrison update:  -1.6014730788
+Orbital 2 error and residual:   -2.617e-02 and 6.514e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00569193267
+Orbital energy after Harrison update:  -1.62344222113
+Orbital 2 error and residual:   -4.814e-02 and 5.197e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00270620286
+Orbital energy after Harrison update:  -1.63856943026
+Orbital 2 error and residual:   -6.326e-02 and 4.223e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00096785232
+Orbital energy after Harrison update:  -1.64937687809
+Orbital 2 error and residual:   -7.407e-02 and 3.488e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999895306189
+Orbital energy after Harrison update:  -1.65730449561
+Orbital 2 error and residual:   -8.200e-02 and 2.923e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999223409307
+Orbital energy after Harrison update:  -1.66322241935
+Orbital 2 error and residual:   -8.792e-02 and 2.477e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998814655228
+Orbital energy after Harrison update:  -1.6676885425
+Orbital 2 error and residual:   -9.238e-02 and 2.117e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998587077463
+Orbital energy after Harrison update:  -1.67108025165
+Orbital 2 error and residual:   -9.577e-02 and 1.821e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998486126912
+Orbital energy after Harrison update:  -1.67366431832
+Orbital 2 error and residual:   -9.836e-02 and 1.572e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998472978434
+Orbital energy after Harrison update:  -1.67563558056
+Orbital 2 error and residual:   -1.003e-01 and 1.362e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998519149312
+Orbital energy after Harrison update:  -1.67713952236
+Orbital 2 error and residual:   -1.018e-01 and 1.181e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998603611065
+Orbital energy after Harrison update:  -1.67828628194
+Orbital 2 error and residual:   -1.030e-01 and 1.026e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998710954746
+Orbital energy after Harrison update:  -1.67915989162
+Orbital 2 error and residual:   -1.039e-01 and 8.916e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.99883006848
+Orbital energy after Harrison update:  -1.67982471054
+Orbital 2 error and residual:   -1.045e-01 and 7.751e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.99895311919
+Orbital energy after Harrison update:  -1.68033009451
+Orbital 2 error and residual:   -1.050e-01 and 6.740e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.99907475058
+Orbital energy after Harrison update:  -1.68071388602
+Orbital 2 error and residual:   -1.054e-01 and 5.860e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999191451288
+Orbital energy after Harrison update:  -1.68100506985
+Orbital 2 error and residual:   -1.057e-01 and 5.094e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999301061815
+Orbital energy after Harrison update:  -1.68122581408
+Orbital 2 error and residual:   -1.059e-01 and 4.428e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999402394725
+Orbital energy after Harrison update:  -1.6813930458
+Orbital 2 error and residual:   -1.061e-01 and 3.848e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999494946214
+Orbital energy after Harrison update:  -1.6815196693
+Orbital 2 error and residual:   -1.062e-01 and 3.343e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999578680179
+Orbital energy after Harrison update:  -1.68161550683
+Orbital 2 error and residual:   -1.063e-01 and 2.904e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999653868927
+Orbital energy after Harrison update:  -1.68168802418
+Orbital 2 error and residual:   -1.064e-01 and 2.522e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999720977447
+Orbital energy after Harrison update:  -1.68174288878
+Orbital 2 error and residual:   -1.064e-01 and 2.190e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999780580753
+Orbital energy after Harrison update:  -1.68178439811
+Orbital 2 error and residual:   -1.065e-01 and 1.901e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999833305983
+Orbital energy after Harrison update:  -1.68181580767
+Orbital 2 error and residual:   -1.065e-01 and 1.650e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999879792819
+Orbital energy after Harrison update:  -1.68183958164
+Orbital 2 error and residual:   -1.065e-01 and 1.432e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999920667295
+Orbital energy after Harrison update:  -1.68185758394
+Orbital 2 error and residual:   -1.066e-01 and 1.243e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999956525247
+Orbital energy after Harrison update:  -1.6818712237
+Orbital 2 error and residual:   -1.066e-01 and 1.078e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.99998792263
+Orbital energy after Harrison update:  -1.68188156575
+Orbital 2 error and residual:   -1.066e-01 and 9.351e-04
+
+
+Used 30 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Norm of psiNew =  0.924405022033
+Orbital energy after Harrison update:  -1.01087714153
+Orbital 3 error and residual:   1.066e-02 and 1.019e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.03715239125
+Orbital energy after Harrison update:  -1.05783760825
+Orbital 3 error and residual:   -3.630e-02 and 6.428e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.01725025023
+Orbital energy after Harrison update:  -1.07898647516
+Orbital 3 error and residual:   -5.745e-02 and 4.336e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00981957821
+Orbital energy after Harrison update:  -1.08967654513
+Orbital 3 error and residual:   -6.814e-02 and 3.136e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00651304989
+Orbital energy after Harrison update:  -1.09557612338
+Orbital 3 error and residual:   -7.404e-02 and 2.336e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.004713719
+Orbital energy after Harrison update:  -1.09896436337
+Orbital 3 error and residual:   -7.743e-02 and 1.773e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00358068498
+Orbital energy after Harrison update:  -1.10095815017
+Orbital 3 error and residual:   -7.942e-02 and 1.365e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00278573559
+Orbital energy after Harrison update:  -1.10215242377
+Orbital 3 error and residual:   -8.062e-02 and 1.064e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00218661652
+Orbital energy after Harrison update:  -1.10287774235
+Orbital 3 error and residual:   -8.134e-02 and 8.378e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00171598606
+Orbital energy after Harrison update:  -1.10332316277
+Orbital 3 error and residual:   -8.179e-02 and 6.661e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00133821081
+Orbital energy after Harrison update:  -1.10359922479
+Orbital 3 error and residual:   -8.206e-02 and 5.345e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00103179865
+Orbital energy after Harrison update:  -1.10377168264
+Orbital 3 error and residual:   -8.224e-02 and 4.327e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00078209979
+Orbital energy after Harrison update:  -1.10388018308
+Orbital 3 error and residual:   -8.235e-02 and 3.535e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00057819725
+Orbital energy after Harrison update:  -1.10394889007
+Orbital 3 error and residual:   -8.241e-02 and 2.914e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00041151751
+Orbital energy after Harrison update:  -1.10399266078
+Orbital 3 error and residual:   -8.246e-02 and 2.424e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00027515117
+Orbital energy after Harrison update:  -1.10402069822
+Orbital 3 error and residual:   -8.249e-02 and 2.034e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00016347161
+Orbital energy after Harrison update:  -1.10403874087
+Orbital 3 error and residual:   -8.250e-02 and 1.722e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00007188446
+Orbital energy after Harrison update:  -1.10405038933
+Orbital 3 error and residual:   -8.252e-02 and 1.470e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999996641099
+Orbital energy after Harrison update:  -1.10405791695
+Orbital 3 error and residual:   -8.252e-02 and 1.264e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999934689063
+Orbital energy after Harrison update:  -1.1040627685
+Orbital 3 error and residual:   -8.253e-02 and 1.095e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999883548185
+Orbital energy after Harrison update:  -1.10406586867
+Orbital 3 error and residual:   -8.253e-02 and 9.545e-04
+
+
+Used 21 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Norm of psiNew =  0.8250937274
+Orbital energy after Harrison update:  -0.771346654922
+Orbital 4 error and residual:   1.742e-01 and 7.516e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.08921644752
+Orbital energy after Harrison update:  -0.855401886731
+Orbital 4 error and residual:   9.015e-02 and 7.928e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.02116365726
+Orbital energy after Harrison update:  -0.875010571729
+Orbital 4 error and residual:   7.054e-02 and 3.754e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00688310051
+Orbital energy after Harrison update:  -0.881309829157
+Orbital 4 error and residual:   6.424e-02 and 2.556e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00300231808
+Orbital energy after Harrison update:  -0.884958193003
+Orbital 4 error and residual:   6.060e-02 and 1.925e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.00113244472
+Orbital energy after Harrison update:  -0.887313992344
+Orbital 4 error and residual:   5.824e-02 and 1.503e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  1.0001529207
+Orbital energy after Harrison update:  -0.888873562565
+Orbital 4 error and residual:   5.668e-02 and 1.196e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999653425778
+Orbital energy after Harrison update:  -0.8899161154
+Orbital 4 error and residual:   5.564e-02 and 9.631e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999419438342
+Orbital energy after Harrison update:  -0.890615678427
+Orbital 4 error and residual:   5.494e-02 and 7.802e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999331186895
+Orbital energy after Harrison update:  -0.891085648246
+Orbital 4 error and residual:   5.447e-02 and 6.343e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999320390967
+Orbital energy after Harrison update:  -0.891401406667
+Orbital 4 error and residual:   5.415e-02 and 5.168e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999348115083
+Orbital energy after Harrison update:  -0.891613485387
+Orbital 4 error and residual:   5.394e-02 and 4.216e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.99939247958
+Orbital energy after Harrison update:  -0.891755860924
+Orbital 4 error and residual:   5.380e-02 and 3.443e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999441553045
+Orbital energy after Harrison update:  -0.891851394857
+Orbital 4 error and residual:   5.370e-02 and 2.813e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999489165439
+Orbital energy after Harrison update:  -0.891915466737
+Orbital 4 error and residual:   5.364e-02 and 2.300e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999532429765
+Orbital energy after Harrison update:  -0.891958417382
+Orbital 4 error and residual:   5.360e-02 and 1.881e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999570280289
+Orbital energy after Harrison update:  -0.891987195653
+Orbital 4 error and residual:   5.357e-02 and 1.539e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999602618724
+Orbital energy after Harrison update:  -0.892006468509
+Orbital 4 error and residual:   5.355e-02 and 1.259e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999629823369
+Orbital energy after Harrison update:  -0.892019368798
+Orbital 4 error and residual:   5.354e-02 and 1.030e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999652473497
+Orbital energy after Harrison update:  -0.892027998615
+Orbital 4 error and residual:   5.353e-02 and 8.435e-04
+
+
+Used 20 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Norm of psiNew =  0.657721497688
+Orbital energy after Harrison update:  0.303868169559
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.619e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.923703600983
+Orbital energy after Harrison update:  -0.133287531124
+Orbital 5 error and residual:   8.123e-01 and 1.108e-01
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  0.618140588169
+Orbital energy after Harrison update:  0.657864433521
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.181e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.932309968613
+Orbital energy after Harrison update:  -0.0382224202626
+Orbital 5 error and residual:   9.073e-01 and 9.052e-02
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  0.658408184942
+Orbital energy after Harrison update:  0.676375205653
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.881e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.932214304227
+Orbital energy after Harrison update:  0.0434293686796
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 8.631e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.930050877071
+Orbital energy after Harrison update:  -0.0241330643274
+Orbital 5 error and residual:   9.214e-01 and 7.421e-02
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  0.66580125444
+Orbital energy after Harrison update:  0.680131623261
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.789e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.930667060964
+Orbital energy after Harrison update:  0.0602936172858
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 8.164e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.92815225867
+Orbital energy after Harrison update:  -0.00582798587415
+Orbital 5 error and residual:   9.397e-01 and 7.237e-02
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  0.67174968492
+Orbital energy after Harrison update:  0.685223242106
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.704e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.929506565432
+Orbital energy after Harrison update:  0.0732457799123
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 8.128e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.926835122483
+Orbital energy after Harrison update:  0.00680223541595
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 7.237e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.927157598245
+Orbital energy after Harrison update:  -0.0448523171658
+Orbital 5 error and residual:   9.007e-01 and 6.974e-02
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  0.659258577876
+Orbital energy after Harrison update:  0.675743958644
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.865e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.930178926857
+Orbital energy after Harrison update:  0.0490190489469
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 7.928e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.928196195017
+Orbital energy after Harrison update:  -0.0137798357749
+Orbital 5 error and residual:   9.318e-01 and 7.281e-02
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  0.6691381939
+Orbital energy after Harrison update:  0.684039318385
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.755e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.929788994638
+Orbital energy after Harrison update:  0.0688739581437
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 8.525e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.927374800425
+Orbital energy after Harrison update:  0.00295367399627
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 8.106e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.928011896479
+Orbital energy after Harrison update:  -0.0487419607682
+Orbital 5 error and residual:   8.968e-01 and 8.521e-02
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  0.658062336251
+Orbital energy after Harrison update:  0.67333435674
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.023e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.931308457891
+Orbital energy after Harrison update:  0.0471071503547
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.306e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.930009189692
+Orbital energy after Harrison update:  -0.0150694518275
+Orbital 5 error and residual:   9.305e-01 and 1.562e-01
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  0.671187721736
+Orbital energy after Harrison update:  0.66465097491
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.695e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.935628317223
+Orbital energy after Harrison update:  0.0716451163136
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 3.022e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.937530478316
+Orbital energy after Harrison update:  0.0119818239433
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 3.920e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.945415785152
+Orbital energy after Harrison update:  -0.0278918812807
+Orbital 5 error and residual:   9.177e-01 and 5.113e-01
+
+
+Wanrning: Orbital energy greater than gauge shift.
+Using singularity subtraction
+Norm of psiNew =  0.69813549126
+Orbital energy after Harrison update:  0.440864410248
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 7.469e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.996042446366
+Orbital energy after Harrison update:  0.100042191452
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 9.825e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.02868284176
+Orbital energy after Harrison update:  0.0882889693786
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.198e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.07076097976
+Orbital energy after Harrison update:  0.101887546333
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.410e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.11487309683
+Orbital energy after Harrison update:  0.127493551325
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.592e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.15360611487
+Orbital energy after Harrison update:  0.154890665429
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.733e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.18301289189
+Orbital energy after Harrison update:  0.178294409596
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.832e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.20308119656
+Orbital energy after Harrison update:  0.195968695036
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.896e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.2158605483
+Orbital energy after Harrison update:  0.208412505929
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.936e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.22368472534
+Orbital energy after Harrison update:  0.216839424487
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.961e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.22838633053
+Orbital energy after Harrison update:  0.222430115024
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.976e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23119728334
+Orbital energy after Harrison update:  0.226102163869
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.985e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23288215227
+Orbital energy after Harrison update:  0.228504436655
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.991e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23389992813
+Orbital energy after Harrison update:  0.230074616923
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.994e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23452038917
+Orbital energy after Harrison update:  0.231101992308
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.996e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23490296809
+Orbital energy after Harrison update:  0.231775237713
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.998e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23514113407
+Orbital energy after Harrison update:  0.232217440941
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.998e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23529112207
+Orbital energy after Harrison update:  0.232508397928
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.999e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23538627936
+Orbital energy after Harrison update:  0.232700312869
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 1.999e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.2354473165
+Orbital energy after Harrison update:  0.232827053361
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23548663372
+Orbital energy after Harrison update:  0.232910952958
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23551224341
+Orbital energy after Harrison update:  0.232966510333
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23552893714
+Orbital energy after Harrison update:  0.233003385531
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23553996209
+Orbital energy after Harrison update:  0.233027836428
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23554722346
+Orbital energy after Harrison update:  0.233044085992
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23555209255
+Orbital energy after Harrison update:  0.233054851665
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23555533883
+Orbital energy after Harrison update:  0.233061997984
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23555756316
+Orbital energy after Harrison update:  0.233066708977
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.2355590764
+Orbital energy after Harrison update:  0.233069815908
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556015122
+Orbital energy after Harrison update:  0.233071834802
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556091074
+Orbital energy after Harrison update:  0.233073140083
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556148323
+Orbital energy after Harrison update:  0.233073955824
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556191494
+Orbital energy after Harrison update:  0.233074452668
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556226861
+Orbital energy after Harrison update:  0.233074727026
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556255955
+Orbital energy after Harrison update:  0.23307485779
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556281981
+Orbital energy after Harrison update:  0.233074885706
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556305278
+Orbital energy after Harrison update:  0.233074847908
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.2355632756
+Orbital energy after Harrison update:  0.233074761052
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556348752
+Orbital energy after Harrison update:  0.233074643008
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556369814
+Orbital energy after Harrison update:  0.23307450016
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556390563
+Orbital energy after Harrison update:  0.233074341338
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556411563
+Orbital energy after Harrison update:  0.233074168657
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556432632
+Orbital energy after Harrison update:  0.233073986613
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556454117
+Orbital energy after Harrison update:  0.233073795629
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.2355647587
+Orbital energy after Harrison update:  0.233073598061
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556498111
+Orbital energy after Harrison update:  0.233073393722
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556520734
+Orbital energy after Harrison update:  0.23307318388
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556543882
+Orbital energy after Harrison update:  0.233072968174
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556567482
+Orbital energy after Harrison update:  0.23307274729
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556591633
+Orbital energy after Harrison update:  0.233072520858
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556616286
+Orbital energy after Harrison update:  0.233072289241
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.2355664151
+Orbital energy after Harrison update:  0.233072052108
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556667277
+Orbital energy after Harrison update:  0.233071809636
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556693637
+Orbital energy after Harrison update:  0.233071561541
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556720575
+Orbital energy after Harrison update:  0.233071307886
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556748129
+Orbital energy after Harrison update:  0.233071048425
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556776293
+Orbital energy after Harrison update:  0.23307078315
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556805099
+Orbital energy after Harrison update:  0.233070511844
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556834548
+Orbital energy after Harrison update:  0.23307023445
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556864665
+Orbital energy after Harrison update:  0.23306995077
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556895458
+Orbital energy after Harrison update:  0.233069660715
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556926948
+Orbital energy after Harrison update:  0.233069364098
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556959147
+Orbital energy after Harrison update:  0.233069060806
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23556992074
+Orbital energy after Harrison update:  0.233068750657
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557025744
+Orbital energy after Harrison update:  0.23306843352
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557060175
+Orbital energy after Harrison update:  0.233068109215
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557095383
+Orbital energy after Harrison update:  0.233067777595
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557131389
+Orbital energy after Harrison update:  0.23306743848
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557168207
+Orbital energy after Harrison update:  0.233067091707
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557205859
+Orbital energy after Harrison update:  0.233066737095
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557244362
+Orbital energy after Harrison update:  0.23306637447
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557283737
+Orbital energy after Harrison update:  0.233066003642
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557324004
+Orbital energy after Harrison update:  0.233065624429
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557365182
+Orbital energy after Harrison update:  0.233065236635
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557407294
+Orbital energy after Harrison update:  0.233064840065
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557450359
+Orbital energy after Harrison update:  0.233064434516
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557494401
+Orbital energy after Harrison update:  0.233064019783
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557539442
+Orbital energy after Harrison update:  0.233063595654
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557585505
+Orbital energy after Harrison update:  0.233063161915
+setting eigenvalue to gauge shift because it was positive
+Orbital 5 error and residual:   4.456e-01 and 2.000e+00
+
+
+Using singularity subtraction
+Norm of psiNew =  1.23557632613
+Orbital energy after Harrison update:  0.233062718342
+setting eigenvalue to gauge shift because it was positive

@@ -49,7 +49,7 @@ def solveLinearSystem(F,weights):
     
 
 
-def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights):
+def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, returnWeights=False):
     '''
     :param cvec: vector of weights, resulting from the minimization
     :param inputDensity: array of input densities.  After nth SCF, it has shape (M,n) where M is the number of quadrature points
@@ -77,9 +77,12 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights):
 #         print()
         weightedInputDensity += cvec[k] * (inputDensities[:,n-2-k] - inputDensities[:,n-1]) 
         weightedOutputDensity += cvec[k] * (outputDensities[:,n-2-k] - outputDensities[:,n-1]) 
-    
-    
-    return mixingParameter*weightedOutputDensity + (1-mixingParameter)*weightedInputDensity
+        
+    nextDensity = mixingParameter*weightedOutputDensity + (1-mixingParameter)*weightedInputDensity
+    if returnWeights==True:
+        return nextDensity, cvec
+    elif returnWeights==False:
+        return nextDensity
  
 
 def test1():
