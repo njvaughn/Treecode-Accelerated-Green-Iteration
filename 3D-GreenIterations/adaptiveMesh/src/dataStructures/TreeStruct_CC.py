@@ -398,7 +398,7 @@ class Tree(object):
 # #         self.normalizeDensity()
 #         self.integrateDensityBothMeshes()
                             
-    def initializeOrbitalsFromAtomicDataExternally(self): 
+    def initializeOrbitalsFromAtomicDataExternally(self,onlyFillOne=False): 
         aufbauList = ['10',                                     # n+ell = 1
                       '20',                                     # n+ell = 2
                       '21', '30',                               # n+ell = 3
@@ -435,40 +435,31 @@ class Tree(object):
 #                     print('Using ', psiID)
                     for m in range(-ell,ell+1):
                         
-                        """
-                        for _,cell in self.masterList:
-                            if cell.leaf==True:
-                                for i,j,k in self.PxByPyByPz:
-                                    gp = cell.gridpoints[i,j,k]
-                                    dx = gp.x-atom.x
-                                    dy = gp.y-atom.y
-                                    dz = gp.z-atom.z
-                                    r = np.sqrt( dx**2 + dy**2 + dz**2 )
-                                    inclination = np.arccos(dz/r)
-                                    azimuthal = np.arctan2(dy,dx)
-                                    
-                                
-    #                                     Y = sph_harm(m,ell,azimuthal,inclination)*np.exp(-1j*m*azimuthal)
-                                    if m<0:
-                                        Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
-                                    if m>0:
-                                        Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+                        sources = self.extractPhi(orbitalIndex)
+                        dx = sources[:,0]-atom.x
+                        dy = sources[:,1]-atom.y
+                        dz = sources[:,2]-atom.z
+                        phi = np.zeros(len(dx))
+                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                        inclination = np.arccos(dz/r)
+                        azimuthal = np.arctan2(dy,dx)
+                        
+                        if m<0:
+                            Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                        if m>0:
+                            Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
 #                                     if ( (m==0) and (ell>1) ):
-                                    if ( m==0 ):
-                                        Y = sph_harm(m,ell,azimuthal,inclination)
+                        if ( m==0 ):
+                            Y = sph_harm(m,ell,azimuthal,inclination)
 #                                     if ( (m==0) and (ell<=1) ):
 #                                         Y = 1
-                                    if abs(np.imag(Y)) > 1e-14:
-                                        print('imag(Y) ', np.imag(Y))
-    #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
-                                    try:
-                                        gp.phi[orbitalIndex] = atom.interpolators[psiID](r)*np.real(Y)
-                                    except ValueError:
-                                        gp.phi[orbitalIndex] = 0.0
-                                        
-                        """
-                                        
+                        if np.max( abs(np.imag(Y)) ) > 1e-14:
+                            print('imag(Y) ', np.imag(Y))
+                            return
+#                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+                        phi = atom.interpolators[psiID](r)*np.real(Y)
                         
+                        self.importPhiOnLeaves(phi, orbitalIndex)
                         
                         print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
                         orbitalIndex += 1
@@ -490,7 +481,7 @@ class Tree(object):
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
         timer.stop()
-        print('Initializing orbitals inside Tree Structure took %f.3 seconds.' %timer.elapsedTime)
+        print('Initializing orbitals EXTERNAL to Tree Structure took %.3f seconds.' %timer.elapsedTime)
         
         for m in range(self.nOrbitals):
             self.normalizeOrbital(m)
@@ -769,9 +760,9 @@ class Tree(object):
         ### INITIALIZE ORBTIALS AND DENSITY ####
         if initializationType=='atomic':
             if onlyFillOne == True:
-                self.initializeOrbitalsFromAtomicData(onlyFillOne=True)
+                self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
             else:
-                self.initializeOrbitalsFromAtomicData()
+                self.initializeOrbitalsFromAtomicDataExternally()
         elif initializationType=='random':
             self.initializeOrbitalsRandomly()
 #         self.orthonormalizeOrbitals()
@@ -963,8 +954,8 @@ class Tree(object):
         self.computeDerivativeMatrices()
 
         ### INITIALIZE ORBTIALS AND DENSITY ####
-        self.initializeDensityFromAtomicData()
-        self.initializeOrbitalsFromAtomicData()            
+        self.initializeDensityFromAtomicDataExternally()
+        self.initializeOrbitalsFromAtomicDataExternally()            
 #         self.normalizeDensity()
         
         self.maxDepthAchieved += 1

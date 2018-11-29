@@ -571,29 +571,29 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     tree.importPhiOnLeaves(andersonOrbital, m)
                     
                     
-#                     print('shape of eigenvalueHistory: ', np.shape(eigenvalueHistory))
-                    print(eigenvalueHistory)
-#                     n = len(np.array(eigenvalueHistory))
-                    n = eigensolveCount
-#                     print('n = ', n)
-                    if eigensolveCount==1:
-                        currentEnergy = eigenvalueHistory
-                    else:
-                        currentEnergy = np.copy(eigenvalueHistory[n-1])
-                    newEnergy = np.copy(currentEnergy)
-#                     print('Current energy: ', currentEnergy)
-#                     print('Anderson Weights: ', andersonWeights)
-#                     print('Eig History:      ', eigenvalueHistory)
-                    for k in range(n-1):
-#                         print('\nk = ', k)
-#                         print('weight: ', andersonWeights[k])
-#                         print('eig:    ', eigenvalueHistory[n-2-k])
-                        newEnergy += andersonWeights[k] * (eigenvalueHistory[n-2-k] - currentEnergy)
-#                         print('current Energy: ', currentEnergy)
-#                     print('New energy: ', newEnergy)
-                    tree.orbitalEnergies[m] = newEnergy 
-#                     eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
-#                     print('eigenvalueHistory: ',eigenvalueHistory)
+# #                     print('shape of eigenvalueHistory: ', np.shape(eigenvalueHistory))
+#                     print(eigenvalueHistory)
+# #                     n = len(np.array(eigenvalueHistory))
+#                     n = eigensolveCount
+# #                     print('n = ', n)
+#                     if eigensolveCount==1:
+#                         currentEnergy = eigenvalueHistory
+#                     else:
+#                         currentEnergy = np.copy(eigenvalueHistory[n-1])
+#                     newEnergy = np.copy(currentEnergy)
+# #                     print('Current energy: ', currentEnergy)
+# #                     print('Anderson Weights: ', andersonWeights)
+# #                     print('Eig History:      ', eigenvalueHistory)
+#                     for k in range(n-1):
+# #                         print('\nk = ', k)
+# #                         print('weight: ', andersonWeights[k])
+# #                         print('eig:    ', eigenvalueHistory[n-2-k])
+#                         newEnergy += andersonWeights[k] * (eigenvalueHistory[n-2-k] - currentEnergy)
+# #                         print('current Energy: ', currentEnergy)
+# #                     print('New energy: ', newEnergy)
+#                     tree.orbitalEnergies[m] = newEnergy 
+# #                     eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
+# #                     print('eigenvalueHistory: ',eigenvalueHistory)
                     
                 residuals[m] = normDiff
                 if normDiff > orbitalResidual:

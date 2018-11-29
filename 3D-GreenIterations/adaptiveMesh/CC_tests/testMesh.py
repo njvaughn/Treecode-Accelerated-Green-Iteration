@@ -39,22 +39,34 @@ def timingTestsForOrbitalInitializations(domain,order,minDepth, maxDepth, divide
 
     
     print('max depth ', maxDepth)
-    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
+    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
     
-    afterInternal = tree.extractLeavesDensity()
-    print('Max density = ', max(afterInternal[:,3]))
-    tree.initializeDensityFromAtomicDataExternally()
-    afterExternal = tree.extractLeavesDensity()
+#     afterInternal = tree.extractLeavesDensity()
+#     print('Max density = ', max(afterInternal[:,3]))
+#     tree.initializeDensityFromAtomicDataExternally()
+#     afterExternal = tree.extractLeavesDensity()
+#     print('Max diff between internal and external: ', np.max( np.abs(afterInternal[:,3] - afterExternal[:,3] )))
+
+
+
+    afterInternal0 = tree.extractPhi(0)
+    afterInternal2 = tree.extractPhi(2)
     
-    print('Max diff between internal and external: ', np.max( np.abs(afterInternal[:,3] - afterExternal[:,3] )))
+    tree.initializeOrbitalsFromAtomicDataExternally()
+    
+    afterExternal0 = tree.extractPhi(0)
+    afterExternal2 = tree.extractPhi(2)
+    
+    print('Max diff between internal0 and external0: ', np.max( np.abs(afterInternal0[:,3] - afterExternal0[:,3] )))
+    print('Max diff between internal2 and external2: ', np.max( np.abs(afterInternal2[:,3] - afterExternal2[:,3] )))
     
 
             
 
 if __name__ == "__main__":
-    timingTestsForOrbitalInitializations(domain=20,order=3,
+    timingTestsForOrbitalInitializations(domain=20,order=5,
                           minDepth=3, maxDepth=20, divideCriterion='LW5', 
-                          divideParameter=500,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
+                          divideParameter=1500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
     
     
 #     exportMeshForParaview(xmin=-10, xmax=10,px=4,
