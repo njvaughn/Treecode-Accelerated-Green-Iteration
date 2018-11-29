@@ -7,6 +7,7 @@ import sys
 sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
 import itertools
+import numpy as np
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 
 from TreeStruct_CC import Tree
@@ -20,23 +21,40 @@ def exportMeshForParaview(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,minLevels, maxL
 #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/hydrogenMolecule')
     
     tree = Tree(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons=14,nOrbitals=10,coordinateFile=coordinateFile)
-#     tree.buildTree( minLevels, maxLevels, divideCriterion, divideParameter, printTreeProperties=True)
+    tree.buildTree( minLevels, maxLevels, divideCriterion, divideParameter, printTreeProperties=True)
     tree.exportGridpoints('/Users/nathanvaughn/Desktop/carbonMonoxide_max14')
 
     print('Mesh Exported.')
     
+def timingTestsForOrbitalInitializations(domain,order,minDepth, maxDepth, divideCriterion, divideParameter,inputFile):
+    [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+    nElectrons = int(nElectrons)
+    nOrbitals = int(nOrbitals)
+    
+    print([coordinateFile, nElectrons, nOrbitals, 
+     Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,gaugeShift=gaugeShift,
+                coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
+
+    
+    print('max depth ', maxDepth)
+    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
+    
+    afterInternal = tree.extractLeavesDensity()
+    print('Max density = ', max(afterInternal[:,3]))
+    tree.initializeDensityFromAtomicDataExternally()
+    afterExternal = tree.extractLeavesDensity()
+    
+    print('Max diff between internal and external: ', np.max( np.abs(afterInternal[:,3] - afterExternal[:,3] )))
     
 
             
 
 if __name__ == "__main__":
-    exportMeshForParaview(xmin=-20, xmax=20,px=3,
-                          ymin=-20, ymax=20,py=3,
-                          zmin=-20, zmax=20,pz=3,
-                          minLevels=3, maxLevels=20, divideCriterion='LW3', 
-#                           divideParameter=100,coordinateFile='../src/utilities/molecularConfigurations/hydrogenMolecule.csv')
-#                           divideParameter=100,coordinateFile='../src/utilities/molecularConfigurations/berylliumAtom.csv')
-                          divideParameter=1,coordinateFile='../src/utilities/molecularConfigurations/oxygenAtom.csv')
+    timingTestsForOrbitalInitializations(domain=20,order=3,
+                          minDepth=3, maxDepth=20, divideCriterion='LW5', 
+                          divideParameter=500,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
     
     
 #     exportMeshForParaview(xmin=-10, xmax=10,px=4,

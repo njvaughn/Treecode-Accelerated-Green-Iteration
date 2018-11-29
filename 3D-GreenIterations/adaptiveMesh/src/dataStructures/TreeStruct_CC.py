@@ -308,6 +308,8 @@ class Tree(object):
                 
       
     def initializeOrbitalsRandomly(self,targetOrbital=None):
+        timer = Timer()
+        timer.start()
         if targetOrbital==None:
             print('Initializing all orbitals randomly...')
             for _,cell in self.masterList:
@@ -328,9 +330,45 @@ class Tree(object):
 #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
                         gp.phi[targetOrbital] = np.random.rand(1)
                         
+        timer.stop()
+        print('Initializing orbitals randomly inside Tree Structure took %.3f seconds.' %timer.elapsedTime)
+                        
                             
         
+    
+    def initializeDensityFromAtomicDataExternally(self):
+        timer = Timer()
+        timer.start()
+        
+        sources = self.extractLeavesDensity()
+        x = sources[:,0]
+        y = sources[:,1]
+        z = sources[:,2]
+        rho = np.zeros(len(x))
+        
+        for atom in self.atoms:
+            r = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2 )
+#             for i in range(len(r)):
+#                 try:
+#                     rho[i] += atom.interpolators['density'](r[i])
+#                 except ValueError:
+#                     rho[i] += 0.0   # if outside the interpolation range, assume 0.
+            try:
+                rho += atom.interpolators['density'](r)
+            except ValueError:
+                rho += 0.0   # if outside the interpolation range, assume 0.
+        
+        print("max density: ", max(abs(rho)))
+        self.importDensityOnLeaves(rho)  
+        timer.stop()
+        print('Initializing density EXTERNALLY took %.3f seconds.' %timer.elapsedTime)  
+        
+       
+    
     def initializeDensityFromAtomicData(self):
+        timer = Timer()
+        timer.start()
+        
         for _,cell in self.masterList:
             if cell.leaf==True:
                 for i,j,k in self.PxByPyByPz:
@@ -342,6 +380,9 @@ class Tree(object):
                             gp.rho += atom.interpolators['density'](r)
                         except ValueError:
                             gp.rho += 0.0   # if outside the interpolation range, assume 0.
+                            
+        timer.stop()
+        print('Initializing density inside Tree Structure took %.3f seconds.' %timer.elapsedTime)
                 
 #                 if hasattr(cell, 'densityPoints'):
 #                     for i,j,k in cell.PxByPyByPz_density:
@@ -357,9 +398,109 @@ class Tree(object):
 # #         self.normalizeDensity()
 #         self.integrateDensityBothMeshes()
                             
+    def initializeOrbitalsFromAtomicDataExternally(self): 
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
+
+        timer = Timer()
+        timer.start()
+        orbitalIndex=0
+        
+
+    
+        for atom in self.atoms:
+            if onlyFillOne == True:
+                print('Setting number of orbitals equal to 1 for oxygen, just for testing the deep state without initializing everything')
+                nAtomicOrbitals = 1
+            else:
+                nAtomicOrbitals = atom.nAtomicOrbitals
+                
+            
+            
+            print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+                      %(atom.atomicNumber, atom.x,atom.y,atom.z))
+            print('Orbital index = %i'%orbitalIndex)            
+            singleAtomOrbitalCount=0
+            for nell in aufbauList:
+                
+                if singleAtomOrbitalCount< nAtomicOrbitals:  
+                    n = int(nell[0])
+                    ell = int(nell[1])
+                    psiID = 'psi'+str(n)+str(ell)
+#                     print('Using ', psiID)
+                    for m in range(-ell,ell+1):
                         
+                        """
+                        for _,cell in self.masterList:
+                            if cell.leaf==True:
+                                for i,j,k in self.PxByPyByPz:
+                                    gp = cell.gridpoints[i,j,k]
+                                    dx = gp.x-atom.x
+                                    dy = gp.y-atom.y
+                                    dz = gp.z-atom.z
+                                    r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                                    inclination = np.arccos(dz/r)
+                                    azimuthal = np.arctan2(dy,dx)
+                                    
+                                
+    #                                     Y = sph_harm(m,ell,azimuthal,inclination)*np.exp(-1j*m*azimuthal)
+                                    if m<0:
+                                        Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                                    if m>0:
+                                        Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+#                                     if ( (m==0) and (ell>1) ):
+                                    if ( m==0 ):
+                                        Y = sph_harm(m,ell,azimuthal,inclination)
+#                                     if ( (m==0) and (ell<=1) ):
+#                                         Y = 1
+                                    if abs(np.imag(Y)) > 1e-14:
+                                        print('imag(Y) ', np.imag(Y))
+    #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+                                    try:
+                                        gp.phi[orbitalIndex] = atom.interpolators[psiID](r)*np.real(Y)
+                                    except ValueError:
+                                        gp.phi[orbitalIndex] = 0.0
+                                        
+                        """
+                                        
+                        
+                        
+                        print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
+                        orbitalIndex += 1
+                        singleAtomOrbitalCount += 1
+                    
+#                 else:
+#                     n = int(nell[0])
+#                     ell = int(nell[1])
+#                     psiID = 'psi'+str(n)+str(ell)
+#                     print('Not using ', psiID)
+                        
+        if orbitalIndex < self.nOrbitals:
+            print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
+            print('Filling extra orbitals with random initial data.')
+            for ii in range(orbitalIndex, self.nOrbitals):
+                self.initializeOrbitalsRandomly(targetOrbital=ii)
+                self.orthonormalizeOrbitals(targetOrbital=ii)
+        if orbitalIndex > self.nOrbitals:
+            print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
+                        
+        timer.stop()
+        print('Initializing orbitals inside Tree Structure took %f.3 seconds.' %timer.elapsedTime)
+        
+        for m in range(self.nOrbitals):
+            self.normalizeOrbital(m)
+            
+            
+            
+                           
     
     def initializeOrbitalsFromAtomicData(self,onlyFillOne=False):
+        
         
         aufbauList = ['10',                                     # n+ell = 1
                       '20',                                     # n+ell = 2
@@ -453,7 +594,9 @@ class Tree(object):
         if orbitalIndex > self.nOrbitals:
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
-
+        timer.stop()
+        print('Initializing orbitals inside Tree Structure took %f.3 seconds.' %timer.elapsedTime)
+        
         for m in range(self.nOrbitals):
             self.normalizeOrbital(m)
     
@@ -621,7 +764,8 @@ class Tree(object):
         print('Number of gridpoints: ', self.numberOfGridpoints)
 
         self.computeDerivativeMatrices()
-        self.initializeDensityFromAtomicData()
+#         self.initializeDensityFromAtomicData()
+        self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
         ### INITIALIZE ORBTIALS AND DENSITY ####
         if initializationType=='atomic':
             if onlyFillOne == True:
