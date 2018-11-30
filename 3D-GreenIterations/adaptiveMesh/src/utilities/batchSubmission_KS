@@ -11,8 +11,8 @@ SMOOTHINGEPS=0
 INTRASCFTOLERANCE=1e-4
 INTERSCFTOLERANCE=1e-4
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
@@ -23,7 +23,7 @@ INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 GRADIENTFREE='True'
 
 
-ORDER=5
+ORDER=4
 MESHTYPE='LW5'
 MESHPARAM=500
 
@@ -31,8 +31,8 @@ MESHPARAM=500
 MIXINGPARAMETER=0.5
 
 
-INTRASCFTOLERANCE=1e-7
-INTERSCFTOLERANCE=1e-6
+INTRASCFTOLERANCE=1e-5
+INTERSCFTOLERANCE=1e-4
 
 	
 MIXING='Anderson'	

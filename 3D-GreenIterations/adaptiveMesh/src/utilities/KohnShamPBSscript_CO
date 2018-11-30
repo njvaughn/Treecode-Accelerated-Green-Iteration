@@ -9,7 +9,7 @@
 #PBS -q fluxg
 
 
-#PBS -l nodes=1:gpus=1,mem=8gb
+#PBS -l nodes=1:gpus=1:titanv,mem=8gb
 #PBS -l walltime=24:00:00
 #PBS -j oe
 #PBS -V
@@ -58,21 +58,20 @@ GRADIENTFREE='True'
 
 ORDER=5
 MESHTYPE='LW5'
-MESHPARAM=1000
+MESHPARAM=500
 
 
-MIXINGPARAMETER=0.5
-
+MIXINGPARAMETER=0.1
 
 INTRASCFTOLERANCE=1e-6
 INTERSCFTOLERANCE=1e-5
 
+	
 MIXING='Anderson'	
 
-OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5_1000_andersonMixing_noGImix_p5.csv'
+
+OUTPUTFILE='/home/njvaughn/GImixingCO/LW5_500o4_noGreenItMixing_1em5_gradientFree_mixing_p1.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
-	
-
 

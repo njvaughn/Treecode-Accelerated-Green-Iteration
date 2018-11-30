@@ -411,6 +411,10 @@ class Tree(object):
         timer.start()
         orbitalIndex=0
         
+        print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+        self.atoms[1].nAtomicOrbitals = 2
+        self.nOrbitals = 7
+        
 
     
         for atom in self.atoms:
@@ -490,7 +494,7 @@ class Tree(object):
             
                            
     
-    def initializeOrbitalsFromAtomicData(self,onlyFillOne=False):
+    def initializeOrbitalsFromAtomicData_deprecated(self,onlyFillOne=False):
         
         
         aufbauList = ['10',                                     # n+ell = 1
@@ -1652,7 +1656,21 @@ class Tree(object):
 #                         gridpoint.phi -= B*gridpoint.finalWavefunction[n]
 #                         gridpoint.orthogonalized = True
                         
-    def orthonormalizeOrbitals(self, targetOrbital=None):
+    def orthonormalizeOrbitals(self, targetOrbital=None, external=False):
+        
+        
+        def orthogonalizeOrbitals_external(tree,phi_m,phi_n,weights,targetOrbital):
+            
+#             sources = self.extractPhi(m)
+#             phi_m = sources[:,3]
+#             sources = self.extractPhi(n)
+#             phi_n = sources[:,3]
+#             weights = sources[:,5]
+            
+            phi_m -= ( np.dot(phi_m,phi_n*weights) / np.dot(phi_n,phi_n*weights) )*phi_n
+            phi_m /= np.sqrt( np.dot(phi_m,phi_m*weights) )
+            self.importPhiOnLeaves(phi_m, targetOrbital)
+            
         
         def orthogonalizeOrbitals(tree,m,n):
             
@@ -1701,14 +1719,33 @@ class Tree(object):
         if targetOrbital==None:
 #         print('Orthonormalizing orbitals within tree structure up to orbital %i.' %maxOrbital)
             for m in range(self.nOrbitals):
-                for n in range(m):
+                if external==True:
+                    sources = self.extractPhi(m)
+                    phi_m = np.copy(sources[:,3])
+                    weights = np.copy(sources[:,5])
+                    for n in range(m):
+                        sources = self.extractPhi(n)
+                        phi_n = np.copy(sources[:,3])
+                        orthogonalizeOrbitals_external(self,phi_m,phi_n,weights,targetOrbital=m)
                     
-                    orthogonalizeOrbitals(self,m,n)
-                    normalizeOrbital(self,m)
+                    
+                else:
+                    for n in range(m):
+                        orthogonalizeOrbitals(self,m,n)
+                        normalizeOrbital(self,m)
         else:
             for n in range(targetOrbital):
-                orthogonalizeOrbitals(self,targetOrbital,n)
-                normalizeOrbital(self,targetOrbital)
+                if external==True:
+                    sources = self.extractPhi(targetOrbital)
+                    phi_m = np.copy(sources[:,3])
+                    weights = np.copy(sources[:,5])
+                    sources = self.extractPhi(n)
+                    phi_n = np.copy(sources[:,3])
+                    orthogonalizeOrbitals_external(self,phi_m,phi_n,weights,targetOrbital=targetOrbital)
+                else:
+                    
+                    orthogonalizeOrbitals(self,targetOrbital,n)
+                    normalizeOrbital(self,targetOrbital)
             
             
     
