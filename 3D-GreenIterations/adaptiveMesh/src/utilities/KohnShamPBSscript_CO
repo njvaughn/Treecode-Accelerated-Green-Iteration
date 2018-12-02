@@ -9,10 +9,11 @@
 #PBS -q fluxg
 
 
-#PBS -l nodes=1:gpus=1:titanv,mem=8gb
+#PBS -l nodes=1:gpus=1,mem=8gb
 #PBS -l walltime=24:00:00
 #PBS -j oe
 #PBS -V
+
 
 ####  End PBS preamble
 
@@ -35,14 +36,14 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 
 
-DOMAIN=30
+DOMAIN=20
 MAXDEPTH=20
 MINDEPTH=3
 SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
-INTRASCFTOLERANCE=1e-5
-INTERSCFTOLERANCE=1e-6
+INTRASCFTOLERANCE=1e-6
+INTERSCFTOLERANCE=1e-7
 
 INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
@@ -53,24 +54,26 @@ INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 
 
 
-GRADIENTFREE='True'
+
+GRADIENTFREE='False'
 
 
-ORDER=5
+ORDER=4
 MESHTYPE='LW5'
 MESHPARAM=500
 
 
-MIXINGPARAMETER=0.1
+MIXINGPARAMETER=0.5
 
-INTRASCFTOLERANCE=1e-6
-INTERSCFTOLERANCE=1e-5
 
-	
+INTRASCFTOLERANCE=1e-4
+INTERSCFTOLERANCE=1e-4
+
+
 MIXING='Anderson'	
 
 
-OUTPUTFILE='/home/njvaughn/GImixingCO/LW5_500o4_noGreenItMixing_1em5_gradientFree_mixing_p1.csv'
+OUTPUTFILE='/home/njvaughn/GImixingO/LW5_500_noGreenItMixing_1em5.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER

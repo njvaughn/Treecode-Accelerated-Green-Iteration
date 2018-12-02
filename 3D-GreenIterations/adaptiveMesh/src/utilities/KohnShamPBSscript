@@ -27,7 +27,6 @@ if [ -d "$PBS_O_WORKDIR" ] ; then
 fi
 
 
-
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 DOMAIN=20
@@ -36,74 +35,34 @@ MINDEPTH=3
 SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
-INTRASCFTOLERANCE=1e-6
-INTERSCFTOLERANCE=1e-6
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+
 
 GRADIENTFREE='True'
 
 
 ORDER=5
 MESHTYPE='LW5'
-MESHPARAM=500
+MESHPARAM=2000
 
 
 MIXINGPARAMETER=0.5
 
+INTRASCFTOLERANCE=1e-7
+INTERSCFTOLERANCE=1e-6
 
-INTRASCFTOLERANCE=1e-9
-INTERSCFTOLERANCE=1e-8
 
 MIXING='Anderson'	
 
-OUTPUTFILE='/home/njvaughn/mixingComparisonBe/LW5_500_andersonMixing_p5_1em8.csv'
+
+OUTPUTFILE='/home/njvaughn/GImixingCO/LW5_2000_baseline.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
-	
-MIXING='Simple'	
-
-OUTPUTFILE='/home/njvaughn/mixingComparisonBe/LW5_500_simpleMixing_p5_1em8.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
-	
-MIXING='None'	
-
-OUTPUTFILE='/home/njvaughn/mixingComparisonBe/LW5_500_noMixing_1em8.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
-	
-	
-MIXINGPARAMETER=0.75
-
-
-INTRASCFTOLERANCE=1e-9
-INTERSCFTOLERANCE=1e-8
-
-MIXING='Anderson'	
-
-OUTPUTFILE='/home/njvaughn/mixingComparisonBe/LW5_500_andersonMixing_p75_1em8.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
-	
-MIXING='Simple'	
-
-OUTPUTFILE='/home/njvaughn/mixingComparisonBe/LW5_500_simpleMixing_p75_1em8.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
-	
-
-	
-
-
 	

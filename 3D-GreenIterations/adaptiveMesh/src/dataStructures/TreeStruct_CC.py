@@ -19,6 +19,7 @@ import pylibxc
 import itertools
 import os
 import csv
+from numba.targets.options import TargetOptions
 try:
     import vtk
 except ModuleNotFoundError:
@@ -1350,7 +1351,7 @@ class Tree(object):
         return
     
     
-    def updateOrbitalEnergies(self,newOccupations=True,correctPositiveEnergies=True,sortByEnergy=True,targetEnergy=None, saveAsReference=False):
+    def updateOrbitalEnergies(self,newOccupations=False,correctPositiveEnergies=False,sortByEnergy=False,targetEnergy=None, saveAsReference=False, sortOrder=None):
 #         print()
         start = time.time()
         self.computeOrbitalKinetics(targetEnergy, saveAsReference)
@@ -1450,8 +1451,11 @@ class Tree(object):
 
 
 
-    def sortOrbitalsAndEnergies(self):
-        newOrder = np.argsort(self.orbitalEnergies)
+    def sortOrbitalsAndEnergies(self, order=None):
+        if order==None:
+            newOrder = np.argsort(self.orbitalEnergies)
+        elif order != None:
+            newOrder = order
         oldEnergies = np.copy(self.orbitalEnergies)
         for m in range(self.nOrbitals):
             self.orbitalEnergies[m] = oldEnergies[newOrder[m]]
@@ -1655,6 +1659,74 @@ class Tree(object):
 #                     if gridpoint.orthogonalized == False:
 #                         gridpoint.phi -= B*gridpoint.finalWavefunction[n]
 #                         gridpoint.orthogonalized = True
+    
+    def copyPhiNewToArray(self, targetOrbital):
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    cell.gridpoints[i,j,k].phi[targetOrbital] = np.copy( cell.gridpoints[i,j,k].phiNew )
+    
+    
+    def normalizePhiNew(self):
+        """ Enforce integral phi*2 dxdydz == 1 """
+        A = 0.0        
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    A += cell.gridpoints[i,j,k].phiNew**2*cell.w[i,j,k]
+
+        """ Rescale wavefunction values, flip the flag """
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                        cell.gridpoints[i,j,k].phiNew /= np.sqrt(A)
+        
+    
+    def orthonormalizePhiNew(self, targetOrbital):
+        
+        def orthogonalizePhiNew(tree,targetOrbital,n):
+            
+#             print('Orthogonalizing phiNew %i against orbital %i' %(targetOrbital,n))
+            """ Compute the overlap, integral phi_r * phi_s """
+            B = 0.0
+            for _,cell in tree.masterList:
+                if cell.leaf == True:
+                    for i,j,k in self.PxByPyByPz:
+                        phiNew = cell.gridpoints[i,j,k].phiNew
+                        phi_n = cell.gridpoints[i,j,k].phi[n]
+                        B += phiNew*phi_n*cell.w[i,j,k]
+
+            """ Subtract the projection """
+            for _,cell in tree.masterList:
+                if cell.leaf==True:
+                    for i,j,k in self.PxByPyByPz:
+                        gridpoint = cell.gridpoints[i,j,k]
+                        gridpoint.phiNew -= B*gridpoint.phi[n]
+                        
+        def normalizePhiNew(tree,m):
+        
+            """ Enforce integral phi*2 dxdydz == 1 """
+            A = 0.0        
+            for _,cell in tree.masterList:
+                if cell.leaf == True:
+                    for i,j,k in self.PxByPyByPz:
+                        A += cell.gridpoints[i,j,k].phiNew**2*cell.w[i,j,k]
+    
+            """ Rescale wavefunction values, flip the flag """
+            for _,cell in tree.masterList:
+                if cell.leaf==True:
+                    for i,j,k in self.PxByPyByPz:
+                            cell.gridpoints[i,j,k].phiNew /= np.sqrt(A)
+                            
+        print('Orthogonalizing phiNew, but not normalizing.')
+        for n in range(targetOrbital):
+            orthogonalizePhiNew(self,targetOrbital,n)
+#         normalizePhiNew(self,targetOrbital)
+        
+        
+        
+        
+        
                         
     def orthonormalizeOrbitals(self, targetOrbital=None, external=False):
         
