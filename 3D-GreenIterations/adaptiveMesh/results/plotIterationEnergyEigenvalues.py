@@ -42,8 +42,8 @@ import numpy as np
 
 
 
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/testingRandomInit/'
-file='LW5_1500_order5_GREEN_.csv'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
+file='LW5_1500_andersonMixing_p5_1em8_GREEN_.csv'
 
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':

@@ -39,8 +39,11 @@ scfTolerance        = float(sys.argv[11])
 outputFile          = str(sys.argv[12])
 inputFile           = str(sys.argv[13])
 noGradients         = str(sys.argv[14])
+mixingScheme        = str(sys.argv[15])
+mixingParameter     = float(sys.argv[16])
 
 print('gradientFree = ', noGradients)
+print('Mixing scheme = ', mixingScheme)
 
 if noGradients=='True':
     gradientFree=True
@@ -71,8 +74,8 @@ def setUpTree(onlyFillOne=False):
     nElectrons = int(nElectrons)
     nOrbitals = int(nOrbitals)
     
-#     nOrbitals = 7  # hard code this in for Carbon Monoxide
-#     print('Hard coding nOrbitals to 7')
+    nOrbitals = 7  # hard code this in for Carbon Monoxide
+    print('Hard coding nOrbitals to 7')
 
 #     nOrbitals = 6
 #     print('Hard coding nOrbitals to 6 to give oxygen one extra')
@@ -99,7 +102,7 @@ def setUpTree(onlyFillOne=False):
 #         tree.scrambleOrbital(m)
 #     tree.normalizeDensity()
 
-    tree.computeOrbitalMoments()
+#     tree.computeOrbitalMoments()
     
 
     
@@ -112,7 +115,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False, 
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, subtractSingularity, 
+    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, mixingScheme, mixingParameter, subtractSingularity, 
                                 smoothingN, smoothingEps,inputFile=inputFile,outputFile=outputFile, 
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
 

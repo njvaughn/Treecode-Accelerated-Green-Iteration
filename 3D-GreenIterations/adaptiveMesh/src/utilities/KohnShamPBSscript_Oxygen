@@ -1,6 +1,6 @@
 ####  PBS preamble
 
-#PBS -N batchGreenIterations_CO
+#PBS -N batchGreenIterations
 #PBS -M njvaughn@umich.edu
 #PBS -m a
 
@@ -9,11 +9,10 @@
 #PBS -q fluxg
 
 
-#PBS -l nodes=1:gpus=1,mem=8gb
-#PBS -l walltime=24:00:00
+#PBS -l nodes=1:gpus=1:titanv,mem=8gb
+#PBS -l walltime=16:00:00
 #PBS -j oe
 #PBS -V
-
 
 ####  End PBS preamble
 
@@ -29,12 +28,8 @@ fi
 
 
 
+#!/bin/bash
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
-
-
-###PBS -l nodes=1:gpus=1:titanv,mem=8gb
-
-
 
 DOMAIN=20
 MAXDEPTH=20
@@ -43,38 +38,37 @@ SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
 INTRASCFTOLERANCE=1e-6
-INTERSCFTOLERANCE=1e-7
+INTERSCFTOLERANCE=1e-6
 
-INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 
 
+GRADIENTFREE='True'
 
 
-GRADIENTFREE='False'
-
-
-ORDER=4
+ORDER=5
 MESHTYPE='LW5'
-MESHPARAM=500
+MESHPARAM=2000
 
 
 MIXINGPARAMETER=0.5
 
 
-INTRASCFTOLERANCE=1e-4
-INTERSCFTOLERANCE=1e-4
-
+INTRASCFTOLERANCE=1e-7
+INTERSCFTOLERANCE=1e-6
 
 MIXING='Anderson'	
 
-
-OUTPUTFILE='/home/njvaughn/GImixingO/LW5_500_noGreenItMixing_1em5.csv'
+OUTPUTFILE='/home/njvaughn/oxygen_with_anderson/LW5_2000_andersonMixing_p5_1em76.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
+	
+MESHPARAM=2000	
+OUTPUTFILE='/home/njvaughn/oxygen_with_anderson/LW5_3000_andersonMixing_p5_1em76.csv'
+python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
+	
 
+	

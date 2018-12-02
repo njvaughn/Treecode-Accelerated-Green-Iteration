@@ -1,0 +1,1133 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+======================================================================
+======================================================================
+====================================================================== 
+
+Hard coding nOrbitals to 7
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/GImixingO/LW5_500_noGreenItMixing_1em6_gradient.csv', 14, 7, -112.471443237994, -11.997011069615391, -0.94214407530225852, -62.898682441673358, -0.5]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Gauge shift  -0.5
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 6 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  372480
+max density:  302.638355155
+Initializing density EXTERNALLY took 1.228 seconds.
+Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 6 located at (x, y, z) = (-1.066,  0.000,  0.000)
+Orbital index = 5
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Initializing orbitals EXTERNAL to Tree Structure took 9.763 seconds.
+Tree build completed. 
+Domain Size:                 [-40.0, 40.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       6849 
+Total Number of Leaf Cells:  5820 
+Total Number of Gridpoints:  372480 
+Minimum Depth                4 levels 
+Maximum Depth:               13 levels 
+Cell Order:                  4 
+Construction time:           27.8 seconds.
+Closest gridpoint to origin:  [-0.01014124443176817, -0.01189382304511144, -0.01189382304511144]
+For a distance of:  0.019641051190853222
+Part of a cell centered at:  [-0.13322624999999999, -0.15625, -0.15625]
+Assuming this is the carbon monoxide test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    372480
+Threads per block:    512
+Blocks per grid:      728
+[-62.898682441673358, 111.85061770418731, -11.997011069615391, -0.94214407530225852, -211.38290579726365, -112.471443237994]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    2.9518 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-19.37167574  -1.5735103   -1.22128526  -0.95514704  -0.95514704
+ -10.49522972  -1.21501704]
+Sorted eigenvalues:  [-19.37167574 -10.49522972  -1.5735103   -1.21501704  -1.22128526
+  -0.95514704  -0.95514704]
+New order:  [0, 5, 1, 6, 2, 3, 4]
+Orbital energies after initial sort: 
+ [-19.37167574 -10.49522972  -1.5735103   -1.21501704  -1.22128526
+  -0.95514704  -0.95514704]
+Kinetic Errors:    [  1.06971810e-02  -2.55585844e+01  -2.62030819e+01  -2.62030393e+01
+  -2.62030393e+01  -1.30354300e+01  -2.71088872e+01]
+Potential Errors:  [ -0.12358663  43.24386041  44.24058295  44.5066785   44.5066785
+  21.79898659  45.15265644]
+Computing band energy.  Current orbital energies are:  [-19.37167574 -10.49522972  -1.5735103   -1.21501704  -1.22128526
+  -0.95514704  -0.95514704]
+Electrostatic Energies:
+Hartree:          74.9580507209
+External:         -308.732497335
+Nuclear-Nuclear:  22.5180848369
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-19.37167574 -10.49522972  -1.5735103   -1.21501704  -1.22128526
+  -0.95514704  -0.95514704]
+Orbital Energy Errors after initialization:  [-0.15252612 -0.08813116  0.0017968  -0.1934822  -0.27573065 -0.0095927
+ -0.12000487]
+Updated V_x:                           -15.8249081986 Hartree
+Updated V_c:                           -1.0434895124 Hartree
+Updated Band Energy:                   -64.5740242530 H, -1.6753418113e+00 H
+Updated Kinetic Energy:                 111.1107693514 H, -7.3984835277e-01 H
+Updated E_x:                           -11.8686811490 H, 1.2832992065e-01 H
+Updated E_c:                           -0.9347296736 H, 7.4144017114e-03 H
+Updated totalElectrostatic:            -211.2563617774 H, 1.2654401983e-01 H
+Total Energy:                          -112.9490032486 H, -4.7756001058e-01 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -19.3716757355
+L2 norm of wavefunction residual (H*psi-lambda*psi):    27.0365977973
+Energy Eigenvalue:  -10.4952297179
+L2 norm of wavefunction residual (H*psi-lambda*psi):    13.0050442549
+Energy Eigenvalue:  -1.57351029835
+L2 norm of wavefunction residual (H*psi-lambda*psi):    6.39228049892
+Energy Eigenvalue:  -1.21501703902
+L2 norm of wavefunction residual (H*psi-lambda*psi):    3.16409140637
+Energy Eigenvalue:  -1.22128526384
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.20140951684
+Energy Eigenvalue:  -0.955147035922
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.345257704788
+Energy Eigenvalue:  -0.955147035922
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.345257704788
+
+
+
+SCF Count  1
+Orbital Energies:  [-19.37167574 -10.49522972  -1.5735103   -1.21501704  -1.22128526
+  -0.95514704  -0.95514704]
+Working on orbital 0
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00007417651
+eigenvalueHistory:  -19.36987763292982
+Orbital energy after Harrison update:  -19.3698776329
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 0 error and residual:   -1.507e-01 and 1.053e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00006970237
+eigenvalueHistory:  [-19.36987763 -19.36990198]
+Orbital energy after Harrison update:  -19.3699019762
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 0 error and residual:   -1.508e-01 and 3.114e-04
+
+
+Used 2 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00041546355
+eigenvalueHistory:  -10.49859602682406
+Orbital energy after Harrison update:  -10.4985960268
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 1 error and residual:   -9.150e-02 and 2.148e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00007570035
+eigenvalueHistory:  [-10.49859603 -10.49863126]
+Orbital energy after Harrison update:  -10.49863126
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 1 error and residual:   -9.153e-02 and 6.544e-04
+
+
+Used 2 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.992707208306
+eigenvalueHistory:  -1.5498540951103859
+Orbital energy after Harrison update:  -1.54985409511
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   2.545e-02 and 8.500e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.01907007844
+eigenvalueHistory:  [-1.5498541  -1.61592936]
+Orbital energy after Harrison update:  -1.61592935786
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -4.062e-02 and 6.508e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.998844292275
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896 ]
+Orbital energy after Harrison update:  -1.60908959509
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -3.378e-02 and 5.241e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00876684767
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882]
+Orbital energy after Harrison update:  -1.63687882071
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -6.157e-02 and 4.194e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00121258743
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065]
+Orbital energy after Harrison update:  -1.63734065034
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -6.203e-02 and 3.496e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00454721133
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526]
+Orbital energy after Harrison update:  -1.65033526412
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -7.503e-02 and 2.901e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.0015418529
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944]
+Orbital energy after Harrison update:  -1.65295944325
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -7.765e-02 and 2.473e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00249101098
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173]
+Orbital energy after Harrison update:  -1.65966172536
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -8.435e-02 and 2.101e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00125600781
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887]
+Orbital energy after Harrison update:  -1.66236886587
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -8.706e-02 and 1.812e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00143343771
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908]
+Orbital energy after Harrison update:  -1.66616907804
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -9.086e-02 and 1.560e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00090147237
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072]
+Orbital energy after Harrison update:  -1.66836071797
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -9.305e-02 and 1.354e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00086794823
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739]
+Orbital energy after Harrison update:  -1.6706973908
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -9.539e-02 and 1.174e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00062106011
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775]
+Orbital energy after Harrison update:  -1.67232774871
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -9.702e-02 and 1.021e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00055130539
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385]
+Orbital energy after Harrison update:  -1.67385385122
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -9.855e-02 and 8.885e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00042541184
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003]
+Orbital energy after Harrison update:  -1.6750300346
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -9.972e-02 and 7.742e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.0003648963
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861]
+Orbital energy after Harrison update:  -1.67606860551
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.008e-01 and 6.745e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00029428462
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091]
+Orbital energy after Harrison update:  -1.67691091185
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.016e-01 and 5.881e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00024974945
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744]
+Orbital energy after Harrison update:  -1.67763743799
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.023e-01 and 5.127e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00020679983
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245]
+Orbital energy after Harrison update:  -1.67824244777
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.029e-01 and 4.471e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00017551333
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047]
+Orbital energy after Harrison update:  -1.67876046973
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.035e-01 and 3.899e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00014772433
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047 -1.67919812]
+Orbital energy after Harrison update:  -1.6791981168
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.039e-01 and 3.400e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00012587847
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047 -1.67919812 -1.67957265]
+Orbital energy after Harrison update:  -1.67957265035
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.043e-01 and 2.965e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00010707593
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047 -1.67919812 -1.67957265 -1.6798918 ]
+Orbital energy after Harrison update:  -1.67989179855
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.046e-01 and 2.586e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00009168003
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047 -1.67919812 -1.67957265 -1.6798918  -1.68016548]
+Orbital energy after Harrison update:  -1.68016548248
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.049e-01 and 2.255e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00007854367
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047 -1.67919812 -1.67957265 -1.6798918  -1.68016548
+ -1.68040001]
+Orbital energy after Harrison update:  -1.68040000754
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.051e-01 and 1.966e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00006754162
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047 -1.67919812 -1.67957265 -1.6798918  -1.68016548
+ -1.68040001 -1.68060167]
+Orbital energy after Harrison update:  -1.68060167048
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.053e-01 and 1.714e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00005814977
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047 -1.67919812 -1.67957265 -1.6798918  -1.68016548
+ -1.68040001 -1.68060167 -1.68077517]
+Orbital energy after Harrison update:  -1.68077516757
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.055e-01 and 1.495e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00005017887
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047 -1.67919812 -1.67957265 -1.6798918  -1.68016548
+ -1.68040001 -1.68060167 -1.68077517 -1.68092475]
+Orbital energy after Harrison update:  -1.68092474566
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.056e-01 and 1.303e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00004335105
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047 -1.67919812 -1.67957265 -1.6798918  -1.68016548
+ -1.68040001 -1.68060167 -1.68077517 -1.68092475 -1.68105381]
+Orbital energy after Harrison update:  -1.68105381372
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.057e-01 and 1.136e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00003750812
+eigenvalueHistory:  [-1.5498541  -1.61592936 -1.6090896  -1.63687882 -1.63734065 -1.65033526
+ -1.65295944 -1.65966173 -1.66236887 -1.66616908 -1.66836072 -1.67069739
+ -1.67232775 -1.67385385 -1.67503003 -1.67606861 -1.67691091 -1.67763744
+ -1.67824245 -1.67876047 -1.67919812 -1.67957265 -1.6798918  -1.68016548
+ -1.68040001 -1.68060167 -1.68077517 -1.68092475 -1.68105381 -1.68116534]
+Orbital energy after Harrison update:  -1.68116534047
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   -1.059e-01 and 9.903e-04
+
+
+Used 30 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.831290656923
+eigenvalueHistory:  -0.5360043535591571
+Orbital energy after Harrison update:  -0.536004353559
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   4.855e-01 and 7.511e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.38353379794
+eigenvalueHistory:  [-0.53600435 -0.95552712]
+Orbital energy after Harrison update:  -0.955527115892
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   6.601e-02 and 1.450e-01
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.964205329582
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805]
+Orbital energy after Harrison update:  -0.897388045639
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   1.241e-01 and 5.219e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.01485428036
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412 ]
+Orbital energy after Harrison update:  -0.94174119855
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   7.979e-02 and 3.751e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.988810530512
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909]
+Orbital energy after Harrison update:  -0.932329089299
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   8.921e-02 and 3.692e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  1.00103354253
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265]
+Orbital energy after Harrison update:  -0.947442654329
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   7.409e-02 and 3.365e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995123570028
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739]
+Orbital energy after Harrison update:  -0.950027387062
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   7.151e-02 and 3.368e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.997821143106
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136]
+Orbital energy after Harrison update:  -0.958601357328
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   6.293e-02 and 3.344e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.99619147213
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372]
+Orbital energy after Harrison update:  -0.964223720642
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   5.731e-02 and 3.394e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.996591701729
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366]
+Orbital energy after Harrison update:  -0.971363664986
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   5.017e-02 and 3.438e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995982215462
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629]
+Orbital energy after Harrison update:  -0.977836294982
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   4.370e-02 and 3.493e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.99588904567
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805]
+Orbital energy after Harrison update:  -0.984718053927
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   3.682e-02 and 3.537e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995591943899
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455]
+Orbital energy after Harrison update:  -0.991454550799
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   3.008e-02 and 3.574e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995458934911
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411]
+Orbital energy after Harrison update:  -0.998284107808
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   2.325e-02 and 3.596e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995319041687
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288]
+Orbital energy after Harrison update:  -1.00504288045
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   1.649e-02 and 3.605e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995259537457
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731]
+Orbital energy after Harrison update:  -1.01175731458
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   9.778e-03 and 3.596e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995238461794
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551]
+Orbital energy after Harrison update:  -1.01835551157
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   3.179e-03 and 3.571e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995273627411
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118]
+Orbital energy after Harrison update:  -1.02481117956
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -3.276e-03 and 3.529e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995351824185
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763 ]
+Orbital energy after Harrison update:  -1.03107630072
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -9.541e-03 and 3.471e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995472841051
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605]
+Orbital energy after Harrison update:  -1.03711605189
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -1.558e-02 and 3.396e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995628965756
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438]
+Orbital energy after Harrison update:  -1.04289437894
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -2.136e-02 and 3.307e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.995815077263
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266]
+Orbital energy after Harrison update:  -1.04838266152
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -2.685e-02 and 3.204e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.996024393702
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712]
+Orbital energy after Harrison update:  -1.05355711893
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -3.202e-02 and 3.090e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.996250838181
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093]
+Orbital energy after Harrison update:  -1.05840092775
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -3.687e-02 and 2.966e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.996488338469
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368]
+Orbital energy after Harrison update:  -1.06290368302
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -4.137e-02 and 2.834e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.996731439103
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155]
+Orbital energy after Harrison update:  -1.06706155192
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -4.553e-02 and 2.696e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.99697525741
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668]
+Orbital energy after Harrison update:  -1.07087668477
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -4.934e-02 and 2.554e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.99721564512
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659]
+Orbital energy after Harrison update:  -1.07435659186
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -5.282e-02 and 2.410e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.997449188369
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328]
+Orbital energy after Harrison update:  -1.07751328282
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -5.598e-02 and 2.266e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.997673211402
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236]
+Orbital energy after Harrison update:  -1.08036235899
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -5.883e-02 and 2.123e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.997885728363
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208]
+Orbital energy after Harrison update:  -1.08292207911
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -6.139e-02 and 1.983e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.998085379665
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247]
+Orbital energy after Harrison update:  -1.08521247404
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -6.368e-02 and 1.847e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.998271351554
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454]
+Orbital energy after Harrison update:  -1.08725454479
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -6.572e-02 and 1.715e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.998443290775
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957]
+Orbital energy after Harrison update:  -1.08906957337
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -6.753e-02 and 1.589e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.998601218911
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856]
+Orbital energy after Harrison update:  -1.09067855796
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -6.914e-02 and 1.469e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.998745451436
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177]
+Orbital energy after Harrison update:  -1.09210177392
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.057e-02 and 1.355e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.998876524231
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845]
+Orbital energy after Harrison update:  -1.09335845298
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.182e-02 and 1.247e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.998995129287
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657]
+Orbital energy after Harrison update:  -1.09446656765
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.293e-02 and 1.146e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999102060247
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427 ]
+Orbital energy after Harrison update:  -1.09544270472
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.391e-02 and 1.052e-02
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999198167706
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201]
+Orbital energy after Harrison update:  -1.09630201109
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.477e-02 and 9.640e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999284323666
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201 -1.0970582 ]
+Orbital energy after Harrison update:  -1.09705819555
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.552e-02 and 8.824e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999361394226
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201 -1.0970582  -1.09772357]
+Orbital energy after Harrison update:  -1.09772357184
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.619e-02 and 8.067e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999430219424
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201 -1.0970582  -1.09772357
+ -1.09830913]
+Orbital energy after Harrison update:  -1.09830913046
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.677e-02 and 7.368e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999491599105
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201 -1.0970582  -1.09772357
+ -1.09830913 -1.09882463]
+Orbital energy after Harrison update:  -1.09882462866
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.729e-02 and 6.723e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999546283705
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201 -1.0970582  -1.09772357
+ -1.09830913 -1.09882463 -1.09927869]
+Orbital energy after Harrison update:  -1.09927869059
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.774e-02 and 6.130e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999594968956
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201 -1.0970582  -1.09772357
+ -1.09830913 -1.09882463 -1.09927869 -1.09967891]
+Orbital energy after Harrison update:  -1.09967891127
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.814e-02 and 5.585e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999638293595
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201 -1.0970582  -1.09772357
+ -1.09830913 -1.09882463 -1.09927869 -1.09967891 -1.10003196]
+Orbital energy after Harrison update:  -1.1000319598
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.850e-02 and 5.085e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.99967683934
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201 -1.0970582  -1.09772357
+ -1.09830913 -1.09882463 -1.09927869 -1.09967891 -1.10003196 -1.10034368]
+Orbital energy after Harrison update:  -1.10034367873
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.881e-02 and 4.627e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999711132463
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201 -1.0970582  -1.09772357
+ -1.09830913 -1.09882463 -1.09927869 -1.09967891 -1.10003196 -1.10034368
+ -1.10061918]
+Orbital energy after Harrison update:  -1.10061917748
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.908e-02 and 4.209e-03
+
+
+Using singularity subtraction
+Orthogonalizing phiNew, but not normalizing.
+Norm of psiNew =  0.999741646483
+eigenvalueHistory:  [-0.53600435 -0.95552712 -0.89738805 -0.9417412  -0.93232909 -0.94744265
+ -0.95002739 -0.95860136 -0.96422372 -0.97136366 -0.97783629 -0.98471805
+ -0.99145455 -0.99828411 -1.00504288 -1.01175731 -1.01835551 -1.02481118
+ -1.0310763  -1.03711605 -1.04289438 -1.04838266 -1.05355712 -1.05840093
+ -1.06290368 -1.06706155 -1.07087668 -1.07435659 -1.07751328 -1.08036236
+ -1.08292208 -1.08521247 -1.08725454 -1.08906957 -1.09067856 -1.09210177
+ -1.09335845 -1.09446657 -1.0954427  -1.09630201 -1.0970582  -1.09772357
+ -1.09830913 -1.09882463 -1.09927869 -1.09967891 -1.10003196 -1.10034368
+ -1.10061918 -1.10086292]
+Orbital energy after Harrison update:  -1.10086291856
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   -7.933e-02 and 3.826e-03
+
+
+Using singularity subtraction

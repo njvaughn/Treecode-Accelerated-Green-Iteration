@@ -19,6 +19,7 @@ import pylibxc
 import itertools
 import os
 import csv
+from numba.targets.options import TargetOptions
 try:
     import vtk
 except ModuleNotFoundError:
@@ -80,7 +81,7 @@ class Tree(object):
         self.gaugeShift = gaugeShift
         self.maxDepthAtAtoms = maxDepthAtAtoms
         
-        self.mixingParameter=0.75  # (1-mixingParam)*rhoNew
+        self.mixingParameter=0.5  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
 #         self.occupations = np.ones(nOrbitals)
 #         self.computeOccupations()
@@ -308,6 +309,8 @@ class Tree(object):
                 
       
     def initializeOrbitalsRandomly(self,targetOrbital=None):
+        timer = Timer()
+        timer.start()
         if targetOrbital==None:
             print('Initializing all orbitals randomly...')
             for _,cell in self.masterList:
@@ -328,9 +331,45 @@ class Tree(object):
 #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
                         gp.phi[targetOrbital] = np.random.rand(1)
                         
+        timer.stop()
+        print('Initializing orbitals randomly inside Tree Structure took %.3f seconds.' %timer.elapsedTime)
+                        
                             
         
+    
+    def initializeDensityFromAtomicDataExternally(self):
+        timer = Timer()
+        timer.start()
+        
+        sources = self.extractLeavesDensity()
+        x = sources[:,0]
+        y = sources[:,1]
+        z = sources[:,2]
+        rho = np.zeros(len(x))
+        
+        for atom in self.atoms:
+            r = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2 )
+#             for i in range(len(r)):
+#                 try:
+#                     rho[i] += atom.interpolators['density'](r[i])
+#                 except ValueError:
+#                     rho[i] += 0.0   # if outside the interpolation range, assume 0.
+            try:
+                rho += atom.interpolators['density'](r)
+            except ValueError:
+                rho += 0.0   # if outside the interpolation range, assume 0.
+        
+        print("max density: ", max(abs(rho)))
+        self.importDensityOnLeaves(rho)  
+        timer.stop()
+        print('Initializing density EXTERNALLY took %.3f seconds.' %timer.elapsedTime)  
+        
+       
+    
     def initializeDensityFromAtomicData(self):
+        timer = Timer()
+        timer.start()
+        
         for _,cell in self.masterList:
             if cell.leaf==True:
                 for i,j,k in self.PxByPyByPz:
@@ -342,6 +381,9 @@ class Tree(object):
                             gp.rho += atom.interpolators['density'](r)
                         except ValueError:
                             gp.rho += 0.0   # if outside the interpolation range, assume 0.
+                            
+        timer.stop()
+        print('Initializing density inside Tree Structure took %.3f seconds.' %timer.elapsedTime)
                 
 #                 if hasattr(cell, 'densityPoints'):
 #                     for i,j,k in cell.PxByPyByPz_density:
@@ -357,9 +399,104 @@ class Tree(object):
 # #         self.normalizeDensity()
 #         self.integrateDensityBothMeshes()
                             
-                        
+    def initializeOrbitalsFromAtomicDataExternally(self,onlyFillOne=False): 
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
+
+        timer = Timer()
+        timer.start()
+        orbitalIndex=0
+        
+        print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+        self.atoms[1].nAtomicOrbitals = 2
+        self.nOrbitals = 7
+        
+
     
-    def initializeOrbitalsFromAtomicData(self,onlyFillOne=False):
+        for atom in self.atoms:
+            if onlyFillOne == True:
+                print('Setting number of orbitals equal to 1 for oxygen, just for testing the deep state without initializing everything')
+                nAtomicOrbitals = 1
+            else:
+                nAtomicOrbitals = atom.nAtomicOrbitals
+                
+            
+            
+            print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+                      %(atom.atomicNumber, atom.x,atom.y,atom.z))
+            print('Orbital index = %i'%orbitalIndex)            
+            singleAtomOrbitalCount=0
+            for nell in aufbauList:
+                
+                if singleAtomOrbitalCount< nAtomicOrbitals:  
+                    n = int(nell[0])
+                    ell = int(nell[1])
+                    psiID = 'psi'+str(n)+str(ell)
+#                     print('Using ', psiID)
+                    for m in range(-ell,ell+1):
+                        
+                        sources = self.extractPhi(orbitalIndex)
+                        dx = sources[:,0]-atom.x
+                        dy = sources[:,1]-atom.y
+                        dz = sources[:,2]-atom.z
+                        phi = np.zeros(len(dx))
+                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                        inclination = np.arccos(dz/r)
+                        azimuthal = np.arctan2(dy,dx)
+                        
+                        if m<0:
+                            Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                        if m>0:
+                            Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+#                                     if ( (m==0) and (ell>1) ):
+                        if ( m==0 ):
+                            Y = sph_harm(m,ell,azimuthal,inclination)
+#                                     if ( (m==0) and (ell<=1) ):
+#                                         Y = 1
+                        if np.max( abs(np.imag(Y)) ) > 1e-14:
+                            print('imag(Y) ', np.imag(Y))
+                            return
+#                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+                        phi = atom.interpolators[psiID](r)*np.real(Y)
+                        
+                        self.importPhiOnLeaves(phi, orbitalIndex)
+                        
+                        print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
+                        orbitalIndex += 1
+                        singleAtomOrbitalCount += 1
+                    
+#                 else:
+#                     n = int(nell[0])
+#                     ell = int(nell[1])
+#                     psiID = 'psi'+str(n)+str(ell)
+#                     print('Not using ', psiID)
+                        
+        if orbitalIndex < self.nOrbitals:
+            print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
+            print('Filling extra orbitals with random initial data.')
+            for ii in range(orbitalIndex, self.nOrbitals):
+                self.initializeOrbitalsRandomly(targetOrbital=ii)
+                self.orthonormalizeOrbitals(targetOrbital=ii)
+        if orbitalIndex > self.nOrbitals:
+            print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
+                        
+        timer.stop()
+        print('Initializing orbitals EXTERNAL to Tree Structure took %.3f seconds.' %timer.elapsedTime)
+        
+        for m in range(self.nOrbitals):
+            self.normalizeOrbital(m)
+            
+            
+            
+                           
+    
+    def initializeOrbitalsFromAtomicData_deprecated(self,onlyFillOne=False):
+        
         
         aufbauList = ['10',                                     # n+ell = 1
                       '20',                                     # n+ell = 2
@@ -453,7 +590,9 @@ class Tree(object):
         if orbitalIndex > self.nOrbitals:
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
-
+        timer.stop()
+        print('Initializing orbitals inside Tree Structure took %f.3 seconds.' %timer.elapsedTime)
+        
         for m in range(self.nOrbitals):
             self.normalizeOrbital(m)
     
@@ -621,13 +760,14 @@ class Tree(object):
         print('Number of gridpoints: ', self.numberOfGridpoints)
 
         self.computeDerivativeMatrices()
-        self.initializeDensityFromAtomicData()
+#         self.initializeDensityFromAtomicData()
+        self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
         ### INITIALIZE ORBTIALS AND DENSITY ####
         if initializationType=='atomic':
             if onlyFillOne == True:
-                self.initializeOrbitalsFromAtomicData(onlyFillOne=True)
+                self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
             else:
-                self.initializeOrbitalsFromAtomicData()
+                self.initializeOrbitalsFromAtomicDataExternally()
         elif initializationType=='random':
             self.initializeOrbitalsRandomly()
 #         self.orthonormalizeOrbitals()
@@ -819,8 +959,8 @@ class Tree(object):
         self.computeDerivativeMatrices()
 
         ### INITIALIZE ORBTIALS AND DENSITY ####
-        self.initializeDensityFromAtomicData()
-        self.initializeOrbitalsFromAtomicData()            
+        self.initializeDensityFromAtomicDataExternally()
+        self.initializeOrbitalsFromAtomicDataExternally()            
 #         self.normalizeDensity()
         
         self.maxDepthAchieved += 1
@@ -931,9 +1071,13 @@ class Tree(object):
                     newRho += cell.tree.occupations[m] * cell.gridpoints[i,j,k].phi[m]**2
                 if mixingScheme=='None':
                     cell.gridpoints[i,j,k].rho = newRho
-                elif mixingScheme=='Simple':
-                    cell.gridpoints[i,j,k].rho = ( self.mixingParameter*cell.gridpoints[i,j,k].rho + 
-                        (1-self.mixingParameter)*newRho )
+                    
+                    ## Mixing has been taken care of externally.  This function is now only supposed to update density from wavefunctions, not handle mixing as well
+                    
+                    
+#                 elif mixingScheme=='Simple':
+#                     cell.gridpoints[i,j,k].rho = ( self.mixingParameter*cell.gridpoints[i,j,k].rho + 
+#                         (1-self.mixingParameter)*newRho )
                 else: 
                     print('Not a valid density mixing scheme.')
                     return
@@ -1207,7 +1351,7 @@ class Tree(object):
         return
     
     
-    def updateOrbitalEnergies(self,newOccupations=True,correctPositiveEnergies=True,sortByEnergy=True,targetEnergy=None, saveAsReference=False):
+    def updateOrbitalEnergies(self,newOccupations=False,correctPositiveEnergies=False,sortByEnergy=False,targetEnergy=None, saveAsReference=False, sortOrder=None):
 #         print()
         start = time.time()
         self.computeOrbitalKinetics(targetEnergy, saveAsReference)
@@ -1307,8 +1451,11 @@ class Tree(object):
 
 
 
-    def sortOrbitalsAndEnergies(self):
-        newOrder = np.argsort(self.orbitalEnergies)
+    def sortOrbitalsAndEnergies(self, order=None):
+        if order==None:
+            newOrder = np.argsort(self.orbitalEnergies)
+        elif order != None:
+            newOrder = order
         oldEnergies = np.copy(self.orbitalEnergies)
         for m in range(self.nOrbitals):
             self.orbitalEnergies[m] = oldEnergies[newOrder[m]]
@@ -1512,8 +1659,90 @@ class Tree(object):
 #                     if gridpoint.orthogonalized == False:
 #                         gridpoint.phi -= B*gridpoint.finalWavefunction[n]
 #                         gridpoint.orthogonalized = True
+    
+    def copyPhiNewToArray(self, targetOrbital):
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    cell.gridpoints[i,j,k].phi[targetOrbital] = np.copy( cell.gridpoints[i,j,k].phiNew )
+    
+    
+    def normalizePhiNew(self):
+        """ Enforce integral phi*2 dxdydz == 1 """
+        A = 0.0        
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    A += cell.gridpoints[i,j,k].phiNew**2*cell.w[i,j,k]
+
+        """ Rescale wavefunction values, flip the flag """
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in self.PxByPyByPz:
+                        cell.gridpoints[i,j,k].phiNew /= np.sqrt(A)
+        
+    
+    def orthonormalizePhiNew(self, targetOrbital):
+        
+        def orthogonalizePhiNew(tree,targetOrbital,n):
+            
+#             print('Orthogonalizing phiNew %i against orbital %i' %(targetOrbital,n))
+            """ Compute the overlap, integral phi_r * phi_s """
+            B = 0.0
+            for _,cell in tree.masterList:
+                if cell.leaf == True:
+                    for i,j,k in self.PxByPyByPz:
+                        phiNew = cell.gridpoints[i,j,k].phiNew
+                        phi_n = cell.gridpoints[i,j,k].phi[n]
+                        B += phiNew*phi_n*cell.w[i,j,k]
+
+            """ Subtract the projection """
+            for _,cell in tree.masterList:
+                if cell.leaf==True:
+                    for i,j,k in self.PxByPyByPz:
+                        gridpoint = cell.gridpoints[i,j,k]
+                        gridpoint.phiNew -= B*gridpoint.phi[n]
                         
-    def orthonormalizeOrbitals(self, targetOrbital=None):
+        def normalizePhiNew(tree,m):
+        
+            """ Enforce integral phi*2 dxdydz == 1 """
+            A = 0.0        
+            for _,cell in tree.masterList:
+                if cell.leaf == True:
+                    for i,j,k in self.PxByPyByPz:
+                        A += cell.gridpoints[i,j,k].phiNew**2*cell.w[i,j,k]
+    
+            """ Rescale wavefunction values, flip the flag """
+            for _,cell in tree.masterList:
+                if cell.leaf==True:
+                    for i,j,k in self.PxByPyByPz:
+                            cell.gridpoints[i,j,k].phiNew /= np.sqrt(A)
+                            
+        print('Orthogonalizing phiNew, but not normalizing.')
+        for n in range(targetOrbital):
+            orthogonalizePhiNew(self,targetOrbital,n)
+#         normalizePhiNew(self,targetOrbital)
+        
+        
+        
+        
+        
+                        
+    def orthonormalizeOrbitals(self, targetOrbital=None, external=False):
+        
+        
+        def orthogonalizeOrbitals_external(tree,phi_m,phi_n,weights,targetOrbital):
+            
+#             sources = self.extractPhi(m)
+#             phi_m = sources[:,3]
+#             sources = self.extractPhi(n)
+#             phi_n = sources[:,3]
+#             weights = sources[:,5]
+            
+            phi_m -= ( np.dot(phi_m,phi_n*weights) / np.dot(phi_n,phi_n*weights) )*phi_n
+            phi_m /= np.sqrt( np.dot(phi_m,phi_m*weights) )
+            self.importPhiOnLeaves(phi_m, targetOrbital)
+            
         
         def orthogonalizeOrbitals(tree,m,n):
             
@@ -1562,14 +1791,33 @@ class Tree(object):
         if targetOrbital==None:
 #         print('Orthonormalizing orbitals within tree structure up to orbital %i.' %maxOrbital)
             for m in range(self.nOrbitals):
-                for n in range(m):
+                if external==True:
+                    sources = self.extractPhi(m)
+                    phi_m = np.copy(sources[:,3])
+                    weights = np.copy(sources[:,5])
+                    for n in range(m):
+                        sources = self.extractPhi(n)
+                        phi_n = np.copy(sources[:,3])
+                        orthogonalizeOrbitals_external(self,phi_m,phi_n,weights,targetOrbital=m)
                     
-                    orthogonalizeOrbitals(self,m,n)
-                    normalizeOrbital(self,m)
+                    
+                else:
+                    for n in range(m):
+                        orthogonalizeOrbitals(self,m,n)
+                        normalizeOrbital(self,m)
         else:
             for n in range(targetOrbital):
-                orthogonalizeOrbitals(self,targetOrbital,n)
-                normalizeOrbital(self,targetOrbital)
+                if external==True:
+                    sources = self.extractPhi(targetOrbital)
+                    phi_m = np.copy(sources[:,3])
+                    weights = np.copy(sources[:,5])
+                    sources = self.extractPhi(n)
+                    phi_n = np.copy(sources[:,3])
+                    orthogonalizeOrbitals_external(self,phi_m,phi_n,weights,targetOrbital=targetOrbital)
+                else:
+                    
+                    orthogonalizeOrbitals(self,targetOrbital,n)
+                    normalizeOrbital(self,targetOrbital)
             
             
     
@@ -2094,6 +2342,25 @@ class Tree(object):
             print('Warning: import index not equal to len(phiNew)')
             print(importIndex)
             print(len(phiNew))
+            
+    def importDensityOnLeaves(self,rho):
+        '''
+        Import density values, apply to leaves
+        '''
+
+        importIndex = 0        
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in self.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    gridpt.rho = rho[importIndex]
+                    importIndex += 1
+                    
+
+        if importIndex != len(rho):
+            print('Warning: import index not equal to len(rho)')
+            print(importIndex)
+            print(len(rho))
             
     def importPhiNewOnLeaves(self,phiNew):
         '''
