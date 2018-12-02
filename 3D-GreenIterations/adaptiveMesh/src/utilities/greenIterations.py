@@ -727,7 +727,6 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
             
 
- 
 
         print()
         print()
@@ -740,7 +739,6 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     #     tree.computeWavefunctionResidual(0)
 #         return
 
-        
 
         
         if maxOrbitals==1:
