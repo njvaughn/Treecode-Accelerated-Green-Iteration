@@ -10,7 +10,7 @@
 
 
 #PBS -l nodes=1:gpus=1:titanv,mem=8gb
-#PBS -l walltime=24:00:00
+#PBS -l walltime=12:00:00
 #PBS -j oe
 #PBS -V
 
@@ -64,8 +64,8 @@ MIXING='Anderson'
 
 #OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5_1000o4_MGS.csv'
 #VTKFILEDIR='/home/njvaughn/CO_with_anderson/LW5_1000o4_plots_MGS'
-OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5_1000o5_ActuallyGradientFree_eigRes.csv'
-VTKFILEDIR='/home/njvaughn/CO_with_anderson/LW5_1000o5_plots_eigRes'
+OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5_1000o5_ActuallyGradientFree_eigRes_titan.csv'
+VTKFILEDIR='/home/njvaughn/CO_with_anderson/LW5_1000o5_plots_eigRes_titan'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER

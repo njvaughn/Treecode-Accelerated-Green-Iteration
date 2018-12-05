@@ -1847,15 +1847,15 @@ class Tree(object):
         else:
             for n in range(targetOrbital):
                 if external==True:
-                    if self.orbitalEnergies[targetOrbital]> self.orbitalEnergies[n]:
-                        sources = self.extractPhi(targetOrbital)
-                        phi_m = np.copy(sources[:,3])
-                        weights = np.copy(sources[:,5])
-                        sources = self.extractPhi(n)
-                        phi_n = np.copy(sources[:,3])
-                        orthogonalizeOrbitals_external(self,phi_m,phi_n,weights,targetOrbital=targetOrbital)
-                    else:
-                        print('Not orthogonalizing orbital %i against %i because energy is lower.' %(targetOrbital,n))
+#                     if self.orbitalEnergies[targetOrbital]> self.orbitalEnergies[n]:
+                    sources = self.extractPhi(targetOrbital)
+                    phi_m = np.copy(sources[:,3])
+                    weights = np.copy(sources[:,5])
+                    sources = self.extractPhi(n)
+                    phi_n = np.copy(sources[:,3])
+                    orthogonalizeOrbitals_external(self,phi_m,phi_n,weights,targetOrbital=targetOrbital)
+#                     else:
+#                         print('Not orthogonalizing orbital %i against %i because energy is lower.' %(targetOrbital,n))
                 else:
                     
                     orthogonalizeOrbitals(self,targetOrbital,n)
