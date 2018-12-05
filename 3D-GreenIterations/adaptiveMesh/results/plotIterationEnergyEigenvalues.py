@@ -42,9 +42,12 @@ import numpy as np
 
 
 
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
-file='LW5_1500_andersonMixing_p5_1em8_GREEN_.csv'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
+# file='LW5_1500_andersonMixing_p5_1em8_GREEN_.csv'
 
+
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/CO_with_anderson/'
+file='LW5_1000o5_gradientFree_eigRes_GREEN_.csv'
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
     TotalEnergy = -7.3340536782581447
@@ -109,16 +112,31 @@ print(df.shape)
 ##                              -4.455359698088187659e-01 ,
 ##                              -3.351144822320292205e-01])
 
+
+""" AFTER FIRST SCF """
+referenceEnergies = np.array( [-1.886761702508549021e+01, -1.000441073298974892e+01,
+                                            -1.185545917003633321e+00, -6.070872074377245964e-01,-3.960960368603070325e-01,
+                                            -5.201973981507257427e-01,  1.721054880813185223e-02, -5.201973981507234113e-01,
+                                            -1.338775668379516559e-02,
+                                            -7.325760563979200057e-02] )
+
+""" FINAL EIGENVALUES """
+referenceEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
+                                  -1.075324514852165958e+00, -5.215419985881135645e-01,
+                                  -4.455527567163568570e-01, -4.455527560478895199e-01,
+                                  -3.351419327004790394e-01, -8.275071966753577701e-02,
+                                  -8.273399296312561324e-02,  7.959071929649078059e-03] )
+
 ## OXYGEN
-referenceEnergies = np.array([psi0,psi1,psi2,psi3,psi4])
+# referenceEnergies = np.array([psi0,psi1,psi2,psi3,psi4])
 
 ## H2
 ##referenceEnergies = np.array([-0.3774974859])
 
 
-residualsMatrix = np.zeros((df.shape[0],5))
-errorsMatrix = np.zeros((df.shape[0],5))
-errorsMatrix1st = np.zeros((df.shape[0],5))
+residualsMatrix = np.zeros((df.shape[0],10))
+errorsMatrix = np.zeros((df.shape[0],10))
+errorsMatrix1st = np.zeros((df.shape[0],10))
 for i in range(df.shape[0]):
     residualsMatrix[i,:] = np.array(df.orbitalResiduals[i][1:-1].split(),dtype=float)
     errorsMatrix[i,:] = abs( np.array( df.energyEigenvalues[i][1:-1].split(),dtype=float) - referenceEnergies )
@@ -133,11 +151,11 @@ df['residual1'] = residualsMatrix[:,1]
 df['residual2'] = residualsMatrix[:,2]
 df['residual3'] = residualsMatrix[:,3]
 df['residual4'] = residualsMatrix[:,4]
-##df['residual5'] = residualsMatrix[:,5]
-##df['residual6'] = residualsMatrix[:,6]
-##df['residual7'] = residualsMatrix[:,7]
-##df['residual8'] = residualsMatrix[:,8]
-##df['residual9'] = residualsMatrix[:,9]
+df['residual5'] = residualsMatrix[:,5]
+df['residual6'] = residualsMatrix[:,6]
+df['residual7'] = residualsMatrix[:,7]
+df['residual8'] = residualsMatrix[:,8]
+df['residual9'] = residualsMatrix[:,9]
 
 ##df['errors0'] = np.copy(df['energyEigenvalues'])
 df['errors0'] = np.abs(errorsMatrix[:,0])
@@ -145,9 +163,11 @@ df['errors1'] = np.abs(errorsMatrix[:,1])
 df['errors2'] = np.abs(errorsMatrix[:,2])
 df['errors3'] = np.abs(errorsMatrix[:,3])
 df['errors4'] = np.abs(errorsMatrix[:,4])
-##df['errors5'] = np.abs(errorsMatrix[:,5])
-##df['errors6'] = np.abs(errorsMatrix[:,6])
-
+df['errors5'] = np.abs(errorsMatrix[:,5])
+df['errors6'] = np.abs(errorsMatrix[:,6])
+df['errors7'] = np.abs(errorsMatrix[:,7])
+df['errors8'] = np.abs(errorsMatrix[:,8])
+df['errors9'] = np.abs(errorsMatrix[:,9])
 
 ##try:
 ##    df['1stSCFerrors0'] = np.abs(errorsMatrix1st[:,0])
@@ -169,11 +189,11 @@ def plotFirstSCF(df):
     df.plot(y='residual2',ax=ax0,logy=True,label='Phi2')
     df.plot(y='residual3',ax=ax0,logy=True,label='Phi3')
     df.plot(y='residual4',ax=ax0,logy=True,label='Phi4')
-##    df.plot(y='residual5',ax=ax0,logy=True,label='Phi5')
-##    df.plot(y='residual6',ax=ax0,logy=True,label='Phi6')
-##    df.plot(y='residual7',ax=ax0,logy=True,label='Phi7')
-##    df.plot(y='residual8',ax=ax0,logy=True,label='Phi8')
-##    df.plot(y='residual9',ax=ax0,logy=True,label='Phi9')
+    df.plot(y='residual5',ax=ax0,logy=True,label='Phi5')
+    df.plot(y='residual6',ax=ax0,logy=True,label='Phi6')
+    df.plot(y='residual7',ax=ax0,logy=True,label='Phi7')
+    df.plot(y='residual8',ax=ax0,logy=True,label='Phi8')
+    df.plot(y='residual9',ax=ax0,logy=True,label='Phi9')
     ax0.set_xlabel('Iteration Number')
     ax0.set_ylabel('Residual L2 Norm')
     ax0.set_title('Orbital Residuals')
@@ -184,11 +204,11 @@ def plotFirstSCF(df):
     df.plot(y='errors2',ax=ax1,logy=True,label='Phi2')
     df.plot(y='errors3',ax=ax1,logy=True,label='Phi3')
     df.plot(y='errors4',ax=ax1,logy=True,label='Phi4')
-##    df.plot(y='errors5',ax=ax1,logy=True,label='Phi5')
-##    df.plot(y='errors6',ax=ax1,logy=True,label='Phi6')
-##    df.plot(y='errors7',ax=ax1,logy=True,label='Phi7')
-##    df.plot(y='errors8',ax=ax1,logy=True,label='Phi8')
-##    df.plot(y='errors9',ax=ax1,logy=True,label='Phi9')
+    df.plot(y='errors5',ax=ax1,logy=True,label='Phi5')
+    df.plot(y='errors6',ax=ax1,logy=True,label='Phi6')
+    df.plot(y='errors7',ax=ax1,logy=True,label='Phi7')
+    df.plot(y='errors8',ax=ax1,logy=True,label='Phi8')
+    df.plot(y='errors9',ax=ax1,logy=True,label='Phi9')
     ax1.set_xlabel('Iteration Number')
     ax1.set_ylabel('Energy Error (Hartree)')
 ##    ax1.set_ylim([1e-4,2e-2])

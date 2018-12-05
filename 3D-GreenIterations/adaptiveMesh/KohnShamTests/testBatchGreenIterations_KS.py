@@ -38,12 +38,14 @@ energyTolerance     = float(sys.argv[10])
 scfTolerance        = float(sys.argv[11])
 outputFile          = str(sys.argv[12])
 inputFile           = str(sys.argv[13])
-noGradients         = str(sys.argv[14])
-mixingScheme        = str(sys.argv[15])
-mixingParameter     = float(sys.argv[16])
+vtkDir              = str(sys.argv[14])
+noGradients         = str(sys.argv[15])
+mixingScheme        = str(sys.argv[16])
+mixingParameter     = float(sys.argv[17])
 
 print('gradientFree = ', noGradients)
 print('Mixing scheme = ', mixingScheme)
+print('vtk directory = ', vtkDir)
 
 if noGradients=='True':
     gradientFree=True
@@ -74,8 +76,8 @@ def setUpTree(onlyFillOne=False):
     nElectrons = int(nElectrons)
     nOrbitals = int(nOrbitals)
     
-    nOrbitals = 7  # hard code this in for Carbon Monoxide
-    print('Hard coding nOrbitals to 7')
+#     nOrbitals = 7  # hard code this in for Carbon Monoxide
+#     print('Hard coding nOrbitals to 7')
 
 #     nOrbitals = 6
 #     print('Hard coding nOrbitals to 6 to give oxygen one extra')
@@ -91,7 +93,7 @@ def setUpTree(onlyFillOne=False):
     
     
     print('max depth ', maxDepth)
-    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=onlyFillOne)
+    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=onlyFillOne)
 #     for element in tree.masterList:
 #         
 # #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
@@ -109,7 +111,7 @@ def setUpTree(onlyFillOne=False):
     return tree
     
     
-def testGreenIterationsGPU(tree,vtkExport=vtkFileBase,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None):
+def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None):
     
     tree.E = -1.0 # set initial energy guess
 
@@ -216,7 +218,8 @@ if __name__ == "__main__":
     tree = setUpTree()  
     
 #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
-    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False)
+#     testGreenIterationsGPU(tree,vtkExport=False)
+    testGreenIterationsGPU(tree)
 #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
     
 #     

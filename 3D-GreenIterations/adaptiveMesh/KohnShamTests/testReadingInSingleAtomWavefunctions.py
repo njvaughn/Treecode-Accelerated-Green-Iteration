@@ -5,9 +5,12 @@ Created on Jul 25, 2018
 '''
 import unittest
 import numpy as np
+import matplotlib.pyplot as plt
+
 import os
 import sys
-import matplotlib.pyplot as plt
+sys.path.append('../src/dataStructures')
+sys.path.append('../src/utilities')
 
 from AtomStruct import Atom
 from TreeStruct_CC import Tree
@@ -24,6 +27,21 @@ class Test(unittest.TestCase):
         plt.figure()
         data = np.genfromtxt(AtomicDataPath+'density.inp')
         plt.plot(data[:,0],data[:,1],label='Density')
+        print(data[:,0])
+        r=data[:,0]
+        density=data[:,1]
+        print('\n\n\n')
+        print(data[:,1])
+        left = 0
+        right = 0
+        for i in range(len(density)-1):
+            left += density[i]*(r[i+1]-r[i])
+            right += density[i+1]*(r[i+1]-r[i])
+        trap = 1/2*(left+right)
+        print('Left = ', left)    
+        print('Right = ', right)
+        print('Integrated density: ', trap)
+        plt.figure()
         for orbital in os.listdir(AtomicDataPath):
             if orbital[:3]=='psi':
 #             if orbital[:5]=='psi32':
@@ -46,7 +64,7 @@ class Test(unittest.TestCase):
 #         plt.plot(r1,psi1,'g',label='psi20')
         plt.legend()
         plt.xlabel('radius')
-        plt.show()
+#         plt.show()
         
     @unittest.skip('Skipping the printing of the interpolators')
     def testSettingUpAtomInterpolators(self):

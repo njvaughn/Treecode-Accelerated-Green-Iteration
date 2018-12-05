@@ -18,6 +18,7 @@ from scipy.optimize import broyden1, anderson, brentq
 import pylibxc
 import itertools
 import os
+import sys
 import csv
 from numba.targets.options import TargetOptions
 try:
@@ -29,6 +30,11 @@ import copy
 try:
     from pyevtk.hl import pointsToVTK
 except ImportError:
+    sys.path.append('/home/njvaughn')
+    try:
+        from pyevtk.hl import pointsToVTK
+    except ImportError:
+        print("Wasn't able to import pyevtk.hl.pointsToVTK, even after appending '/home/njvaughn' to path.")
     pass
 
 from GridpointStruct import GridPoint
@@ -347,7 +353,9 @@ class Tree(object):
         z = sources[:,2]
         rho = np.zeros(len(x))
         
+        totalElectrons = 0
         for atom in self.atoms:
+            totalElectrons += atom.atomicNumber
             r = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2 )
 #             for i in range(len(r)):
 #                 try:
@@ -358,9 +366,15 @@ class Tree(object):
                 rho += atom.interpolators['density'](r)
             except ValueError:
                 rho += 0.0   # if outside the interpolation range, assume 0.
+                
+            print("max density: ", max(abs(rho)))
+            self.importDensityOnLeaves(rho)
+            self.normalizeDensityToValue(totalElectrons) 
+            sources = self.extractLeavesDensity()
+            rho = np.copy(sources[:,3])
         
-        print("max density: ", max(abs(rho)))
-        self.importDensityOnLeaves(rho)  
+#         print("max density: ", max(abs(rho)))
+#         self.importDensityOnLeaves(rho)  
         timer.stop()
         print('Initializing density EXTERNALLY took %.3f seconds.' %timer.elapsedTime)  
         
@@ -412,9 +426,9 @@ class Tree(object):
         timer.start()
         orbitalIndex=0
         
-        print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
-        self.atoms[1].nAtomicOrbitals = 2
-        self.nOrbitals = 7
+#         print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+#         self.atoms[1].nAtomicOrbitals = 2
+#         self.nOrbitals = 7
         
 
     
@@ -1087,6 +1101,30 @@ class Tree(object):
             if cell.leaf==True:
                 CellUpdateDensity(cell,mixingScheme)
      
+    
+    def normalizeDensityToValue(self,value):
+        A = 0.0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in cell.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    A += gp.rho * cell.w[i,j,k]
+        print('Integrated density before normalization: ', A)
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in cell.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    gp.rho /= A
+                    gp.rho *= value
+        A = 0.0
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in cell.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    A += gp.rho * cell.w[i,j,k]
+        print('Integrated density after normalization: ', A)
+                
+    
     def normalizeDensity(self):            
         def integrateDensity(cell):
             rho = np.empty((cell.px,cell.py,cell.pz))
@@ -1719,9 +1757,10 @@ class Tree(object):
                             cell.gridpoints[i,j,k].phiNew /= np.sqrt(A)
                             
         print('Orthogonalizing phiNew, but not normalizing.')
+#         print('Orthonormalizing phiNew.')
         for n in range(targetOrbital):
             orthogonalizePhiNew(self,targetOrbital,n)
-#         normalizePhiNew(self,targetOrbital)
+#             normalizePhiNew(self,targetOrbital)
         
         
         
@@ -1808,12 +1847,15 @@ class Tree(object):
         else:
             for n in range(targetOrbital):
                 if external==True:
-                    sources = self.extractPhi(targetOrbital)
-                    phi_m = np.copy(sources[:,3])
-                    weights = np.copy(sources[:,5])
-                    sources = self.extractPhi(n)
-                    phi_n = np.copy(sources[:,3])
-                    orthogonalizeOrbitals_external(self,phi_m,phi_n,weights,targetOrbital=targetOrbital)
+                    if self.orbitalEnergies[targetOrbital]> self.orbitalEnergies[n]:
+                        sources = self.extractPhi(targetOrbital)
+                        phi_m = np.copy(sources[:,3])
+                        weights = np.copy(sources[:,5])
+                        sources = self.extractPhi(n)
+                        phi_n = np.copy(sources[:,3])
+                        orthogonalizeOrbitals_external(self,phi_m,phi_n,weights,targetOrbital=targetOrbital)
+                    else:
+                        print('Not orthogonalizing orbital %i against %i because energy is lower.' %(targetOrbital,n))
                 else:
                     
                     orthogonalizeOrbitals(self,targetOrbital,n)
@@ -2532,15 +2574,15 @@ class Tree(object):
                     phi4.append(gp.phi[4])
                     phi5.append(gp.phi[5])
                     phi6.append(gp.phi[6])
-                    phi7.append(gp.phi[7])
-                    phi8.append(gp.phi[8])
-                    phi9.append(gp.phi[9])
+#                     phi7.append(gp.phi[7])
+#                     phi8.append(gp.phi[8])
+#                     phi9.append(gp.phi[9])
         
         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
                     {"V" : np.array(v), "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),
                      "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4),
-                     "Phi5" : np.array(phi5), "Phi6" : np.array(phi6),
-                     "Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})
+                     "Phi5" : np.array(phi5), "Phi6" : np.array(phi6)}) #,
+                     #"Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})
         
         
 #         phi10 = []
