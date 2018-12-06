@@ -121,11 +121,11 @@ referenceEnergies = np.array( [-1.886761702508549021e+01, -1.000441073298974892e
                                             -7.325760563979200057e-02] )
 
 """ FINAL EIGENVALUES """
-referenceEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
-                                  -1.075324514852165958e+00, -5.215419985881135645e-01,
-                                  -4.455527567163568570e-01, -4.455527560478895199e-01,
-                                  -3.351419327004790394e-01, -8.275071966753577701e-02,
-                                  -8.273399296312561324e-02,  7.959071929649078059e-03] )
+# referenceEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
+#                                   -1.075324514852165958e+00, -5.215419985881135645e-01,
+#                                   -4.455527567163568570e-01, -4.455527560478895199e-01,
+#                                   -3.351419327004790394e-01, -8.275071966753577701e-02,
+#                                   -8.273399296312561324e-02,  7.959071929649078059e-03] )
 
 ## OXYGEN
 # referenceEnergies = np.array([psi0,psi1,psi2,psi3,psi4])
@@ -136,10 +136,12 @@ referenceEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e
 
 residualsMatrix = np.zeros((df.shape[0],10))
 errorsMatrix = np.zeros((df.shape[0],10))
+eigenvaluesMatrix = np.zeros((df.shape[0],10))
 errorsMatrix1st = np.zeros((df.shape[0],10))
 for i in range(df.shape[0]):
     residualsMatrix[i,:] = np.array(df.orbitalResiduals[i][1:-1].split(),dtype=float)
     errorsMatrix[i,:] = abs( np.array( df.energyEigenvalues[i][1:-1].split(),dtype=float) - referenceEnergies )
+    eigenvaluesMatrix[i,:] =  np.array( df.energyEigenvalues[i][1:-1].split(),dtype=float) 
 ##    errorsMatrix[i,:] = np.array( df.energyEigenvalues[i][1:-1].split(),dtype=float)
     try:
         errorsMatrix1st[i,:] = np.array( df.energyErrorsWRTfirstSCF[i][1:-1].split(),dtype=float) 
@@ -169,6 +171,17 @@ df['errors7'] = np.abs(errorsMatrix[:,7])
 df['errors8'] = np.abs(errorsMatrix[:,8])
 df['errors9'] = np.abs(errorsMatrix[:,9])
 
+df['eigenvalue0'] = eigenvaluesMatrix[:,0]
+df['eigenvalue1'] = eigenvaluesMatrix[:,1]
+df['eigenvalue2'] = eigenvaluesMatrix[:,2]
+df['eigenvalue3'] = eigenvaluesMatrix[:,3]
+df['eigenvalue4'] = eigenvaluesMatrix[:,4]
+df['eigenvalue5'] = eigenvaluesMatrix[:,5]
+df['eigenvalue6'] = eigenvaluesMatrix[:,6]
+df['eigenvalue7'] = eigenvaluesMatrix[:,7]
+df['eigenvalue8'] = eigenvaluesMatrix[:,8]
+df['eigenvalue9'] = eigenvaluesMatrix[:,9]
+
 ##try:
 ##    df['1stSCFerrors0'] = np.abs(errorsMatrix1st[:,0])
 ##    df['1stSCFerrors1'] = np.abs(errorsMatrix1st[:,1])
@@ -181,6 +194,26 @@ df['errors9'] = np.abs(errorsMatrix[:,9])
 ##    pass
 
 def plotFirstSCF(df):
+    f, ax = plt.subplots(1,1, figsize=(12,6))
+    df.plot(y='eigenvalue0',ax=ax,label='Phi0')
+    df.plot(y='eigenvalue1',ax=ax,label='Phi1')
+    df.plot(y='eigenvalue2',ax=ax,label='Phi2')
+    df.plot(y='eigenvalue3',ax=ax,label='Phi3')
+    df.plot(y='eigenvalue4',ax=ax,label='Phi4')
+    df.plot(y='eigenvalue5',ax=ax,label='Phi5')
+    df.plot(y='eigenvalue6',ax=ax,label='Phi6')
+    df.plot(y='eigenvalue7',ax=ax,label='Phi7')
+    df.plot(y='eigenvalue8',ax=ax,label='Phi8')
+    df.plot(y='eigenvalue9',ax=ax,label='Phi9')
+    
+    for i in range(len(referenceEnergies)):
+        ax.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5)
+    ax.set_xlabel('Iteration Number')
+    ax.set_ylabel('Eigenvalues')
+    ax.set_title('Eigenvalues During First SCF Iteration')
+    
+#     plt.show()
+#     return
 
     
     f0, (ax0, ax1) = plt.subplots(1,2, figsize=(12,6))
@@ -241,13 +274,53 @@ def plotFirstSCF(df):
 ##        pass
     
     plt.show()
+    
+def plot_eigenvalues(eigenvaluesMatrix,referenceEnergies):
+
+    (n,m) = np.shape(eigenvaluesMatrix)
+    
+    # fix some bad initial values from before phi5 was being updated
+    for i in range(n):
+        if eigenvaluesMatrix[i,5] < -10.0:
+            eigenvaluesMatrix[i,5] = 0
+    
+    
+    f, ax = plt.subplots(1,1, figsize=(12,8))
+#     for i in range(m):
+    for i in range(0,1):
+        eigs = []
+#         for j in range(315):
+        for j in range(n-1):
+            if eigenvaluesMatrix[j,i] != eigenvaluesMatrix[j+1,i]:
+                eigs.append(eigenvaluesMatrix[j,i])
+        plt.plot(eigs,label='phi%i'%i)
+        if i==0:
+            plt.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5,label='Reference')
+        else:
+            plt.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5)
+            
+        
+#     for i in range(len(referenceEnergies)):
+#         if i==0:
+#             plt.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5,label='Reference')
+#         else:
+#             plt.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5)
+        
+    plt.legend()
+    plt.title('Orbital Energies During First SCF Iteration')
+    plt.xlabel('Green Iteration Count')
+    plt.ylabel('Energy (H)')
+    plt.show()
+    
+    return
 
 
 
     
 
 if __name__=="__main__":
+    print(df.head())
     plotFirstSCF(df)
-    
+#     plot_eigenvalues(eigenvaluesMatrix,referenceEnergies)
 
 

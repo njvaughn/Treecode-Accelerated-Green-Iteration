@@ -218,8 +218,8 @@ if __name__ == "__main__":
     tree = setUpTree()  
     
 #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
-#     testGreenIterationsGPU(tree,vtkExport=False)
-    testGreenIterationsGPU(tree)
+    testGreenIterationsGPU(tree,vtkExport=False)
+#     testGreenIterationsGPU(tree)
 #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
     
 #     
