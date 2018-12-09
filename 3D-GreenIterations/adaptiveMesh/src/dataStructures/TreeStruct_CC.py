@@ -155,7 +155,7 @@ class Tree(object):
         
     def computeOccupations(self):
         
-        self.T = 20
+        self.T = 200
 #         KB = 8.6173303e-5/27.211386
         KB = 1/315774.6
         self.sigma = self.T*KB
@@ -304,6 +304,7 @@ class Tree(object):
             if cell.leaf==True:
                 cell.divideIfAspectRatioExceeds(1.5) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
         
+        
         # Reset all cells to level 1.  These divides shouldnt count towards its depth.  
         for _,cell in self.masterList:
             if cell.leaf==True:
@@ -369,6 +370,7 @@ class Tree(object):
                 
             print("max density: ", max(abs(rho)))
             self.importDensityOnLeaves(rho)
+#             print('Should I normalize density??')
             self.normalizeDensityToValue(totalElectrons) 
             sources = self.extractLeavesDensity()
             rho = np.copy(sources[:,3])
@@ -1826,6 +1828,13 @@ class Tree(object):
                 if cell.leaf==True:
                     for i,j,k in self.PxByPyByPz:
                             cell.gridpoints[i,j,k].phi[m] /= np.sqrt(A)
+                            
+#             A = 0.0        
+#             for _,cell in tree.masterList:
+#                 if cell.leaf == True:
+#                     for i,j,k in self.PxByPyByPz:
+#                         A += cell.gridpoints[i,j,k].phi[m]**2*cell.w[i,j,k]
+#             print('Integral of phi%i**2 = ' %m, A )
         
         if targetOrbital==None:
 #         print('Orthonormalizing orbitals within tree structure up to orbital %i.' %maxOrbital)
@@ -1860,8 +1869,9 @@ class Tree(object):
                     
                     orthogonalizeOrbitals(self,targetOrbital,n)
                     normalizeOrbital(self,targetOrbital)
+            normalizeOrbital(self,targetOrbital)  # orthonormalize once more at the end (important for psi0)
             
-            
+        
     
     """
     IMPORT/EXPORT FUNCTIONS
@@ -2569,19 +2579,19 @@ class Tree(object):
                     v.append(gp.v_eff)
                     phi0.append(gp.phi[0])
                     phi1.append(gp.phi[1])
-                    phi2.append(gp.phi[2])
-                    phi3.append(gp.phi[3])
-                    phi4.append(gp.phi[4])
-                    phi5.append(gp.phi[5])
-                    phi6.append(gp.phi[6])
+#                     phi2.append(gp.phi[2])
+#                     phi3.append(gp.phi[3])
+#                     phi4.append(gp.phi[4])
+#                     phi5.append(gp.phi[5])
+#                     phi6.append(gp.phi[6])
 #                     phi7.append(gp.phi[7])
 #                     phi8.append(gp.phi[8])
 #                     phi9.append(gp.phi[9])
         
         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
-                    {"V" : np.array(v), "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),
-                     "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4),
-                     "Phi5" : np.array(phi5), "Phi6" : np.array(phi6)}) #,
+                    {"V" : np.array(v), "Phi0" : np.array(phi0), "Phi1" : np.array(phi1)}) #,
+                     #"Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4),
+                     #"Phi5" : np.array(phi5), "Phi6" : np.array(phi6)}) #,
                      #"Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})
         
         

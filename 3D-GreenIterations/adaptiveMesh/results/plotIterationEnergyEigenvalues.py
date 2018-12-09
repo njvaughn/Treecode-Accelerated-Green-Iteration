@@ -46,8 +46,13 @@ import numpy as np
 # file='LW5_1500_andersonMixing_p5_1em8_GREEN_.csv'
 
 
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/CO_with_anderson/'
-file='LW5_1000o5_gradientFree_eigRes_GREEN_.csv'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/CO_with_anderson/'
+# file='LW5_1000o5_gradientFree_eigRes_GREEN_.csv'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
+# file ='LW5_1500o5_GradientFree_eigRes_looseThenTight_titan_GREEN_.csv'
+file='LW5o5_1500_GREEN_.csv'
+# file='LW5o5_1500_largeDomain_GREEN_.csv'
+# file='LW5o5_1500_tight_GREEN_.csv'
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
     TotalEnergy = -7.3340536782581447
@@ -121,7 +126,7 @@ referenceEnergies = np.array( [-1.886761702508549021e+01, -1.000441073298974892e
                                             -7.325760563979200057e-02] )
 
 """ FINAL EIGENVALUES """
-# referenceEnergies = np.array( [-1.871953147002199813e+01, -9.907188115343084078e+00,
+# referenceEnergies = np.array( [   -1.871953147002199813e+01, -9.907188115343084078e+00,
 #                                   -1.075324514852165958e+00, -5.215419985881135645e-01,
 #                                   -4.455527567163568570e-01, -4.455527560478895199e-01,
 #                                   -3.351419327004790394e-01, -8.275071966753577701e-02,
@@ -202,9 +207,9 @@ def plotFirstSCF(df):
     df.plot(y='eigenvalue4',ax=ax,label='Phi4')
     df.plot(y='eigenvalue5',ax=ax,label='Phi5')
     df.plot(y='eigenvalue6',ax=ax,label='Phi6')
-    df.plot(y='eigenvalue7',ax=ax,label='Phi7')
-    df.plot(y='eigenvalue8',ax=ax,label='Phi8')
-    df.plot(y='eigenvalue9',ax=ax,label='Phi9')
+#     df.plot(y='eigenvalue7',ax=ax,label='Phi7')
+#     df.plot(y='eigenvalue8',ax=ax,label='Phi8')
+#     df.plot(y='eigenvalue9',ax=ax,label='Phi9')
     
     for i in range(len(referenceEnergies)):
         ax.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5)
@@ -224,9 +229,9 @@ def plotFirstSCF(df):
     df.plot(y='residual4',ax=ax0,logy=True,label='Phi4')
     df.plot(y='residual5',ax=ax0,logy=True,label='Phi5')
     df.plot(y='residual6',ax=ax0,logy=True,label='Phi6')
-    df.plot(y='residual7',ax=ax0,logy=True,label='Phi7')
-    df.plot(y='residual8',ax=ax0,logy=True,label='Phi8')
-    df.plot(y='residual9',ax=ax0,logy=True,label='Phi9')
+#     df.plot(y='residual7',ax=ax0,logy=True,label='Phi7')
+#     df.plot(y='residual8',ax=ax0,logy=True,label='Phi8')
+#     df.plot(y='residual9',ax=ax0,logy=True,label='Phi9')
     ax0.set_xlabel('Iteration Number')
     ax0.set_ylabel('Residual L2 Norm')
     ax0.set_title('Orbital Residuals')
@@ -239,9 +244,9 @@ def plotFirstSCF(df):
     df.plot(y='errors4',ax=ax1,logy=True,label='Phi4')
     df.plot(y='errors5',ax=ax1,logy=True,label='Phi5')
     df.plot(y='errors6',ax=ax1,logy=True,label='Phi6')
-    df.plot(y='errors7',ax=ax1,logy=True,label='Phi7')
-    df.plot(y='errors8',ax=ax1,logy=True,label='Phi8')
-    df.plot(y='errors9',ax=ax1,logy=True,label='Phi9')
+#     df.plot(y='errors7',ax=ax1,logy=True,label='Phi7')
+#     df.plot(y='errors8',ax=ax1,logy=True,label='Phi8')
+#     df.plot(y='errors9',ax=ax1,logy=True,label='Phi9')
     ax1.set_xlabel('Iteration Number')
     ax1.set_ylabel('Energy Error (Hartree)')
 ##    ax1.set_ylim([1e-4,2e-2])
@@ -286,8 +291,8 @@ def plot_eigenvalues(eigenvaluesMatrix,referenceEnergies):
     
     
     f, ax = plt.subplots(1,1, figsize=(12,8))
-#     for i in range(m):
-    for i in range(0,1):
+    for i in range(m):
+#     for i in range(0,4):
         eigs = []
 #         for j in range(315):
         for j in range(n-1):
@@ -307,6 +312,7 @@ def plot_eigenvalues(eigenvaluesMatrix,referenceEnergies):
 #             plt.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5)
         
     plt.legend()
+#     plt.ylim([-20,0])
     plt.title('Orbital Energies During First SCF Iteration')
     plt.xlabel('Green Iteration Count')
     plt.ylabel('Energy (H)')

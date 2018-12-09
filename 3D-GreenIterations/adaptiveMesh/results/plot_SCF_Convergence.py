@@ -11,25 +11,25 @@ import os
 import numpy as np
 
 
-##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
-##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
-#resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
-##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
-#resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
-plotsDir = resultsDir+'plots/'
-file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
-# file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
+# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
+# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
+# #resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
+# #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
+# plotsDir = resultsDir+'plots/'
+# file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
+# # file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
 
 
 ## Carbon Monoxide
-##file='CO_LW3_1200_singSub_fixedMixingBug_SCF_.csv'
-##file='CO_LW3_800_simpleMixing_SCF_.csv'
-##file='CO_LW3_1200_simpleMixing_SCF_.csv'
-##file='CO_LW1_2000_simpleMixing_SCF_.csv'
-##file='CO_LW3_2500_simpleMixing_SCF_.csv'
-##file='CO_LW3_1600_simpleMixing_SCF_.csv'
-##file='CO_LW3_1000_simpleMixing_SCF_.csv'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
+plotsDir = resultsDir+'plots/'
+# file ='LW5_1500o5_GradientFree_eigRes_looseThenTight_titan_SCF_.csv'
+file ='LW5o5_1500_SCF_.csv'
+# file='LW5o5_1500_largeDomain_SCF_.csv'
+
+
 
 
 ## Beryllium
@@ -40,6 +40,7 @@ file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
 
 
 df = pd.read_csv(resultsDir+file, header=0)
+df = df.drop(df.index[14]) 
     
 def plotSCFconvergence(df, system = 'H2'):
     
@@ -78,11 +79,18 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeElectrostaticEnergy = -1.4081814437367436e+02
         
     if system == "carbonMonoxide":
-        # these taken from mesh size 0.125 run
-        dftfeTotalEnergy = -1.1247167888813128e+02
-        dftfeExchangeEnergy = -1.1997052574614749e+01
-        dftfeCorrelationEnergy = -9.4214501809750550e-01
-        dftfeBandEnergy = -6.2898649220361037e+01
+#         # these taken from mesh size 0.125 run
+#         dftfeTotalEnergy = -1.1247167888813128e+02
+#         dftfeExchangeEnergy = -1.1997052574614749e+01
+#         dftfeCorrelationEnergy = -9.4214501809750550e-01
+#         dftfeBandEnergy = -6.2898649220361037e+01
+        
+        dftfeBandEnergy = -6.2898682441673358e+01 # Band energy 
+        dftfeKineticEnergy = 1.1185061770418731e+02 # Kinetic energy 
+        dftfeExchangeEnergy = -1.1997011069615391e+01 # Exchange energy 
+        dftfeCorrelationEnergy = -9.4214407530225852e-01 # Correlation Energy 
+        dftfeElectrostaticEnergy = -2.1138290579726365e+02 # Electrostatic Energy
+        dftfeTotalEnergy = -1.1247144323799400e+02 # Total Energy 
 
 
     df['bandEnergyError']=abs(df['bandEnergy']-dftfeBandEnergy)
@@ -107,7 +115,7 @@ def plotSCFconvergence(df, system = 'H2'):
     f1, ax1 = plt.subplots(1, 1, figsize=(10,6))
     f2, ax2 = plt.subplots(1, 1, figsize=(10,6))
     df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='o-')
-    df.plot(x='Iteration', y='kineticEnergyError', logy=True,ax=ax2, style='o-')
+#     df.plot(x='Iteration', y='kineticEnergyError', logy=True,ax=ax2, style='o-')
     df.plot(x='Iteration', y='electrostaticEnergyError', logy=True,ax=ax2, style='o-')
     df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='o-')
     df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='o-')
@@ -136,9 +144,9 @@ def plotSCFconvergence(df, system = 'H2'):
 
 if __name__=="__main__":
     
-##    plotSCFconvergence(df_CO, system="carbonMonoxide")    
+    plotSCFconvergence(df, system="carbonMonoxide")    
 #    plotSCFconvergence(df, system="Beryllium")    
-    plotSCFconvergence(df, system="Oxygen")    
+#     plotSCFconvergence(df, system="Oxygen")    
 
 
 

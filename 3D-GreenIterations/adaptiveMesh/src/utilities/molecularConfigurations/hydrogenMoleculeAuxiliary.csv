@@ -1,11 +1,11 @@
 ../src/utilities/molecularConfigurations/hydrogenMolecule.csv
 /home/njvaughn/results_H2/results.csv
 2
-1
+2
 -7.5499497178953057e-01 # Band energy 
 0 	 					# Kinetic energy
 -5.5876966592456134e-01 # Exchange energy 
 -9.4268448521496129e-02 # Correlation Energy
 0 						# Electrostatic Energy
 -1.1376691191341821e+00 # Total Energy 
-0
+-0.5
