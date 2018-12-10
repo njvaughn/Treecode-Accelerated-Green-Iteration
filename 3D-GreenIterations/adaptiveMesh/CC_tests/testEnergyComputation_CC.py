@@ -22,8 +22,8 @@ class TestEnergyComputation(unittest.TestCase):
         setUp() gets called before every test below.
         '''
 #         inputFile ='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
-        inputFile ='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-#         inputFile ='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
+#         inputFile ='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+        inputFile ='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
         xmin = ymin = zmin = -20
         xmax = ymax = zmax = 20
         order=3
@@ -72,8 +72,8 @@ class TestEnergyComputation(unittest.TestCase):
         
         print(np.max(np.abs(weights_density-weight_psi0)))
         print(np.max(np.abs(weight_psi1-weight_psi0)))
-        print(self.tree.PxByPyByPz)
         print(self.tree.root.PxByPyByPz)
+        print(self.tree.root.children[0,1,1].PxByPyByPz)
         
             
 if __name__ == "__main__":

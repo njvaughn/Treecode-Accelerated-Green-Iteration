@@ -118,8 +118,12 @@ class Tree(object):
         zvec = ChebyshevPoints(self.zmin,self.zmax,self.pz)
         gridpoints = np.empty((px,py,pz),dtype=object)
 
-        for i, j, k in self.PxByPyByPz:
-            gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k],self.nOrbitals, self.gaugeShift, self.atoms,initPotential=False)
+
+        for i in range(self.px):
+            for j in range(self.py):
+                for k in range(self.pz):
+#         for i, j, k in self.PxByPyByPz:
+                    gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k],self.nOrbitals, self.gaugeShift, self.atoms,initPotential=False)
         
         # generate root cell from the gridpoint objects  
         self.root = Cell( self.xmin, self.xmax, self.px, 
@@ -2434,10 +2438,10 @@ class Tree(object):
         '''
 
         importIndex = 0        
-        for element in self.masterList:
-            if element[1].leaf == True:
+        for _,cell in self.masterList:
+            if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
-                    gridpt = element[1].gridpoints[i,j,k]
+                    gridpt = cell.gridpoints[i,j,k]
                     gridpt.v_coulomb = V_coulombNew[importIndex]
                     importIndex += 1
 
@@ -2471,8 +2475,7 @@ class Tree(object):
         coords = []
         faces = []
         pointcounter=0
-        for element in self.masterList:
-            cell = element[1]
+        for _,cell in self.masterList:
             if cell.leaf == True:
                 coords.append( (cell.xmin, cell.ymin, cell.zmin))
                 coords.append( (cell.xmax, cell.ymin, cell.zmin))
@@ -2623,8 +2626,7 @@ class Tree(object):
         coords = []
         faces = []
         pointcounter=0
-        for element in self.masterList:
-            cell = element[1]
+        for _,cell in self.masterList:
             if cell.leaf == True:
                 phi = 0.0
                 # compute representative phi

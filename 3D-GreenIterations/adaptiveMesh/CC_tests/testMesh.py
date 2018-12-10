@@ -23,7 +23,7 @@ def exportMeshForParaview(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,minLevels, maxL
     
     tree = Tree(xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons=14,nOrbitals=10,coordinateFile=coordinateFile)
     tree.buildTree( minLevels, maxLevels, divideCriterion, divideParameter, printTreeProperties=True)
-    tree.exportGridpoints('/Users/nathanvaughn/Desktop/carbonMonoxide_max14')
+    tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
 
     print('Mesh Exported.')
     
@@ -111,16 +111,16 @@ if __name__ == "__main__":
 #                           divideParameter=1500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
 
 
-    timingTestsForOrbitalOrthogonalizations(domain=20,order=4,
-                          minDepth=3, maxDepth=20, divideCriterion='LW5', 
-                          divideParameter=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+#     timingTestsForOrbitalOrthogonalizations(domain=20,order=4,
+#                           minDepth=3, maxDepth=20, divideCriterion='LW5', 
+#                           divideParameter=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
     
     
-#     exportMeshForParaview(xmin=-10, xmax=10,px=4,
-#                           ymin=-10, ymax=10,py=4,
-#                           zmin=-10, zmax=10,pz=4,
-#                           minLevels=3, maxLevels=20, divideCriterion='LW1', 
-#                           divideParameter=200,coordinateFile='../src/utilities/molecularConfigurations/diatomic_example.csv')
+    exportMeshForParaview(xmin=-10, xmax=10,px=4,
+                          ymin=-10, ymax=10,py=4,
+                          zmin=-10, zmax=10,pz=4,
+                          minLevels=3, maxLevels=20, divideCriterion='LW5', 
+                          divideParameter=200,coordinateFile='../src/utilities/molecularConfigurations/diatomic_example.csv')
     
     
     

@@ -437,7 +437,12 @@ class Cell(object):
     def checkIfAboveMeshDensity(self,divideParameter,divideCriterion):
         self.divideFlag = False
         for atom in self.tree.atoms:
-            
+#             r_arr = np.zeros(np.shape(self.gridpoints))
+#             for i,j,k in self.PxByPyByPz:
+#                 gp = self.gridpoints[i,j,k]
+#                 r_arr[i,j,k] = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+#             
+#             r = np.min(r_arr)
             r = np.sqrt( (self.xmid-atom.x)**2 + (self.ymid-atom.y)**2 + (self.zmid-atom.z)**2 )
             if 1/self.volume < meshDensity(r,divideParameter,divideCriterion):
                 self.divideFlag=True

@@ -308,9 +308,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         tree.scrambleOrbital(m)
 #     tree.orbitalEnergies[5] = tree.gaugeShift-0.1
 
-    print('Scrambling all orbitals...')
-    for m in range(tree.nOrbitals):
-        tree.scrambleOrbital(m)
+#     print('Scrambling all orbitals...')
+#     for m in range(tree.nOrbitals):
+#         tree.scrambleOrbital(m)
 
     
     
@@ -681,7 +681,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             tree.exportGridpoints(filename)
             
                     
-                    GIandersonMixing=False
+                    GIandersonMixing=True
                     GIsimpleMixing=False
                     
                     if GIsimpleMixing==True:
