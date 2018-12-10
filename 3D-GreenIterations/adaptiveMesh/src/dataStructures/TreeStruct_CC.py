@@ -81,13 +81,13 @@ class Tree(object):
         self.zmin = zmin
         self.zmax = zmax
         self.pz = pz
-        self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
+#         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         self.nElectrons = nElectrons
         self.nOrbitals = nOrbitals
         self.gaugeShift = gaugeShift
         self.maxDepthAtAtoms = maxDepthAtAtoms
         
-        self.mixingParameter=0.5  # (1-mixingParam)*rhoNew
+#         self.mixingParameter=0.5  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
 #         self.occupations = np.ones(nOrbitals)
 #         self.computeOccupations()
@@ -204,40 +204,40 @@ class Tree(object):
         
 
             
-    def initialDivideBasedOnNuclei(self, coordinateFile,maxLevels=15):
+    def initialDivideBasedOnNuclei(self, coordinateFile,maxLevels=99):
             
-        def refineToMaxDepth(self,Atom,Cell):
-            if hasattr(Cell, "children"):
-                (ii,jj,kk) = np.shape(Cell.children)
-                for i in range(ii):
-                    for j in range(jj):
-                        for k in range(kk):
-                            if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
-                                if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
-                                    if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
-#                                         print('Calling refine on cell ',Cell.children[i,j,k].uniqueID)                                           
-                                        refineToMaxDepth(self, Atom, Cell.children[i,j,k])
-            
-            else:  # cell is a leaf
-                if Cell.level < self.maxDepthAtAtoms:
-                    xdiv = Cell.xmid
-                    ydiv = Cell.ymid
-                    zdiv = Cell.zmid
-#                     if ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) ):
-#                         xdiv = None
-#                     if ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ):
-#                         ydiv = None
-#                     if ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ):
-#                         zdiv = None
-                    Cell.divide(xdiv, ydiv, zdiv)
-#                     print('Dividing cell ', Cell.uniqueID, ' at depth ', Cell.level)
-                    refineToMaxDepth(self,Atom,Cell)
-                
-                else: 
-                    # This nucleus is at the corner of this cell, but this cell is already at max depth.  Try things here
-                    # such as setting the weights to zero for this cell.  
-                    print('Setting weights to zero for cell ', Cell.uniqueID)
-                    Cell.w = np.zeros( (Cell.px,Cell.py,Cell.pz) )
+#         def refineToMaxDepth(self,Atom,Cell):
+#             if hasattr(Cell, "children"):
+#                 (ii,jj,kk) = np.shape(Cell.children)
+#                 for i in range(ii):
+#                     for j in range(jj):
+#                         for k in range(kk):
+#                             if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
+#                                 if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
+#                                     if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
+# #                                         print('Calling refine on cell ',Cell.children[i,j,k].uniqueID)                                           
+#                                         refineToMaxDepth(self, Atom, Cell.children[i,j,k])
+#             
+#             else:  # cell is a leaf
+#                 if Cell.level < self.maxDepthAtAtoms:
+#                     xdiv = Cell.xmid
+#                     ydiv = Cell.ymid
+#                     zdiv = Cell.zmid
+# #                     if ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) ):
+# #                         xdiv = None
+# #                     if ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ):
+# #                         ydiv = None
+# #                     if ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ):
+# #                         zdiv = None
+#                     Cell.divide(xdiv, ydiv, zdiv)
+# #                     print('Dividing cell ', Cell.uniqueID, ' at depth ', Cell.level)
+#                     refineToMaxDepth(self,Atom,Cell)
+#                 
+#                 else: 
+#                     # This nucleus is at the corner of this cell, but this cell is already at max depth.  Try things here
+#                     # such as setting the weights to zero for this cell.  
+#                     print('Setting weights to zero for cell ', Cell.uniqueID)
+#                     Cell.w = np.zeros( (Cell.px,Cell.py,Cell.pz) )
                     
                     
             
@@ -246,9 +246,7 @@ class Tree(object):
             # Atom is in this cell.  Check if this cell has children.  If so, find the child that contains
             # the atom.  If not, divideInto8 the cell.
             if hasattr(Cell, "children"):
-#                 x = Cell.children[0,0,0].xmax
-#                 y = Cell.children[0,0,0].ymax
-#                 z = Cell.children[0,0,0].zmax
+                
                 (ii,jj,kk) = np.shape(Cell.children)
                 for i in range(ii):
                     for j in range(jj):
@@ -256,7 +254,7 @@ class Tree(object):
 #                 for i,j,k in TwoByTwoByTwo: # this should catch cases where atom is on the boundary of a previous cut
                             if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
                                 if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
-                                    if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ):                                            
+                                    if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
                                         recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
                                 
                                         
@@ -297,12 +295,12 @@ class Tree(object):
             recursiveDivideByAtom(self,atom,self.root)
             self.nAtoms += 1
         
-        
+    
         
 #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cell.divideIfAspectRatioExceeds(1.5) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
+                cell.divideIfAspectRatioExceeds(1.1) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
         
         
         # Reset all cells to level 1.  These divides shouldnt count towards its depth.  
@@ -322,7 +320,7 @@ class Tree(object):
             print('Initializing all orbitals randomly...')
             for _,cell in self.masterList:
                 if cell.leaf==True:
-                    for i,j,k in self.PxByPyByPz:
+                    for i,j,k in cell.PxByPyByPz:
                         for m in range(self.nOrbitals):
                             gp = cell.gridpoints[i,j,k]
     #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
@@ -332,7 +330,7 @@ class Tree(object):
             print('Initializing orbital ',targetOrbital,' randomly...')
             for _,cell in self.masterList:
                 if cell.leaf==True:
-                    for i,j,k in self.PxByPyByPz:
+                    for i,j,k in cell.PxByPyByPz:
 #                         for m in range(self.nOrbitals):
                         gp = cell.gridpoints[i,j,k]
 #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
@@ -388,7 +386,7 @@ class Tree(object):
         
         for _,cell in self.masterList:
             if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     gp.rho = 0.0
                     for atom in self.atoms:
@@ -557,7 +555,7 @@ class Tree(object):
                     for m in range(-ell,ell+1):
                         for _,cell in self.masterList:
                             if cell.leaf==True:
-                                for i,j,k in self.PxByPyByPz:
+                                for i,j,k in cell.PxByPyByPz:
                                     gp = cell.gridpoints[i,j,k]
                                     dx = gp.x-atom.x
                                     dy = gp.y-atom.y
@@ -635,7 +633,7 @@ class Tree(object):
                 interpolators[1] = interp1d(data[:,0],data[:,1])
             
         for _,cell in self.masterList:
-            for i,j,k in self.PxByPyByPz:
+            for i,j,k in cell.PxByPyByPz:
                 gp = cell.gridpoints[i,j,k]
                 r = np.sqrt( (gp.x-BerylliumAtom.x)**2 + (gp.y-BerylliumAtom.y)**2 + (gp.z-BerylliumAtom.z)**2 )
                 if r >= 29:
@@ -672,7 +670,7 @@ class Tree(object):
                     count+=1
                 
             for _,cell in self.masterList:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
 #                     print(interpolators[0](r))
@@ -751,7 +749,7 @@ class Tree(object):
         for _,cell in self.masterList:
             if cell.leaf==True:
                 self.numberOfCells += 1
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     if not hasattr(cell.gridpoints[i,j,k], "counted"):
                         self.numberOfGridpoints += 1
                         cell.gridpoints[i,j,k].counted = True
@@ -768,7 +766,7 @@ class Tree(object):
         
                         
         for _,cell in self.masterList:
-            for i,j,k in self.PxByPyByPz:
+            for i,j,k in cell.PxByPyByPz:
                 if hasattr(cell.gridpoints[i,j,k], "counted"):
                     cell.gridpoints[i,j,k].counted = None
          
@@ -786,16 +784,7 @@ class Tree(object):
                 self.initializeOrbitalsFromAtomicDataExternally()
         elif initializationType=='random':
             self.initializeOrbitalsRandomly()
-#         self.orthonormalizeOrbitals()
-            
-        
-#         self.normalizeDensity()
-        
-            
-            
-#         self.initializeForHydrogenMolecule()
-#         self.initializeForBerylliumAtom()
-#         self.orthonormalizeOrbitals()
+
         
         
         timer.stop()
@@ -853,18 +842,18 @@ class Tree(object):
         
         """ Count the number of unique gridpoints """
         self.numberOfGridpoints = 0
-        for element in self.masterList:
-            if element[1].leaf==True:
+        for _,cell in self.masterList:
+            if cell.leaf==True:
                 for i,j,k in self.PxByPyByPz:
-                    if not hasattr(element[1].gridpoints[i,j,k], "counted"):
+                    if not hasattr(cell.gridpoints[i,j,k], "counted"):
                         self.numberOfGridpoints += 1
-                        element[1].gridpoints[i,j,k].counted = True
+                        cell.gridpoints[i,j,k].counted = True
         
                         
-        for element in self.masterList:
+        for _,cell in self.masterList:
             for i,j,k in self.PxByPyByPz:
-                if hasattr(element[1].gridpoints[i,j,k], "counted"):
-                    element[1].gridpoints[i,j,k].counted = None
+                if hasattr(cell.gridpoints[i,j,k], "counted"):
+                    cell.gridpoints[i,j,k].counted = None
                     
         if printTreeProperties == True: 
             print("Tree build completed. \n"
@@ -877,168 +866,168 @@ class Tree(object):
                   "Construction time:           %.3g seconds." 
                   %(self.xmin, self.xmax, divideTolerance, self.treeSize, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
             
-    def buildTreeTwoConditions(self,minLevels,maxLevels, maxDx, divideTolerance1, divideTolerance2,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
-        # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
-        # regardless of division criteria
-        timer = Timer()
-        def recursiveDivide(self, Cell, minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
-            levelCounter += 1
-            if currentLevel < maxLevels:
-                
-                if ( (currentLevel < minLevels) or (Cell.dx > maxDx)):
-                    Cell.divideFlag = True 
-                    
-                else:                             
-                    Cell.checkIfCellShouldDivideTwoConditions(divideTolerance1, divideTolerance2)
-                    
-                if Cell.divideFlag == True:   
-                    Cell.divideInto8(printNumberOfCells)
-#                     for i,j,k in TwoByTwoByTwo: # update the list of cells
-#                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
-                    for i,j,k in TwoByTwoByTwo:
-                        maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
-                else:
-                    minDepthAchieved = min(minDepthAchieved, currentLevel)
-                    
-                    
-            maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
-            return maxDepthAchieved, minDepthAchieved, levelCounter
-        
-        timer.start()
-        levelCounter=0
-        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
-        timer.stop()
-        
-        """ Count the number of unique gridpoints """
-        self.numberOfGridpoints = 0
-        for element in self.masterList:
-            if element[1].leaf==True:
-                for i,j,k in self.PxByPyByPz:
-                    if not hasattr(element[1].gridpoints[i,j,k], "counted"):
-                        self.numberOfGridpoints += 1
-                        element[1].gridpoints[i,j,k].counted = True
-        
-                        
-        for element in self.masterList:
-            for i,j,k in self.PxByPyByPz:
-                if hasattr(element[1].gridpoints[i,j,k], "counted"):
-                    element[1].gridpoints[i,j,k].counted = None
-                    
-        if printTreeProperties == True: 
-            print("Tree build completed. \n"
-                  "Domain Size:                 [%.1f, %.1f] \n"
-                  "Gauge Shift:                 %f \n"
-                  "Tolerance1:                  %1.2e \n"
-                  "Tolerance2:                  %1.2e \n"
-                  "Total Number of Cells:       %i \n"
-                  "Total Number of Gridpoints:  %i \n"
-                  "Minimum Depth                %i levels \n"
-                  "Maximum Depth:               %i levels \n"
-                  "Construction time:           %.3g seconds." 
-                  %(self.xmin, self.xmax, self.gaugeShift, 
-                    divideTolerance1, divideTolerance2, 
-                    self.treeSize, self.numberOfGridpoints, 
-                    self.minDepthAchieved,self.maxDepthAchieved, 
-                    timer.elapsedTime))
-    
-
-    def uniformlyRefine(self):
-        
-        cellCounter = 0
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                cellCounter += 1
-                cell.divideFlag = True
-        
-        print('Uniformly refining all %i cells.' %cellCounter)
-        
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-#                 print('Dividing cell ', cell.uniqueID)
-                if  cell.divideFlag == True:
-#                     print('Dividing cell ', cell.uniqueID)
-                    cell.divide(cell.xmid, cell.ymid, cell.zmid)
-                    for i,j,k in TwoByTwoByTwo:
-                        cell.children[i,j,k].divideFlag = False
-                    cell.divideFlag = False
-                    
-        cellCounter = 0
-        self.numberOfGridpoints = 0
-        self.numberOfCells = 0
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                self.numberOfCells += 1
-                self.numberOfGridpoints += self.px * self.py * self.pz
-                
-        print('Now there are %i cells and %i gridpoints.' %(self.numberOfCells, self.numberOfGridpoints) )
-        
-        self.computeDerivativeMatrices()
-
-        ### INITIALIZE ORBTIALS AND DENSITY ####
-        self.initializeDensityFromAtomicDataExternally()
-        self.initializeOrbitalsFromAtomicDataExternally()            
-#         self.normalizeDensity()
-        
-        self.maxDepthAchieved += 1
-        self.minDepthAchieved += 1
-        
-    def uniformlyRefineWithinRadius(self,R):
-        
-        cellCounter = 0
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                for atom in self.atoms:
-                    r = np.sqrt( (cell.xmid - atom.x)**2 + (cell.ymid - atom.y)**2 + (cell.zmid - atom.z)**2)
-                    if r < R:
-                        cellCounter += 1
-                        cell.divideFlag = True
-        
-        print('Uniformly refining %i cells within radius %1.2e.' %(cellCounter,R))
-        
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-#                 print('Dividing cell ', cell.uniqueID)
-                if  cell.divideFlag == True:
-#                     print('Dividing cell ', cell.uniqueID)
-                    cell.divide(cell.xmid, cell.ymid, cell.zmid)
-                    for i,j,k in TwoByTwoByTwo:
-                        cell.children[i,j,k].divideFlag = False
-                    cell.divideFlag = False
-                    
-        cellCounter = 0
-        self.numberOfGridpoints = 0
-        self.numberOfCells = 0
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                self.maxDepthAchieved = max(self.maxDepthAchieved, cell.level)
-                self.numberOfCells += 1
-                self.numberOfGridpoints += self.px * self.py * self.pz
-                
-        print('Now there are %i cells and %i gridpoints.' %(self.numberOfCells, self.numberOfGridpoints) )
-        print('Maximum depth ', self.maxDepthAchieved)
-        
-        self.computeDerivativeMatrices()
-
-        ### INITIALIZE ORBTIALS AND DENSITY ####
-#         self.initializeOrbitalsFromAtomicData()            
-#         self.initializeDensityFromAtomicData()
-#         self.normalizeDensity()
-        
-        self.maxDepthAchieved += 1
-        self.minDepthAchieved += 1
-        
-        
-    
-    def refineOnTheFly(self, divideTolerance):
-        counter = 0
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                rhoVariation = cell.getRhoVariation()
-                if rhoVariation > divideTolerance:
-                    cell.divide(cell.xmid, cell.ymid, cell.zmid,interpolate=True)
-                    counter+=1
-        print('Refined %i cells.' %counter)
-            
+#     def buildTreeTwoConditions(self,minLevels,maxLevels, maxDx, divideTolerance1, divideTolerance2,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
+#         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
+#         # regardless of division criteria
+#         timer = Timer()
+#         def recursiveDivide(self, Cell, minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
+#             levelCounter += 1
+#             if currentLevel < maxLevels:
+#                 
+#                 if ( (currentLevel < minLevels) or (Cell.dx > maxDx)):
+#                     Cell.divideFlag = True 
+#                     
+#                 else:                             
+#                     Cell.checkIfCellShouldDivideTwoConditions(divideTolerance1, divideTolerance2)
+#                     
+#                 if Cell.divideFlag == True:   
+#                     Cell.divideInto8(printNumberOfCells)
+# #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
+# #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
+#                     for i,j,k in TwoByTwoByTwo:
+#                         maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
+#                 else:
+#                     minDepthAchieved = min(minDepthAchieved, currentLevel)
+#                     
+#                     
+#             maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
+#             return maxDepthAchieved, minDepthAchieved, levelCounter
+#         
+#         timer.start()
+#         levelCounter=0
+#         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
+#         timer.stop()
+#         
+#         """ Count the number of unique gridpoints """
+#         self.numberOfGridpoints = 0
+#         for element in self.masterList:
+#             if element[1].leaf==True:
+#                 for i,j,k in cell.PxByPyByPz:
+#                     if not hasattr(element[1].gridpoints[i,j,k], "counted"):
+#                         self.numberOfGridpoints += 1
+#                         element[1].gridpoints[i,j,k].counted = True
+#         
+#                         
+#         for element in self.masterList:
+#             for i,j,k in cell.PxByPyByPz:
+#                 if hasattr(element[1].gridpoints[i,j,k], "counted"):
+#                     element[1].gridpoints[i,j,k].counted = None
+#                     
+#         if printTreeProperties == True: 
+#             print("Tree build completed. \n"
+#                   "Domain Size:                 [%.1f, %.1f] \n"
+#                   "Gauge Shift:                 %f \n"
+#                   "Tolerance1:                  %1.2e \n"
+#                   "Tolerance2:                  %1.2e \n"
+#                   "Total Number of Cells:       %i \n"
+#                   "Total Number of Gridpoints:  %i \n"
+#                   "Minimum Depth                %i levels \n"
+#                   "Maximum Depth:               %i levels \n"
+#                   "Construction time:           %.3g seconds." 
+#                   %(self.xmin, self.xmax, self.gaugeShift, 
+#                     divideTolerance1, divideTolerance2, 
+#                     self.treeSize, self.numberOfGridpoints, 
+#                     self.minDepthAchieved,self.maxDepthAchieved, 
+#                     timer.elapsedTime))
+#     
+#  
+#     def uniformlyRefine(self):
+#         
+#         cellCounter = 0
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 cellCounter += 1
+#                 cell.divideFlag = True
+#         
+#         print('Uniformly refining all %i cells.' %cellCounter)
+#         
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+# #                 print('Dividing cell ', cell.uniqueID)
+#                 if  cell.divideFlag == True:
+# #                     print('Dividing cell ', cell.uniqueID)
+#                     cell.divide(cell.xmid, cell.ymid, cell.zmid)
+#                     for i,j,k in TwoByTwoByTwo:
+#                         cell.children[i,j,k].divideFlag = False
+#                     cell.divideFlag = False
+#                     
+#         cellCounter = 0
+#         self.numberOfGridpoints = 0
+#         self.numberOfCells = 0
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 self.numberOfCells += 1
+#                 self.numberOfGridpoints += self.px * self.py * self.pz
+#                 
+#         print('Now there are %i cells and %i gridpoints.' %(self.numberOfCells, self.numberOfGridpoints) )
+#         
+#         self.computeDerivativeMatrices()
+# 
+#         ### INITIALIZE ORBTIALS AND DENSITY ####
+#         self.initializeDensityFromAtomicDataExternally()
+#         self.initializeOrbitalsFromAtomicDataExternally()            
+# #         self.normalizeDensity()
+#         
+#         self.maxDepthAchieved += 1
+#         self.minDepthAchieved += 1
+#         
+#     def uniformlyRefineWithinRadius(self,R):
+#         
+#         cellCounter = 0
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 for atom in self.atoms:
+#                     r = np.sqrt( (cell.xmid - atom.x)**2 + (cell.ymid - atom.y)**2 + (cell.zmid - atom.z)**2)
+#                     if r < R:
+#                         cellCounter += 1
+#                         cell.divideFlag = True
+#         
+#         print('Uniformly refining %i cells within radius %1.2e.' %(cellCounter,R))
+#         
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+# #                 print('Dividing cell ', cell.uniqueID)
+#                 if  cell.divideFlag == True:
+# #                     print('Dividing cell ', cell.uniqueID)
+#                     cell.divide(cell.xmid, cell.ymid, cell.zmid)
+#                     for i,j,k in TwoByTwoByTwo:
+#                         cell.children[i,j,k].divideFlag = False
+#                     cell.divideFlag = False
+#                     
+#         cellCounter = 0
+#         self.numberOfGridpoints = 0
+#         self.numberOfCells = 0
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 self.maxDepthAchieved = max(self.maxDepthAchieved, cell.level)
+#                 self.numberOfCells += 1
+#                 self.numberOfGridpoints += self.px * self.py * self.pz
+#                 
+#         print('Now there are %i cells and %i gridpoints.' %(self.numberOfCells, self.numberOfGridpoints) )
+#         print('Maximum depth ', self.maxDepthAchieved)
+#         
+#         self.computeDerivativeMatrices()
+# 
+#         ### INITIALIZE ORBTIALS AND DENSITY ####
+# #         self.initializeOrbitalsFromAtomicData()            
+# #         self.initializeDensityFromAtomicData()
+# #         self.normalizeDensity()
+#         
+#         self.maxDepthAchieved += 1
+#         self.minDepthAchieved += 1
+#         
+#         
+#     
+#     def refineOnTheFly(self, divideTolerance):
+#         counter = 0
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 rhoVariation = cell.getRhoVariation()
+#                 if rhoVariation > divideTolerance:
+#                     cell.divide(cell.xmid, cell.ymid, cell.zmid,interpolate=True)
+#                     counter+=1
+#         print('Refined %i cells.' %counter)
+#             
 
     
     """
@@ -1081,7 +1070,7 @@ class Tree(object):
 
     def updateDensityAtQuadpoints(self, mixingScheme='None'):
         def CellUpdateDensity(cell,mixingScheme):
-            for i,j,k in self.PxByPyByPz:
+            for i,j,k in cell.PxByPyByPz:
                 newRho = 0
                 for m in range(self.nOrbitals):
                     newRho += cell.tree.occupations[m] * cell.gridpoints[i,j,k].phi[m]**2
@@ -1322,7 +1311,7 @@ class Tree(object):
         for _,cell in self.masterList:
             if cell.leaf==True:
                 val = np.random.rand(1)
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
 #                     gp.phi[m] = val/r
@@ -1333,7 +1322,7 @@ class Tree(object):
         # randomize orbital because its energy went > Vgauge
         for _,cell in self.masterList:
             if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
                     gp.phi[m] *= np.exp(-r)
@@ -1344,7 +1333,7 @@ class Tree(object):
         # randomize orbital because its energy went > Vgauge
         for _,cell in self.masterList:
             if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
                     gp.phi[m] = np.exp(-r)
@@ -1354,7 +1343,7 @@ class Tree(object):
         # set orbital m equal to orbital n
         for _,cell in self.masterList:
             if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     gp.phi[m] = gp.phi[n]
                     
@@ -1503,7 +1492,7 @@ class Tree(object):
         print('New order: ', newOrder)
         for _,cell in self.masterList:
             if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     
                     gp.sortOrbitals(newOrder)
@@ -1570,14 +1559,14 @@ class Tree(object):
         errorsIfDifferentSign = []
         phiComputed = np.zeros((self.px,self.py,self.pz))
         phiAnalytic = np.zeros((self.px,self.py,self.pz))
-        for element in self.masterList:
-            if element[1].leaf == True:
+        for _,cell in self.masterList:
+            if cell.leaf == True:
                 for i,j,k in self.PxByPyByPz:
-                    gridpt = element[1].gridpoints[i,j,k]
+                    gridpt = cell.gridpoints[i,j,k]
                     phiComputed[i,j,k] = gridpt.phi
                     phiAnalytic[i,j,k] = normalizationFactor*trueWavefunction(energyLevel,gridpt.x,gridpt.y,gridpt.z)
-                errorsIfSameSign.append( np.sum( (phiAnalytic-phiComputed)**2*element[1].w ))
-                errorsIfDifferentSign.append( np.sum( (phiAnalytic+phiComputed)**2*element[1].w ))
+                errorsIfSameSign.append( np.sum( (phiAnalytic-phiComputed)**2*cell.w ))
+                errorsIfDifferentSign.append( np.sum( (phiAnalytic+phiComputed)**2*cell.w ))
 #                 errorsIfSameSign.append( (midpoint.phi - normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
 #                 errorsIfDifferentSign.append( (midpoint.phi + normalizationFactor*trueWavefunction(energyLevel,midpoint.x,midpoint.y,midpoint.z))**2 * element[1].volume)
                 absErr = np.max(np.abs( phiAnalytic-phiComputed ))
@@ -1654,7 +1643,7 @@ class Tree(object):
         
         for _,cell in self.masterList:
             if cell.leaf == True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
 #                     if abs(element[1].gridpoints[i,j,k].phi) > maxPhi:
 #                         maxPhi = abs(element[1].gridpoints[i,j,k].phi)
 #                     maxPhi = max( maxPhi, abs(element[1].gridpoints[i,j,k].phi))
@@ -1669,7 +1658,7 @@ class Tree(object):
         """ Rescale wavefunction values, flip the flag """
         for _,cell in self.masterList:
             if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                         cell.gridpoints[i,j,k].phi[n] /= np.sqrt(A)
 #                     if element[1].gridpoints[i,j,k].normalized == False:
 #                         element[1].gridpoints[i,j,k].phi /= np.sqrt(A)
@@ -1688,13 +1677,13 @@ class Tree(object):
 #         """ Initialize the orthogonalization flag for each gridpoint """        
 #         for _,cell in self.masterList:
 #             if cell.leaf==True:
-#                 for i,j,k in self.PxByPyByPz:
+#                 for i,j,k in cell.PxByPyByPz:
 #                     cell.gridpoints[i,j,k].orthogonalized = False
 #         
 #         """ Subtract the projection, flip the flag """
 #         for _,cell in self.masterList:
 #             if cell.leaf==True:
-#                 for i,j,k in self.PxByPyByPz:
+#                 for i,j,k in cell.PxByPyByPz:
 #                     gridpoint = cell.gridpoints[i,j,k]
 #                     if gridpoint.orthogonalized == False:
 #                         gridpoint.phi -= B*gridpoint.finalWavefunction[n]
@@ -1703,7 +1692,7 @@ class Tree(object):
     def copyPhiNewToArray(self, targetOrbital):
         for _,cell in self.masterList:
             if cell.leaf == True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     cell.gridpoints[i,j,k].phi[targetOrbital] = np.copy( cell.gridpoints[i,j,k].phiNew )
     
     
@@ -1712,13 +1701,13 @@ class Tree(object):
         A = 0.0        
         for _,cell in self.masterList:
             if cell.leaf == True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     A += cell.gridpoints[i,j,k].phiNew**2*cell.w[i,j,k]
 
         """ Rescale wavefunction values, flip the flag """
         for _,cell in self.masterList:
             if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                         cell.gridpoints[i,j,k].phiNew /= np.sqrt(A)
         
     
@@ -1731,7 +1720,7 @@ class Tree(object):
             B = 0.0
             for _,cell in tree.masterList:
                 if cell.leaf == True:
-                    for i,j,k in self.PxByPyByPz:
+                    for i,j,k in cell.PxByPyByPz:
                         phiNew = cell.gridpoints[i,j,k].phiNew
                         phi_n = cell.gridpoints[i,j,k].phi[n]
                         B += phiNew*phi_n*cell.w[i,j,k]
@@ -1739,7 +1728,7 @@ class Tree(object):
             """ Subtract the projection """
             for _,cell in tree.masterList:
                 if cell.leaf==True:
-                    for i,j,k in self.PxByPyByPz:
+                    for i,j,k in cell.PxByPyByPz:
                         gridpoint = cell.gridpoints[i,j,k]
                         gridpoint.phiNew -= B*gridpoint.phi[n]
                         
@@ -1749,13 +1738,13 @@ class Tree(object):
             A = 0.0        
             for _,cell in tree.masterList:
                 if cell.leaf == True:
-                    for i,j,k in self.PxByPyByPz:
+                    for i,j,k in cell.PxByPyByPz:
                         A += cell.gridpoints[i,j,k].phiNew**2*cell.w[i,j,k]
     
             """ Rescale wavefunction values, flip the flag """
             for _,cell in tree.masterList:
                 if cell.leaf==True:
-                    for i,j,k in self.PxByPyByPz:
+                    for i,j,k in cell.PxByPyByPz:
                             cell.gridpoints[i,j,k].phiNew /= np.sqrt(A)
                             
         print('Orthogonalizing phiNew, but not normalizing.')
@@ -1792,7 +1781,7 @@ class Tree(object):
             B = 0.0
             for _,cell in tree.masterList:
                 if cell.leaf == True:
-                    for i,j,k in self.PxByPyByPz:
+                    for i,j,k in cell.PxByPyByPz:
                         phi_m = cell.gridpoints[i,j,k].phi[m]
                         phi_n = cell.gridpoints[i,j,k].phi[n]
                         B += phi_m*phi_n*cell.w[i,j,k]
@@ -1801,14 +1790,14 @@ class Tree(object):
             """ Subtract the projection """
             for _,cell in tree.masterList:
                 if cell.leaf==True:
-                    for i,j,k in self.PxByPyByPz:
+                    for i,j,k in cell.PxByPyByPz:
                         gridpoint = cell.gridpoints[i,j,k]
                         gridpoint.phi[m] -= B*gridpoint.phi[n]
             
 #             B = 0.0
 #             for _,cell in tree.masterList:
 #                 if cell.leaf == True:
-#                     for i,j,k in self.PxByPyByPz:
+#                     for i,j,k in cell.PxByPyByPz:
 #                         phi_m = cell.gridpoints[i,j,k].phi[m]
 #                         phi_n = cell.gridpoints[i,j,k].phi[n]
 #                         B += phi_m*phi_n*cell.w[i,j,k]
@@ -1820,19 +1809,19 @@ class Tree(object):
             A = 0.0        
             for _,cell in tree.masterList:
                 if cell.leaf == True:
-                    for i,j,k in self.PxByPyByPz:
+                    for i,j,k in cell.PxByPyByPz:
                         A += cell.gridpoints[i,j,k].phi[m]**2*cell.w[i,j,k]
     
             """ Rescale wavefunction values, flip the flag """
             for _,cell in tree.masterList:
                 if cell.leaf==True:
-                    for i,j,k in self.PxByPyByPz:
+                    for i,j,k in cell.PxByPyByPz:
                             cell.gridpoints[i,j,k].phi[m] /= np.sqrt(A)
                             
 #             A = 0.0        
 #             for _,cell in tree.masterList:
 #                 if cell.leaf == True:
-#                     for i,j,k in self.PxByPyByPz:
+#                     for i,j,k in cell.PxByPyByPz:
 #                         A += cell.gridpoints[i,j,k].phi[m]**2*cell.w[i,j,k]
 #             print('Integral of phi%i**2 = ' %m, A )
         
@@ -1899,12 +1888,12 @@ class Tree(object):
 #         print('Extracting the gridpoints from all leaves...')
         leaves = []
         for _,cell in self.masterList:
-            for i,j,k in self.PxByPyByPz:
+            for i,j,k in cell.PxByPyByPz:
                 cell.gridpoints[i,j,k].extracted = False
                 
         for _,cell in self.masterList:
             if cell.leaf == True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
                     if gridpt.extracted == False:
                         leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi, gridpt.v_eff, cell.w[i,j,k] ] )
@@ -1912,7 +1901,7 @@ class Tree(object):
                     
 
         for _,cell in self.masterList:
-            for i,j,k in self.PxByPyByPz:
+            for i,j,k in cell.PxByPyByPz:
                 cell.gridpoints[i,j,k].extracted = False
                 
         return np.array(leaves)
@@ -1924,12 +1913,12 @@ class Tree(object):
 #         print('Extracting the gridpoints from all leaves...')
         leaves = []
 #         for _,cell in self.masterList:
-#             for i,j,k in self.PxByPyByPz:
+#             for i,j,k in cell.PxByPyByPz:
 #                 cell.gridpoints[i,j,k].extracted = False
                 
         for _,cell in self.masterList:
             if cell.leaf == True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
 #                     if gridpt.extracted == False:
                     leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi[orbitalNumber], gridpt.v_eff, cell.w[i,j,k], cell.volume ] )
@@ -1937,7 +1926,7 @@ class Tree(object):
                     
 
 #         for _,cell in self.masterList:
-#             for i,j,k in self.PxByPyByPz:
+#             for i,j,k in cell.PxByPyByPz:
 #                 cell.gridpoints[i,j,k].extracted = False
                 
         return np.array(leaves)
@@ -2375,12 +2364,12 @@ class Tree(object):
         Import phi values, apply to leaves
         '''
 #         for _,cell in self.masterList:
-#             for i,j,k in self.PxByPyByPz:
+#             for i,j,k in cell.PxByPyByPz:
 #                 cell.gridpoints[i,j,k].phiImported = False
         importIndex = 0        
         for _,cell in self.masterList:
             if cell.leaf == True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
 #                     if gridpt.phiImported == False:
                     gridpt.phi[orbitalNumber] = phiNew[importIndex]
@@ -2388,7 +2377,7 @@ class Tree(object):
                     importIndex += 1
                     
 #         for _,cell in self.masterList:
-#             for i,j,k in self.PxByPyByPz:
+#             for i,j,k in cell.PxByPyByPz:
 #                 cell.gridpoints[i,j,k].phiImported = None
         if importIndex != len(phiNew):
             print('Warning: import index not equal to len(phiNew)')
@@ -2403,7 +2392,7 @@ class Tree(object):
         importIndex = 0        
         for _,cell in self.masterList:
             if cell.leaf == True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
                     gridpt.rho = rho[importIndex]
                     importIndex += 1
@@ -2419,12 +2408,12 @@ class Tree(object):
         Import phi difference values, apply to leaves
         '''
 #         for _,cell in self.masterList:
-#             for i,j,k in self.PxByPyByPz:
+#             for i,j,k in cell.PxByPyByPz:
 #                 cell.gridpoints[i,j,k].phiImported = False
         importIndex = 0        
         for _,cell in self.masterList:
             if cell.leaf == True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
 #                     if gridpt.phiImported == False:
                     gridpt.phiNew = phiNew[importIndex]
@@ -2432,7 +2421,7 @@ class Tree(object):
                     importIndex += 1
                     
 #         for _,cell in self.masterList:
-#             for i,j,k in self.PxByPyByPz:
+#             for i,j,k in cell.PxByPyByPz:
 #                 cell.gridpoints[i,j,k].phiImported = None
         if importIndex != len(phiNew):
             print('Warning: import index not equal to len(phiNew)')
@@ -2447,7 +2436,7 @@ class Tree(object):
         importIndex = 0        
         for element in self.masterList:
             if element[1].leaf == True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gridpt = element[1].gridpoints[i,j,k]
                     gridpt.v_coulomb = V_coulombNew[importIndex]
                     importIndex += 1
@@ -2461,9 +2450,9 @@ class Tree(object):
                 
     def copyPhiToFinalOrbital(self, n):
         # outdated
-        for element in self.masterList:
-            for i,j,k in self.PxByPyByPz:
-                gridpt = element[1].gridpoints[i,j,k]
+        for _,cell in self.masterList:
+            for i,j,k in cell.PxByPyByPz:
+                gridpt = cell.gridpoints[i,j,k]
                 if len(gridpt.finalWavefunction) == n:
                     gridpt.finalWavefunction.append(gridpt.phi)
                      
@@ -2508,7 +2497,7 @@ class Tree(object):
 #                 # Generate interpolators for each orbital
 #                 interpolators = np.empty(self.nOrbitals,dtype=object)
 #                 phi = np.zeros((cell.px,cell.py,cell.pz,self.nOrbitals))
-#                 for i,j,k in self.PxByPyByPz:
+#                 for i,j,k in cell.PxByPyByPz:
 #                     for m in range(self.nOrbitals):
 #                         phi[i,j,k,m] = cell.gridpoints[i,j,k].phi[m]
 #                 
