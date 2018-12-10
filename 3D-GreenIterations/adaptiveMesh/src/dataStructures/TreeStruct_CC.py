@@ -316,7 +316,7 @@ class Tree(object):
 #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cell.divideIfAspectRatioExceeds(2221.5) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
+                cell.divideIfAspectRatioExceeds(1.5) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
         
         leafCount = 0
         for _,cell in self.masterList:
@@ -324,6 +324,13 @@ class Tree(object):
                 leafCount += 1
         print('After aspect ratio divide there are %i leaf cells.' %leafCount)
         
+        # Now reset level to 1 for any cell near an atom (which might not be 1 anymore because of aspect ratio divisions)
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for atom in self.atoms:
+                    rsq = (cell.xmid-atom.x)**2 + (cell.ymid-atom.y)**2 + (cell.zmid-atom.z)**2
+                    if rsq < 4:
+                        cell.level = 1
 #         # Reset all cells to level 1.  These divides shouldnt count towards its depth.  
 #         for _,cell in self.masterList:
 #             if cell.leaf==True:
@@ -1803,7 +1810,7 @@ class Tree(object):
         
         def orthogonalizeOrbitals(tree,m,n):
             
-            print('Orthogonalizing orbital %i against %i' %(m,n))
+#             print('Orthogonalizing orbital %i against %i' %(m,n))
             """ Compute the overlap, integral phi_r * phi_s """
             B = 0.0
             for _,cell in tree.masterList:
@@ -1814,7 +1821,7 @@ class Tree(object):
 #                         if abs(phi_m*phi_n*cell.w[i,j,k])>1e-8:
 #                             B += phi_m*phi_n*cell.w[i,j,k]
                         B += phi_m*phi_n*cell.w[i,j,k]
-            print('Overlap before orthogonalization: ', B)
+#             print('Overlap before orthogonalization: ', B)
 
             """ Subtract the projection """
             for _,cell in tree.masterList:
@@ -1824,14 +1831,14 @@ class Tree(object):
 #                         if abs(phi_m*phi_n)>1e-8:
                         gridpoint.phi[m] -= B*gridpoint.phi[n]
             
-            B = 0.0
-            for _,cell in tree.masterList:
-                if cell.leaf == True:
-                    for i,j,k in cell.PxByPyByPz:
-                        phi_m = cell.gridpoints[i,j,k].phi[m]
-                        phi_n = cell.gridpoints[i,j,k].phi[n]
-                        B += phi_m*phi_n*cell.w[i,j,k]
-            print('Overlap after orthogonalization: ', B)
+#             B = 0.0
+#             for _,cell in tree.masterList:
+#                 if cell.leaf == True:
+#                     for i,j,k in cell.PxByPyByPz:
+#                         phi_m = cell.gridpoints[i,j,k].phi[m]
+#                         phi_n = cell.gridpoints[i,j,k].phi[n]
+#                         B += phi_m*phi_n*cell.w[i,j,k]
+#             print('Overlap after orthogonalization: ', B)
         
         def normalizeOrbital(tree,m):
         

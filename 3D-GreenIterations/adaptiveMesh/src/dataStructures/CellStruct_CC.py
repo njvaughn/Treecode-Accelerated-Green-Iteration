@@ -779,8 +779,8 @@ class Cell(object):
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals, self.tree.gaugeShift, self.tree.atoms)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[ii,0,0].setGridpoints(gridpoints)
-#                     if hasattr(cell,'level'):
-#                         children[ii,0,0].level = cell.level+1
+                    if hasattr(cell,'level'):
+                        children[ii,0,0].level = cell.level+1
 #                 print('Not increasing the cell level because only dividing along x axis.')
                         
             elif ( (zdiv == None) and (xdiv==None) ):  # divide along y axis only
@@ -822,8 +822,8 @@ class Cell(object):
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals, self.tree.gaugeShift, self.tree.atoms)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,jj,0].setGridpoints(gridpoints)
-#                     if hasattr(cell,'level'):
-#                         children[0,jj,0].level = cell.level+1
+                    if hasattr(cell,'level'):
+                        children[0,jj,0].level = cell.level+1
 #                 print('Not increasing the cell level because only dividing along y axis.')
 
                         
@@ -865,8 +865,8 @@ class Cell(object):
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals, self.tree.gaugeShift, self.tree.atoms)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,0,kk].setGridpoints(gridpoints)
-#                     if hasattr(cell,'level'):
-#                         children[0,0,kk].level = cell.level+1
+                    if hasattr(cell,'level'):
+                        children[0,0,kk].level = cell.level+1
 #                 print('Not increasing the cell level because only dividing along z axis.')
 
                         
@@ -907,6 +907,8 @@ class Cell(object):
         aspectRatio = getAspectRatio(self)
         
         if aspectRatio > tolerance:  # fix tolerance to 1.5 for now
+#             for atom in self.tree.atoms
+#             distToAtom = np.sqrt(self.xmid-atom.x)
 #             print('Cell ', self.uniqueID,' has apsect ratio of ', aspectRatio,'.  Dividing')
             # find longest edge:
             dx = self.xmax-self.xmin
