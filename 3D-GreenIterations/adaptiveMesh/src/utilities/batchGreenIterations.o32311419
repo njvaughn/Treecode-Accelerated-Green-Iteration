@@ -1,0 +1,119 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/CO_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/carbonAtom.csv', '/home/njvaughn/CO_with_anderson/testing.csv', 6, 5, -21.29635387597698, -37.424276713062639, -4.3554777463893002, 0.0, 0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Gauge shift  0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  247808
+max density:  125.024241756
+Integrated density before normalization:  6.00834371728
+Integrated density after normalization:  6.0
+Initializing density EXTERNALLY took 1.907 seconds.
+Initializing all orbitals randomly...
+Initializing orbitals randomly inside Tree Structure took 2.618 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       4425 
+Total Number of Leaf Cells:  3872 
+Total Number of Gridpoints:  247808 
+Minimum Depth                3 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  4 
+Construction time:           12.6 seconds.
+Closest gridpoint to origin:  [-0.00037168197015973251, -0.00037168197015973251, -0.00037168197015973251]
+For a distance of:  0.000643772056573956
+Part of a cell centered at:  [-0.0048828125, -0.0048828125, -0.0048828125]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    247808
+Threads per block:    512
+Blocks per grid:      484
+[0.0, 0.0, -37.424276713062639, -4.3554777463893002, -0.37134385924119506, -21.29635387597698]
+Integrated density:  6.0
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    1.4089 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [ 25782.44951988  25567.75720217  25648.61742876  25449.11773971
+  25808.75969123]
+Sorted eigenvalues:  [ 25449.11773971  25567.75720217  25648.61742876  25782.44951988
+  25808.75969123]
+New order:  [3 1 2 0 4]
+Orbital energies after initial sort: 
+ [ 25449.11773971  25567.75720217  25648.61742876  25782.44951988
+  25808.75969123]
+Kinetic Errors:    [ 25821.17731021  25605.72923473  25686.68019025  25487.65565594
+  25847.56192685]
+Potential Errors:  [-19.96900404 -19.21324628 -19.3039752  -19.77912995 -20.04344933]
+Computing band energy.  Current orbital energies are:  [ 25449.11773971  25567.75720217  25648.61742876  25782.44951988
+  25808.75969123]
+Electrostatic Energies:
+Hartree:          17.6132066993
+External:         -87.4591977173
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [ 25449.11773971  25567.75720217  25648.61742876  25782.44951988
+  25808.75969123]
+Orbital Energy Errors after initialization:  [ 25467.87664267  25568.62840916  25648.95572322  25782.78781433
+  25809.09798568]
+Updated V_x:                           -5.8032071061 Hartree
+Updated V_c:                           -0.4162182776 Hartree
+Updated Band Energy:                   205020.1854035908 H, 2.0502018540e+05 H
+Updated Kinetic Energy:                 205078.6376132933 H, 2.0507863761e+05 H
+Updated E_x:                           -4.3524053296 H, 3.3071871383e+01 H
+Updated E_c:                           -0.3712553913 H, 3.9842223551e+00 H
+Updated totalElectrostatic:            -69.8459910180 H, -6.9474647159e+01 H
+Total Energy:                          205004.0679615544 H, 2.0502536432e+05 H
+
+
+
+SCF Count  1
+Orbital Energies:  [ 25449.11773971  25567.75720217  25648.61742876  25782.44951988
+  25808.75969123]
+orbital %i energy is positive, not updating it anymore. 0
+orbital %i energy is positive, not updating it anymore. 1
+orbital %i energy is positive, not updating it anymore. 2
+orbital %i energy is positive, not updating it anymore. 3
+orbital %i energy is positive, not updating it anymore. 4
+Sorted eigenvalues:  [ 25449.11773971  25567.75720217  25648.61742876  25782.44951988
+  25808.75969123]
+New order:  [0 1 2 3 4]
+../src/dataStructures/TreeStruct_CC.py:156: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 221, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False)
+  File "testBatchGreenIterations_KS.py", line 122, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 845, in greenIterations_KohnSham_SCF
+    tree.computeOccupations()
+  File "../src/dataStructures/TreeStruct_CC.py", line 169, in computeOccupations
+    eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/scipy/optimize/zeros.py", line 442, in brentq
+    r = _zeros._brentq(f,a,b,xtol,rtol,maxiter,args,full_output,disp)
+ValueError: f(a) and f(b) must have different signs

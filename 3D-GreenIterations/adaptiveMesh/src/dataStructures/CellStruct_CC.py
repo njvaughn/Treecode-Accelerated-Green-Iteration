@@ -63,6 +63,15 @@ class Cell(object):
 
     def setGridpoints(self,gridpoints):
         self.gridpoints = gridpoints
+        
+        if  (   (self.gridpoints[0,0,0].x    < self.xmin) or
+                (self.gridpoints[-1,-1,-1].x > self.xmax) or
+                (self.gridpoints[0,0,0].y    < self.ymin) or
+                (self.gridpoints[-1,-1,-1].y > self.ymax) or
+                (self.gridpoints[0,0,0].z    < self.zmin) or
+                (self.gridpoints[-1,-1,-1].z > self.zmax)    ):
+            
+            print('WARNING: Gridpoints arent contained within cell bounds.')
     
     def setDensityPoints(self,densityPoints):
         self.densityPoints = densityPoints
@@ -512,29 +521,29 @@ class Cell(object):
             self.leaf = False
             self.nOrbitals = len(self.gridpoints[0,0,0].phi)
             
-            if interpolate==True:
-                # generate the x, y, and z arrays
-                x = np.empty(self.px)
-                y = np.empty(self.py)
-                z = np.empty(self.pz)
-                for i in range(self.px):
-                    x[i] = self.gridpoints[i,0,0].x
-                for j in range(self.py):
-                    y[j] = self.gridpoints[0,j,0].y
-                for k in range(self.pz):
-                    z[k] = self.gridpoints[0,0,k].z
-                    
-                
-                # Generate interpolators for each orbital
-                self.nOrbitals = len(self.gridpoints[0,0,0].phi)
-                interpolators = np.empty(self.nOrbitals,dtype=object)
-                phi = np.zeros((self.px,self.py,self.pz,self.nOrbitals))
-                for i,j,k in self.PxByPyByPz:
-                    for m in range(self.nOrbitals):
-                        phi[i,j,k,m] = self.gridpoints[i,j,k].phi[m]
-                
-                for m in range(self.nOrbitals):
-                    interpolators[m] = self.interpolator(x, y, z, phi[:,:,:,m])
+#             if interpolate==True:
+#                 # generate the x, y, and z arrays
+#                 x = np.empty(self.px)
+#                 y = np.empty(self.py)
+#                 z = np.empty(self.pz)
+#                 for i in range(self.px):
+#                     x[i] = self.gridpoints[i,0,0].x
+#                 for j in range(self.py):
+#                     y[j] = self.gridpoints[0,j,0].y
+#                 for k in range(self.pz):
+#                     z[k] = self.gridpoints[0,0,k].z
+#                     
+#                 
+#                 # Generate interpolators for each orbital
+#                 self.nOrbitals = len(self.gridpoints[0,0,0].phi)
+#                 interpolators = np.empty(self.nOrbitals,dtype=object)
+#                 phi = np.zeros((self.px,self.py,self.pz,self.nOrbitals))
+#                 for i,j,k in self.PxByPyByPz:
+#                     for m in range(self.nOrbitals):
+#                         phi[i,j,k,m] = self.gridpoints[i,j,k].phi[m]
+#                 
+#                 for m in range(self.nOrbitals):
+#                     interpolators[m] = self.interpolator(x, y, z, phi[:,:,:,m])
                     
                     
         
@@ -542,9 +551,9 @@ class Cell(object):
             y = [ChebyshevPoints(cell.ymin,float(ydiv),cell.py), ChebyshevPoints(float(ydiv),cell.ymax,cell.py)]
             z = [ChebyshevPoints(cell.zmin,float(zdiv),cell.pz), ChebyshevPoints(float(zdiv),cell.zmax,cell.pz)]
             
-            x_density = [ChebyshevPoints(cell.xmin,float(xdiv),cell.pxd), ChebyshevPoints(float(xdiv),cell.xmax,cell.pxd)]
-            y_density = [ChebyshevPoints(cell.ymin,float(ydiv),cell.pyd), ChebyshevPoints(float(ydiv),cell.ymax,cell.pyd)]
-            z_density = [ChebyshevPoints(cell.zmin,float(zdiv),cell.pzd), ChebyshevPoints(float(zdiv),cell.zmax,cell.pzd)]
+#             x_density = [ChebyshevPoints(cell.xmin,float(xdiv),cell.pxd), ChebyshevPoints(float(xdiv),cell.xmax,cell.pxd)]
+#             y_density = [ChebyshevPoints(cell.ymin,float(ydiv),cell.pyd), ChebyshevPoints(float(ydiv),cell.ymax,cell.pyd)]
+#             z_density = [ChebyshevPoints(cell.zmin,float(zdiv),cell.pzd), ChebyshevPoints(float(zdiv),cell.zmax,cell.pzd)]
             
             xbounds = np.array([cell.xmin, float(xdiv), cell.xmax])
             ybounds = np.array([cell.ymin, float(ydiv), cell.ymax])
@@ -579,12 +588,14 @@ class Cell(object):
                 for i, j, k in cell.PxByPyByPz:
                     newGridpointCount += 1
                     gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.nOrbitals, self.tree.gaugeShift, self.tree.atoms)
-                    if interpolate == True:
-                        for m in range(self.nOrbitals):
-                            gridpoints[i,j,k].setPhi(interpolators[m](xOct[i],yOct[j],zOct[k]),m)
+#                     if interpolate == True:
+#                         for m in range(self.nOrbitals):
+#                             gridpoints[i,j,k].setPhi(interpolators[m](xOct[i],yOct[j],zOct[k]),m)
                 children[ii,jj,kk].setGridpoints(gridpoints)
                 if hasattr(cell,'level'):
                     children[ii,jj,kk].level = cell.level+1
+                else:
+                    print('Warning: cell ',cell.uniqueID, ' does not have attribute level.')
                     
                     
 #             for ii,jj,kk in TwoByTwoByTwo:
@@ -727,10 +738,15 @@ class Cell(object):
             cell.children = children
         
         def divideInto2(cell, xdiv, ydiv, zdiv, printNumberOfCells=False):
+            
             '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
+            cell.leaf = False
             if ( (zdiv == None) and (ydiv==None) ):
+                
+                # First check bounds:
+                if ( (xdiv < cell.xmin) or (xdiv > cell.xmax) ):
+                    print('WARNING: XDIV NOT IN CELL BOUNDS')
                 children = np.empty((2,1,1), dtype=object)
-                cell.leaf = False
         
                 x = [ChebyshevPoints(cell.xmin,float(xdiv),cell.px), ChebyshevPoints(float(xdiv),cell.xmax,cell.px)]
                 y = [ChebyshevPoints(cell.ymin,cell.ymax,cell.py)]
@@ -763,10 +779,15 @@ class Cell(object):
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals, self.tree.gaugeShift, self.tree.atoms)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[ii,0,0].setGridpoints(gridpoints)
-                    if hasattr(cell,'level'):
-                        children[ii,0,0].level = cell.level+1
+#                     if hasattr(cell,'level'):
+#                         children[ii,0,0].level = cell.level+1
+#                 print('Not increasing the cell level because only dividing along x axis.')
                         
             elif ( (zdiv == None) and (xdiv==None) ):  # divide along y axis only
+                # First check bounds:
+                if ( (ydiv < cell.ymin) or (ydiv > cell.ymax) ):
+                    print('WARNING: YDIV NOT IN CELL BOUNDS')
+                    
                 children = np.empty((1,2,1), dtype=object)
                 cell.leaf = False
         
@@ -801,10 +822,16 @@ class Cell(object):
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals, self.tree.gaugeShift, self.tree.atoms)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,jj,0].setGridpoints(gridpoints)
-                    if hasattr(cell,'level'):
-                        children[0,jj,0].level = cell.level+1
+#                     if hasattr(cell,'level'):
+#                         children[0,jj,0].level = cell.level+1
+#                 print('Not increasing the cell level because only dividing along y axis.')
+
                         
             elif ( (xdiv == None) and (ydiv==None) ):  # divide along z axis only
+                # First check bounds:
+                if ( (zdiv < cell.zmin) or (zdiv > cell.zmax) ):
+                    print('WARNING: ZDIV NOT IN CELL BOUNDS')
+                    
                 children = np.empty((1,1,2), dtype=object)
                 cell.leaf = False
         
@@ -838,8 +865,10 @@ class Cell(object):
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.tree.nOrbitals, self.tree.gaugeShift, self.tree.atoms)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,0,kk].setGridpoints(gridpoints)
-                    if hasattr(cell,'level'):
-                        children[0,0,kk].level = cell.level+1
+#                     if hasattr(cell,'level'):
+#                         children[0,0,kk].level = cell.level+1
+#                 print('Not increasing the cell level because only dividing along z axis.')
+
                         
             if printNumberOfCells == True: print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, cell.uniqueID))
         
@@ -857,8 +886,10 @@ class Cell(object):
         if noneCount == 0:
             divideInto8(self, xdiv, ydiv, zdiv, printNumberOfCells, interpolate)
         elif noneCount == 1:
+#             print('Using divideInto4... are you sure?')
             divideInto4(self, xdiv, ydiv, zdiv, printNumberOfCells) 
         elif noneCount == 2:
+#             print('Using divideInto2... are you sure?')
             divideInto2(self, xdiv, ydiv, zdiv, printNumberOfCells)
 
     def divideIfAspectRatioExceeds(self, tolerance):

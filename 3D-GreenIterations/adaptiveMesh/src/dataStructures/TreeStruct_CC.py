@@ -259,6 +259,8 @@ class Tree(object):
                             if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
                                 if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
                                     if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
+                                        print('Atom located inside child ', Cell.children[i,j,k].uniqueID)
+                                        print('Calling recursive divide for this child, but not others.')
                                         recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
                                 
                                         
@@ -266,6 +268,7 @@ class Tree(object):
 
   
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
+                print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
                 xdiv = Atom.x
                 ydiv = Atom.y
                 zdiv = Atom.z
@@ -277,6 +280,12 @@ class Tree(object):
                     zdiv = None
                     
                 Cell.divide(xdiv, ydiv, zdiv)
+                
+                leafCount = 0
+                for _,cell in self.masterList:
+                    if cell.leaf==True:
+                        leafCount += 1
+                print('There are now %i leaf cells.' %leafCount)
         
 #         print('Reading atomic coordinates from: ', coordinateFile)
 #         atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
@@ -299,18 +308,26 @@ class Tree(object):
             recursiveDivideByAtom(self,atom,self.root)
             self.nAtoms += 1
         
-    
+        # Reset all cells to level 1.  These divides shouldnt count towards its depth.    Do this BEFORE or AFTER aspect ratio divide?  Unclear.
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                cell.level = 1
         
 #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cell.divideIfAspectRatioExceeds(1.1) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
+                cell.divideIfAspectRatioExceeds(2221.5) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
         
-        
-        # Reset all cells to level 1.  These divides shouldnt count towards its depth.  
+        leafCount = 0
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cell.level = 0
+                leafCount += 1
+        print('After aspect ratio divide there are %i leaf cells.' %leafCount)
+        
+#         # Reset all cells to level 1.  These divides shouldnt count towards its depth.  
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 cell.level = 1
         
 #         print('Dividing adjacent to nuclei')  
 #         for atom in self.atoms:
@@ -692,7 +709,7 @@ class Tree(object):
         # regardless of division criteria
         # N is roughly the number of grid points.  It is used to generate the density function.
         timer = Timer()
-        def recursiveDivide(self, Cell, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
+        def recursiveDivide(self, Cell, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
             levelCounter += 1
             
             if hasattr(Cell, "children"):
@@ -705,11 +722,13 @@ class Tree(object):
                             maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], 
                                                                                 minLevels, maxLevels, divideCriterion, divideParameter, 
                                                                                 levelCounter, printNumberOfCells, maxDepthAchieved, 
-                                                                                minDepthAchieved, currentLevel+1)
+                                                                                minDepthAchieved)
             
-            elif currentLevel < maxLevels:
+            elif Cell.level < maxLevels:
+#             elif currentLevel < maxLevels:
                 
-                if currentLevel < minLevels:
+#                 if currentLevel < minLevels:
+                if Cell.level < minLevels:
                     Cell.divideFlag = True 
 #                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
                 else:  
@@ -726,18 +745,22 @@ class Tree(object):
                     zdiv = (Cell.zmax + Cell.zmin)/2   
                     Cell.divide(xdiv, ydiv, zdiv, printNumberOfCells)
 
-                    for i,j,k in TwoByTwoByTwo:
-                        maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
+#                     for i,j,k in TwoByTwoByTwo:  # what if there aren't 8 children?
+                    (ii,jj,kk) = np.shape(Cell.children)
+                    for i in range(ii):
+                        for j in range(jj):
+                            for k in range(kk):
+                                maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved)
                 else:
-                    minDepthAchieved = min(minDepthAchieved, currentLevel)
+                    minDepthAchieved = min(minDepthAchieved, Cell.level)
                     
                     
-            maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
+            maxDepthAchieved = max(maxDepthAchieved, Cell.level)                                                                                                                                                       
             return maxDepthAchieved, minDepthAchieved, levelCounter
         
         timer.start()
         levelCounter=0
-        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
         
 #         refineRadius = 0.01
 #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
@@ -813,63 +836,63 @@ class Tree(object):
 
 
                  
-    def buildTreeOneCondition(self,minLevels,maxLevels,divideTolerance,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
-        # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
-        # regardless of division criteria
-        timer = Timer()
-        def recursiveDivide(self, Cell, minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
-            levelCounter += 1
-            if currentLevel < maxLevels:
-                
-                if currentLevel < minLevels:
-                    Cell.divideFlag = True 
-                else:                             
-                    Cell.checkIfCellShouldDivide(divideTolerance)
-                    
-                if Cell.divideFlag == True:   
-                    Cell.divideInto8(printNumberOfCells)
-#                     for i,j,k in TwoByTwoByTwo: # update the list of cells
-#                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
-                    for i,j,k in TwoByTwoByTwo:
-                        maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
-                else:
-                    minDepthAchieved = min(minDepthAchieved, currentLevel)
-                    
-                    
-            maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
-            return maxDepthAchieved, minDepthAchieved, levelCounter
-        
-        timer.start()
-        levelCounter=0
-        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
-        timer.stop()
-        
-        """ Count the number of unique gridpoints """
-        self.numberOfGridpoints = 0
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                for i,j,k in self.PxByPyByPz:
-                    if not hasattr(cell.gridpoints[i,j,k], "counted"):
-                        self.numberOfGridpoints += 1
-                        cell.gridpoints[i,j,k].counted = True
-        
-                        
-        for _,cell in self.masterList:
-            for i,j,k in self.PxByPyByPz:
-                if hasattr(cell.gridpoints[i,j,k], "counted"):
-                    cell.gridpoints[i,j,k].counted = None
-                    
-        if printTreeProperties == True: 
-            print("Tree build completed. \n"
-                  "Domain Size:                 [%.1f, %.1f] \n"
-                  "Tolerance:                   %1.2e \n"
-                  "Total Number of Cells:       %i \n"
-                  "Total Number of Gridpoints:  %i \n"
-                  "Minimum Depth                %i levels \n"
-                  "Maximum Depth:               %i levels \n"
-                  "Construction time:           %.3g seconds." 
-                  %(self.xmin, self.xmax, divideTolerance, self.treeSize, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
-            
+#     def buildTreeOneCondition(self,minLevels,maxLevels,divideTolerance,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
+#         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
+#         # regardless of division criteria
+#         timer = Timer()
+#         def recursiveDivide(self, Cell, minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
+#             levelCounter += 1
+#             if currentLevel < maxLevels:
+#                 
+#                 if currentLevel < minLevels:
+#                     Cell.divideFlag = True 
+#                 else:                             
+#                     Cell.checkIfCellShouldDivide(divideTolerance)
+#                     
+#                 if Cell.divideFlag == True:   
+#                     Cell.divideInto8(printNumberOfCells)
+# #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
+# #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
+#                     for i,j,k in TwoByTwoByTwo:
+#                         maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
+#                 else:
+#                     minDepthAchieved = min(minDepthAchieved, currentLevel)
+#                     
+#                     
+#             maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
+#             return maxDepthAchieved, minDepthAchieved, levelCounter
+#         
+#         timer.start()
+#         levelCounter=0
+#         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
+#         timer.stop()
+#         
+#         """ Count the number of unique gridpoints """
+#         self.numberOfGridpoints = 0
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 for i,j,k in self.PxByPyByPz:
+#                     if not hasattr(cell.gridpoints[i,j,k], "counted"):
+#                         self.numberOfGridpoints += 1
+#                         cell.gridpoints[i,j,k].counted = True
+#         
+#                         
+#         for _,cell in self.masterList:
+#             for i,j,k in self.PxByPyByPz:
+#                 if hasattr(cell.gridpoints[i,j,k], "counted"):
+#                     cell.gridpoints[i,j,k].counted = None
+#                     
+#         if printTreeProperties == True: 
+#             print("Tree build completed. \n"
+#                   "Domain Size:                 [%.1f, %.1f] \n"
+#                   "Tolerance:                   %1.2e \n"
+#                   "Total Number of Cells:       %i \n"
+#                   "Total Number of Gridpoints:  %i \n"
+#                   "Minimum Depth                %i levels \n"
+#                   "Maximum Depth:               %i levels \n"
+#                   "Construction time:           %.3g seconds." 
+#                   %(self.xmin, self.xmax, divideTolerance, self.treeSize, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
+#             
 #     def buildTreeTwoConditions(self,minLevels,maxLevels, maxDx, divideTolerance1, divideTolerance2,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
 #         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
 #         # regardless of division criteria
@@ -1780,7 +1803,7 @@ class Tree(object):
         
         def orthogonalizeOrbitals(tree,m,n):
             
-#             print('Orthogonalizing orbital %i against %i' %(m,n))
+            print('Orthogonalizing orbital %i against %i' %(m,n))
             """ Compute the overlap, integral phi_r * phi_s """
             B = 0.0
             for _,cell in tree.masterList:
@@ -1788,24 +1811,27 @@ class Tree(object):
                     for i,j,k in cell.PxByPyByPz:
                         phi_m = cell.gridpoints[i,j,k].phi[m]
                         phi_n = cell.gridpoints[i,j,k].phi[n]
+#                         if abs(phi_m*phi_n*cell.w[i,j,k])>1e-8:
+#                             B += phi_m*phi_n*cell.w[i,j,k]
                         B += phi_m*phi_n*cell.w[i,j,k]
-#             print('Overlap before orthogonalization: ', B)
+            print('Overlap before orthogonalization: ', B)
 
             """ Subtract the projection """
             for _,cell in tree.masterList:
                 if cell.leaf==True:
                     for i,j,k in cell.PxByPyByPz:
                         gridpoint = cell.gridpoints[i,j,k]
+#                         if abs(phi_m*phi_n)>1e-8:
                         gridpoint.phi[m] -= B*gridpoint.phi[n]
             
-#             B = 0.0
-#             for _,cell in tree.masterList:
-#                 if cell.leaf == True:
-#                     for i,j,k in cell.PxByPyByPz:
-#                         phi_m = cell.gridpoints[i,j,k].phi[m]
-#                         phi_n = cell.gridpoints[i,j,k].phi[n]
-#                         B += phi_m*phi_n*cell.w[i,j,k]
-#             print('Overlap after orthogonalization: ', B)
+            B = 0.0
+            for _,cell in tree.masterList:
+                if cell.leaf == True:
+                    for i,j,k in cell.PxByPyByPz:
+                        phi_m = cell.gridpoints[i,j,k].phi[m]
+                        phi_n = cell.gridpoints[i,j,k].phi[n]
+                        B += phi_m*phi_n*cell.w[i,j,k]
+            print('Overlap after orthogonalization: ', B)
         
         def normalizeOrbital(tree,m):
         
@@ -1843,6 +1869,7 @@ class Tree(object):
                     
                     
                 else:
+                    normalizeOrbital(self,m)
                     for n in range(m):
                         orthogonalizeOrbitals(self,m,n)
                         normalizeOrbital(self,m)
@@ -2571,20 +2598,20 @@ class Tree(object):
                     v.append(gp.v_eff)
                     phi0.append(gp.phi[0])
                     phi1.append(gp.phi[1])
-#                     phi2.append(gp.phi[2])
-#                     phi3.append(gp.phi[3])
-#                     phi4.append(gp.phi[4])
-#                     phi5.append(gp.phi[5])
-#                     phi6.append(gp.phi[6])
-#                     phi7.append(gp.phi[7])
-#                     phi8.append(gp.phi[8])
-#                     phi9.append(gp.phi[9])
+                    phi2.append(gp.phi[2])
+                    phi3.append(gp.phi[3])
+                    phi4.append(gp.phi[4])
+                    phi5.append(gp.phi[5])
+                    phi6.append(gp.phi[6])
+                    phi7.append(gp.phi[7])
+                    phi8.append(gp.phi[8])
+                    phi9.append(gp.phi[9])
         
         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
-                    {"V" : np.array(v), "Phi0" : np.array(phi0), "Phi1" : np.array(phi1)}) #,
-                     #"Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4),
-                     #"Phi5" : np.array(phi5), "Phi6" : np.array(phi6)}) #,
-                     #"Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})
+                    {"V" : np.array(v), "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),#}) #,
+                     "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4),
+                     "Phi5" : np.array(phi5), "Phi6" : np.array(phi6),#}) #,
+                     "Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})
         
         
 #         phi10 = []
