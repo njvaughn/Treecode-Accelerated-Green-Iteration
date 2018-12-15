@@ -50,9 +50,14 @@ import numpy as np
 # file='LW5_1000o5_gradientFree_eigRes_GREEN_.csv'
 resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
 # file ='LW5_1500o5_GradientFree_eigRes_looseThenTight_titan_GREEN_.csv'
-file='LW5o5_1500_GREEN_.csv'
+# file='LW5o5_1500_GREEN_.csv'
 # file='LW5o5_1500_largeDomain_GREEN_.csv'
 # file='LW5o5_1500_tight_GREEN_.csv'
+# file='LW5o4_500_fixedMesh_GREEN_.csv'
+# file='LW5o5_1000_fixedMesh_GREEN_.csv'
+# file='LW5o4_2000_fixedMesh_randInit_noTitan_GREEN_.csv'
+# file='LW5o5_1000_fixedMesh_only7_looseInit_GREEN_.csv'
+file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_GREEN_.csv'
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
     TotalEnergy = -7.3340536782581447
@@ -119,11 +124,16 @@ print(df.shape)
 
 
 """ AFTER FIRST SCF """
-referenceEnergies = np.array( [-1.886761702508549021e+01, -1.000441073298974892e+01,
-                                            -1.185545917003633321e+00, -6.070872074377245964e-01,-3.960960368603070325e-01,
-                                            -5.201973981507257427e-01,  1.721054880813185223e-02, -5.201973981507234113e-01,
-                                            -1.338775668379516559e-02,
-                                            -7.325760563979200057e-02] )
+# referenceEnergies = np.array( [-1.886761702508549021e+01, -1.000441073298974892e+01,
+#                                             -1.185545917003633321e+00, -6.070872074377245964e-01,
+#                                             -5.201973981507257427e-01, -5.201973981507234113e-01,
+#                                             -3.960960368603070325e-01,-1.338775668379516559e-02,
+#                                             -7.325760563979200057e-02, 1.721054880813185223e-02,] )
+
+# referenceEnergies = np.array( [-1.886761702508549021e+01, -1.000441073298974892e+01,
+#                                             -1.185545917003633321e+00, -6.070872074377245964e-01,
+#                                             -5.201973981507257427e-01, -5.201973981507234113e-01,
+#                                             -3.960960368603070325e-01] )
 
 """ FINAL EIGENVALUES """
 # referenceEnergies = np.array( [   -1.871953147002199813e+01, -9.907188115343084078e+00,
@@ -132,6 +142,11 @@ referenceEnergies = np.array( [-1.886761702508549021e+01, -1.000441073298974892e
 #                                   -3.351419327004790394e-01, -8.275071966753577701e-02,
 #                                   -8.273399296312561324e-02,  7.959071929649078059e-03] )
 
+referenceEnergies = np.array( [   -1.871953147002199813e+01, -9.907188115343084078e+00,
+                                  -1.075324514852165958e+00, -5.215419985881135645e-01,
+                                  -4.455527567163568570e-01, -4.455527560478895199e-01,
+                                  -3.351419327004790394e-01] )
+
 ## OXYGEN
 # referenceEnergies = np.array([psi0,psi1,psi2,psi3,psi4])
 
@@ -139,10 +154,15 @@ referenceEnergies = np.array( [-1.886761702508549021e+01, -1.000441073298974892e
 ##referenceEnergies = np.array([-0.3774974859])
 
 
-residualsMatrix = np.zeros((df.shape[0],10))
-errorsMatrix = np.zeros((df.shape[0],10))
-eigenvaluesMatrix = np.zeros((df.shape[0],10))
-errorsMatrix1st = np.zeros((df.shape[0],10))
+# residualsMatrix = np.zeros((df.shape[0],10))
+# errorsMatrix = np.zeros((df.shape[0],10))
+# eigenvaluesMatrix = np.zeros((df.shape[0],10))
+# errorsMatrix1st = np.zeros((df.shape[0],10))
+
+residualsMatrix = np.zeros((df.shape[0],7))
+errorsMatrix = np.zeros((df.shape[0],7))
+eigenvaluesMatrix = np.zeros((df.shape[0],7))
+errorsMatrix1st = np.zeros((df.shape[0],7))
 for i in range(df.shape[0]):
     residualsMatrix[i,:] = np.array(df.orbitalResiduals[i][1:-1].split(),dtype=float)
     errorsMatrix[i,:] = abs( np.array( df.energyEigenvalues[i][1:-1].split(),dtype=float) - referenceEnergies )
@@ -160,9 +180,9 @@ df['residual3'] = residualsMatrix[:,3]
 df['residual4'] = residualsMatrix[:,4]
 df['residual5'] = residualsMatrix[:,5]
 df['residual6'] = residualsMatrix[:,6]
-df['residual7'] = residualsMatrix[:,7]
-df['residual8'] = residualsMatrix[:,8]
-df['residual9'] = residualsMatrix[:,9]
+# df['residual7'] = residualsMatrix[:,7]
+# df['residual8'] = residualsMatrix[:,8]
+# df['residual9'] = residualsMatrix[:,9]
 
 ##df['errors0'] = np.copy(df['energyEigenvalues'])
 df['errors0'] = np.abs(errorsMatrix[:,0])
@@ -172,9 +192,9 @@ df['errors3'] = np.abs(errorsMatrix[:,3])
 df['errors4'] = np.abs(errorsMatrix[:,4])
 df['errors5'] = np.abs(errorsMatrix[:,5])
 df['errors6'] = np.abs(errorsMatrix[:,6])
-df['errors7'] = np.abs(errorsMatrix[:,7])
-df['errors8'] = np.abs(errorsMatrix[:,8])
-df['errors9'] = np.abs(errorsMatrix[:,9])
+# df['errors7'] = np.abs(errorsMatrix[:,7])
+# df['errors8'] = np.abs(errorsMatrix[:,8])
+# df['errors9'] = np.abs(errorsMatrix[:,9])
 
 df['eigenvalue0'] = eigenvaluesMatrix[:,0]
 df['eigenvalue1'] = eigenvaluesMatrix[:,1]
@@ -183,9 +203,9 @@ df['eigenvalue3'] = eigenvaluesMatrix[:,3]
 df['eigenvalue4'] = eigenvaluesMatrix[:,4]
 df['eigenvalue5'] = eigenvaluesMatrix[:,5]
 df['eigenvalue6'] = eigenvaluesMatrix[:,6]
-df['eigenvalue7'] = eigenvaluesMatrix[:,7]
-df['eigenvalue8'] = eigenvaluesMatrix[:,8]
-df['eigenvalue9'] = eigenvaluesMatrix[:,9]
+# df['eigenvalue7'] = eigenvaluesMatrix[:,7]
+# df['eigenvalue8'] = eigenvaluesMatrix[:,8]
+# df['eigenvalue9'] = eigenvaluesMatrix[:,9]
 
 ##try:
 ##    df['1stSCFerrors0'] = np.abs(errorsMatrix1st[:,0])
@@ -291,8 +311,8 @@ def plot_eigenvalues(eigenvaluesMatrix,referenceEnergies):
     
     
     f, ax = plt.subplots(1,1, figsize=(12,8))
-    for i in range(m):
-#     for i in range(0,4):
+#     for i in range(m):
+    for i in range(0,1):
         eigs = []
 #         for j in range(315):
         for j in range(n-1):
@@ -303,7 +323,7 @@ def plot_eigenvalues(eigenvaluesMatrix,referenceEnergies):
             plt.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5,label='Reference')
         else:
             plt.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5)
-            
+        
         
 #     for i in range(len(referenceEnergies)):
 #         if i==0:

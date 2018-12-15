@@ -48,9 +48,9 @@ INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 GRADIENTFREE='True'
 
 
-ORDER=5
+ORDER=4
 MESHTYPE='LW5'
-MESHPARAM=1000
+MESHPARAM=500
 
 MIXINGPARAMETER=0.5
 
@@ -62,7 +62,7 @@ MIXING='Anderson'
 #OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5_1000o4_MGS.csv'
 #VTKFILEDIR='/home/njvaughn/CO_with_anderson/LW5_1000o4_plots_MGS'
 #OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5o5_1500_tight_noSingSubt.csv'
-OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5o5_1000_fixedMesh.csv'
+OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5o4_1000_only7_tightFromStart.csv'
 VTKFILEDIR='/home/njvaughn/CO_with_anderson/LW5_1500o5_plots_eigRes'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

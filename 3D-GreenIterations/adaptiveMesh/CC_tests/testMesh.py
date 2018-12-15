@@ -128,9 +128,9 @@ if __name__ == "__main__":
 #                           divideParameter=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
     
     
-    exportMeshForParaview(domain=20,order=3,
+    exportMeshForParaview(domain=20,order=5,
                         minDepth=3, maxDepth=20, divideCriterion='LW5', 
-                        divideParameter=500,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+                        divideParameter=1000,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
     
     

@@ -64,7 +64,7 @@ class Test(unittest.TestCase):
 #         plt.plot(r1,psi1,'g',label='psi20')
         plt.legend()
         plt.xlabel('radius')
-#         plt.show()
+        plt.show()
         
     @unittest.skip('Skipping the printing of the interpolators')
     def testSettingUpAtomInterpolators(self):

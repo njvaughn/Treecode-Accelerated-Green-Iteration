@@ -454,9 +454,9 @@ class Tree(object):
         timer.start()
         orbitalIndex=0
         
-#         print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
-#         self.atoms[1].nAtomicOrbitals = 2
-#         self.nOrbitals = 7
+        print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+        self.atoms[1].nAtomicOrbitals = 2
+        self.nOrbitals = 7
         
 
     
