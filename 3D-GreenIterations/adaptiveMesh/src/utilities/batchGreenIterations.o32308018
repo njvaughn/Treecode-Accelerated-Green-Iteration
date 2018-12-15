@@ -1,0 +1,111 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/CO_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/CO_with_anderson/LW5o5_1000_tightGI_noEigExit_randomInit.csv', 14, 10, -112.471443237994, -11.997011069615391, -0.94214407530225852, -62.898682441673358, -1.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -1.0
+Nuclear energy:  21.9004369536
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 0.633,  0.633,  0.633)
+Z = 8 located at (x, y, z) = (-0.633, -0.633, -0.633)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  2196375
+max density:  125.389227035
+Integrated density before normalization:  6.00837698343
+Integrated density after normalization:  6.0
+max density:  306.927492218
+Integrated density before normalization:  14.0000638073
+Integrated density after normalization:  14.0
+Initializing density EXTERNALLY took 29.307 seconds.
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 0.633,  0.633,  0.633)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-0.633, -0.633, -0.633)
+Orbital index = 5
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Orbital 7 filled with (n,ell,m) = (2,1,-1) 
+Orbital 8 filled with (n,ell,m) = (2,1,0) 
+Orbital 9 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals EXTERNAL to Tree Structure took 81.608 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       22457 
+Total Number of Leaf Cells:  17571 
+Total Number of Gridpoints:  2196375 
+Minimum Depth                3 levels 
+Maximum Depth:               13 levels 
+Cell Order:                  5 
+Construction time:           199 seconds.
+Closest gridpoint to origin:  [-0.0077416355350140575, -0.0077416355350140575, -0.0077416355350140575]
+For a distance of:  0.013408906080325016
+Part of a cell centered at:  [-0.15817500000000001, -0.15817500000000001, -0.15817500000000001]
+Assuming this is the carbon monoxide test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    2196375
+Threads per block:    512
+Blocks per grid:      4290
+[-62.898682441673358, 111.85061770418731, -11.997011069615391, -0.94214407530225852, -211.38290579726365, -112.471443237994]
+Integrated density:  14.0
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    91.2767 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-11.00122839  -1.70172979  -1.38664059  -1.38664059  -1.38664059
+ -19.85596374  -2.05783627  -1.53054287  -1.53054287  -1.53054287]
+Orbital energies after initial sort: 
+ [-11.00122839  -1.70172979  -1.38664059  -1.38664059  -1.38664059
+ -19.85596374  -2.05783627  -1.53054287  -1.53054287  -1.53054287]
+Kinetic Errors:    [ -1.30421502e+01  -2.71095575e+01  -2.75301427e+01  -2.75301427e+01
+  -2.75301427e+01   9.51698331e-04  -2.55602009e+01  -2.62042087e+01
+  -2.62042087e+01  -2.62042087e+01]
+Potential Errors:  [ 21.79970813  45.16661397  45.90228838  45.90228838  45.90228838
+  -0.09812915  43.26115095  44.43245216  44.43245216  44.43245216]
+Computing band energy.  Current orbital energies are:  [-11.00122839  -1.70172979  -1.38664059  -1.38664059  -1.38664059
+ -19.85596374  -2.05783627  -1.53054287  -1.53054287  -1.53054287]
+Electrostatic Energies:
+Hartree:          74.4206466884
+External:         -307.399726145
+Nuclear-Nuclear:  21.9004369536
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-11.00122839  -1.70172979  -1.38664059  -1.38664059  -1.38664059
+ -19.85596374  -2.05783627  -1.53054287  -1.53054287  -1.53054287]
+Orbital Energy Errors after initialization:  [  8.86638864   9.30268094   0.79890533   0.22044662   0.13355681
+ -18.33576634  -0.66174023  -0.51715511  -0.45728527  -0.54775342]
+Updated V_x:                           -15.7883364888 Hartree
+Updated V_c:                           -1.0418528046 Hartree
+Updated Band Energy:                   -63.5533599022 H, -6.5467746055e-01 H
+Updated Kinetic Energy:                 111.8352621596 H, -1.5355544554e-02 H
+Updated E_x:                           -11.8412523666 H, 1.5575870304e-01 H
+Updated E_c:                           -0.9332184205 H, 8.9256547867e-03 H
+Updated totalElectrostatic:            -211.0786425034 H, 3.0426329391e-01 H
+Total Energy:                          -112.0178511308 H, 4.5359210718e-01 H
+Scrambling all orbitals...

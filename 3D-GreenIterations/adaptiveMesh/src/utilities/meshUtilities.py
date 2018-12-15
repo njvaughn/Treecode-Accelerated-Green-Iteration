@@ -331,8 +331,36 @@ if __name__=="__main__":
 #     plt.legend()
 #     plt.show()
 
-    x = ChebyshevPoints(-1, 1, 4)
-    print(x)
+#     x = ChebyshevPoints(-1, 1, 4)
+#     print(x)
+    Nx = Ny = Nz = 5
+    xlow = -5
+    xhigh = -1
+    ylow=0
+    yhigh=2
+    zlow=0
+    zhigh=1
+    xw = weights(xlow, xhigh, Nx)
+    yw = weights(ylow, yhigh, Ny)
+    zw = weights(zlow, zhigh, Nz)
+    
+#     print('xw: ', xw)
+#     print('yw: ', yw)
+#     print('zw: ', zw)
+
+    
+    W = weights3D(xlow,xhigh,Nx,ylow,yhigh,Ny,zlow,zhigh,Nz)
+#     print(W[0,0,0]) # should return xw[0]*yx[1]*zw[1]
+#     print(W[1,0,0]) # should return xw[0]*yx[1]*zw[1]
+#     print(W[2,0,0]) # should return xw[0]*yx[1]*zw[1]
+#     print(W)
+    
+    for i in range(Nx):
+        for j in range(Ny):
+            for k in range(Nz):
+                err = W[i,j,k] - xw[i]*yw[j]*zw[k]
+                if err > 0.0: print(err)
+    print('Passed')
 
     
     

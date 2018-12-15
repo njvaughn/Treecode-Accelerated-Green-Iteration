@@ -11,23 +11,25 @@ import os
 import numpy as np
 
 
-# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
-# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
-# #resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
-# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
-# #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
+# # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
+# # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
+# # #resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+# # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
+# # #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
 # plotsDir = resultsDir+'plots/'
-# file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
-# # file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
+# # file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
+# file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
 
 
 ## Carbon Monoxide
 resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
 plotsDir = resultsDir+'plots/'
 # file ='LW5_1500o5_GradientFree_eigRes_looseThenTight_titan_SCF_.csv'
-file ='LW5o5_1500_SCF_.csv'
+# file ='LW5o5_1500_SCF_.csv'
 # file='LW5o5_1500_largeDomain_SCF_.csv'
+# file='LW5o5_1000_fixedMesh_only7_looseInit_SCF_.csv'
+file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_SCF_.csv'
 
 
 
@@ -40,7 +42,7 @@ file ='LW5o5_1500_SCF_.csv'
 
 
 df = pd.read_csv(resultsDir+file, header=0)
-df = df.drop(df.index[14]) 
+# df = df.drop(df.index[14]) 
     
 def plotSCFconvergence(df, system = 'H2'):
     

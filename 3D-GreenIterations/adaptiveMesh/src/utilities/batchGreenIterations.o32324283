@@ -1,0 +1,1068 @@
+Running on
+      1 nyx7501
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/CO_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/CO_with_anderson/LW5o4_2000_fixedMesh_randInit_noTitan.csv', 14, 10, -112.471443237994, -11.997011069615391, -0.94214407530225852, -62.898682441673358, -1.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -1.0
+Nuclear energy:  21.9004369536
+Atom is contained in cell    which has no children.  Divide at atomic location.
+There are now 8 leaf cells.
+Atom located inside child  111
+Calling recursive divide for this child, but not others.
+Atom is contained in cell  111  which has no children.  Divide at atomic location.
+There are now 15 leaf cells.
+After aspect ratio divide there are 825 leaf cells.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 0.633,  0.633,  0.633)
+Z = 8 located at (x, y, z) = (-0.633, -0.633, -0.633)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  257088
+max density:  124.122875762
+Integrated density before normalization:  6.00843509729
+Integrated density after normalization:  6.0
+max density:  302.542535955
+Integrated density before normalization:  14.0003233454
+Integrated density after normalization:  14.0
+Initializing density EXTERNALLY took 3.968 seconds.
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 0.633,  0.633,  0.633)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-0.633, -0.633, -0.633)
+Orbital index = 5
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Orbital 7 filled with (n,ell,m) = (2,1,-1) 
+Orbital 8 filled with (n,ell,m) = (2,1,0) 
+Orbital 9 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals EXTERNAL to Tree Structure took 11.173 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       5285 
+Total Number of Leaf Cells:  4017 
+Total Number of Gridpoints:  257088 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  4 
+Construction time:           36.5 seconds.
+Closest gridpoint to origin:  [-0.012040354945027198, -0.012040354945027198, -0.012040354945027198]
+For a distance of:  0.020854506505950283
+Part of a cell centered at:  [-0.15817500000000001, -0.15817500000000001, -0.15817500000000001]
+Assuming this is the carbon monoxide test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    257088
+Threads per block:    512
+Blocks per grid:      503
+[-62.898682441673358, 111.85061770418731, -11.997011069615391, -0.94214407530225852, -211.38290579726365, -112.471443237994]
+Integrated density:  14.0
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    10.2788 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-11.00088215  -1.70144989  -1.38631662  -1.38631662  -1.38631662
+ -19.86589393  -2.05759381  -1.52976753  -1.52976753  -1.52976753]
+Sorted eigenvalues:  [-19.86589393 -11.00088215  -2.05759381  -1.70144989  -1.52976753
+  -1.52976753  -1.38631662  -1.38631662  -1.38631662  -1.52976753]
+New order:  [5, 0, 6, 1, 8, 9, 2, 3, 4, 7]
+Orbital energies after initial sort: 
+ [-19.86589393 -11.00088215  -2.05759381  -1.70144989  -1.52976753
+  -1.52976753  -1.38631662  -1.38631662  -1.38631662  -1.52976753]
+Kinetic Errors:    [ -1.30343389e+01  -2.71088494e+01  -2.75298009e+01  -2.75298009e+01
+  -2.75298009e+01   1.56476251e-02  -2.55585441e+01  -2.62034616e+01
+  -2.62034616e+01  -2.62034616e+01]
+Potential Errors:  [ 21.79224307  45.1661858   45.90227056  45.90227056  45.90227056
+  -0.12275527  43.25973658  44.43248037  44.43248037  44.43248037]
+Computing band energy.  Current orbital energies are:  [-19.86589393 -11.00088215  -2.05759381  -1.70144989  -1.52976753
+  -1.52976753  -1.38631662  -1.38631662  -1.38631662  -1.52976753]
+Electrostatic Energies:
+Hartree:          74.4193013403
+External:         -307.468377151
+Nuclear-Nuclear:  21.9004369536
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-19.86589393 -11.00088215  -2.05759381  -1.70144989  -1.52976753
+  -1.52976753  -1.38631662  -1.38631662  -1.38631662  -1.52976753]
+Orbital Energy Errors after initialization:  [ 0.00172309  0.00352859  0.1279521  -0.09436269 -0.00957013 -0.00957013
+  0.00977942 -0.31305901 -0.37292886 -0.54697808]
+Updated V_x:                           -15.7891254201 Hartree
+Updated V_c:                           -1.0418599713 Hartree
+Updated Band Energy:                   -64.1433429335 H, -1.2446604919e+00 H
+Updated Kinetic Energy:                 111.3174169277 H, -5.3320077644e-01 H
+Updated E_x:                           -11.8418440651 H, 1.5516700454e-01 H
+Updated E_c:                           -0.9332253791 H, 8.9186962071e-03 H
+Updated totalElectrostatic:            -211.1486388566 H, 2.3426694066e-01 H
+Total Energy:                          -112.6062913730 H, -1.3484813504e-01 H
+Scrambling all orbitals...
+
+
+
+SCF Count  1
+Orbital Energies:  [-19.86589393 -11.00088215  -2.05759381  -1.70144989  -1.52976753
+  -1.52976753  -1.38631662  -1.38631662  -1.38631662  -1.52976753]
+Working on orbital 0
+Using singularity subtraction
+Norm of psiNew =  8.15803873727
+eigenvalueHistory:  301.919051794148
+Orbital energy after Harrison update:  301.919051794
+Setting energy to gauge shift - 0.5 because new value was positive.
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   1.837e+01 and 3.218e+02
+Orbital 0 wavefunction residual: 1.484e+02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.652571662473
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01]
+Orbital energy after Harrison update:  -0.219036825932
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   1.965e+01 and 1.281e+00
+Orbital 0 wavefunction residual: 8.694e-01
+
+
+Using singularity skipping because energy too close to 0
+Norm of psiNew =  3.77536761991
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01]
+Orbital energy after Harrison update:  -0.496484688936
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   1.937e+01 and 2.774e-01
+Orbital 0 wavefunction residual: 5.935e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  2.68981229702
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00]
+Orbital energy after Harrison update:  -1.0667420196
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   1.880e+01 and 5.703e-01
+Orbital 0 wavefunction residual: 3.499e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.96040469633
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00]
+Orbital energy after Harrison update:  -2.25570098532
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   1.761e+01 and 1.189e+00
+Orbital 0 wavefunction residual: 4.168e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.58464052547
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00]
+Orbital energy after Harrison update:  -4.44781283301
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   1.542e+01 and 2.192e+00
+Orbital 0 wavefunction residual: 3.530e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.29036585402
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00]
+Orbital energy after Harrison update:  -7.8092421089
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   1.206e+01 and 3.361e+00
+Orbital 0 wavefunction residual: 3.063e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.11684214326
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01]
+Orbital energy after Harrison update:  -11.8783520502
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   7.989e+00 and 4.069e+00
+Orbital 0 wavefunction residual: 2.684e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  1.02067273951
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01]
+Orbital energy after Harrison update:  -15.507886654
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   4.360e+00 and 3.630e+00
+Orbital 0 wavefunction residual: 2.106e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.977143328811
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01]
+Orbital energy after Harrison update:  -17.8493874193
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   2.018e+00 and 2.342e+00
+Orbital 0 wavefunction residual: 1.507e-01
+
+
+Using singularity subtraction
+Norm of psiNew =  0.969076808227
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01]
+Orbital energy after Harrison update:  -19.0103012484
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   8.573e-01 and 1.161e+00
+Orbital 0 wavefunction residual: 9.929e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.97618925643
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01]
+Orbital energy after Harrison update:  -19.5010150219
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   3.666e-01 and 4.907e-01
+Orbital 0 wavefunction residual: 6.196e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.985382112081
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01]
+Orbital energy after Harrison update:  -19.6982043435
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   1.694e-01 and 1.972e-01
+Orbital 0 wavefunction residual: 3.895e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.992077938385
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01]
+Orbital energy after Harrison update:  -19.7823900261
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   8.523e-02 and 8.419e-02
+Orbital 0 wavefunction residual: 2.609e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.995986645119
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01]
+Orbital energy after Harrison update:  -19.8232155653
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   4.440e-02 and 4.083e-02
+Orbital 0 wavefunction residual: 1.878e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.998022896037
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01]
+Orbital energy after Harrison update:  -19.8454167922
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   2.220e-02 and 2.220e-02
+Orbital 0 wavefunction residual: 1.416e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999027637848
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01]
+Orbital energy after Harrison update:  -19.8583168319
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   9.300e-03 and 1.290e-02
+Orbital 0 wavefunction residual: 1.091e-02
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999514871805
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01]
+Orbital energy after Harrison update:  -19.8660393984
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   1.578e-03 and 7.723e-03
+Orbital 0 wavefunction residual: 8.474e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999752311656
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01]
+Orbital energy after Harrison update:  -19.8707180379
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -3.101e-03 and 4.679e-03
+Orbital 0 wavefunction residual: 6.606e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999870094057
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01]
+Orbital energy after Harrison update:  -19.8735655813
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -5.949e-03 and 2.848e-03
+Orbital 0 wavefunction residual: 5.157e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999929979636
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01]
+Orbital energy after Harrison update:  -19.8753017165
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -7.685e-03 and 1.736e-03
+Orbital 0 wavefunction residual: 4.027e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999961281616
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01]
+Orbital energy after Harrison update:  -19.8763609502
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -8.744e-03 and 1.059e-03
+Orbital 0 wavefunction residual: 3.146e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999978104182
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01]
+Orbital energy after Harrison update:  -19.877007372
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -9.390e-03 and 6.464e-04
+Orbital 0 wavefunction residual: 2.458e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999987382518
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01]
+Orbital energy after Harrison update:  -19.8774019078
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -9.785e-03 and 3.945e-04
+Orbital 0 wavefunction residual: 1.920e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999992617875
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01]
+Orbital energy after Harrison update:  -19.8776427184
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.003e-02 and 2.408e-04
+Orbital 0 wavefunction residual: 1.500e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999995628955
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01]
+Orbital energy after Harrison update:  -19.877789703
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.017e-02 and 1.470e-04
+Orbital 0 wavefunction residual: 1.172e-03
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999997387703
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01]
+Orbital energy after Harrison update:  -19.8778794194
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.026e-02 and 8.972e-05
+Orbital 0 wavefunction residual: 9.155e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999998427516
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01]
+Orbital energy after Harrison update:  -19.8779341806
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.032e-02 and 5.476e-05
+Orbital 0 wavefunction residual: 7.153e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999048068
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01]
+Orbital energy after Harrison update:  -19.8779676058
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.035e-02 and 3.343e-05
+Orbital 0 wavefunction residual: 5.588e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999421083
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01]
+Orbital energy after Harrison update:  -19.8779880079
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.037e-02 and 2.040e-05
+Orbital 0 wavefunction residual: 4.366e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999646554
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01]
+Orbital energy after Harrison update:  -19.878000461
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.038e-02 and 1.245e-05
+Orbital 0 wavefunction residual: 3.411e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999783439
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01]
+Orbital energy after Harrison update:  -19.8780080621
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.039e-02 and 7.601e-06
+Orbital 0 wavefunction residual: 2.665e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999866844
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01]
+Orbital energy after Harrison update:  -19.8780127017
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 4.640e-06
+Orbital 0 wavefunction residual: 2.082e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999917823
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01]
+Orbital energy after Harrison update:  -19.8780155336
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 2.832e-06
+Orbital 0 wavefunction residual: 1.627e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999949076
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01]
+Orbital energy after Harrison update:  -19.8780172622
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 1.729e-06
+Orbital 0 wavefunction residual: 1.271e-04
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999968293
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01]
+Orbital energy after Harrison update:  -19.8780183173
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 1.055e-06
+Orbital 0 wavefunction residual: 9.929e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999980147
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01]
+Orbital energy after Harrison update:  -19.8780189613
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 6.440e-07
+Orbital 0 wavefunction residual: 7.757e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999987487
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01]
+Orbital energy after Harrison update:  -19.8780193543
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 3.931e-07
+Orbital 0 wavefunction residual: 6.060e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999992052
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01]
+Orbital energy after Harrison update:  -19.8780195943
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 2.399e-07
+Orbital 0 wavefunction residual: 4.735e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999994905
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01]
+Orbital energy after Harrison update:  -19.8780197407
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 1.465e-07
+Orbital 0 wavefunction residual: 3.699e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999996699
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01]
+Orbital energy after Harrison update:  -19.8780198301
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 8.939e-08
+Orbital 0 wavefunction residual: 2.890e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999997836
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01]
+Orbital energy after Harrison update:  -19.8780198847
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 5.456e-08
+Orbital 0 wavefunction residual: 2.258e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999998562
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01]
+Orbital energy after Harrison update:  -19.878019918
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 3.330e-08
+Orbital 0 wavefunction residual: 1.764e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999031
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01]
+Orbital energy after Harrison update:  -19.8780199383
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 2.033e-08
+Orbital 0 wavefunction residual: 1.378e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999337
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199507
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 1.241e-08
+Orbital 0 wavefunction residual: 1.077e-05
+
+
+Using singularity subtraction
+Norm of psiNew =  0.99999999954
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199583
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 7.573e-09
+Orbital 0 wavefunction residual: 8.412e-06
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999676
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199629
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 4.623e-09
+Orbital 0 wavefunction residual: 6.572e-06
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999768
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199657
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 2.822e-09
+Orbital 0 wavefunction residual: 5.134e-06
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999832
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199675
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 1.723e-09
+Orbital 0 wavefunction residual: 4.011e-06
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999877
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199685
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 1.051e-09
+Orbital 0 wavefunction residual: 3.134e-06
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999909
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199692
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 6.415e-10
+Orbital 0 wavefunction residual: 2.448e-06
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999932
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199695
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 3.917e-10
+Orbital 0 wavefunction residual: 1.913e-06
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999948
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199698
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 2.390e-10
+Orbital 0 wavefunction residual: 1.495e-06
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999961
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199699
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 1.459e-10
+Orbital 0 wavefunction residual: 1.168e-06
+
+
+Using singularity subtraction
+Norm of psiNew =  0.99999999997
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.87801997
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 8.896e-11
+Orbital 0 wavefunction residual: 9.122e-07
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999977
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199701
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 5.444e-11
+Orbital 0 wavefunction residual: 7.127e-07
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999982
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199701
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 3.308e-11
+Orbital 0 wavefunction residual: 5.568e-07
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999986
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199701
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 2.048e-11
+Orbital 0 wavefunction residual: 4.350e-07
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999989
+eigenvalueHistory:  [  3.01919052e+02  -2.19036826e-01  -4.96484689e-01  -1.06674202e+00
+  -2.25570099e+00  -4.44781283e+00  -7.80924211e+00  -1.18783521e+01
+  -1.55078867e+01  -1.78493874e+01  -1.90103012e+01  -1.95010150e+01
+  -1.96982043e+01  -1.97823900e+01  -1.98232156e+01  -1.98454168e+01
+  -1.98583168e+01  -1.98660394e+01  -1.98707180e+01  -1.98735656e+01
+  -1.98753017e+01  -1.98763610e+01  -1.98770074e+01  -1.98774019e+01
+  -1.98776427e+01  -1.98777897e+01  -1.98778794e+01  -1.98779342e+01
+  -1.98779676e+01  -1.98779880e+01  -1.98780005e+01  -1.98780081e+01
+  -1.98780127e+01  -1.98780155e+01  -1.98780173e+01  -1.98780183e+01
+  -1.98780190e+01  -1.98780194e+01  -1.98780196e+01  -1.98780197e+01
+  -1.98780198e+01  -1.98780199e+01  -1.98780199e+01  -1.98780199e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01
+  -1.98780200e+01  -1.98780200e+01  -1.98780200e+01]
+Orbital energy after Harrison update:  -19.8780199701
+Norm of new wavefunction:  1.0
+Orbital 0 error and eigenvalue residual:   -1.040e-02 and 1.234e-11
+Orbital 0 wavefunction residual: 3.399e-07
+
+
+Using singularity subtraction
+Norm of psiNew =  0.999999999992

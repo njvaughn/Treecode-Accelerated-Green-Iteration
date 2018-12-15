@@ -116,8 +116,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             dftfeOrbitalEnergies = np.array( [-1.886761702508549021e+01, -1.000441073298974892e+01,
                                               -1.185545917003633321e+00, -6.070872074377245964e-01,
                                               -5.201973981507257427e-01, -5.201973981507234113e-01,
-                                              -3.960960368603070325e-01, -1.338775668379516559e-02,
-                                              -7.325760563979200057e-02,  1.721054880813185223e-02] )
+                                              -3.960960368603070325e-01, -7.325760563979200057e-02,
+                                              -1.338775668379516559e-02,  1.721054880813185223e-02] )
             
             
             tree.occupations = np.array([2,2,2,2,2,2,2,0,0,0]) 
@@ -169,6 +169,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     # Initialize density history arrays
     inputDensities = np.zeros((tree.numberOfGridpoints,1))
     outputDensities = np.zeros((tree.numberOfGridpoints,1))
+    
+    targets = tree.extractLeavesDensity() 
+    inputDensities[:,0] = np.copy(targets[:,3])
     
     
 
@@ -232,9 +235,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     tree.updateOrbitalEnergies(sortByEnergy=True, saveAsReference=True)
     tree.updateOrbitalEnergies(sortByEnergy=False, saveAsReference=True)
 #     tree.sortOrbitalsAndEnergies(order = [0,5,1,6,2,8,9,3,4,7])
-#     tree.sortOrbitalsAndEnergies(order = [5,0,6,1,2,8,9,3,4,7])
+#     tree.sortOrbitalsAndEnergies(order = [5,0,6,1,8,9,2,3,4,7])
 #     tree.sortOrbitalsAndEnergies(order = [5,0,6,1,7,8,9,2,3,4])
-#     tree.sortOrbitalsAndEnergies()
+    tree.sortOrbitalsAndEnergies()
     print('Orbital energies after initial sort: \n', tree.orbitalEnergies)
 #     print('Kinetic:   ', tree.orbitalKinetic)
 #     print('Potential: ', tree.orbitalPotential)
@@ -401,29 +404,86 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         if SCFcount > 100:
             return
         
+        if SCFcount>1:
+            inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (tree.numberOfGridpoints,1))), axis=1)
+        
 #         if SCFcount == 1:
 #             print('setting loose tolerance for initial few SCFs')
+#             intraScfTolerance = 3e-3 # setting loose tolerance for initial SCF
+#         if SCFcount == 3:
+#             print('setting loose tolerance for initial few SCFs')
+#             intraScfTolerance = 3e-3 # setting loose tolerance for initial SCF
+#         if SCFcount == 5:
+#             print('setting medium tolerance for next few SCFs')
 #             intraScfTolerance = 1e-4 # setting loose tolerance for initial SCF
 #         if SCFcount == 15:
 #             print('setting medium tolerance for next few SCFs')
-#             intraScfTolerance = 3e-5  # set it to medium
+#             intraScfTolerance = 1e-5  # set it to medium
 #         if SCFcount == 20:
 #             print('setting medium tolerance for next few SCFs')
-#             intraScfTolerance = 1e-5  # set it to medium
-#         if SCFcount == 30:
-#             print('setting tight tolerance for remaining SCFs')
-#             intraScfTolerance = 1e-6  # set it tight
+#             intraScfTolerance = 1e-6  # set it to medium
+# #         if SCFcount == 30:
+# #             print('setting tight tolerance for remaining SCFs')
+# #             intraScfTolerance = 1e-6  # set it tight
 #         if SCFcount == 40:
 #             print('setting tight tolerance for remaining SCFs')
 #             intraScfTolerance = inputIntraSCFtolerance  # set it tight 
-         
+#             
+            
         
-        # fill in the inputDensities array...
-        targets = tree.extractLeavesDensity() 
-        if SCFcount==1:
-            inputDensities[:,0] = np.copy(targets[:,3])
-        else:
-            inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (tree.numberOfGridpoints,1))), axis=1)
+#         if SCFcount == 1:
+#             print('setting loose tolerance for initial few SCFs')
+#             intraScfTolerance = 5e-3 # setting loose tolerance for initial SCF
+#             
+#             inputDensities = np.zeros((tree.numberOfGridpoints,1))
+#             outputDensities = np.zeros((tree.numberOfGridpoints,1))
+#             targets = tree.extractLeavesDensity() 
+#             inputDensities[:,0] = np.copy(targets[:,3])
+#             
+#             
+#         elif SCFcount == 3:
+#             print('setting loose tolerance for initial few SCFs')
+#             intraScfTolerance = 1e-3 # setting loose tolerance for initial SCF
+#             
+#             inputDensities = np.zeros((tree.numberOfGridpoints,1))
+#             outputDensities = np.zeros((tree.numberOfGridpoints,1))
+#             targets = tree.extractLeavesDensity() 
+#             inputDensities[:,0] = np.copy(targets[:,3])
+#             
+#             
+#             
+#         elif SCFcount == 5:
+#             print('setting medium tolerance for next few SCFs')
+#             intraScfTolerance = 1e-5 # setting loose tolerance for initial SCF
+#             
+#             inputDensities = np.zeros((tree.numberOfGridpoints,1))
+#             outputDensities = np.zeros((tree.numberOfGridpoints,1))
+#             targets = tree.extractLeavesDensity() 
+#             inputDensities[:,0] = np.copy(targets[:,3])
+#             
+#             
+#         elif SCFcount == 8:
+#             print('setting medium tolerance for next few SCFs')
+#             intraScfTolerance = inputIntraSCFtolerance  # set it to medium
+#             
+#             inputDensities = np.zeros((tree.numberOfGridpoints,1))
+#             outputDensities = np.zeros((tree.numberOfGridpoints,1))
+#             targets = tree.extractLeavesDensity() 
+#             inputDensities[:,0] = np.copy(targets[:,3])
+            
+            
+            
+#         elif SCFcount == 12:
+#             print('setting tight tolerance for next few SCFs')
+#             intraScfTolerance = inputIntraSCFtolerance  # set it to medium
+#             inputDensities = np.zeros((tree.numberOfGridpoints,1))
+#             outputDensities = np.zeros((tree.numberOfGridpoints,1))
+#             targets = tree.extractLeavesDensity() 
+#             inputDensities[:,0] = np.copy(targets[:,3])
+#             
+# 
+#         else:
+#             inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (tree.numberOfGridpoints,1))), axis=1)
             
 #             diff = inputDensities[:,SCFcount-1] - andersonDensity
 #             if np.max(np.abs(diff)) > 1e-14: print('input density not the same as previously computed anderson density.  Why?')
@@ -468,20 +528,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     #             print('Using tolerance of %e' %(intraScfTolerance*10**m))
                 inputIntraSCFtolerance = np.copy(intraScfTolerance)
                 
-                
-    #             if m <= 5:
-    #                 intraScfTolerance = 1e-3
-    #             else: 
-    #                 intraScfTolerance = 1e-6
-    #             elif ( () and () ):
-    #                 intraScfTolerance = inputIntraSCFtolerance
+   
     #             while ( ( orbitalResidual > intraScfTolerance*10**m ) and ( greenIterationsCount < max_GreenIterationsCount) ):
                 previousResidual = 1
                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) ):
 #                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) and (tree.orbitalEnergies[m] < tree.gaugeShift) ):
     #             while ( ( orbitalResidual > intraScfTolerance ) ):
                 
-    #                 print('Iteration %i' %greenIterationsCount)
                     orbitalResidual = 0.0
     
                     sources = tree.extractPhi(m)
@@ -629,9 +682,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
                         newEigenvalue = tree.orbitalEnergies[m]
                         
-                        if newEigenvalue > tree.gaugeShift:
-                            tree.orbitalEnergies[m] = oldEigenvalue
-                            print('Setting energy to old value because new value was greater than gauge shift.')
+#                         if newEigenvalue > tree.gaugeShift:
+                        if newEigenvalue > 0:
+                            if greenIterationsCount < 20:
+                                tree.orbitalEnergies[m] = tree.gaugeShift-0.5
+#                             tree.orbitalEnergies[m] = oldEigenvalue
+#                             print('Setting energy to old value because new value was greater than gauge shift.')
+#                             print('Setting energy to old value because new value was greater than zero.')
+                            print('Setting energy to gauge shift - 0.5 because new value was positive.')
                         
                         
                         
@@ -648,25 +706,29 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     print('Norm of new wavefunction: ', normOfPsi)
                     normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
                     eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
-                    if ( (tree.orbitalEnergies[m]>0) ):
-                        if (greenIterationsCount <= 5):
-#                     if ( (tree.orbitalEnergies[m]>tree.gaugeShift) and (greenIterationCount <= 5) ):
-                            print('setting eigenvalue to to negative of itself because it was positive.  Wont do this after 5 iterations')
-                            tree.orbitalEnergies[m] *= -1
-                            tree.orbitalEnergies[m] -= tree.gaugeShift
+                    
+                    
+                    ### SCRAMBLE ORBITAL IF POSITIVE AFTER SOME NUMBER OF GREEN ITERATIONS
+#                     if ( (tree.orbitalEnergies[m]>0) ):
+#                         if (greenIterationsCount <= 5):
+# #                     if ( (tree.orbitalEnergies[m]>tree.gaugeShift) and (greenIterationCount <= 5) ):
+#                             print('setting eigenvalue to to negative of itself because it was positive.  Wont do this after 5 iterations')
+#                             tree.orbitalEnergies[m] *= -1
+#                             tree.orbitalEnergies[m] -= tree.gaugeShift
+# #                             greenIterationsCount = 0
+#     #                     print('setting eigenvalue to gauge shift because it was positive')
+#     #                     tree.orbitalEnergies[m] = tree.gaugeShift
+#                         else:
+#                             print('Eigenvalue still positive after 5 iterations.  Try scrambling and resetting.')
+#                             tree.scrambleOrbital(m)
+#                             tree.orthonormalizeOrbitals(targetOrbital=m)
+#                             tree.orbitalEnergies[m] = -2
 #                             greenIterationsCount = 0
-    #                     print('setting eigenvalue to gauge shift because it was positive')
-    #                     tree.orbitalEnergies[m] = tree.gaugeShift
-                        else:
-                            print('Eigenvalue still positive after 5 iterations.  Try scrambling and resetting.')
-                            tree.scrambleOrbital(m)
-                            tree.orthonormalizeOrbitals(targetOrbital=m)
-                            tree.orbitalEnergies[m] = -2
-                            greenIterationsCount = 0
-                    else: 
-                        pass # no worries, orbital eigenvalue is negative.  Proceed
+#                     else: 
+#                         pass # no worries, orbital eigenvalue is negative.  Proceed
+
+
                     residuals[m] = normDiff
-    #                 if normDiff > orbitalResidual:  # why is this here?
                     orbitalResidual = np.copy(normDiff)
                     
                     if greenIterationsCount==1:
@@ -681,7 +743,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             tree.exportGridpoints(filename)
             
                     
-                    GIandersonMixing=True
+                    GIandersonMixing=False
                     GIsimpleMixing=False
                     
                     if GIsimpleMixing==True:
@@ -879,7 +941,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         targets = np.copy(sources)
         newDensity = np.copy(sources[:,3])
         
-        if SCFcount==1:
+        if SCFcount==1: # not okay anymore because output density gets reset when tolerances get reset.
+#         if np.max(outputDensities)==0.0:  # that means the array is just one column of zeros.
             outputDensities[:,0] = np.copy(newDensity)
         else:
             outputDensities = np.concatenate( ( outputDensities, np.reshape(np.copy(newDensity), (tree.numberOfGridpoints,1)) ), axis=1)

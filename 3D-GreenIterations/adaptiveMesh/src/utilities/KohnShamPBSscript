@@ -36,9 +36,9 @@ SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
@@ -50,7 +50,7 @@ GRADIENTFREE='True'
 
 ORDER=4
 MESHTYPE='LW5'
-MESHPARAM=1000
+MESHPARAM=500
 
 MIXINGPARAMETER=0.5
 
@@ -62,8 +62,7 @@ MIXING='Anderson'
 #OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5_1000o4_MGS.csv'
 #VTKFILEDIR='/home/njvaughn/CO_with_anderson/LW5_1000o4_plots_MGS'
 #OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5o5_1500_tight_noSingSubt.csv'
-OUTPUTFILE='/home/njvaughn/CO_with_anderson/testing.csv'
-#OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5_1500o5_GradientFree_eigRes_gradualTightening.csv'
+OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5o4_1000_only7_tightFromStart.csv'
 VTKFILEDIR='/home/njvaughn/CO_with_anderson/LW5_1500o5_plots_eigRes'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
