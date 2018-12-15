@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Green Iterations AMR Task List
 
 
@@ -22,4 +23,30 @@ psi200 = (2-r)e^(-r/2) / (4sqrt(2pi)) = 0.1073306015
 
 
 
+=======
+Green Iterations AMR Task List
+
+
+Excited States
+—Test normalization of analytic wavefunction— check my scaling factor
+—Test orthogonalization
+—Why the L2 error in the excited wavefunction — solved… psi only defined to a minus sign, was converging to the negative of the analytic solution I provided
+—Plot slices along face
+
+
+Other
+—Extract only midpoints and face centers
+—Parameter study for ground state, also for excited state
+—Perform all of Green Iterations on GPU.  Extract leaves ONCE, along with cell volumes.  Will require communicating the updated target values to the array of sources, which could be tricky.
+—Extrapolate between children and parents
+
+
+
+test case
+r = 0.5694020987
+psi200 = (2-r)e^(-r/2) / (4sqrt(2pi)) = 0.1073306015
+
+
+
+>>>>>>> refs/remotes/eclipse_auto/master
 cd Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/tests/

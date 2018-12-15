@@ -8,6 +8,10 @@ import numpy as np
 from numpy.random import randint
 import itertools
 
+import sys
+sys.path.append('../src/dataStructures')
+sys.path.append('../src/utilities')
+
 from meshUtilities import *
 from GridpointStruct import *
 

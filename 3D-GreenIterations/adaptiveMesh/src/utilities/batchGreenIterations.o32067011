@@ -1,0 +1,105 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/berylliumAtom.csv', '/home/njvaughn/Be_Gaussian/LW5_2000.csv', 4, 2, -14.446166357178834, -2.2903850379744677, -0.22343185497421675, -8.1232110006201541, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/berylliumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z4/singleAtomData/
+Atom with Z=4 will get 2 atomic orbitals initialized.
+Warning, evaluating potential at singularity!
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  862000
+Initializing orbitals for atom Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            2.00e+03 
+Total Number of Cells:       7881 
+Total Number of Leaf Cells:  6896 
+Total Number of Gridpoints:  862000 
+Minimum Depth                3 levels 
+Maximum Depth:               14 levels 
+Cell Order:                  5 
+Construction time:           122 seconds.
+Closest gridpoint to origin:  [-5.9745463506892527e-05, -5.9745463506892527e-05, -5.9745463506892527e-05]
+For a distance of:  0.00010348217831569009
+Part of a cell centered at:  [-0.001220703125, -0.001220703125, -0.001220703125]
+['../src/utilities/molecularConfigurations/berylliumAtom.csv', '/home/njvaughn/Be_Gaussian/LW5_2000.csv', 4, 2, -14.446166357178834, -2.2903850379744677, -0.22343185497421675, -8.1232110006201541, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/berylliumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z4/singleAtomData/
+Atom with Z=4 will get 2 atomic orbitals initialized.
+Warning, evaluating potential at singularity!
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  862000
+Initializing orbitals for atom Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            2.00e+03 
+Total Number of Cells:       7881 
+Total Number of Leaf Cells:  6896 
+Total Number of Gridpoints:  862000 
+Minimum Depth                3 levels 
+Maximum Depth:               14 levels 
+Cell Order:                  5 
+Construction time:           121 seconds.
+Closest gridpoint to origin:  [-5.9745463506892527e-05, -5.9745463506892527e-05, -5.9745463506892527e-05]
+For a distance of:  0.00010348217831569009
+Part of a cell centered at:  [-0.001220703125, -0.001220703125, -0.001220703125]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    862000
+Threads per block:    512
+Blocks per grid:      1684
+[-8.1232110006201541, 14.308962108980166, -2.2903850379744677, -0.22343185497421675, -26.241311573210314, -14.446166357178834]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    14.4860 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 194, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=None)
+  File "testBatchGreenIterations_KS.py", line 104, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 154, in greenIterations_KohnSham_SCF
+    tree.updateOrbitalEnergies(sortByEnergy=False, saveAsReference=True)
+  File "../src/dataStructures/TreeStruct_CC.py", line 1144, in updateOrbitalEnergies
+    self.computeOrbitalKinetics(targetEnergy, saveAsReference)
+  File "../src/dataStructures/TreeStruct_CC.py", line 1064, in computeOrbitalKinetics
+    self.totalKinetic = np.sum(self.occupations*self.orbitalKinetic)
+ValueError: operands could not be broadcast together with shapes (5,) (2,) 

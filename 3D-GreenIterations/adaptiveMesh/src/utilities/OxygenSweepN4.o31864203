@@ -1,0 +1,1631 @@
+Running on
+      1 nyx7513
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/Oxygen_SmoothingTests/testTightTolerance_1000.csv', 8, 5, -74.469012630225393, -7.2193295915891582, -0.54455267145166231, -40.613086299670449, -1.0]
+Gauge shift  -1.0
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  498000
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW3 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       4553 
+Total Number of Leaf Cells:  3984 
+Total Number of Gridpoints:  498000 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  5 
+Construction time:           7.3 seconds.
+Closest gridpoint to origin:  [-0.00047796370805514021, -0.00047796370805514021, -0.00047796370805514021]
+For a distance of:  0.0008278574265255207
+Part of a cell centered at:  [-0.009765625, -0.009765625, -0.009765625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    498000
+Threads per block:    512
+Blocks per grid:      973
+[-40.613086299670449, 74.112265375596365, -7.2193295915891582, -0.54455267145166231, -140.81739574277032, -74.469012630225393]
+Computing Vcoulomb took:    2.9553 seconds. 
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [0 1 2 4 3]
+Orbital Energy:            [-19.78115789  -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+New order:  [0 1 2 3 4]
+../src/dataStructures/TreeStruct_CC.py:131: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -1.3413545629873198
+Occupations:  [ 2.          2.          1.33333353  1.33333352  1.33333351]
+Kinetic:    [ 28.75727588   3.1960312    2.55204283   2.55204283   2.55204283]
+Potential:  [-48.53843377  -5.07120843  -3.89339761  -3.89339761  -3.89339761]
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-19.77867671  -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87799474e+01 and -4.75586241e+01 
+Orbital 0 error and residual:   -1.989e-02 and 2.840e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77871368  -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87869627e+01 and -4.75656764e+01 
+Orbital 0 error and residual:   -1.993e-02 and 8.481e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77871158  -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87900881e+01 and -4.75687997e+01 
+Orbital 0 error and residual:   -1.993e-02 and 3.862e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77871143  -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87914499e+01 and -4.75701613e+01 
+Orbital 0 error and residual:   -1.993e-02 and 1.718e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77871141  -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87920419e+01 and -4.75707533e+01 
+Orbital 0 error and residual:   -1.993e-02 and 7.578e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77871141  -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87922987e+01 and -4.75710101e+01 
+Orbital 0 error and residual:   -1.993e-02 and 3.318e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87924098e+01 and -4.75711213e+01 
+Orbital 0 error and residual:   -1.993e-02 and 1.446e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87924579e+01 and -4.75711693e+01 
+Orbital 0 error and residual:   -1.993e-02 and 6.277e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87924787e+01 and -4.75711901e+01 
+Orbital 0 error and residual:   -1.993e-02 and 2.720e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87924877e+01 and -4.75711991e+01 
+Orbital 0 error and residual:   -1.993e-02 and 1.177e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87924916e+01 and -4.75712030e+01 
+Orbital 0 error and residual:   -1.993e-02 and 5.090e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87924933e+01 and -4.75712047e+01 
+Orbital 0 error and residual:   -1.993e-02 and 2.200e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87517723  -1.34135478  -1.34135478  -1.34135478]
+Orbital 0 kinetic and potential: 2.87924940e+01 and -4.75712054e+01 
+Orbital 0 error and residual:   -1.993e-02 and 9.503e-09
+Used 13 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.8748081   -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.19841385e+00 and -4.07322195e+00 
+Orbital 1 error and residual:   -3.608e-03 and 6.335e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481394  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20086024e+00 and -4.07567418e+00 
+Orbital 1 error and residual:   -3.614e-03 and 3.214e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481395  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20217443e+00 and -4.07698838e+00 
+Orbital 1 error and residual:   -3.614e-03 and 1.859e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481397  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20288742e+00 and -4.07770139e+00 
+Orbital 1 error and residual:   -3.614e-03 and 1.078e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481398  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20327914e+00 and -4.07809312e+00 
+Orbital 1 error and residual:   -3.614e-03 and 6.267e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481397  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20349654e+00 and -4.07831051e+00 
+Orbital 1 error and residual:   -3.614e-03 and 3.646e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481397  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20361816e+00 and -4.07843213e+00 
+Orbital 1 error and residual:   -3.614e-03 and 2.122e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481397  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20368663e+00 and -4.07850060e+00 
+Orbital 1 error and residual:   -3.614e-03 and 1.235e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481397  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20372538e+00 and -4.07853934e+00 
+Orbital 1 error and residual:   -3.614e-03 and 7.183e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481397  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20374739e+00 and -4.07856135e+00 
+Orbital 1 error and residual:   -3.614e-03 and 4.177e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20375993e+00 and -4.07857390e+00 
+Orbital 1 error and residual:   -3.614e-03 and 2.428e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20376710e+00 and -4.07858107e+00 
+Orbital 1 error and residual:   -3.614e-03 and 1.411e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20377121e+00 and -4.07858517e+00 
+Orbital 1 error and residual:   -3.614e-03 and 8.200e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20377356e+00 and -4.07858753e+00 
+Orbital 1 error and residual:   -3.614e-03 and 4.763e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20377492e+00 and -4.07858888e+00 
+Orbital 1 error and residual:   -3.614e-03 and 2.766e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20377570e+00 and -4.07858966e+00 
+Orbital 1 error and residual:   -3.614e-03 and 1.606e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20377614e+00 and -4.07859011e+00 
+Orbital 1 error and residual:   -3.614e-03 and 9.321e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20377640e+00 and -4.07859037e+00 
+Orbital 1 error and residual:   -3.614e-03 and 5.409e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20377655e+00 and -4.07859051e+00 
+Orbital 1 error and residual:   -3.614e-03 and 3.139e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20377664e+00 and -4.07859060e+00 
+Orbital 1 error and residual:   -3.614e-03 and 1.821e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20377669e+00 and -4.07859065e+00 
+Orbital 1 error and residual:   -3.614e-03 and 1.056e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34135478  -1.34135478  -1.34135478]
+Orbital 1 kinetic and potential: 3.20377672e+00 and -4.07859068e+00 
+Orbital 1 error and residual:   -3.614e-03 and 6.128e-09
+Used 22 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34075481  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55506079e+00 and -2.89581560e+00 
+Orbital 2 error and residual:   -2.457e-03 and 6.453e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076206  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55625929e+00 and -2.89702135e+00 
+Orbital 2 error and residual:   -2.465e-03 and 3.513e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076224  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55714610e+00 and -2.89790834e+00 
+Orbital 2 error and residual:   -2.465e-03 and 2.514e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076233  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55779474e+00 and -2.89855708e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.822e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55826968e+00 and -2.89903205e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.333e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076239  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55861770e+00 and -2.89938009e+00 
+Orbital 2 error and residual:   -2.465e-03 and 9.818e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076239  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55887291e+00 and -2.89963530e+00 
+Orbital 2 error and residual:   -2.465e-03 and 7.257e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076239  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55906019e+00 and -2.89982258e+00 
+Orbital 2 error and residual:   -2.465e-03 and 5.379e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076239  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55919772e+00 and -2.89996011e+00 
+Orbital 2 error and residual:   -2.465e-03 and 3.994e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076239  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55929877e+00 and -2.90006116e+00 
+Orbital 2 error and residual:   -2.465e-03 and 2.970e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076238  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55937308e+00 and -2.90013547e+00 
+Orbital 2 error and residual:   -2.465e-03 and 2.210e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076238  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55942776e+00 and -2.90019014e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.646e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076238  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55946801e+00 and -2.90023039e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.227e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076238  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55949767e+00 and -2.90026005e+00 
+Orbital 2 error and residual:   -2.465e-03 and 9.148e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076238  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55951954e+00 and -2.90028192e+00 
+Orbital 2 error and residual:   -2.465e-03 and 6.822e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076238  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55953567e+00 and -2.90029804e+00 
+Orbital 2 error and residual:   -2.465e-03 and 5.089e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076238  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55954757e+00 and -2.90030995e+00 
+Orbital 2 error and residual:   -2.465e-03 and 3.797e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076238  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55955636e+00 and -2.90031873e+00 
+Orbital 2 error and residual:   -2.465e-03 and 2.834e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55956285e+00 and -2.90032523e+00 
+Orbital 2 error and residual:   -2.465e-03 and 2.115e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55956765e+00 and -2.90033003e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.579e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55957120e+00 and -2.90033358e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.178e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55957383e+00 and -2.90033620e+00 
+Orbital 2 error and residual:   -2.465e-03 and 8.796e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55957577e+00 and -2.90033815e+00 
+Orbital 2 error and residual:   -2.465e-03 and 6.567e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55957721e+00 and -2.90033959e+00 
+Orbital 2 error and residual:   -2.465e-03 and 4.903e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55957828e+00 and -2.90034065e+00 
+Orbital 2 error and residual:   -2.465e-03 and 3.661e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55957907e+00 and -2.90034144e+00 
+Orbital 2 error and residual:   -2.465e-03 and 2.733e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55957966e+00 and -2.90034203e+00 
+Orbital 2 error and residual:   -2.465e-03 and 2.041e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958009e+00 and -2.90034246e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.524e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958041e+00 and -2.90034279e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.138e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958065e+00 and -2.90034303e+00 
+Orbital 2 error and residual:   -2.465e-03 and 8.497e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958083e+00 and -2.90034320e+00 
+Orbital 2 error and residual:   -2.465e-03 and 6.345e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958096e+00 and -2.90034333e+00 
+Orbital 2 error and residual:   -2.465e-03 and 4.738e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958106e+00 and -2.90034343e+00 
+Orbital 2 error and residual:   -2.465e-03 and 3.539e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958113e+00 and -2.90034350e+00 
+Orbital 2 error and residual:   -2.465e-03 and 2.643e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958118e+00 and -2.90034356e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.973e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958122e+00 and -2.90034360e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.474e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958125e+00 and -2.90034363e+00 
+Orbital 2 error and residual:   -2.465e-03 and 1.101e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34135478  -1.34135478]
+Orbital 2 kinetic and potential: 2.55958128e+00 and -2.90034365e+00 
+Orbital 2 error and residual:   -2.465e-03 and 8.220e-09
+Used 38 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34075481  -1.34135478]
+Orbital 3 kinetic and potential: 2.55506079e+00 and -2.89581560e+00 
+Orbital 3 error and residual:   -2.457e-03 and 6.453e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076206  -1.34135478]
+Orbital 3 kinetic and potential: 2.55625929e+00 and -2.89702135e+00 
+Orbital 3 error and residual:   -2.465e-03 and 3.513e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076224  -1.34135478]
+Orbital 3 kinetic and potential: 2.55714610e+00 and -2.89790834e+00 
+Orbital 3 error and residual:   -2.465e-03 and 2.514e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076233  -1.34135478]
+Orbital 3 kinetic and potential: 2.55779474e+00 and -2.89855708e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.822e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55826968e+00 and -2.89903205e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.333e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076239  -1.34135478]
+Orbital 3 kinetic and potential: 2.55861770e+00 and -2.89938009e+00 
+Orbital 3 error and residual:   -2.465e-03 and 9.818e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076239  -1.34135478]
+Orbital 3 kinetic and potential: 2.55887291e+00 and -2.89963530e+00 
+Orbital 3 error and residual:   -2.465e-03 and 7.257e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076239  -1.34135478]
+Orbital 3 kinetic and potential: 2.55906019e+00 and -2.89982258e+00 
+Orbital 3 error and residual:   -2.465e-03 and 5.379e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076239  -1.34135478]
+Orbital 3 kinetic and potential: 2.55919772e+00 and -2.89996011e+00 
+Orbital 3 error and residual:   -2.465e-03 and 3.994e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076239  -1.34135478]
+Orbital 3 kinetic and potential: 2.55929877e+00 and -2.90006116e+00 
+Orbital 3 error and residual:   -2.465e-03 and 2.970e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076238  -1.34135478]
+Orbital 3 kinetic and potential: 2.55937308e+00 and -2.90013547e+00 
+Orbital 3 error and residual:   -2.465e-03 and 2.210e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076238  -1.34135478]
+Orbital 3 kinetic and potential: 2.55942776e+00 and -2.90019014e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.646e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076238  -1.34135478]
+Orbital 3 kinetic and potential: 2.55946801e+00 and -2.90023039e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.227e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076238  -1.34135478]
+Orbital 3 kinetic and potential: 2.55949767e+00 and -2.90026005e+00 
+Orbital 3 error and residual:   -2.465e-03 and 9.148e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076238  -1.34135478]
+Orbital 3 kinetic and potential: 2.55951954e+00 and -2.90028192e+00 
+Orbital 3 error and residual:   -2.465e-03 and 6.822e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076238  -1.34135478]
+Orbital 3 kinetic and potential: 2.55953567e+00 and -2.90029804e+00 
+Orbital 3 error and residual:   -2.465e-03 and 5.089e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076238  -1.34135478]
+Orbital 3 kinetic and potential: 2.55954757e+00 and -2.90030995e+00 
+Orbital 3 error and residual:   -2.465e-03 and 3.797e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076238  -1.34135478]
+Orbital 3 kinetic and potential: 2.55955636e+00 and -2.90031873e+00 
+Orbital 3 error and residual:   -2.465e-03 and 2.834e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55956285e+00 and -2.90032523e+00 
+Orbital 3 error and residual:   -2.465e-03 and 2.115e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55956765e+00 and -2.90033003e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.579e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55957120e+00 and -2.90033358e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.178e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55957383e+00 and -2.90033620e+00 
+Orbital 3 error and residual:   -2.465e-03 and 8.796e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55957577e+00 and -2.90033815e+00 
+Orbital 3 error and residual:   -2.465e-03 and 6.567e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55957721e+00 and -2.90033959e+00 
+Orbital 3 error and residual:   -2.465e-03 and 4.903e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55957828e+00 and -2.90034065e+00 
+Orbital 3 error and residual:   -2.465e-03 and 3.661e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55957907e+00 and -2.90034144e+00 
+Orbital 3 error and residual:   -2.465e-03 and 2.733e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55957966e+00 and -2.90034203e+00 
+Orbital 3 error and residual:   -2.465e-03 and 2.041e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958009e+00 and -2.90034246e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.524e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958041e+00 and -2.90034279e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.138e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958065e+00 and -2.90034303e+00 
+Orbital 3 error and residual:   -2.465e-03 and 8.497e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958083e+00 and -2.90034320e+00 
+Orbital 3 error and residual:   -2.465e-03 and 6.345e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958096e+00 and -2.90034333e+00 
+Orbital 3 error and residual:   -2.465e-03 and 4.738e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958106e+00 and -2.90034343e+00 
+Orbital 3 error and residual:   -2.465e-03 and 3.539e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958113e+00 and -2.90034350e+00 
+Orbital 3 error and residual:   -2.465e-03 and 2.643e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958118e+00 and -2.90034356e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.973e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958122e+00 and -2.90034360e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.474e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958125e+00 and -2.90034363e+00 
+Orbital 3 error and residual:   -2.465e-03 and 1.101e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34135478]
+Orbital 3 kinetic and potential: 2.55958128e+00 and -2.90034365e+00 
+Orbital 3 error and residual:   -2.465e-03 and 8.220e-09
+Used 38 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34075481]
+Orbital 4 kinetic and potential: 2.55506079e+00 and -2.89581560e+00 
+Orbital 4 error and residual:   -2.457e-03 and 6.453e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076206]
+Orbital 4 kinetic and potential: 2.55625929e+00 and -2.89702135e+00 
+Orbital 4 error and residual:   -2.465e-03 and 3.513e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076224]
+Orbital 4 kinetic and potential: 2.55714610e+00 and -2.89790834e+00 
+Orbital 4 error and residual:   -2.465e-03 and 2.514e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076233]
+Orbital 4 kinetic and potential: 2.55779474e+00 and -2.89855708e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.822e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55826968e+00 and -2.89903205e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.333e-04
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076239]
+Orbital 4 kinetic and potential: 2.55861770e+00 and -2.89938009e+00 
+Orbital 4 error and residual:   -2.465e-03 and 9.818e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076239]
+Orbital 4 kinetic and potential: 2.55887291e+00 and -2.89963530e+00 
+Orbital 4 error and residual:   -2.465e-03 and 7.257e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076239]
+Orbital 4 kinetic and potential: 2.55906019e+00 and -2.89982258e+00 
+Orbital 4 error and residual:   -2.465e-03 and 5.379e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076239]
+Orbital 4 kinetic and potential: 2.55919772e+00 and -2.89996011e+00 
+Orbital 4 error and residual:   -2.465e-03 and 3.994e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076239]
+Orbital 4 kinetic and potential: 2.55929877e+00 and -2.90006116e+00 
+Orbital 4 error and residual:   -2.465e-03 and 2.970e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076238]
+Orbital 4 kinetic and potential: 2.55937308e+00 and -2.90013547e+00 
+Orbital 4 error and residual:   -2.465e-03 and 2.210e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076238]
+Orbital 4 kinetic and potential: 2.55942776e+00 and -2.90019014e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.646e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076238]
+Orbital 4 kinetic and potential: 2.55946801e+00 and -2.90023039e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.227e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076238]
+Orbital 4 kinetic and potential: 2.55949767e+00 and -2.90026005e+00 
+Orbital 4 error and residual:   -2.465e-03 and 9.148e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076238]
+Orbital 4 kinetic and potential: 2.55951954e+00 and -2.90028192e+00 
+Orbital 4 error and residual:   -2.465e-03 and 6.822e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076238]
+Orbital 4 kinetic and potential: 2.55953567e+00 and -2.90029804e+00 
+Orbital 4 error and residual:   -2.465e-03 and 5.089e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076238]
+Orbital 4 kinetic and potential: 2.55954757e+00 and -2.90030995e+00 
+Orbital 4 error and residual:   -2.465e-03 and 3.797e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076238]
+Orbital 4 kinetic and potential: 2.55955636e+00 and -2.90031873e+00 
+Orbital 4 error and residual:   -2.465e-03 and 2.834e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55956285e+00 and -2.90032523e+00 
+Orbital 4 error and residual:   -2.465e-03 and 2.115e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55956765e+00 and -2.90033003e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.579e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55957120e+00 and -2.90033358e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.178e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55957383e+00 and -2.90033620e+00 
+Orbital 4 error and residual:   -2.465e-03 and 8.796e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55957577e+00 and -2.90033815e+00 
+Orbital 4 error and residual:   -2.465e-03 and 6.567e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55957721e+00 and -2.90033959e+00 
+Orbital 4 error and residual:   -2.465e-03 and 4.903e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55957828e+00 and -2.90034065e+00 
+Orbital 4 error and residual:   -2.465e-03 and 3.661e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55957907e+00 and -2.90034144e+00 
+Orbital 4 error and residual:   -2.465e-03 and 2.733e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55957966e+00 and -2.90034203e+00 
+Orbital 4 error and residual:   -2.465e-03 and 2.041e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958009e+00 and -2.90034246e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.524e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958041e+00 and -2.90034279e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.138e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958065e+00 and -2.90034303e+00 
+Orbital 4 error and residual:   -2.465e-03 and 8.497e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958083e+00 and -2.90034320e+00 
+Orbital 4 error and residual:   -2.465e-03 and 6.345e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958096e+00 and -2.90034333e+00 
+Orbital 4 error and residual:   -2.465e-03 and 4.738e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958106e+00 and -2.90034343e+00 
+Orbital 4 error and residual:   -2.465e-03 and 3.539e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958113e+00 and -2.90034350e+00 
+Orbital 4 error and residual:   -2.465e-03 and 2.643e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958118e+00 and -2.90034356e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.973e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958122e+00 and -2.90034360e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.474e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958125e+00 and -2.90034363e+00 
+Orbital 4 error and residual:   -2.465e-03 and 1.101e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Orbital 4 kinetic and potential: 2.55958128e+00 and -2.90034365e+00 
+Orbital 4 error and residual:   -2.465e-03 and 8.220e-09
+Used 38 iterations for orbital 4.
+
+
+Integrated density:  8.00000028083
+Density Residual  0.00470336196298
+Computing Vcoulomb and updating Veff took:    4.6534 seconds. 
+Band energies before Veff update: -40.670100 H, -5.70e-02 H
+Total Energy without computing orbitals energies with new Veff: -74.5212699893 H, -5.2257359114e-02 H
+Orbital energies before recomputing with new Veff:  [-19.7787114   -1.87481396  -1.34076237  -1.34076237  -1.34076237]
+Now recompute orbital energies with new Veff...
+Orbital Energy:            [-19.77336867  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Band energies after Veff update: -40.648260 H, -3.52e-02 H
+Orbital Energy Errors after Veff Update:  [-0.01458496 -0.00170836 -0.00062909 -0.00062909 -0.00062909]
+Orbital 0 error: -1.458e-02
+Orbital 1 error: -1.708e-03
+Orbital 2 error: -6.291e-04
+Orbital 3 error: -6.291e-04
+Orbital 4 error: -6.291e-04
+Orbital Energies:  [-19.77336867  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Updated V_x:                           -9.6307011314 Hartree
+Updated V_c:                           -0.6073927162 Hartree
+Updated Band Energy:                   -40.6482595706 H, -3.5173270936e-02 H
+Updated Kinetic Energy:                 74.2308679656 H, 1.1860258999e-01 H
+Updated E_x:                           -7.2230258485 H, -3.6962569607e-03 H
+Updated E_c:                           -0.5446926943 H, -1.4002282365e-04 H
+Updated totalElectrostatic:            -140.9625785625 H, -1.4518281971e-01 H
+Total Energy:                          -74.4994291397 H, -3.0416509499e-02 H
+Energy Residual:                        7.300e+01
+Density Residual:                       4.703e-03
+
+
+Setting density residual to min of density residual and energy residual, just for testing purposes
+
+
+
+SCF Count  2
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-19.77337093  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Orbital 0 kinetic and potential: 2.87915082e+01 and -4.75648792e+01 
+Orbital 0 error and residual:   -1.459e-02 and 2.123e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337093  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Orbital 0 kinetic and potential: 2.87911165e+01 and -4.75644875e+01 
+Orbital 0 error and residual:   -1.459e-02 and 7.003e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Orbital 0 kinetic and potential: 2.87909553e+01 and -4.75643262e+01 
+Orbital 0 error and residual:   -1.459e-02 and 2.550e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Orbital 0 kinetic and potential: 2.87908876e+01 and -4.75642586e+01 
+Orbital 0 error and residual:   -1.459e-02 and 9.921e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Orbital 0 kinetic and potential: 2.87908589e+01 and -4.75642299e+01 
+Orbital 0 error and residual:   -1.459e-02 and 4.024e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Orbital 0 kinetic and potential: 2.87908467e+01 and -4.75642176e+01 
+Orbital 0 error and residual:   -1.459e-02 and 1.674e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Orbital 0 kinetic and potential: 2.87908414e+01 and -4.75642124e+01 
+Orbital 0 error and residual:   -1.459e-02 and 7.069e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Orbital 0 kinetic and potential: 2.87908392e+01 and -4.75642101e+01 
+Orbital 0 error and residual:   -1.459e-02 and 3.012e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Orbital 0 kinetic and potential: 2.87908382e+01 and -4.75642091e+01 
+Orbital 0 error and residual:   -1.459e-02 and 1.290e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.872908    -1.33892651  -1.33892651  -1.33892651]
+Orbital 0 kinetic and potential: 2.87908378e+01 and -4.75642087e+01 
+Orbital 0 error and residual:   -1.459e-02 and 5.546e-09
+Used 10 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290888  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20238677e+00 and -4.07529565e+00 
+Orbital 1 error and residual:   -1.709e-03 and 2.479e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290903  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20144867e+00 and -4.07435769e+00 
+Orbital 1 error and residual:   -1.709e-03 and 1.420e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290909  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20092808e+00 and -4.07383717e+00 
+Orbital 1 error and residual:   -1.709e-03 and 8.206e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290911  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20063769e+00 and -4.07354680e+00 
+Orbital 1 error and residual:   -1.709e-03 and 4.759e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290912  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20047490e+00 and -4.07338403e+00 
+Orbital 1 error and residual:   -1.709e-03 and 2.765e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290913  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20038324e+00 and -4.07329237e+00 
+Orbital 1 error and residual:   -1.709e-03 and 1.608e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290913  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20033142e+00 and -4.07324056e+00 
+Orbital 1 error and residual:   -1.709e-03 and 9.353e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290913  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20030203e+00 and -4.07321116e+00 
+Orbital 1 error and residual:   -1.709e-03 and 5.441e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290913  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20028530e+00 and -4.07319443e+00 
+Orbital 1 error and residual:   -1.709e-03 and 3.165e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290913  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20027576e+00 and -4.07318489e+00 
+Orbital 1 error and residual:   -1.709e-03 and 1.840e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20027030e+00 and -4.07317944e+00 
+Orbital 1 error and residual:   -1.709e-03 and 1.070e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20026718e+00 and -4.07317631e+00 
+Orbital 1 error and residual:   -1.709e-03 and 6.219e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20026538e+00 and -4.07317452e+00 
+Orbital 1 error and residual:   -1.709e-03 and 3.614e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20026435e+00 and -4.07317349e+00 
+Orbital 1 error and residual:   -1.709e-03 and 2.100e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20026376e+00 and -4.07317290e+00 
+Orbital 1 error and residual:   -1.709e-03 and 1.220e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20026342e+00 and -4.07317256e+00 
+Orbital 1 error and residual:   -1.709e-03 and 7.083e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20026322e+00 and -4.07317236e+00 
+Orbital 1 error and residual:   -1.709e-03 and 4.113e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20026311e+00 and -4.07317225e+00 
+Orbital 1 error and residual:   -1.709e-03 and 2.388e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20026305e+00 and -4.07317218e+00 
+Orbital 1 error and residual:   -1.709e-03 and 1.386e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892651  -1.33892651  -1.33892651]
+Orbital 1 kinetic and potential: 3.20026301e+00 and -4.07317214e+00 
+Orbital 1 error and residual:   -1.709e-03 and 8.045e-09
+Used 20 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892763  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55816146e+00 and -2.89708909e+00 
+Orbital 2 error and residual:   -6.302e-04 and 3.389e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892797  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55714880e+00 and -2.89607677e+00 
+Orbital 2 error and residual:   -6.306e-04 and 2.426e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892816  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55642092e+00 and -2.89534908e+00 
+Orbital 2 error and residual:   -6.307e-04 and 1.767e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892827  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55589525e+00 and -2.89482352e+00 
+Orbital 2 error and residual:   -6.309e-04 and 1.299e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892833  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55551432e+00 and -2.89444265e+00 
+Orbital 2 error and residual:   -6.309e-04 and 9.605e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892837  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55523753e+00 and -2.89416590e+00 
+Orbital 2 error and residual:   -6.310e-04 and 7.125e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.3389284   -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55503597e+00 and -2.89396437e+00 
+Orbital 2 error and residual:   -6.310e-04 and 5.298e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892841  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55488893e+00 and -2.89381734e+00 
+Orbital 2 error and residual:   -6.310e-04 and 3.945e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892842  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55478148e+00 and -2.89370990e+00 
+Orbital 2 error and residual:   -6.310e-04 and 2.940e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892843  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55470285e+00 and -2.89363128e+00 
+Orbital 2 error and residual:   -6.310e-04 and 2.193e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892844  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55464523e+00 and -2.89357366e+00 
+Orbital 2 error and residual:   -6.310e-04 and 1.637e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892844  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55460295e+00 and -2.89353139e+00 
+Orbital 2 error and residual:   -6.310e-04 and 1.222e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892844  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55457191e+00 and -2.89350035e+00 
+Orbital 2 error and residual:   -6.310e-04 and 9.124e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892844  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55454908e+00 and -2.89347752e+00 
+Orbital 2 error and residual:   -6.310e-04 and 6.814e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892844  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55453228e+00 and -2.89346072e+00 
+Orbital 2 error and residual:   -6.310e-04 and 5.090e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55451991e+00 and -2.89344835e+00 
+Orbital 2 error and residual:   -6.310e-04 and 3.803e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55451078e+00 and -2.89343923e+00 
+Orbital 2 error and residual:   -6.310e-04 and 2.841e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55450405e+00 and -2.89343250e+00 
+Orbital 2 error and residual:   -6.310e-04 and 2.123e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55449909e+00 and -2.89342753e+00 
+Orbital 2 error and residual:   -6.310e-04 and 1.586e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55449542e+00 and -2.89342386e+00 
+Orbital 2 error and residual:   -6.310e-04 and 1.185e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55449270e+00 and -2.89342115e+00 
+Orbital 2 error and residual:   -6.310e-04 and 8.859e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55449070e+00 and -2.89341915e+00 
+Orbital 2 error and residual:   -6.310e-04 and 6.621e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448921e+00 and -2.89341766e+00 
+Orbital 2 error and residual:   -6.310e-04 and 4.948e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448811e+00 and -2.89341656e+00 
+Orbital 2 error and residual:   -6.310e-04 and 3.698e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448730e+00 and -2.89341575e+00 
+Orbital 2 error and residual:   -6.310e-04 and 2.764e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448670e+00 and -2.89341514e+00 
+Orbital 2 error and residual:   -6.310e-04 and 2.066e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448625e+00 and -2.89341470e+00 
+Orbital 2 error and residual:   -6.310e-04 and 1.544e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448592e+00 and -2.89341437e+00 
+Orbital 2 error and residual:   -6.310e-04 and 1.154e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448567e+00 and -2.89341412e+00 
+Orbital 2 error and residual:   -6.310e-04 and 8.626e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448549e+00 and -2.89341394e+00 
+Orbital 2 error and residual:   -6.310e-04 and 6.448e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448535e+00 and -2.89341380e+00 
+Orbital 2 error and residual:   -6.310e-04 and 4.820e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448525e+00 and -2.89341370e+00 
+Orbital 2 error and residual:   -6.310e-04 and 3.603e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448518e+00 and -2.89341363e+00 
+Orbital 2 error and residual:   -6.310e-04 and 2.693e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448512e+00 and -2.89341357e+00 
+Orbital 2 error and residual:   -6.310e-04 and 2.013e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448508e+00 and -2.89341353e+00 
+Orbital 2 error and residual:   -6.310e-04 and 1.505e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448505e+00 and -2.89341350e+00 
+Orbital 2 error and residual:   -6.310e-04 and 1.125e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892651  -1.33892651]
+Orbital 2 kinetic and potential: 2.55448503e+00 and -2.89341348e+00 
+Orbital 2 error and residual:   -6.310e-04 and 8.409e-09
+Used 37 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892763  -1.33892651]
+Orbital 3 kinetic and potential: 2.55816146e+00 and -2.89708909e+00 
+Orbital 3 error and residual:   -6.302e-04 and 3.389e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892797  -1.33892651]
+Orbital 3 kinetic and potential: 2.55714880e+00 and -2.89607677e+00 
+Orbital 3 error and residual:   -6.306e-04 and 2.426e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892816  -1.33892651]
+Orbital 3 kinetic and potential: 2.55642092e+00 and -2.89534908e+00 
+Orbital 3 error and residual:   -6.307e-04 and 1.767e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892827  -1.33892651]
+Orbital 3 kinetic and potential: 2.55589525e+00 and -2.89482352e+00 
+Orbital 3 error and residual:   -6.309e-04 and 1.299e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892833  -1.33892651]
+Orbital 3 kinetic and potential: 2.55551432e+00 and -2.89444265e+00 
+Orbital 3 error and residual:   -6.309e-04 and 9.605e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892837  -1.33892651]
+Orbital 3 kinetic and potential: 2.55523753e+00 and -2.89416590e+00 
+Orbital 3 error and residual:   -6.310e-04 and 7.125e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.3389284   -1.33892651]
+Orbital 3 kinetic and potential: 2.55503597e+00 and -2.89396437e+00 
+Orbital 3 error and residual:   -6.310e-04 and 5.298e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892841  -1.33892651]
+Orbital 3 kinetic and potential: 2.55488893e+00 and -2.89381734e+00 
+Orbital 3 error and residual:   -6.310e-04 and 3.945e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892842  -1.33892651]
+Orbital 3 kinetic and potential: 2.55478148e+00 and -2.89370990e+00 
+Orbital 3 error and residual:   -6.310e-04 and 2.940e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892843  -1.33892651]
+Orbital 3 kinetic and potential: 2.55470285e+00 and -2.89363128e+00 
+Orbital 3 error and residual:   -6.310e-04 and 2.193e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892844  -1.33892651]
+Orbital 3 kinetic and potential: 2.55464523e+00 and -2.89357366e+00 
+Orbital 3 error and residual:   -6.310e-04 and 1.637e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892844  -1.33892651]
+Orbital 3 kinetic and potential: 2.55460295e+00 and -2.89353139e+00 
+Orbital 3 error and residual:   -6.310e-04 and 1.222e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892844  -1.33892651]
+Orbital 3 kinetic and potential: 2.55457191e+00 and -2.89350035e+00 
+Orbital 3 error and residual:   -6.310e-04 and 9.124e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892844  -1.33892651]
+Orbital 3 kinetic and potential: 2.55454908e+00 and -2.89347752e+00 
+Orbital 3 error and residual:   -6.310e-04 and 6.814e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892844  -1.33892651]
+Orbital 3 kinetic and potential: 2.55453228e+00 and -2.89346072e+00 
+Orbital 3 error and residual:   -6.310e-04 and 5.090e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55451991e+00 and -2.89344835e+00 
+Orbital 3 error and residual:   -6.310e-04 and 3.803e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55451078e+00 and -2.89343923e+00 
+Orbital 3 error and residual:   -6.310e-04 and 2.841e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55450405e+00 and -2.89343250e+00 
+Orbital 3 error and residual:   -6.310e-04 and 2.123e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55449909e+00 and -2.89342753e+00 
+Orbital 3 error and residual:   -6.310e-04 and 1.586e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55449542e+00 and -2.89342386e+00 
+Orbital 3 error and residual:   -6.310e-04 and 1.185e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55449270e+00 and -2.89342115e+00 
+Orbital 3 error and residual:   -6.310e-04 and 8.859e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55449070e+00 and -2.89341915e+00 
+Orbital 3 error and residual:   -6.310e-04 and 6.621e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448921e+00 and -2.89341766e+00 
+Orbital 3 error and residual:   -6.310e-04 and 4.948e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448811e+00 and -2.89341656e+00 
+Orbital 3 error and residual:   -6.310e-04 and 3.698e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448730e+00 and -2.89341575e+00 
+Orbital 3 error and residual:   -6.310e-04 and 2.764e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448670e+00 and -2.89341514e+00 
+Orbital 3 error and residual:   -6.310e-04 and 2.066e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448625e+00 and -2.89341470e+00 
+Orbital 3 error and residual:   -6.310e-04 and 1.544e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448592e+00 and -2.89341437e+00 
+Orbital 3 error and residual:   -6.310e-04 and 1.154e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448567e+00 and -2.89341412e+00 
+Orbital 3 error and residual:   -6.310e-04 and 8.626e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448549e+00 and -2.89341394e+00 
+Orbital 3 error and residual:   -6.310e-04 and 6.448e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448535e+00 and -2.89341380e+00 
+Orbital 3 error and residual:   -6.310e-04 and 4.820e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448525e+00 and -2.89341370e+00 
+Orbital 3 error and residual:   -6.310e-04 and 3.603e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448518e+00 and -2.89341363e+00 
+Orbital 3 error and residual:   -6.310e-04 and 2.693e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448512e+00 and -2.89341357e+00 
+Orbital 3 error and residual:   -6.310e-04 and 2.013e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448508e+00 and -2.89341353e+00 
+Orbital 3 error and residual:   -6.310e-04 and 1.505e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448505e+00 and -2.89341350e+00 
+Orbital 3 error and residual:   -6.310e-04 and 1.125e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892651]
+Orbital 3 kinetic and potential: 2.55448503e+00 and -2.89341348e+00 
+Orbital 3 error and residual:   -6.310e-04 and 8.409e-09
+Used 37 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892763]
+Orbital 4 kinetic and potential: 2.55816146e+00 and -2.89708909e+00 
+Orbital 4 error and residual:   -6.302e-04 and 3.389e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892797]
+Orbital 4 kinetic and potential: 2.55714880e+00 and -2.89607677e+00 
+Orbital 4 error and residual:   -6.306e-04 and 2.426e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892816]
+Orbital 4 kinetic and potential: 2.55642092e+00 and -2.89534908e+00 
+Orbital 4 error and residual:   -6.307e-04 and 1.767e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892827]
+Orbital 4 kinetic and potential: 2.55589525e+00 and -2.89482352e+00 
+Orbital 4 error and residual:   -6.309e-04 and 1.299e-04
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892833]
+Orbital 4 kinetic and potential: 2.55551432e+00 and -2.89444265e+00 
+Orbital 4 error and residual:   -6.309e-04 and 9.605e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892837]
+Orbital 4 kinetic and potential: 2.55523753e+00 and -2.89416590e+00 
+Orbital 4 error and residual:   -6.310e-04 and 7.125e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.3389284 ]
+Orbital 4 kinetic and potential: 2.55503597e+00 and -2.89396437e+00 
+Orbital 4 error and residual:   -6.310e-04 and 5.298e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892841]
+Orbital 4 kinetic and potential: 2.55488893e+00 and -2.89381734e+00 
+Orbital 4 error and residual:   -6.310e-04 and 3.945e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892842]
+Orbital 4 kinetic and potential: 2.55478148e+00 and -2.89370990e+00 
+Orbital 4 error and residual:   -6.310e-04 and 2.940e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892843]
+Orbital 4 kinetic and potential: 2.55470285e+00 and -2.89363128e+00 
+Orbital 4 error and residual:   -6.310e-04 and 2.193e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892844]
+Orbital 4 kinetic and potential: 2.55464523e+00 and -2.89357366e+00 
+Orbital 4 error and residual:   -6.310e-04 and 1.637e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892844]
+Orbital 4 kinetic and potential: 2.55460295e+00 and -2.89353139e+00 
+Orbital 4 error and residual:   -6.310e-04 and 1.222e-05
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892844]
+Orbital 4 kinetic and potential: 2.55457191e+00 and -2.89350035e+00 
+Orbital 4 error and residual:   -6.310e-04 and 9.124e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892844]
+Orbital 4 kinetic and potential: 2.55454908e+00 and -2.89347752e+00 
+Orbital 4 error and residual:   -6.310e-04 and 6.814e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892844]
+Orbital 4 kinetic and potential: 2.55453228e+00 and -2.89346072e+00 
+Orbital 4 error and residual:   -6.310e-04 and 5.090e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55451991e+00 and -2.89344835e+00 
+Orbital 4 error and residual:   -6.310e-04 and 3.803e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55451078e+00 and -2.89343923e+00 
+Orbital 4 error and residual:   -6.310e-04 and 2.841e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55450405e+00 and -2.89343250e+00 
+Orbital 4 error and residual:   -6.310e-04 and 2.123e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55449909e+00 and -2.89342753e+00 
+Orbital 4 error and residual:   -6.310e-04 and 1.586e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55449542e+00 and -2.89342386e+00 
+Orbital 4 error and residual:   -6.310e-04 and 1.185e-06
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55449270e+00 and -2.89342115e+00 
+Orbital 4 error and residual:   -6.310e-04 and 8.859e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55449070e+00 and -2.89341915e+00 
+Orbital 4 error and residual:   -6.310e-04 and 6.621e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448921e+00 and -2.89341766e+00 
+Orbital 4 error and residual:   -6.310e-04 and 4.948e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448811e+00 and -2.89341656e+00 
+Orbital 4 error and residual:   -6.310e-04 and 3.698e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448730e+00 and -2.89341575e+00 
+Orbital 4 error and residual:   -6.310e-04 and 2.764e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448670e+00 and -2.89341514e+00 
+Orbital 4 error and residual:   -6.310e-04 and 2.066e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448625e+00 and -2.89341470e+00 
+Orbital 4 error and residual:   -6.310e-04 and 1.544e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448592e+00 and -2.89341437e+00 
+Orbital 4 error and residual:   -6.310e-04 and 1.154e-07
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448567e+00 and -2.89341412e+00 
+Orbital 4 error and residual:   -6.310e-04 and 8.626e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448549e+00 and -2.89341394e+00 
+Orbital 4 error and residual:   -6.310e-04 and 6.448e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448535e+00 and -2.89341380e+00 
+Orbital 4 error and residual:   -6.310e-04 and 4.820e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448525e+00 and -2.89341370e+00 
+Orbital 4 error and residual:   -6.310e-04 and 3.603e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448518e+00 and -2.89341363e+00 
+Orbital 4 error and residual:   -6.310e-04 and 2.693e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448512e+00 and -2.89341357e+00 
+Orbital 4 error and residual:   -6.310e-04 and 2.013e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448508e+00 and -2.89341353e+00 
+Orbital 4 error and residual:   -6.310e-04 and 1.505e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448505e+00 and -2.89341350e+00 
+Orbital 4 error and residual:   -6.310e-04 and 1.125e-08
+Using singularity subtraction
+Orbital Energy:            [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Orbital 4 kinetic and potential: 2.55448503e+00 and -2.89341348e+00 
+Orbital 4 error and residual:   -6.310e-04 and 8.409e-09
+Used 37 iterations for orbital 4.
+
+
+Integrated density:  8.00000042124
+Density Residual  0.00187162788834
+Computing Vcoulomb and updating Veff took:    4.6722 seconds. 
+Band energies before Veff update: -40.648274 H, -3.52e-02 H
+Total Energy without computing orbitals energies with new Veff: -74.4979209244 H, -2.8908294193e-02 H
+Orbital energies before recomputing with new Veff:  [-19.77337094  -1.87290914  -1.33892845  -1.33892845  -1.33892845]
+Now recompute orbital energies with new Veff...
+Orbital Energy:            [-19.77355403  -1.8731005   -1.33912185  -1.33912185  -1.33912185]
+Band energies after Veff update: -40.649797 H, -3.67e-02 H
+Orbital Energy Errors after Veff Update:  [-0.01477033 -0.00190085 -0.00082443 -0.00082444 -0.00082444]
+Orbital 0 error: -1.477e-02
+Orbital 1 error: -1.901e-03
+Orbital 2 error: -8.244e-04
+Orbital 3 error: -8.244e-04
+Orbital 4 error: -8.244e-04
+Orbital Energies:  [-19.77355403  -1.8731005   -1.33912185  -1.33912185  -1.33912185]
+Updated V_x:                           -9.6307855587 Hartree
+Updated V_c:                           -0.6073816458 Hartree
+Updated Band Energy:                   -40.6497966570 H, -3.6710357295e-02 H
+Updated Kinetic Energy:                 74.2001431060 H, 8.7877730422e-02 H
+Updated E_x:                           -7.2230891690 H, -3.7595774114e-03 H
+Updated E_c:                           -0.5446824614 H, -1.2978991637e-04 H
+Updated totalElectrostatic:            -140.9318149270 H, -1.1441918427e-01 H
+Total Energy:                          -74.4994434514 H, -3.0430821170e-02 H
+Energy Residual:                        1.431e-05
+Density Residual:                       1.872e-03
+
+
+Setting density residual to min of density residual and energy residual, just for testing purposes
+
+
+
+SCF Count  3
+Working on orbital 0
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731005   -1.33912185  -1.33912185  -1.33912185]
+Orbital 0 kinetic and potential: 2.87906493e+01 and -4.75642042e+01 
+Orbital 0 error and residual:   -1.477e-02 and 3.022e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731005   -1.33912185  -1.33912185  -1.33912185]
+Orbital 0 kinetic and potential: 2.87905718e+01 and -4.75641267e+01 
+Orbital 0 error and residual:   -1.477e-02 and 1.165e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731005   -1.33912185  -1.33912185  -1.33912185]
+Orbital 0 kinetic and potential: 2.87905390e+01 and -4.75640939e+01 
+Orbital 0 error and residual:   -1.477e-02 and 4.682e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731005   -1.33912185  -1.33912185  -1.33912185]
+Orbital 0 kinetic and potential: 2.87905251e+01 and -4.75640800e+01 
+Orbital 0 error and residual:   -1.477e-02 and 1.929e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731005   -1.33912185  -1.33912185  -1.33912185]
+Orbital 0 kinetic and potential: 2.87905191e+01 and -4.75640740e+01 
+Orbital 0 error and residual:   -1.477e-02 and 8.089e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731005   -1.33912185  -1.33912185  -1.33912185]
+Orbital 0 kinetic and potential: 2.87905166e+01 and -4.75640715e+01 
+Orbital 0 error and residual:   -1.477e-02 and 3.430e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731005   -1.33912185  -1.33912185  -1.33912185]
+Orbital 0 kinetic and potential: 2.87905155e+01 and -4.75640704e+01 
+Orbital 0 error and residual:   -1.477e-02 and 1.465e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731005   -1.33912185  -1.33912185  -1.33912185]
+Orbital 0 kinetic and potential: 2.87905150e+01 and -4.75640699e+01 
+Orbital 0 error and residual:   -1.477e-02 and 6.282e-09
+Used 8 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731006   -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20043577e+00 and -4.07353638e+00 
+Orbital 1 error and residual:   -1.901e-03 and 2.431e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731006   -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20051580e+00 and -4.07361639e+00 
+Orbital 1 error and residual:   -1.901e-03 and 1.380e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.8731006   -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20056159e+00 and -4.07366219e+00 
+Orbital 1 error and residual:   -1.901e-03 and 7.924e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20058769e+00 and -4.07368828e+00 
+Orbital 1 error and residual:   -1.901e-03 and 4.579e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20060254e+00 and -4.07370313e+00 
+Orbital 1 error and residual:   -1.901e-03 and 2.654e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20061099e+00 and -4.07371158e+00 
+Orbital 1 error and residual:   -1.901e-03 and 1.540e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20061581e+00 and -4.07371640e+00 
+Orbital 1 error and residual:   -1.901e-03 and 8.949e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20061855e+00 and -4.07371915e+00 
+Orbital 1 error and residual:   -1.901e-03 and 5.201e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20062012e+00 and -4.07372072e+00 
+Orbital 1 error and residual:   -1.901e-03 and 3.022e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20062102e+00 and -4.07372161e+00 
+Orbital 1 error and residual:   -1.901e-03 and 1.757e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20062154e+00 and -4.07372213e+00 
+Orbital 1 error and residual:   -1.901e-03 and 1.021e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20062183e+00 and -4.07372242e+00 
+Orbital 1 error and residual:   -1.901e-03 and 5.931e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20062200e+00 and -4.07372259e+00 
+Orbital 1 error and residual:   -1.901e-03 and 3.446e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20062210e+00 and -4.07372269e+00 
+Orbital 1 error and residual:   -1.901e-03 and 2.001e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20062216e+00 and -4.07372275e+00 
+Orbital 1 error and residual:   -1.901e-03 and 1.162e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912185  -1.33912185  -1.33912185]
+Orbital 1 kinetic and potential: 3.20062219e+00 and -4.07372278e+00 
+Orbital 1 error and residual:   -1.901e-03 and 6.748e-09
+Used 16 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912192  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55463132e+00 and -2.89375324e+00 
+Orbital 2 error and residual:   -8.245e-04 and 3.616e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912192  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55473581e+00 and -2.89385773e+00 
+Orbital 2 error and residual:   -8.245e-04 and 2.571e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912192  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55481097e+00 and -2.89393288e+00 
+Orbital 2 error and residual:   -8.245e-04 and 1.863e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55486529e+00 and -2.89398720e+00 
+Orbital 2 error and residual:   -8.245e-04 and 1.366e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55490469e+00 and -2.89402660e+00 
+Orbital 2 error and residual:   -8.245e-04 and 1.007e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55493335e+00 and -2.89405526e+00 
+Orbital 2 error and residual:   -8.245e-04 and 7.462e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55495424e+00 and -2.89407615e+00 
+Orbital 2 error and residual:   -8.245e-04 and 5.542e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55496949e+00 and -2.89409139e+00 
+Orbital 2 error and residual:   -8.245e-04 and 4.123e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55498063e+00 and -2.89410254e+00 
+Orbital 2 error and residual:   -8.245e-04 and 3.071e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55498880e+00 and -2.89411070e+00 
+Orbital 2 error and residual:   -8.245e-04 and 2.290e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55499478e+00 and -2.89411669e+00 
+Orbital 2 error and residual:   -8.245e-04 and 1.708e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55499917e+00 and -2.89412108e+00 
+Orbital 2 error and residual:   -8.245e-04 and 1.275e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55500240e+00 and -2.89412431e+00 
+Orbital 2 error and residual:   -8.245e-04 and 9.517e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55500477e+00 and -2.89412668e+00 
+Orbital 2 error and residual:   -8.245e-04 and 7.106e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55500652e+00 and -2.89412843e+00 
+Orbital 2 error and residual:   -8.245e-04 and 5.307e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55500781e+00 and -2.89412971e+00 
+Orbital 2 error and residual:   -8.245e-04 and 3.964e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55500876e+00 and -2.89413066e+00 
+Orbital 2 error and residual:   -8.245e-04 and 2.961e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55500945e+00 and -2.89413136e+00 
+Orbital 2 error and residual:   -8.245e-04 and 2.212e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55500997e+00 and -2.89413188e+00 
+Orbital 2 error and residual:   -8.245e-04 and 1.653e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55501035e+00 and -2.89413226e+00 
+Orbital 2 error and residual:   -8.245e-04 and 1.235e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55501064e+00 and -2.89413254e+00 
+Orbital 2 error and residual:   -8.245e-04 and 9.228e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55501084e+00 and -2.89413275e+00 
+Orbital 2 error and residual:   -8.245e-04 and 6.896e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55501100e+00 and -2.89413290e+00 
+Orbital 2 error and residual:   -8.245e-04 and 5.153e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55501111e+00 and -2.89413302e+00 
+Orbital 2 error and residual:   -8.245e-04 and 3.851e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55501120e+00 and -2.89413310e+00 
+Orbital 2 error and residual:   -8.245e-04 and 2.878e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55501126e+00 and -2.89413317e+00 
+Orbital 2 error and residual:   -8.245e-04 and 2.151e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55501131e+00 and -2.89413321e+00 
+Orbital 2 error and residual:   -8.245e-04 and 1.607e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55501134e+00 and -2.89413325e+00 
+Orbital 2 error and residual:   -8.245e-04 and 1.201e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912185  -1.33912185]
+Orbital 2 kinetic and potential: 2.55501137e+00 and -2.89413327e+00 
+Orbital 2 error and residual:   -8.245e-04 and 8.977e-09
+Used 29 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912192  -1.33912185]
+Orbital 3 kinetic and potential: 2.55463132e+00 and -2.89375324e+00 
+Orbital 3 error and residual:   -8.245e-04 and 3.616e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912192  -1.33912185]
+Orbital 3 kinetic and potential: 2.55473581e+00 and -2.89385773e+00 
+Orbital 3 error and residual:   -8.245e-04 and 2.571e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912192  -1.33912185]
+Orbital 3 kinetic and potential: 2.55481097e+00 and -2.89393288e+00 
+Orbital 3 error and residual:   -8.245e-04 and 1.863e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55486529e+00 and -2.89398720e+00 
+Orbital 3 error and residual:   -8.245e-04 and 1.366e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55490469e+00 and -2.89402661e+00 
+Orbital 3 error and residual:   -8.245e-04 and 1.007e-05
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55493335e+00 and -2.89405526e+00 
+Orbital 3 error and residual:   -8.245e-04 and 7.462e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55495424e+00 and -2.89407615e+00 
+Orbital 3 error and residual:   -8.245e-04 and 5.542e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55496949e+00 and -2.89409139e+00 
+Orbital 3 error and residual:   -8.245e-04 and 4.123e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55498064e+00 and -2.89410254e+00 
+Orbital 3 error and residual:   -8.245e-04 and 3.071e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55498880e+00 and -2.89411071e+00 
+Orbital 3 error and residual:   -8.245e-04 and 2.290e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55499478e+00 and -2.89411669e+00 
+Orbital 3 error and residual:   -8.245e-04 and 1.708e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55499917e+00 and -2.89412108e+00 
+Orbital 3 error and residual:   -8.245e-04 and 1.275e-06
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55500240e+00 and -2.89412431e+00 
+Orbital 3 error and residual:   -8.245e-04 and 9.517e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55500477e+00 and -2.89412668e+00 
+Orbital 3 error and residual:   -8.245e-04 and 7.106e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55500652e+00 and -2.89412843e+00 
+Orbital 3 error and residual:   -8.245e-04 and 5.307e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55500781e+00 and -2.89412971e+00 
+Orbital 3 error and residual:   -8.245e-04 and 3.964e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55500876e+00 and -2.89413066e+00 
+Orbital 3 error and residual:   -8.245e-04 and 2.961e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55500946e+00 and -2.89413136e+00 
+Orbital 3 error and residual:   -8.245e-04 and 2.212e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55500997e+00 and -2.89413188e+00 
+Orbital 3 error and residual:   -8.245e-04 and 1.653e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55501035e+00 and -2.89413226e+00 
+Orbital 3 error and residual:   -8.245e-04 and 1.235e-07
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55501064e+00 and -2.89413254e+00 
+Orbital 3 error and residual:   -8.245e-04 and 9.228e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55501084e+00 and -2.89413275e+00 
+Orbital 3 error and residual:   -8.245e-04 and 6.896e-08
+Using singularity subtraction
+Orbital Energy:            [-19.7735549   -1.87310059  -1.33912191  -1.33912191  -1.33912185]
+Orbital 3 kinetic and potential: 2.55501100e+00 and -2.89413290e+00 
+Orbital 3 error and residual:   -8.245e-04 and 5.153e-08
+Using singularity subtraction

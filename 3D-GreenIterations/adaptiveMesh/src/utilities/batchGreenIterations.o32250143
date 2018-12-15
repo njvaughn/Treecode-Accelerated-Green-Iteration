@@ -1,0 +1,285 @@
+Running on
+      1 nyx7506
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/CO_with_anderson/LW5_1000o5_plots_gradient
+======================================================================
+======================================================================
+====================================================================== 
+
+Hard coding nOrbitals to 7
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/CO_with_anderson/LW5_1000o5_gradient_looseInitially.csv', 14, 7, -112.471443237994, -11.997011069615391, -0.94214407530225852, -62.898682441673358, -0.5]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Gauge shift  -0.5
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 6 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  708500
+max density:  306.704219679
+Initializing density EXTERNALLY took 2.232 seconds.
+Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 6 located at (x, y, z) = (-1.066,  0.000,  0.000)
+Orbital index = 5
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Initializing orbitals EXTERNAL to Tree Structure took 16.895 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       6529 
+Total Number of Leaf Cells:  5668 
+Total Number of Gridpoints:  708500 
+Minimum Depth                3 levels 
+Maximum Depth:               13 levels 
+Cell Order:                  5 
+Construction time:           50.9 seconds.
+Closest gridpoint to origin:  [-0.0065205567959327748, -0.0076474193288822434, -0.0076474193288822434]
+For a distance of:  0.012628685826819376
+Part of a cell centered at:  [-0.13322624999999999, -0.15625, -0.15625]
+Assuming this is the carbon monoxide test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    708500
+Threads per block:    512
+Blocks per grid:      1384
+[-62.898682441673358, 111.85061770418731, -11.997011069615391, -0.94214407530225852, -211.38290579726365, -112.471443237994]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    73.2051 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-19.36504277  -1.57431647  -1.22279589  -0.95679593  -0.95679593
+ -10.49594242  -1.21568216]
+Sorted eigenvalues:  [-19.36504277 -10.49594242  -1.57431647  -1.21568216  -1.22279589
+  -0.95679593  -0.95679593]
+New order:  [0, 5, 1, 6, 2, 3, 4]
+Orbital energies after initial sort: 
+ [-19.36504277 -10.49594242  -1.57431647  -1.21568216  -1.22279589
+  -0.95679593  -0.95679593]
+Kinetic Errors:    [  7.44832160e-04  -2.55602289e+01  -2.62042126e+01  -2.62042099e+01
+  -2.62042099e+01  -1.30421487e+01  -2.71095564e+01]
+Potential Errors:  [ -0.10700132  43.24469875  44.24020296  44.50620023  44.50620023
+  21.80499258  45.15266057]
+Computing band energy.  Current orbital energies are:  [-19.36504277 -10.49594242  -1.57431647  -1.21568216  -1.22279589
+  -0.95679593  -0.95679593]
+Electrostatic Energies:
+Hartree:          74.9475212918
+External:         -308.649576819
+Nuclear-Nuclear:  22.5180848369
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-19.36504277 -10.49594242  -1.57431647  -1.21568216  -1.22279589
+  -0.95679593  -0.95679593]
+Orbital Energy Errors after initialization:  [-0.14589315 -0.08884386  0.00099063 -0.19414732 -0.27724128 -0.01124159
+ -0.12165376]
+Updated V_x:                           -15.8230138132 Hartree
+Updated V_c:                           -1.0434269284 Hartree
+Updated Band Energy:                   -64.5747431011 H, -1.6760606595e+00 H
+Updated Kinetic Energy:                 111.0462318756 H, -8.0438582857e-01 H
+Updated E_x:                           -11.8672603599 H, 1.2975070971e-01 H
+Updated E_c:                           -0.9346719069 H, 7.4721684521e-03 H
+Updated totalElectrostatic:            -211.1839706900 H, 1.9893510726e-01 H
+Total Energy:                          -112.9396710811 H, -4.6822784315e-01 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -19.365042768
+L2 norm of wavefunction residual (H*psi-lambda*psi):    14.6763155548
+Energy Eigenvalue:  -10.495942419
+L2 norm of wavefunction residual (H*psi-lambda*psi):    6.98327045576
+Energy Eigenvalue:  -1.57431646799
+L2 norm of wavefunction residual (H*psi-lambda*psi):    3.50487945057
+Energy Eigenvalue:  -1.21568215641
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.93322671754
+Energy Eigenvalue:  -1.22279588807
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.17276766305
+Energy Eigenvalue:  -0.95679592552
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.195573086384
+Energy Eigenvalue:  -0.95679592552
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.195573086384
+
+
+
+SCF Count  1
+Orbital Energies:  [-19.36504277 -10.49594242  -1.57431647  -1.21568216  -1.22279589
+  -0.95679593  -0.95679593]
+Working on orbital 0
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.00005846343
+eigenvalueHistory:  -19.366306800033136
+Orbital energy after Harrison update:  -19.3663068
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 0 error and residual:   -1.472e-01 and 9.723e-04
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.00000121273
+eigenvalueHistory:  [-19.3663068  -19.36632146]
+Orbital energy after Harrison update:  -19.3663214619
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 0 error and residual:   -1.472e-01 and 3.085e-04
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  0.999999705305
+eigenvalueHistory:  [-19.3663068  -19.36632146 -19.36632336]
+Orbital energy after Harrison update:  -19.3663233593
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 0 error and residual:   -1.472e-01 and 1.113e-04
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  0.999999705684
+eigenvalueHistory:  [-19.3663068  -19.36632146 -19.36632336 -19.36632366]
+Orbital energy after Harrison update:  -19.3663236613
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 0 error and residual:   -1.472e-01 and 4.284e-05
+
+
+Working on orbital 1
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  -10.490325944638204
+Orbital energy after Harrison update:  -10.4903259446
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 1 error and residual:   -8.323e-02 and 2.140e-03
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  [-10.49032594 -10.48588968]
+Orbital energy after Harrison update:  -10.4858896769
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 1 error and residual:   -7.879e-02 and 7.114e-04
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  [-10.49032594 -10.48588968 -10.48233011]
+Orbital energy after Harrison update:  -10.4823301113
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 1 error and residual:   -7.523e-02 and 3.087e-04
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  [-10.49032594 -10.48588968 -10.48233011 -10.47945442]
+Orbital energy after Harrison update:  -10.4794544249
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 1 error and residual:   -7.236e-02 and 1.822e-04
+
+
+Working on orbital 2
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  -1.4996447830273636
+Orbital energy after Harrison update:  -1.49964478303
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   7.566e-02 and 1.389e-01
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  [-1.49964478 -1.4303613 ]
+Orbital energy after Harrison update:  -1.43036129897
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   1.449e-01 and 6.186e-02
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  [-1.49964478 -1.4303613  -1.36352111]
+Orbital energy after Harrison update:  -1.3635211064
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   2.118e-01 and 4.806e-02
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  [-1.49964478 -1.4303613  -1.36352111 -1.30117966]
+Orbital energy after Harrison update:  -1.30117965713
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 2 error and residual:   2.741e-01 and 3.913e-02
+
+
+Working on orbital 3
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  -0.6760013107192909
+Orbital energy after Harrison update:  -0.676001310719
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   3.455e-01 and 6.245e-01
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  [-0.67600131 -0.56135629]
+Orbital energy after Harrison update:  -0.56135628799
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   4.602e-01 and 9.873e-02
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  [-0.67600131 -0.56135629 -0.43978138]
+Orbital energy after Harrison update:  -0.439781376286
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   5.818e-01 and 8.588e-02
+
+
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  [-0.67600131 -0.56135629 -0.43978138 -0.30025771]
+Orbital energy after Harrison update:  -0.300257714651
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 3 error and residual:   7.213e-01 and 9.398e-02
+
+
+Working on orbital 4
+Using singularity subtraction
+Orthonormalizing phiNew.
+Norm of psiNew =  1.0
+eigenvalueHistory:  -1.1068881789816198
+Orbital energy after Harrison update:  -1.10688817898
+Copying phiNew into Phi array after the energy update and normalization.
+Orbital 4 error and residual:   -1.613e-01 and 5.487e-01
+
+
+Using singularity subtraction

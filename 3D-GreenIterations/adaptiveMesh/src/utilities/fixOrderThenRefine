@@ -1,0 +1,1720 @@
+Running on
+      1 nyx7506
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  True
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/berylliumAtom.csv', '/home/njvaughn/Be_gradientFree_testing/LW5_500_order4_gradientFree.csv', 4, 2, -14.446201118081863, -2.2903921833555341, -0.22343205529440757, -8.1232305760491457, -0.5]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/berylliumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z4/singleAtomData/
+Atom with Z=4 will get 2 atomic orbitals initialized.
+Gauge shift  -0.5
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  267000
+Initializing orbitals for atom Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       2441 
+Total Number of Leaf Cells:  2136 
+Total Number of Gridpoints:  267000 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  5 
+Construction time:           33.5 seconds.
+Closest gridpoint to origin:  [-0.00047796370805514021, -0.00047796370805514021, -0.00047796370805514021]
+For a distance of:  0.0008278574265255207
+Part of a cell centered at:  [-0.009765625, -0.009765625, -0.009765625]
+Assuming this is the Beryllium test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    267000
+Threads per block:    512
+Blocks per grid:      522
+[-8.1232305760491457, 14.309060170370618, -2.2903921833555341, -0.22343205529440757, -26.241437049802535, -14.446201118081863]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    10.5534 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35573131 -0.70598597]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Kinetic Errors:    [-22.1689605  -28.18880164]
+Potential Errors:  [ 37.07201548  46.74160195]
+Computing band energy.  Current orbital energies are:  [-4.35573131 -0.70598597]
+Electrostatic Energies:
+Hartree:          7.115348306
+External:         -33.3577242909
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:                      -4.3557313074 H, -0.7059859712 H
+Orbital Energy Errors after initialization:  [ -1.15889919e-04   1.38992765e-05]
+Updated V_x:                           -3.0538923843 Hartree
+Updated V_c:                           -0.2522074701 Hartree
+Updated Band Energy:                   -8.1234345573 H, -2.0398129030e-04 H
+Updated Kinetic Energy:                 14.3096929760 H, 6.3280558762e-04 H
+Updated E_x:                           -2.2904192882 H, -2.7104852048e-05 H
+Updated E_c:                           -0.2234348138 H, -2.7584885647e-06 H
+Updated totalElectrostatic:            -26.2423759849 H, -9.3893510278e-04 H
+Total Energy:                          -14.4465371109 H, -3.3599285577e-04 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -4.35573130744
+L2 norm of wavefunction residual (H*psi-lambda*psi):    3.57846294052
+Energy Eigenvalue:  -0.705985971232
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.734236274979
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35573131 -0.70598597]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000341766
+Orbital energy after Harrison update:  -4.35608032554
+Gradient Energy:       -4.35573130744
+Gradient-free energy:  -4.35608032554
+Discrepancy:           0.000349018106433
+stored orbital energy:  -4.35608032554
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608032554
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.13117085707
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              9.69003423305e-05
+Linf Error:            -0.0355305060752
+LinfRel Error:         0.00864162888216
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.649e-04 and 9.690e-05
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35545151 -0.70598597]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999973963029
+Orbital energy after Harrison update:  -4.35608067171
+Gradient Energy:       -4.35545151297
+Gradient-free energy:  -4.35608067171
+Discrepancy:           0.000629158741428
+stored orbital energy:  -4.35608067171
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608067171
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.16033049577
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000108995693266
+Linf Error:            -0.0369098665855
+LinfRel Error:         0.00897410236292
+Located at:            0.000477963708055 0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.653e-04 and 3.092e-05
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546675 -0.70598597]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999988441598
+Orbital energy after Harrison update:  -4.35608068553
+Gradient Energy:       -4.35546675447
+Gradient-free energy:  -4.35608068553
+Discrepancy:           0.000613931051045
+stored orbital energy:  -4.35608068553
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608068553
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.16129991393
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000116396511571
+Linf Error:            -0.0370993872243
+LinfRel Error:         0.00901976595243
+Located at:            0.000477963708055 0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.653e-04 and 1.402e-05
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546678 -0.70598597]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999994905301
+Orbital energy after Harrison update:  -4.35608068805
+Gradient Energy:       -4.35546677894
+Gradient-free energy:  -4.35608068805
+Discrepancy:           0.000613909111726
+stored orbital energy:  -4.35608068805
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608068805
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.16142824713
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000120082549491
+Linf Error:            -0.03716355333
+LinfRel Error:         0.00903522534521
+Located at:            0.000477963708055 -0.000477963708055 0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.653e-04 and 6.288e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546678 -0.70598597]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999997761571
+Orbital energy after Harrison update:  -4.35608068853
+Gradient Energy:       -4.35546678482
+Gradient-free energy:  -4.35608068853
+Discrepancy:           0.000613903704251
+stored orbital energy:  -4.35608068853
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608068853
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.16147262631
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000121787128167
+Linf Error:            -0.0371899952715
+LinfRel Error:         0.00904159580125
+Located at:            -0.000477963708055 -0.000477963708055 0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.653e-04 and 2.797e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70598597]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999999018431
+Orbital energy after Harrison update:  -4.35608068862
+Gradient Energy:       -4.35546678673
+Gradient-free energy:  -4.35608068862
+Discrepancy:           0.000613901889129
+stored orbital energy:  -4.35608068862
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608068862
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.1614910765
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000122552613018
+Linf Error:            -0.0372013177489
+LinfRel Error:         0.00904432361463
+Located at:            0.000477963708055 0.000477963708055 0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.653e-04 and 1.236e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70598597]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999999570086
+Orbital energy after Harrison update:  -4.35608068864
+Gradient Energy:       -4.35546678745
+Gradient-free energy:  -4.35608068864
+Discrepancy:           0.000613901186692
+stored orbital energy:  -4.35608068864
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608068864
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.16149900259
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000122891864596
+Linf Error:            -0.0372062214671
+LinfRel Error:         0.00904550501468
+Located at:            0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.653e-04 and 5.444e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70598597]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.99999981184
+Orbital energy after Harrison update:  -4.35608068864
+Gradient Energy:       -4.35546678774
+Gradient-free energy:  -4.35608068864
+Discrepancy:           0.000613900905071
+stored orbital energy:  -4.35608068864
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608068864
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.16150243202
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000123041254776
+Linf Error:            -0.0372083548304
+LinfRel Error:         0.00904601898208
+Located at:            0.000477963708055 0.000477963708055 0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.653e-04 and 2.391e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70598597]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999999917685
+Orbital energy after Harrison update:  -4.35608068864
+Gradient Energy:       -4.35546678785
+Gradient-free energy:  -4.35608068864
+Discrepancy:           0.000613900787576
+stored orbital energy:  -4.35608068864
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608068864
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.16150393025
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000123106824093
+Linf Error:            -0.0372092849969
+LinfRel Error:         0.00904624307651
+Located at:            0.000477963708055 -0.000477963708055 0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.653e-04 and 1.048e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70598597]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999999963999
+Orbital energy after Harrison update:  -4.35608068864
+Gradient Energy:       -4.3554667879
+Gradient-free energy:  -4.35608068864
+Discrepancy:           0.000613900738685
+stored orbital energy:  -4.35608068864
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608068864
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.1615045863
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              0.000123135553394
+Linf Error:            -0.0372096912815
+LinfRel Error:         0.00904634095804
+Located at:            -0.000477963708055 -0.000477963708055 -0.000477963708055
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   -4.653e-04 and 4.591e-08
+
+
+Used 10 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70598598]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00004043106
+Orbital energy after Harrison update:  -0.706015544266
+Gradient Energy:       -0.705985975079
+Gradient-free energy:  -0.706015544266
+Discrepancy:           2.95691869017e-05
+stored orbital energy:  -0.706015544266
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.706015544266
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.98523952907
+Orbital 1 error and residual:   -1.567e-05 and 3.015e-04
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593135]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000682442
+Orbital energy after Harrison update:  -0.70601561236
+Gradient Energy:       -0.705931354103
+Gradient-free energy:  -0.70601561236
+Discrepancy:           8.42582569448e-05
+stored orbital energy:  -0.70601561236
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.70601561236
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989098366525
+Orbital 1 error and residual:   -1.574e-05 and 4.380e-05
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593613]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000747311
+Orbital energy after Harrison update:  -0.70601561338
+Gradient Energy:       -0.705936131861
+Gradient-free energy:  -0.70601561338
+Discrepancy:           7.94815184018e-05
+stored orbital energy:  -0.70601561338
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.70601561338
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.98921047242
+Orbital 1 error and residual:   -1.574e-05 and 1.517e-05
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593615]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000792424
+Orbital energy after Harrison update:  -0.706015613354
+Gradient Energy:       -0.705936152611
+Gradient-free energy:  -0.706015613354
+Discrepancy:           7.94607426624e-05
+stored orbital energy:  -0.706015613354
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.706015613354
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989226270702
+Orbital 1 error and residual:   -1.574e-05 and 7.016e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593617]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000819857
+Orbital energy after Harrison update:  -0.706015613286
+Gradient Energy:       -0.705936165843
+Gradient-free energy:  -0.706015613286
+Discrepancy:           7.94474422798e-05
+stored orbital energy:  -0.706015613286
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.706015613286
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989232409126
+Orbital 1 error and residual:   -1.574e-05 and 3.712e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593617]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.000008364
+Orbital energy after Harrison update:  -0.70601561324
+Gradient Energy:       -0.705936166763
+Gradient-free energy:  -0.70601561324
+Discrepancy:           7.94464774072e-05
+stored orbital energy:  -0.70601561324
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.70601561324
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989235342046
+Orbital 1 error and residual:   -1.574e-05 and 2.121e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593617]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000846416
+Orbital energy after Harrison update:  -0.706015613214
+Gradient Energy:       -0.705936167131
+Gradient-free energy:  -0.706015613214
+Discrepancy:           7.94460829895e-05
+stored orbital energy:  -0.706015613214
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.706015613214
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989236854395
+Orbital 1 error and residual:   -1.574e-05 and 1.276e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593617]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000852545
+Orbital energy after Harrison update:  -0.706015613198
+Gradient Energy:       -0.705936167133
+Gradient-free energy:  -0.706015613198
+Discrepancy:           7.94460651999e-05
+stored orbital energy:  -0.706015613198
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.706015613198
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989237680395
+Orbital 1 error and residual:   -1.574e-05 and 7.985e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593617]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000856351
+Orbital energy after Harrison update:  -0.706015613189
+Gradient Energy:       -0.705936167116
+Gradient-free energy:  -0.706015613189
+Discrepancy:           7.94460726725e-05
+stored orbital energy:  -0.706015613189
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.706015613189
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989238149039
+Orbital 1 error and residual:   -1.574e-05 and 5.164e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593617]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000858752
+Orbital energy after Harrison update:  -0.706015613183
+Gradient Energy:       -0.705936167087
+Gradient-free energy:  -0.706015613183
+Discrepancy:           7.94460959119e-05
+stored orbital energy:  -0.706015613183
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.706015613183
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989238425262
+Orbital 1 error and residual:   -1.574e-05 and 3.433e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593617]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000860293
+Orbital energy after Harrison update:  -0.70601561318
+Gradient Energy:       -0.705936167065
+Gradient-free energy:  -0.70601561318
+Discrepancy:           7.94461147605e-05
+stored orbital energy:  -0.70601561318
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.70601561318
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989238602576
+Orbital 1 error and residual:   -1.574e-05 and 2.334e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593617]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.000008613
+Orbital energy after Harrison update:  -0.706015613178
+Gradient Energy:       -0.705936167048
+Gradient-free energy:  -0.706015613178
+Discrepancy:           7.94461300557e-05
+stored orbital energy:  -0.706015613178
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.706015613178
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989238712251
+Orbital 1 error and residual:   -1.574e-05 and 1.615e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593617]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000861969
+Orbital energy after Harrison update:  -0.706015613177
+Gradient Energy:       -0.705936167036
+Gradient-free energy:  -0.706015613177
+Discrepancy:           7.94461408893e-05
+stored orbital energy:  -0.706015613177
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.706015613177
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989238787391
+Orbital 1 error and residual:   -1.574e-05 and 1.133e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35546679 -0.70593617]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000862419
+Orbital energy after Harrison update:  -0.706015613176
+Gradient Energy:       -0.705936167027
+Gradient-free energy:  -0.706015613176
+Discrepancy:           7.94461489486e-05
+stored orbital energy:  -0.706015613176
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.706015613176
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989238833975
+Orbital 1 error and residual:   -1.574e-05 and 8.027e-08
+
+
+Used 14 iterations for orbital 1.
+
+
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35608068864
+L2 norm of wavefunction residual (H*psi-lambda*psi):    5.1615045863
+Energy Eigenvalue:  -0.706015613176
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.989238833975
+Integrated density:  4.00003572271
+Density Residual  0.000177736484432
+Computing Vcoulomb and updating Veff took:    11.6920 seconds. 
+Computing band energy.  Current orbital energies are:  [-4.35608069 -0.70601561]
+Electrostatic Energies:
+Hartree:          7.11542450908
+External:         -33.3585340383
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -8.124193 H, -9.62e-04 H
+Orbital Energy Errors after Veff Update:  [ -4.65271124e-04  -1.57426667e-05]
+Orbital 0 error: -4.653e-04
+Orbital 1 error: -1.574e-05
+Orbital Energies:                      -4.3560806886 H, -0.7060156132 H
+Updated V_x:                           -3.0539436658 Hartree
+Updated V_c:                           -0.2522077986 Hartree
+Updated Band Energy:                   -8.1241926036 H, -9.6202758581e-04 H
+Updated Kinetic Energy:                 14.3096438809 H, 5.8371055177e-04 H
+Updated E_x:                           -2.2904577494 H, -6.5566007665e-05 H
+Updated E_c:                           -0.2234351808 H, -3.1254758592e-06 H
+Updated totalElectrostatic:            -26.2431095293 H, -1.6724794602e-03 H
+Total Energy:                          -14.4473585785 H, -1.1574603920e-03 H
+Energy Residual:                        1.345e+01
+Density Residual:                       1.777e-04
+
+
+Setting density residual to -1 to exit after the first SCF
+
+Convergence to a tolerance of 0.000001 took 2 iterations
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  True
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/berylliumAtom.csv', '/home/njvaughn/Be_gradientFree_testing/LW5_500_order4_gradientFree.csv', 4, 2, -14.446201118081863, -2.2903921833555341, -0.22343205529440757, -8.1232305760491457, -0.5]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/berylliumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z4/singleAtomData/
+Atom with Z=4 will get 2 atomic orbitals initialized.
+Gauge shift  -0.5
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  666000
+Initializing orbitals for atom Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.50e+03 
+Total Number of Cells:       6089 
+Total Number of Leaf Cells:  5328 
+Total Number of Gridpoints:  666000 
+Minimum Depth                3 levels 
+Maximum Depth:               13 levels 
+Cell Order:                  5 
+Construction time:           83.3 seconds.
+Closest gridpoint to origin:  [-0.00011949092701378505, -0.00011949092701378505, -0.00011949092701378505]
+For a distance of:  0.00020696435663138018
+Part of a cell centered at:  [-0.00244140625, -0.00244140625, -0.00244140625]
+Assuming this is the Beryllium test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    666000
+Threads per block:    512
+Blocks per grid:      1301
+[-8.1232305760491457, 14.309060170370618, -2.2903921833555341, -0.22343205529440757, -26.241437049802535, -14.446201118081863]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    64.0373 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35554785 -0.70598077]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Kinetic Errors:    [-22.16915062 -28.18881446]
+Potential Errors:  [ 37.07238906  46.74161997]
+Computing band energy.  Current orbital energies are:  [-4.35554785 -0.70598077]
+Electrostatic Energies:
+Hartree:          7.11535517487
+External:         -33.3569617087
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:                      -4.3555478478 H, -0.7059807703 H
+Orbital Energy Errors after initialization:  [  6.75697586e-05   1.91001738e-05]
+Updated V_x:                           -3.0538927096 Hartree
+Updated V_c:                           -0.2522073434 Hartree
+Updated Band Energy:                   -8.1230572362 H, 1.7333986011e-04 H
+Updated Kinetic Energy:                 14.3092941758 H, 2.3400542473e-04 H
+Updated E_x:                           -2.2904195322 H, -2.7348817140e-05 H
+Updated E_c:                           -0.2234347350 H, -2.6797506715e-06 H
+Updated totalElectrostatic:            -26.2416065339 H, -1.6948404778e-04 H
+Total Energy:                          -14.4461666253 H, 3.4492809142e-05 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -4.35554784776
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.91736578206
+Energy Eigenvalue:  -0.705980770335
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.393375003463
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35554785 -0.70598077]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000430539
+Orbital energy after Harrison update:  -4.35560759447
+Gradient Energy:       -4.35554784776
+Gradient-free energy:  -4.35560759447
+Discrepancy:           5.97467155323e-05
+stored orbital energy:  -4.35560759447
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35560759447
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.52699022062
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.16790251332e-05
+Linf Error:            -0.00689653266179
+LinfRel Error:         0.00168432494326
+Located at:            -0.000119490927014 0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   7.823e-06 and 3.168e-05
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35502935 -0.70598077]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999997268173
+Orbital energy after Harrison update:  -4.35560760177
+Gradient Energy:       -4.35502935047
+Gradient-free energy:  -4.35560760177
+Discrepancy:           0.000578251299506
+stored orbital energy:  -4.35560760177
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35560760177
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.52966459722
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.21783421227e-05
+Linf Error:            -0.00698730653828
+LinfRel Error:         0.00170645661537
+Located at:            0.000119490927014 -0.000119490927014 -0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   7.816e-06 and 3.686e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70598077]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999998807671
+Orbital energy after Harrison update:  -4.35560760191
+Gradient Energy:       -4.35503309256
+Gradient-free energy:  -4.35560760191
+Discrepancy:           0.00057450934408
+stored orbital energy:  -4.35560760191
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35560760191
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.52969425117
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.24372541908e-05
+Linf Error:            -0.007002348028
+LinfRel Error:         0.00171012380167
+Located at:            -0.000119490927014 0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   7.816e-06 and 1.564e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70598077]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999999479443
+Orbital energy after Harrison update:  -4.35560760193
+Gradient Energy:       -4.35503309325
+Gradient-free energy:  -4.35560760193
+Discrepancy:           0.000574508685308
+stored orbital energy:  -4.35560760193
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35560760193
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.52969952753
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.2569968531e-05
+Linf Error:            -0.0070083030507
+LinfRel Error:         0.00171157565691
+Located at:            -0.000119490927014 -0.000119490927014 -0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   7.816e-06 and 6.748e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70598077]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999999772631
+Orbital energy after Harrison update:  -4.35560760194
+Gradient Energy:       -4.35503309268
+Gradient-free energy:  -4.35560760194
+Discrepancy:           0.000574509255999
+stored orbital energy:  -4.35560760194
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35560760194
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.529701633
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.26316159774e-05
+Linf Error:            -0.00701085431025
+LinfRel Error:         0.00171219766156
+Located at:            -0.000119490927014 0.000119490927014 0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   7.816e-06 and 2.929e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70598077]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999999900662
+Orbital energy after Harrison update:  -4.35560760194
+Gradient Energy:       -4.3550330924
+Gradient-free energy:  -4.35560760194
+Discrepancy:           0.000574509535705
+stored orbital energy:  -4.35560760194
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35560760194
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.52970258856
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.26592177968e-05
+Linf Error:            -0.00701196404312
+LinfRel Error:         0.00171246821749
+Located at:            -0.000119490927014 -0.000119490927014 -0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   7.816e-06 and 1.276e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70598077]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999999956591
+Orbital energy after Harrison update:  -4.35560760194
+Gradient Energy:       -4.35503309228
+Gradient-free energy:  -4.35560760194
+Discrepancy:           0.000574509657831
+stored orbital energy:  -4.35560760194
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35560760194
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.52970296746
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              3.26713993967e-05
+Linf Error:            -0.00701244715305
+LinfRel Error:         0.00171258600098
+Located at:            -0.000119490927014 0.000119490927014 -0.000119490927014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   7.816e-06 and 5.565e-08
+
+
+Used 7 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70598077]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000986553
+Orbital energy after Harrison update:  -0.705987283527
+Gradient Energy:       -0.70598077072
+Gradient-free energy:  -0.705987283527
+Discrepancy:           6.51280614239e-06
+stored orbital energy:  -0.705987283527
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987283527
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439048125443
+Orbital 1 error and residual:   1.259e-05 and 1.079e-04
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591763]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000200326
+Orbital energy after Harrison update:  -0.705987291179
+Gradient Energy:       -0.705917627697
+Gradient-free energy:  -0.705987291179
+Discrepancy:           6.96634819601e-05
+stored orbital energy:  -0.705987291179
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987291179
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439133630216
+Orbital 1 error and residual:   1.258e-05 and 1.074e-05
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000183887
+Orbital energy after Harrison update:  -0.705987291261
+Gradient Energy:       -0.705918946649
+Gradient-free energy:  -0.705987291261
+Discrepancy:           6.83446125556e-05
+stored orbital energy:  -0.705987291261
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987291261
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439133359814
+Orbital 1 error and residual:   1.258e-05 and 3.880e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000172717
+Orbital energy after Harrison update:  -0.705987291276
+Gradient Energy:       -0.705918949067
+Gradient-free energy:  -0.705987291276
+Discrepancy:           6.83422093605e-05
+stored orbital energy:  -0.705987291276
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987291276
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439133018084
+Orbital 1 error and residual:   1.258e-05 and 2.178e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000164742
+Orbital energy after Harrison update:  -0.705987291283
+Gradient Energy:       -0.705918950555
+Gradient-free energy:  -0.705987291283
+Discrepancy:           6.8340727481e-05
+stored orbital energy:  -0.705987291283
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987291283
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439132751021
+Orbital 1 error and residual:   1.258e-05 and 1.418e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000159035
+Orbital energy after Harrison update:  -0.705987291286
+Gradient Energy:       -0.705918950748
+Gradient-free energy:  -0.705987291286
+Discrepancy:           6.83405383802e-05
+stored orbital energy:  -0.705987291286
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987291286
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439132443224
+Orbital 1 error and residual:   1.258e-05 and 9.754e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000154936
+Orbital energy after Harrison update:  -0.705987291288
+Gradient Energy:       -0.70591895086
+Gradient-free energy:  -0.705987291288
+Discrepancy:           6.83404285929e-05
+stored orbital energy:  -0.705987291288
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987291288
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439132244161
+Orbital 1 error and residual:   1.258e-05 and 6.869e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000151984
+Orbital energy after Harrison update:  -0.70598729129
+Gradient Energy:       -0.705918950919
+Gradient-free energy:  -0.70598729129
+Discrepancy:           6.83403705949e-05
+stored orbital energy:  -0.70598729129
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.70598729129
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439132153869
+Orbital 1 error and residual:   1.258e-05 and 4.895e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000149853
+Orbital energy after Harrison update:  -0.70598729129
+Gradient Energy:       -0.70591895096
+Gradient-free energy:  -0.70598729129
+Discrepancy:           6.83403304684e-05
+stored orbital energy:  -0.70598729129
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.70598729129
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439132018629
+Orbital 1 error and residual:   1.258e-05 and 3.512e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000148311
+Orbital energy after Harrison update:  -0.705987291291
+Gradient Energy:       -0.705918950988
+Gradient-free energy:  -0.705987291291
+Discrepancy:           6.83403031129e-05
+stored orbital energy:  -0.705987291291
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987291291
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439131931947
+Orbital 1 error and residual:   1.258e-05 and 2.531e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000147194
+Orbital energy after Harrison update:  -0.705987291291
+Gradient Energy:       -0.705918951008
+Gradient-free energy:  -0.705987291291
+Discrepancy:           6.83402835772e-05
+stored orbital energy:  -0.705987291291
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987291291
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439131889716
+Orbital 1 error and residual:   1.258e-05 and 1.828e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000146385
+Orbital energy after Harrison update:  -0.705987291292
+Gradient Energy:       -0.705918951022
+Gradient-free energy:  -0.705987291292
+Discrepancy:           6.83402698239e-05
+stored orbital energy:  -0.705987291292
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987291292
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.43913183246
+Orbital 1 error and residual:   1.258e-05 and 1.324e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35503309 -0.70591895]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000145799
+Orbital energy after Harrison update:  -0.705987291292
+Gradient Energy:       -0.705918951032
+Gradient-free energy:  -0.705987291292
+Discrepancy:           6.83402596462e-05
+stored orbital energy:  -0.705987291292
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705987291292
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439131943268
+Orbital 1 error and residual:   1.258e-05 and 9.599e-08
+
+
+Used 13 iterations for orbital 1.
+
+
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35560760194
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.52970296746
+Energy Eigenvalue:  -0.705987291292
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.439131943268
+Integrated density:  4.0000356067
+Density Residual  3.02661325493e-05
+Computing Vcoulomb and updating Veff took:    67.3805 seconds. 
+Computing band energy.  Current orbital energies are:  [-4.3556076  -0.70598729]
+Electrostatic Energies:
+Hartree:          7.11531453106
+External:         -33.3569241029
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -8.123190 H, 4.08e-05 H
+Orbital Energy Errors after Veff Update:  [  7.81557943e-06   1.25792171e-05]
+Orbital 0 error: 7.816e-06
+Orbital 1 error: 1.258e-05
+Orbital Energies:                      -4.3556076019 H, -0.7059872913 H
+Updated V_x:                           -3.0538843099 Hartree
+Updated V_c:                           -0.2522064551 Hartree
+Updated Band Energy:                   -8.1231897865 H, 4.0789588450e-05 H
+Updated Kinetic Energy:                 14.3091960194 H, 1.3584902415e-04 H
+Updated E_x:                           -2.2904132324 H, -2.1049078316e-05 H
+Updated E_c:                           -0.2234339441 H, -1.8888186869e-06 H
+Updated totalElectrostatic:            -26.2416095719 H, -1.7252206930e-04 H
+Total Energy:                          -14.4462607290 H, -5.9610942145e-05 H
+Energy Residual:                        1.345e+01
+Density Residual:                       3.027e-05
+
+
+Setting density residual to -1 to exit after the first SCF
+
+Convergence to a tolerance of 0.000001 took 2 iterations
+/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/blaze/server/server.py:17: ExtDeprecationWarning: Importing flask.ext.cors is deprecated, use flask_cors instead.
+  from flask.ext.cors import cross_origin
+gradientFree =  True
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/berylliumAtom.csv', '/home/njvaughn/Be_gradientFree_testing/LW5_500_order4_gradientFree.csv', 4, 2, -14.446201118081863, -2.2903921833555341, -0.22343205529440757, -8.1232305760491457, -0.5]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/berylliumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z4/singleAtomData/
+Atom with Z=4 will get 2 atomic orbitals initialized.
+Gauge shift  -0.5
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  1086000
+Initializing orbitals for atom Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            2.50e+03 
+Total Number of Cells:       9929 
+Total Number of Leaf Cells:  8688 
+Total Number of Gridpoints:  1086000 
+Minimum Depth                3 levels 
+Maximum Depth:               14 levels 
+Cell Order:                  5 
+Construction time:           136 seconds.
+Closest gridpoint to origin:  [-5.9745463506892527e-05, -5.9745463506892527e-05, -5.9745463506892527e-05]
+For a distance of:  0.00010348217831569009
+Part of a cell centered at:  [-0.001220703125, -0.001220703125, -0.001220703125]
+Assuming this is the Beryllium test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    1086000
+Threads per block:    512
+Blocks per grid:      2122
+[-8.1232305760491457, 14.309060170370618, -2.2903921833555341, -0.22343205529440757, -26.241437049802535, -14.446201118081863]
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    170.0659 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.3555461  -0.70598103]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Kinetic Errors:    [-22.16916626 -28.18881585]
+Potential Errors:  [ 37.07240644  46.7416211 ]
+Computing band energy.  Current orbital energies are:  [-4.3555461  -0.70598103]
+Electrostatic Energies:
+Hartree:          7.11535415332
+External:         -33.3569227881
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:                      -4.3555461047 H, -0.7059810341 H
+Orbital Energy Errors after initialization:  [  6.93128361e-05   1.88363843e-05]
+Updated V_x:                           -3.0538927687 Hartree
+Updated V_c:                           -0.2522073410 Hartree
+Updated Band Energy:                   -8.1230542776 H, 1.7629843609e-04 H
+Updated Kinetic Energy:                 14.3092603135 H, 2.0014314290e-04 H
+Updated E_x:                           -2.2904195765 H, -2.7393163913e-05 H
+Updated E_c:                           -0.2234347333 H, -2.6779861276e-06 H
+Updated totalElectrostatic:            -26.2415686347 H, -1.3158493171e-04 H
+Total Energy:                          -14.4461626310 H, 3.8487061151e-05 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -4.35554610468
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.70762348723
+Energy Eigenvalue:  -0.705981034125
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.350341575592
+
+
+
+SCF Count  1
+Working on orbital 0
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.3555461  -0.70598103]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000302462
+Orbital energy after Harrison update:  -4.35558098718
+Gradient Energy:       -4.35554610468
+Gradient-free energy:  -4.35558098718
+Discrepancy:           3.48824958136e-05
+stored orbital energy:  -4.35558098718
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35558098718
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.78605005413
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              2.05804704972e-05
+Linf Error:            -0.00186280328997
+LinfRel Error:         0.000455229482447
+Located at:            -5.97454635069e-05 -5.97454635069e-05 -5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.443e-05 and 2.058e-05
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35505854 -0.70598103]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999998650463
+Orbital energy after Harrison update:  -4.35558098993
+Gradient Energy:       -4.35505853506
+Gradient-free energy:  -4.35558098993
+Discrepancy:           0.000522454863869
+stored orbital energy:  -4.35558098993
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35558098993
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.78647038462
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              2.07894693748e-05
+Linf Error:            -0.001887842409
+LinfRel Error:         0.000461345687301
+Located at:            5.97454635069e-05 -5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.443e-05 and 1.966e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70598103]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999999417336
+Orbital energy after Harrison update:  -4.35558098996
+Gradient Energy:       -4.35506074405
+Gradient-free energy:  -4.35558098996
+Discrepancy:           0.000520245903632
+stored orbital energy:  -4.35558098996
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35558098996
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.78647613481
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              2.08907258916e-05
+Linf Error:            -0.00189425691717
+LinfRel Error:         0.000462912521358
+Located at:            5.97454635069e-05 -5.97454635069e-05 -5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.443e-05 and 8.054e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70598103]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.999999747326
+Orbital energy after Harrison update:  -4.35558098996
+Gradient Energy:       -4.35506074421
+Gradient-free energy:  -4.35558098996
+Discrepancy:           0.000520245758889
+stored orbital energy:  -4.35558098996
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35558098996
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.78647790306
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              2.09417306044e-05
+Linf Error:            -0.00189698109422
+LinfRel Error:         0.000463577938525
+Located at:            5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.443e-05 and 3.389e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70598103]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.9999998901
+Orbital energy after Harrison update:  -4.35558098997
+Gradient Energy:       -4.35506074397
+Gradient-free energy:  -4.35558098997
+Discrepancy:           0.000520245998046
+stored orbital energy:  -4.35558098997
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35558098997
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.78647869341
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              2.09650476406e-05
+Linf Error:            -0.00189817516549
+LinfRel Error:         0.000463869606337
+Located at:            -5.97454635069e-05 5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.443e-05 and 1.447e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70598103]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  0.99999995211
+Orbital energy after Harrison update:  -4.35558098997
+Gradient Energy:       -4.35506074386
+Gradient-free energy:  -4.35558098997
+Discrepancy:           0.000520246108841
+stored orbital energy:  -4.35558098997
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35558098997
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.78647867343
+~~~~~~~~~Eigenvalue Errors~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Wavefunction Errors~~~~~~~~~~
+L2 Error:              2.09753687595e-05
+Linf Error:            -0.0018986955338
+LinfRel Error:         0.000463996713174
+Located at:            -5.97454635069e-05 -5.97454635069e-05 5.97454635069e-05
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Orbital 0 error and residual:   3.443e-05 and 6.236e-08
+
+
+Used 6 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70598103]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000564657
+Orbital energy after Harrison update:  -0.705984477425
+Gradient Energy:       -0.705981034268
+Gradient-free energy:  -0.705984477425
+Discrepancy:           3.4431569248e-06
+stored orbital energy:  -0.705984477425
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984477425
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.28798970585
+Orbital 1 error and residual:   1.539e-05 and 6.776e-05
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592608]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000131218
+Orbital energy after Harrison update:  -0.705984480349
+Gradient Energy:       -0.705926084484
+Gradient-free energy:  -0.705984480349
+Discrepancy:           5.83958652806e-05
+stored orbital energy:  -0.705984480349
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480349
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287929508681
+Orbital 1 error and residual:   1.539e-05 and 6.809e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000110735
+Orbital energy after Harrison update:  -0.705984480387
+Gradient Energy:       -0.705926751463
+Gradient-free energy:  -0.705984480387
+Discrepancy:           5.77289244079e-05
+stored orbital energy:  -0.705984480387
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480387
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287928763464
+Orbital 1 error and residual:   1.539e-05 and 3.005e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000096513
+Orbital energy after Harrison update:  -0.705984480398
+Gradient Energy:       -0.705926752646
+Gradient-free energy:  -0.705984480398
+Discrepancy:           5.77277522231e-05
+stored orbital energy:  -0.705984480398
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480398
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287928267079
+Orbital 1 error and residual:   1.539e-05 and 1.978e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000086423
+Orbital energy after Harrison update:  -0.705984480404
+Gradient Energy:       -0.705926753269
+Gradient-free energy:  -0.705984480404
+Discrepancy:           5.77271348461e-05
+stored orbital energy:  -0.705984480404
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480404
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287928186378
+Orbital 1 error and residual:   1.539e-05 and 1.394e-06
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000079243
+Orbital energy after Harrison update:  -0.705984480407
+Gradient Energy:       -0.705926753412
+Gradient-free energy:  -0.705984480407
+Discrepancy:           5.77269951053e-05
+stored orbital energy:  -0.705984480407
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480407
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287927762255
+Orbital 1 error and residual:   1.539e-05 and 9.978e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000074125
+Orbital energy after Harrison update:  -0.705984480409
+Gradient Energy:       -0.705926753497
+Gradient-free energy:  -0.705984480409
+Discrepancy:           5.77269115272e-05
+stored orbital energy:  -0.705984480409
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480409
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287927730036
+Orbital 1 error and residual:   1.539e-05 and 7.185e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.0000007047
+Orbital energy after Harrison update:  -0.70598448041
+Gradient Energy:       -0.705926753553
+Gradient-free energy:  -0.70598448041
+Discrepancy:           5.77268565449e-05
+stored orbital energy:  -0.70598448041
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.70598448041
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287927741389
+Orbital 1 error and residual:   1.539e-05 and 5.190e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000067857
+Orbital energy after Harrison update:  -0.70598448041
+Gradient Energy:       -0.705926753593
+Gradient-free energy:  -0.70598448041
+Discrepancy:           5.7726817923e-05
+stored orbital energy:  -0.70598448041
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.70598448041
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287927459785
+Orbital 1 error and residual:   1.539e-05 and 3.757e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000065986
+Orbital energy after Harrison update:  -0.705984480411
+Gradient Energy:       -0.70592675362
+Gradient-free energy:  -0.705984480411
+Discrepancy:           5.77267906766e-05
+stored orbital energy:  -0.705984480411
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480411
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287927480238
+Orbital 1 error and residual:   1.539e-05 and 2.724e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000064645
+Orbital energy after Harrison update:  -0.705984480411
+Gradient Energy:       -0.70592675364
+Gradient-free energy:  -0.705984480411
+Discrepancy:           5.77267710383e-05
+stored orbital energy:  -0.705984480411
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480411
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287927393282
+Orbital 1 error and residual:   1.539e-05 and 1.977e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000063683
+Orbital energy after Harrison update:  -0.705984480411
+Gradient Energy:       -0.705926753654
+Gradient-free energy:  -0.705984480411
+Discrepancy:           5.77267570305e-05
+stored orbital energy:  -0.705984480411
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480411
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287927397593
+Orbital 1 error and residual:   1.539e-05 and 1.437e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000062991
+Orbital energy after Harrison update:  -0.705984480411
+Gradient Energy:       -0.705926753665
+Gradient-free energy:  -0.705984480411
+Discrepancy:           5.7726746802e-05
+stored orbital energy:  -0.705984480411
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480411
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287927411514
+Orbital 1 error and residual:   1.539e-05 and 1.045e-07
+
+
+Using singularity subtraction
+First compute eigenvalue with gradients, just to compare.
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35506074 -0.70592675]
+Fermi energy:  1.0
+Occupations:  [ 2.  2.]
+Norm of psiNew =  1.00000062494
+Orbital energy after Harrison update:  -0.705984480411
+Gradient Energy:       -0.705926753672
+Gradient-free energy:  -0.705984480411
+Discrepancy:           5.77267396259e-05
+stored orbital energy:  -0.705984480411
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -0.705984480411
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287927433308
+Orbital 1 error and residual:   1.539e-05 and 7.603e-08
+
+
+Used 14 iterations for orbital 1.
+
+
+Computing L2 residual for orbitals after Green Iterations...
+Energy Eigenvalue:  -4.35558098997
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.78647867343
+Energy Eigenvalue:  -0.705984480411
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.287927433308
+Integrated density:  4.00003541333
+Density Residual  1.95923973597e-05
+Computing Vcoulomb and updating Veff took:    174.3565 seconds. 
+Computing band energy.  Current orbital energies are:  [-4.35558099 -0.70598448]
+Electrostatic Energies:
+Hartree:          7.11530779326
+External:         -33.3568439475
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -8.123131 H, 9.96e-05 H
+Orbital Energy Errors after Veff Update:  [  3.44275521e-05   1.53900975e-05]
+Orbital 0 error: 3.443e-05
+Orbital 1 error: 1.539e-05
+Orbital Energies:                      -4.3555809900 H, -0.7059844804 H
+Updated V_x:                           -3.0538814412 Hartree
+Updated V_c:                           -0.2522063883 Hartree
+Updated Band Energy:                   -8.1231309408 H, 9.9635294657e-05 H
+Updated Kinetic Energy:                 14.3091852496 H, 1.2507927265e-04 H
+Updated E_x:                           -2.2904110809 H, -1.8897517940e-05 H
+Updated E_c:                           -0.2234338811 H, -1.8257743443e-06 H
+Updated totalElectrostatic:            -26.2415361542 H, -9.9104421718e-05 H
+Total Energy:                          -14.4461958665 H, 5.2515586493e-06 H
+Energy Residual:                        1.345e+01
+Density Residual:                       1.959e-05
+
+
+Setting density residual to -1 to exit after the first SCF
+
+Convergence to a tolerance of 0.000001 took 2 iterations

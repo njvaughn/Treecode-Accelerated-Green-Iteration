@@ -86,5 +86,3 @@ def Slice2D_Comparison(psi,psi_true,x,y,kindex):
         plt.show()
     
 
-
-

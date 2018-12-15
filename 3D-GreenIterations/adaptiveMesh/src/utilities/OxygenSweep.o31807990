@@ -1,0 +1,83 @@
+Running on
+      1 nyx7511
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 146, in <module>
+    tree = setUpTree()
+  File "testBatchGreenIterations_KS.py", line 60, in setUpTree
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+ValueError: not enough values to unpack (expected 9, got 7)
+======================================================================
+======================================================================
+====================================================================== 
+
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 146, in <module>
+    tree = setUpTree()
+  File "testBatchGreenIterations_KS.py", line 60, in setUpTree
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+ValueError: not enough values to unpack (expected 9, got 7)
+======================================================================
+======================================================================
+====================================================================== 
+
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 146, in <module>
+    tree = setUpTree()
+  File "testBatchGreenIterations_KS.py", line 60, in setUpTree
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+ValueError: not enough values to unpack (expected 9, got 7)
+======================================================================
+======================================================================
+====================================================================== 
+
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 146, in <module>
+    tree = setUpTree()
+  File "testBatchGreenIterations_KS.py", line 60, in setUpTree
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+ValueError: not enough values to unpack (expected 9, got 7)
+======================================================================
+======================================================================
+====================================================================== 
+
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 146, in <module>
+    tree = setUpTree()
+  File "testBatchGreenIterations_KS.py", line 60, in setUpTree
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+ValueError: not enough values to unpack (expected 9, got 7)
+======================================================================
+======================================================================
+====================================================================== 
+
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 146, in <module>
+    tree = setUpTree()
+  File "testBatchGreenIterations_KS.py", line 60, in setUpTree
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+ValueError: not enough values to unpack (expected 9, got 7)
+======================================================================
+======================================================================
+====================================================================== 
+
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 146, in <module>
+    tree = setUpTree()
+  File "testBatchGreenIterations_KS.py", line 60, in setUpTree
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+ValueError: not enough values to unpack (expected 9, got 7)
+======================================================================
+======================================================================
+====================================================================== 
+
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 146, in <module>
+    tree = setUpTree()
+  File "testBatchGreenIterations_KS.py", line 60, in setUpTree
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+ValueError: not enough values to unpack (expected 9, got 7)

@@ -1,0 +1,78 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/CO_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/carbonAtom.csv', '/home/njvaughn/CO_with_anderson/testing.csv', 6, 5, -21.29635387597698, -37.424276713062639, -4.3554777463893002, 0.0, 0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Gauge shift  0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  247808
+max density:  125.024241756
+Integrated density before normalization:  6.00834371728
+Integrated density after normalization:  6.0
+Initializing density EXTERNALLY took 1.889 seconds.
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals EXTERNAL to Tree Structure took 4.549 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       4425 
+Total Number of Leaf Cells:  3872 
+Total Number of Gridpoints:  247808 
+Minimum Depth                3 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  4 
+Construction time:           18 seconds.
+Closest gridpoint to origin:  [-0.00037168197015973251, -0.00037168197015973251, -0.00037168197015973251]
+For a distance of:  0.000643772056573956
+Part of a cell centered at:  [-0.0048828125, -0.0048828125, -0.0048828125]
+Assuming this is the oxygen atom test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    247808
+Threads per block:    512
+Blocks per grid:      484
+[0.0, 0.0, -37.424276713062639, -4.3554777463893002, -0.37134385924119506, -21.29635387597698]
+Integrated density:  6.0
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    1.4058 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-9.95055821 -0.50146978 -0.19865862 -0.19865862 -0.19865862]
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 221, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False)
+  File "testBatchGreenIterations_KS.py", line 122, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 235, in greenIterations_KohnSham_SCF
+    tree.sortOrbitalsAndEnergies(order = [5,0,6,1,2,8,9,3,4,7])
+  File "../src/dataStructures/TreeStruct_CC.py", line 1494, in sortOrbitalsAndEnergies
+    self.orbitalEnergies[m] = oldEnergies[newOrder[m]]
+IndexError: index 5 is out of bounds for axis 0 with size 5

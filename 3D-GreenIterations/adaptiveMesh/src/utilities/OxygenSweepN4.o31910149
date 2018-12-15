@@ -1,0 +1,81 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/RegularizingVext/LW5_3000_VextEps0p0000001.csv', 8, 5, -74.469012630225393, -7.2193295915891582, -0.54455267145166231, -40.613086299670449, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  0.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  1254000
+Original mesh computed density  8.00005782793
+Secondary mesh computed density  8.00005761702
+L2 norm of the difference (cell averaged) :  1.76411077976e-08
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Tree build completed. 
+Domain Size:                 [-15.0, 15.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            3.00e+03 
+Total Number of Cells:       11465 
+Total Number of Leaf Cells:  10032 
+Total Number of Gridpoints:  1254000 
+Minimum Depth                3 levels 
+Maximum Depth:               14 levels 
+Cell Order:                  5 
+Construction time:           23.2 seconds.
+Closest gridpoint to origin:  [-4.4809097630169395e-05, -4.4809097630169395e-05, -4.4809097630169395e-05]
+For a distance of:  7.761163373676757e-05
+Part of a cell centered at:  [-0.00091552734375, -0.00091552734375, -0.00091552734375]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    1254000
+Threads per block:    512
+Blocks per grid:      2450
+[-40.613086299670449, 74.112265375596365, -7.2193295915891582, -0.54455267145166231, -140.81739574277032, -74.469012630225393]
+Computing Vcoulomb took:    30.9720 seconds. 
+Update orbital energies after computing the initial Veff.
+Need to re-order orbitals.
+New order:  [0 1 4 3 2]
+Orbital Energy:            [-18.76068588  -0.87171559  -0.33874168  -0.33874168  -0.33874168]
+New order:  [0 1 2 3 4]
+../src/dataStructures/TreeStruct_CC.py:145: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.3387414568441528
+Occupations:  [ 2.          2.          1.33333331  1.33333331  1.3333333 ]
+Kinetic:    [ 28.75633483   3.19596155   2.55202947   2.55202947   2.55202947]
+Potential:  [-47.51702072  -4.06767714  -2.89077115  -2.89077115  -2.89077115]
+Electrostatic Energies:
+Hartree:          36.3220403373
+External:         -177.144143335
+Nuclear-Nuclear:  0.0
+Orbital Energies:  [-18.76068588  -0.87171559  -0.33874168  -0.33874168  -0.33874168]
+Updated V_x:                           -9.6258906910 Hartree
+Updated V_c:                           -0.6072487985 Hartree
+Updated Band Energy:                   -40.6197696272 H, -6.6833275471e-03 H
+Updated Kinetic Energy:                 74.1127106547 H, 4.4527910124e-04 H
+Updated E_x:                           -7.2194180182 H, -8.8426632626e-05 H
+Updated E_c:                           -0.5445570375 H, -4.3660009338e-06 H
+Updated totalElectrostatic:            -140.8221029977 H, -4.7072549511e-03 H
+Total Energy:                          -74.4733673987 H, -4.3547684728e-03 H

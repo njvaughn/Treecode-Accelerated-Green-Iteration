@@ -1,0 +1,70 @@
+<<<<<<< HEAD
+Kohn Sham Test Cases
+
+
+ISSUE: The kinetic energy blows up during the iterations.  
+
+1. Testing the Orbital Part
+Suppressed Vxc and Vcoulomb, reducing to single electron Schrodinger
+
+	—PASS— Single atom at origin, ground state orbital computed accurately
+		Implication: Helmholtz part still good, orbital KE and PE still good for a grid with all cubes
+
+	—PASS— Single atom off-center (-1.5,1.5,1.5), ground state orbital computed accurately
+		Implication: Orbital energies computed accurately for non-cubic cells
+	
+	—FAIL— Two atoms, coaxial along x-axis.  Kinetic blows up
+		Implication: Something wrong with orbitals for two atom grid
+		Probe this with further tests:
+
+		—PASS— Tighter aspect ratios: 1.5 -> 1.2.  Kinetic still blows up
+			Implication: aspect ratio of 1.5 seems to be fine.
+
+		—PASS— Two atoms, not coaxial.  Gives same result as coaxial
+			Implication: The problem is not that the atoms are coaxial
+
+		—XXXX— Test the initialization divides (due to subsequent atoms and aspect ratio)
+			FOUND BUG: Aspect ratio divides weren’t getting both of the y children.  
+
+
+
+2. Testing the Potential Part
+In isolation, compute the Coulomb potential from a known density
+	—PASS— Computing potential from Krasny’s ``pseudo potential’’ and Gaussian potential
+		Implication: Coulomb convolution is working.  Accuracy TBD, but it gets a few digits in L2error.
+=======
+Kohn Sham Test Cases
+
+
+ISSUE: The kinetic energy blows up during the iterations.  
+
+1. Testing the Orbital Part
+Suppressed Vxc and Vcoulomb, reducing to single electron Schrodinger
+
+	—PASS— Single atom at origin, ground state orbital computed accurately
+		Implication: Helmholtz part still good, orbital KE and PE still good for a grid with all cubes
+
+	—PASS— Single atom off-center (-1.5,1.5,1.5), ground state orbital computed accurately
+		Implication: Orbital energies computed accurately for non-cubic cells
+	
+	—FAIL— Two atoms, coaxial along x-axis.  Kinetic blows up
+		Implication: Something wrong with orbitals for two atom grid
+		Probe this with further tests:
+
+		—PASS— Tighter aspect ratios: 1.5 -> 1.2.  Kinetic still blows up
+			Implication: aspect ratio of 1.5 seems to be fine.
+
+		—PASS— Two atoms, not coaxial.  Gives same result as coaxial
+			Implication: The problem is not that the atoms are coaxial
+
+		—XXXX— Test the initialization divides (due to subsequent atoms and aspect ratio)
+			FOUND BUG: Aspect ratio divides weren’t getting both of the y children.  
+
+
+
+2. Testing the Potential Part
+In isolation, compute the Coulomb potential from a known density
+	—PASS— Computing potential from Krasny’s ``pseudo potential’’ and Gaussian potential
+		Implication: Coulomb convolution is working.  Accuracy TBD, but it gets a few digits in L2error.
+>>>>>>> refs/remotes/eclipse_auto/master
+	

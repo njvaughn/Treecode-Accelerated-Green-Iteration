@@ -1,0 +1,34 @@
+#!/bin/bash
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/CC_tests
+
+
+
+DOMAIN=10
+
+MAXDEPTH=20
+MINDEPTH=3
+SINGSUBT=1
+SMOOTHINGN=0
+SMOOTHINGEPS=0
+INTRASCFTOLERANCE=1e-3
+INTERSCFTOLERANCE=1e-5
+INPUTFILE='../src/utilities/molecularConfigurations/dummyAtomAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/noAtomsAuxiliary.csv'
+OUTPUTFILE='/home/njvaughn/HartreeTests/GaussianSingularitySubtraction/GaussianDensity_alpha2_domain5/runComparison.csv'
+DENSITYPARAMETER=2
+MESHTYPE='LW3'	
+ORDER=4
+HELMHOLTZSHIFT=0  # if k=0, solving the Poisson equation.  If k>0, solving the Helmholtz equation
+#TESTCASE='Hydrogenic'
+TESTCASE='Gaussian'
+
+
+GAUSSIANSUBTRACTIONALPHA=1
+MESHPARAM=2000
+
+
+python -u testGaussianSingularitySubtraction.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $DENSITYPARAMETER $GAUSSIANSUBTRACTIONALPHA $HELMHOLTZSHIFT $TESTCASE
+
+

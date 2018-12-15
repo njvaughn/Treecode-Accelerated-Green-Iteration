@@ -65,7 +65,7 @@ def plot_fixed_n(rmax,epsilon_min, epsilon_max, nepsilon, n):
 if __name__=="__main__":
     
     G_n(1,1,5)
-    plot_fixed_epsilon(0.5,13,0.25)
+    plot_fixed_epsilon(0.5,13,0.1)
 #     plot_fixed_n(1, -1, -7, 7, 2)
 
 #     print(np.logspace(0,-3,4))
@@ -79,4 +79,3 @@ if __name__=="__main__":
 #     print(G_ep(r,0.1))
 #     print()
 #     print( G_n(r,0.1,0) )    
-#     print( G_n_vec(r,0.0,0) )

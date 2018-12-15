@@ -1,0 +1,1401 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/CO_with_anderson/LW5_1000o4_plots
+======================================================================
+======================================================================
+====================================================================== 
+
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/CO_with_anderson/LW5_1000o4_gauge1q.csv', 14, 10, -112.471443237994, -11.997011069615391, -0.94214407530225852, -62.898682441673358, -0.0]
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Atom with Z=6 will get 5 atomic orbitals initialized.
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Atom with Z=8 will get 5 atomic orbitals initialized.
+Gauge shift  -0.0
+Nuclear energy:  22.5180848369
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+max depth  20
+Number of gridpoints:  362752
+max density:  125.069238073
+Integrated density before normalization:  6.00843156937
+Integrated density after normalization:  6.0
+max density:  305.62394937
+Integrated density before normalization:  14.000100487
+Integrated density after normalization:  14.0
+Initializing density EXTERNALLY took 4.739 seconds.
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 1.066,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-1.066,  0.000,  0.000)
+Orbital index = 5
+Orbital 5 filled with (n,ell,m) = (1,0,0) 
+Orbital 6 filled with (n,ell,m) = (2,0,0) 
+Orbital 7 filled with (n,ell,m) = (2,1,-1) 
+Orbital 8 filled with (n,ell,m) = (2,1,0) 
+Orbital 9 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals EXTERNAL to Tree Structure took 13.973 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       6529 
+Total Number of Leaf Cells:  5668 
+Total Number of Gridpoints:  362752 
+Minimum Depth                3 levels 
+Maximum Depth:               13 levels 
+Cell Order:                  4 
+Construction time:           39.1 seconds.
+Closest gridpoint to origin:  [-0.01014124443176817, -0.01189382304511144, -0.01189382304511144]
+For a distance of:  0.019641051190853222
+Part of a cell centered at:  [-0.13322624999999999, -0.15625, -0.15625]
+Assuming this is the carbon monoxide test case...
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    362752
+Threads per block:    512
+Blocks per grid:      709
+[-62.898682441673358, 111.85061770418731, -11.997011069615391, -0.94214407530225852, -211.38290579726365, -112.471443237994]
+Integrated density:  14.0
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    2.8176 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-10.00791484  -0.72076817  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Sorted eigenvalues:  [-18.86612148 -10.00791484  -1.07750199  -0.72076817  -0.72633798
+  -0.65368314  -0.45984627  -0.45984627  -0.27606433  -0.27606433]
+New order:  [5, 0, 6, 1, 7, 2, 8, 9, 3, 4]
+Orbital energies after initial sort: 
+ [-18.86612148 -10.00791484  -1.07750199  -0.72076817  -0.72633798
+  -0.65368314  -0.45984627  -0.45984627  -0.27606433  -0.27606433]
+Kinetic Errors:    [ -1.30388357e+01  -2.71092772e+01  -2.75300331e+01  -2.75299931e+01
+  -2.75299931e+01   9.97330074e-03  -2.55593940e+01  -2.62038549e+01
+  -2.62037788e+01  -2.62037788e+01]
+Potential Errors:  [ 21.78970711  45.14729533  45.63513621  46.01271502  46.01271502
+  -0.1173085   43.24067833  44.23630321  44.50271885  44.50271885]
+Computing band energy.  Current orbital energies are:  [-18.86612148 -10.00791484  -1.07750199  -0.72076817  -0.72633798
+  -0.65368314  -0.45984627  -0.45984627  -0.27606433  -0.27606433]
+Electrostatic Energies:
+Hartree:          74.8666095416
+External:         -308.510973337
+Nuclear-Nuclear:  22.5180848369
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.86612148 -10.00791484  -1.07750199  -0.72076817  -0.72633798
+  -0.65368314  -0.45984627  -0.45984627  -0.27606433  -0.27606433]
+Orbital Energy Errors after initialization:  [ 0.00149554 -0.00350411  0.10804393 -0.11368096 -0.20614058 -0.13348574
+ -0.06375023 -0.44645851 -0.20280673 -0.29327488]
+Updated V_x:                           -15.8117622558 Hartree
+Updated V_c:                           -1.0427589511 Hartree
+Updated Band Energy:                   -65.0243477358 H, -2.1256652941e+00 H
+Updated Kinetic Energy:                 110.6079277249 H, -1.2426899793e+00 H
+Updated E_x:                           -11.8588216918 H, 1.3818937778e-01 H
+Updated E_c:                           -0.9340713138 H, 8.0727614565e-03 H
+Updated totalElectrostatic:            -211.1262789585 H, 2.5662683876e-01 H
+Total Energy:                          -113.3112442393 H, -8.3980100130e-01 H
+Computing L2 residual for initialized orbitals...
+Energy Eigenvalue:  -18.8661214826
+L2 norm of wavefunction residual (H*psi-lambda*psi):    19.1533364643
+Energy Eigenvalue:  -10.0079148438
+L2 norm of wavefunction residual (H*psi-lambda*psi):    9.19735703724
+Energy Eigenvalue:  -1.0775019884
+L2 norm of wavefunction residual (H*psi-lambda*psi):    4.55066886784
+Energy Eigenvalue:  -0.720768168646
+L2 norm of wavefunction residual (H*psi-lambda*psi):    2.36821297788
+Energy Eigenvalue:  -0.726337976614
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.1835642234
+Energy Eigenvalue:  -0.653683137137
+L2 norm of wavefunction residual (H*psi-lambda*psi):    1.82462650536
+Energy Eigenvalue:  -0.459846270744
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.251810064913
+Energy Eigenvalue:  -0.459846270744
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.251810064913
+Energy Eigenvalue:  -0.276064331649
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.23431832964
+Energy Eigenvalue:  -0.276064331649
+L2 norm of wavefunction residual (H*psi-lambda*psi):    0.23431832964
+
+
+
+SCF Count  1
+Orbital Energies:  [-18.86612148 -10.00791484  -1.07750199  -0.72076817  -0.72633798
+  -0.65368314  -0.45984627  -0.45984627  -0.27606433  -0.27606433]
+Working on orbital 0
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.85516695  -0.72076817  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 0 error and residual:   1.245e-02 and 1.029e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87373769  -0.72076817  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 0 error and residual:   -6.121e-03 and 6.012e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.86906476  -0.72076817  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 0 error and residual:   -1.448e-03 and 2.309e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87192526  -0.72076817  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 0 error and residual:   -4.308e-03 and 8.618e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87171865  -0.72076817  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 0 error and residual:   -4.102e-03 and 4.027e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87230671  -0.72076817  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 0 error and residual:   -4.690e-03 and 2.033e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87243756  -0.72076817  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 0 error and residual:   -4.821e-03 and 1.250e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -0.72076817  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 0 error and residual:   -4.994e-03 and 7.757e-06
+
+
+Used 8 iterations for orbital 0.
+Working on orbital 1
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -6.72636658  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   3.278e+00 and 5.883e-01
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -8.87098347  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   1.133e+00 and 3.336e-01
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.68574767  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   3.187e-01 and 1.624e-01
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.92725894  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   7.715e-02 and 7.812e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.98449407  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   1.992e-02 and 3.520e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99616736  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   8.243e-03 and 1.504e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99835373  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   6.057e-03 and 6.268e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99874308  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   5.668e-03 and 2.595e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99880918  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   5.602e-03 and 1.076e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99881943  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   5.591e-03 and 4.480e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882063  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   5.590e-03 and 1.873e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882058  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   5.590e-03 and 7.856e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882046  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   5.590e-03 and 3.305e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882039  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   5.590e-03 and 1.394e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -0.65368314  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 1 error and residual:   5.590e-03 and 5.892e-06
+
+
+Used 15 iterations for orbital 1.
+Working on orbital 2
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.08453662  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.010e-01 and 2.017e-01
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.12760347  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   5.794e-02 and 1.015e-01
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.14516821  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   4.038e-02 and 5.583e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.15594192  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   2.960e-02 and 3.948e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.16347907  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   2.207e-02 and 3.124e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.16894559  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.660e-02 and 2.578e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.17295368  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.259e-02 and 2.165e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.17590338  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   9.643e-03 and 1.835e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.1780767   -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   7.469e-03 and 1.562e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.1796781   -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   5.868e-03 and 1.333e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18085757  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   4.688e-03 and 1.139e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18172569  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   3.820e-03 and 9.741e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18236419  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   3.182e-03 and 8.331e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.1828335   -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   2.712e-03 and 7.123e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18317825  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   2.368e-03 and 6.089e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18343142  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   2.114e-03 and 5.203e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18361731  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.929e-03 and 4.444e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18375381  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.792e-03 and 3.795e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18385408  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.692e-03 and 3.239e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18392779  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.618e-03 and 2.763e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18398203  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.564e-03 and 2.357e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18402198  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.524e-03 and 2.010e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18405147  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.494e-03 and 1.713e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18407327  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.473e-03 and 1.460e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18408944  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.456e-03 and 1.244e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18410145  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.444e-03 and 1.060e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18411041  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.436e-03 and 9.026e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18411711  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.429e-03 and 7.686e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18412215  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.424e-03 and 6.545e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18412596  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.420e-03 and 5.572e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18412884  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.417e-03 and 4.744e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413104  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.415e-03 and 4.038e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413273  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.413e-03 and 3.437e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413404  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.412e-03 and 2.926e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413505  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.411e-03 and 2.490e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413584  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.410e-03 and 2.119e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413646  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.409e-03 and 1.803e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413696  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.409e-03 and 1.535e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413735  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.409e-03 and 1.306e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413766  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.408e-03 and 1.111e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413792  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.408e-03 and 9.457e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413812  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.408e-03 and 8.047e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413829  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.408e-03 and 6.848e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413843  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 5.827e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413854  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 4.958e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413863  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 4.219e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413871  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 3.589e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413878  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 3.054e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413883  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 2.599e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413887  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 2.211e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413891  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 1.881e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413894  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 1.601e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413897  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 1.362e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413899  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 1.159e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.27606433  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 2 error and residual:   1.407e-03 and 9.860e-06
+
+
+Used 55 iterations for orbital 2.
+Working on orbital 3
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.30158751  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   3.055e-01 and 6.921e-01
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.38072882  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.264e-01 and 1.899e-01
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.3990836   -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.080e-01 and 1.038e-01
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.40714838  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.999e-01 and 5.402e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.41197205  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.951e-01 and 3.575e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.4165304   -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.906e-01 and 3.087e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.42106084  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.860e-01 and 3.057e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.42592163  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.812e-01 and 3.164e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.43117769  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.759e-01 and 3.319e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.43693163  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.702e-01 and 3.490e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.44322172  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.639e-01 and 3.664e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.45007913  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.570e-01 and 3.835e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.45750805  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.496e-01 and 4.000e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.46549472  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.416e-01 and 4.154e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.47400282  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.331e-01 and 4.295e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.48297362  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.241e-01 and 4.420e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.49232444  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.148e-01 and 4.525e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.50194886  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.051e-01 and 4.608e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.51171827  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   9.537e-02 and 4.664e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.52148591  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   8.560e-02 and 4.690e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.53109333  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   7.599e-02 and 4.681e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.54037948  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   6.671e-02 and 4.635e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.5491915   -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   5.790e-02 and 4.550e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.55739575  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   4.969e-02 and 4.426e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.56488762  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   4.220e-02 and 4.266e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.57159817  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   3.549e-02 and 4.072e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.57749667  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.959e-02 and 3.851e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.58258881  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.450e-02 and 3.608e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.58691126  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.018e-02 and 3.350e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.5905239   -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.656e-02 and 3.086e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.59350137  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.359e-02 and 2.821e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.59592511  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   1.116e-02 and 2.562e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.59787683  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   9.210e-03 and 2.312e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.59943388  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   7.653e-03 and 2.075e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60066623  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   6.421e-03 and 1.854e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6016351   -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   5.452e-03 and 1.650e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60239259  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   4.695e-03 and 1.463e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60298209  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   4.105e-03 and 1.294e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60343914  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   3.648e-03 and 1.141e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60379242  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   3.295e-03 and 1.004e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60406483  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   3.022e-03 and 8.820e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60427448  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.813e-03 and 7.736e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60443559  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.652e-03 and 6.777e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60455927  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.528e-03 and 5.930e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60465416  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.433e-03 and 5.184e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60472692  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.360e-03 and 4.528e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60478271  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.304e-03 and 3.953e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60482549  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.262e-03 and 3.449e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60485831  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.229e-03 and 3.008e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60488351  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.204e-03 and 2.622e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60490287  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.184e-03 and 2.285e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60491777  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.169e-03 and 1.990e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60492924  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.158e-03 and 1.734e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60493809  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.149e-03 and 1.510e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60494493  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.142e-03 and 1.314e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60495023  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.137e-03 and 1.144e-03
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60495435  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.133e-03 and 9.960e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60495756  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.130e-03 and 8.669e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496006  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.127e-03 and 7.544e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496202  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.125e-03 and 6.565e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496357  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.124e-03 and 5.713e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496479  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.122e-03 and 4.971e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496575  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.121e-03 and 4.325e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496652  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.121e-03 and 3.763e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496713  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.120e-03 and 3.274e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496763  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.120e-03 and 2.848e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496803  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.119e-03 and 2.478e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496835  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.119e-03 and 2.156e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496861  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.119e-03 and 1.876e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496883  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.118e-03 and 1.632e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496901  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.118e-03 and 1.419e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496915  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.118e-03 and 1.235e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496927  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.118e-03 and 1.074e-04
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496938  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.118e-03 and 9.345e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496946  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.118e-03 and 8.129e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496953  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.118e-03 and 7.072e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496959  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.118e-03 and 6.152e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496964  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.118e-03 and 5.352e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496969  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.118e-03 and 4.655e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496972  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 4.050e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496975  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 3.523e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496978  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 3.065e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6049698   -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 2.666e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496982  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 2.319e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496984  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 2.017e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496985  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 1.755e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496987  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 1.527e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496988  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 1.328e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496989  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 1.155e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.60496989  -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 1.005e-05
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6049699   -0.27606433
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 3 error and residual:   2.117e-03 and 8.743e-06
+
+
+Used 91 iterations for orbital 3.
+Working on orbital 4
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6049699    0.2173252
+ -18.86612148  -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 4 error and residual:   7.375e-01 and 1.400e+00
+
+
+Orbital 4 energy greater than zero.  Not performing Green Iterations for it...
+Orbital 4 error and residual:   7.375e-01 and 0.000e+00
+
+
+Used 2 iterations for orbital 4.
+Working on orbital 5
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6049699    0.2173252
+   3.6686598   -1.07750199  -0.72633798  -0.45984627  -0.45984627]
+Orbital 5 error and residual:   4.189e+00 and 1.213e+00
+
+
+Orbital 5 energy greater than zero.  Not performing Green Iterations for it...
+Orbital 5 error and residual:   4.189e+00 and 0.000e+00
+
+
+Used 2 iterations for orbital 5.
+Working on orbital 6
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6049699    0.2173252
+   3.6686598   -0.44294559  -0.72633798  -0.45984627  -0.45984627]
+Orbital 6 error and residual:   -4.685e-02 and 1.944e-01
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6049699    0.2173252
+   3.6686598   -0.48007172  -0.72633798  -0.45984627  -0.45984627]
+Orbital 6 error and residual:   -8.398e-02 and 1.161e-01
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6049699    0.2173252
+   3.6686598   -0.4927059   -0.72633798  -0.45984627  -0.45984627]
+Orbital 6 error and residual:   -9.661e-02 and 5.252e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6049699    0.2173252
+   3.6686598   -0.50016425  -0.72633798  -0.45984627  -0.45984627]
+Orbital 6 error and residual:   -1.041e-01 and 3.765e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6049699    0.2173252
+   3.6686598   -0.50525272  -0.72633798  -0.45984627  -0.45984627]
+Orbital 6 error and residual:   -1.092e-01 and 3.016e-02
+
+
+Using singularity subtraction
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.87261144  -9.99882036  -1.18413901  -0.6049699    0.2173252
+   3.6686598   -0.50889521  -0.72633798  -0.45984627  -0.45984627]
+Orbital 6 error and residual:   -1.128e-01 and 2.500e-02
+
+
+Using singularity subtraction

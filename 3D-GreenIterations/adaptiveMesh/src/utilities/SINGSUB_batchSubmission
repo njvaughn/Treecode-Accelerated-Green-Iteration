@@ -1,0 +1,34 @@
+#!/bin/bash
+
+DOMAIN=20
+MINDEPTH=3
+MAXDEPTH=20
+ORDER=5
+SINGSUBT=1
+SMOOTHINGN=0
+SMOOTHINGEPS=0.0
+MESHTYPE='LW1'
+MESHPARAM=50
+INTRASCFTOLERANCE=1e-2
+INTERSCFTOLERANCE=1e-7
+COORDINATES='../src/utilities/molecularConfigurations/lithiumAtom.csv'
+#COORDINATES='../src/utilities/molecularConfigurations/berylliumAtom.csv'
+#COORDINATES='../src/utilities/molecularConfigurations/hydrogenMolecule.csv'
+AUXILIARYFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
+NELECTRONS=3
+NORBITALS=2
+#OUTFILE='/home/njvaughn/onTheFly/results/onTheFlyMeshTests.csv'
+#OUTFILE='/home/njvaughn/results_Be/results.csv'
+#OUTFILE='/home/njvaughn/results_H2/results.csv'
+OUTFILE='/home/njvaughn/results_Li/results.csv'
+VTKFILEDIR='/home/njvaughn/onTheFly/meshes'
+
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
+
+MESHTYPE='LW5'
+MESHPARAM=1000
+python testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+	$COORDINATES $AUXILIARYFILE $NELECTRONS $NORBITALS $OUTFILE $VTKFILEDIR
+
