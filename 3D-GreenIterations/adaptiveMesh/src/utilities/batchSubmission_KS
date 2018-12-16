@@ -20,23 +20,26 @@ INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 
 GRADIENTFREE='True'
 
-
 ORDER=4
 MESHTYPE='LW5'
 MESHPARAM=500
 
 MIXINGPARAMETER=0.5
 
-INTRASCFTOLERANCE=1e-2
+INTRASCFTOLERANCE=1e-6
 INTERSCFTOLERANCE=1e-6
 
 MIXING='Anderson'	
 
-OUTPUTFILE='/home/njvaughn/CO_with_anderson/testing.csv'
+#OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5_1000o4_MGS.csv'
+#VTKFILEDIR='/home/njvaughn/CO_with_anderson/LW5_1000o4_plots_MGS'
+#OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5o5_1500_tight_noSingSubt.csv'
+OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5o4_1000_only7_tightFromStart_GIanderson.csv'
 VTKFILEDIR='/home/njvaughn/CO_with_anderson/LW5_1500o5_plots_eigRes'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER
 	
+
 	
 	

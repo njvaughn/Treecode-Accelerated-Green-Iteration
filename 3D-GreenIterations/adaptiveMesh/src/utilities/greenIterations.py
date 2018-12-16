@@ -519,7 +519,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 orbitalResidual = 1
                 eigenvalueResidual = 1
                 greenIterationsCount = 1
-                max_GreenIterationsCount = 100
+                max_GreenIterationsCount = 50
                 
     #             tree.orthonormalizeOrbitals(targetOrbital=m)
             
@@ -742,8 +742,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             filename = vtkExport + '/scf_%i_orbital_%i_iteration%03d'%(SCFcount,m,greenIterationsCount) #+ '.vtk'
                             tree.exportGridpoints(filename)
             
-                    
-                    GIandersonMixing=False
+                    if SCFcount>=2:
+                        GIandersonMixing=True
+                    else:
+                        GIandersonMixing=False
+                                                
                     GIsimpleMixing=False
                     
                     if GIsimpleMixing==True:
