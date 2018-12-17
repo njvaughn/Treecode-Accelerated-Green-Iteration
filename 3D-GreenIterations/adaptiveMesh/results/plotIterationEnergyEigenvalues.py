@@ -57,7 +57,10 @@ resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
 # file='LW5o5_1000_fixedMesh_GREEN_.csv'
 # file='LW5o4_2000_fixedMesh_randInit_noTitan_GREEN_.csv'
 # file='LW5o5_1000_fixedMesh_only7_looseInit_GREEN_.csv'
-file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_GREEN_.csv'
+# file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_GREEN_.csv'
+# file='LW5o4_1000_only7_tightFromStart_GIanderson_afterSCF1_GREEN_.csv'
+file='LW5o5_2000_only7_tightFromStart_GIandersonAfterSCF1_GREEN_.csv'
+
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
     TotalEnergy = -7.3340536782581447

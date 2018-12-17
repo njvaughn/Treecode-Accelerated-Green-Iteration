@@ -703,7 +703,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     tempOrbital = tree.extractPhi(m)
                     orbitals[:,m] = tempOrbital[:,3]
                     normOfPsi = np.sqrt( np.sum( (orbitals[:,m])**2*weights ) )
-                    print('Norm of new wavefunction: ', normOfPsi)
+#                     print('Norm of new wavefunction: ', normOfPsi)
                     normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
                     eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
                     
