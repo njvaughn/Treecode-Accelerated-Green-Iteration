@@ -9,6 +9,7 @@ Created on Mar 13, 2018
 '''
 import os
 import sys
+from docutils.nodes import reference
 sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
 
@@ -71,41 +72,56 @@ def setUpTree(onlyFillOne=False):
 #     [coordinateFile, outputFile, nElectrons, nOrbitals] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[0:4]
 #     [coordinateFile, outputFile, nElectrons, nOrbitals, 
 #      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift] = np.genfromtxt(inputFile,delimiter=',',dtype=[("|U100","|U100",int,int,float,float,float,float,float)])
-    [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
-    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
-    nElectrons = int(nElectrons)
-    nOrbitals = int(nOrbitals)
+    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+#     [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+#     nElectrons = int(nElectrons)
+#     nOrbitals = int(nOrbitals)
     
-    nOrbitals = 7  # hard code this in for Carbon Monoxide
-    print('Hard coding nOrbitals to 7')
-
-#     nOrbitals = 6
+#     nOrbitals = 7  # hard code this in for Carbon Monoxide
+#     print('Hard coding nOrbitals to 7')
+ #     nOrbitals = 6
 #     print('Hard coding nOrbitals to 6 to give oxygen one extra')
 #     nOrbitals = 1
 #     print('Hard coding nOrbitals to 1')
+
+    print('Reading atomic coordinates from: ', coordinateFile)
+    atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+    if np.shape(atomData)==(5,):
+        nElectrons = atomData[3]
+    else:
+        nElectrons = 0
+        for i in range(len(atomData)):
+            nElectrons += atomData[i,3]
     
+#     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
+    nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.  
+                                            # If the final orbital is unoccupied, this amount is enough. 
+                                            # If there is a degeneracy leading to teh final orbital being 
+                                            # partially filled, then it will be necessary to increase nOrbitals by 1.
+
+#     nOrbitals=6
+#     print('Setting nOrbitals to six for purposes of testing the adaptivity on the oxygen atom.')
+    occupations = 2*np.ones(nOrbitals)
+    occupations[-1] = 0
+    print('in testBatchGreen..., nOrbitals = ', nOrbitals)
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    
+    referenceEigenvalues = np.array( np.genfromtxt(referenceEigenvaluesFile,delimiter=',',dtype=float) )
+    print(referenceEigenvalues)
+    print(np.shape(referenceEigenvalues))
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
-
-    
+    tree.referenceEigenvalues = np.copy(referenceEigenvalues)
+    tree.occupations = occupations
+    print('On the tree, nOrbitals = ', tree.nOrbitals)
+    print('type: ', type(tree.nOrbitals))
     
     print('max depth ', maxDepth)
     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=onlyFillOne)
-#     for element in tree.masterList:
-#         
-# #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
-#         for i,j,k in tree.PxByPyByPz:
-#             element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
-            
-#     for m in range(5,tree.nOrbitals):
-#         tree.scrambleOrbital(m)
-#     tree.normalizeDensity()
 
-#     tree.computeOrbitalMoments()
-    
 
     
     return tree

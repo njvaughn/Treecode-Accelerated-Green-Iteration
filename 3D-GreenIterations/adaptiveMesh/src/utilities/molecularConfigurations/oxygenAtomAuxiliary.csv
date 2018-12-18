@@ -1,8 +1,6 @@
 ../src/utilities/molecularConfigurations/oxygenAtom.csv
+../src/utilities/molecularConfigurations/oxygenAtomReferenceEigenvalues.csv
 /home/njvaughn/results_Oxygen/results.csv
-8
-5
-
 -4.0613397710076626e+01  # Final converged DFTFE results
  7.4112730191157425e+01
 -7.2193700828939980e+00

@@ -102,14 +102,14 @@ class Tree(object):
         atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
 #         print(np.shape(atomData))
 #         print(len(atomData))
-        if np.shape(atomData)==(4,):
+        if np.shape(atomData)==(5,):
             self.atoms = np.empty((1,),dtype=object)
-            atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3])
+            atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3],atomData[4])
             self.atoms[0] = atom
         else:
             self.atoms = np.empty((len(atomData),),dtype=object)
             for i in range(len(atomData)):
-                atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3])
+                atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4])
                 self.atoms[i] = atom
         
         # generate gridpoint objects.  
@@ -454,9 +454,9 @@ class Tree(object):
         timer.start()
         orbitalIndex=0
         
-        print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
-        self.atoms[1].nAtomicOrbitals = 2
-        self.nOrbitals = 7
+#         print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+#         self.atoms[1].nAtomicOrbitals = 2
+#         self.nOrbitals = 7
         
 
     
@@ -1350,6 +1350,19 @@ class Tree(object):
                     r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
 #                     gp.phi[m] = val/r
                     gp.phi[m] = val
+                    
+    def increaseNumberOfWavefunctionsByOne(self):
+        
+        for _,cell in self.masterList:
+            for i,j,k in cell.PxByPyByPz:
+                gp = cell.gridpoints[i,j,k]
+                gp.phi = np.append(gp.phi,0.0)
+        
+        self.scrambleOrbital(-1)
+        self.orthonormalizeOrbitals(targetOrbital = -1)
+        self.occupations = np.append(self.occupations, 0.0)
+        self.orbitalEnergies = np.append(self.orbitalEnergies, self.gaugeShift-0.1)
+        self.nOrbitals += 1
     
     def softenOrbital(self,m):
         print('Softening orbital ', m)
