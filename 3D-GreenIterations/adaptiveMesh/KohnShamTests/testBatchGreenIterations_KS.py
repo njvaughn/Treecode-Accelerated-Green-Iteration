@@ -100,10 +100,11 @@ def setUpTree(onlyFillOne=False):
                                             # If there is a degeneracy leading to teh final orbital being 
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
 
-#     nOrbitals=6
+    nOrbitals=7
 #     print('Setting nOrbitals to six for purposes of testing the adaptivity on the oxygen atom.')
+    print('Setting nOrbitals to seven for purposes of running Carbon monoxide.')
     occupations = 2*np.ones(nOrbitals)
-    occupations[-1] = 0
+#     occupations[-1] = 0
     print('in testBatchGreen..., nOrbitals = ', nOrbitals)
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
