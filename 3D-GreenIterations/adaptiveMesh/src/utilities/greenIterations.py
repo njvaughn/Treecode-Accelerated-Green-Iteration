@@ -196,7 +196,6 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Threads per block:   ', threadsPerBlock)
     print('Blocks per grid:     ', blocksPerGrid)
     
-    greenIterationCounter=1                                     # initialize the counter to counter the number of iterations required for convergence
     densityResidual = 10                                   # initialize the densityResidual to something that fails the convergence tolerance
     Eold = -0.5 + tree.gaugeShift
 
@@ -377,8 +376,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
 
     if vtkExport != False:
-#         filename = vtkExport + '/mesh%03d'%(greenIterationCounter-1) + '.vtk'
-        filename = vtkExport + '/mesh%03d'%(greenIterationCounter-1) + '.vtk'
+        filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
         tree.exportGridpoints(filename)
         
     
@@ -647,7 +645,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                 eigenvalueHistory = np.array(tree.orbitalEnergies[m])
                             else:
                                 eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
-                            print('eigenvalueHistory: ',eigenvalueHistory)
+                            print('eigenvalueHistory: \n',eigenvalueHistory)
                             
                             
                             print('Orbital energy after Harrison update: ', tree.orbitalEnergies[m])
@@ -697,12 +695,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         
 #                         if newEigenvalue > tree.gaugeShift:
                             else:
-                                tree.orbitalEnergies[m] = tree.gaugeShift-0.2
-                                print("Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).")
-                                if greenIterationCount %10 == 0:
+                                tree.orbitalEnergies[m] = tree.gaugeShift-5.5
+#                                 print("Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).")
+                                if greenIterationsCount % 10 == 0:
                                     tree.scrambleOrbital(m)
                                     tree.orthonormalizeOrbitals(targetOrbital=m)
-                                    print('Scrambling orbital')
+                                    print("Scrambling orbital because it's been a multiple of 10.")
                         
                         
                         
@@ -1117,12 +1115,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         print('Energy Residual:                        %.3e' %energyResidual)
         print('Density Residual:                       %.3e\n\n'%densityResidual)
 
-#         if vtkExport != False:
-#             tree.exportGreenIterationOrbital(vtkExport,greenIterationCounter)
+
 
             
         if vtkExport != False:
-            filename = vtkExport + '/mesh%03d'%(greenIterationCounter-1) + '.vtk'
+            filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
             tree.exportGridpoints(filename)
 
         printEachIteration=True
@@ -1131,7 +1128,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
                       'exchangeEnergy', 'correlationEnergy', 'electrostaticEnergy', 'totalEnergy']
         
-            myData = [greenIterationCounter, densityResidual, tree.orbitalEnergies, tree.totalBandEnergy, tree.totalKinetic, 
+            myData = [SCFcount, densityResidual, tree.orbitalEnergies, tree.totalBandEnergy, tree.totalKinetic, 
                       tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
             
         
@@ -1148,21 +1145,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 writer.writerow(myData)
                 
         """ END WRITING INDIVIDUAL ITERATION TO FILE """
-        
-        if greenIterationCounter%2==0:
-            if onTheFlyRefinement==True:
-                tree.refineOnTheFly(divideTolerance=0.05)
-                if vtkExport != False:
-                    filename = vtkExport + '/mesh%03d'%greenIterationCounter + '.vtk'
-                    tree.exportMeshVTK(filename)
+     
         
         if tree.E > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
             print('Warning, Energy is positive')
             tree.E = -0.5
             
-        greenIterationCounter+=1
         
-        if greenIterationCounter >= 150:
+        if SCFcount >= 150:
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
         
@@ -1176,7 +1166,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
 
         
-    print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, greenIterationCounter))
+    print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, SCFcount))
 
 # def greenIterations_KohnSham_SCF_parallelOrbitals(tree, intraScfTolerance, interScfTolerance, numberOfTargets, 
 #                                 subtractSingularity, smoothingN, smoothingEps, inputFile='',SCFiterationOutFile='iterationConvergence.csv',

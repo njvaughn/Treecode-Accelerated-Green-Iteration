@@ -9,7 +9,7 @@
 #PBS -q fluxg
 
 
-#PBS -l nodes=1:gpus=1,mem=8gb
+#PBS -l nodes=1:gpus=1:titanv,mem=8gb
 #PBS -l walltime=24:00:00
 #PBS -j oe
 #PBS -V
@@ -43,22 +43,21 @@ INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
-
-
 GRADIENTFREE='True'
 
 ORDER=5
 MESHTYPE='LW5'
-MESHPARAM=1000
+MESHPARAM=1500
 
 MIXINGPARAMETER=0.5
 
-INTRASCFTOLERANCE=1e-5
+INTRASCFTOLERANCE=1e-6
 INTERSCFTOLERANCE=1e-6
+
 
 MIXING='Anderson'	
 
-OUTPUTFILE='/home/njvaughn/O_with_anderson/LW5o5_1500_6_orbitals.csv'
+OUTPUTFILE='/home/njvaughn/O_with_anderson/LW5o5_1500_7_orbitals.csv'
 VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

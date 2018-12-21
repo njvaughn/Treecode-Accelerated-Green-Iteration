@@ -1344,10 +1344,11 @@ class Tree(object):
         # randomize orbital because its energy went > Vgauge
         for _,cell in self.masterList:
             if cell.leaf==True:
-                val = np.random.rand(1)
+#                 val = np.random.rand(1)
                 for i,j,k in cell.PxByPyByPz:
+                    val = np.random.rand(1)
                     gp = cell.gridpoints[i,j,k]
-                    r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
+#                     r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
 #                     gp.phi[m] = val/r
                     gp.phi[m] = val
                     
