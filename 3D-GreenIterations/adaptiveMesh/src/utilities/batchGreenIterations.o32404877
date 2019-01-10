@@ -1,0 +1,68 @@
+Running on
+      1 nyx7506
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+in testBatchGreen..., nOrbitals =  8
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/O_with_anderson/LW5o5_1500_6_orbitals.csv', 14.0, 8, -112.471443237994, -11.997011069615391, -0.94214407530225852, -62.898682441673358, -1.0]
+[ -1.87191496e+01  -9.90709856e+00  -1.07530710e+00  -5.21534840e-01
+  -4.45554611e-01  -4.45554331e-01  -3.35142164e-01  -8.27912477e-02
+  -8.27912477e-02   1.29036768e-02]
+(10,)
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Gauge shift  -1.0
+Nuclear energy:  22.5181832905
+Atom is contained in cell    which has no children.  Divide at atomic location.
+There are now 8 leaf cells.
+Atom located inside child  111
+Calling recursive divide for this child, but not others.
+Atom is contained in cell  111  which has no children.  Divide at atomic location.
+There are now 15 leaf cells.
+After aspect ratio divide there are 825 leaf cells.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 0.615,  0.615,  0.615)
+Z = 8 located at (x, y, z) = (-0.615, -0.615, -0.615)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the tree, nOrbitals =  8
+type:  <class 'int'>
+max depth  20
+Number of gridpoints:  1098000
+max density:  125.690869235
+Integrated density before normalization:  6.00841155131
+Integrated density after normalization:  6.0
+max density:  307.641404554
+Integrated density before normalization:  14.0000580426
+Integrated density after normalization:  14.0
+Initializing density EXTERNALLY took 13.014 seconds.
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 0.615,  0.615,  0.615)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-0.615, -0.615, -0.615)
+Orbital index = 2
+Orbital 2 filled with (n,ell,m) = (1,0,0) 
+Orbital 3 filled with (n,ell,m) = (2,0,0) 
+Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?
+Filling extra orbitals with random initial data.
+Initializing orbital  4  randomly...
+Initializing orbitals randomly inside Tree Structure took 1.823 seconds.
+Initializing orbital  5  randomly...
+Initializing orbitals randomly inside Tree Structure took 1.838 seconds.
+Initializing orbital  6  randomly...
+Initializing orbitals randomly inside Tree Structure took 1.807 seconds.

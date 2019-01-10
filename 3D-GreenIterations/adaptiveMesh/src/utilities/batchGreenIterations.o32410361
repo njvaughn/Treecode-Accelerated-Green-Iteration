@@ -1,0 +1,306 @@
+Running on
+      1 nyx7510
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+in testBatchGreen..., nOrbitals =  5
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/O_with_anderson/LW5o5_1500_6_orbitals.csv', 8.0, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.5]
+[-18.75890296  -0.87120699  -0.33829445  -0.33829445  -0.33829445   0.           0.
+   0.           0.        ]
+(9,)
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Gauge shift  -0.5
+Nuclear energy:  0.0
+Atom is contained in cell    which has no children.  Divide at atomic location.
+There are now 8 leaf cells.
+After aspect ratio divide there are 8 leaf cells.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the tree, nOrbitals =  5
+type:  <class 'int'>
+max depth  20
+Number of gridpoints:  484000
+max density:  306.586216826
+Integrated density before normalization:  8.00005789033
+Integrated density after normalization:  8.0
+Initializing density EXTERNALLY took 3.504 seconds.
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?
+Filling extra orbitals with random initial data.
+Initializing orbital  2  randomly...
+Initializing orbitals randomly inside Tree Structure took 0.798 seconds.
+Initializing orbital  3  randomly...
+Initializing orbitals randomly inside Tree Structure took 0.796 seconds.
+Initializing orbital  4  randomly...
+Initializing orbitals randomly inside Tree Structure took 0.795 seconds.
+Initializing orbitals EXTERNAL to Tree Structure took 27.540 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       4425 
+Total Number of Leaf Cells:  3872 
+Total Number of Gridpoints:  484000 
+Minimum Depth                3 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  5 
+Construction time:           47.6 seconds.
+Closest gridpoint to origin:  [-0.00023898185402757011, -0.00023898185402757011, -0.00023898185402757011]
+For a distance of:  0.00041392871326276036
+Part of a cell centered at:  [-0.0048828125, -0.0048828125, -0.0048828125]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    484000
+Threads per block:    512
+Blocks per grid:      946
+[74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821, -0.5]
+Integrated density:  8.0
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    34.0081 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-19.25979178  -1.37123541   1.75546738   7.4841749    8.13240708]
+Sorted eigenvalues:  [-19.25979178  -1.37123541   1.75546738   7.4841749    8.13240708]
+New order:  [0 1 2 3 4]
+Orbital energies after initial sort: 
+ [-19.25979178  -1.37123541   1.75546738   7.4841749    8.13240708]
+Kinetic:    [ 28.75701121   3.19602104   2.25828575   7.98632562   8.63453674]
+Potential:  [-48.01680299  -4.56725646  -0.50281837  -0.50215072  -0.50212966]
+Computing band energy.  Current orbital energies are:  [-19.25979178  -1.37123541   1.75546738   7.4841749    8.13240708]
+Electrostatic Energies:
+Hartree:          36.3250195668
+External:         -177.146329145
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-19.25979178  -1.37123541   1.75546738   7.4841749    8.13240708]
+Orbital Energy Errors after initialization:  [ -8.88825266e-04  -2.84245901e-05   2.59376183e+00   8.32246935e+00
+   8.97070153e+00]
+Updated V_x:                           -9.6257967162 Hartree
+Updated V_c:                           -0.6072438701 Hartree
+Updated Band Energy:                   -18.7827698386 H, -9.2895500030e+01 H
+Updated Kinetic Energy:                 95.9465607590 H, 1.0316593084e+02 H
+Updated E_x:                           -7.2193475372 H, -6.6747943015e+00 H
+Updated E_c:                           -0.5445524598 H, 1.4027359191e+02 H
+Updated totalElectrostatic:            -140.8213095781 H, -6.6351972077e+01 H
+Total Energy:                          -52.6386488161 H, -5.2138648816e+01 H
+
+
+
+SCF Count  1
+Orbital Energies:  [-19.25979178  -1.37123541  -1.5         -1.5         -1.5       ]
+Working on orbital 0
+Using singularity subtraction.  Convolution time:  28.079068183898926
+Norm of psiNew =  0.999997957085
+eigenvalueHistory:  -19.26107792102537
+Orbital energy after Harrison update:  -19.261077921
+Orbital 0 error and eigenvalue residual:   -2.175e-03 and 1.286e-03
+Orbital 0 wavefunction residual: 9.352e-05
+
+
+Turning on Anderson Mixing for wavefunction 0
+Using singularity subtraction.  Convolution time:  28.09453797340393
+Norm of psiNew =  0.999978804178
+eigenvalueHistory:  [-19.26107792 -19.26107934]
+Orbital energy after Harrison update:  -19.2610793422
+Anderson mixing on the orbital.
+Input densities has shape  (484000, 1)
+
+Anderson weights:  [] 1.0
+Orbital 0 error and eigenvalue residual:   -2.176e-03 and 1.421e-06
+Orbital 0 wavefunction residual: 3.408e-05
+
+
+Using singularity subtraction.  Convolution time:  28.241159439086914
+Norm of psiNew =  0.999994980653
+eigenvalueHistory:  [-19.26107792 -19.26107934 -19.26107937]
+Orbital energy after Harrison update:  -19.2610793721
+Anderson mixing on the orbital.
+Input densities has shape  (484000, 2)
+
+Anderson weights:  [ 0.01126551] 0.988734489264
+Orbital 0 error and eigenvalue residual:   -2.176e-03 and 2.992e-08
+Orbital 0 wavefunction residual: 2.121e-05
+
+
+Using singularity subtraction.  Convolution time:  28.178189992904663
+Norm of psiNew =  0.999996413825
+eigenvalueHistory:  [-19.26107792 -19.26107934 -19.26107937 -19.26107939]
+Orbital energy after Harrison update:  -19.2610793868
+Anderson mixing on the orbital.
+Input densities has shape  (484000, 3)
+
+Anderson weights:  [ 0.00484148 -2.54998042] 3.54513894115
+Orbital 0 error and eigenvalue residual:   -2.176e-03 and 1.474e-08
+Orbital 0 wavefunction residual: 1.524e-05
+
+
+Using singularity subtraction.  Convolution time:  28.163296461105347
+Norm of psiNew =  1.00000000038
+eigenvalueHistory:  [-19.26107792 -19.26107934 -19.26107937 -19.26107939 -19.2610794 ]
+Orbital energy after Harrison update:  -19.261079402
+Anderson mixing on the orbital.
+Input densities has shape  (484000, 4)
+
+Anderson weights:  [-0.00518783  3.2573116  -4.53309684] 2.28097306346
+Orbital 0 error and eigenvalue residual:   -2.176e-03 and 1.516e-08
+Orbital 0 wavefunction residual: 5.675e-07
+
+
+Used 5 iterations for orbital 0.
+
+
+
+Working on orbital 1
+Using singularity subtraction.  Convolution time:  28.12140440940857
+Norm of psiNew =  0.999988650394
+eigenvalueHistory:  -1.3713381444587123
+Orbital energy after Harrison update:  -1.37133814446
+Orbital 1 error and eigenvalue residual:   -1.312e-04 and 1.027e-04
+Orbital 1 wavefunction residual: 7.733e-05
+
+
+Turning on Anderson Mixing for wavefunction 1
+Using singularity subtraction.  Convolution time:  28.154850244522095
+Norm of psiNew =  1.00000048961
+eigenvalueHistory:  [-1.37133814 -1.37133822]
+Orbital energy after Harrison update:  -1.37133821776
+Anderson mixing on the orbital.
+Input densities has shape  (484000, 1)
+
+Anderson weights:  [] 1.0
+Orbital 1 error and eigenvalue residual:   -1.312e-04 and 7.330e-08
+Orbital 1 wavefunction residual: 4.277e-05
+
+
+Using singularity subtraction.  Convolution time:  28.304155111312866
+Norm of psiNew =  0.999999236839
+eigenvalueHistory:  [-1.37133814 -1.37133822 -1.37133822]
+Orbital energy after Harrison update:  -1.37133822209
+Anderson mixing on the orbital.
+Input densities has shape  (484000, 2)
+
+Anderson weights:  [-2.17180725] 3.17180724962
+Orbital 1 error and eigenvalue residual:   -1.312e-04 and 4.333e-09
+Orbital 1 wavefunction residual: 3.099e-05
+
+
+Using singularity subtraction.  Convolution time:  28.312570095062256
+Norm of psiNew =  1.00000304795
+eigenvalueHistory:  [-1.37133814 -1.37133822 -1.37133822 -1.37133822]
+Orbital energy after Harrison update:  -1.37133822462
+Anderson mixing on the orbital.
+Input densities has shape  (484000, 3)
+
+Anderson weights:  [ 0.00022984 -0.22742676] 1.22719692036
+Orbital 1 error and eigenvalue residual:   -1.312e-04 and 2.527e-09
+Orbital 1 wavefunction residual: 6.465e-06
+
+
+Used 4 iterations for orbital 1.
+
+
+
+Working on orbital 2
+Using singularity subtraction.  Convolution time:  28.127686977386475
+Norm of psiNew =  0.301665024602
+eigenvalueHistory:  2.5016320191349957
+Orbital energy after Harrison update:  2.50163201913
+Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).
+Orbital 2 error and eigenvalue residual:   1.383e-01 and 4.002e+00
+Orbital 2 wavefunction residual: 7.066e-01
+
+
+Using singularity subtraction.  Convolution time:  28.128623247146606
+Norm of psiNew =  0.667276184641
+eigenvalueHistory:  [ 2.50163202 -0.29166875]
+Orbital energy after Harrison update:  -0.291668747008
+Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).
+Orbital 2 error and eigenvalue residual:   1.383e-01 and 4.083e-01
+Orbital 2 wavefunction residual: 7.272e-01
+
+
+Using singularity subtraction.  Convolution time:  28.15734338760376
+Norm of psiNew =  0.667496308204
+eigenvalueHistory:  [ 2.50163202 -0.29166875 -0.29239542]
+Orbital energy after Harrison update:  -0.292395418529
+Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).
+Orbital 2 error and eigenvalue residual:   1.383e-01 and 4.076e-01
+Orbital 2 wavefunction residual: 7.168e-01
+
+
+Using singularity subtraction.  Convolution time:  28.19018530845642
+Norm of psiNew =  0.667615930947
+eigenvalueHistory:  [ 2.50163202 -0.29166875 -0.29239542 -0.29226285]
+Orbital energy after Harrison update:  -0.292262849773
+Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).
+Orbital 2 error and eigenvalue residual:   1.383e-01 and 4.077e-01
+Orbital 2 wavefunction residual: 6.785e-01
+
+
+Using singularity subtraction.  Convolution time:  28.217984676361084
+Norm of psiNew =  0.669902993693
+eigenvalueHistory:  [ 2.50163202 -0.29166875 -0.29239542 -0.29226285 -0.29938698]
+Orbital energy after Harrison update:  -0.299386975838
+Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).
+Orbital 2 error and eigenvalue residual:   1.383e-01 and 4.006e-01
+Orbital 2 wavefunction residual: 6.982e-01
+
+
+Using singularity subtraction.  Convolution time:  28.182156801223755
+Norm of psiNew =  0.66709406329
+eigenvalueHistory:  [ 2.50163202 -0.29166875 -0.29239542 -0.29226285 -0.29938698 -0.2912913 ]
+Orbital energy after Harrison update:  -0.291291296974
+Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).
+Orbital 2 error and eigenvalue residual:   1.383e-01 and 4.087e-01
+Orbital 2 wavefunction residual: 7.464e-01
+
+
+Using singularity subtraction.  Convolution time:  28.1886785030365
+Norm of psiNew =  0.667883925089
+eigenvalueHistory:  [ 2.50163202 -0.29166875 -0.29239542 -0.29226285 -0.29938698 -0.2912913
+ -0.29342053]
+Orbital energy after Harrison update:  -0.293420534633
+Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).
+Orbital 2 error and eigenvalue residual:   1.383e-01 and 4.066e-01
+Orbital 2 wavefunction residual: 7.278e-01
+
+
+Using singularity subtraction.  Convolution time:  28.204465866088867
+Norm of psiNew =  0.665581518856
+eigenvalueHistory:  [ 2.50163202 -0.29166875 -0.29239542 -0.29226285 -0.29938698 -0.2912913
+ -0.29342053 -0.2857985 ]
+Orbital energy after Harrison update:  -0.285798504011
+Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).
+Orbital 2 error and eigenvalue residual:   1.383e-01 and 4.142e-01
+Orbital 2 wavefunction residual: 7.260e-01
+
+
+Using singularity subtraction.  Convolution time:  28.22666597366333
+Norm of psiNew =  0.67022021485
+eigenvalueHistory:  [ 2.50163202 -0.29166875 -0.29239542 -0.29226285 -0.29938698 -0.2912913
+ -0.29342053 -0.2857985  -0.30021421]
+Orbital energy after Harrison update:  -0.300214211036
+Energy still positive after 10 iterations.  The wavefunction isn't being resolved well enough. Setting energy to equal the gauge shift and exiting Green Iterations (maybe).
+Orbital 2 error and eigenvalue residual:   1.383e-01 and 3.998e-01
+Orbital 2 wavefunction residual: 6.916e-01
+
+

@@ -1,0 +1,1986 @@
+Running on
+      1 nyx7512
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Setting nOrbitals to seven for purposes of running Carbon monoxide.
+in testBatchGreen..., nOrbitals =  7
+['../src/utilities/molecularConfigurations/carbonMonoxide.csv', '/home/njvaughn/CO_with_anderson/LW5o5_1000_7_orbitals_randValence.csv', 14.0, 7, -112.471443237994, -11.997011069615391, -0.94214407530225852, -62.898682441673358, -1.0]
+[ -1.87191496e+01  -9.90709856e+00  -1.07530710e+00  -5.21534840e-01
+  -4.45554611e-01  -4.45554331e-01  -3.35142164e-01  -8.27912477e-02
+  -8.27912477e-02   1.29036768e-02]
+(10,)
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/carbonMonoxide.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z6/singleAtomData/
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Gauge shift  -1.0
+Nuclear energy:  22.5181832905
+Atom is contained in cell    which has no children.  Divide at atomic location.
+There are now 8 leaf cells.
+Atom located inside child  111
+Calling recursive divide for this child, but not others.
+Atom is contained in cell  111  which has no children.  Divide at atomic location.
+There are now 15 leaf cells.
+After aspect ratio divide there are 825 leaf cells.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 6 located at (x, y, z) = ( 0.615,  0.615,  0.615)
+Z = 8 located at (x, y, z) = (-0.615, -0.615, -0.615)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the tree, nOrbitals =  7
+type:  <class 'int'>
+max depth  20
+Number of gridpoints:  786500
+max density:  125.388686535
+Integrated density before normalization:  6.0083931269
+Integrated density after normalization:  6.0
+max density:  306.671323615
+Integrated density before normalization:  14.0000576751
+Integrated density after normalization:  14.0
+Initializing density EXTERNALLY took 9.555 seconds.
+Initializing orbitals for atom Z = 6 located at (x, y, z) = ( 0.615,  0.615,  0.615)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Initializing orbitals for atom Z = 8 located at (x, y, z) = (-0.615, -0.615, -0.615)
+Orbital index = 2
+Orbital 2 filled with (n,ell,m) = (1,0,0) 
+Orbital 3 filled with (n,ell,m) = (2,0,0) 
+Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?
+Filling extra orbitals with random initial data.
+Initializing orbital  4  randomly...
+Initializing orbitals randomly inside Tree Structure took 1.287 seconds.
+Initializing orbital  5  randomly...
+Initializing orbitals randomly inside Tree Structure took 1.285 seconds.
+Initializing orbital  6  randomly...
+Initializing orbitals randomly inside Tree Structure took 1.278 seconds.
+Initializing orbitals EXTERNAL to Tree Structure took 73.525 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            1.00e+03 
+Total Number of Cells:       7885 
+Total Number of Leaf Cells:  6292 
+Total Number of Gridpoints:  786500 
+Minimum Depth                3 levels 
+Maximum Depth:               12 levels 
+Cell Order:                  5 
+Construction time:           119 seconds.
+Closest gridpoint to origin:  [-0.0075292575233478209, -0.0075292575233478209, -0.0075292575233478209]
+For a distance of:  0.013041056573708638
+Part of a cell centered at:  [-0.15383574999999999, -0.15383574999999999, -0.15383574999999999]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    786500
+Threads per block:    512
+Blocks per grid:      1537
+[111.85061770418731, -11.997011069615391, -0.94214407530225852, -211.38290579726365, -112.471443237994, -1.0]
+Integrated density:  14.0
+Using Gaussian singularity subtraction, alpha =  1
+Computing Vcoulomb took:    12.0629 seconds. 
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-11.00917496  -1.72094055 -19.86893231  -2.07798688   1.85043326
+   9.17888406  10.07816564]
+Sorted eigenvalues:  [-19.86893231 -11.00917496  -2.07798688  -1.72094055   1.85043326
+   9.17888406  10.07816564]
+New order:  [2 0 3 1 4 5 6]
+Orbital energies after initial sort: 
+ [-19.86893231 -11.00917496  -2.07798688  -1.72094055   1.85043326
+   9.17888406  10.07816564]
+Kinetic:    [ 15.71410223   1.64669004  28.75700974   3.19601829   2.85560509
+  10.1829982   11.08225987]
+Potential:  [-26.72327719  -3.36763058 -48.62594205  -5.27400518  -1.00517183
+  -1.00411413  -1.00409422]
+Computing band energy.  Current orbital energies are:  [-19.86893231 -11.00917496  -2.07798688  -1.72094055   1.85043326
+   9.17888406  10.07816564]
+Electrostatic Energies:
+Hartree:          74.8683834662
+External:         -308.495981402
+Nuclear-Nuclear:  22.5181832905
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-19.86893231 -11.00917496  -2.07798688  -1.72094055   1.85043326
+   9.17888406  10.07816564]
+Orbital Energy Errors after initialization:  [ -1.49782693e-01  -1.02076395e-01  -2.67978682e-03  -1.99405707e-01
+   3.29598787e+00   1.06244384e+01   1.14133078e+01]
+Updated V_x:                           -15.8117190048 Hartree
+Updated V_c:                           -1.0427594488 Hartree
+Updated Band Energy:                   -13.1391034535 H, -1.2498972116e+02 H
+Updated Kinetic Energy:                 162.4745894693 H, 1.7447160054e+02 H
+Updated E_x:                           -11.8587892536 H, -1.0916645178e+01 H
+Updated E_c:                           -0.9340716599 H, 2.1044883414e+02 H
+Updated totalElectrostatic:            -211.1094146448 H, -9.8637971407e+01 H
+Total Energy:                          -61.4276860890 H, -6.0427686089e+01 H
+
+
+
+SCF Count  1
+Orbital Energies:  [-19.86893231 -11.00917496  -2.07798688  -1.72094055  -2.          -2.          -2.        ]
+Working on orbital 0
+Using singularity subtraction.  Convolution time:  10.56869649887085
+Norm of psiNew =  1.00005664365
+eigenvalueHistory: 
+ -19.870242335862553
+Orbital energy after Harrison update:  -19.8702423359
+Orbital 0 error and eigenvalue residual:   -1.511e-01 and 1.310e-03
+Orbital 0 wavefunction residual: 9.605e-04
+
+
+Turning on Anderson Mixing for wavefunction 0
+Using singularity subtraction.  Convolution time:  10.564635276794434
+Norm of psiNew =  1.00000078116
+eigenvalueHistory: 
+ [-19.87024234 -19.87025752]
+Orbital energy after Harrison update:  -19.8702575175
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 1)
+
+Anderson weights:  [] 1.0
+Orbital 0 error and eigenvalue residual:   -1.511e-01 and 1.518e-05
+Orbital 0 wavefunction residual: 3.158e-04
+
+
+Using singularity subtraction.  Convolution time:  10.54917860031128
+Norm of psiNew =  0.99999997318
+eigenvalueHistory: 
+ [-19.87024234 -19.87025752 -19.87025875]
+Orbital energy after Harrison update:  -19.8702587541
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 2)
+
+Anderson weights:  [-2.12219538] 3.12219538187
+Orbital 0 error and eigenvalue residual:   -1.511e-01 and 1.237e-06
+Orbital 0 wavefunction residual: 2.156e-04
+
+
+Using singularity subtraction.  Convolution time:  10.54789400100708
+Norm of psiNew =  0.999999510038
+eigenvalueHistory: 
+ [-19.87024234 -19.87025752 -19.87025875 -19.87025994]
+Orbital energy after Harrison update:  -19.8702599415
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 3)
+
+Anderson weights:  [ 3.76945606 -5.56961524] 2.80015917617
+Orbital 0 error and eigenvalue residual:   -1.511e-01 and 1.187e-06
+Orbital 0 wavefunction residual: 1.742e-05
+
+
+Using singularity subtraction.  Convolution time:  10.559043169021606
+Norm of psiNew =  0.999999954726
+eigenvalueHistory: 
+ [-19.87024234 -19.87025752 -19.87025875 -19.87025994 -19.87025995]
+Orbital energy after Harrison update:  -19.8702599541
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 4)
+
+Anderson weights:  [-0.89934937  1.32904581 -0.68066007] 1.25096363563
+Orbital 0 error and eigenvalue residual:   -1.511e-01 and 1.262e-08
+Orbital 0 wavefunction residual: 9.647e-07
+
+
+Used 5 iterations for orbital 0.
+
+
+
+Working on orbital 1
+Using singularity subtraction.  Convolution time:  10.547674655914307
+Norm of psiNew =  1.00016701543
+eigenvalueHistory: 
+ -11.009708435839698
+Orbital energy after Harrison update:  -11.0097084358
+Orbital 1 error and eigenvalue residual:   -1.026e-01 and 5.335e-04
+Orbital 1 wavefunction residual: 2.039e-03
+
+
+Using singularity subtraction.  Convolution time:  10.567590475082397
+Norm of psiNew =  1.00005677163
+eigenvalueHistory: 
+ [-11.00970844 -11.00973925]
+Orbital energy after Harrison update:  -11.0097392511
+Orbital 1 error and eigenvalue residual:   -1.026e-01 and 3.082e-05
+Orbital 1 wavefunction residual: 6.747e-04
+
+
+Turning on Anderson Mixing for wavefunction 1
+Using singularity subtraction.  Convolution time:  10.54974627494812
+Norm of psiNew =  1.00002367942
+eigenvalueHistory: 
+ [-11.00970844 -11.00973925 -11.00974362]
+Orbital energy after Harrison update:  -11.0097436161
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 1)
+
+Anderson weights:  [] 1.0
+Orbital 1 error and eigenvalue residual:   -1.026e-01 and 4.365e-06
+Orbital 1 wavefunction residual: 2.461e-04
+
+
+Using singularity subtraction.  Convolution time:  10.542072534561157
+Norm of psiNew =  1.00001682528
+eigenvalueHistory: 
+ [-11.00970844 -11.00973925 -11.00974362 -11.00974404]
+Orbital energy after Harrison update:  -11.00974404
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 2)
+
+Anderson weights:  [-2.23406789] 3.23406788636
+Orbital 1 error and eigenvalue residual:   -1.026e-01 and 4.239e-07
+Orbital 1 wavefunction residual: 1.705e-04
+
+
+Using singularity subtraction.  Convolution time:  10.565520524978638
+Norm of psiNew =  1.00000151016
+eigenvalueHistory: 
+ [-11.00970844 -11.00973925 -11.00974362 -11.00974404 -11.00974446]
+Orbital energy after Harrison update:  -11.0097444631
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 3)
+
+Anderson weights:  [ 4.33741425 -6.29791863] 2.96050438172
+Orbital 1 error and eigenvalue residual:   -1.026e-01 and 4.230e-07
+Orbital 1 wavefunction residual: 1.219e-05
+
+
+Using singularity subtraction.  Convolution time:  10.54499864578247
+Norm of psiNew =  1.00000010003
+eigenvalueHistory: 
+ [-11.00970844 -11.00973925 -11.00974362 -11.00974404 -11.00974446
+ -11.00974447]
+Orbital energy after Harrison update:  -11.0097444666
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 4)
+
+Anderson weights:  [-4.81891581  6.99806218 -3.30312111] 2.1239747398
+Orbital 1 error and eigenvalue residual:   -1.026e-01 and 3.581e-09
+Orbital 1 wavefunction residual: 1.215e-06
+
+
+Using singularity subtraction.  Convolution time:  10.563703060150146
+Norm of psiNew =  1.00000004648
+eigenvalueHistory: 
+ [-11.00970844 -11.00973925 -11.00974362 -11.00974404 -11.00974446
+ -11.00974447 -11.00974447]
+Orbital energy after Harrison update:  -11.0097444667
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 5)
+
+Anderson weights:  [-0.0673078   0.09636915 -0.03919311 -0.76501142] 1.77514318062
+Orbital 1 error and eigenvalue residual:   -1.026e-01 and 4.229e-11
+Orbital 1 wavefunction residual: 5.760e-07
+
+
+Used 7 iterations for orbital 1.
+
+
+
+Working on orbital 2
+Using singularity subtraction.  Convolution time:  10.547085285186768
+Norm of psiNew =  1.01471636037
+eigenvalueHistory: 
+ -2.141807239464495
+Orbital energy after Harrison update:  -2.14180723946
+Orbital 2 error and eigenvalue residual:   -6.650e-02 and 6.382e-02
+Orbital 2 wavefunction residual: 1.204e-01
+
+
+Using singularity subtraction.  Convolution time:  10.545367002487183
+Norm of psiNew =  0.985726680078
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937]
+Orbital energy after Harrison update:  -2.10493936986
+Orbital 2 error and eigenvalue residual:   -2.963e-02 and 3.687e-02
+Orbital 2 wavefunction residual: 5.749e-02
+
+
+Using singularity subtraction.  Convolution time:  10.565252304077148
+Norm of psiNew =  1.00541971168
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048]
+Orbital energy after Harrison update:  -2.1259104843
+Orbital 2 error and eigenvalue residual:   -5.060e-02 and 2.097e-02
+Orbital 2 wavefunction residual: 4.544e-02
+
+
+Using singularity subtraction.  Convolution time:  10.542831182479858
+Norm of psiNew =  1.00239106762
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915]
+Orbital energy after Harrison update:  -2.1399891487
+Orbital 2 error and eigenvalue residual:   -6.468e-02 and 1.408e-02
+Orbital 2 wavefunction residual: 3.793e-02
+
+
+Using singularity subtraction.  Convolution time:  10.54540228843689
+Norm of psiNew =  1.00091550729
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718]
+Orbital energy after Harrison update:  -2.1503871776
+Orbital 2 error and eigenvalue residual:   -7.508e-02 and 1.040e-02
+Orbital 2 wavefunction residual: 3.226e-02
+
+
+Using singularity subtraction.  Convolution time:  10.562203407287598
+Norm of psiNew =  1.00003279248
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723]
+Orbital energy after Harrison update:  -2.15832723416
+Orbital 2 error and eigenvalue residual:   -8.302e-02 and 7.940e-03
+Orbital 2 wavefunction residual: 2.777e-02
+
+
+Using singularity subtraction.  Convolution time:  10.545570373535156
+Norm of psiNew =  0.999467344661
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727 ]
+Orbital energy after Harrison update:  -2.16447269685
+Orbital 2 error and eigenvalue residual:   -8.917e-02 and 6.145e-03
+Orbital 2 wavefunction residual: 2.409e-02
+
+
+Using singularity subtraction.  Convolution time:  10.546181201934814
+Norm of psiNew =  0.999105217333
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089]
+Orbital energy after Harrison update:  -2.16926089329
+Orbital 2 error and eigenvalue residual:   -9.395e-02 and 4.788e-03
+Orbital 2 wavefunction residual: 2.101e-02
+
+
+Using singularity subtraction.  Convolution time:  10.563441276550293
+Norm of psiNew =  0.998883246108
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462]
+Orbital energy after Harrison update:  -2.17300461963
+Orbital 2 error and eigenvalue residual:   -9.770e-02 and 3.744e-03
+Orbital 2 wavefunction residual: 1.840e-02
+
+
+Using singularity subtraction.  Convolution time:  10.547200679779053
+Norm of psiNew =  0.998760640486
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668]
+Orbital energy after Harrison update:  -2.17593668101
+Orbital 2 error and eigenvalue residual:   -1.006e-01 and 2.932e-03
+Orbital 2 wavefunction residual: 1.615e-02
+
+
+Using singularity subtraction.  Convolution time:  10.543068647384644
+Norm of psiNew =  0.998708913984
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344 ]
+Orbital energy after Harrison update:  -2.17823440219
+Orbital 2 error and eigenvalue residual:   -1.029e-01 and 2.298e-03
+Orbital 2 wavefunction residual: 1.421e-02
+
+
+Using singularity subtraction.  Convolution time:  10.563509225845337
+Norm of psiNew =  0.998707328123
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483]
+Orbital energy after Harrison update:  -2.18003482638
+Orbital 2 error and eigenvalue residual:   -1.047e-01 and 1.800e-03
+Orbital 2 wavefunction residual: 1.251e-02
+
+
+Using singularity subtraction.  Convolution time:  10.545895099639893
+Norm of psiNew =  0.998740470838
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483]
+Orbital energy after Harrison update:  -2.18144483376
+Orbital 2 error and eigenvalue residual:   -1.061e-01 and 1.410e-03
+Orbital 2 wavefunction residual: 1.103e-02
+
+
+Using singularity subtraction.  Convolution time:  10.542752265930176
+Norm of psiNew =  0.998796806979
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823]
+Orbital energy after Harrison update:  -2.18254823072
+Orbital 2 error and eigenvalue residual:   -1.072e-01 and 1.103e-03
+Orbital 2 wavefunction residual: 9.725e-03
+
+
+Using singularity subtraction.  Convolution time:  10.573002099990845
+Norm of psiNew =  0.998867721638
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092]
+Orbital energy after Harrison update:  -2.18341091836
+Orbital 2 error and eigenvalue residual:   -1.081e-01 and 8.627e-04
+Orbital 2 wavefunction residual: 8.578e-03
+
+
+Using singularity subtraction.  Convolution time:  10.543392658233643
+Norm of psiNew =  0.998946838225
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478]
+Orbital energy after Harrison update:  -2.18408477702
+Orbital 2 error and eigenvalue residual:   -1.088e-01 and 6.739e-04
+Orbital 2 wavefunction residual: 7.567e-03
+
+
+Using singularity subtraction.  Convolution time:  10.552139282226562
+Norm of psiNew =  0.999029505956
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065]
+Orbital energy after Harrison update:  -2.18461065083
+Orbital 2 error and eigenvalue residual:   -1.093e-01 and 5.259e-04
+Orbital 2 wavefunction residual: 6.675e-03
+
+
+Using singularity subtraction.  Convolution time:  10.568114042282104
+Norm of psiNew =  0.999112402637
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067]
+Orbital energy after Harrison update:  -2.18502067474
+Orbital 2 error and eigenvalue residual:   -1.097e-01 and 4.100e-04
+Orbital 2 wavefunction residual: 5.888e-03
+
+
+Using singularity subtraction.  Convolution time:  10.547547101974487
+Norm of psiNew =  0.999193222417
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011]
+Orbital energy after Harrison update:  -2.18534010549
+Orbital 2 error and eigenvalue residual:   -1.100e-01 and 3.194e-04
+Orbital 2 wavefunction residual: 5.193e-03
+
+
+Using singularity subtraction.  Convolution time:  10.546679496765137
+Norm of psiNew =  0.999270429524
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877]
+Orbital energy after Harrison update:  -2.18558876947
+Orbital 2 error and eigenvalue residual:   -1.103e-01 and 2.487e-04
+Orbital 2 wavefunction residual: 4.579e-03
+
+
+Using singularity subtraction.  Convolution time:  10.563102722167969
+Norm of psiNew =  0.999343064605
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221]
+Orbital energy after Harrison update:  -2.18578221008
+Orbital 2 error and eigenvalue residual:   -1.105e-01 and 1.934e-04
+Orbital 2 wavefunction residual: 4.037e-03
+
+
+Using singularity subtraction.  Convolution time:  10.546624183654785
+Norm of psiNew =  0.999410593431
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326 ]
+Orbital energy after Harrison update:  -2.18593259717
+Orbital 2 error and eigenvalue residual:   -1.106e-01 and 1.504e-04
+Orbital 2 wavefunction residual: 3.559e-03
+
+
+Using singularity subtraction.  Convolution time:  10.55040955543518
+Norm of psiNew =  0.999472789692
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945]
+Orbital energy after Harrison update:  -2.18604944751
+Orbital 2 error and eigenvalue residual:   -1.107e-01 and 1.169e-04
+Orbital 2 wavefunction residual: 3.137e-03
+
+
+Using singularity subtraction.  Convolution time:  10.567831993103027
+Norm of psiNew =  0.999529645079
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019]
+Orbital energy after Harrison update:  -2.18614019453
+Orbital 2 error and eigenvalue residual:   -1.108e-01 and 9.075e-05
+Orbital 2 wavefunction residual: 2.764e-03
+
+
+Using singularity subtraction.  Convolution time:  10.5461745262146
+Norm of psiNew =  0.99958130103
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064]
+Orbital energy after Harrison update:  -2.18621063823
+Orbital 2 error and eigenvalue residual:   -1.109e-01 and 7.044e-05
+Orbital 2 wavefunction residual: 2.435e-03
+
+
+Using singularity subtraction.  Convolution time:  10.548044204711914
+Norm of psiNew =  0.999627997509
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653 ]
+Orbital energy after Harrison update:  -2.18626529974
+Orbital 2 error and eigenvalue residual:   -1.110e-01 and 5.466e-05
+Orbital 2 wavefunction residual: 2.145e-03
+
+
+Using singularity subtraction.  Convolution time:  10.571915864944458
+Norm of psiNew =  0.999670035074
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077 ]
+Orbital energy after Harrison update:  -2.18630770026
+Orbital 2 error and eigenvalue residual:   -1.110e-01 and 4.240e-05
+Orbital 2 wavefunction residual: 1.890e-03
+
+
+Using singularity subtraction.  Convolution time:  10.551157236099243
+Norm of psiNew =  0.999707747199
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058]
+Orbital energy after Harrison update:  -2.18634058003
+Orbital 2 error and eigenvalue residual:   -1.110e-01 and 3.288e-05
+Orbital 2 wavefunction residual: 1.664e-03
+
+
+Using singularity subtraction.  Convolution time:  10.547903537750244
+Norm of psiNew =  0.999741480448
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607]
+Orbital energy after Harrison update:  -2.1863660701
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 2.549e-05
+Orbital 2 wavefunction residual: 1.465e-03
+
+
+Using singularity subtraction.  Convolution time:  10.567432403564453
+Norm of psiNew =  0.999771580592
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583]
+Orbital energy after Harrison update:  -2.18638582673
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 1.976e-05
+Orbital 2 wavefunction residual: 1.290e-03
+
+
+Using singularity subtraction.  Convolution time:  10.549356698989868
+Norm of psiNew =  0.999798383186
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114]
+Orbital energy after Harrison update:  -2.18640113646
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 1.531e-05
+Orbital 2 wavefunction residual: 1.136e-03
+
+
+Using singularity subtraction.  Convolution time:  10.543523073196411
+Norm of psiNew =  0.999822207466
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413  ]
+Orbital energy after Harrison update:  -2.18641299816
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 1.186e-05
+Orbital 2 wavefunction residual: 1.000e-03
+
+
+Turning on Anderson Mixing for wavefunction 2
+Using singularity subtraction.  Convolution time:  10.55832552909851
+Norm of psiNew =  0.999843352661
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219]
+Orbital energy after Harrison update:  -2.18642218703
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 1)
+
+Anderson weights:  [] 1.0
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 9.189e-06
+Orbital 2 wavefunction residual: 8.802e-04
+
+
+Using singularity subtraction.  Convolution time:  10.549187660217285
+Norm of psiNew =  0.999851168517
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586]
+Orbital energy after Harrison update:  -2.1864258594
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 2)
+
+Anderson weights:  [-15.73089983] 16.7308998323
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 3.672e-06
+Orbital 2 wavefunction residual: 8.276e-04
+
+
+Using singularity subtraction.  Convolution time:  10.551218032836914
+Norm of psiNew =  1.00003738176
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586 -2.18645374]
+Orbital energy after Harrison update:  -2.18645373714
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 3)
+
+Anderson weights:  [-17.96769501  19.10892643] -0.141231423119
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 2.788e-05
+Orbital 2 wavefunction residual: 2.588e-05
+
+
+Using singularity subtraction.  Convolution time:  10.571132898330688
+Norm of psiNew =  1.00003024296
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586 -2.18645374 -2.18645374]
+Orbital energy after Harrison update:  -2.18645373735
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 4)
+
+Anderson weights:  [-17.64985754  18.77107645   0.99283976] -1.11405866499
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 2.089e-10
+Orbital 2 wavefunction residual: 2.656e-05
+
+
+Using singularity subtraction.  Convolution time:  10.545846939086914
+Norm of psiNew =  1.00002864386
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586 -2.18645374 -2.18645374
+ -2.18645374]
+Orbital energy after Harrison update:  -2.18645373779
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 5)
+
+Anderson weights:  [ 10.38453499 -11.06938828   3.76822714 -29.76369123] 27.6803173909
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 4.428e-10
+Orbital 2 wavefunction residual: 2.513e-05
+
+
+Using singularity subtraction.  Convolution time:  10.55195927619934
+Norm of psiNew =  0.999984238365
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586 -2.18645374 -2.18645374
+ -2.18645374 -2.18645374]
+Orbital energy after Harrison update:  -2.18645373689
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 6)
+
+Anderson weights:  [ 17.08606446 -18.11165866  -0.18128485  72.42032594 -73.6845217 ] 3.47107480182
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 8.997e-10
+Orbital 2 wavefunction residual: 1.999e-05
+
+
+Using singularity subtraction.  Convolution time:  10.571549654006958
+Norm of psiNew =  0.999976047246
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586 -2.18645374 -2.18645374
+ -2.18645374 -2.18645374 -2.18645374]
+Orbital energy after Harrison update:  -2.1864537377
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 7)
+
+Anderson weights:  [   8.5437226    -9.22122048   -0.7761978  -159.87160184  167.19930593
+   -7.69895715] 2.82494873676
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 8.104e-10
+Orbital 2 wavefunction residual: 2.484e-05
+
+
+Using singularity subtraction.  Convolution time:  10.547751665115356
+Norm of psiNew =  0.999993318787
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586 -2.18645374 -2.18645374
+ -2.18645374 -2.18645374 -2.18645374 -2.18645374]
+Orbital energy after Harrison update:  -2.18645373934
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 8)
+
+Anderson weights:  [  -0.92344548    1.24595159    0.49838784  314.01829404 -326.24714353
+   15.11837043   -5.65777461] 2.94735972206
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 1.636e-09
+Orbital 2 wavefunction residual: 8.772e-06
+
+
+Using singularity subtraction.  Convolution time:  10.562125444412231
+Norm of psiNew =  0.999998437612
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586 -2.18645374 -2.18645374
+ -2.18645374 -2.18645374 -2.18645374 -2.18645374 -2.18645374]
+Orbital energy after Harrison update:  -2.18645373949
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 9)
+
+Anderson weights:  [  3.42362216  -3.71419509  -0.33182502 -86.61867013  90.41117464
+  -4.16548267   1.55113407  -0.88341272] 1.3276547673
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 1.551e-10
+Orbital 2 wavefunction residual: 4.034e-06
+
+
+Using singularity subtraction.  Convolution time:  10.551203489303589
+Norm of psiNew =  0.999999398306
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586 -2.18645374 -2.18645374
+ -2.18645374 -2.18645374 -2.18645374 -2.18645374 -2.18645374 -2.18645374]
+Orbital energy after Harrison update:  -2.18645373953
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 10)
+
+Anderson weights:  [  1.58113353  -1.70547208  -0.12690631 -28.53322411  29.83575055
+  -1.37950212   0.49882333  -0.19686362  -1.2929219 ] 2.31918271763
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 3.540e-11
+Orbital 2 wavefunction residual: 3.142e-06
+
+
+Using singularity subtraction.  Convolution time:  10.543731927871704
+Norm of psiNew =  1.00000100389
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586 -2.18645374 -2.18645374
+ -2.18645374 -2.18645374 -2.18645374 -2.18645374 -2.18645374 -2.18645374
+ -2.18645374]
+Orbital energy after Harrison update:  -2.18645373956
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 11)
+
+Anderson weights:  [  0.82127974  -0.88838824  -0.06480815 -17.26498624  18.02350542
+  -0.81631379   0.32554556  -0.33576534   3.27723637  -5.27032029] 3.19301497921
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 2.860e-11
+Orbital 2 wavefunction residual: 1.656e-06
+
+
+Using singularity subtraction.  Convolution time:  10.560581684112549
+Norm of psiNew =  1.00000191339
+eigenvalueHistory: 
+ [-2.14180724 -2.10493937 -2.12591048 -2.13998915 -2.15038718 -2.15832723
+ -2.1644727  -2.16926089 -2.17300462 -2.17593668 -2.1782344  -2.18003483
+ -2.18144483 -2.18254823 -2.18341092 -2.18408478 -2.18461065 -2.18502067
+ -2.18534011 -2.18558877 -2.18578221 -2.1859326  -2.18604945 -2.18614019
+ -2.18621064 -2.1862653  -2.1863077  -2.18634058 -2.18636607 -2.18638583
+ -2.18640114 -2.186413   -2.18642219 -2.18642586 -2.18645374 -2.18645374
+ -2.18645374 -2.18645374 -2.18645374 -2.18645374 -2.18645374 -2.18645374
+ -2.18645374 -2.18645374]
+Orbital energy after Harrison update:  -2.18645373957
+Anderson mixing on the orbital.
+Input densities has shape  (786500, 12)
+
+Anderson weights:  [  0.35036887  -0.3786967   -0.02357047  -8.10450404   8.46638585
+  -0.41842514   0.10827923   0.26121372  -6.29863035  10.44249405
+  -6.5653936 ] 3.16047858373
+Orbital 2 error and eigenvalue residual:   -1.111e-01 and 1.333e-11
+Orbital 2 wavefunction residual: 8.145e-07
+
+
+Used 44 iterations for orbital 2.
+
+
+
+Working on orbital 3
+Using singularity subtraction.  Convolution time:  10.548206567764282
+Norm of psiNew =  1.02966347602
+eigenvalueHistory: 
+ -1.8906520438297991
+Orbital energy after Harrison update:  -1.89065204383
+Orbital 3 error and eigenvalue residual:   -3.691e-01 and 1.697e-01
+Orbital 3 wavefunction residual: 6.396e-01
+
+
+Using singularity subtraction.  Convolution time:  10.563950061798096
+Norm of psiNew =  0.816949918007
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861]
+Orbital energy after Harrison update:  -1.26511860895
+Orbital 3 error and eigenvalue residual:   2.564e-01 and 6.255e-01
+Orbital 3 wavefunction residual: 5.377e-02
+
+
+Using singularity subtraction.  Convolution time:  10.54420804977417
+Norm of psiNew =  1.08557163461
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703]
+Orbital energy after Harrison update:  -1.38830703453
+Orbital 3 error and eigenvalue residual:   1.332e-01 and 1.232e-01
+Orbital 3 wavefunction residual: 6.000e-02
+
+
+Using singularity subtraction.  Convolution time:  10.544293403625488
+Norm of psiNew =  1.01743469906
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948]
+Orbital energy after Harrison update:  -1.41054948334
+Orbital 3 error and eigenvalue residual:   1.110e-01 and 2.224e-02
+Orbital 3 wavefunction residual: 3.202e-02
+
+
+Using singularity subtraction.  Convolution time:  10.563984394073486
+Norm of psiNew =  1.00674109767
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256]
+Orbital energy after Harrison update:  -1.41731256458
+Orbital 3 error and eigenvalue residual:   1.042e-01 and 6.763e-03
+Orbital 3 wavefunction residual: 2.585e-02
+
+
+Using singularity subtraction.  Convolution time:  10.550007581710815
+Norm of psiNew =  1.00439247722
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271]
+Orbital energy after Harrison update:  -1.42240270852
+Orbital 3 error and eigenvalue residual:   9.913e-02 and 5.090e-03
+Orbital 3 wavefunction residual: 2.361e-02
+
+
+Using singularity subtraction.  Convolution time:  10.549074649810791
+Norm of psiNew =  1.0030911868
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611]
+Orbital energy after Harrison update:  -1.42694611222
+Orbital 3 error and eigenvalue residual:   9.459e-02 and 4.543e-03
+Orbital 3 wavefunction residual: 2.283e-02
+
+
+Using singularity subtraction.  Convolution time:  10.555044412612915
+Norm of psiNew =  1.00222542549
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527]
+Orbital energy after Harrison update:  -1.43127527271
+Orbital 3 error and eigenvalue residual:   9.026e-02 and 4.329e-03
+Orbital 3 wavefunction residual: 2.283e-02
+
+
+Using singularity subtraction.  Convolution time:  10.551790475845337
+Norm of psiNew =  1.00160332608
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746]
+Orbital energy after Harrison update:  -1.4355674596
+Orbital 3 error and eigenvalue residual:   8.597e-02 and 4.292e-03
+Orbital 3 wavefunction residual: 2.323e-02
+
+
+Using singularity subtraction.  Convolution time:  10.547657489776611
+Norm of psiNew =  1.00112040355
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983]
+Orbital energy after Harrison update:  -1.43992983344
+Orbital 3 error and eigenvalue residual:   8.161e-02 and 4.362e-03
+Orbital 3 wavefunction residual: 2.384e-02
+
+
+Using singularity subtraction.  Convolution time:  10.56098484992981
+Norm of psiNew =  1.00071376788
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003]
+Orbital energy after Harrison update:  -1.44443002934
+Orbital 3 error and eigenvalue residual:   7.710e-02 and 4.500e-03
+Orbital 3 wavefunction residual: 2.454e-02
+
+
+Using singularity subtraction.  Convolution time:  10.543599843978882
+Norm of psiNew =  1.0003444522
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066]
+Orbital energy after Harrison update:  -1.44911065557
+Orbital 3 error and eigenvalue residual:   7.242e-02 and 4.681e-03
+Orbital 3 wavefunction residual: 2.528e-02
+
+
+Using singularity subtraction.  Convolution time:  10.545875072479248
+Norm of psiNew =  0.999988393259
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707]
+Orbital energy after Harrison update:  -1.45399706569
+Orbital 3 error and eigenvalue residual:   6.754e-02 and 4.886e-03
+Orbital 3 wavefunction residual: 2.601e-02
+
+
+Using singularity subtraction.  Convolution time:  10.567464351654053
+Norm of psiNew =  0.999631277801
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184]
+Orbital energy after Harrison update:  -1.45910184126
+Orbital 3 error and eigenvalue residual:   6.243e-02 and 5.105e-03
+Orbital 3 wavefunction residual: 2.673e-02
+
+
+Using singularity subtraction.  Convolution time:  10.545016288757324
+Norm of psiNew =  0.999265409176
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751]
+Orbital energy after Harrison update:  -1.46442751289
+Orbital 3 error and eigenvalue residual:   5.711e-02 and 5.326e-03
+Orbital 3 wavefunction residual: 2.740e-02
+
+
+Using singularity subtraction.  Convolution time:  10.547183752059937
+Norm of psiNew =  0.998887718402
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829]
+Orbital energy after Harrison update:  -1.46996828818
+Orbital 3 error and eigenvalue residual:   5.157e-02 and 5.541e-03
+Orbital 3 wavefunction residual: 2.802e-02
+
+
+Using singularity subtraction.  Convolution time:  10.569732189178467
+Norm of psiNew =  0.998498451187
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121]
+Orbital energy after Harrison update:  -1.47571121156
+Orbital 3 error and eigenvalue residual:   4.582e-02 and 5.743e-03
+Orbital 3 wavefunction residual: 2.858e-02
+
+
+Using singularity subtraction.  Convolution time:  10.548539876937866
+Norm of psiNew =  0.998100261193
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701]
+Orbital energy after Harrison update:  -1.48163701027
+Orbital 3 error and eigenvalue residual:   3.990e-02 and 5.926e-03
+Orbital 3 wavefunction residual: 2.907e-02
+
+
+Using singularity subtraction.  Convolution time:  10.54377555847168
+Norm of psiNew =  0.997697547174
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079]
+Orbital energy after Harrison update:  -1.48772078871
+Orbital 3 error and eigenvalue residual:   3.381e-02 and 6.084e-03
+Orbital 3 wavefunction residual: 2.949e-02
+
+
+Using singularity subtraction.  Convolution time:  10.568460702896118
+Norm of psiNew =  0.997295934258
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268]
+Orbital energy after Harrison update:  -1.49393267858
+Orbital 3 error and eigenvalue residual:   2.760e-02 and 6.212e-03
+Orbital 3 wavefunction residual: 2.983e-02
+
+
+Using singularity subtraction.  Convolution time:  10.54875659942627
+Norm of psiNew =  0.996901838821
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852]
+Orbital energy after Harrison update:  -1.50023851695
+Orbital 3 error and eigenvalue residual:   2.130e-02 and 6.306e-03
+Orbital 3 wavefunction residual: 3.009e-02
+
+
+Using singularity subtraction.  Convolution time:  10.549329996109009
+Norm of psiNew =  0.996522082042
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006 ]
+Orbital energy after Harrison update:  -1.50660059787
+Orbital 3 error and eigenvalue residual:   1.493e-02 and 6.362e-03
+Orbital 3 wavefunction residual: 3.026e-02
+
+
+Using singularity subtraction.  Convolution time:  10.558093786239624
+Norm of psiNew =  0.996163534844
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852]
+Orbital energy after Harrison update:  -1.51297852188
+Orbital 3 error and eigenvalue residual:   8.556e-03 and 6.378e-03
+Orbital 3 wavefunction residual: 3.033e-02
+
+
+Using singularity subtraction.  Convolution time:  10.547642707824707
+Norm of psiNew =  0.995832789057
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015]
+Orbital energy after Harrison update:  -1.5193301486
+Orbital 3 error and eigenvalue residual:   2.205e-03 and 6.352e-03
+Orbital 3 wavefunction residual: 3.031e-02
+
+
+Using singularity subtraction.  Convolution time:  10.547455787658691
+Norm of psiNew =  0.995535857871
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264]
+Orbital energy after Harrison update:  -1.52561263997
+Orbital 3 error and eigenvalue residual:   -4.078e-03 and 6.282e-03
+Orbital 3 wavefunction residual: 3.019e-02
+
+
+Using singularity subtraction.  Convolution time:  10.572496175765991
+Norm of psiNew =  0.995277913633
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357]
+Orbital energy after Harrison update:  -1.53178356607
+Orbital 3 error and eigenvalue residual:   -1.025e-02 and 6.171e-03
+Orbital 3 wavefunction residual: 2.998e-02
+
+
+Using singularity subtraction.  Convolution time:  10.550127029418945
+Norm of psiNew =  0.9950630733
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203]
+Orbital energy after Harrison update:  -1.53780203166
+Orbital 3 error and eigenvalue residual:   -1.627e-02 and 6.018e-03
+Orbital 3 wavefunction residual: 2.966e-02
+
+
+Using singularity subtraction.  Convolution time:  10.546741724014282
+Norm of psiNew =  0.994894241632
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977]
+Orbital energy after Harrison update:  -1.54362977236
+Orbital 3 error and eigenvalue residual:   -2.209e-02 and 5.828e-03
+Orbital 3 wavefunction residual: 2.925e-02
+
+
+Using singularity subtraction.  Convolution time:  10.551051378250122
+Norm of psiNew =  0.994773019935
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216]
+Orbital energy after Harrison update:  -1.54923216438
+Orbital 3 error and eigenvalue residual:   -2.770e-02 and 5.602e-03
+Orbital 3 wavefunction residual: 2.874e-02
+
+
+Using singularity subtraction.  Convolution time:  10.544315814971924
+Norm of psiNew =  0.994699684266
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909]
+Orbital energy after Harrison update:  -1.55457909287
+Orbital 3 error and eigenvalue residual:   -3.304e-02 and 5.347e-03
+Orbital 3 wavefunction residual: 2.815e-02
+
+
+Using singularity subtraction.  Convolution time:  10.55319881439209
+Norm of psiNew =  0.994673232181
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563]
+Orbital energy after Harrison update:  -1.55964563095
+Orbital 3 error and eigenvalue residual:   -3.811e-02 and 5.067e-03
+Orbital 3 wavefunction residual: 2.747e-02
+
+
+Using singularity subtraction.  Convolution time:  10.568477153778076
+Norm of psiNew =  0.994691492013
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249]
+Orbital energy after Harrison update:  -1.56441249405
+Orbital 3 error and eigenvalue residual:   -4.288e-02 and 4.767e-03
+Orbital 3 wavefunction residual: 2.672e-02
+
+
+Using singularity subtraction.  Convolution time:  10.543175458908081
+Norm of psiNew =  0.994751284077
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625]
+Orbital energy after Harrison update:  -1.56886625073
+Orbital 3 error and eigenvalue residual:   -4.733e-02 and 4.454e-03
+Orbital 3 wavefunction residual: 2.589e-02
+
+
+Using singularity subtraction.  Convolution time:  10.548576831817627
+Norm of psiNew =  0.994848619716
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929]
+Orbital energy after Harrison update:  -1.5729992893
+Orbital 3 error and eigenvalue residual:   -5.146e-02 and 4.133e-03
+Orbital 3 wavefunction residual: 2.501e-02
+
+
+Using singularity subtraction.  Convolution time:  10.561392068862915
+Norm of psiNew =  0.994978922158
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956]
+Orbital energy after Harrison update:  -1.57680955796
+Orbital 3 error and eigenvalue residual:   -5.527e-02 and 3.810e-03
+Orbital 3 wavefunction residual: 2.409e-02
+
+
+Using singularity subtraction.  Convolution time:  10.546387195587158
+Norm of psiNew =  0.995137252929
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011]
+Orbital energy after Harrison update:  -1.58030011091
+Orbital 3 error and eigenvalue residual:   -5.877e-02 and 3.491e-03
+Orbital 3 wavefunction residual: 2.312e-02
+
+
+Using singularity subtraction.  Convolution time:  10.549295663833618
+Norm of psiNew =  0.995318528927
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785 ]
+Orbital energy after Harrison update:  -1.58347850447
+Orbital 3 error and eigenvalue residual:   -6.194e-02 and 3.178e-03
+Orbital 3 wavefunction residual: 2.212e-02
+
+
+Using singularity subtraction.  Convolution time:  10.560340404510498
+Norm of psiNew =  0.995517717925
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609]
+Orbital energy after Harrison update:  -1.58635609264
+Orbital 3 error and eigenvalue residual:   -6.482e-02 and 2.878e-03
+Orbital 3 wavefunction residual: 2.111e-02
+
+
+Using singularity subtraction.  Convolution time:  10.54952359199524
+Norm of psiNew =  0.995730003687
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727]
+Orbital energy after Harrison update:  -1.58894727229
+Orbital 3 error and eigenvalue residual:   -6.741e-02 and 2.591e-03
+Orbital 3 wavefunction residual: 2.009e-02
+
+
+Using singularity subtraction.  Convolution time:  10.544535875320435
+Norm of psiNew =  0.995950915634
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727 -1.59126872]
+Orbital energy after Harrison update:  -1.59126872404
+Orbital 3 error and eigenvalue residual:   -6.973e-02 and 2.321e-03
+Orbital 3 wavefunction residual: 1.907e-02
+
+
+Using singularity subtraction.  Convolution time:  10.56267261505127
+Norm of psiNew =  0.99617642152
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727 -1.59126872 -1.59333869]
+Orbital energy after Harrison update:  -1.59333868769
+Orbital 3 error and eigenvalue residual:   -7.180e-02 and 2.070e-03
+Orbital 3 wavefunction residual: 1.805e-02
+
+
+Using singularity subtraction.  Convolution time:  10.549000024795532
+Norm of psiNew =  0.996402984575
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727 -1.59126872 -1.59333869 -1.5951763 ]
+Orbital energy after Harrison update:  -1.59517630172
+Orbital 3 error and eigenvalue residual:   -7.364e-02 and 1.838e-03
+Orbital 3 wavefunction residual: 1.705e-02
+
+
+Using singularity subtraction.  Convolution time:  10.54648494720459
+Norm of psiNew =  0.996627588843
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727 -1.59126872 -1.59333869 -1.5951763
+ -1.59680103]
+Orbital energy after Harrison update:  -1.59680102647
+Orbital 3 error and eigenvalue residual:   -7.527e-02 and 1.625e-03
+Orbital 3 wavefunction residual: 1.608e-02
+
+
+Using singularity subtraction.  Convolution time:  10.56830644607544
+Norm of psiNew =  0.996847737833
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727 -1.59126872 -1.59333869 -1.5951763
+ -1.59680103 -1.59823216]
+Orbital energy after Harrison update:  -1.59823216149
+Orbital 3 error and eigenvalue residual:   -7.670e-02 and 1.431e-03
+Orbital 3 wavefunction residual: 1.512e-02
+
+
+Using singularity subtraction.  Convolution time:  10.545293807983398
+Norm of psiNew =  0.997061432308
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727 -1.59126872 -1.59333869 -1.5951763
+ -1.59680103 -1.59823216 -1.59948846]
+Orbital energy after Harrison update:  -1.59948845949
+Orbital 3 error and eigenvalue residual:   -7.795e-02 and 1.256e-03
+Orbital 3 wavefunction residual: 1.420e-02
+
+
+Using singularity subtraction.  Convolution time:  10.54682445526123
+Norm of psiNew =  0.997267132996
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727 -1.59126872 -1.59333869 -1.5951763
+ -1.59680103 -1.59823216 -1.59948846 -1.60058783]
+Orbital energy after Harrison update:  -1.60058783311
+Orbital 3 error and eigenvalue residual:   -7.905e-02 and 1.099e-03
+Orbital 3 wavefunction residual: 1.332e-02
+
+
+Using singularity subtraction.  Convolution time:  10.556704759597778
+Norm of psiNew =  0.997463713632
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727 -1.59126872 -1.59333869 -1.5951763
+ -1.59680103 -1.59823216 -1.59948846 -1.60058783 -1.60154715]
+Orbital energy after Harrison update:  -1.60154714649
+Orbital 3 error and eigenvalue residual:   -8.001e-02 and 9.593e-04
+Orbital 3 wavefunction residual: 1.247e-02
+
+
+Using singularity subtraction.  Convolution time:  10.54467511177063
+Norm of psiNew =  0.997650408905
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727 -1.59126872 -1.59333869 -1.5951763
+ -1.59680103 -1.59823216 -1.59948846 -1.60058783 -1.60154715 -1.60238208]
+Orbital energy after Harrison update:  -1.60238208077
+Orbital 3 error and eigenvalue residual:   -8.085e-02 and 8.349e-04
+Orbital 3 wavefunction residual: 1.165e-02
+
+
+Using singularity subtraction.  Convolution time:  10.543266534805298
+Norm of psiNew =  0.997826761072
+eigenvalueHistory: 
+ [-1.89065204 -1.26511861 -1.38830703 -1.41054948 -1.41731256 -1.42240271
+ -1.42694611 -1.43127527 -1.43556746 -1.43992983 -1.44443003 -1.44911066
+ -1.45399707 -1.45910184 -1.46442751 -1.46996829 -1.47571121 -1.48163701
+ -1.48772079 -1.49393268 -1.50023852 -1.5066006  -1.51297852 -1.51933015
+ -1.52561264 -1.53178357 -1.53780203 -1.54362977 -1.54923216 -1.55457909
+ -1.55964563 -1.56441249 -1.56886625 -1.57299929 -1.57680956 -1.58030011
+ -1.5834785  -1.58635609 -1.58894727 -1.59126872 -1.59333869 -1.5951763
+ -1.59680103 -1.59823216 -1.59948846 -1.60058783 -1.60154715 -1.60238208
+ -1.60310706]
+Orbital energy after Harrison update:  -1.60310706174
+Orbital 3 error and eigenvalue residual:   -8.157e-02 and 7.250e-04
+Orbital 3 wavefunction residual: 1.088e-02
+
+
+Working on orbital 4
+Using singularity subtraction.  Convolution time:  10.553057670593262
+Norm of psiNew =  0.458058666029
+eigenvalueHistory: 
+ 0.7980754219740094
+Orbital energy after Harrison update:  0.798075421974
+Setting energy to gauge shift - 0.5 because new value was positive.
+Orbital 4 error and eigenvalue residual:   -5.445e-02 and 2.798e+00
+Orbital 4 wavefunction residual: 4.345e-01
+
+
+Using singularity subtraction.  Convolution time:  10.547890663146973
+Norm of psiNew =  0.647706164629
+eigenvalueHistory: 
+ [ 0.79807542 -0.58873193]
+Orbital energy after Harrison update:  -0.588731928658
+Setting energy to gauge shift - 0.5 because new value was positive.
+Orbital 4 error and eigenvalue residual:   -5.445e-02 and 9.113e-01
+Orbital 4 wavefunction residual: 2.993e-01
+
+
+Using singularity subtraction.  Convolution time:  10.547425508499146
+Norm of psiNew =  0.661463755323
+eigenvalueHistory: 
+ [ 0.79807542 -0.58873193 -0.69113363]
+Orbital energy after Harrison update:  -0.691133628213
+Setting energy to gauge shift - 0.5 because new value was positive.
+Orbital 4 error and eigenvalue residual:   -5.445e-02 and 8.089e-01
+Orbital 4 wavefunction residual: 2.066e-01
+
+
+Using singularity subtraction.  Convolution time:  10.564955234527588
+Norm of psiNew =  0.665801515486
+eigenvalueHistory: 
+ [ 0.79807542 -0.58873193 -0.69113363 -0.72447948]
+Orbital energy after Harrison update:  -0.72447947944
+Setting energy to gauge shift - 0.5 because new value was positive.
+Orbital 4 error and eigenvalue residual:   -5.445e-02 and 7.755e-01
+Orbital 4 wavefunction residual: 1.549e-01
+
+
+Using singularity subtraction.  Convolution time:  10.547377586364746
+Norm of psiNew =  0.667767064045
+eigenvalueHistory: 
+ [ 0.79807542 -0.58873193 -0.69113363 -0.72447948 -0.73879731]
+Orbital energy after Harrison update:  -0.738797309331
+Setting energy to gauge shift - 0.5 because new value was positive.
+Orbital 4 error and eigenvalue residual:   -5.445e-02 and 7.612e-01
+Orbital 4 wavefunction residual: 1.240e-01
+
+
+Using singularity subtraction.  Convolution time:  10.548193454742432
+Norm of psiNew =  0.669290925715
+eigenvalueHistory: 
+ [ 0.79807542 -0.58873193 -0.69113363 -0.72447948 -0.73879731 -0.74727037]
+Orbital energy after Harrison update:  -0.747270370079
+Setting energy to gauge shift - 0.5 because new value was positive.
+Orbital 4 error and eigenvalue residual:   -5.445e-02 and 7.527e-01
+Orbital 4 wavefunction residual: 1.056e-01
+
+
+Using singularity subtraction.  Convolution time:  10.555298566818237
+Norm of psiNew =  0.671355025292
+eigenvalueHistory: 
+ [ 0.79807542 -0.58873193 -0.69113363 -0.72447948 -0.73879731 -0.74727037
+ -0.75549155]
+Orbital energy after Harrison update:  -0.755491554921
+Setting energy to gauge shift - 0.5 because new value was positive.
+Orbital 4 error and eigenvalue residual:   -5.445e-02 and 7.445e-01
+Orbital 4 wavefunction residual: 9.679e-02
+
+
+Using singularity subtraction.  Convolution time:  10.550228834152222
+Norm of psiNew =  0.675079850261
+eigenvalueHistory: 
+ [ 0.79807542 -0.58873193 -0.69113363 -0.72447948 -0.73879731 -0.74727037
+ -0.75549155 -0.76815601]
+Orbital energy after Harrison update:  -0.768156005418
+Setting energy to gauge shift - 0.5 because new value was positive.
+Orbital 4 error and eigenvalue residual:   -5.445e-02 and 7.318e-01
+Orbital 4 wavefunction residual: 9.766e-02
+
+
+Using singularity subtraction.  Convolution time:  10.548169374465942
+Norm of psiNew =  0.682348070157
+eigenvalueHistory: 
+ [ 0.79807542 -0.58873193 -0.69113363 -0.72447948 -0.73879731 -0.74727037
+ -0.75549155 -0.76815601 -0.79184225]
+Orbital energy after Harrison update:  -0.791842254991
+Setting energy to gauge shift - 0.5 because new value was positive.
+Orbital 4 error and eigenvalue residual:   -5.445e-02 and 7.082e-01
+Orbital 4 wavefunction residual: 1.094e-01
+
+
+Using singularity subtraction.  Convolution time:  10.557536125183105
+Norm of psiNew =  0.696353495936
+eigenvalueHistory: 
+ [ 0.79807542 -0.58873193 -0.69113363 -0.72447948 -0.73879731 -0.74727037
+ -0.75549155 -0.76815601 -0.79184225 -0.83624322]
+Orbital energy after Harrison update:  -0.836243219162
+Scrambling orbital because it's been a multiple of 10.
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 6.638e-01
+Orbital 4 wavefunction residual: 6.002e-01
+
+
+Using singularity subtraction.  Convolution time:  10.545730113983154
+Norm of psiNew =  0.155396743865
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299]
+Orbital energy after Harrison update:  29.6947329931
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 3.619e+01
+Orbital 4 wavefunction residual: 5.828e-01
+
+
+Using singularity subtraction.  Convolution time:  10.560280323028564
+Norm of psiNew =  0.187095975508
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037]
+Orbital energy after Harrison update:  19.7066403738
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 2.621e+01
+Orbital 4 wavefunction residual: 1.035e+00
+
+
+Using singularity subtraction.  Convolution time:  10.548410415649414
+Norm of psiNew =  0.262701766577
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753]
+Orbital energy after Harrison update:  9.08407753228
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 1.558e+01
+Orbital 4 wavefunction residual: 1.574e+00
+
+
+Using singularity subtraction.  Convolution time:  10.552491188049316
+Norm of psiNew =  0.345736100364
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315]
+Orbital energy after Harrison update:  4.33340315437
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 1.083e+01
+Orbital 4 wavefunction residual: 1.871e+00
+
+
+Using singularity subtraction.  Convolution time:  10.561903476715088
+Norm of psiNew =  0.387877418264
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025]
+Orbital energy after Harrison update:  2.94180024743
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 9.442e+00
+Orbital 4 wavefunction residual: 1.945e+00
+
+
+Using singularity subtraction.  Convolution time:  10.54813814163208
+Norm of psiNew =  0.409110321052
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558 ]
+Orbital energy after Harrison update:  2.46595579935
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 8.966e+00
+Orbital 4 wavefunction residual: 1.942e+00
+
+
+Using singularity subtraction.  Convolution time:  10.542915105819702
+Norm of psiNew =  0.425104595302
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206]
+Orbital energy after Harrison update:  2.32500205535
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 8.825e+00
+Orbital 4 wavefunction residual: 1.917e+00
+
+
+Using singularity subtraction.  Convolution time:  10.561713695526123
+Norm of psiNew =  0.440102479017
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058]
+Orbital energy after Harrison update:  2.42364057649
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 8.924e+00
+Orbital 4 wavefunction residual: 1.874e+00
+
+
+Using singularity subtraction.  Convolution time:  10.553531408309937
+Norm of psiNew =  0.455400998245
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591]
+Orbital energy after Harrison update:  2.74653590711
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 9.247e+00
+Orbital 4 wavefunction residual: 1.811e+00
+
+
+Using singularity subtraction.  Convolution time:  10.548121452331543
+Norm of psiNew =  0.471578819725
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321 ]
+Orbital energy after Harrison update:  3.27463210474
+Scrambling orbital because it's been a multiple of 10.
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 9.775e+00
+Orbital 4 wavefunction residual: 1.412e+00
+
+
+Using singularity subtraction.  Convolution time:  10.55859923362732
+Norm of psiNew =  0.155651026219
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852]
+Orbital energy after Harrison update:  29.5906485195
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 3.609e+01
+Orbital 4 wavefunction residual: 5.887e-01
+
+
+Using singularity subtraction.  Convolution time:  10.543322086334229
+Norm of psiNew =  0.187772239186
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403]
+Orbital energy after Harrison update:  19.5578940323
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 2.606e+01
+Orbital 4 wavefunction residual: 1.044e+00
+
+
+Using singularity subtraction.  Convolution time:  10.56123399734497
+Norm of psiNew =  0.26385813882
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185]
+Orbital energy after Harrison update:  8.98891184677
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 1.549e+01
+Orbital 4 wavefunction residual: 1.581e+00
+
+
+Using singularity subtraction.  Convolution time:  10.544173240661621
+Norm of psiNew =  0.34661213297
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754]
+Orbital energy after Harrison update:  4.29253753745
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 1.079e+01
+Orbital 4 wavefunction residual: 1.873e+00
+
+
+Using singularity subtraction.  Convolution time:  10.543158769607544
+Norm of psiNew =  0.38855714593
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823]
+Orbital energy after Harrison update:  2.90680822725
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 9.407e+00
+Orbital 4 wavefunction residual: 1.946e+00
+
+
+Using singularity subtraction.  Convolution time:  10.562909841537476
+Norm of psiNew =  0.409789119402
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868]
+Orbital energy after Harrison update:  2.42341867676
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 8.923e+00
+Orbital 4 wavefunction residual: 1.944e+00
+
+
+Using singularity subtraction.  Convolution time:  10.543765306472778
+Norm of psiNew =  0.425706087722
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561]
+Orbital energy after Harrison update:  2.27084560728
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 8.771e+00
+Orbital 4 wavefunction residual: 1.920e+00
+
+
+Using singularity subtraction.  Convolution time:  10.54518437385559
+Norm of psiNew =  0.440458404293
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478]
+Orbital energy after Harrison update:  2.35357478138
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 8.854e+00
+Orbital 4 wavefunction residual: 1.879e+00
+
+
+Using singularity subtraction.  Convolution time:  10.567181587219238
+Norm of psiNew =  0.455331360438
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478   2.65587204]
+Orbital energy after Harrison update:  2.65587203836
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 9.156e+00
+Orbital 4 wavefunction residual: 1.820e+00
+
+
+Using singularity subtraction.  Convolution time:  10.54472827911377
+Norm of psiNew =  0.470942239717
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478   2.65587204   3.16097144]
+Orbital energy after Harrison update:  3.16097144087
+Scrambling orbital because it's been a multiple of 10.
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 9.661e+00
+Orbital 4 wavefunction residual: 1.410e+00
+
+
+Using singularity subtraction.  Convolution time:  10.570601224899292
+Norm of psiNew =  0.155327271478
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478   2.65587204   3.16097144
+  29.7286801 ]
+Orbital energy after Harrison update:  29.7286801024
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 3.623e+01
+Orbital 4 wavefunction residual: 5.823e-01
+
+
+Using singularity subtraction.  Convolution time:  10.545478582382202
+Norm of psiNew =  0.187302771792
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478   2.65587204   3.16097144
+  29.7286801   19.65259337]
+Orbital energy after Harrison update:  19.6525933735
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 2.615e+01
+Orbital 4 wavefunction residual: 1.036e+00
+
+
+Using singularity subtraction.  Convolution time:  10.559611558914185
+Norm of psiNew =  0.263962976776
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478   2.65587204   3.16097144
+  29.7286801   19.65259337   8.95733718]
+Orbital energy after Harrison update:  8.9573371775
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 1.546e+01
+Orbital 4 wavefunction residual: 1.577e+00
+
+
+Using singularity subtraction.  Convolution time:  10.550724029541016
+Norm of psiNew =  0.348047693501
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478   2.65587204   3.16097144
+  29.7286801   19.65259337   8.95733718   4.21554331]
+Orbital energy after Harrison update:  4.21554330952
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 1.072e+01
+Orbital 4 wavefunction residual: 1.872e+00
+
+
+Using singularity subtraction.  Convolution time:  10.543072700500488
+Norm of psiNew =  0.390593673911
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478   2.65587204   3.16097144
+  29.7286801   19.65259337   8.95733718   4.21554331   2.82941522]
+Orbital energy after Harrison update:  2.82941521628
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 9.329e+00
+Orbital 4 wavefunction residual: 1.945e+00
+
+
+Using singularity subtraction.  Convolution time:  10.571093320846558
+Norm of psiNew =  0.41201827634
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478   2.65587204   3.16097144
+  29.7286801   19.65259337   8.95733718   4.21554331   2.82941522
+   2.34851634]
+Orbital energy after Harrison update:  2.34851634261
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 8.849e+00
+Orbital 4 wavefunction residual: 1.944e+00
+
+
+Using singularity subtraction.  Convolution time:  10.5481436252594
+Norm of psiNew =  0.427952613528
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478   2.65587204   3.16097144
+  29.7286801   19.65259337   8.95733718   4.21554331   2.82941522
+   2.34851634   2.19688697]
+Orbital energy after Harrison update:  2.19688697154
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 8.697e+00
+Orbital 4 wavefunction residual: 1.920e+00
+
+
+Using singularity subtraction.  Convolution time:  10.549999475479126
+Norm of psiNew =  0.442528879462
+eigenvalueHistory: 
+ [  0.79807542  -0.58873193  -0.69113363  -0.72447948  -0.73879731
+  -0.74727037  -0.75549155  -0.76815601  -0.79184225  -0.83624322
+  29.69473299  19.70664037   9.08407753   4.33340315   2.94180025
+   2.4659558    2.32500206   2.42364058   2.74653591   3.2746321
+  29.59064852  19.55789403   8.98891185   4.29253754   2.90680823
+   2.42341868   2.27084561   2.35357478   2.65587204   3.16097144
+  29.7286801   19.65259337   8.95733718   4.21554331   2.82941522
+   2.34851634   2.19688697   2.27778312]
+Orbital energy after Harrison update:  2.27778311909
+Orbital 4 error and eigenvalue residual:   -5.054e+00 and 8.778e+00
+Orbital 4 wavefunction residual: 1.880e+00
+
+
+Using singularity subtraction.  Convolution time:  10.569336652755737

@@ -31,7 +31,9 @@ plotsDir = resultsDir+'plots/'
 # file='LW5o5_1000_fixedMesh_only7_looseInit_SCF_.csv'
 # file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_SCF_.csv'
 # file='LW5o4_1000_only7_tightFromStart_GIanderson_afterSCF1_SCF_.csv'
-file='LW5o5_2000_only7_tightFromStart_GIandersonAfterSCF1_SCF_.csv'
+# file='LW5o5_2000_only7_tightFromStart_GIandersonAfterSCF1_SCF_.csv'
+# file='LW5o5_2000_6_orbitals_SCF_.csv'
+file='LW5o5_2000_7_orbitals_noGIanderson_SCF_.csv'
 
 
 ## Beryllium

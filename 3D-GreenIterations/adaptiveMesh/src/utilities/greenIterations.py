@@ -536,10 +536,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 orbitalResidual = 1
                 eigenvalueResidual = 1
                 greenIterationsCount = 1
-                max_GreenIterationsCount = 150
+                max_GreenIterationsCount = 1500
                 
     #             tree.orthonormalizeOrbitals(targetOrbital=m)
-            
+    
             
                 print('Working on orbital %i' %m)
     #             print('Using tolerance of %e' %(intraScfTolerance*10**m))
@@ -932,12 +932,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         
         ##  DO I HAVE ENOUGH ORBITALS?  CHECK, AND ADD ONE IF NOT.
-#         if tree.occupations[-1] > 1e-5:
-#             
-#             print('Occupation of final state is ', tree.occupations[-1])
-#             tree.increaseNumberOfWavefunctionsByOne()
-#             residuals = np.append(residuals, 0.0)
-#             print('Increased number of wavefunctions to ', tree.nOrbitals)
+        if tree.occupations[-1] > 1e-5:
+             
+            print('Occupation of final state is ', tree.occupations[-1])
+            tree.increaseNumberOfWavefunctionsByOne()
+            residuals = np.append(residuals, 0.0)
+            print('Increased number of wavefunctions to ', tree.nOrbitals)
             
             
 
