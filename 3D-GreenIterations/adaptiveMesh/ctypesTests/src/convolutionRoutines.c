@@ -87,30 +87,35 @@ void directSum_PoissonSingularitySubtraction(int numTargets, int numSources, dou
 
 
 
-#pragma omp parallel for private(j,xt,yt,zt,xs,ys,zs,r, targetVal)
-    for (i = 0; i < numTargets; i++) {
-    	outputArray[i] = 0.0;
-    	xt = targetX[i];
-    	yt = targetY[i];
-    	zt = targetZ[i];
+#pragma omp parallel
+	{
+		printf("Number of threads being used: %d\n", omp_get_num_threads());
+	#pragma omp for private(j,xt,yt,zt,xs,ys,zs,r, targetVal)
 
-    	targetVal = targetValue[i];
+		for (i = 0; i < numTargets; i++) {
+			outputArray[i] = 0.0;
+			xt = targetX[i];
+			yt = targetY[i];
+			zt = targetZ[i];
 
-//    	outputArray[i] = targetVal*2*M_PI*gaussianAlphaSq;
+			targetVal = targetValue[i];
 
-    	for (j=0; j< numSources; j++){
-    		xs = sourceX[j];
-    		ys = sourceY[j];
-    		zs = sourceZ[j];
-    		r = sqrt( (xt-xs)*(xt-xs) + (yt-ys)*(yt-ys) + (zt-zs)*(zt-zs)  );
-			if (i!=j){
-    			outputArray[i] += sourceWeight[j] * ( sourceValue[j] - targetVal*exp(-gaussianAlphaSq*r*r) ) /r;
-    		}
+	//    	outputArray[i] = targetVal*2*M_PI*gaussianAlphaSq;
+
+			for (j=0; j< numSources; j++){
+				xs = sourceX[j];
+				ys = sourceY[j];
+				zs = sourceZ[j];
+				r = sqrt( (xt-xs)*(xt-xs) + (yt-ys)*(yt-ys) + (zt-zs)*(zt-zs)  );
+				if (i!=j){
+					outputArray[i] += sourceWeight[j] * ( sourceValue[j] - targetVal*exp(-gaussianAlphaSq*r*r) ) /r;
+				}
 
 
-    	}
+			}
 
-    }
+		}
+	}
 
     return;
 }

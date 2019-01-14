@@ -641,7 +641,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         """ 
         Compute new electron-electron potential and update pointwise potential values 
         """
-        startCoulombConvolutionTime = timer()
+#         startCoulombConvolutionTime = timer()
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = np.copy(sources)
         V_coulombNew = np.zeros((len(targets)))
@@ -650,8 +650,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
       
         tree.importVcoulombOnLeaves(V_coulombNew)
         tree.updateVxcAndVeffAtQuadpoints()
-        CoulombConvolutionTime = timer() - startCoulombConvolutionTime
-        print('Computing Vcoulomb and updating Veff took:    %.4f seconds. ' %CoulombConvolutionTime)
+#         CoulombConvolutionTime = timer() - startCoulombConvolutionTime
+#         print('Computing Vcoulomb and updating Veff took:    %.4f seconds. ' %CoulombConvolutionTime)
 
         
         """ 
