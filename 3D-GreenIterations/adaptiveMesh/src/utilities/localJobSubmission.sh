@@ -1,8 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-
-cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
-
+cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 DOMAIN=20
 MAXDEPTH=20
 MINDEPTH=3
@@ -18,7 +16,7 @@ SMOOTHINGEPS=0
 INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 GRADIENTFREE='True'
-GPUPRESENT='True'
+GPUPRESENT='False'
 
 ORDER=3
 MESHTYPE='LW5'
@@ -32,7 +30,7 @@ INTERSCFTOLERANCE=1e-6
 MIXING='Anderson'	
 
 
-OUTPUTFILE='/home/njvaughn/H2Baseline/LW5o4_500_GPUdirectSum.csv'
+OUTPUTFILE='/Users/nathanvaughn/Documents/GreenIterationOutputData/LW5o4_500_H2.csv'
 VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

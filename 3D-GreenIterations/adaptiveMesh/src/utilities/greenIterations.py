@@ -19,14 +19,19 @@ import sys
 sys.path.append('../ctypesTests')
 sys.path.append('../ctypesTests/lib')
 
-GPU = False
-if GPU==True:
-    from convolution import *
-elif GPU==False:
-    import treecodeWrapperTemplate
-else:
-    print('Is there a GPU available?')
 
+try:
+    from convolution import *
+except ImportError:
+    print('Unable to import JIT GPU Convolutions')
+try:
+    import treecodeWrapperTemplate
+except ImportError:
+    print('Unable to import treecodeWrapperTemplate due to ImportError')
+except OSError:
+    print('Unable to import treecodeWrapperTemplate due to OSError')
+    
+    
 
 
 @jit(nopython=True,parallel=True)
@@ -43,7 +48,6 @@ def modifiedGramSchrmidt(V,weights):
         
     return U
 
-# @jit(parallel=True)
 def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital):
     n,k = np.shape(V)
     U = V[:,targetOrbital]
@@ -84,25 +88,25 @@ def normalizeOrbitals(V,weights):
     
     return U
 
-def wavefunctionErrors(wave1, wave2, weights, x,y,z):
-    L2error = np.sqrt( np.sum(weights*(wave1-wave2)**2 ) )
-    LinfIndex = np.argmax( abs( wave1-wave2 ))
-    Linf = wave1[LinfIndex] - wave2[LinfIndex] 
-    LinfRel = (wave1[LinfIndex] - wave2[LinfIndex])/wave1[LinfIndex]
-    xinf = x[LinfIndex]
-    yinf = y[LinfIndex]
-    zinf = z[LinfIndex]
-    
-    print('~~~~~~~~Wavefunction Errors~~~~~~~~~~')
-    print("L2 Error:             ", L2error)
-    print("Linf Error:           ", Linf)
-    print("LinfRel Error:        ", LinfRel)
-    print("Located at:           ", xinf, yinf, zinf)
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+# def wavefunctionErrors(wave1, wave2, weights, x,y,z):
+#     L2error = np.sqrt( np.sum(weights*(wave1-wave2)**2 ) )
+#     LinfIndex = np.argmax( abs( wave1-wave2 ))
+#     Linf = wave1[LinfIndex] - wave2[LinfIndex] 
+#     LinfRel = (wave1[LinfIndex] - wave2[LinfIndex])/wave1[LinfIndex]
+#     xinf = x[LinfIndex]
+#     yinf = y[LinfIndex]
+#     zinf = z[LinfIndex]
+#     
+#     print('~~~~~~~~Wavefunction Errors~~~~~~~~~~')
+#     print("L2 Error:             ", L2error)
+#     print("Linf Error:           ", Linf)
+#     print("LinfRel Error:        ", LinfRel)
+#     print("Located at:           ", xinf, yinf, zinf)
+#     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 
 
-def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, mixingScheme, mixingParameter,
+def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, mixingScheme, mixingParameter,
                                 subtractSingularity, smoothingN, smoothingEps, inputFile='',outputFile='',
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None): 
     '''
@@ -157,13 +161,45 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
     print('Integrated density: ', integratedDensity)
 
-    V_coulombNew = np.zeros((len(targets)))
 #     startCoulombConvolutionTime = timer()
     alpha = 1
     alphasq=alpha*alpha
     
     print('Using Gaussian singularity subtraction, alpha = ', alpha)
-    gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+    
+    print('GPUpresent set to ', GPUpresent)
+    print('Type: ', type(GPUpresent))
+    if GPUpresent==False:
+        numTargets = len(targets)
+        numSources = len(sources)
+#         print('numTargets = ', numTargets)
+#         print(targets[:10,:])
+#         print('numSources = ', numSources)
+#         print(sources[:10,:])
+        sourceX = np.copy(sources[:,0])
+#         print(np.shape(sourceX))
+#         print('sourceX = ', sourceX[0:10])
+        sourceY = np.copy(sources[:,1])
+        sourceZ = np.copy(sources[:,2])
+        sourceValue = np.copy(sources[:,3])
+        sourceWeight = np.copy(sources[:,4])
+        
+        targetX = np.copy(targets[:,0])
+        targetY = np.copy(targets[:,1])
+        targetZ = np.copy(targets[:,2])
+        targetValue = np.copy(targets[:,3])
+        targetWeight = np.copy(targets[:,4])
+        
+#         return
+        V_coulombNew = treecodeWrapperTemplate.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
+                                                                                                  targetX, targetY, targetZ, targetValue,targetWeight, 
+                                                                                                  sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+        V_coulombNew += targets[:,3]* (4*np.pi)* alphasq/2
+#         print(V_coulombNew[0:10])
+#         print(np.shape(V_coulombNew))
+    elif GPUpresent==True:
+        V_coulombNew = np.zeros((len(targets)))
+        gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
     
 
 #     CoulombConvolutionTime = timer() - startCoulombConvolutionTime
@@ -343,10 +379,36 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
                         elif subtractSingularity==1:
                             if tree.orbitalEnergies[m] < -0.25: 
-                                startTime = time.time()
-                                gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-                                convolutionTime = time.time()-startTime
-                                print('Using singularity subtraction.  Convolution time: ', convolutionTime)
+                                
+                                
+                                if GPUpresent==False:
+                                    print('Using Precompiled-C Helmholtz Singularity Subtract')
+                                    numTargets = len(targets)
+                                    numSources = len(sources)
+
+                                    sourceX = np.copy(sources[:,0])
+
+                                    sourceY = np.copy(sources[:,1])
+                                    sourceZ = np.copy(sources[:,2])
+                                    sourceValue = np.copy(sources[:,3])
+                                    sourceWeight = np.copy(sources[:,4])
+                                    
+                                    targetX = np.copy(targets[:,0])
+                                    targetY = np.copy(targets[:,1])
+                                    targetZ = np.copy(targets[:,2])
+                                    targetValue = np.copy(targets[:,3])
+                                    targetWeight = np.copy(targets[:,4])
+                                    
+                                    phiNew = treecodeWrapperTemplate.callCompiledC_directSum_HelmholtzSingularitySubtract(numTargets, numSources, k, 
+                                                                                                                          targetX, targetY, targetZ, targetValue, targetWeight, 
+                                                                                                                          sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+                                    phiNew += 4*np.pi*targets[:,3]/k**2
+                                    phiNew /= (4*np.pi)
+                                else:
+                                    startTime = time.time()
+                                    gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                                    convolutionTime = time.time()-startTime
+                                    print('Using singularity subtraction.  Convolution time: ', convolutionTime)
                             else:
                                 print('Using singularity skipping because energy too close to 0')
                                 gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)
@@ -505,12 +567,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         
         ##  DO I HAVE ENOUGH ORBITALS?  CHECK, AND ADD ONE IF NOT.
-        if tree.occupations[-1] > 1e-5:
-             
-            print('Occupation of final state is ', tree.occupations[-1])
-            tree.increaseNumberOfWavefunctionsByOne()
-            residuals = np.append(residuals, 0.0)
-            print('Increased number of wavefunctions to ', tree.nOrbitals)
+#         if tree.occupations[-1] > 1e-5:
+#              
+#             print('Occupation of final state is ', tree.occupations[-1])
+#             tree.increaseNumberOfWavefunctionsByOne()
+#             residuals = np.append(residuals, 0.0)
+#             print('Increased number of wavefunctions to ', tree.nOrbitals)
             
             
 

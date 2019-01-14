@@ -1,7 +1,6 @@
 ../src/utilities/molecularConfigurations/hydrogenMolecule.csv
-/home/njvaughn/results_H2/results.csv
-2
-2
+../src/utilities/molecularConfigurations/hydrogenMoleculeReferenceEigenvalues.csv
+/Users/nathanvaughn/Documents/GreenIterationOutputData/results.csv
 -7.5499497178953057e-01 # Band energy 
 0 	 					# Kinetic energy
 -5.5876966592456134e-01 # Exchange energy 
