@@ -23,12 +23,11 @@ import time
 
 _treecodeRoutines = ctypes.CDLL('/Users/nathanvaughn/Documents/GitHub/hybrid-gpu-treecode/lib/libtreedriverWrapper.so')
 
-_treecodeRoutines.treedriverWrapper(ctypes.c_int, ctypes.c_int,
+_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
         ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
         ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
-        ctypes.POINTER(ctypes.c_double), ctypes.c_int, ctypes.c_double, ctypes.c_int, 
-        ctypes.c_double, 
-        ctypes.c_int, ctypes.c_int, ctypes.c_int)
+        ctypes.POINTER(ctypes.c_double), ctypes.c_int, ctypes.c_double, 
+        ctypes.c_int, ctypes.c_double,  ctypes.c_int, ctypes.c_int )
 
 # void treedriverWrapper(int numTargets, int numSources,
 #         double *targetX, double *targetY, double *targetZ, double *targetValue,
@@ -53,7 +52,6 @@ def callTreedriver(numTargets, numSources,
     targetY_p = targetY.ctypes.data_as(c_double_p)
     targetZ_p = targetZ.ctypes.data_as(c_double_p)
     targetValue_p = targetValue.ctypes.data_as(c_double_p)
-    targetWeight_p = targetWeight.ctypes.data_as(c_double_p)
     
     
     sourceX_p = sourceX.ctypes.data_as(c_double_p)

@@ -208,8 +208,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 #         V_coulombNew += targets[:,3]* (4*np.pi)* alphasq/2
 
-        potentialType=1
-        order=4
+        potentialType=0
+        order=3
         kappa = 0.0
         theta = 0.5
         maxParNode = 500
@@ -218,6 +218,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                                        targetX, targetY, targetZ, targetValue, 
                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                        potentialType, kappa, order, theta, maxParNode, batchSize)
+        
+        print('First few terms of V_coulombNew: ', V_coulombNew[:8])
         
         
     elif GPUpresent==True:
@@ -236,11 +238,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     targetsTXT = '/Users/nathanvaughn/Documents/testData/H2Targets.txt'
     hartreePotentialTXT = '/Users/nathanvaughn/Documents/testData/H2HartreePotential.txt'
     
-    np.savetxt(sourcesTXT, sources)
-    np.savetxt(targetsTXT, targets[:,0:4])
-    np.savetxt(hartreePotentialTXT, V_coulombNew)
-    
-    return
+#     np.savetxt(sourcesTXT, sources)
+#     np.savetxt(targetsTXT, targets[:,0:4])
+#     np.savetxt(hartreePotentialTXT, V_coulombNew)
+#     
+#     return
 
 
     print('Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell')
