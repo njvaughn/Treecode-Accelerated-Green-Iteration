@@ -208,10 +208,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 #         V_coulombNew += targets[:,3]* (4*np.pi)* alphasq/2
 
+
+#         V_coulombNew = directSumWrappers.callCompiledC_directSum_Poisson(numTargets, numSources, 
+#                                                                         targetX, targetY, targetZ, targetValue,targetWeight, 
+#                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+
         potentialType=0
-        order=3
+        order=4
         kappa = 0.0
-        theta = 0.5
+        theta = 0.8
         maxParNode = 500
         batchSize = 500
         V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
@@ -219,7 +224,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                        potentialType, kappa, order, theta, maxParNode, batchSize)
         
-        print('First few terms of V_coulombNew: ', V_coulombNew[:8])
+#         print('First few terms of V_coulombNew: ', V_coulombNew[:8])
         
         
     elif GPUpresent==True:

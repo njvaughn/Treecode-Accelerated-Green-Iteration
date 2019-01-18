@@ -114,7 +114,7 @@ void directSum_PoissonSingularitySubtraction(int numTargets, int numSources, dou
 }
 
 
-void directSum_Poisson(int numTargets, int numSources, double gaussianAlphaSq,
+void directSum_Poisson(int numTargets, int numSources,
 		double *targetX, double *targetY, double *targetZ, double *targetValue, double *targetWeight,
 		double *sourceX, double *sourceY, double *sourceZ, double *sourceValue, double *sourceWeight,
 		double *outputArray) {

@@ -94,7 +94,7 @@ def callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, a
     return resultArray
 
 
-def callCompiledC_directSum_Poisson(numTargets, numSources, alphasq, targetX, targetY, targetZ, targetValue, targetWeight, sourceX, sourceY, sourceZ, sourceValue, sourceWeight):
+def callCompiledC_directSum_Poisson(numTargets, numSources, targetX, targetY, targetZ, targetValue, targetWeight, sourceX, sourceY, sourceZ, sourceValue, sourceWeight):
     #                                                 (numTargets, numSources, alphasq, targetX, targetY, targetZ, targetW, sourceX, sourceY, sourceZ, sourceW)
    
     global _convolutionRoutines
@@ -117,7 +117,7 @@ def callCompiledC_directSum_Poisson(numTargets, numSources, alphasq, targetX, ta
     resultArray = np.zeros(numTargets)
     resultArray_p = resultArray.ctypes.data_as(c_double_p)
 
-    _convolutionRoutines.directSum_Poisson(ctypes.c_int(numTargets), ctypes.c_int(numSources), ctypes.c_double(alphasq),
+    _convolutionRoutines.directSum_Poisson(ctypes.c_int(numTargets), ctypes.c_int(numSources),
                                                  targetX_p, targetY_p, targetZ_p, targetValue_p, targetWeight_p,
                                                  sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
                                                  resultArray_p)
