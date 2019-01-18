@@ -20,7 +20,7 @@ GPUPRESENT='False'
 
 ORDER=3
 MESHTYPE='LW5'
-MESHPARAM=500
+MESHPARAM=100
 
 MIXINGPARAMETER=0.5
 
@@ -30,7 +30,7 @@ INTERSCFTOLERANCE=1e-6
 MIXING='Anderson'	
 
 
-OUTPUTFILE='/Users/nathanvaughn/Documents/GreenIterationOutputData/LW5o4_500_H2.csv'
+OUTPUTFILE='/Users/nathanvaughn/Documents/GreenIterationOutputData/LW5o3_500_H2.csv'
 VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

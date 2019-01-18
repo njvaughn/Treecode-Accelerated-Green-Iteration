@@ -18,11 +18,11 @@ SMOOTHINGEPS=0
 INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 GRADIENTFREE='True'
-GPUPRESENT='False'
+GPUPRESENT='True'
 
-ORDER=3
+ORDER=4
 MESHTYPE='LW5'
-MESHPARAM=100
+MESHPARAM=1000
 
 MIXINGPARAMETER=0.5
 

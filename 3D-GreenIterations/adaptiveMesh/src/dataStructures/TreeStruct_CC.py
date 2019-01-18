@@ -1357,9 +1357,9 @@ class Tree(object):
         for _,cell in self.masterList:
             for i,j,k in cell.PxByPyByPz:
                 gp = cell.gridpoints[i,j,k]
-                gp.phi = np.append(gp.phi,0.0)
+                gp.phi = np.append(gp.phi,1.0)
         
-        self.scrambleOrbital(-1)
+#         self.scrambleOrbital(-1)
         self.orthonormalizeOrbitals(targetOrbital = -1)
         self.occupations = np.append(self.occupations, 0.0)
         self.orbitalEnergies = np.append(self.orbitalEnergies, self.gaugeShift-0.1)

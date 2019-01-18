@@ -9,7 +9,7 @@
 #PBS -q fluxg
 
 
-#PBS -l nodes=1:gpus=1:titanv,mem=8gb
+#PBS -l nodes=1:gpus=1,mem=8gb
 #PBS -l walltime=24:00:00
 #PBS -j oe
 #PBS -V
@@ -38,7 +38,7 @@ SMOOTHINGEPS=0
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -47,17 +47,17 @@ GPUPRESENT='True'
 
 ORDER=4
 MESHTYPE='LW5'
-MESHPARAM=500
+MESHPARAM=1000
 
 MIXINGPARAMETER=0.5
 
 INTRASCFTOLERANCE=1e-6
-INTERSCFTOLERANCE=1e-6
+INTERSCFTOLERANCE=1e-5
 
 MIXING='Anderson'	
 
 
-OUTPUTFILE='/home/njvaughn/CO_with_anderson/LW5o5_1000_7_orbitals_2C5O_noGIlimit.csv'
+OUTPUTFILE='/home/njvaughn/H2Baseline/Beryllium_LW5o4_500.csv'
 VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
