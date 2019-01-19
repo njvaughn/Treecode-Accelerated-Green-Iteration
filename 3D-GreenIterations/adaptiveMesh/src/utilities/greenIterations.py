@@ -202,6 +202,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         targetValue = np.copy(targets[:,3])
         targetWeight = np.copy(targets[:,4])
         
+        start = time.time()
+        
         
 #         V_coulombNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
 #                                                                                                   targetX, targetY, targetZ, targetValue,targetWeight, 
@@ -213,18 +215,21 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                                                         targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
-        potentialType=0
-        order=4
+        potentialType=0 # shoud be 0.  Set to 1 just to test Yukawa quickly
+        order=6
         kappa = 0.0
-        theta = 0.8
-        maxParNode = 500
-        batchSize = 500
+        theta = 0.5
+        maxParNode = 5000
+        batchSize = 5000
         V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                        targetX, targetY, targetZ, targetValue, 
                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                        potentialType, kappa, order, theta, maxParNode, batchSize)
         
 #         print('First few terms of V_coulombNew: ', V_coulombNew[:8])
+        print('Convolution time: ', time.time()-start)
+        
+        return
         
         
     elif GPUpresent==True:
@@ -441,10 +446,28 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                     targetValue = np.copy(targets[:,3])
                                     targetWeight = np.copy(targets[:,4])
                                     
-                                    phiNew = treecodeWrapperTemplate.callCompiledC_directSum_HelmholtzSingularitySubtract(numTargets, numSources, k, 
-                                                                                                                          targetX, targetY, targetZ, targetValue, targetWeight, 
-                                                                                                                          sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
-                                    phiNew += 4*np.pi*targets[:,3]/k**2
+#                                     phiNew = directSumWrappers.callCompiledC_directSum_HelmholtzSingularitySubtract(numTargets, numSources, k, 
+#                                                                                                                           targetX, targetY, targetZ, targetValue, targetWeight, 
+#                                                                                                                           sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+#                                     phiNew += 4*np.pi*targets[:,3]/k**2
+
+#                                     phiNew = directSumWrappers.callCompiledC_directSum_Helmholtz(numTargets, numSources, k, 
+#                                                                                               targetX, targetY, targetZ, targetValue, targetWeight, 
+#                                                                                               sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+
+
+                                    potentialType=1
+                                    order=3
+                                    kappa = k
+                                    theta = 0.5
+                                    maxParNode = 500
+                                    batchSize = 500
+                                    start = time.time()
+                                    phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                                                   targetX, targetY, targetZ, targetValue, 
+                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                                                   potentialType, kappa, order, theta, maxParNode, batchSize)
+                                    print('Convolution time: ', time.time()-start)
                                     phiNew /= (4*np.pi)
                                 else:
                                     startTime = time.time()

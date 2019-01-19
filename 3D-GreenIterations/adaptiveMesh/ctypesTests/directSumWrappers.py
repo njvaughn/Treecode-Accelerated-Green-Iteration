@@ -158,6 +158,40 @@ def callCompiledC_directSum_HelmholtzSingularitySubtract(numTargets, numSources,
 
 
 
+
+def callCompiledC_directSum_Helmholtz(numTargets, numSources, helmholtzK, targetX, targetY, targetZ, targetValue, targetWeight, sourceX, sourceY, sourceZ, sourceValue, sourceWeight):
+    #                                                 (numTargets, numSources, alphasq, targetX, targetY, targetZ, targetW, sourceX, sourceY, sourceZ, sourceW)
+   
+    global _convolutionRoutines
+    c_double_p = ctypes.POINTER(ctypes.c_double)
+    
+    
+    targetX_p = targetX.ctypes.data_as(c_double_p)
+    targetY_p = targetY.ctypes.data_as(c_double_p)
+    targetZ_p = targetZ.ctypes.data_as(c_double_p)
+    targetValue_p = targetValue.ctypes.data_as(c_double_p)
+    targetWeight_p = targetWeight.ctypes.data_as(c_double_p)
+    
+    
+    sourceX_p = sourceX.ctypes.data_as(c_double_p)
+    sourceY_p = sourceY.ctypes.data_as(c_double_p)
+    sourceZ_p = sourceZ.ctypes.data_as(c_double_p)
+    sourceValue_p = sourceValue.ctypes.data_as(c_double_p)
+    sourceWeight_p = sourceWeight.ctypes.data_as(c_double_p)
+    
+    resultArray = np.zeros(numTargets)
+    resultArray_p = resultArray.ctypes.data_as(c_double_p)
+
+    _convolutionRoutines.directSum_Helmholtz(ctypes.c_int(numTargets), ctypes.c_int(numSources), ctypes.c_double(helmholtzK),
+                                                 targetX_p, targetY_p, targetZ_p, targetValue_p, targetWeight_p,
+                                                 sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
+                                                 resultArray_p)
+ 
+     
+    return resultArray
+
+
+
 if __name__=="__main__":
     import os
     myhost = os.uname()[1]

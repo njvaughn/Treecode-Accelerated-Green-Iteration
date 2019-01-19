@@ -152,6 +152,43 @@ void directSum_Poisson(int numTargets, int numSources,
 }
 
 
+void directSum_Helmholtz(int numTargets, int numSources, double helmholtzK,
+		double *targetX, double *targetY, double *targetZ, double *targetValue, double *targetWeight,
+		double *sourceX, double *sourceY, double *sourceZ, double *sourceValue, double *sourceWeight,
+		double *outputArray) {
+
+	int i, j;
+	double xt, yt, zt, xs, ys, zs, r, targetVal;
+
+
+#pragma omp parallel for private(j,xt,yt,zt,xs,ys,zs,r, targetVal)
+    for (i = 0; i < numTargets; i++) {
+    	outputArray[i] = 0.0;
+    	xt = targetX[i];
+    	yt = targetY[i];
+    	zt = targetZ[i];
+
+    	targetVal = targetValue[i];
+
+    	for (j=0; j< numSources; j++){
+    		xs = sourceX[j];
+    		ys = sourceY[j];
+    		zs = sourceZ[j];
+    		r = sqrt( (xt-xs)*(xt-xs) + (yt-ys)*(yt-ys) + (zt-zs)*(zt-zs)  );
+//    		if (r > 0.0){
+    		if (i!=j){
+    			outputArray[i] += sourceWeight[j]*( sourceValue[j] )*exp(-helmholtzK*r) /r;
+    		}
+
+//		outputArray[i] /= 4*M_PI;
+
+    	}
+
+    }
+
+    return;
+}
+
 
 
 
