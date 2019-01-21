@@ -205,31 +205,36 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         start = time.time()
         
         
+#         alphasq = 0.5
 #         V_coulombNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
 #                                                                                                   targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
-#         V_coulombNew += targets[:,3]* (4*np.pi)* alphasq/2
+# #         V_coulombNew += targets[:,3]* (4*np.pi)* alphasq/2  # Wrong
+#         V_coulombNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)
 
 
 #         V_coulombNew = directSumWrappers.callCompiledC_directSum_Poisson(numTargets, numSources, 
 #                                                                         targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
-        potentialType=0 # shoud be 0.  Set to 1 just to test Yukawa quickly
-        order=6
-        kappa = 0.0
+        potentialType=2 # shoud be 0.  Set to 1, 2, or 3 just to test other kernels quickly
+        order=3
         theta = 0.5
-        maxParNode = 5000
-        batchSize = 5000
+        maxParNode = 500
+        batchSize = 500
+        alphasq = 1.0
         V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                        targetX, targetY, targetZ, targetValue, 
                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                       potentialType, kappa, order, theta, maxParNode, batchSize)
+                                                       potentialType, alphasq, order, theta, maxParNode, batchSize)
+        
+        V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
+
         
 #         print('First few terms of V_coulombNew: ', V_coulombNew[:8])
         print('Convolution time: ', time.time()-start)
         
-        return
+#         return
         
         
     elif GPUpresent==True:
@@ -282,7 +287,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
     print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
     
-
+#     return
     
     printInitialEnergies=True
 
@@ -456,7 +461,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                                                                               sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
 
-                                    potentialType=1
+                                    potentialType=3
                                     order=3
                                     kappa = k
                                     theta = 0.5

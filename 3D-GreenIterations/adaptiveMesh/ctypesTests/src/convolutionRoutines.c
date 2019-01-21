@@ -102,7 +102,7 @@ void directSum_PoissonSingularitySubtraction(int numTargets, int numSources, dou
 				zs = sourceZ[j];
 				r = sqrt( (xt-xs)*(xt-xs) + (yt-ys)*(yt-ys) + (zt-zs)*(zt-zs)  );
 				if (i!=j){
-					outputArray[i] += sourceWeight[j] * ( sourceValue[j] - targetVal*exp(-gaussianAlphaSq*r*r) ) /r;
+					outputArray[i] += sourceWeight[j] * ( sourceValue[j] - targetVal*exp(-r*r/gaussianAlphaSq) ) /r;
 				}
 
 
