@@ -217,7 +217,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                                                         targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
-        potentialType=2 # shoud be 0.  Set to 1, 2, or 3 just to test other kernels quickly
+        potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
         order=3
         theta = 0.5
         maxParNode = 500
@@ -228,7 +228,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                        potentialType, alphasq, order, theta, maxParNode, batchSize)
         
-        V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
+        if potentialType==2:
+            V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
 
         
 #         print('First few terms of V_coulombNew: ', V_coulombNew[:8])
@@ -287,7 +288,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
     print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
     
-#     return
+    return
     
     printInitialEnergies=True
 
@@ -473,6 +474,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                                                                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                                                    potentialType, kappa, order, theta, maxParNode, batchSize)
                                     print('Convolution time: ', time.time()-start)
+                                    if potentialType==3:
+                                        phiNew += 4*np.pi*targets[:,3]/k**2
                                     phiNew /= (4*np.pi)
                                 else:
                                     startTime = time.time()
@@ -714,10 +717,28 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         Compute new electron-electron potential and update pointwise potential values 
         """
 #         startCoulombConvolutionTime = timer()
+
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = np.copy(sources)
-        V_coulombNew = np.zeros((len(targets)))
-        gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+        
+        if GPUpresent==True:
+            V_coulombNew = np.zeros((len(targets)))
+            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+            
+        else:
+            potentialType=2 # shoud be 0.  Set to 1, 2, or 3 just to test other kernels quickly
+            order=3
+            theta = 0.5
+            maxParNode = 500
+            batchSize = 500
+            alphasq = 1.0
+            V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                           targetX, targetY, targetZ, targetValue, 
+                                                           sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                           potentialType, alphasq, order, theta, maxParNode, batchSize)
+            if potentialType==2:
+                V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
+        
         
       
         tree.importVcoulombOnLeaves(V_coulombNew)
