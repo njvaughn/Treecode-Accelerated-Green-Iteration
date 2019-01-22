@@ -743,6 +743,8 @@ class Tree(object):
                          (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') ):
 #                         print('checking divide criterion for cell ', Cell.uniqueID)
                         Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
+                    elif divideCriterion=='Biros':
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance(divideParameter)
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
                     

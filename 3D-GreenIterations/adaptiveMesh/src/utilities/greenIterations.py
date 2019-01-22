@@ -205,31 +205,30 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         start = time.time()
         
         
-#         alphasq = 0.5
-#         V_coulombNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
-#                                                                                                   targetX, targetY, targetZ, targetValue,targetWeight, 
-#                                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
-# #         V_coulombNew += targets[:,3]* (4*np.pi)* alphasq/2  # Wrong
-#         V_coulombNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)
+        V_coulombNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
+                                                                                                  targetX, targetY, targetZ, targetValue,targetWeight, 
+                                                                                                  sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+#         V_coulombNew += targets[:,3]* (4*np.pi)* alphasq/2  # Wrong
+        V_coulombNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)
 
 
 #         V_coulombNew = directSumWrappers.callCompiledC_directSum_Poisson(numTargets, numSources, 
 #                                                                         targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
-        potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
-        order=3
-        theta = 0.5
-        maxParNode = 500
-        batchSize = 500
-        alphasq = 1.0
-        V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
-                                                       targetX, targetY, targetZ, targetValue, 
-                                                       sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                       potentialType, alphasq, order, theta, maxParNode, batchSize)
-        
-        if potentialType==2:
-            V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
+#         potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
+#         order=3
+#         theta = 0.8
+#         maxParNode = 500
+#         batchSize = 500
+#         alphasq = 1.0
+#         V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+#                                                        targetX, targetY, targetZ, targetValue, 
+#                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+#                                                        potentialType, alphasq, order, theta, maxParNode, batchSize)
+#         
+#         if potentialType==2:
+#             V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
 
         
 #         print('First few terms of V_coulombNew: ', V_coulombNew[:8])

@@ -455,6 +455,11 @@ class Cell(object):
             r = np.sqrt( (self.xmid-atom.x)**2 + (self.ymid-atom.y)**2 + (self.zmid-atom.z)**2 )
             if 1/self.volume < meshDensity(r,divideParameter,divideCriterion):
                 self.divideFlag=True
+                
+                
+    def checkIfChebyshevCoefficientsAboveTolerance(self, divideParameter):
+        coefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQ(,3)
+        return
                
     
     """
