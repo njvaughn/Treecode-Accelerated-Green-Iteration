@@ -20,7 +20,7 @@ import itertools
 import os
 import sys
 import csv
-from numba.targets.options import TargetOptions
+# from numba.targets.options import TargetOptions
 try:
     import vtk
 except ModuleNotFoundError:
@@ -102,14 +102,14 @@ class Tree(object):
         atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
 #         print(np.shape(atomData))
 #         print(len(atomData))
-        if np.shape(atomData)==(4,):
+        if np.shape(atomData)==(5,):
             self.atoms = np.empty((1,),dtype=object)
-            atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3])
+            atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3],atomData[4])
             self.atoms[0] = atom
         else:
             self.atoms = np.empty((len(atomData),),dtype=object)
             for i in range(len(atomData)):
-                atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3])
+                atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4])
                 self.atoms[i] = atom
         
         # generate gridpoint objects.  
@@ -316,7 +316,7 @@ class Tree(object):
 #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cell.divideIfAspectRatioExceeds(1.5) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
+                cell.divideIfAspectRatioExceeds(1.75) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
         
         leafCount = 0
         for _,cell in self.masterList:
@@ -454,9 +454,9 @@ class Tree(object):
         timer.start()
         orbitalIndex=0
         
-        print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
-        self.atoms[1].nAtomicOrbitals = 2
-        self.nOrbitals = 7
+#         print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+#         self.atoms[1].nAtomicOrbitals = 2
+#         self.nOrbitals = 7
         
 
     
@@ -1344,12 +1344,26 @@ class Tree(object):
         # randomize orbital because its energy went > Vgauge
         for _,cell in self.masterList:
             if cell.leaf==True:
-                val = np.random.rand(1)
+#                 val = np.random.rand(1)
                 for i,j,k in cell.PxByPyByPz:
+                    val = np.random.rand(1)
                     gp = cell.gridpoints[i,j,k]
-                    r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
+#                     r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
 #                     gp.phi[m] = val/r
                     gp.phi[m] = val
+                    
+    def increaseNumberOfWavefunctionsByOne(self):
+        
+        for _,cell in self.masterList:
+            for i,j,k in cell.PxByPyByPz:
+                gp = cell.gridpoints[i,j,k]
+                gp.phi = np.append(gp.phi,1.0)
+        
+#         self.scrambleOrbital(-1)
+        self.orthonormalizeOrbitals(targetOrbital = -1)
+        self.occupations = np.append(self.occupations, 0.0)
+        self.orbitalEnergies = np.append(self.orbitalEnergies, self.gaugeShift-0.1)
+        self.nOrbitals += 1
     
     def softenOrbital(self,m):
         print('Softening orbital ', m)

@@ -9,8 +9,17 @@ Created on Mar 13, 2018
 '''
 import os
 import sys
+from docutils.nodes import reference
 sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
+sys.path.append('../ctypesTests/src')
+
+
+global rootDirectory
+if os.uname()[1] == 'Nathans-MacBook-Pro.local':
+    rootDirectory = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/'
+else:
+    print('os.uname()[1] = ', os.uname()[1])
 
 import unittest
 import numpy as np
@@ -42,6 +51,7 @@ vtkDir              = str(sys.argv[14])
 noGradients         = str(sys.argv[15])
 mixingScheme        = str(sys.argv[16])
 mixingParameter     = float(sys.argv[17])
+GPUpresent          = str(sys.argv[18])
 
 print('gradientFree = ', noGradients)
 print('Mixing scheme = ', mixingScheme)
@@ -53,6 +63,13 @@ elif noGradients=='False':
     gradientFree=False
 else:
     print('Warning, not correct input for gradientFree')
+    
+if GPUpresent=='True':
+    GPUpresent=True
+elif GPUpresent=='False':
+    GPUpresent=False
+else:
+    print('Warning, not correct input for GPUpresent')
 
 # coordinateFile      = str(sys.argv[12])
 # auxiliaryFile      = str(sys.argv[13])
@@ -71,41 +88,60 @@ def setUpTree(onlyFillOne=False):
 #     [coordinateFile, outputFile, nElectrons, nOrbitals] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[0:4]
 #     [coordinateFile, outputFile, nElectrons, nOrbitals, 
 #      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift] = np.genfromtxt(inputFile,delimiter=',',dtype=[("|U100","|U100",int,int,float,float,float,float,float)])
-    [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
-    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
-    nElectrons = int(nElectrons)
-    nOrbitals = int(nOrbitals)
+    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+#     [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+#     nElectrons = int(nElectrons)
+#     nOrbitals = int(nOrbitals)
     
-    nOrbitals = 7  # hard code this in for Carbon Monoxide
-    print('Hard coding nOrbitals to 7')
-
-#     nOrbitals = 6
+#     nOrbitals = 7  # hard code this in for Carbon Monoxide
+#     print('Hard coding nOrbitals to 7')
+ #     nOrbitals = 6
 #     print('Hard coding nOrbitals to 6 to give oxygen one extra')
 #     nOrbitals = 1
 #     print('Hard coding nOrbitals to 1')
+
+    print('Reading atomic coordinates from: ', coordinateFile)
+    atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+    if np.shape(atomData)==(5,):
+        nElectrons = atomData[3]
+    else:
+        nElectrons = 0
+        for i in range(len(atomData)):
+            nElectrons += atomData[i,3]
     
+#     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
+    nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.  
+                                            # If the final orbital is unoccupied, this amount is enough. 
+                                            # If there is a degeneracy leading to teh final orbital being 
+                                            # partially filled, then it will be necessary to increase nOrbitals by 1.
+
+#     nOrbitals=7
+#     print('Setting nOrbitals to six for purposes of testing the adaptivity on the oxygen atom.')
+#     print('Setting nOrbitals to seven for purposes of running Carbon monoxide.')
+    
+    
+#     nOrbitals = 6
+    occupations = 2*np.ones(nOrbitals)
+#     occupations[-1] = 0
+    print('in testBatchGreen..., nOrbitals = ', nOrbitals)
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    
+    referenceEigenvalues = np.array( np.genfromtxt(referenceEigenvaluesFile,delimiter=',',dtype=float) )
+    print(referenceEigenvalues)
+    print(np.shape(referenceEigenvalues))
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
-
-    
+    tree.referenceEigenvalues = np.copy(referenceEigenvalues)
+    tree.occupations = occupations
+    print('On the tree, nOrbitals = ', tree.nOrbitals)
+    print('type: ', type(tree.nOrbitals))
     
     print('max depth ', maxDepth)
     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=onlyFillOne)
-#     for element in tree.masterList:
-#         
-# #             element[1].gridpoints[1,1,1].setPsi(np.random.rand(1))
-#         for i,j,k in tree.PxByPyByPz:
-#             element[1].gridpoints[i,j,k].setPsi(np.random.rand(1))
-            
-#     for m in range(5,tree.nOrbitals):
-#         tree.scrambleOrbital(m)
-#     tree.normalizeDensity()
 
-#     tree.computeOrbitalMoments()
-    
 
     
     return tree
@@ -117,7 +153,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, mixingScheme, mixingParameter, subtractSingularity, 
+    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, GPUpresent, mixingScheme, mixingParameter, subtractSingularity, 
                                 smoothingN, smoothingEps,inputFile=inputFile,outputFile=outputFile, 
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
 
@@ -205,47 +241,10 @@ if __name__ == "__main__":
     print('='*70)
     print('='*70,'\n')
     
-    """ Normal Run """
-#     tree = setUpTree()
-#     startTime = timer()
-#     tree = setUpTree()
-#     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
-    
 
 
-    """ Refinement based on deepest state """
-#     tree = setUpTree(onlyFillOne=True)  
     tree = setUpTree()  
     
 #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
     testGreenIterationsGPU(tree,vtkExport=False)
-#     testGreenIterationsGPU(tree)
-#     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=1)
-    
-#     
-#     print('\n\n\n\nNow refine based on errors in each cell, the re-initialize: ')
-#     tree.compareToReferenceEnergies(refineFraction = 0.1 )
-#     tree = updateTree(tree,onlyFillOne=True) 
-#     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
-#     
-# #     print('\n\n\n\nNow refine based on errors in each cell, the re-initialize: ')
-# #     tree.compareToReferenceEnergies(refineFraction = 0.05 )
-# #     tree = updateTree(tree,onlyFillOne=True) 
-# #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
-# #     
-# #     print('\n\n\n\nNow refine based on errors in each cell, the re-initialize: ')
-# #     tree.compareToReferenceEnergies(refineFraction = 0.05 )
-# #     tree = updateTree(tree,onlyFillOne=True) 
-# #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
-# #     
-# #     print('\n\n\n\nNow refine based on errors in each cell, the re-initialize: ')
-# #     tree.compareToReferenceEnergies(refineFraction = 0.05 )
-# #     tree = updateTree(tree,onlyFillOne=True) 
-# #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
-#     
-#     print('Now do the real thing...')
-# #     tree.compareToReferenceEnergies(refineFraction = 0.05 )
-#     tree = updateTree(tree) 
-#     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxSCFIterations=None)
-#     
-#     
+

@@ -57,7 +57,12 @@ resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
 # file='LW5o5_1000_fixedMesh_GREEN_.csv'
 # file='LW5o4_2000_fixedMesh_randInit_noTitan_GREEN_.csv'
 # file='LW5o5_1000_fixedMesh_only7_looseInit_GREEN_.csv'
-file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_GREEN_.csv'
+# file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_GREEN_.csv'
+# file='LW5o4_1000_only7_tightFromStart_GIanderson_afterSCF1_GREEN_.csv'
+# file='LW5o5_2000_only7_tightFromStart_GIandersonAfterSCF1_GREEN_.csv'
+file='LW5o5_2000_6_orbitals_GREEN_.csv'
+# file='LW5o5_2000_7_orbitals_noGIanderson_GREEN_.csv'
+
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
     TotalEnergy = -7.3340536782581447
@@ -276,7 +281,8 @@ def plotFirstSCF(df):
 ##    plt.suptitle('Using Singularity Subtraction, LW3-800, minDepth 3')
 ##    plt.suptitle(file)
 ##    plt.suptitle('Convergence of Green Iterations for Oxygen -- Coarse')
-    plt.suptitle('Convergence of Green Iterations for Oxygen')
+    plt.suptitle('Convergence of Green Iterations for Carbon Monoxide')
+#     plt.suptitle('Convergence of Green Iterations for Oxygen')
 
 ##    try:
 ##        f1, (ax2,ax3) = plt.subplots(1,2, figsize=(12,6))

@@ -1,7 +1,0 @@
-Running on
-      1 nyx7512
-Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
-Traceback (most recent call last):
-  File "testBatchGreenIterations_KS.py", line 29, in <module>
-    minDepth            = int(sys.argv[2])
-ValueError: invalid literal for int() with base 10: 'LW5'

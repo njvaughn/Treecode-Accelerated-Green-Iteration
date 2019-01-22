@@ -1,33 +1,6 @@
-####  PBS preamble
+#!/usr/bin/env bash
 
-#PBS -N batchGreenIterations
-#PBS -M njvaughn@umich.edu
-#PBS -m a
-
-#PBS -A krasny_fluxg
-#PBS -l qos=flux
-#PBS -q fluxg
-
-
-#PBS -l nodes=1:gpus=1,mem=8gb
-#PBS -l walltime=24:00:00
-#PBS -j oe
-#PBS -V
-
-####  End PBS preamble
-
-if [ -s "$PBS_NODEFILE" ] ; then
-    echo "Running on"
-    uniq -c $PBS_NODEFILE
-fi
-
-if [ -d "$PBS_O_WORKDIR" ] ; then
-    cd $PBS_O_WORKDIR
-    echo "Running from $PBS_O_WORKDIR"
-fi
-
-cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
-
+cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 DOMAIN=20
 MAXDEPTH=20
 MINDEPTH=3
@@ -38,28 +11,34 @@ SMOOTHINGEPS=0
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 GRADIENTFREE='True'
-GPUPRESENT='True'
+GPUPRESENT='False'
 
-ORDER=4
+ORDER=3
 MESHTYPE='LW5'
-MESHPARAM=1000
+MESHPARAM=100
 
 MIXINGPARAMETER=0.5
 
 INTRASCFTOLERANCE=1e-6
-INTERSCFTOLERANCE=1e-5
+INTERSCFTOLERANCE=1e-6
 
 MIXING='Anderson'	
 
 
-OUTPUTFILE='/home/njvaughn/H2Baseline/Beryllium_LW5o4_500.csv'
+OUTPUTFILE='/Users/nathanvaughn/Documents/GreenIterationOutputData/LW5o3_500_H2.csv'
 VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+
+
+#python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+#	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+#	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER $GPUPRESENT
+	
+python -u -m yep -v testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER $GPUPRESENT
 	
