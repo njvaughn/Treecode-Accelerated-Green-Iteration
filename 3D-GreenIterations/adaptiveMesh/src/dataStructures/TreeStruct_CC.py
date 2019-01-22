@@ -20,7 +20,7 @@ import itertools
 import os
 import sys
 import csv
-from numba.targets.options import TargetOptions
+# from numba.targets.options import TargetOptions
 try:
     import vtk
 except ModuleNotFoundError:
@@ -316,7 +316,7 @@ class Tree(object):
 #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
         for _,cell in self.masterList:
             if cell.leaf==True:
-                cell.divideIfAspectRatioExceeds(1.5) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
+                cell.divideIfAspectRatioExceeds(1.75) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
         
         leafCount = 0
         for _,cell in self.masterList:
@@ -1357,9 +1357,9 @@ class Tree(object):
         for _,cell in self.masterList:
             for i,j,k in cell.PxByPyByPz:
                 gp = cell.gridpoints[i,j,k]
-                gp.phi = np.append(gp.phi,0.0)
+                gp.phi = np.append(gp.phi,1.0)
         
-        self.scrambleOrbital(-1)
+#         self.scrambleOrbital(-1)
         self.orthonormalizeOrbitals(targetOrbital = -1)
         self.occupations = np.append(self.occupations, 0.0)
         self.orbitalEnergies = np.append(self.orbitalEnergies, self.gaugeShift-0.1)
