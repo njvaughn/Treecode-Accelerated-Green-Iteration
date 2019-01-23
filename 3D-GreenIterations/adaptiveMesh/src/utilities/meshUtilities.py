@@ -114,6 +114,7 @@ def computeCoefficicents(f):
     return coefficients
 
 def sumChebyshevCoefficicentsGreaterThanOrderQ(f,q):
+#     print('\n q = ', q, '\n')
     (px,py,pz) = np.shape(f)
 #     print(px,py,pz)
     x = ChebyshevPoints(-1, 1, px)
@@ -145,6 +146,10 @@ def sumChebyshevCoefficicentsGreaterThanOrderQ(f,q):
                                 
                                 coefficients[i,j,k] += f[ell,m,n] * cos(i*theta_ell) * cos(j*theta_m) * cos(k*theta_n)
     #                             coefficients[i,j,k] += f[ell,m,n] * cos(i*x[ell]) * cos(j*y[m]) * cos(k*z[n])
+    
+#                 if abs(coefficients[i,j,k]) > 1e-12:
+#                     print('alpha(%i,%i,%i) = %e' %(i,j,k,coefficients[i,j,k]) )
+    
                 
                 
                     coefficients[i,j,k] *= (2/px)*(2/py)*(2/pz)
@@ -160,6 +165,10 @@ def sumChebyshevCoefficicentsGreaterThanOrderQ(f,q):
 #                     if abs(coefficients[i,j,k]) > 1e-12:
 #                         print('alpha(%i,%i,%i) = %e' %(i,j,k,coefficients[i,j,k]) )
     
+#     if q==12: 
+#         print()
+#         print(coefficients)
+#         print()
     return np.sum(np.abs(coefficients))
                 
                 
@@ -435,8 +444,8 @@ if __name__=="__main__":
     for i in range(nx):
         for j in range(ny):
             for k in range(nz):
-#                 f[i,j,k] = x[i]**4 * exp(y[j]**2-y[j]) * z[k]**1
-                f[i,j,k] = exp(-sqrt( abs(x[i]**2 +y[j]**2+ z[k]**2)) )
+                f[i,j,k] = x[i]**4 * exp(y[j]**2-y[j]) * z[k]**1
+#                 f[i,j,k] = exp(-sqrt( abs(x[i]**2 +y[j]**2+ z[k]**2)) )
 #                 f[i,j,k] = x[i]**2 * y[j]**1 * z[k]**1 + 6
 #                 f[i,j,k] = (4*x[i]**3-3*x[i]) * y[j]**1 * z[k]**1
 #                 f[i,j,k] = x[i]**2 * y[j]**1 * z[k]**1
@@ -471,14 +480,14 @@ if __name__=="__main__":
     print('\nMax error: ', np.max(f-g))
      
      
-#     plt.figure()
-#     for n in range(nx+ny+nz):
-#         val = sumChebyshevCoefficicentsGreaterThanOrderQ(f,n)
-#         print(val)
-#         plt.semilogy(n,val,'ko')
-#     plt.title('Absolute Sum of Coefficients Greater Than Specified Order: $[0,1]^3$')
-#     plt.xlabel('Order')
-#     plt.ylabel('Sum')
+    plt.figure()
+    for n in range(nx+ny+nz):
+        val = sumChebyshevCoefficicentsGreaterThanOrderQ(f,n)
+        print(val)
+        plt.semilogy(n,val,'ko')
+    plt.title('Absolute Sum of Coefficients Greater Than Specified Order')
+    plt.xlabel('i+j+k > ')
+    plt.ylabel('Sum')
 #     plt.show()
      
     plt.figure()
@@ -504,8 +513,8 @@ if __name__=="__main__":
     plt.figure()
 #     if coefficients[0,0,0]==0.0:
 #         coefficients[0,0,0] = 1e-17*np.random.rand()
-#     plt.title('Largest Chebyshev Coefficients for $f = x^4 * e^{y^2-y} * z$')
-    plt.title('Largest Chebyshev Coefficients for $f = e^{-r}$')
+    plt.title('Largest Chebyshev Coefficients for $f = x^4 * e^{y^2-y} * z$')
+#     plt.title('Largest Chebyshev Coefficients for $f = e^{-r}$')
     plt.semilogy(0,np.max(abs(coefficients[0,:,:])),'bo',label='max x')
     plt.semilogy(0,np.max(abs(coefficients[:,0,:])),'g^',label='max y')
     plt.semilogy(0,np.max(abs(coefficients[:,:,0])),'rx',label='max z')
@@ -529,73 +538,73 @@ if __name__=="__main__":
     
     
     
-    ## REFINEMENT TEST
-    nx = ny = nz = 5
-    plt.figure()
-    plt.title('Absolute Sum of Coefficients Greater Than Specified Order')
-    plt.xlabel('Order')
-    plt.ylabel('Sum')
-     
-    for ii in range(8):
-        print('ii = ', ii)
-        x = ChebyshevPoints(0, 1/(2**ii), nx)
-        y = ChebyshevPoints(0, 1/(2**ii), ny)
-        z = ChebyshevPoints(0, 1/(2**ii), nz)
-        f = np.zeros((nx,ny,nz))
-         
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    f[i,j,k] = exp(-sqrt( abs(x[i]**2 +y[j]**2+ z[k]**2)) )
-         
-         
-         
-         
-        if ii==0:
-            plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'ko',label='Refinement Level %i' %ii)
-        elif ii==1:
-            plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'bo',label='Refinement Level %i' %ii)
-        elif ii==2:
-            plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'go',label='Refinement Level %i' %ii)
-        elif ii==3:
-            plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'ro',label='Refinement Level %i' %ii)
-        elif ii==4:
-            plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'mo',label='Refinement Level %i' %ii)
-        elif ii==5:
-            plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'k^',label='Refinement Level %i' %ii)
-        elif ii==6:
-            plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'b^',label='Refinement Level %i' %ii)
-        elif ii==7:
-            plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'g^',label='Refinement Level %i' %ii)
-        elif ii==8:
-            plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'r^',label='Refinement Level %i' %ii)
-        elif ii==9:
-            plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'m^',label='Refinement Level %i' %ii)
-                 
-        for n in range(1,nx+ny+nz):
-            if ii==0:
-                plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'ko')
-            elif ii==1:
-                plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'bo')
-            elif ii==2:
-                plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'go')
-            elif ii==3:
-                plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'ro')
-            elif ii==4:
-                plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'mo')
-            elif ii==5:
-                plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'k^')
-            elif ii==6:
-                plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'b^')
-            elif ii==7:
-                plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'g^')
-            elif ii==8:
-                plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'r^')
-            elif ii==9:
-                plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'m^')
-     
-    plt.legend()
-    plt.show()
+#     ## REFINEMENT TEST
+#     nx = ny = nz = 5
+#     plt.figure()
+#     plt.title('Absolute Sum of Coefficients Greater Than Specified Order')
+#     plt.xlabel('Order')
+#     plt.ylabel('Sum')
+#      
+#     for ii in range(8):
+#         print('ii = ', ii)
+#         x = ChebyshevPoints(0, 1/(2**ii), nx)
+#         y = ChebyshevPoints(0, 1/(2**ii), ny)
+#         z = ChebyshevPoints(0, 1/(2**ii), nz)
+#         f = np.zeros((nx,ny,nz))
+#          
+#         for i in range(nx):
+#             for j in range(ny):
+#                 for k in range(nz):
+#                     f[i,j,k] = exp(-sqrt( abs(x[i]**2 +y[j]**2+ z[k]**2)) )
+#          
+#          
+#          
+#          
+#         if ii==0:
+#             plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'ko',label='Refinement Level %i' %ii)
+#         elif ii==1:
+#             plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'bo',label='Refinement Level %i' %ii)
+#         elif ii==2:
+#             plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'go',label='Refinement Level %i' %ii)
+#         elif ii==3:
+#             plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'ro',label='Refinement Level %i' %ii)
+#         elif ii==4:
+#             plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'mo',label='Refinement Level %i' %ii)
+#         elif ii==5:
+#             plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'k^',label='Refinement Level %i' %ii)
+#         elif ii==6:
+#             plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'b^',label='Refinement Level %i' %ii)
+#         elif ii==7:
+#             plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'g^',label='Refinement Level %i' %ii)
+#         elif ii==8:
+#             plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'r^',label='Refinement Level %i' %ii)
+#         elif ii==9:
+#             plt.semilogy(0,sumChebyshevCoefficicentsGreaterThanOrderQ(f,0),'m^',label='Refinement Level %i' %ii)
+#                  
+#         for n in range(1,nx+ny+nz):
+#             if ii==0:
+#                 plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'ko')
+#             elif ii==1:
+#                 plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'bo')
+#             elif ii==2:
+#                 plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'go')
+#             elif ii==3:
+#                 plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'ro')
+#             elif ii==4:
+#                 plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'mo')
+#             elif ii==5:
+#                 plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'k^')
+#             elif ii==6:
+#                 plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'b^')
+#             elif ii==7:
+#                 plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'g^')
+#             elif ii==8:
+#                 plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'r^')
+#             elif ii==9:
+#                 plt.semilogy(n,sumChebyshevCoefficicentsGreaterThanOrderQ(f,n),'m^')
+#      
+#     plt.legend()
+#     plt.show()
          
     
     

@@ -5,12 +5,13 @@ Created on Mar 5, 2018
 '''
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
+from scipy.special import sph_harm
 import itertools
 import bisect
 
 from hydrogenAtom import potential
 from meshUtilities import meshDensity, weights3D, unscaledWeights, ChebGradient3D, ChebyshevPoints,computeDerivativeMatrix,\
-    computeLaplacianMatrix, ChebLaplacian3D
+    computeLaplacianMatrix, ChebLaplacian3D, sumChebyshevCoefficicentsGreaterThanOrderQ
 from GridpointStruct import GridPoint, DensityPoint
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -455,11 +456,144 @@ class Cell(object):
             r = np.sqrt( (self.xmid-atom.x)**2 + (self.ymid-atom.y)**2 + (self.zmid-atom.z)**2 )
             if 1/self.volume < meshDensity(r,divideParameter,divideCriterion):
                 self.divideFlag=True
+     
+    def initializeCellWavefunctions(self):           
+        
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
+
+        orbitalIndex=0
+
+    
+        for atom in self.tree.atoms:
+            nAtomicOrbitals = atom.nAtomicOrbitals
                 
+            
+            
+#             print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+#                       %(atom.atomicNumber, atom.x,atom.y,atom.z))
+#             print('Orbital index = %i'%orbitalIndex)            
+            singleAtomOrbitalCount=0
+            for nell in aufbauList:
+                
+                if singleAtomOrbitalCount< nAtomicOrbitals:  
+                    n = int(nell[0])
+                    ell = int(nell[1])
+                    psiID = 'psi'+str(n)+str(ell)
+#                     print('Using ', psiID)
+                    for m in range(-ell,ell+1):
+#                         for _,cell in self.masterList:
+#                             if cell.leaf==True:
+                        for i,j,k in self.PxByPyByPz:
+                            gp = self.gridpoints[i,j,k]
+                            dx = gp.x-atom.x
+                            dy = gp.y-atom.y
+                            dz = gp.z-atom.z
+                            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                            inclination = np.arccos(dz/r)
+                            azimuthal = np.arctan2(dy,dx)
+                            
+                        
+#                                     Y = sph_harm(m,ell,azimuthal,inclination)*np.exp(-1j*m*azimuthal)
+                            if m<0:
+                                Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                            if m>0:
+                                Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+#                                     if ( (m==0) and (ell>1) ):
+                            if ( m==0 ):
+                                Y = sph_harm(m,ell,azimuthal,inclination)
+#                                     if ( (m==0) and (ell<=1) ):
+#                                         Y = 1
+                            if abs(np.imag(Y)) > 1e-14:
+                                print('imag(Y) ', np.imag(Y))
+#                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+                            try:
+                                gp.phi[orbitalIndex] = atom.interpolators[psiID](r)*np.real(Y)
+                            except ValueError:
+                                gp.phi[orbitalIndex] = 0.0
+                                        
+                        
+                        
+#                         print('Cell %s Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(self.uniqueID,orbitalIndex,n,ell,m))
+                        orbitalIndex += 1
+                        singleAtomOrbitalCount += 1
+                        
+                        
                 
     def checkIfChebyshevCoefficientsAboveTolerance(self, divideParameter):
-        coefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQ(,3)
-        return
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+        self.divideFlag = False
+        
+        
+        # intialize density on this cell
+        rho = np.zeros((self.px,self.py,self.pz))
+        phi0 = np.zeros((self.px,self.py,self.pz))
+        phi1 = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+        # measure density first...
+        densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQ(rho,(self.px-1) + (self.py-1) + (self.pz-1) - 1  )
+        
+        
+#         print('Density Coefficient Sum = ', coefficientSum)
+#         print()
+        if densityCoefficientSum > divideParameter:
+            self.divideFlag=True
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_DensityAndWavefunctions(self, divideParameter):
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+        self.divideFlag = False
+        
+        self.initializeCellWavefunctions()
+        
+        # intialize density on this cell
+        rho = np.zeros((self.px,self.py,self.pz))
+        phi = np.zeros((self.px,self.py,self.pz,self.tree.nOrbitals))
+#         phi0 = np.zeros((self.px,self.py,self.pz))
+#         phi1 = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+                    
+            for m in range(self.tree.nOrbitals):
+                phi[i,j,k,m] = gp.phi[m]
+        
+        # measure density first...
+        densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQ(rho,(self.px-1) + (self.py-1) + (self.pz-1) - 1  )
+        
+        
+        # Now the wavefunctions
+        wavefunctionCoefficientSum = 0.0
+        for m in range(self.tree.nOrbitals):
+            wavefunctionCoefficientSum += sumChebyshevCoefficicentsGreaterThanOrderQ(phi[:,:,:,m],(self.px-1) + (self.py-1) + (self.pz-1) - 1  )
+        
+#         print('Cell ID: ', self.uniqueID)
+#         print('Density Coefficient Sum = ', densityCoefficientSum)
+#         print('Wavefunction Coefficient Sum = ', wavefunctionCoefficientSum)
+#         print()
+#         if wavefunctionCoefficientSum > densityCoefficientSum:
+#             print('wavefunctino sum greater than density sum.')
+        if (densityCoefficientSum+wavefunctionCoefficientSum) > divideParameter:
+            self.divideFlag=True
                
     
     """
@@ -923,37 +1057,38 @@ class Cell(object):
 #             print('dy = ', dy)
 #             print('dz = ', dz)
             
-#             # locate shortest dimension.  Divide, then check aspect ratio of children.  
-#             if (dx <= min(dy,dz)): # x is shortest dimension.
-#                 self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
-#             elif (dy <= min(dx,dz)): # y is shortest dimension
-#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
-#             elif (dz <= max(dx,dy)): # z is shortest dimension
-#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
-#                
-# #               Should I divide children?  Maybe it's okay if a child still has a bad aspect ratio because
-# #               at least no one side  
-#  
-#             if hasattr(self, "children"):
-#                 (ii,jj,kk) = np.shape(self.children)
-#                 for i in range(ii):
-#                     for j in range(jj):
-#                         for k in range(kk):
-#                             self.children[i,j,k].divideIfAspectRatioExceeds(tolerance)
+            # locate shortest dimension.  Divide, then check aspect ratio of children.  
+            if (dx <= min(dy,dz)): # x is shortest dimension.
+                self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
+            elif (dy <= min(dx,dz)): # y is shortest dimension
+                self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
+            elif (dz <= max(dx,dy)): # z is shortest dimension
+                self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
                 
-#             locate longest dimension.  Divide, then check aspect ratio of children.  
-            if (dx >= max(dy,dz)): # x is longest dimension.
-                self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
-            elif (dy >= max(dx,dz)): # y is longest dimension
-                self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
-            elif (dz >= max(dx,dy)): # z is longest dimension
-                self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
+#               Should I divide children?  Maybe it's okay if a child still has a bad aspect ratio because
+#               at least no one side  
+  
+            if hasattr(self, "children"):
+                (ii,jj,kk) = np.shape(self.children)
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+                            self.children[i,j,k].divideIfAspectRatioExceeds(tolerance)
+                
+                
+# #             locate longest dimension.  Divide, then check aspect ratio of children.  
+#             if (dx >= max(dy,dz)): # x is longest dimension.
+#                 self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
+#             elif (dy >= max(dx,dz)): # y is longest dimension
+#                 self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
+#             elif (dz >= max(dx,dy)): # z is longest dimension
+#                 self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
              
     def divideButJustReturnChildren(self):
         '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''

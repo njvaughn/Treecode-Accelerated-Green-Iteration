@@ -1,0 +1,106 @@
+Running on
+      1 nyx7505
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+os.uname()[1] =  nyx7505.arc-ts.umich.edu
+Unable to import directSumWrappers due to OSError
+Unable to import treecodeWrapper due to OSError
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/berylliumAtom.csv
+in testBatchGreen..., nOrbitals =  2
+['../src/utilities/molecularConfigurations/berylliumAtom.csv', '/home/njvaughn/BirosMeshes/Beryllium_o5_5em5_max12.csv', 4.0, 2, -14.446201118081863, -2.2903921833555341, -0.22343205529440757, -8.1232305760491457, -0.5]
+[-3.85561542 -0.20599987 -0.07579017]
+(3,)
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/berylliumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z4/singleAtomData/
+Gauge shift  -0.5
+Nuclear energy:  0.0
+Atom is contained in cell    which has no children.  Divide at atomic location.
+There are now 8 leaf cells.
+After aspect ratio divide there are 8 leaf cells.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the tree, nOrbitals =  2
+type:  <class 'int'>
+max depth  15
+Number of gridpoints:  148000
+max density:  34.88850066
+Integrated density before normalization:  4.00015728647
+Integrated density after normalization:  4.0
+Initializing density EXTERNALLY took 1.079 seconds.
+Initializing orbitals for atom Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Initializing orbitals EXTERNAL to Tree Structure took 1.100 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             Biros 
+Divide Parameter:            5.00e-05 
+Total Number of Cells:       1353 
+Total Number of Leaf Cells:  1184 
+Total Number of Gridpoints:  148000 
+Minimum Depth                3 levels 
+Maximum Depth:               15 levels 
+Cell Order:                  5 
+Construction time:           16.2 seconds.
+Closest gridpoint to origin:  [-2.9872731753446263e-05, -2.9872731753446263e-05, -2.9872731753446263e-05]
+For a distance of:  5.1741089157845045e-05
+Part of a cell centered at:  [-0.0006103515625, -0.0006103515625, -0.0006103515625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    148000
+Threads per block:    512
+Blocks per grid:      290
+[14.309060170370618, -2.2903921833555341, -0.22343205529440757, -26.241437049802535, -14.446201118081863, -0.5]
+Integrated density:  4.0
+Using Gaussian singularity subtraction, alpha =  1
+GPUpresent set to  True
+Type:  <class 'bool'>
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35595066 -0.70598459]
+Sorted eigenvalues:  [-4.35595066 -0.70598459]
+New order:  [0 1]
+Orbital energies after initial sort: 
+ [-4.35595066 -0.70598459]
+Kinetic:    [ 6.58719011  0.56750112]
+Potential:  [-10.94314077  -1.27348571]
+Computing band energy.  Current orbital energies are:  [-4.35595066 -0.70598459]
+Electrostatic Energies:
+Hartree:          7.11465894251
+External:         -33.3565112675
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-4.35595066 -0.70598459]
+Orbital Energy Errors after initialization:  [ -3.35240193e-04   1.52758225e-05]
+Updated V_x:                           -3.0538180788 Hartree
+Updated V_c:                           -0.2522029943 Hartree
+Updated Band Energy:                   -8.1238705048 H, -2.2432930675e+01 H
+Updated Kinetic Energy:                 14.3093439507 H, 1.6599736134e+01 H
+Updated E_x:                           -2.2903635591 H, -2.0669315038e+00 H
+Updated E_c:                           -0.2234305316 H, 2.6018006518e+01 H
+Updated totalElectrostatic:            -26.2418523250 H, -1.1795651207e+01 H
+Total Energy:                          -14.4463024649 H, -1.3946302465e+01 H
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 249, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False)
+  File "testBatchGreenIterations_KS.py", line 158, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 305, in greenIterations_KohnSham_SCF
+    myFile = open(SCFiterationOutFile, 'a')
+FileNotFoundError: [Errno 2] No such file or directory: '/home/njvaughn/BirosMeshes/Beryllium_o5_5em5_max12_SCF_.csv'

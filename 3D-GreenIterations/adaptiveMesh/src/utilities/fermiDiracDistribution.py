@@ -17,7 +17,7 @@ def computeOccupations(orbitalEnergies, nElectrons, Temperature):
     
 
     KB = 1/315774.6
-    sigma = T*KB
+    sigma = Temperature*KB
     
     
     

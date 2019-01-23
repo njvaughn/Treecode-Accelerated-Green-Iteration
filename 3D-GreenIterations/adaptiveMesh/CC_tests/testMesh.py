@@ -18,24 +18,37 @@ from TreeStruct_CC import Tree
 def exportMeshForParaview(domain,order,minDepth, maxDepth, divideCriterion, divideParameter,inputFile):    
     
     
-    [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
-    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
-    nElectrons = int(nElectrons)
-    nOrbitals = int(nOrbitals)
+#     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+#     nElectrons = int(nElectrons)
+#     nOrbitals = int(nOrbitals)
+
+    print('Reading atomic coordinates from: ', coordinateFile)
+    atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+    if np.shape(atomData)==(5,):
+        nElectrons = atomData[3]
+    else:
+        nElectrons = 0
+        for i in range(len(atomData)):
+            nElectrons += atomData[i,3]
     
-    print([coordinateFile, nElectrons, nOrbitals, 
-     Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    nOrbitals = int( np.ceil(nElectrons/2)+1)
+    print('nElectrons = ', nElectrons)
+    print('nOrbitals  = ', nOrbitals)
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
 
     
     print('max depth ', maxDepth)
     tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
-    tree.sortOrbitalsAndEnergies(order = [5,0,6,1,2,8,9,3,4,7])
+#     tree.sortOrbitalsAndEnergies(order = [5,0,6,1,2,8,9,3,4,7])
     
-    tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_beforeOrth')
-    tree.orthonormalizeOrbitals()
-    tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
+#     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/Biros/Beryllium_order5_1em4')
+    tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/Biros/H2_order5_1em3')
+#     tree.orthonormalizeOrbitals()
+#     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
 
     print('Meshes Exported.')
     
@@ -129,8 +142,11 @@ if __name__ == "__main__":
     
     
     exportMeshForParaview(domain=20,order=5,
-                        minDepth=3, maxDepth=20, divideCriterion='LW5', 
-                        divideParameter=1000,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+                        minDepth=3, maxDepth=12, divideCriterion='Biros', 
+                        divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
+#                         divideParameter=1e-4,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+#                         divideParameter=1e-3,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
+#                         divideParameter=1e-4,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
     
     

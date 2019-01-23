@@ -1,0 +1,1414 @@
+Running on
+      1 nyx7505
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+os.uname()[1] =  nyx7505.arc-ts.umich.edu
+Unable to import directSumWrappers due to OSError
+Unable to import treecodeWrapper due to OSError
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+in testBatchGreen..., nOrbitals =  5
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/LWvsBiros/Oxygen/Biros_o7_1em4.csv', 8.0, 5, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+[-18.75890296  -0.87120699  -0.33829445  -0.33829445  -0.33829445   0.           0.
+   0.           0.        ]
+(9,)
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Gauge shift  -0.0
+Nuclear energy:  0.0
+Atom is contained in cell    which has no children.  Divide at atomic location.
+There are now 8 leaf cells.
+After aspect ratio divide there are 8 leaf cells.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the tree, nOrbitals =  5
+type:  <class 'int'>
+max depth  11
+Number of gridpoints:  329280
+max density:  306.535277651
+Integrated density before normalization:  8.00005953546
+Integrated density after normalization:  8.0
+Initializing density EXTERNALLY took 2.371 seconds.
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Orbital 4 filled with (n,ell,m) = (2,1,1) 
+Initializing orbitals EXTERNAL to Tree Structure took 6.031 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             Biros 
+Divide Parameter:            1.00e-04 
+Total Number of Cells:       1097 
+Total Number of Leaf Cells:  960 
+Total Number of Gridpoints:  329280 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  7 
+Construction time:           36.2 seconds.
+Closest gridpoint to origin:  [0.00024484460759937872, 0.00024484460759937872, 0.00024484460759937872]
+For a distance of:  0.00042408330032138875
+Part of a cell centered at:  [0.009765625, 0.009765625, 0.009765625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    329280
+Threads per block:    512
+Blocks per grid:      644
+[-40.613397710076626, 74.112730191157425, -7.219370082893998, -0.54455323568788838, -140.81814437367436, -74.469337501098821]
+Integrated density:  8.0
+Using Gaussian singularity subtraction, alpha =  1
+GPUpresent set to  True
+Type:  <class 'bool'>
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-18.76068832  -0.87130361  -0.33831058  -0.33831058  -0.33831058]
+Sorted eigenvalues:  [-18.76068832  -0.87130361  -0.33831058  -0.33831058  -0.33831058]
+New order:  [0 1 3 4 2]
+Orbital energies after initial sort: 
+ [-18.76068832  -0.87130361  -0.33831058  -0.33831058  -0.33831058]
+Kinetic:    [ 28.75627372   3.1959612    2.55202196   2.55202196   2.55202196]
+Potential:  [-47.51696204  -4.06726481  -2.89033254  -2.89033254  -2.89033254]
+Computing band energy.  Current orbital energies are:  [-18.76068832  -0.87130361  -0.33831058  -0.33831058  -0.33831058]
+Electrostatic Energies:
+Hartree:          36.3248959572
+External:         -177.14639934
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-18.76068832  -0.87130361  -0.33831058  -0.33831058  -0.33831058]
+Orbital Energy Errors after initialization:  [ -1.78535549e-03  -9.66186423e-05  -1.61298488e-05  -1.61298515e-05
+  -1.61298555e-05]
+Updated V_x:                           -9.6257957881 Hartree
+Updated V_c:                           -0.6072440190 Hartree
+Updated Band Energy:                   -41.2938473434 H, -6.8044963328e-01 H
+Updated Kinetic Energy:                 73.4357998898 H, -6.7693030134e-01 H
+Updated E_x:                           -7.2193468411 H, 2.3241814255e-05 H
+Updated E_c:                           -0.5445525562 H, 6.7952876237e-07 H
+Updated totalElectrostatic:            -140.8215033832 H, -3.3590095485e-03 H
+Total Energy:                          -75.1496028906 H, -6.8026538955e-01 H
+
+
+
+SCF Count  1
+Orbital Energies:  [-18.76068832  -0.87130361  -0.33831058  -0.33831058  -0.33831058]
+Working on orbital 0
+Using singularity subtraction.  Convolution time:  13.450617551803589
+Norm of psiNew =  0.999974732199
+eigenvalueHistory: 
+ -18.761129724598696
+Orbital energy after Harrison update:  -18.7611297246
+Orbital 0 error and eigenvalue residual:   -2.227e-03 and 4.414e-04
+Orbital 0 wavefunction residual: 9.251e-05
+
+
+Turning on Anderson Mixing for wavefunction 0
+Using singularity subtraction.  Convolution time:  13.442245960235596
+Norm of psiNew =  0.99998102819
+eigenvalueHistory: 
+ [-18.76112972 -18.76113135]
+Orbital energy after Harrison update:  -18.7611313494
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 0 error and eigenvalue residual:   -2.228e-03 and 1.625e-06
+Orbital 0 wavefunction residual: 2.082e-05
+
+
+Using singularity subtraction.  Convolution time:  13.40444564819336
+Norm of psiNew =  0.999986389985
+eigenvalueHistory: 
+ [-18.76112972 -18.76113135 -18.76113137]
+Orbital energy after Harrison update:  -18.7611313731
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-2.54734848] 3.54734848415
+Orbital 0 error and eigenvalue residual:   -2.228e-03 and 2.371e-08
+Orbital 0 wavefunction residual: 1.502e-05
+
+
+Using singularity subtraction.  Convolution time:  13.450181245803833
+Norm of psiNew =  1.00000015292
+eigenvalueHistory: 
+ [-18.76112972 -18.76113135 -18.76113137 -18.76113139]
+Orbital energy after Harrison update:  -18.7611313947
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.13234852 -4.35690475] 2.224556226
+Orbital 0 error and eigenvalue residual:   -2.228e-03 and 2.165e-08
+Orbital 0 wavefunction residual: 1.138e-06
+
+
+Using singularity subtraction.  Convolution time:  13.450504064559937
+Norm of psiNew =  1.00000003734
+eigenvalueHistory: 
+ [-18.76112972 -18.76113135 -18.76113137 -18.76113139 -18.7611314 ]
+Orbital energy after Harrison update:  -18.7611313952
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [-4.18692325  5.8166713  -2.9650868 ] 2.33533874851
+Orbital 0 error and eigenvalue residual:   -2.228e-03 and 5.049e-10
+Orbital 0 wavefunction residual: 1.367e-07
+
+
+Used 5 iterations for orbital 0.
+
+
+
+Working on orbital 1
+Using singularity subtraction.  Convolution time:  13.450298547744751
+Norm of psiNew =  0.999946523494
+eigenvalueHistory: 
+ -0.8713793552967609
+Orbital energy after Harrison update:  -0.871379355297
+Orbital 1 error and eigenvalue residual:   -1.724e-04 and 7.575e-05
+Orbital 1 wavefunction residual: 1.494e-04
+
+
+Turning on Anderson Mixing for wavefunction 1
+Using singularity subtraction.  Convolution time:  13.465611457824707
+Norm of psiNew =  0.999970676225
+eigenvalueHistory: 
+ [-0.87137936 -0.87137946]
+Orbital energy after Harrison update:  -0.871379464012
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 1 error and eigenvalue residual:   -1.725e-04 and 1.087e-07
+Orbital 1 wavefunction residual: 4.789e-05
+
+
+Using singularity subtraction.  Convolution time:  13.450980186462402
+Norm of psiNew =  0.999978739476
+eigenvalueHistory: 
+ [-0.87137936 -0.87137946 -0.87137947]
+Orbital energy after Harrison update:  -0.871379470259
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-2.06527221] 3.06527220607
+Orbital 1 error and eigenvalue residual:   -1.725e-04 and 6.247e-09
+Orbital 1 wavefunction residual: 3.234e-05
+
+
+Using singularity subtraction.  Convolution time:  13.45197319984436
+Norm of psiNew =  0.999995661412
+eigenvalueHistory: 
+ [-0.87137936 -0.87137946 -0.87137947 -0.87137948]
+Orbital energy after Harrison update:  -0.871379476369
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 2.77366929 -4.12659987] 2.35293058227
+Orbital 1 error and eigenvalue residual:   -1.725e-04 and 6.110e-09
+Orbital 1 wavefunction residual: 1.639e-06
+
+
+Using singularity subtraction.  Convolution time:  13.415698289871216
+Norm of psiNew =  0.99999599468
+eigenvalueHistory: 
+ [-0.87137936 -0.87137946 -0.87137947 -0.87137948 -0.87137948]
+Orbital energy after Harrison update:  -0.871379476431
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [-2.44726566  3.6363104  -2.06733771] 1.87829297228
+Orbital 1 error and eigenvalue residual:   -1.725e-04 and 6.195e-11
+Orbital 1 wavefunction residual: 1.388e-07
+
+
+Used 5 iterations for orbital 1.
+
+
+
+Working on orbital 2
+Using singularity subtraction.  Convolution time:  13.403154611587524
+Norm of psiNew =  1.00001466969
+eigenvalueHistory: 
+ -0.33838430185121693
+Orbital energy after Harrison update:  -0.338384301851
+Orbital 2 error and eigenvalue residual:   -8.985e-05 and 7.372e-05
+Orbital 2 wavefunction residual: 1.514e-04
+
+
+Turning on Anderson Mixing for wavefunction 2
+Using singularity subtraction.  Convolution time:  13.460013628005981
+Norm of psiNew =  0.99996584014
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431]
+Orbital energy after Harrison update:  -0.338384311535
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 2 error and eigenvalue residual:   -8.986e-05 and 9.684e-09
+Orbital 2 wavefunction residual: 4.460e-05
+
+
+Using singularity subtraction.  Convolution time:  13.461865663528442
+Norm of psiNew =  0.999975035418
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431 -0.33838431]
+Orbital energy after Harrison update:  -0.338384312845
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-2.06650344] 3.06650344218
+Orbital 2 error and eigenvalue residual:   -8.986e-05 and 1.310e-09
+Orbital 2 wavefunction residual: 3.042e-05
+
+
+Using singularity subtraction.  Convolution time:  13.420067071914673
+Norm of psiNew =  0.999995218616
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431 -0.33838431 -0.33838431]
+Orbital energy after Harrison update:  -0.338384314469
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 4.06226905 -6.11245869] 3.05018963758
+Orbital 2 error and eigenvalue residual:   -8.986e-05 and 1.624e-09
+Orbital 2 wavefunction residual: 4.374e-06
+
+
+Using singularity subtraction.  Convolution time:  13.459988355636597
+Norm of psiNew =  0.999999327106
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431 -0.33838431 -0.33838431 -0.33838431]
+Orbital energy after Harrison update:  -0.338384314623
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [-6.61287099  9.94439475 -5.04160247] 2.7100787147
+Orbital 2 error and eigenvalue residual:   -8.986e-05 and 1.535e-10
+Orbital 2 wavefunction residual: 6.532e-07
+
+
+Used 5 iterations for orbital 2.
+
+
+
+Working on orbital 3
+Using singularity subtraction.  Convolution time:  13.460783004760742
+Norm of psiNew =  1.00001466969
+eigenvalueHistory: 
+ -0.33838430185121143
+Orbital energy after Harrison update:  -0.338384301851
+Orbital 3 error and eigenvalue residual:   -8.985e-05 and 7.372e-05
+Orbital 3 wavefunction residual: 1.514e-04
+
+
+Turning on Anderson Mixing for wavefunction 3
+Using singularity subtraction.  Convolution time:  13.463099002838135
+Norm of psiNew =  0.99996584014
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431]
+Orbital energy after Harrison update:  -0.338384311535
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 3 error and eigenvalue residual:   -8.986e-05 and 9.684e-09
+Orbital 3 wavefunction residual: 4.460e-05
+
+
+Using singularity subtraction.  Convolution time:  13.471688747406006
+Norm of psiNew =  0.999975035418
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431 -0.33838431]
+Orbital energy after Harrison update:  -0.338384312845
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-2.06650344] 3.0665034421
+Orbital 3 error and eigenvalue residual:   -8.986e-05 and 1.310e-09
+Orbital 3 wavefunction residual: 3.042e-05
+
+
+Using singularity subtraction.  Convolution time:  13.409145593643188
+Norm of psiNew =  0.999995218616
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431 -0.33838431 -0.33838431]
+Orbital energy after Harrison update:  -0.338384314469
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 4.06226905 -6.11245869] 3.05018963762
+Orbital 3 error and eigenvalue residual:   -8.986e-05 and 1.624e-09
+Orbital 3 wavefunction residual: 4.374e-06
+
+
+Using singularity subtraction.  Convolution time:  13.4100661277771
+Norm of psiNew =  0.999999327106
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431 -0.33838431 -0.33838431 -0.33838431]
+Orbital energy after Harrison update:  -0.338384314623
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [-6.61287097  9.94439472 -5.04160246] 2.71007871
+Orbital 3 error and eigenvalue residual:   -8.986e-05 and 1.536e-10
+Orbital 3 wavefunction residual: 6.532e-07
+
+
+Used 5 iterations for orbital 3.
+
+
+
+Working on orbital 4
+Using singularity subtraction.  Convolution time:  13.469957828521729
+Norm of psiNew =  1.00001466969
+eigenvalueHistory: 
+ -0.3383843018512283
+Orbital energy after Harrison update:  -0.338384301851
+Orbital 4 error and eigenvalue residual:   -8.985e-05 and 7.372e-05
+Orbital 4 wavefunction residual: 1.514e-04
+
+
+Turning on Anderson Mixing for wavefunction 4
+Using singularity subtraction.  Convolution time:  13.412432193756104
+Norm of psiNew =  0.99996584014
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431]
+Orbital energy after Harrison update:  -0.338384311535
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 4 error and eigenvalue residual:   -8.986e-05 and 9.684e-09
+Orbital 4 wavefunction residual: 4.460e-05
+
+
+Using singularity subtraction.  Convolution time:  13.411994934082031
+Norm of psiNew =  0.999975035418
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431 -0.33838431]
+Orbital energy after Harrison update:  -0.338384312845
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-2.06650344] 3.06650344207
+Orbital 4 error and eigenvalue residual:   -8.986e-05 and 1.310e-09
+Orbital 4 wavefunction residual: 3.042e-05
+
+
+Using singularity subtraction.  Convolution time:  13.414193630218506
+Norm of psiNew =  0.999995218616
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431 -0.33838431 -0.33838431]
+Orbital energy after Harrison update:  -0.338384314469
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 4.06226908 -6.11245872] 3.05018964703
+Orbital 4 error and eigenvalue residual:   -8.986e-05 and 1.624e-09
+Orbital 4 wavefunction residual: 4.374e-06
+
+
+Using singularity subtraction.  Convolution time:  13.472347974777222
+Norm of psiNew =  0.999999327106
+eigenvalueHistory: 
+ [-0.3383843  -0.33838431 -0.33838431 -0.33838431 -0.33838431]
+Orbital energy after Harrison update:  -0.338384314623
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [-6.61287075  9.94439439 -5.04160227] 2.71007863554
+Orbital 4 error and eigenvalue residual:   -8.986e-05 and 1.535e-10
+Orbital 4 wavefunction residual: 6.532e-07
+
+
+Used 5 iterations for orbital 4.
+
+
+
+Sorted eigenvalues:  [-18.7611314   -0.87137948  -0.33838431  -0.33838431  -0.33838431]
+New order:  [0 1 3 4 2]
+../src/dataStructures/TreeStruct_CC.py:156: RuntimeWarning: overflow encountered in exp
+  temp = 1/(1+np.exp( exponentialArg ) )
+Fermi energy:  -0.33794530073107554
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+
+
+Integrated density:  8.00000000025
+Density Residual  0.00190521666153
+Density Residual from arrays  0.00190521666153
+Shape of density histories:  (329280, 1) (329280, 1)
+Using anderson mixing.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Integrated anderson density:  8.00000000013
+Computing band energy.  Current orbital energies are:  [-18.7611314   -0.87137948  -0.33838431  -0.33838431  -0.33838431]
+Electrostatic Energies:
+Hartree:          36.3265252495
+External:         -177.155793421
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.618559 H, -5.16e-03 H
+Orbital Energy Errors after Veff Update:  [ -2.22843555e-03  -1.72486969e-04  -8.98616743e-05  -8.98616770e-05
+  -8.98616810e-05]
+Orbital 0 error: -2.228e-03
+Orbital 1 error: -1.725e-04
+Orbital 2 error: -8.986e-05
+Orbital 3 error: -8.986e-05
+Orbital 4 error: -8.986e-05
+Orbital Energies:  [-18.7611314   -0.87137948  -0.33838431  -0.33838431  -0.33838431]
+Updated V_x:                           -9.6262262991 Hartree
+Updated V_c:                           -0.6072533047 Hartree
+Updated Band Energy:                   -40.6185590018 H, -5.1612917448e-03 H
+Updated Kinetic Energy:                 74.1176635242 H, 4.9333330231e-03 H
+Updated E_x:                           -7.2196697243 H, -2.9964140878e-04 H
+Updated E_c:                           -0.5445613359 H, -8.1002293382e-06 H
+Updated totalElectrostatic:            -140.8292681717 H, -1.1123798043e-02 H
+Total Energy:                          -74.4758357078 H, -6.4982066579e-03 H
+Energy Residual:                        7.398e+01
+Density Residual:                       1.905e-03
+
+
+
+
+
+SCF Count  2
+Orbital Energies:  [-18.7611314   -0.87137948  -0.33838431  -0.33838431  -0.33838431]
+Working on orbital 0
+Using singularity subtraction.  Convolution time:  13.407649040222168
+Norm of psiNew =  0.999988716985
+eigenvalueHistory: 
+ -18.760693333121086
+Orbital energy after Harrison update:  -18.7606933331
+Orbital 0 error and eigenvalue residual:   -1.790e-03 and 4.381e-04
+Orbital 0 wavefunction residual: 2.636e-06
+
+
+Turning on Anderson Mixing for wavefunction 0
+Using singularity subtraction.  Convolution time:  13.41343069076538
+Norm of psiNew =  1.00000274656
+eigenvalueHistory: 
+ [-18.76069333 -18.76069333]
+Orbital energy after Harrison update:  -18.7606933316
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 0 error and eigenvalue residual:   -1.790e-03 and 1.493e-09
+Orbital 0 wavefunction residual: 4.351e-06
+
+
+Using singularity subtraction.  Convolution time:  13.424869060516357
+Norm of psiNew =  1.0000019221
+eigenvalueHistory: 
+ [-18.76069333 -18.76069333 -18.76069333]
+Orbital energy after Harrison update:  -18.7606933319
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-2.0703294] 3.07032940437
+Orbital 0 error and eigenvalue residual:   -1.790e-03 and 3.094e-10
+Orbital 0 wavefunction residual: 2.944e-06
+
+
+Using singularity subtraction.  Convolution time:  13.411074161529541
+Norm of psiNew =  1.00000015806
+eigenvalueHistory: 
+ [-18.76069333 -18.76069333 -18.76069333 -18.76069333]
+Orbital energy after Harrison update:  -18.7606933322
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.54761584 -5.29032694] 2.74271109484
+Orbital 0 error and eigenvalue residual:   -1.790e-03 and 3.016e-10
+Orbital 0 wavefunction residual: 2.089e-07
+
+
+Used 4 iterations for orbital 0.
+
+
+
+Working on orbital 1
+Using singularity subtraction.  Convolution time:  13.458913564682007
+Norm of psiNew =  0.999940105824
+eigenvalueHistory: 
+ -0.8712682594496771
+Orbital energy after Harrison update:  -0.87126825945
+Orbital 1 error and eigenvalue residual:   -6.127e-05 and 1.112e-04
+Orbital 1 wavefunction residual: 3.340e-06
+
+
+Turning on Anderson Mixing for wavefunction 1
+Using singularity subtraction.  Convolution time:  13.469583988189697
+Norm of psiNew =  1.00001094547
+eigenvalueHistory: 
+ [-0.87126826 -0.87126827]
+Orbital energy after Harrison update:  -0.871268269205
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 1 error and eigenvalue residual:   -6.128e-05 and 9.756e-09
+Orbital 1 wavefunction residual: 2.813e-05
+
+
+Using singularity subtraction.  Convolution time:  13.461972713470459
+Norm of psiNew =  1.00000589085
+eigenvalueHistory: 
+ [-0.87126826 -0.87126827 -0.87126827]
+Orbital energy after Harrison update:  -0.871268269574
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.77864405] 2.77864404783
+Orbital 1 error and eigenvalue residual:   -6.128e-05 and 3.682e-10
+Orbital 1 wavefunction residual: 1.807e-05
+
+
+Using singularity subtraction.  Convolution time:  13.462701320648193
+Norm of psiNew =  0.999996702251
+eigenvalueHistory: 
+ [-0.87126826 -0.87126827 -0.87126827 -0.87126827]
+Orbital energy after Harrison update:  -0.871268269758
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 2.80222759 -4.40210545] 2.59987785825
+Orbital 1 error and eigenvalue residual:   -6.128e-05 and 1.846e-10
+Orbital 1 wavefunction residual: 1.224e-06
+
+
+Using singularity subtraction.  Convolution time:  13.460012674331665
+Norm of psiNew =  0.999996147698
+eigenvalueHistory: 
+ [-0.87126826 -0.87126827 -0.87126827 -0.87126827 -0.87126827]
+Orbital energy after Harrison update:  -0.871268269731
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [-3.99570049  6.27761386 -3.72417573] 2.44226235169
+Orbital 1 error and eigenvalue residual:   -6.128e-05 and 2.695e-11
+Orbital 1 wavefunction residual: 7.245e-08
+
+
+Used 5 iterations for orbital 1.
+
+
+
+Working on orbital 2
+Using singularity subtraction.  Convolution time:  13.477540731430054
+Norm of psiNew =  0.999953739646
+eigenvalueHistory: 
+ -0.3382786440557955
+Orbital energy after Harrison update:  -0.338278644056
+Orbital 2 error and eigenvalue residual:   1.581e-05 and 1.057e-04
+Orbital 2 wavefunction residual: 8.178e-06
+
+
+Turning on Anderson Mixing for wavefunction 2
+Using singularity subtraction.  Convolution time:  13.412093162536621
+Norm of psiNew =  1.00003578226
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787 ]
+Orbital energy after Harrison update:  -0.338278703696
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 2 error and eigenvalue residual:   1.575e-05 and 5.964e-08
+Orbital 2 wavefunction residual: 5.341e-05
+
+
+Using singularity subtraction.  Convolution time:  13.414944648742676
+Norm of psiNew =  1.00002558084
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787  -0.3382787 ]
+Orbital energy after Harrison update:  -0.338278704868
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.93300568] 2.93300568041
+Orbital 2 error and eigenvalue residual:   1.575e-05 and 1.172e-09
+Orbital 2 wavefunction residual: 3.553e-05
+
+
+Using singularity subtraction.  Convolution time:  13.411963939666748
+Norm of psiNew =  1.00000474271
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787  -0.3382787  -0.33827871]
+Orbital energy after Harrison update:  -0.338278706218
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.84471033 -5.91007853] 3.06536819311
+Orbital 2 error and eigenvalue residual:   1.575e-05 and 1.350e-09
+Orbital 2 wavefunction residual: 4.456e-06
+
+
+Using singularity subtraction.  Convolution time:  13.473524332046509
+Norm of psiNew =  1.00000063124
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787  -0.3382787  -0.33827871 -0.33827871]
+Orbital energy after Harrison update:  -0.338278706346
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [ -6.79457843  10.45139031  -5.50212029] 2.84530840774
+Orbital 2 error and eigenvalue residual:   1.575e-05 and 1.278e-10
+Orbital 2 wavefunction residual: 6.500e-07
+
+
+Used 5 iterations for orbital 2.
+
+
+
+Working on orbital 3
+Using singularity subtraction.  Convolution time:  13.413076162338257
+Norm of psiNew =  0.999953739646
+eigenvalueHistory: 
+ -0.33827864405580055
+Orbital energy after Harrison update:  -0.338278644056
+Orbital 3 error and eigenvalue residual:   1.581e-05 and 1.057e-04
+Orbital 3 wavefunction residual: 8.178e-06
+
+
+Turning on Anderson Mixing for wavefunction 3
+Using singularity subtraction.  Convolution time:  13.412107706069946
+Norm of psiNew =  1.00003578226
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787 ]
+Orbital energy after Harrison update:  -0.338278703696
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 3 error and eigenvalue residual:   1.575e-05 and 5.964e-08
+Orbital 3 wavefunction residual: 5.341e-05
+
+
+Using singularity subtraction.  Convolution time:  13.423898458480835
+Norm of psiNew =  1.00002558084
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787  -0.3382787 ]
+Orbital energy after Harrison update:  -0.338278704868
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.93300568] 2.93300568066
+Orbital 3 error and eigenvalue residual:   1.575e-05 and 1.172e-09
+Orbital 3 wavefunction residual: 3.553e-05
+
+
+Using singularity subtraction.  Convolution time:  13.410938262939453
+Norm of psiNew =  1.00000474271
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787  -0.3382787  -0.33827871]
+Orbital energy after Harrison update:  -0.338278706218
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.84471033 -5.91007852] 3.06536819002
+Orbital 3 error and eigenvalue residual:   1.575e-05 and 1.350e-09
+Orbital 3 wavefunction residual: 4.456e-06
+
+
+Using singularity subtraction.  Convolution time:  13.411117315292358
+Norm of psiNew =  1.00000063124
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787  -0.3382787  -0.33827871 -0.33827871]
+Orbital energy after Harrison update:  -0.338278706346
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [ -6.7945783   10.45139011  -5.50212019] 2.84530837775
+Orbital 3 error and eigenvalue residual:   1.575e-05 and 1.279e-10
+Orbital 3 wavefunction residual: 6.500e-07
+
+
+Used 5 iterations for orbital 3.
+
+
+
+Working on orbital 4
+Using singularity subtraction.  Convolution time:  13.465054750442505
+Norm of psiNew =  0.999953739646
+eigenvalueHistory: 
+ -0.338278644055877
+Orbital energy after Harrison update:  -0.338278644056
+Orbital 4 error and eigenvalue residual:   1.581e-05 and 1.057e-04
+Orbital 4 wavefunction residual: 8.178e-06
+
+
+Turning on Anderson Mixing for wavefunction 4
+Using singularity subtraction.  Convolution time:  13.42324185371399
+Norm of psiNew =  1.00003578226
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787 ]
+Orbital energy after Harrison update:  -0.338278703696
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 4 error and eigenvalue residual:   1.575e-05 and 5.964e-08
+Orbital 4 wavefunction residual: 5.341e-05
+
+
+Using singularity subtraction.  Convolution time:  13.412754774093628
+Norm of psiNew =  1.00002558084
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787  -0.3382787 ]
+Orbital energy after Harrison update:  -0.338278704868
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.93300568] 2.93300568199
+Orbital 4 error and eigenvalue residual:   1.575e-05 and 1.172e-09
+Orbital 4 wavefunction residual: 3.553e-05
+
+
+Using singularity subtraction.  Convolution time:  13.412758827209473
+Norm of psiNew =  1.00000474271
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787  -0.3382787  -0.33827871]
+Orbital energy after Harrison update:  -0.338278706218
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.84471034 -5.91007853] 3.0653681923
+Orbital 4 error and eigenvalue residual:   1.575e-05 and 1.350e-09
+Orbital 4 wavefunction residual: 4.456e-06
+
+
+Using singularity subtraction.  Convolution time:  13.413509368896484
+Norm of psiNew =  1.00000063124
+eigenvalueHistory: 
+ [-0.33827864 -0.3382787  -0.3382787  -0.33827871 -0.33827871]
+Orbital energy after Harrison update:  -0.338278706346
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [ -6.79457825  10.45139002  -5.50212012] 2.84530835441
+Orbital 4 error and eigenvalue residual:   1.575e-05 and 1.279e-10
+Orbital 4 wavefunction residual: 6.500e-07
+
+
+Used 5 iterations for orbital 4.
+
+
+
+Sorted eigenvalues:  [-18.76069333  -0.87126827  -0.33827871  -0.33827871  -0.33827871]
+New order:  [0 1 4 3 2]
+Fermi energy:  -0.3378396924539199
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+
+
+Integrated density:  8.00000000027
+Density Residual  0.000885135199261
+Density Residual from arrays  0.000885135199261
+Shape of density histories:  (329280, 2) (329280, 2)
+Using anderson mixing.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-0.80822571] 1.80822571383
+Integrated anderson density:  8.00000000026
+Computing band energy.  Current orbital energies are:  [-18.76069333  -0.87126827  -0.33827871  -0.33827871  -0.33827871]
+Electrostatic Energies:
+Hartree:          36.326482942
+External:         -177.160970716
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.617038 H, -3.64e-03 H
+Orbital Energy Errors after Veff Update:  [ -1.79037255e-03  -6.12802689e-05   1.57466028e-05   1.57466002e-05
+   1.57465962e-05]
+Orbital 0 error: -1.790e-03
+Orbital 1 error: -6.128e-05
+Orbital 2 error: 1.575e-05
+Orbital 3 error: 1.575e-05
+Orbital 4 error: 1.575e-05
+Orbital Energies:  [-18.76069333  -0.87126827  -0.33827871  -0.33827871  -0.33827871]
+Updated V_x:                           -9.6263335027 Hartree
+Updated V_c:                           -0.6072519046 Hartree
+Updated Band Energy:                   -40.6170380293 H, -3.6403192455e-03 H
+Updated Kinetic Energy:                 74.1245522104 H, 1.1822019280e-02 H
+Updated E_x:                           -7.2197501270 H, -3.8004414950e-04 H
+Updated E_c:                           -0.5445600647 H, -6.8290287351e-06 H
+Updated totalElectrostatic:            -140.8344877744 H, -1.6343400750e-02 H
+Total Energy:                          -74.4742457557 H, -4.9082546483e-03 H
+Energy Residual:                        1.590e-03
+Density Residual:                       8.851e-04
+
+
+
+
+
+SCF Count  3
+Orbital Energies:  [-18.76069333  -0.87126827  -0.33827871  -0.33827871  -0.33827871]
+Working on orbital 0
+Using singularity subtraction.  Convolution time:  13.410501718521118
+Norm of psiNew =  0.99999916805
+eigenvalueHistory: 
+ -18.760635118478085
+Orbital energy after Harrison update:  -18.7606351185
+Orbital 0 error and eigenvalue residual:   -1.732e-03 and 5.821e-05
+Orbital 0 wavefunction residual: 7.761e-07
+
+
+Turning on Anderson Mixing for wavefunction 0
+Used 1 iterations for orbital 0.
+
+
+
+Working on orbital 1
+Using singularity subtraction.  Convolution time:  13.409979581832886
+Norm of psiNew =  1.00001697073
+eigenvalueHistory: 
+ -0.8712984361050917
+Orbital energy after Harrison update:  -0.871298436105
+Orbital 1 error and eigenvalue residual:   -9.145e-05 and 3.017e-05
+Orbital 1 wavefunction residual: 2.199e-06
+
+
+Turning on Anderson Mixing for wavefunction 1
+Using singularity subtraction.  Convolution time:  13.421303987503052
+Norm of psiNew =  0.999994794781
+eigenvalueHistory: 
+ [-0.87129844 -0.87129844]
+Orbital energy after Harrison update:  -0.871298436375
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 1 error and eigenvalue residual:   -9.145e-05 and 2.698e-10
+Orbital 1 wavefunction residual: 6.565e-06
+
+
+Using singularity subtraction.  Convolution time:  13.410754919052124
+Norm of psiNew =  0.999995930335
+eigenvalueHistory: 
+ [-0.87129844 -0.87129844 -0.87129844]
+Orbital energy after Harrison update:  -0.871298436401
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.69917291] 2.69917290968
+Orbital 1 error and eigenvalue residual:   -9.145e-05 and 2.598e-11
+Orbital 1 wavefunction residual: 4.146e-06
+
+
+Using singularity subtraction.  Convolution time:  13.459059476852417
+Norm of psiNew =  0.999997914951
+eigenvalueHistory: 
+ [-0.87129844 -0.87129844 -0.87129844 -0.87129844]
+Orbital energy after Harrison update:  -0.871298436426
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 2.69886505 -4.30943532] 2.61057026188
+Orbital 1 error and eigenvalue residual:   -9.145e-05 and 2.550e-11
+Orbital 1 wavefunction residual: 2.661e-07
+
+
+Used 4 iterations for orbital 1.
+
+
+
+Working on orbital 2
+Using singularity subtraction.  Convolution time:  13.411593198776245
+Norm of psiNew =  1.00001700679
+eigenvalueHistory: 
+ -0.33830997597433654
+Orbital energy after Harrison update:  -0.338309975974
+Orbital 2 error and eigenvalue residual:   -1.552e-05 and 3.127e-05
+Orbital 2 wavefunction residual: 5.745e-06
+
+
+Turning on Anderson Mixing for wavefunction 2
+Using singularity subtraction.  Convolution time:  13.470196962356567
+Norm of psiNew =  0.999991086809
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996]
+Orbital energy after Harrison update:  -0.338309961138
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 2 error and eigenvalue residual:   -1.551e-05 and 1.484e-08
+Orbital 2 wavefunction residual: 1.446e-05
+
+
+Using singularity subtraction.  Convolution time:  13.412570476531982
+Norm of psiNew =  0.999993706096
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996 -0.33830996]
+Orbital energy after Harrison update:  -0.338309961217
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.86370279] 2.86370278561
+Orbital 2 error and eigenvalue residual:   -1.551e-05 and 7.878e-11
+Orbital 2 wavefunction residual: 9.488e-06
+
+
+Using singularity subtraction.  Convolution time:  13.461622953414917
+Norm of psiNew =  0.999998866243
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996 -0.33830996 -0.33830996]
+Orbital energy after Harrison update:  -0.338309961291
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.61911226 -5.62820039] 3.00908813653
+Orbital 2 error and eigenvalue residual:   -1.551e-05 and 7.422e-11
+Orbital 2 wavefunction residual: 1.104e-06
+
+
+Using singularity subtraction.  Convolution time:  13.460732460021973
+Norm of psiNew =  0.999999828685
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996 -0.33830996 -0.33830996 -0.33830996]
+Orbital energy after Harrison update:  -0.338309961297
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [ -6.53126488  10.16239382  -5.5162394 ] 2.88511045911
+Orbital 2 error and eigenvalue residual:   -1.551e-05 and 6.526e-12
+Orbital 2 wavefunction residual: 1.681e-07
+
+
+Used 5 iterations for orbital 2.
+
+
+
+Working on orbital 3
+Using singularity subtraction.  Convolution time:  13.420364618301392
+Norm of psiNew =  1.00001700679
+eigenvalueHistory: 
+ -0.3383099759761672
+Orbital energy after Harrison update:  -0.338309975976
+Orbital 3 error and eigenvalue residual:   -1.552e-05 and 3.127e-05
+Orbital 3 wavefunction residual: 5.745e-06
+
+
+Turning on Anderson Mixing for wavefunction 3
+Using singularity subtraction.  Convolution time:  13.41286587715149
+Norm of psiNew =  0.999991086808
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996]
+Orbital energy after Harrison update:  -0.33830996114
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 3 error and eigenvalue residual:   -1.551e-05 and 1.484e-08
+Orbital 3 wavefunction residual: 1.446e-05
+
+
+Using singularity subtraction.  Convolution time:  13.459530115127563
+Norm of psiNew =  0.999993706095
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996 -0.33830996]
+Orbital energy after Harrison update:  -0.338309961219
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.8637028] 2.86370279701
+Orbital 3 error and eigenvalue residual:   -1.551e-05 and 7.875e-11
+Orbital 3 wavefunction residual: 9.488e-06
+
+
+Using singularity subtraction.  Convolution time:  13.425564765930176
+Norm of psiNew =  0.999998866243
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996 -0.33830996 -0.33830996]
+Orbital energy after Harrison update:  -0.338309961293
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.61911219 -5.62820025] 3.00908806531
+Orbital 3 error and eigenvalue residual:   -1.551e-05 and 7.424e-11
+Orbital 3 wavefunction residual: 1.104e-06
+
+
+Using singularity subtraction.  Convolution time:  13.414052486419678
+Norm of psiNew =  0.999999828685
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996 -0.33830996 -0.33830996 -0.33830996]
+Orbital energy after Harrison update:  -0.338309961299
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [ -6.53126327  10.16239122  -5.51623803] 2.88511007567
+Orbital 3 error and eigenvalue residual:   -1.551e-05 and 6.502e-12
+Orbital 3 wavefunction residual: 1.681e-07
+
+
+Used 5 iterations for orbital 3.
+
+
+
+Working on orbital 4
+Using singularity subtraction.  Convolution time:  13.41045069694519
+Norm of psiNew =  1.00001700679
+eigenvalueHistory: 
+ -0.33830997597625456
+Orbital energy after Harrison update:  -0.338309975976
+Orbital 4 error and eigenvalue residual:   -1.552e-05 and 3.127e-05
+Orbital 4 wavefunction residual: 5.745e-06
+
+
+Turning on Anderson Mixing for wavefunction 4
+Using singularity subtraction.  Convolution time:  13.408488512039185
+Norm of psiNew =  0.999991086808
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996]
+Orbital energy after Harrison update:  -0.33830996114
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 4 error and eigenvalue residual:   -1.551e-05 and 1.484e-08
+Orbital 4 wavefunction residual: 1.446e-05
+
+
+Using singularity subtraction.  Convolution time:  13.470605611801147
+Norm of psiNew =  0.999993706095
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996 -0.33830996]
+Orbital energy after Harrison update:  -0.338309961219
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.86370279] 2.86370278775
+Orbital 4 error and eigenvalue residual:   -1.551e-05 and 7.874e-11
+Orbital 4 wavefunction residual: 9.488e-06
+
+
+Using singularity subtraction.  Convolution time:  13.408222913742065
+Norm of psiNew =  0.999998866243
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996 -0.33830996 -0.33830996]
+Orbital energy after Harrison update:  -0.338309961293
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.61911222 -5.62820032] 3.00908810201
+Orbital 4 error and eigenvalue residual:   -1.551e-05 and 7.426e-11
+Orbital 4 wavefunction residual: 1.104e-06
+
+
+Using singularity subtraction.  Convolution time:  13.40972375869751
+Norm of psiNew =  0.999999828685
+eigenvalueHistory: 
+ [-0.33830998 -0.33830996 -0.33830996 -0.33830996 -0.33830996]
+Orbital energy after Harrison update:  -0.338309961299
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [ -6.53126263  10.16239028  -5.5162375 ] 2.88510985416
+Orbital 4 error and eigenvalue residual:   -1.551e-05 and 6.518e-12
+Orbital 4 wavefunction residual: 1.681e-07
+
+
+Used 5 iterations for orbital 4.
+
+
+
+Sorted eigenvalues:  [-18.76063512  -0.87129844  -0.33830996  -0.33830996  -0.33830996]
+New order:  [0 1 4 3 2]
+Fermi energy:  -0.33787094740677026
+Occupations:  [ 2.          2.          1.33333333  1.33333333  1.33333333]
+
+
+Integrated density:  8.00000000001
+Density Residual  8.57938018926e-05
+Density Residual from arrays  8.57938018926e-05
+Shape of density histories:  (329280, 3) (329280, 3)
+Using anderson mixing.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [-0.07628687  0.06956441] 1.00672246132
+Integrated anderson density:  8.00000000014
+Computing band energy.  Current orbital energies are:  [-18.76063512  -0.87129844  -0.33830996  -0.33830996  -0.33830996]
+Electrostatic Energies:
+Hartree:          36.3266332708
+External:         -177.161733199
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.617107 H, -3.71e-03 H
+Orbital Energy Errors after Veff Update:  [ -1.73215879e-03  -9.14469640e-05  -1.55083507e-05  -1.55083532e-05
+  -1.55083555e-05]
+Orbital 0 error: -1.732e-03
+Orbital 1 error: -9.145e-05
+Orbital 2 error: -1.551e-05
+Orbital 3 error: -1.551e-05
+Orbital 4 error: -1.551e-05
+Orbital Energies:  [-18.76063512  -0.87129844  -0.33830996  -0.33830996  -0.33830996]
+Updated V_x:                           -9.6263702592 Hartree
+Updated V_c:                           -0.6072528438 Hartree
+Updated Band Energy:                   -40.6171069550 H, -3.7092449271e-03 H
+Updated Kinetic Energy:                 74.1249828053 H, 1.2252614109e-02 H
+Updated E_x:                           -7.2197776944 H, -4.0761151196e-04 H
+Updated E_c:                           -0.5445609511 H, -7.7153816013e-06 H
+Updated totalElectrostatic:            -140.8350999280 H, -1.6955554356e-02 H
+Total Energy:                          -74.4744557682 H, -5.1182671407e-03 H
+Energy Residual:                        2.100e-04
+Density Residual:                       8.579e-05
+
+
+
+
+
+SCF Count  4
+Orbital Energies:  [-18.76063512  -0.87129844  -0.33830996  -0.33830996  -0.33830996]
+Working on orbital 0
+Using singularity subtraction.  Convolution time:  13.469479322433472
+Norm of psiNew =  0.999999644649
+eigenvalueHistory: 
+ -18.76059797614847
+Orbital energy after Harrison update:  -18.7605979761
+Orbital 0 error and eigenvalue residual:   -1.695e-03 and 3.714e-05
+Orbital 0 wavefunction residual: 7.066e-07
+
+
+Turning on Anderson Mixing for wavefunction 0
+Used 1 iterations for orbital 0.
+
+
+
+Working on orbital 1
+Using singularity subtraction.  Convolution time:  13.408751249313354
+Norm of psiNew =  0.999991983839
+eigenvalueHistory: 
+ -0.8712869424704681
+Orbital energy after Harrison update:  -0.87128694247
+Orbital 1 error and eigenvalue residual:   -7.995e-05 and 1.149e-05
+Orbital 1 wavefunction residual: 5.499e-07
+
+
+Turning on Anderson Mixing for wavefunction 1
+Used 1 iterations for orbital 1.
+
+
+
+Working on orbital 2
+Using singularity subtraction.  Convolution time:  13.409454822540283
+Norm of psiNew =  0.999994904833
+eigenvalueHistory: 
+ -0.33829900712013994
+Orbital energy after Harrison update:  -0.33829900712
+Orbital 2 error and eigenvalue residual:   -4.554e-06 and 1.095e-05
+Orbital 2 wavefunction residual: 1.158e-06
+
+
+Turning on Anderson Mixing for wavefunction 2
+Using singularity subtraction.  Convolution time:  13.47045350074768
+Norm of psiNew =  1.00000356307
+eigenvalueHistory: 
+ [-0.33829901 -0.33829901]
+Orbital energy after Harrison update:  -0.338299012615
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 2 error and eigenvalue residual:   -4.560e-06 and 5.495e-09
+Orbital 2 wavefunction residual: 5.409e-06
+
+
+Using singularity subtraction.  Convolution time:  13.45887017250061
+Norm of psiNew =  1.00000254144
+eigenvalueHistory: 
+ [-0.33829901 -0.33829901 -0.33829901]
+Orbital energy after Harrison update:  -0.338299012625
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.91758356] 2.91758355718
+Orbital 2 error and eigenvalue residual:   -4.560e-06 and 9.090e-12
+Orbital 2 wavefunction residual: 3.588e-06
+
+
+Using singularity subtraction.  Convolution time:  13.410151481628418
+Norm of psiNew =  1.00000046989
+eigenvalueHistory: 
+ [-0.33829901 -0.33829901 -0.33829901 -0.33829901]
+Orbital energy after Harrison update:  -0.338299012638
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.79822113 -5.85323662] 3.05501549423
+Orbital 2 error and eigenvalue residual:   -4.560e-06 and 1.300e-11
+Orbital 2 wavefunction residual: 4.445e-07
+
+
+Used 4 iterations for orbital 2.
+
+
+
+Working on orbital 3
+Using singularity subtraction.  Convolution time:  13.45826005935669
+Norm of psiNew =  0.999994904833
+eigenvalueHistory: 
+ -0.3382990071213402
+Orbital energy after Harrison update:  -0.338299007121
+Orbital 3 error and eigenvalue residual:   -4.554e-06 and 1.095e-05
+Orbital 3 wavefunction residual: 1.158e-06
+
+
+Turning on Anderson Mixing for wavefunction 3
+Using singularity subtraction.  Convolution time:  13.422364234924316
+Norm of psiNew =  1.00000356307
+eigenvalueHistory: 
+ [-0.33829901 -0.33829901]
+Orbital energy after Harrison update:  -0.338299012617
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 3 error and eigenvalue residual:   -4.560e-06 and 5.495e-09
+Orbital 3 wavefunction residual: 5.409e-06
+
+
+Using singularity subtraction.  Convolution time:  13.413089752197266
+Norm of psiNew =  1.00000254144
+eigenvalueHistory: 
+ [-0.33829901 -0.33829901 -0.33829901]
+Orbital energy after Harrison update:  -0.338299012626
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.91758359] 2.91758358704
+Orbital 3 error and eigenvalue residual:   -4.560e-06 and 9.076e-12
+Orbital 3 wavefunction residual: 3.588e-06
+
+
+Using singularity subtraction.  Convolution time:  13.410371541976929
+Norm of psiNew =  1.00000046989
+eigenvalueHistory: 
+ [-0.33829901 -0.33829901 -0.33829901 -0.33829901]
+Orbital energy after Harrison update:  -0.338299012639
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.79822104 -5.85323645] 3.05501540539
+Orbital 3 error and eigenvalue residual:   -4.560e-06 and 1.303e-11
+Orbital 3 wavefunction residual: 4.445e-07
+
+
+Used 4 iterations for orbital 3.
+
+
+
+Working on orbital 4
+Using singularity subtraction.  Convolution time:  13.411923885345459
+Norm of psiNew =  0.999994904848
+eigenvalueHistory: 
+ -0.338299007145862
+Orbital energy after Harrison update:  -0.338299007146
+Orbital 4 error and eigenvalue residual:   -4.554e-06 and 1.095e-05
+Orbital 4 wavefunction residual: 1.158e-06
+
+
+Turning on Anderson Mixing for wavefunction 4
+Using singularity subtraction.  Convolution time:  13.420169591903687
+Norm of psiNew =  1.00000356306
+eigenvalueHistory: 
+ [-0.33829901 -0.33829901]
+Orbital energy after Harrison update:  -0.338299012641
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 1)
+
+Anderson weights:  [] 1.0
+Orbital 4 error and eigenvalue residual:   -4.560e-06 and 5.495e-09
+Orbital 4 wavefunction residual: 5.409e-06
+
+
+Using singularity subtraction.  Convolution time:  13.46123194694519
+Norm of psiNew =  1.00000254143
+eigenvalueHistory: 
+ [-0.33829901 -0.33829901 -0.33829901]
+Orbital energy after Harrison update:  -0.33829901265
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 2)
+
+Anderson weights:  [-1.91758381] 2.91758381033
+Orbital 4 error and eigenvalue residual:   -4.560e-06 and 9.072e-12
+Orbital 4 wavefunction residual: 3.588e-06
+
+
+Using singularity subtraction.  Convolution time:  13.41028881072998
+Norm of psiNew =  1.00000046989
+eigenvalueHistory: 
+ [-0.33829901 -0.33829901 -0.33829901 -0.33829901]
+Orbital energy after Harrison update:  -0.338299012663
+Anderson mixing on the orbital.
+Input densities has shape  (329280, 3)
+
+Anderson weights:  [ 3.79822144 -5.85323684] 3.05501540356
+Orbital 4 error and eigenvalue residual:   -4.560e-06 and 1.304e-11
+Orbital 4 wavefunction residual: 4.445e-07
+
+
+Used 4 iterations for orbital 4.
+
+
+
+Sorted eigenvalues:  [-18.76059798  -0.87128694  -0.33829901  -0.33829901  -0.33829901]
+New order:  [0 1 4 3 2]
+Fermi energy:  -0.3378599987545912
+Occupations:  [ 2.          2.          1.33333335  1.33333333  1.33333333]
+
+
+Integrated density:  7.99999999999
+Density Residual  8.1022909476e-06
+Density Residual from arrays  8.1022909476e-06
+Shape of density histories:  (329280, 4) (329280, 4)
+Using anderson mixing.
+Input densities has shape  (329280, 4)
+
+Anderson weights:  [ 0.09906757 -0.08545738 -1.32072116] 2.30711097628
+Integrated anderson density:  7.99999999996
+Computing band energy.  Current orbital energies are:  [-18.76059798  -0.87128694  -0.33829901  -0.33829901  -0.33829901]
+Electrostatic Energies:
+Hartree:          36.3266603037
+External:         -177.161719338
+Nuclear-Nuclear:  0.0
+Updating total energy without explicit kinetic evaluation.
+Band energies after Veff update: -40.616966 H, -3.57e-03 H
+Orbital Energy Errors after Veff Update:  [ -1.69501646e-03  -7.99530081e-05  -4.55971456e-06  -4.55969270e-06
+  -4.55969557e-06]
+Orbital 0 error: -1.695e-03
+Orbital 1 error: -7.995e-05
+Orbital 2 error: -4.560e-06
+Orbital 3 error: -4.560e-06
+Orbital 4 error: -4.560e-06
+Orbital Energies:  [-18.76059798  -0.87128694  -0.33829901  -0.33829901  -0.33829901]
+Updated V_x:                           -9.6263726480 Hartree
+Updated V_c:                           -0.6072530682 Hartree
+Updated Band Energy:                   -40.6169658878 H, -3.5681777473e-03 H
+Updated Kinetic Energy:                 74.1250585589 H, 1.2328367738e-02 H
+Updated E_x:                           -7.2197794860 H, -4.0940311857e-04 H
+Updated E_c:                           -0.5445611606 H, -7.9248921960e-06 H
+Updated totalElectrostatic:            -140.8350590342 H, -1.6914660506e-02 H
+Total Energy:                          -74.4743411219 H, -5.0036207786e-03 H
+Energy Residual:                        1.146e-04
+Density Residual:                       8.102e-06
+
+
+
+Convergence to a tolerance of 0.000010 took 4 iterations

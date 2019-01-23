@@ -32,17 +32,17 @@ except ImportError:
 except OSError:
     print('Unable to import directSumWrappers due to OSError')
     
-# try:
-#     import treecodeWrappers
-# except ImportError:
-#     print('Unable to import treecodeWrapper due to ImportError')
-# except OSError:
-#     print('Unable to import treecodeWrapper due to OSError')
-#     
-import treecodeWrappers
+try:
+    import treecodeWrappers
+except ImportError:
+    print('Unable to import treecodeWrapper due to ImportError')
+except OSError:
+    print('Unable to import treecodeWrapper due to OSError')
+     
+# import treecodeWrappers
 
 
-@jit(nopython=True,parallel=True)
+# @jit(nopython=True,parallel=True)
 def modifiedGramSchrmidt(V,weights):
     n,k = np.shape(V)
     U = np.zeros_like(V)
@@ -56,7 +56,7 @@ def modifiedGramSchrmidt(V,weights):
         
     return U
 
-@njit(parallel=False)
+# @njit(parallel=False)
 def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, n, k):
     U = V[:,targetOrbital]
     for j in range(targetOrbital):
@@ -121,6 +121,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
     
+#     return
+    
 
     if hasattr(tree, 'referenceEigenvalues'):
         referenceEigenvalues = tree.referenceEigenvalues
@@ -161,7 +163,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     Eold = -0.5 + gaugeShift
 
 #     [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[4:8]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[4:10]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:9]
     print([Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal])
 
     ### COMPUTE THE INITIAL HAMILTONIAN ###
@@ -226,7 +228,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                                        targetX, targetY, targetZ, targetValue, 
 #                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
 #                                                        potentialType, alphasq, order, theta, maxParNode, batchSize)
-#         
+#          
 #         if potentialType==2:
 #             V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
 
@@ -287,7 +289,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
     print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
     
-    return
+#     return
     
     printInitialEnergies=True
 
@@ -451,30 +453,30 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                     targetValue = np.copy(targets[:,3])
                                     targetWeight = np.copy(targets[:,4])
                                     
-#                                     phiNew = directSumWrappers.callCompiledC_directSum_HelmholtzSingularitySubtract(numTargets, numSources, k, 
-#                                                                                                                           targetX, targetY, targetZ, targetValue, targetWeight, 
-#                                                                                                                           sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
-#                                     phiNew += 4*np.pi*targets[:,3]/k**2
+                                    phiNew = directSumWrappers.callCompiledC_directSum_HelmholtzSingularitySubtract(numTargets, numSources, k, 
+                                                                                                                          targetX, targetY, targetZ, targetValue, targetWeight, 
+                                                                                                                          sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+                                    phiNew += 4*np.pi*targets[:,3]/k**2
 
 #                                     phiNew = directSumWrappers.callCompiledC_directSum_Helmholtz(numTargets, numSources, k, 
 #                                                                                               targetX, targetY, targetZ, targetValue, targetWeight, 
 #                                                                                               sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
 
-                                    potentialType=3
-                                    order=3
-                                    kappa = k
-                                    theta = 0.5
-                                    maxParNode = 500
-                                    batchSize = 500
-                                    start = time.time()
-                                    phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
-                                                                                   targetX, targetY, targetZ, targetValue, 
-                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                                                   potentialType, kappa, order, theta, maxParNode, batchSize)
-                                    print('Convolution time: ', time.time()-start)
-                                    if potentialType==3:
-                                        phiNew += 4*np.pi*targets[:,3]/k**2
+#                                     potentialType=3
+#                                     order=3
+#                                     kappa = k
+#                                     theta = 0.5
+#                                     maxParNode = 500
+#                                     batchSize = 500
+#                                     start = time.time()
+#                                     phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+#                                                                                    targetX, targetY, targetZ, targetValue, 
+#                                                                                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+#                                                                                    potentialType, kappa, order, theta, maxParNode, batchSize)
+#                                     print('Convolution time: ', time.time()-start)
+#                                     if potentialType==3:
+#                                         phiNew += 4*np.pi*targets[:,3]/k**2
                                     phiNew /= (4*np.pi)
                                 else:
                                     startTime = time.time()
@@ -636,8 +638,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         # sort by energy and compute new occupations
         tree.sortOrbitalsAndEnergies()
-#         tree.computeOccupations()
-        occupations = computeOccupations(tree.orbitalEnergies, tree.nElectrons, Temperature)
+        tree.computeOccupations()
+#         occupations = computeOccupations(tree.orbitalEnergies, tree.nElectrons, Temperature)
         
         
         ##  DO I HAVE ENOUGH ORBITALS?  CHECK, AND ADD ONE IF NOT.

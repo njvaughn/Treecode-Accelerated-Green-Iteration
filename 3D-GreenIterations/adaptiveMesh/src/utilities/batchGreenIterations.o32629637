@@ -1,0 +1,62 @@
+Running on
+      1 nyx7505
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+os.uname()[1] =  nyx7505.arc-ts.umich.edu
+Unable to import directSumWrappers due to OSError
+Unable to import treecodeWrapper due to OSError
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+in testBatchGreen..., nOrbitals =  4
+['../src/utilities/molecularConfigurations/oxygenAtom.csv', '/home/njvaughn/LWvsBiros/Oxygen/Biros_o7_1em4.csv', 8.0, 4, -74.469337501098821, -7.219370082893998, -0.54455323568788838, -40.613397710076626, -0.0]
+[-18.75890296  -0.87120699  -0.33829445  -0.33829445  -0.33829445   0.           0.
+   0.           0.        ]
+(9,)
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/oxygenAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z8/singleAtomData/
+Gauge shift  -0.0
+Nuclear energy:  0.0
+Atom is contained in cell    which has no children.  Divide at atomic location.
+There are now 8 leaf cells.
+After aspect ratio divide there are 8 leaf cells.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the tree, nOrbitals =  4
+type:  <class 'int'>
+max depth  11
+Number of gridpoints:  329280
+max density:  306.535277651
+Integrated density before normalization:  8.00005953546
+Integrated density after normalization:  8.0
+Initializing density EXTERNALLY took 2.335 seconds.
+Initializing orbitals for atom Z = 8 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Orbital 2 filled with (n,ell,m) = (2,1,-1) 
+Orbital 3 filled with (n,ell,m) = (2,1,0) 
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 246, in <module>
+    tree = setUpTree()  
+  File "testBatchGreenIterations_KS.py", line 143, in setUpTree
+    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=onlyFillOne)
+  File "../src/dataStructures/TreeStruct_CC.py", line 822, in buildTree
+    self.initializeOrbitalsFromAtomicDataExternally()
+  File "../src/dataStructures/TreeStruct_CC.py", line 485, in initializeOrbitalsFromAtomicDataExternally
+    sources = self.extractPhi(orbitalIndex)
+  File "../src/dataStructures/TreeStruct_CC.py", line 1980, in extractPhi
+    leaves.append( [gridpt.x, gridpt.y, gridpt.z, gridpt.phi[orbitalNumber], gridpt.v_eff, cell.w[i,j,k], cell.volume ] )
+IndexError: index 4 is out of bounds for axis 0 with size 4
