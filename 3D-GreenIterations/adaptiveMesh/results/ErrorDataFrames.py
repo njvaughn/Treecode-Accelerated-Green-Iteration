@@ -27,9 +27,16 @@ file='runComparison.csv'
 #### Oxygen
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
+
+
+#### Biros Meshes
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Beryllium/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
+
 
 
 df = pd.read_csv(resultsDir+file, header=0)
@@ -44,7 +51,8 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Lith
 
 
 # if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/':
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/':
+# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/':
+if resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Beryllium/':
     TotalEnergy = -1.4446201118081863e+01
     ExchangeEnergy = -2.2903921833555341e+00
     CorrelationEnergy = -2.2343205529440757e-01
@@ -52,7 +60,7 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_g
     KineticEnergy =   1.4309060170370618e+01
     ElectrostaticEnergy = -2.6241437049802535e+01
     
-    df.drop(df.index[24], inplace=True)  # 24th row is bad in Beryllium gradient free data
+#     df.drop(df.index[24], inplace=True)  # 24th row is bad in Beryllium gradient free data
 
 
 
@@ -60,7 +68,10 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_g
 ##if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/':
 # if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/':
 # if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/':
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/':
+# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/':
+if ( (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/') or 
+     (resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/' ) or
+     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/') ):
 # if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/':
 
     TotalEnergy = -7.4469337501098821e+01
@@ -417,7 +428,14 @@ def totalEnergyErrors_splitByGradientHandling():
 if __name__=="__main__":
 #     energyErrors()
 
-    totalEnergyErrors_splitByGradientHandling()
+#     logAversusLogBcolorbyC(df.loc[df['order']==7],'TotalEnergyError', 'numberOfPoints', 'divideParameter')
+    logAversusLogBcolorbyC(df.loc[df['order']==7],'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df.loc[df['gradientFree']==1],'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'gradientFree')
+    
+
+#     totalEnergyErrors_splitByGradientHandling()
 #     energyErrors_splitByGradientHandling(order=5)
     
     

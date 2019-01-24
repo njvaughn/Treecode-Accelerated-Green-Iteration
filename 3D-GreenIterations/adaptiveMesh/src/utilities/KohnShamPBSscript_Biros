@@ -10,7 +10,7 @@
 
 
 #PBS -l nodes=1:gpus=1,mem=8gb
-#PBS -l walltime=10:00:00
+#PBS -l walltime=24:00:00
 #PBS -j oe
 #PBS -V
 
@@ -46,20 +46,22 @@ GPUPRESENT='True'
 
 ORDER=7
 MESHTYPE='Biros'
-MESHPARAM=8e-5
-MAXDEPTH=13
+MESHPARAM=1e-4
+MAXDEPTH=15
 
 
 MIXINGPARAMETER=0.5
 
-INTRASCFTOLERANCE=1e-6
-INTERSCFTOLERANCE=1e-5
+INTRASCFTOLERANCE=1e-7
+INTERSCFTOLERANCE=1e-6
 
 MIXING='Anderson'	
 
 
 #OUTPUTFILE='/home/njvaughn/LWvsBiros/Beryllium/Biros_o8_5em3_max13.csv'
-OUTPUTFILE='/home/njvaughn/LWvsBiros/Oxygen/Biros_o7_1em4.csv'
+#OUTPUTFILE='/home/njvaughn/LWvsBiros/Oxygen/Biros_o7_1em4_1em76.csv'
+OUTPUTFILE='/home/njvaughn/LWvsBiros/Oxygen/testing.csv'
+#OUTPUTFILE='/home/njvaughn/LWvsBiros/CO/Biros_o7_1em4.csv'
 VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

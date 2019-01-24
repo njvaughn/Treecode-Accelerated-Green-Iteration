@@ -37,16 +37,16 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, divideCriterion, divi
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
-    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,gaugeShift=gaugeShift,
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
 
     
     print('max depth ', maxDepth)
-    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
 #     tree.sortOrbitalsAndEnergies(order = [5,0,6,1,2,8,9,3,4,7])
     
 #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/Biros/Beryllium_order5_1em4')
-    tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/Biros/H2_order5_1em3')
+    tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/Biros/CO_order5_1em3')
 #     tree.orthonormalizeOrbitals()
 #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
 
@@ -141,12 +141,12 @@ if __name__ == "__main__":
 #                           divideParameter=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
     
     
-    exportMeshForParaview(domain=20,order=5,
-                        minDepth=3, maxDepth=12, divideCriterion='Biros', 
-                        divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
-#                         divideParameter=1e-4,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+    exportMeshForParaview(domain=20,order=6,
+                        minDepth=3, maxDepth=15, divideCriterion='Biros', 
+#                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
+                        divideParameter=5e-5,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
 #                         divideParameter=1e-3,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
-#                         divideParameter=1e-4,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+#                         divideParameter=2e-0,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
     
     

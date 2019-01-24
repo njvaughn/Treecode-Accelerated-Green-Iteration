@@ -132,7 +132,7 @@ def setUpTree(onlyFillOne=False):
     referenceEigenvalues = np.array( np.genfromtxt(referenceEigenvaluesFile,delimiter=',',dtype=float) )
     print(referenceEigenvalues)
     print(np.shape(referenceEigenvalues))
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,gaugeShift=gaugeShift,
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
     tree.referenceEigenvalues = np.copy(referenceEigenvalues)
     tree.occupations = occupations
@@ -140,7 +140,7 @@ def setUpTree(onlyFillOne=False):
     print('type: ', type(tree.nOrbitals))
     
     print('max depth ', maxDepth)
-    tree.buildTree( minLevels=minDepth, maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=onlyFillOne)
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=onlyFillOne)
 
 
     
@@ -246,5 +246,5 @@ if __name__ == "__main__":
     tree = setUpTree()  
     
 #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
-#     testGreenIterationsGPU(tree,vtkExport=False)
+    testGreenIterationsGPU(tree,vtkExport=False)
 

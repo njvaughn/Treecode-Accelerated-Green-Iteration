@@ -62,7 +62,7 @@ class Tree(object):
     """
     
     
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,maxDepthAtAtoms,gaugeShift=0.0,
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,maxDepthAtAtoms,minDepth,gaugeShift=0.0,
                  coordinateFile='',inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
                  printTreeProperties = True):
@@ -86,6 +86,9 @@ class Tree(object):
         self.nOrbitals = nOrbitals
         self.gaugeShift = gaugeShift
         self.maxDepthAtAtoms = maxDepthAtAtoms
+        self.minDepth = minDepth
+        
+        self.coordinateFile = coordinateFile
         
 #         self.mixingParameter=0.5  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
@@ -137,7 +140,7 @@ class Tree(object):
 # #         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
 #         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
         print('Gauge shift ', self.gaugeShift)
-        self.initialDivideBasedOnNuclei(coordinateFile)
+#         self.initialDivideBasedOnNuclei(coordinateFile)
         if  printTreeProperties == True:
             print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
             print('~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~')
@@ -209,42 +212,23 @@ class Tree(object):
 
             
     def initialDivideBasedOnNuclei(self, coordinateFile,maxLevels=99):
+        
+        def refineToMinDepth(self,Cell):
+            # Divide the root to the minimum depth, BEFORE dividing at the nuclear positions
             
-#         def refineToMaxDepth(self,Atom,Cell):
-#             if hasattr(Cell, "children"):
-#                 (ii,jj,kk) = np.shape(Cell.children)
-#                 for i in range(ii):
-#                     for j in range(jj):
-#                         for k in range(kk):
-#                             if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
-#                                 if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
-#                                     if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
-# #                                         print('Calling refine on cell ',Cell.children[i,j,k].uniqueID)                                           
-#                                         refineToMaxDepth(self, Atom, Cell.children[i,j,k])
-#             
-#             else:  # cell is a leaf
-#                 if Cell.level < self.maxDepthAtAtoms:
-#                     xdiv = Cell.xmid
-#                     ydiv = Cell.ymid
-#                     zdiv = Cell.zmid
-# #                     if ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) ):
-# #                         xdiv = None
-# #                     if ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ):
-# #                         ydiv = None
-# #                     if ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ):
-# #                         zdiv = None
-#                     Cell.divide(xdiv, ydiv, zdiv)
-# #                     print('Dividing cell ', Cell.uniqueID, ' at depth ', Cell.level)
-#                     refineToMaxDepth(self,Atom,Cell)
-#                 
-#                 else: 
-#                     # This nucleus is at the corner of this cell, but this cell is already at max depth.  Try things here
-#                     # such as setting the weights to zero for this cell.  
-#                     print('Setting weights to zero for cell ', Cell.uniqueID)
-#                     Cell.w = np.zeros( (Cell.px,Cell.py,Cell.pz) )
-                    
-                    
-            
+            if (Cell.level) < self.minDepth:
+                print('Dividing cell %s because it is at depth %i.' %(Cell.uniqueID, Cell.level))
+                xdiv = (Cell.xmax + Cell.xmin)/2   
+                ydiv = (Cell.ymax + Cell.ymin)/2   
+                zdiv = (Cell.zmax + Cell.zmin)/2   
+                Cell.divide(xdiv, ydiv, zdiv)
+                
+                (ii,jj,kk) = np.shape(Cell.children)
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+                            refineToMinDepth(self, Cell.children[i,j,k])
+ 
         
         def recursiveDivideByAtom(self,Atom,Cell):
             # Atom is in this cell.  Check if this cell has children.  If so, find the child that contains
@@ -259,16 +243,12 @@ class Tree(object):
                             if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
                                 if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
                                     if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
-                                        print('Atom located inside child ', Cell.children[i,j,k].uniqueID)
-                                        print('Calling recursive divide for this child, but not others.')
+#                                         print('Atom located inside or on the boundary of child ', Cell.children[i,j,k].uniqueID, '. Calling recursive divide.')
                                         recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
-                                
-                                        
-
 
   
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
-                print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
+#                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
                 xdiv = Atom.x
                 ydiv = Atom.y
                 zdiv = Atom.z
@@ -303,42 +283,55 @@ class Tree(object):
 #                 self.atoms[i] = atom
         
         self.computeNuclearNuclearEnergy()
+#         refineToMinDepth(self,self.root)
+#         
+#         cellCount = 0
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 cellCount += 1
+#         print('Number of cell after minDepth refine: ', cellCount)
+
         self.nAtoms = 0
         for atom in self.atoms:
             recursiveDivideByAtom(self,atom,self.root)
             self.nAtoms += 1
-        
-        # Reset all cells to level 1.  These divides shouldnt count towards its depth.    Do this BEFORE or AFTER aspect ratio divide?  Unclear.
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                cell.level = 1
-        
-#         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                cell.divideIfAspectRatioExceeds(2.0) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
-        
-        leafCount = 0
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                leafCount += 1
-        print('After aspect ratio divide there are %i leaf cells.' %leafCount)
-        
-        # Now reset level to 1 for any cell near an atom (which might not be 1 anymore because of aspect ratio divisions)
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                for atom in self.atoms:
-                    rsq = (cell.xmid-atom.x)**2 + (cell.ymid-atom.y)**2 + (cell.zmid-atom.z)**2
-                    if rsq < 4:
-                        cell.level = 1
-#         # Reset all cells to level 1.  These divides shouldnt count towards its depth.  
+#         
+# #         # Reset all cells to level 1.  These divides shouldnt count towards its depth.    Do this BEFORE or AFTER aspect ratio divide?  Unclear.
+# #         for _,cell in self.masterList:
+# #             if cell.leaf==True:
+# #                 cell.level = 1
+# 
+#         # Reset all cells to level minDepth.  These divides shouldnt count towards its depth.    Do this BEFORE or AFTER aspect ratio divide?  Unclear.
 #         for _,cell in self.masterList:
 #             if cell.leaf==True:
-#                 cell.level = 1
-        
-#         print('Dividing adjacent to nuclei')  
-#         for atom in self.atoms:
-#             refineToMaxDepth(self,atom,self.root)
+#                 cell.level = self.minDepth
+#         
+# #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 cell.divideIfAspectRatioExceeds(4) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
+#         
+#         leafCount = 0
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 leafCount += 1
+#         print('After aspect ratio divide there are %i leaf cells.' %leafCount)
+#         
+#         # Now reset level to self.minDepth for any cell near an atom (which might not be 1 anymore because of aspect ratio divisions)
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 for atom in self.atoms:
+#                     rsq = (cell.xmid-atom.x)**2 + (cell.ymid-atom.y)**2 + (cell.zmid-atom.z)**2
+#                     if rsq < 4:
+#                         cell.level = self.minDepth
+# #         # Reset all cells to level 1.  These divides shouldnt count towards its depth.  
+# #         for _,cell in self.masterList:
+# #             if cell.leaf==True:
+# #                 cell.level = 1
+#         
+# #         print('Dividing adjacent to nuclei')  
+# #         for atom in self.atoms:
+# #             refineToMaxDepth(self,atom,self.root)
                 
       
     def initializeOrbitalsRandomly(self,targetOrbital=None):
@@ -640,83 +633,15 @@ class Tree(object):
     
 
         
-    def initializeForBerylliumAtom(self):
-        print('Initializing orbitals for beryllium atom exclusively. ')
 
-        # Generalized for any atoms.  Not complete yet.  
-        timer = Timer()
-        timer.start()
+ 
         
-        interpolators = np.empty(self.nOrbitals,dtype=object)
-#         count=0
-        BerylliumAtom = self.atoms[0]
-#         path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(BerylliumAtom.atomicNumber)+'/singleAtomData/'
-        path = '/home/njvaughn/AtomicData/allElectron/z'+str(BerylliumAtom.atomicNumber)+'/singleAtomData/'
-        for orbital in os.listdir(path): 
-            if orbital[:5]=='psi10':
-                data = np.genfromtxt(path+orbital)
-                interpolators[0] = interp1d(data[:,0],data[:,1])
-            if orbital[:5]=='psi20':
-                data = np.genfromtxt(path+orbital)
-                interpolators[1] = interp1d(data[:,0],data[:,1])
-            
-        for _,cell in self.masterList:
-            for i,j,k in cell.PxByPyByPz:
-                gp = cell.gridpoints[i,j,k]
-                r = np.sqrt( (gp.x-BerylliumAtom.x)**2 + (gp.y-BerylliumAtom.y)**2 + (gp.z-BerylliumAtom.z)**2 )
-                if r >= 29:
-                    gp.setPhi(0,0)
-                    gp.setPhi(0,1)
-                else:
-                    gp.setPhi(interpolators[0](r),0)
-                    gp.setPhi(interpolators[1](r),1)
-                    
-                    #  Perturb the initial wavefunction
-                
-                    gp.setPhi( gp.phi[0] + np.sin(r),0)
-                    gp.setPhi( gp.phi[1] + np.sin(2*r),1)
-                   
-        timer.stop()
-        print('Using perturbed versions of single-atom data, since this is a single atom calculation.')
-        print('Initialization from single Beryllium atom data took %f.3 seconds.' %timer.elapsedTime)
-        
-    def initializeForHydrogenMolecule(self):
-        print('Initializing orbitals for hydrogen molecule exclusively. ')
-        # Generalized for any atoms.  Not complete yet.  
-        timer = Timer()
-        timer.start()
-        
-        for atom in self.atoms:
-            interpolators = np.empty((self.nOrbitals,),dtype=object) 
-            count=0
-#             path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atom.atomicNumber)+'/singleAtomData/'
-            path = '/home/njvaughn/AtomicData/allElectron/z'+str(atom.atomicNumber)+'/singleAtomData/'
-            for orbital in os.listdir(path): 
-                if orbital[:5]=='psi10':
-                    data = np.genfromtxt(path+orbital)
-                    interpolators[count] = interp1d(data[:,0],data[:,1])  # issue: data for multiple orbitals, but I only have 1.  
-                    count+=1
-                
-            for _,cell in self.masterList:
-                for i,j,k in cell.PxByPyByPz:
-                    gp = cell.gridpoints[i,j,k]
-                    r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
-#                     print(interpolators[0](r))
-                    if r > 29:
-                        gp.setPhi(gp.phi[0] + 0,0)
-                    else:
-                        gp.setPhi(gp.phi[0] + interpolators[0](r),0)
-                   
-        timer.stop()
-        print('Initialization from single atom data took %f.3 seconds.' %timer.elapsedTime)
-        
-        
-    def buildTree(self,minLevels,maxLevels, divideCriterion, divideParameter, initializationType='atomic',printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
+    def buildTree(self,maxLevels, divideCriterion, divideParameter, initializationType='atomic',printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         # N is roughly the number of grid points.  It is used to generate the density function.
         timer = Timer()
-        def recursiveDivide(self, Cell, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
+        def recursiveDivide(self, Cell, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
             levelCounter += 1
             
             if hasattr(Cell, "children"):
@@ -727,15 +652,15 @@ class Tree(object):
                     for j in range(jj):
                         for k in range(kk):
                             maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], 
-                                                                                minLevels, maxLevels, divideCriterion, divideParameter, 
+                                                                                maxLevels, divideCriterion, divideParameter, 
                                                                                 levelCounter, printNumberOfCells, maxDepthAchieved, 
                                                                                 minDepthAchieved)
             
             elif Cell.level < maxLevels:
 #             elif currentLevel < maxLevels:
                 
-#                 if currentLevel < minLevels:
-                if Cell.level < minLevels:
+#                 if currentLevel < self.minDepth:
+                if Cell.level < self.minDepth:
                     Cell.divideFlag = True 
 #                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
                 else:  
@@ -761,7 +686,7 @@ class Tree(object):
                     for i in range(ii):
                         for j in range(jj):
                             for k in range(kk):
-                                maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved)
+                                maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved)
                 else:
                     minDepthAchieved = min(minDepthAchieved, Cell.level)
                     
@@ -771,8 +696,11 @@ class Tree(object):
         
         timer.start()
         levelCounter=0
-        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
         
+        
+#         self.initialDivideBasedOnNuclei(self)
+        self.initialDivideBasedOnNuclei(self.coordinateFile)
 #         refineRadius = 0.01
 #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
 #         self.uniformlyRefineWithinRadius(refineRadius)
@@ -845,227 +773,6 @@ class Tree(object):
             print('For a distance of: ', closestToOrigin)
             print('Part of a cell centered at: ', closestMidpoint) 
 
-
-                 
-#     def buildTreeOneCondition(self,minLevels,maxLevels,divideTolerance,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
-#         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
-#         # regardless of division criteria
-#         timer = Timer()
-#         def recursiveDivide(self, Cell, minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
-#             levelCounter += 1
-#             if currentLevel < maxLevels:
-#                 
-#                 if currentLevel < minLevels:
-#                     Cell.divideFlag = True 
-#                 else:                             
-#                     Cell.checkIfCellShouldDivide(divideTolerance)
-#                     
-#                 if Cell.divideFlag == True:   
-#                     Cell.divideInto8(printNumberOfCells)
-# #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
-# #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
-#                     for i,j,k in TwoByTwoByTwo:
-#                         maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
-#                 else:
-#                     minDepthAchieved = min(minDepthAchieved, currentLevel)
-#                     
-#                     
-#             maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
-#             return maxDepthAchieved, minDepthAchieved, levelCounter
-#         
-#         timer.start()
-#         levelCounter=0
-#         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, divideTolerance, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
-#         timer.stop()
-#         
-#         """ Count the number of unique gridpoints """
-#         self.numberOfGridpoints = 0
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 for i,j,k in self.PxByPyByPz:
-#                     if not hasattr(cell.gridpoints[i,j,k], "counted"):
-#                         self.numberOfGridpoints += 1
-#                         cell.gridpoints[i,j,k].counted = True
-#         
-#                         
-#         for _,cell in self.masterList:
-#             for i,j,k in self.PxByPyByPz:
-#                 if hasattr(cell.gridpoints[i,j,k], "counted"):
-#                     cell.gridpoints[i,j,k].counted = None
-#                     
-#         if printTreeProperties == True: 
-#             print("Tree build completed. \n"
-#                   "Domain Size:                 [%.1f, %.1f] \n"
-#                   "Tolerance:                   %1.2e \n"
-#                   "Total Number of Cells:       %i \n"
-#                   "Total Number of Gridpoints:  %i \n"
-#                   "Minimum Depth                %i levels \n"
-#                   "Maximum Depth:               %i levels \n"
-#                   "Construction time:           %.3g seconds." 
-#                   %(self.xmin, self.xmax, divideTolerance, self.treeSize, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved,timer.elapsedTime))
-#             
-#     def buildTreeTwoConditions(self,minLevels,maxLevels, maxDx, divideTolerance1, divideTolerance2,printNumberOfCells=False, printTreeProperties = True): # call the recursive divison on the root of the tree
-#         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
-#         # regardless of division criteria
-#         timer = Timer()
-#         def recursiveDivide(self, Cell, minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100, currentLevel=0):
-#             levelCounter += 1
-#             if currentLevel < maxLevels:
-#                 
-#                 if ( (currentLevel < minLevels) or (Cell.dx > maxDx)):
-#                     Cell.divideFlag = True 
-#                     
-#                 else:                             
-#                     Cell.checkIfCellShouldDivideTwoConditions(divideTolerance1, divideTolerance2)
-#                     
-#                 if Cell.divideFlag == True:   
-#                     Cell.divideInto8(printNumberOfCells)
-# #                     for i,j,k in TwoByTwoByTwo: # update the list of cells
-# #                         self.masterList.append([CellStruct.children[i,j,k].uniqueID, CellStruct.children[i,j,k]])
-#                     for i,j,k in TwoByTwoByTwo:
-#                         maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved, currentLevel+1)
-#                 else:
-#                     minDepthAchieved = min(minDepthAchieved, currentLevel)
-#                     
-#                     
-#             maxDepthAchieved = max(maxDepthAchieved, currentLevel)                                                                                                                                                       
-#             return maxDepthAchieved, minDepthAchieved, levelCounter
-#         
-#         timer.start()
-#         levelCounter=0
-#         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, minLevels, maxLevels, maxDx, divideTolerance1, divideTolerance2, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels, currentLevel=0 )
-#         timer.stop()
-#         
-#         """ Count the number of unique gridpoints """
-#         self.numberOfGridpoints = 0
-#         for element in self.masterList:
-#             if element[1].leaf==True:
-#                 for i,j,k in cell.PxByPyByPz:
-#                     if not hasattr(element[1].gridpoints[i,j,k], "counted"):
-#                         self.numberOfGridpoints += 1
-#                         element[1].gridpoints[i,j,k].counted = True
-#         
-#                         
-#         for element in self.masterList:
-#             for i,j,k in cell.PxByPyByPz:
-#                 if hasattr(element[1].gridpoints[i,j,k], "counted"):
-#                     element[1].gridpoints[i,j,k].counted = None
-#                     
-#         if printTreeProperties == True: 
-#             print("Tree build completed. \n"
-#                   "Domain Size:                 [%.1f, %.1f] \n"
-#                   "Gauge Shift:                 %f \n"
-#                   "Tolerance1:                  %1.2e \n"
-#                   "Tolerance2:                  %1.2e \n"
-#                   "Total Number of Cells:       %i \n"
-#                   "Total Number of Gridpoints:  %i \n"
-#                   "Minimum Depth                %i levels \n"
-#                   "Maximum Depth:               %i levels \n"
-#                   "Construction time:           %.3g seconds." 
-#                   %(self.xmin, self.xmax, self.gaugeShift, 
-#                     divideTolerance1, divideTolerance2, 
-#                     self.treeSize, self.numberOfGridpoints, 
-#                     self.minDepthAchieved,self.maxDepthAchieved, 
-#                     timer.elapsedTime))
-#     
-#  
-#     def uniformlyRefine(self):
-#         
-#         cellCounter = 0
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 cellCounter += 1
-#                 cell.divideFlag = True
-#         
-#         print('Uniformly refining all %i cells.' %cellCounter)
-#         
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-# #                 print('Dividing cell ', cell.uniqueID)
-#                 if  cell.divideFlag == True:
-# #                     print('Dividing cell ', cell.uniqueID)
-#                     cell.divide(cell.xmid, cell.ymid, cell.zmid)
-#                     for i,j,k in TwoByTwoByTwo:
-#                         cell.children[i,j,k].divideFlag = False
-#                     cell.divideFlag = False
-#                     
-#         cellCounter = 0
-#         self.numberOfGridpoints = 0
-#         self.numberOfCells = 0
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 self.numberOfCells += 1
-#                 self.numberOfGridpoints += self.px * self.py * self.pz
-#                 
-#         print('Now there are %i cells and %i gridpoints.' %(self.numberOfCells, self.numberOfGridpoints) )
-#         
-#         self.computeDerivativeMatrices()
-# 
-#         ### INITIALIZE ORBTIALS AND DENSITY ####
-#         self.initializeDensityFromAtomicDataExternally()
-#         self.initializeOrbitalsFromAtomicDataExternally()            
-# #         self.normalizeDensity()
-#         
-#         self.maxDepthAchieved += 1
-#         self.minDepthAchieved += 1
-#         
-#     def uniformlyRefineWithinRadius(self,R):
-#         
-#         cellCounter = 0
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 for atom in self.atoms:
-#                     r = np.sqrt( (cell.xmid - atom.x)**2 + (cell.ymid - atom.y)**2 + (cell.zmid - atom.z)**2)
-#                     if r < R:
-#                         cellCounter += 1
-#                         cell.divideFlag = True
-#         
-#         print('Uniformly refining %i cells within radius %1.2e.' %(cellCounter,R))
-#         
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-# #                 print('Dividing cell ', cell.uniqueID)
-#                 if  cell.divideFlag == True:
-# #                     print('Dividing cell ', cell.uniqueID)
-#                     cell.divide(cell.xmid, cell.ymid, cell.zmid)
-#                     for i,j,k in TwoByTwoByTwo:
-#                         cell.children[i,j,k].divideFlag = False
-#                     cell.divideFlag = False
-#                     
-#         cellCounter = 0
-#         self.numberOfGridpoints = 0
-#         self.numberOfCells = 0
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 self.maxDepthAchieved = max(self.maxDepthAchieved, cell.level)
-#                 self.numberOfCells += 1
-#                 self.numberOfGridpoints += self.px * self.py * self.pz
-#                 
-#         print('Now there are %i cells and %i gridpoints.' %(self.numberOfCells, self.numberOfGridpoints) )
-#         print('Maximum depth ', self.maxDepthAchieved)
-#         
-#         self.computeDerivativeMatrices()
-# 
-#         ### INITIALIZE ORBTIALS AND DENSITY ####
-# #         self.initializeOrbitalsFromAtomicData()            
-# #         self.initializeDensityFromAtomicData()
-# #         self.normalizeDensity()
-#         
-#         self.maxDepthAchieved += 1
-#         self.minDepthAchieved += 1
-#         
-#         
-#     
-#     def refineOnTheFly(self, divideTolerance):
-#         counter = 0
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 rhoVariation = cell.getRhoVariation()
-#                 if rhoVariation > divideTolerance:
-#                     cell.divide(cell.xmid, cell.ymid, cell.zmid,interpolate=True)
-#                     counter+=1
-#         print('Refined %i cells.' %counter)
-#             
 
     
     """
@@ -2729,7 +2436,7 @@ def TestTreeForProfiling():
     xmin = ymin = zmin = -12
     xmax = ymax = zmax = -xmin
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
-    tree.buildTree( minLevels=4, maxLevels=4, divideTolerance=0.07,printTreeProperties=True)
+    tree.buildTree( maxLevels=4, divideTolerance=0.07,printTreeProperties=True)
     
                
 if __name__ == "__main__":
