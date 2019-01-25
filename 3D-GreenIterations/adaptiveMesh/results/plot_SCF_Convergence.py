@@ -16,11 +16,11 @@ import numpy as np
 # # #resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
 # # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
 # # #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
-plotsDir = resultsDir+'plots/'
-# file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
+# plotsDir = resultsDir+'plots/'
+# # file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
 # file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
-file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
+# # file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
 
 # ## Carbon Monoxide
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
@@ -36,9 +36,9 @@ file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
 # file='LW5o5_2000_7_orbitals_noGIanderson_SCF_.csv'
 
 # ## Oxygen -- Biros
-# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
-# plotsDir = resultsDir+'plots/'
-# file='Biros_o7_1em4_SCF_.csv'
+resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+plotsDir = resultsDir+'plots/'
+file='Biros_o7_1em4_solo_SCF_.csv'
 
 ## Beryllium
 #file='LW3_1500_SCF_.csv'
@@ -106,7 +106,7 @@ def plotSCFconvergence(df, system = 'H2'):
     df['electrostaticEnergyError']=abs(df['electrostaticEnergy']-dftfeElectrostaticEnergy)
     df['exchangeEnergyError']=abs(df['exchangeEnergy']-dftfeExchangeEnergy)
     df['correlationEnergyError']=abs(df['correlationEnergy']-dftfeCorrelationEnergy)
-    df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/2
+    df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/1
 
     print("band energy errors:")
     print(df['bandEnergyError'])

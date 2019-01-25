@@ -170,6 +170,66 @@ def sumChebyshevCoefficicentsGreaterThanOrderQ(f,q):
 #         print(coefficients)
 #         print()
     return np.sum(np.abs(coefficients))
+
+def sumChebyshevCoefficicentsEachGreaterThanOrderQ(f,q):
+#     print('\n q = ', q, '\n')
+    (px,py,pz) = np.shape(f)
+#     print(px,py,pz)
+    x = ChebyshevPoints(-1, 1, px)
+    y = ChebyshevPoints(-1, 1, py)
+    z = ChebyshevPoints(-1, 1, pz)
+    
+    coefficients = np.zeros_like(f)
+    
+    # Loop through coefficients
+    for i in range(px):
+#         print()
+#         print()
+        for j in range(py):
+#             print()
+            for k in range(pz):
+                
+#                 if (i+j+k)>=q:
+                if ( (i>=q) and (j>=q) and (k>=q) ):
+                    # Loop through quadrature sums
+                    
+                    for ell in range(px):
+    #                     theta_ell = (ell+1/2)*pi/px
+                        theta_ell = arccos(x[ell])
+                        for m in range(py):
+    #                         theta_m = (m+1/2)*pi/py
+                            theta_m = arccos(y[m])
+                            for n in range(pz):
+    #                             theta_n = (n+1/2)*pi/pz
+                                theta_n = arccos(z[n])
+                                
+                                coefficients[i,j,k] += f[ell,m,n] * cos(i*theta_ell) * cos(j*theta_m) * cos(k*theta_n)
+    #                             coefficients[i,j,k] += f[ell,m,n] * cos(i*x[ell]) * cos(j*y[m]) * cos(k*z[n])
+    
+#                 if abs(coefficients[i,j,k]) > 1e-12:
+#                     print('alpha(%i,%i,%i) = %e' %(i,j,k,coefficients[i,j,k]) )
+    
+                
+                
+                    coefficients[i,j,k] *= (2/px)*(2/py)*(2/pz)
+                    
+                    if i==0:
+                        coefficients[i,j,k]/=2
+                    if j==0:
+                        coefficients[i,j,k]/=2
+                    if k==0:
+                        coefficients[i,j,k]/=2
+                        
+        
+#                     if abs(coefficients[i,j,k]) > 1e-12:
+#                         print('alpha(%i,%i,%i) = %e' %(i,j,k,coefficients[i,j,k]) )
+    
+#     if q==12: 
+#         print()
+#         print(coefficients)
+#         print()
+    return np.sum(np.abs(coefficients))
+    
                 
                 
             

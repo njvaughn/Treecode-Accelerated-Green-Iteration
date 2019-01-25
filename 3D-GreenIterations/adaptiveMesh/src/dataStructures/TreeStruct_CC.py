@@ -672,6 +672,8 @@ class Tree(object):
                         Cell.checkIfChebyshevCoefficientsAboveTolerance(divideParameter)
                     elif divideCriterion=='BirosCombined':
                         Cell.checkIfChebyshevCoefficientsAboveTolerance_DensityAndWavefunctions(divideParameter)
+                    elif divideCriterion=='BirosK':
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_allIndicesAboveQ(divideParameter)
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
                     

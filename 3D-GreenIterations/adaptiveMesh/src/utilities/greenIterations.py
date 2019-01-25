@@ -176,7 +176,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Integrated density: ', integratedDensity)
 
 #     startCoulombConvolutionTime = timer()
-    alpha = 1
+    alpha = 1.0
     alphasq=alpha*alpha
     
     print('Using Gaussian singularity subtraction, alpha = ', alpha)

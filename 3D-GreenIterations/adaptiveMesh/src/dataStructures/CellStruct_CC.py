@@ -11,7 +11,7 @@ import bisect
 
 from hydrogenAtom import potential
 from meshUtilities import meshDensity, weights3D, unscaledWeights, ChebGradient3D, ChebyshevPoints,computeDerivativeMatrix,\
-    computeLaplacianMatrix, ChebLaplacian3D, sumChebyshevCoefficicentsGreaterThanOrderQ
+    computeLaplacianMatrix, ChebLaplacian3D, sumChebyshevCoefficicentsGreaterThanOrderQ, sumChebyshevCoefficicentsEachGreaterThanOrderQ
 from GridpointStruct import GridPoint, DensityPoint
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -532,8 +532,6 @@ class Cell(object):
         
         # intialize density on this cell
         rho = np.zeros((self.px,self.py,self.pz))
-        phi0 = np.zeros((self.px,self.py,self.pz))
-        phi1 = np.zeros((self.px,self.py,self.pz))
         for i,j,k in self.PxByPyByPz:
             gp = self.gridpoints[i,j,k]
             for atom in self.tree.atoms:
@@ -552,6 +550,32 @@ class Cell(object):
 #         print()
         if densityCoefficientSum > divideParameter:
             self.divideFlag=True
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_allIndicesAboveQ(self, divideParameter):
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+#         print('Working on Cell %s' %(self.uniqueID))
+        self.divideFlag = False
+        
+        
+        # intialize density on this cell
+        rho = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+        # measure density first...
+        densityCoefficientSum = sumChebyshevCoefficicentsEachGreaterThanOrderQ(rho,(self.px-1)  )
+        
+
+        if densityCoefficientSum > divideParameter:
+            self.divideFlag=True
+            
             
     def checkIfChebyshevCoefficientsAboveTolerance_DensityAndWavefunctions(self, divideParameter):
 #         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
@@ -592,7 +616,9 @@ class Cell(object):
 #         print()
 #         if wavefunctionCoefficientSum > densityCoefficientSum:
 #             print('wavefunctino sum greater than density sum.')
-        if (densityCoefficientSum+wavefunctionCoefficientSum) > divideParameter:
+#         if (densityCoefficientSum+wavefunctionCoefficientSum) > divideParameter:
+#             self.divideFlag=True
+        if (densityCoefficientSum) > divideParameter:
             self.divideFlag=True
                
     
@@ -1030,6 +1056,8 @@ class Cell(object):
         elif noneCount == 2:
 #             print('Using divideInto2... are you sure?')
             divideInto2(self, xdiv, ydiv, zdiv, printNumberOfCells)
+        elif noneCount == 3:
+            print('Not acutally dividing because xdiv=ydiv=zdiv=None.  Happens when trying to divide at a nucleus that is already at a vertex.')
 
     def divideIfAspectRatioExceeds(self, tolerance):
         
