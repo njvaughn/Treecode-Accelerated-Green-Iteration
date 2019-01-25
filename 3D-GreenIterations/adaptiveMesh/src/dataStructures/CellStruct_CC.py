@@ -11,7 +11,7 @@ import bisect
 
 from hydrogenAtom import potential
 from meshUtilities import meshDensity, weights3D, unscaledWeights, ChebGradient3D, ChebyshevPoints,computeDerivativeMatrix,\
-    computeLaplacianMatrix, ChebLaplacian3D, sumChebyshevCoefficicentsGreaterThanOrderQ, sumChebyshevCoefficicentsEachGreaterThanOrderQ
+    computeLaplacianMatrix, ChebLaplacian3D, sumChebyshevCoefficicentsGreaterThanOrderQ, sumChebyshevCoefficicentsEachGreaterThanOrderQ, sumChebyshevCoefficicentsAnyGreaterThanOrderQ
 from GridpointStruct import GridPoint, DensityPoint
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -571,6 +571,31 @@ class Cell(object):
         
         # measure density first...
         densityCoefficientSum = sumChebyshevCoefficicentsEachGreaterThanOrderQ(rho,(self.px-1)  )
+        
+
+        if densityCoefficientSum > divideParameter:
+            self.divideFlag=True
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ(self, divideParameter):
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+#         print('Working on Cell %s' %(self.uniqueID))
+        self.divideFlag = False
+        
+        
+        # intialize density on this cell
+        rho = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+        # measure density first...
+        densityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
         
 
         if densityCoefficientSum > divideParameter:

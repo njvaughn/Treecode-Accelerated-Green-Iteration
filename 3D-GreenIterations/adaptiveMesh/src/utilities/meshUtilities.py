@@ -229,6 +229,48 @@ def sumChebyshevCoefficicentsEachGreaterThanOrderQ(f,q):
 #         print(coefficients)
 #         print()
     return np.sum(np.abs(coefficients))
+
+def sumChebyshevCoefficicentsAnyGreaterThanOrderQ(f,q):
+#     print('\n q = ', q, '\n')
+    (px,py,pz) = np.shape(f)
+#     print(px,py,pz)
+    x = ChebyshevPoints(-1, 1, px)
+    y = ChebyshevPoints(-1, 1, py)
+    z = ChebyshevPoints(-1, 1, pz)
+    
+    coefficients = np.zeros_like(f)
+    
+    # Loop through coefficients
+#     for i in range(px):
+#         for j in range(py):
+#             for k in range(pz):
+                
+#                 if ( (i>=q) or (j>=q) or (k>=q) ):
+#                     # Loop through quadrature sums
+                    
+    for ell in range(px):
+        theta_ell = arccos(x[ell])
+        for m in range(py):
+            theta_m = arccos(y[m])
+            for n in range(pz):
+                theta_n = arccos(z[n])
+                
+                coefficients[q,0,0] += f[ell,m,n] * cos(q*theta_ell) * cos(0*theta_m) * cos(0*theta_n)
+                coefficients[0,q,0] += f[ell,m,n] * cos(0*theta_ell) * cos(q*theta_m) * cos(0*theta_n)
+                coefficients[0,0,q] += f[ell,m,n] * cos(0*theta_ell) * cos(0*theta_m) * cos(q*theta_n)
+    
+#                 if abs(coefficients[i,j,k]) > 1e-12:
+#                     print('alpha(%i,%i,%i) = %e' %(i,j,k,coefficients[i,j,k]) )
+    
+                
+                
+    coefficients[q,0,0] *= (2/px)*(2/py)*(2/pz) / 4
+    coefficients[0,q,0] *= (2/px)*(2/py)*(2/pz) / 4
+    coefficients[0,0,q] *= (2/px)*(2/py)*(2/pz) / 4
+                    
+                        
+
+    return np.sum(np.abs(coefficients))
     
                 
                 

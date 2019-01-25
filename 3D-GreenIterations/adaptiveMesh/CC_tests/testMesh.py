@@ -141,12 +141,12 @@ if __name__ == "__main__":
 #                           divideParameter=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
     
     
-    exportMeshForParaview(domain=20,order=7,
-                        minDepth=3, maxDepth=15, divideCriterion='BirosK', 
+    exportMeshForParaview(domain=20,order=5,
+                        minDepth=3, maxDepth=15, divideCriterion='LW5', 
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
-                        divideParameter=2e-5,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+#                         divideParameter=1e-4,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
 #                         divideParameter=1e-3,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
-#                         divideParameter=2e-0,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+                        divideParameter=2000,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
     
     
