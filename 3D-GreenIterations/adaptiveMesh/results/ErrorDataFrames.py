@@ -34,8 +34,11 @@ file='runComparison.csv'
 
 #### Biros Meshes
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Beryllium/'
-# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
-resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
+resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenDepthTest/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaussianAlphaTest/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
 
 
 
@@ -71,7 +74,10 @@ if resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Beryllium/':
 # if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/':
 if ( (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/') or 
      (resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/' ) or
-     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/') ):
+     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/') or
+     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenDepthTest/')or
+     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/')or
+     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaussianAlphaTest/') ):
 # if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/':
 
     TotalEnergy = -7.4469337501098821e+01
@@ -173,8 +179,8 @@ def logAversusBcolorbyC(df,A,B,C,save=False):
     fig.suptitle('Log %s versus %s colored by %s' %(A,B,C))
     grouped = df.groupby(C)
     for name,group in grouped:
-        group['logA'] = np.log10(np.abs(group[A]))
-        group.plot(x=B, y='logA', style='o', ax=ax, label='%s = %.2f'%(C,name))
+#         group['logA'] = np.log10(np.abs(group[A]))
+        group.plot(x=B, y=A, logy=True, style='o', ax=ax, label='%s = %.2f'%(C,name))
 ##        group.plot(x=B, y='logA', style='o', ax=ax, label='%s = %s'%(C,name))
     plt.legend(loc = 'best')
 
@@ -201,7 +207,7 @@ def logAversusLogBcolorbyC(df,A,B,C,save=False):
     plt.legend(loc = 'best')
     plt.xlabel(B)
     plt.ylabel(A)
-    plt.ylim([5e-5,2e-2])
+#     plt.ylim([5e-5,2e-2])
     plt.grid()
     
     if save == True:
@@ -430,17 +436,30 @@ def totalEnergyErrors_splitByGradientHandling():
 if __name__=="__main__":
 #     energyErrors()
     df = df.loc[df['gradientFree']==1]
-    df = df.loc[df['order'].isin([5,7])]
+    df = df.loc[df['maxDepth']>11]
+    df = df.loc[df['order'].isin([7,5])]
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
+
     
-    df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5', 'BirosN'])]
-    print(df_LW_and_BirosN)
+    df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5', 'BirosN','BirosG'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['BirosN','BirosG'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5', 'BirosN', 'BirosG', 'BirosGN', 'BirosGN2'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['BirosGN2'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5','BirosN', 'BirosGN'])]
+#     print(df_LW_and_BirosN)
 #     logAversusLogBcolorbyC(df.loc[df['order']==7],'TotalEnergyError', 'numberOfPoints', 'divideParameter')
 #     logAversusLogBcolorbyC(df.loc[df['order']==7],'TotalEnergyError', 'numberOfPoints', 'maxDepth')
 #     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter')
 #     logAversusLogBcolorbyC(df.loc[df['gradientFree']==1],'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
-    logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
+#     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
 #     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'order')
+#     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'gaussianAlpha')
+#     logAversusBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'gaussianAlpha', 'maxDepth')
 #     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'gradientFree')
+    logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'divideParameter')
+
     
 
 #     totalEnergyErrors_splitByGradientHandling()

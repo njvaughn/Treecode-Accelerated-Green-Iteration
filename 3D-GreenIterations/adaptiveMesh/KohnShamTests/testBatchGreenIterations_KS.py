@@ -9,7 +9,7 @@ Created on Mar 13, 2018
 '''
 import os
 import sys
-from docutils.nodes import reference
+# from docutils.nodes import reference
 sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
 sys.path.append('../ctypesTests/src')
@@ -110,8 +110,8 @@ def setUpTree(onlyFillOne=False):
         for i in range(len(atomData)):
             nElectrons += atomData[i,3]
     
-    nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
-#     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.  
+#     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
+    nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.  
                                             # If the final orbital is unoccupied, this amount is enough. 
                                             # If there is a degeneracy leading to teh final orbital being 
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
@@ -163,12 +163,12 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
 
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints','gradientFree',
-              'divideCriterion','divideParameter','energyTolerance',
+              'divideCriterion','divideParameter','gaussianAlpha','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
-              divideCriterion,divideParameter,energyTolerance,
+              divideCriterion,divideParameter,smoothingEps,energyTolerance,
               subtractSingularity,
               tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
 #               tree.E, tree.

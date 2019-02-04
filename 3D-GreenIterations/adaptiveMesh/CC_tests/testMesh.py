@@ -14,6 +14,51 @@ ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3
 from TreeStruct_CC import Tree
 
 
+def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, divideCriterion, divideParameter,inputFile):
+
+    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+
+
+    print('Reading atomic coordinates from: ', coordinateFile)
+    atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+    if np.shape(atomData)==(5,):
+        nElectrons = atomData[3]
+    else:
+        nElectrons = 0
+        for i in range(len(atomData)):
+            nElectrons += atomData[i,3]
+    
+    nOrbitals = int( np.ceil(nElectrons/2)+1)
+    print('nElectrons = ', nElectrons)
+    print('nOrbitals  = ', nOrbitals)
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,minDepth=minDepth,gaugeShift=gaugeShift,
+                coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
+
+    
+    print('max depth ', maxDepth)
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
+    
+    
+#     sourcesTXT = '../examples/S%ipy.txt' %tree.numberOfGridpoints
+#     targetsTXT = '../examples/T%ipy.txt' %tree.numberOfGridpoints
+    
+    sourcesTXT = '/Users/nathanvaughn/Documents/GitHub/hybrid-gpu-treecode/examplesOxygenAtom/S%ipy.txt' %tree.numberOfGridpoints
+    targetsTXT = '/Users/nathanvaughn/Documents/GitHub/hybrid-gpu-treecode/examplesOxygenAtom/T%ipy.txt' %tree.numberOfGridpoints
+    
+    Sources = tree.extractLeavesDensity()
+    Targets = tree.extractLeavesDensity()
+
+#     print(Targets[0,:])
+    print(Targets[0:3,0:4])
+    
+    # Save as .txt files
+    np.savetxt(sourcesTXT, Sources)
+    np.savetxt(targetsTXT, Targets[:,0:4])
+
+    print('Meshes Exported.')    
+
 
 def exportMeshForParaview(domain,order,minDepth, maxDepth, divideCriterion, divideParameter,inputFile):    
     
@@ -142,11 +187,16 @@ if __name__ == "__main__":
     
     
     exportMeshForParaview(domain=20,order=5,
-                        minDepth=3, maxDepth=15, divideCriterion='LW5', 
+                        minDepth=3, maxDepth=15, divideCriterion='BirosG', 
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
-#                         divideParameter=1e-4,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+                        divideParameter=1e-3,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
 #                         divideParameter=1e-3,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
-                        divideParameter=2000,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+#                         divideParameter=1.25e-3,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+    
+    
+#     exportMeshForTreecodeTesting(domain=20,order=7,
+#                         minDepth=3, maxDepth=15, divideCriterion='BirosN', 
+#                         divideParameter=5e-4,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
     
     
     

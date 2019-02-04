@@ -9,7 +9,7 @@
 #PBS -q fluxg
 
 
-#PBS -l nodes=1:gpus=1:titanv,mem=8gb
+#PBS -l nodes=1:gpus=1,mem=8gb
 #PBS -l walltime=24:00:00
 #PBS -j oe
 #PBS -V
@@ -28,14 +28,13 @@ fi
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
-DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 SMOOTHINGN=0
-SMOOTHINGEPS=0
 
-INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
@@ -44,10 +43,8 @@ INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 GRADIENTFREE='True'
 GPUPRESENT='True'
 
-ORDER=7
-MESHTYPE='BirosN'
-MESHPARAM=5e-4
-MAXDEPTH=15
+
+MESHTYPE='BirosG'
 
 
 MIXINGPARAMETER=0.5
@@ -56,21 +53,24 @@ INTRASCFTOLERANCE=1e-6
 INTERSCFTOLERANCE=1e-5
 
 MIXING='Anderson'	
-
-
-#OUTPUTFILE='/home/njvaughn/LWvsBiros/Beryllium/Biros_o8_5em3_max13.csv'
-#OUTPUTFILE='/home/njvaughn/LWvsBiros/Oxygen/Biros_o7_1em4_1em76.csv'
-#OUTPUTFILE='/home/njvaughn/LWvsBiros/CO/Biros_o7_1em4.csv'
-
-
-#OUTPUTFILE='/home/njvaughn/LWvsBiros/Oxygen/BirosN_o7_1p5em3.csv'
-
-
-
-OUTPUTFILE='/home/njvaughn/LWvsBiros/CO/BirosN_o7_5em4.csv'
 VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
+
+
+ORDER=6
+MAXDEPTH=20
+SMOOTHINGEPS=1
+DOMAIN=20
+
+
+MESHPARAM=1e-2	
+OUTPUTFILE='/home/njvaughn/LWvsBiros/Oxygen_feb4/BirosG_o6_1em2.csv'
 python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
 	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER $GPUPRESENT
-	
+
+MESHPARAM=1e-3	
+OUTPUTFILE='/home/njvaughn/LWvsBiros/Oxygen_feb4/BirosG_o6_1em3.csv'
+python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
+	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER $GPUPRESENT
 	

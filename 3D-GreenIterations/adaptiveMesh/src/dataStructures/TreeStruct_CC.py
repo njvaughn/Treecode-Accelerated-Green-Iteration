@@ -676,6 +676,13 @@ class Tree(object):
                         Cell.checkIfChebyshevCoefficientsAboveTolerance_allIndicesAboveQ(divideParameter)
                     elif divideCriterion=='BirosN':
                         Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ(divideParameter)
+                    elif divideCriterion=='BirosG':
+#                         Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_sumOfWavefunctions(divideParameter)
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_sumOfWavefunctions(divideParameter)
+                    elif divideCriterion=='BirosGN':
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho(divideParameter)
+                    elif divideCriterion=='BirosGN2':
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho_or_v(divideParameter)
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
                     

@@ -11,11 +11,11 @@ import os
 import numpy as np
 
 
-# # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
-# # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
-# # #resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
-# # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
-# # #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
+# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
+# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
+# #resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
+# #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
 # plotsDir = resultsDir+'plots/'
 # # file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
@@ -23,26 +23,29 @@ import numpy as np
 # file='LW5_2000_andersonMixing_p5_1em76_SCF_.csv'
 
 # ## Carbon Monoxide
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
-plotsDir = resultsDir+'plots/'
-# file ='LW5_1500o5_GradientFree_eigRes_looseThenTight_titan_SCF_.csv'
-# file ='LW5o5_1500_SCF_.csv'
-# file='LW5o5_1500_largeDomain_SCF_.csv'
-# file='LW5o5_1000_fixedMesh_only7_looseInit_SCF_.csv'
-file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_SCF_.csv'
-# file='LW5o4_1000_only7_tightFromStart_GIanderson_afterSCF1_SCF_.csv'
-# file='LW5o5_2000_only7_tightFromStart_GIandersonAfterSCF1_SCF_.csv'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
+# plotsDir = resultsDir+'plots/'
+# # file ='LW5_1500o5_GradientFree_eigRes_looseThenTight_titan_SCF_.csv'
+# # file ='LW5o5_1500_SCF_.csv'
+# # file='LW5o5_1500_largeDomain_SCF_.csv'
+# # file='LW5o5_1000_fixedMesh_only7_looseInit_SCF_.csv'
+# # file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_SCF_.csv'
+# # file='LW5o4_1000_only7_tightFromStart_GIanderson_afterSCF1_SCF_.csv'
+# # file='LW5o5_2000_only7_tightFromStart_GIandersonAfterSCF1_SCF_.csv'
 # file='LW5o5_2000_6_orbitals_SCF_.csv'
-# file='LW5o5_2000_7_orbitals_noGIanderson_SCF_.csv'
+# # file='LW5o5_2000_7_orbitals_noGIanderson_SCF_.csv'
 
 # ## Oxygen -- Biros
-# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
-# plotsDir = resultsDir+'plots/'
-# # file='Biros_o7_1em4_solo_SCF_.csv'
-# # file='Biros_o7_7em5_alpha_1p5_SCF_.csv'
-# # file='BirosN_o7_1em3_SCF_.csv'
-# file='BirosN_o7_2em4_SCF_.csv'
-
+# # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+plotsDir = resultsDir+'plots/'
+# # # file='Biros_o7_1em4_solo_SCF_.csv'
+# # # file='Biros_o7_7em5_alpha_1p5_SCF_.csv'
+# # # file='BirosN_o7_1em3_SCF_.csv'
+# # # file='BirosN_o7_2em4_SCF_.csv'
+# file='BirosG_o7_max15_SCF_.csv'
+file='BirosG_o7_1em5_SCF_.csv'
+ 
 ## Beryllium
 #file='LW3_1500_SCF_.csv'
 
@@ -150,15 +153,15 @@ def plotSCFconvergence(df, system = 'H2'):
 
     ax1.grid()
     ax2.grid()
-    
+    plt.ylim([5e-7,2e-2])
     plt.show()
     
 
 if __name__=="__main__":
     
-    plotSCFconvergence(df, system="carbonMonoxide")    
+#     plotSCFconvergence(df, system="carbonMonoxide")    
 #    plotSCFconvergence(df, system="Beryllium")    
-#     plotSCFconvergence(df, system="Oxygen")    
+    plotSCFconvergence(df, system="Oxygen")    
 
 
 
