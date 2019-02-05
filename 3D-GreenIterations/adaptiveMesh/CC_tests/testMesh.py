@@ -187,9 +187,9 @@ if __name__ == "__main__":
     
     
     exportMeshForParaview(domain=20,order=5,
-                        minDepth=3, maxDepth=13, divideCriterion='BirosG', 
+                        minDepth=3, maxDepth=13, divideCriterion='Krasny', 
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
-                        divideParameter=1e-4,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+                        divideParameter=5e-1,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
 #                         divideParameter=1e-3,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
 #                         divideParameter=1.25e-3,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     

@@ -683,6 +683,8 @@ class Tree(object):
                         Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho(divideParameter)
                     elif divideCriterion=='BirosGN2':
                         Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho_or_v(divideParameter)
+                    elif divideCriterion=='Krasny':
+                        Cell.checkWavefunctionVariation(divideParameter)
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
                     

@@ -321,6 +321,19 @@ class Cell(object):
             if self.gridpoints[i,j,k].rho > maxRho: maxRho = self.gridpoints[i,j,k].rho
         
         return maxRho - minRho
+    
+    def getWavefunctionVariation(self,m):
+        minPsi = self.gridpoints[0,0,0].phi[m]
+        maxPsi = self.gridpoints[0,0,0].phi[m]
+        maxAbsPsi = 0.0
+        for i,j,k in self.PxByPyByPz:
+            if self.gridpoints[i,j,k].phi[m] < minPsi: minPsi = self.gridpoints[i,j,k].phi[m]
+            if self.gridpoints[i,j,k].phi[m] > maxPsi: maxPsi = self.gridpoints[i,j,k].phi[m]
+            if abs(self.gridpoints[i,j,k].phi[m]) > maxAbsPsi: maxAbsPsi = self.gridpoints[i,j,k].phi[m]
+        
+#         return (maxPsi - minPsi)
+#         return (maxPsi - minPsi)/maxAbsPsi
+        return min( (maxPsi - minPsi)/maxAbsPsi, (maxPsi - minPsi))
         
     def getTestFunctionVariation(self):
         minValue = self.gridpoints[0,0,0].testFunctionValue
@@ -544,7 +557,20 @@ class Cell(object):
                         singleAtomOrbitalCount += 1
                         
                         
-                
+    def checkWavefunctionVariation(self, divideParameter):
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+#         print('Working on Cell %s' %(self.uniqueID))
+        self.divideFlag = False
+        self.initializeCellWavefunctions()
+        
+        for m in range(self.tree.nOrbitals):
+            waveVariation = self.getWavefunctionVariation(m)
+            if waveVariation > divideParameter:
+                self.divideFlag=True
+                print('Dividing cell %s because of wavefunction %i.' %(self.uniqueID,m))
+                return
+            
+                        
     def checkIfChebyshevCoefficientsAboveTolerance(self, divideParameter):
 #         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
         self.divideFlag = False
