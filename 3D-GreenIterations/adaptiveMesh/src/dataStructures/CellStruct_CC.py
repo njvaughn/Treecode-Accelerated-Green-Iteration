@@ -474,17 +474,17 @@ class Cell(object):
         for atom in self.tree.atoms:
             nAtomicOrbitals = atom.nAtomicOrbitals
             
-            dx=[]
-            dy=[]
-            dz=[]
-            for i,j,k in self.PxByPyByPz:
-                gp = self.gridpoints[i,j,k]
-                dx = np.append(dx, gp.x-atom.x)
-                dy = np.append(dy,gp.y-atom.y)
-                dz = np.append(dz,gp.z-atom.z)
-            r = np.sqrt( dx**2 + dy**2 + dz**2 )
-            inclination = np.arccos(dz/r)
-            azimuthal = np.arctan2(dy,dx)
+#             dx=[]
+#             dy=[]
+#             dz=[]
+#             for i,j,k in self.PxByPyByPz:
+#                 gp = self.gridpoints[i,j,k]
+#                 dx = np.append(dx, gp.x-atom.x)
+#                 dy = np.append(dy,gp.y-atom.y)
+#                 dz = np.append(dz,gp.z-atom.z)
+#             r = np.sqrt( dx**2 + dy**2 + dz**2 )
+#             inclination = np.arccos(dz/r)
+#             azimuthal = np.arctan2(dy,dx)
                 
             
             
@@ -502,31 +502,40 @@ class Cell(object):
                     for m in range(-ell,ell+1):
 #                         for _,cell in self.masterList:
 #                             if cell.leaf==True:
+
+                        for i,j,k in self.PxByPyByPz:
+                            gp = self.gridpoints[i,j,k]
+                            dx = gp.x-atom.x
+                            dy = gp.y-atom.y
+                            dz = gp.z-atom.z
+                            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                            inclination = np.arccos(dz/r)
+                            azimuthal = np.arctan2(dy,dx)
                         
                             
                         
 #                                     Y = sph_harm(m,ell,azimuthal,inclination)*np.exp(-1j*m*azimuthal)
-                        if m<0:
-                            Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
-                        if m>0:
-                            Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
-#                                     if ( (m==0) and (ell>1) ):
-                        if ( m==0 ):
-                            Y = sph_harm(m,ell,azimuthal,inclination)
-#                                     if ( (m==0) and (ell<=1) ):
-#                                         Y = 1
-#                         if abs(np.imag(Y)) > 1e-14:
-#                             print('imag(Y) ', np.imag(Y))
-#                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
-                        try:
-                            phi = atom.interpolators[psiID](r)*np.real(Y)
-                        except ValueError:
-                            phi = 0.0
-                           
-                        count=0 
-                        for i,j,k in self.PxByPyByPz:
-                            self.gridpoints[i,j,k].phi[orbitalIndex] = phi[count]
-                            count += 1
+                            if m<0:
+                                Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                            if m>0:
+                                Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+    #                                     if ( (m==0) and (ell>1) ):
+                            if ( m==0 ):
+                                Y = sph_harm(m,ell,azimuthal,inclination)
+    #                                     if ( (m==0) and (ell<=1) ):
+    #                                         Y = 1
+    #                         if abs(np.imag(Y)) > 1e-14:
+    #                             print('imag(Y) ', np.imag(Y))
+    #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+                            try:
+                                gp.phi[orbitalIndex] = atom.interpolators[psiID](r)*np.real(Y)
+                            except ValueError:
+                                gp.phi[orbitalIndex] = 0.0
+                               
+#                             count=0 
+#                             for i,j,k in self.PxByPyByPz:
+#                                 gp.phi[orbitalIndex] = phi[count]
+#                                 count += 1
                                         
                         
                         

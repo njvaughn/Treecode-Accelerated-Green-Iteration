@@ -701,7 +701,9 @@ class Tree(object):
                 else:
                     minDepthAchieved = min(minDepthAchieved, Cell.level)
                     
-                    
+            else: 
+                Cell.initializeCellWavefunctions() 
+                       
             maxDepthAchieved = max(maxDepthAchieved, Cell.level)                                                                                                                                                       
             return maxDepthAchieved, minDepthAchieved, levelCounter
         
@@ -752,8 +754,12 @@ class Tree(object):
 
         self.computeDerivativeMatrices()
 #         self.initializeDensityFromAtomicData()
+
         self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
+        
         ### INITIALIZE ORBTIALS AND DENSITY ####
+                # Only need to do this if wavefunctions aren't set during adaptive refinement
+
         if initializationType=='atomic':
             if onlyFillOne == True:
                 self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
@@ -2324,9 +2330,9 @@ class Tree(object):
         
         phi0 = []
         phi1 = []
-#         phi2 = []
-#         phi3 = []
-#         phi4 = []
+        phi2 = []
+        phi3 = []
+        phi4 = []
 #         phi5 = []
 #         phi6 = []
 #         phi7 = []
@@ -2343,9 +2349,9 @@ class Tree(object):
                     v.append(gp.v_eff)
                     phi0.append(gp.phi[0])
                     phi1.append(gp.phi[1])
-#                     phi2.append(gp.phi[2])
-#                     phi3.append(gp.phi[3])
-#                     phi4.append(gp.phi[4])
+                    phi2.append(gp.phi[2])
+                    phi3.append(gp.phi[3])
+                    phi4.append(gp.phi[4])
 #                     phi5.append(gp.phi[5])
 #                     phi6.append(gp.phi[6])
 #                     phi7.append(gp.phi[7])
@@ -2353,8 +2359,8 @@ class Tree(object):
 #                     phi9.append(gp.phi[9])
         
         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
-                    {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1)}) #,
-#                      "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4),
+                    {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),#}) ,
+                    "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4) } )#,
 #                      "Phi5" : np.array(phi5), "Phi6" : np.array(phi6),#}) #,
 #                      "Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})
         
