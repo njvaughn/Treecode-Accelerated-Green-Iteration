@@ -34,13 +34,22 @@ file='runComparison.csv'
 
 #### Biros Meshes
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Beryllium/'
-resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenDepthTest/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaussianAlphaTest/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
 
 
+
+#### Treecode Testing
+resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
+TotalEnergy = -7.4469337501098821e+01  # Oxygen Atom
+ExchangeEnergy = -7.2193700828939980e+00
+CorrelationEnergy = -5.4455323568788838e-01
+BandEnergy = -4.0613397710076626e+01
+KineticEnergy =  7.4112730191157425e+01
+ElectrostaticEnergy = -1.4081814437367436e+02
 
 df = pd.read_csv(resultsDir+file, header=0)
 print(df)
@@ -183,6 +192,10 @@ def logAversusBcolorbyC(df,A,B,C,save=False):
         group.plot(x=B, y=A, logy=True, style='o', ax=ax, label='%s = %.2f'%(C,name))
 ##        group.plot(x=B, y='logA', style='o', ax=ax, label='%s = %s'%(C,name))
     plt.legend(loc = 'best')
+    plt.xlabel(B)
+    plt.ylabel(A)
+#     plt.ylim([1e-3,1e-2])
+    plt.grid()
 
     if save == True:
         saveID = 'log'+A+'Vs'+B+'ColoredBy'+C
@@ -434,14 +447,27 @@ def totalEnergyErrors_splitByGradientHandling():
 
 
 if __name__=="__main__":
+    
+    
+    
+    
+#     df['TreecodeError'] = np.abs( df['TotalEnergy'] + 74.4706852 )
+#     print(df['TreecodeError'])
+#     logAversusBcolorbyC(df,'TreecodeError', 'theta', 'treecodeOrder')
+
+
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'theta', 'Treecode')
+    logAversusBcolorbyC(df,'TotalEnergyError', 'theta', 'treecodeOrder')
+
+
 #     energyErrors()
-    df = df.loc[df['gradientFree']==1]
-    df = df.loc[df['maxDepth']>11]
-    df = df.loc[df['order'].isin([7,5])]
+#     df = df.loc[df['gradientFree']==1]
+#     df = df.loc[df['maxDepth']>11]
+#     df = df.loc[df['order'].isin([7,5])]
 #     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
 
     
-    df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5', 'BirosN','BirosG'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5', 'BirosN','BirosG'])]
 #     df_LW_and_BirosN = df[df['divideCriterion'].isin(['BirosN','BirosG'])]
 #     df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5', 'BirosN', 'BirosG', 'BirosGN', 'BirosGN2'])]
 #     df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5'])]
@@ -458,7 +484,7 @@ if __name__=="__main__":
 #     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'gaussianAlpha')
 #     logAversusBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'gaussianAlpha', 'maxDepth')
 #     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'gradientFree')
-    logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'divideParameter')
+#     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'divideParameter')
 
     
 

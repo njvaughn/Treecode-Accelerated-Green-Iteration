@@ -52,6 +52,12 @@ noGradients         = str(sys.argv[15])
 mixingScheme        = str(sys.argv[16])
 mixingParameter     = float(sys.argv[17])
 GPUpresent          = str(sys.argv[18])
+treecode            = str(sys.argv[19])
+treecodeOrder       = int(sys.argv[20])
+theta               = float(sys.argv[21])
+maxParNode          = int(sys.argv[22])
+batchSize           = int(sys.argv[23])
+
 
 print('gradientFree = ', noGradients)
 print('Mixing scheme = ', mixingScheme)
@@ -70,6 +76,12 @@ elif GPUpresent=='False':
     GPUpresent=False
 else:
     print('Warning, not correct input for GPUpresent')
+if treecode=='True':
+    treecode=True
+elif treecode=='False':
+    treecode=False
+else:
+    print('Warning, not correct input for treecode')
 
 # coordinateFile      = str(sys.argv[12])
 # auxiliaryFile      = str(sys.argv[13])
@@ -153,7 +165,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, GPUpresent, mixingScheme, mixingParameter, subtractSingularity, 
+    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, mixingScheme, mixingParameter, subtractSingularity, 
                                 smoothingN, smoothingEps,inputFile=inputFile,outputFile=outputFile, 
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
 
@@ -165,12 +177,14 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
     header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints','gradientFree',
               'divideCriterion','divideParameter','gaussianAlpha','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
-              'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy']
+              'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy',
+              'Treecode','treecodeOrder','theta','maxParNode','batchSize']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
               divideCriterion,divideParameter,smoothingEps,energyTolerance,
               subtractSingularity,
-              tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
+              tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E,
+              treecode,treecodeOrder,theta,maxParNode,batchSize]
 #               tree.E, tree.
 #               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     

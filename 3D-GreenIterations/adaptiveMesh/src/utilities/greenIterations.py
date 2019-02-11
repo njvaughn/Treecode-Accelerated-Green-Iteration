@@ -114,7 +114,9 @@ def normalizeOrbitals(V,weights):
 
 
 
-def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, mixingScheme, mixingParameter,
+def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, 
+                                 treecode, treecodeOrder, theta, maxParNode, batchSize,
+                                 mixingScheme, mixingParameter,
                                 subtractSingularity, smoothingN, smoothingEps, inputFile='',outputFile='',
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None): 
     '''
@@ -211,7 +213,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                                                                                   targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 # #         V_coulombNew += targets[:,3]* (4*np.pi)* alphasq/2  # Wrong
-#         V_coulombNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)
+#         V_coulombNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
 
 
 #         V_coulombNew = directSumWrappers.callCompiledC_directSum_Poisson(numTargets, numSources, 
@@ -219,15 +221,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
         potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
-        order=5
-        theta = 0.8
-        maxParNode = 500
-        batchSize = 500
-        alphasq = smoothingEps**2
+        alpha = smoothingEps
         V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                        targetX, targetY, targetZ, targetValue, 
                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                       potentialType, alphasq, order, theta, maxParNode, batchSize)
+                                                       potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
           
         if potentialType==2:
             V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
@@ -240,11 +238,40 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         
     elif GPUpresent==True:
-        V_coulombNew = np.zeros((len(targets)))
-        start = time.time()
-        gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
-        print('Convolution time: ', time.time()-start)
-#         return
+        if treecode==False:
+            V_coulombNew = np.zeros((len(targets)))
+            start = time.time()
+            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+            print('Convolution time: ', time.time()-start)
+#             return
+        elif treecode==True:
+            numTargets = len(targets)
+            numSources = len(sources)
+            sourceX = np.copy(sources[:,0])
+
+            sourceY = np.copy(sources[:,1])
+            sourceZ = np.copy(sources[:,2])
+            sourceValue = np.copy(sources[:,3])
+            sourceWeight = np.copy(sources[:,4])
+            
+            targetX = np.copy(targets[:,0])
+            targetY = np.copy(targets[:,1])
+            targetZ = np.copy(targets[:,2])
+            targetValue = np.copy(targets[:,3])
+            targetWeight = np.copy(targets[:,4])
+            
+            start = time.time()
+            potentialType=2 
+            alpha = smoothingEps
+            V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                           targetX, targetY, targetZ, targetValue, 
+                                                           sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                           potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+            print('Convolution time: ', time.time()-start)
+            
+        else:
+            print('treecode True or False?')
+            return
     
 
 #     CoulombConvolutionTime = timer() - startCoulombConvolutionTime
@@ -435,7 +462,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             print('Using singularity skipping')
                             gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
                         elif subtractSingularity==1:
-                            if tree.orbitalEnergies[m] < -0.25: 
+                            if tree.orbitalEnergies[m] < 10.25: 
                                 
                                 
                                 if GPUpresent==False:
@@ -481,11 +508,43 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                     if potentialType==3:
 #                                         phiNew += 4*np.pi*targets[:,3]/k**2
                                     phiNew /= (4*np.pi)
-                                else:
-                                    startTime = time.time()
-                                    gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-                                    convolutionTime = time.time()-startTime
-                                    print('Using singularity subtraction.  Convolution time: ', convolutionTime)
+                                elif GPUpresent==True:
+                                    if treecode==False:
+                                        startTime = time.time()
+                                        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                                        convolutionTime = time.time()-startTime
+                                        print('Using singularity subtraction.  Convolution time: ', convolutionTime)
+                                    elif treecode==True:
+                                        numTargets = len(targets)
+                                        numSources = len(sources)
+    
+                                        sourceX = np.copy(sources[:,0])
+    
+                                        sourceY = np.copy(sources[:,1])
+                                        sourceZ = np.copy(sources[:,2])
+                                        sourceValue = np.copy(sources[:,3])
+                                        sourceWeight = np.copy(sources[:,4])
+                                        
+                                        targetX = np.copy(targets[:,0])
+                                        targetY = np.copy(targets[:,1])
+                                        targetZ = np.copy(targets[:,2])
+                                        targetValue = np.copy(targets[:,3])
+                                        targetWeight = np.copy(targets[:,4])
+                                    
+ 
+                                        potentialType=3
+                                        kappa = k
+                                        start = time.time()
+                                        phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                                                       targetX, targetY, targetZ, targetValue, 
+                                                                                       sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                                                       potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
+                                        print('Convolution time: ', time.time()-start)
+                                        phiNew /= (4*np.pi)
+                                    
+                                    else: 
+                                        print('treecode true or false?')
+                                        return
                             else:
                                 print('Using singularity skipping because energy too close to 0')
                                 gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)
