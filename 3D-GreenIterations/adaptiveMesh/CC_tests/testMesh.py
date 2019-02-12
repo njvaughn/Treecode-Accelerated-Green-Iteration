@@ -60,7 +60,7 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, divideCriterio
     print('Meshes Exported.')    
 
 
-def exportMeshForParaview(domain,order,minDepth, maxDepth, divideCriterion, divideParameter,inputFile):    
+def exportMeshForParaview(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, inputFile='', outputFile=''):    
     
     
 #     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
@@ -82,16 +82,18 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, divideCriterion, divi
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
-    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,minDepth=minDepth,gaugeShift=gaugeShift,
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=depthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
 
     
     print('max depth ', maxDepth)
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+                    divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
+                    printTreeProperties=True,onlyFillOne=False)
 #     tree.sortOrbitalsAndEnergies(order = [5,0,6,1,2,8,9,3,4,7])
     
 #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/Biros/Beryllium_order5_1em4')
-    tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/Biros/CO_order5_1em3')
+    tree.exportGridpoints(outputFile)
 #     tree.orthonormalizeOrbitals()
 #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
 
@@ -185,14 +187,22 @@ if __name__ == "__main__":
 #                           minDepth=3, maxDepth=20, divideCriterion='LW5', 
 #                           divideParameter=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
     
+    # param1: wavefunction variation
+    # param2: wavefunction relative variation
+    # param3: absIntegral of wavefunction
+    # param4: density variation   
     
     exportMeshForParaview(domain=20,order=5,
-                        minDepth=3, maxDepth=13, divideCriterion='Krasny', 
+                        minDepth=3, maxDepth=20, depthAtAtoms=13, divideCriterion='Krasny', 
+                        divideParameter1=5, divideParameter2=100, divideParameter3=0.03, divideParameter4=5000,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/Biros/Oxygen_krasny4parameter_p4_5000_p1_5')
+
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
-                        divideParameter=5e-1,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+#                         divideParameter1=1.0, divideParameter2=1.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+#                         divideParameter1=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
 #                         divideParameter=1e-3,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
 #                         divideParameter=1.25e-3,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
-    
+     
     
 #     exportMeshForTreecodeTesting(domain=20,order=7,
 #                         minDepth=3, maxDepth=15, divideCriterion='BirosN', 

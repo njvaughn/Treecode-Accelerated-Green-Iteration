@@ -90,6 +90,7 @@ class Tree(object):
         
         self.coordinateFile = coordinateFile
         
+        
 #         self.mixingParameter=0.5  # (1-mixingParam)*rhoNew
 #         self.mixingParameter=-1 # accelerate with -1
 #         self.occupations = np.ones(nOrbitals)
@@ -249,23 +250,44 @@ class Tree(object):
   
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
 #                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
-                xdiv = Atom.x
-                ydiv = Atom.y
-                zdiv = Atom.z
-                if ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) ):
-                    xdiv = None
-                if ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ):
-                    ydiv = None
-                if ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ):
-                    zdiv = None
-                    
-                Cell.divide(xdiv, ydiv, zdiv)
+                if ( (Atom.x < Cell.xmax) and (Atom.x > Cell.xmin) and 
+                     (Atom.y < Cell.ymax) and (Atom.y > Cell.ymin) and
+                     (Atom.z < Cell.zmax) and (Atom.z > Cell.zmin) ):
+                    xdiv = Atom.x
+                    ydiv = Atom.y
+                    zdiv = Atom.z
+#                     if ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) ):
+#                         xdiv = None
+#                     if ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ):
+#                         ydiv = None
+#                     if ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ):
+#                         zdiv = None
+        
+        
+#                     if ( (xdiv!=None) or (ydiv!=None) or (zdiv!=None) ):    
+                    Cell.divide(xdiv, ydiv, zdiv)
+            
+                    leafCount = 0
+                    for _,cell in self.masterList:
+                        if cell.leaf==True:
+                            leafCount += 1
+                    print('There are now %i leaf cells.' %leafCount)
                 
-                leafCount = 0
-                for _,cell in self.masterList:
-                    if cell.leaf==True:
-                        leafCount += 1
-                print('There are now %i leaf cells.' %leafCount)
+                else:   
+                    if ( ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) )  and 
+                         ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ) and
+                         ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ) ): # atom is at a vertex.
+                        if Cell.level < self.maxDepthAtAtoms: # But have we gone deep enough?
+                            print('Dividing cell %s because it is at depth %i' %(Cell.uniqueID,Cell.level))
+                            xdiv = Cell.xmid
+                            ydiv = Cell.ymid
+                            zdiv = Cell.zmid
+                            Cell.divide(xdiv, ydiv, zdiv)
+                            (ii,jj,kk) = np.shape(Cell.children)
+                            for i in range(ii):
+                                for j in range(jj):
+                                    for k in range(kk):
+                                        recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
         
 #         print('Reading atomic coordinates from: ', coordinateFile)
 #         atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
@@ -282,7 +304,7 @@ class Tree(object):
 #                 self.atoms[i] = atom
 #                 self.atoms[i] = atom
         
-        self.computeNuclearNuclearEnergy()
+        
 #         refineToMinDepth(self,self.root)
 #         
 #         cellCount = 0
@@ -295,6 +317,8 @@ class Tree(object):
         for atom in self.atoms:
             recursiveDivideByAtom(self,atom,self.root)
             self.nAtoms += 1
+            
+        self.computeNuclearNuclearEnergy()
 #         
 # #         # Reset all cells to level 1.  These divides shouldnt count towards its depth.    Do this BEFORE or AFTER aspect ratio divide?  Unclear.
 # #         for _,cell in self.masterList:
@@ -390,7 +414,7 @@ class Tree(object):
             print("max density: ", max(abs(rho)))
             self.importDensityOnLeaves(rho)
 #             print('Should I normalize density??')
-            self.normalizeDensityToValue(totalElectrons) 
+#             self.normalizeDensityToValue(totalElectrons) 
             sources = self.extractLeavesDensity()
             rho = np.copy(sources[:,3])
         
@@ -636,10 +660,12 @@ class Tree(object):
 
  
         
-    def buildTree(self,maxLevels, divideCriterion, divideParameter, initializationType='atomic',printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
+    def buildTree(self,maxLevels, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         # N is roughly the number of grid points.  It is used to generate the density function.
+        
+        divideParameter = divideParameter1 # for methods that use only one divide parameter.
         timer = Timer()
         def recursiveDivide(self, Cell, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
             levelCounter += 1
@@ -684,7 +710,7 @@ class Tree(object):
                     elif divideCriterion=='BirosGN2':
                         Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho_or_v(divideParameter)
                     elif divideCriterion=='Krasny':
-                        Cell.checkWavefunctionVariation(divideParameter)
+                        Cell.checkWavefunctionVariation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
                     
@@ -776,18 +802,20 @@ class Tree(object):
                     
         if printTreeProperties == True: 
             print("Tree build completed. \n"
-                  "Domain Size:                 [%.1f, %.1f] \n"
-                  "Divide Criterion:             %s \n"
-                  "Divide Parameter:            %1.2e \n"
-                  "Total Number of Cells:       %i \n"
-                  "Total Number of Leaf Cells:  %i \n"
-                  "Total Number of Gridpoints:  %i \n"
-                  "Minimum Depth                %i levels \n"
-                  "Maximum Depth:               %i levels \n"
-                  "Cell Order:                  %i \n"
-                  "Construction time:           %.3g seconds."
+                  "Domain Size:                                 [%.1f, %.1f] \n"
+                  "Divide Criterion:                            %s \n"
+                  "Divide Parameter:                            %1.2e \n"
+                  "Total Number of Cells:                       %i \n"
+                  "Total Number of Leaf Cells:                  %i \n"
+                  "Total Number of Gridpoints:                  %i \n"
+                  "Minimum Depth                                %i levels \n"
+                  "Maximum Depth from refinement scheme:        %i levels \n"
+                  "Additional refinement to depth:              %i levels \n"
+                  "Cell Order:                                  %i \n"
+                  "Construction time:                           %.3g seconds."
                    
-                  %(self.xmin, self.xmax, divideCriterion,divideParameter, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved, self.px, timer.elapsedTime))
+                  %(self.xmin, self.xmax, divideCriterion,divideParameter, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved, 
+                    self.maxDepthAtAtoms, self.px, timer.elapsedTime))
             print('Closest gridpoint to origin: ', closestCoords)
             print('For a distance of: ', closestToOrigin)
             print('Part of a cell centered at: ', closestMidpoint) 

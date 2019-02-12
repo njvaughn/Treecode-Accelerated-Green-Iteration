@@ -37,26 +37,30 @@ from greenIterations import greenIterations_KohnSham_SCF#,greenIterations_KohnSh
 domainSize          = int(sys.argv[1])
 minDepth            = int(sys.argv[2])
 maxDepth            = int(sys.argv[3])
-order               = int(sys.argv[4])
-subtractSingularity = int(sys.argv[5])
-smoothingN          = int(sys.argv[6])
-smoothingEps        = float(sys.argv[7])
-divideCriterion     = str(sys.argv[8])
-divideParameter     = float(sys.argv[9])
-energyTolerance     = float(sys.argv[10])
-scfTolerance        = float(sys.argv[11])
-outputFile          = str(sys.argv[12])
-inputFile           = str(sys.argv[13])
-vtkDir              = str(sys.argv[14])
-noGradients         = str(sys.argv[15])
-mixingScheme        = str(sys.argv[16])
-mixingParameter     = float(sys.argv[17])
-GPUpresent          = str(sys.argv[18])
-treecode            = str(sys.argv[19])
-treecodeOrder       = int(sys.argv[20])
-theta               = float(sys.argv[21])
-maxParNode          = int(sys.argv[22])
-batchSize           = int(sys.argv[23])
+depthAtAtoms        = int(sys.argv[4])
+order               = int(sys.argv[5])
+subtractSingularity = int(sys.argv[6])
+smoothingN          = int(sys.argv[7])
+smoothingEps        = float(sys.argv[8])
+divideCriterion     = str(sys.argv[9])
+divideParameter1     = float(sys.argv[10])
+divideParameter2     = float(sys.argv[11])
+energyTolerance     = float(sys.argv[12])
+scfTolerance        = float(sys.argv[13])
+outputFile          = str(sys.argv[14])
+inputFile           = str(sys.argv[15])
+vtkDir              = str(sys.argv[16])
+noGradients         = str(sys.argv[17])
+mixingScheme        = str(sys.argv[18])
+mixingParameter     = float(sys.argv[19])
+GPUpresent          = str(sys.argv[20])
+treecode            = str(sys.argv[21])
+treecodeOrder       = int(sys.argv[22])
+theta               = float(sys.argv[23])
+maxParNode          = int(sys.argv[24])
+batchSize           = int(sys.argv[25])
+divideParameter3     = float(sys.argv[26])
+divideParameter4     = float(sys.argv[27])
 
 
 print('gradientFree = ', noGradients)
@@ -144,7 +148,7 @@ def setUpTree(onlyFillOne=False):
     referenceEigenvalues = np.array( np.genfromtxt(referenceEigenvaluesFile,delimiter=',',dtype=float) )
     print(referenceEigenvalues)
     print(np.shape(referenceEigenvalues))
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,minDepth=minDepth,gaugeShift=gaugeShift,
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,maxDepthAtAtoms=depthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
     tree.referenceEigenvalues = np.copy(referenceEigenvalues)
     tree.occupations = occupations
@@ -152,7 +156,9 @@ def setUpTree(onlyFillOne=False):
     print('type: ', type(tree.nOrbitals))
     
     print('max depth ', maxDepth)
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=onlyFillOne)
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+                    divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
+                    printTreeProperties=True,onlyFillOne=onlyFillOne)
 
 
     
