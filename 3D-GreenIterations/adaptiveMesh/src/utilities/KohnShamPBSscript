@@ -29,14 +29,15 @@ fi
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 DOMAIN=20
-MAXDEPTH=15
+MAXDEPTH=20
+DEPTHATATOMS=13
 MINDEPTH=3
 SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
@@ -49,8 +50,8 @@ GRADIENTFREE='True'
 GPUPRESENT='True'
 
 TREECODE='True'
-#TREECODEORDER=0
-#THETA=0.0
+TREECODEORDER=7
+THETA=0.8
 MAXPARNODE=8000
 BATCHSIZE=8000
 
@@ -58,8 +59,11 @@ BATCHSIZE=8000
 CELLORDER=5
 GAUSSIANALPHA=1.0
 
-MESHTYPE='LW5'
-MESHPARAM=2000
+MESHTYPE='Krasny'
+MESHPARAM1=2
+MESHPARAM2=100
+MESHPARAM3=0.03
+MESHPARAM4=5000
 
 MIXINGPARAMETER=0.5
 
@@ -68,18 +72,21 @@ INTERSCFTOLERANCE=1e-6
 
 MIXING='Anderson'
 
+ 
 
-
-	
-OUTPUTFILE='/home/njvaughn/treecodeKohnShamTesting/Oxygen/tree_LW5_2000_combinedRuns.csv'
-for TREECODEORDER in 5 6 7
+	 
+OUTPUTFILE='/home/njvaughn/krasnyMeshTests/CO/treecode_Krasny4Param_combined_noTitan.csv'
+for DEPTHATATOMS in 13
   do 
-     for THETA in 0.6 0.7 0.8 0.9
+     for MESHPARAM1 in 2
      	do
-			python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $CELLORDER $SINGSUBT \
-				$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-				$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
-				$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE     
-	done
- done
+     		for MESHPARAM3 in 0.03
+     			do
+				python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
+															$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+															$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
+															$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4   
+			done
+		done
+ done 
 

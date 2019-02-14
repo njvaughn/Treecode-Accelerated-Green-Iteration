@@ -414,7 +414,7 @@ class Tree(object):
             print("max density: ", max(abs(rho)))
             self.importDensityOnLeaves(rho)
 #             print('Should I normalize density??')
-#             self.normalizeDensityToValue(totalElectrons) 
+            self.normalizeDensityToValue(totalElectrons) 
             sources = self.extractLeavesDensity()
             rho = np.copy(sources[:,3])
         

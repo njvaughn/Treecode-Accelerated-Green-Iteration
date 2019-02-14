@@ -126,8 +126,8 @@ def setUpTree(onlyFillOne=False):
         for i in range(len(atomData)):
             nElectrons += atomData[i,3]
     
-#     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
-    nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.  
+    nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
+#     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.  
                                             # If the final orbital is unoccupied, this amount is enough. 
                                             # If there is a degeneracy leading to teh final orbital being 
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
@@ -180,14 +180,16 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 #                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
 
-    header = ['domainSize','minDepth','maxDepth','order','numberOfCells','numberOfPoints','gradientFree',
-              'divideCriterion','divideParameter','gaussianAlpha','energyTolerance',
+    header = ['domainSize','minDepth','maxDepth','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
+              'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
+              'gaussianAlpha','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy',
               'Treecode','treecodeOrder','theta','maxParNode','batchSize']
     
-    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
-              divideCriterion,divideParameter,smoothingEps,energyTolerance,
+    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
+              divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
+              smoothingEps,energyTolerance,
               subtractSingularity,
               tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E,
               treecode,treecodeOrder,theta,maxParNode,batchSize]

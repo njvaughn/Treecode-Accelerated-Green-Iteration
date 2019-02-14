@@ -205,6 +205,6 @@ if __name__ == "__main__":
 #     refine_anyWavefunction(8,['psi10', 'psi21'],15,0.5,1.0)
 #     refine_anyWavefunction(8,['psi21'],15,0.7,1000.0)
     
-    refine_singleWavefunction(8,'psi20',15,0.5,10.0, 0.5)
+    refine_singleWavefunction(8,'psi21',15,0.15,1000.0, 500)
     
     

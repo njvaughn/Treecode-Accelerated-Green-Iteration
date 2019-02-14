@@ -194,7 +194,7 @@ if __name__ == "__main__":
     
     exportMeshForParaview(domain=20,order=5,
                         minDepth=3, maxDepth=20, depthAtAtoms=13, divideCriterion='Krasny', 
-                        divideParameter1=5, divideParameter2=100, divideParameter3=0.03, divideParameter4=5000,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+                        divideParameter1=5, divideParameter2=100, divideParameter3=0.03, divideParameter4=5000,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv', 
                         outputFile='/Users/nathanvaughn/Desktop/meshTests/Biros/Oxygen_krasny4parameter_p4_5000_p1_5')
 
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')

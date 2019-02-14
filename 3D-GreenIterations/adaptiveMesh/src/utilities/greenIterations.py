@@ -369,10 +369,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     inputIntraSCFtolerance = np.copy(intraScfTolerance)
 
+    energyResidual=1
     
     residuals = 10*np.ones_like(tree.orbitalEnergies)
     SCFcount=0
-    while ( densityResidual > interScfTolerance ):
+    while ( (densityResidual > interScfTolerance) and (energyResidual > interScfTolerance) ):  # terminate SCF when both energy and density are converged.
         SCFcount += 1
         print()
         print()
@@ -420,7 +421,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 orbitalResidual = 1
                 eigenvalueResidual = 1
                 greenIterationsCount = 1
-                max_GreenIterationsCount = 50
+                max_GreenIterationsCount = 999
                 
     
             
