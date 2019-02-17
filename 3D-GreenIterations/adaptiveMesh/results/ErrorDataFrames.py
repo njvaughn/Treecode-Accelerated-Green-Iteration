@@ -10,7 +10,7 @@ from cycler import cycler
 import os
 import numpy as np
 
-file='runComparison.csv'
+file='runComparison_K.csv'
 
 
 #### Lithium
@@ -29,6 +29,7 @@ file='runComparison.csv'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
+
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
 
 
@@ -40,10 +41,15 @@ file='runComparison.csv'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
 
+#### Krasny Mesh
+resultsDir='/Users/nathanvaughn/Desktop/krasnyMeshTest/Oxygen/'
+
 
 
 #### Treecode Testing
-resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
+# resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
+
+# Oxygen
 TotalEnergy = -7.4469337501098821e+01  # Oxygen Atom
 ExchangeEnergy = -7.2193700828939980e+00
 CorrelationEnergy = -5.4455323568788838e-01
@@ -220,7 +226,7 @@ def logAversusLogBcolorbyC(df,A,B,C,save=False):
     plt.legend(loc = 'best')
     plt.xlabel(B)
     plt.ylabel(A)
-#     plt.ylim([5e-5,2e-2])
+    plt.ylim([1e-4,1e-2])
     plt.grid()
     
     if save == True:
@@ -448,18 +454,29 @@ def totalEnergyErrors_splitByGradientHandling():
 
 if __name__=="__main__":
     
+#     df = df.loc[df['divideParameter3']==0.05]    
+    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter3')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+
+
+#     df = df.loc[df['gradientFree']==1]
+#     df = df.loc[df['maxDepth']>11]
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
     
     
-    
+# #     print( df['numberOfPoints'] )
+#     df = df.loc[df['numberOfPoints']==666000]
+#     df = df.loc[df['treecodeOrder']>0.0]
+#  
 #     df['TreecodeError'] = np.abs( df['TotalEnergy'] + 74.4706852 )
-#     print(df['TreecodeError'])
+# #     print(df['TreecodeError'])
 #     logAversusBcolorbyC(df,'TreecodeError', 'theta', 'treecodeOrder')
 
 
 #     logAversusLogBcolorbyC(df,'TotalEnergyError', 'theta', 'Treecode')
-    logAversusBcolorbyC(df,'TotalEnergyError', 'theta', 'treecodeOrder')
+#     logAversusBcolorbyC(df,'TotalEnergyError', 'theta', 'treecodeOrder')
 
-
+  
 #     energyErrors()
 #     df = df.loc[df['gradientFree']==1]
 #     df = df.loc[df['maxDepth']>11]
