@@ -166,8 +166,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     Eold = -0.5 + gaugeShift
 
 #     [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[4:8]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:9]
-    print([Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal])
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal] = np.genfromtxt(inputFile)[3:9]
+    print([Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal])
 
     ### COMPUTE THE INITIAL HAMILTONIAN ###
     targets = tree.extractLeavesDensity()  
@@ -178,7 +178,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
     print('Integrated density: ', integratedDensity)
 
-#     startCoulombConvolutionTime = timer()
+#     starthartreeConvolutionTime = timer()
     alpha = smoothingEps
     alphasq=alpha*alpha
     
@@ -210,29 +210,29 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         start = time.time()
         
         
-#         V_coulombNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
+#         V_hartreeNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
 #                                                                                                   targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
-# #         V_coulombNew += targets[:,3]* (4*np.pi)* alphasq/2  # Wrong
-#         V_coulombNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
+# #         V_hartreeNew += targets[:,3]* (4*np.pi)* alphasq/2  # Wrong
+#         V_hartreeNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
 
 
-#         V_coulombNew = directSumWrappers.callCompiledC_directSum_Poisson(numTargets, numSources, 
+#         V_hartreeNew = directSumWrappers.callCompiledC_directSum_Poisson(numTargets, numSources, 
 #                                                                         targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
-        potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
+        potentialType=0 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
         alpha = smoothingEps
-        V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+        V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                        targetX, targetY, targetZ, targetValue, 
                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                        potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
           
         if potentialType==2:
-            V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
+            V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
 
         
-#         print('First few terms of V_coulombNew: ', V_coulombNew[:8])
+#         print('First few terms of V_hartreeNew: ', V_hartreeNew[:8])
         print('Convolution time: ', time.time()-start)
         
 #         return
@@ -240,9 +240,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
     elif GPUpresent==True:
         if treecode==False:
-            V_coulombNew = np.zeros((len(targets)))
+            V_hartreeNew = np.zeros((len(targets)))
             start = time.time()
-            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_hartreeNew,alphasq)
             print('Convolution time: ', time.time()-start)
 #             return
         elif treecode==True:
@@ -264,7 +264,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             start = time.time()
             potentialType=2 
             alpha = smoothingEps
-            V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+            V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                            targetX, targetY, targetZ, targetValue, 
                                                            sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                            potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
@@ -275,9 +275,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             return
     
 
-#     CoulombConvolutionTime = timer() - startCoulombConvolutionTime
-#     print('Computing Vcoulomb took:    %.4f seconds. ' %CoulombConvolutionTime)
-    tree.importVcoulombOnLeaves(V_coulombNew)
+#     hartreeConvolutionTime = timer() - starthartreeConvolutionTime
+#     print('Computing Vhartree took:    %.4f seconds. ' %hartreeConvolutionTime)
+    tree.importVhartreeOnLeaves(V_hartreeNew)
     tree.updateVxcAndVeffAtQuadpoints()
     
     
@@ -288,7 +288,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
 #     np.savetxt(sourcesTXT, sources)
 #     np.savetxt(targetsTXT, targets[:,0:4])
-#     np.savetxt(hartreePotentialTXT, V_coulombNew)
+#     np.savetxt(hartreePotentialTXT, V_hartreeNew)
 #     
 #     return
 
@@ -314,10 +314,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Updated V_c:                           %.10f Hartree' %tree.totalVc)
     
     print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalBandEnergy, tree.totalBandEnergy-Eband) )
-    print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Ekinetic) )
+#     print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Ekinetic) )
+    print('Updated E_H:                            %.10f H, %.10e H' %(tree.totalEhartree, tree.totalEhartree-Ehartree) )
     print('Updated E_x:                           %.10f H, %.10e H' %(tree.totalEx, tree.totalEx-Eexchange) )
     print('Updated E_c:                           %.10f H, %.10e H' %(tree.totalEc, tree.totalEc-Ecorrelation) )
-    print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
+#     print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
     print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
     
 #     return
@@ -326,10 +327,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     if printInitialEnergies==True:
         header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
-                  'exchangeEnergy', 'correlationEnergy', 'electrostaticEnergy', 'totalEnergy']
+                  'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy']
     
         myData = [0, 1, tree.orbitalEnergies, tree.totalBandEnergy, tree.totalKinetic, 
-                  tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
+                  tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E]
         
     
         if not os.path.isfile(SCFiterationOutFile):
@@ -374,7 +375,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     residuals = 10*np.ones_like(tree.orbitalEnergies)
     SCFcount=0
-    while ( (densityResidual > interScfTolerance) and (energyResidual > interScfTolerance) ):  # terminate SCF when both energy and density are converged.
+    while ( (densityResidual > interScfTolerance) or (energyResidual > interScfTolerance) ):  # terminate SCF when both energy and density are converged.
         SCFcount += 1
         print()
         print()
@@ -781,14 +782,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         """ 
         Compute new electron-electron potential and update pointwise potential values 
         """
-#         startCoulombConvolutionTime = timer()
+#         starthartreeConvolutionTime = timer()
 
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = np.copy(sources)
         
         if GPUpresent==True:
-            V_coulombNew = np.zeros((len(targets)))
-            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+            V_hartreeNew = np.zeros((len(targets)))
+            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_hartreeNew,alphasq)
             
         else:
             potentialType=2 # shoud be 0.  Set to 1, 2, or 3 just to test other kernels quickly
@@ -797,19 +798,19 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             maxParNode = 500
             batchSize = 500
             alphasq = smoothingEps**2
-            V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+            V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                            targetX, targetY, targetZ, targetValue, 
                                                            sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                            potentialType, alphasq, order, theta, maxParNode, batchSize)
             if potentialType==2:
-                V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
+                V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
         
         
       
-        tree.importVcoulombOnLeaves(V_coulombNew)
+        tree.importVhartreeOnLeaves(V_hartreeNew)
         tree.updateVxcAndVeffAtQuadpoints()
-#         CoulombConvolutionTime = timer() - startCoulombConvolutionTime
-#         print('Computing Vcoulomb and updating Veff took:    %.4f seconds. ' %CoulombConvolutionTime)
+#         hartreeConvolutionTime = timer() - starthartreeConvolutionTime
+#         print('Computing Vhartree and updating Veff took:    %.4f seconds. ' %hartreeConvolutionTime)
 
         
         """ 
@@ -840,10 +841,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         print('Updated V_c:                           %.10f Hartree' %tree.totalVc)
         
         print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalBandEnergy, tree.totalBandEnergy-Eband) )
-        print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Ekinetic) )
+#         print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Ekinetic) )
+        print('Updated E_Hartree:                      %.10f H, %.10e H' %(tree.totalEhartree, tree.totalEhartree-Ehartree) )
         print('Updated E_x:                           %.10f H, %.10e H' %(tree.totalEx, tree.totalEx-Eexchange) )
         print('Updated E_c:                           %.10f H, %.10e H' %(tree.totalEc, tree.totalEc-Ecorrelation) )
-        print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
+#         print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
         print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
         print('Energy Residual:                        %.3e' %energyResidual)
         print('Density Residual:                       %.3e\n\n'%densityResidual)
@@ -859,10 +861,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
         if printEachIteration==True:
             header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
-                      'exchangeEnergy', 'correlationEnergy', 'electrostaticEnergy', 'totalEnergy']
+                      'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy']
         
             myData = [SCFcount, densityResidual, tree.orbitalEnergies, tree.totalBandEnergy, tree.totalKinetic, 
-                      tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
+                      tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E]
             
         
             if not os.path.isfile(SCFiterationOutFile):

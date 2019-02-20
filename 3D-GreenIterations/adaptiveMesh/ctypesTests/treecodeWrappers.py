@@ -22,7 +22,7 @@ import time
 
 
 # _treecodeRoutines = ctypes.CDLL('/Users/nathanvaughn/Documents/GitHub/hybrid-gpu-treecode/lib/libtreedriverWrapper.so')
-_treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/libTitan/libtreedriverWrapper.so')
+_treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib/libtreedriverWrapper.so')
 
 _treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
         ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),

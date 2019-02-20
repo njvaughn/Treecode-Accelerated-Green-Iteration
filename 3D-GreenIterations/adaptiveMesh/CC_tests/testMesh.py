@@ -14,7 +14,7 @@ ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3
 from TreeStruct_CC import Tree
 
 
-def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, divideCriterion, divideParameter,inputFile):
+def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, divideParameter1, divideParameter2, divideParameter3, divideParameter4, inputFile):
 
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
     [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
@@ -33,13 +33,19 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, divideCriterio
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
-    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,minDepth=minDepth,gaugeShift=gaugeShift,
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=depthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
+    
+    
+    
 
     
     print('max depth ', maxDepth)
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
-    
+
+#     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+                    divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
+                    printTreeProperties=True,onlyFillOne=False)
     
 #     sourcesTXT = '../examples/S%ipy.txt' %tree.numberOfGridpoints
 #     targetsTXT = '../examples/T%ipy.txt' %tree.numberOfGridpoints
@@ -78,7 +84,11 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, depthAtAtoms, divideC
         for i in range(len(atomData)):
             nElectrons += atomData[i,3]
     
-    nOrbitals = int( np.ceil(nElectrons/2)+1)
+    nOrbitals = int( np.ceil(nElectrons/2))
+#     nOrbitals = int( np.ceil(nElectrons/2)+1)
+
+    if inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
+        nOrbitals = 30
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
@@ -99,7 +109,7 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, depthAtAtoms, divideC
 
     print('Meshes Exported.')
     
-def timingTestsForOrbitalInitializations(domain,order,minDepth, maxDepth, divideCriterion, divideParameter,inputFile):
+def timingTestsForOrbitalInitializations(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, divideParameter,inputFile):
     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
     [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
     nElectrons = int(nElectrons)
@@ -192,10 +202,15 @@ if __name__ == "__main__":
     # param3: absIntegral of wavefunction
     # param4: density variation   
     
-    exportMeshForParaview(domain=20,order=5,
-                        minDepth=3, maxDepth=20, depthAtAtoms=13, divideCriterion='Krasny', 
-                        divideParameter1=5, divideParameter2=100, divideParameter3=0.03, divideParameter4=5000,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/Biros/Oxygen_krasny4parameter_p4_5000_p1_5')
+    exportMeshForParaview(domain=20,order=3,
+                        minDepth=3, maxDepth=20, depthAtAtoms=5, divideCriterion='LW5', 
+                        divideParameter1=500, divideParameter2=100, divideParameter3=0.05, divideParameter4=5000,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/LW5_500')
+
+#     exportMeshForTreecodeTesting(domain=20,order=5,
+#                         minDepth=3, maxDepth=20, depthAtAtoms=13, divideCriterion='Krasny', 
+#                         divideParameter1=5, divideParameter2=100, divideParameter3=0.03, divideParameter4=5000,
+#                         inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
 
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
 #                         divideParameter1=1.0, divideParameter2=1.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')

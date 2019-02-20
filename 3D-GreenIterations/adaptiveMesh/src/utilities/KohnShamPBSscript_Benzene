@@ -1,0 +1,84 @@
+####  PBS preamble
+
+#PBS -N benzeneGreenIterations
+#PBS -M njvaughn@umich.edu
+#PBS -m a
+
+#PBS -A krasny_fluxg
+#PBS -l qos=flux
+#PBS -q fluxg
+
+
+#PBS -l nodes=1:gpus=1:titanv,mem=8gb
+#PBS -l walltime=36:00:00
+#PBS -j oe
+#PBS -V
+
+####  End PBS preamble
+
+if [ -s "$PBS_NODEFILE" ] ; then
+    echo "Running on"
+    uniq -c $PBS_NODEFILE
+fi
+
+if [ -d "$PBS_O_WORKDIR" ] ; then
+    cd $PBS_O_WORKDIR
+    echo "Running from $PBS_O_WORKDIR"
+fi
+
+
+
+#!/bin/bash
+
+cd /home/njvaughn/hybrid-gpu-treecode/src
+make clean;make
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
+
+DOMAIN=20
+MAXDEPTH=20
+MINDEPTH=3
+SINGSUBT=1
+SMOOTHINGN=0
+SMOOTHINGEPS=0
+
+INPUTFILE='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv'
+
+VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
+
+
+GRADIENTFREE='True'
+GPUPRESENT='True'
+
+TREECODE='False'
+TREECODEORDER=0
+THETA=0.0
+MAXPARNODE=8000
+BATCHSIZE=8000
+
+
+CELLORDER=5
+GAUSSIANALPHA=1.0
+
+MESHTYPE='LW5'
+MESHPARAM1=800
+MESHPARAM2=100
+MESHPARAM3=0.03
+MESHPARAM4=5000
+
+MIXINGPARAMETER=0.3  
+ 
+INTRASCFTOLERANCE=1e-7
+INTERSCFTOLERANCE=5e-6
+ 
+MIXING='Anderson'   
+  
+DEPTHATATOMS=13
+OUTPUTFILE='/home/njvaughn/synchronizedDataFiles/benzene/ds_LW5_800.csv'
+python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
+															$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+															$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
+															$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4  
+  
+												
+	

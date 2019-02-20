@@ -9,6 +9,7 @@ Created on Mar 13, 2018
 '''
 import os
 import sys
+import time
 # from docutils.nodes import reference
 sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
@@ -138,6 +139,11 @@ def setUpTree(onlyFillOne=False):
     
     
 #     nOrbitals = 6
+
+    if inputFile=='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv':
+        nOrbitals=5
+    elif inputFile=='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
+        nOrbitals=7
     occupations = 2*np.ones(nOrbitals)
 #     occupations[-1] = 0
     print('in testBatchGreen..., nOrbitals = ', nOrbitals)
@@ -167,6 +173,8 @@ def setUpTree(onlyFillOne=False):
     
 def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None):
     
+    
+    startTime = time.time()
     tree.E = -1.0 # set initial energy guess
 
 
@@ -179,20 +187,22 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 #                                 smoothingN, smoothingEps,auxiliaryFile=auxiliaryFile, 
 #                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
+    totalKohnShamTime = time.time()-startTime
+    print('Total Time: ', totalKohnShamTime)
 
     header = ['domainSize','minDepth','maxDepth','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
               'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
               'gaussianAlpha','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
-              'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy',
-              'Treecode','treecodeOrder','theta','maxParNode','batchSize']
+              'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
+              'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
               divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
               smoothingEps,energyTolerance,
               subtractSingularity,
-              tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E,
-              treecode,treecodeOrder,theta,maxParNode,batchSize]
+              tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E,
+              treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime]
 #               tree.E, tree.
 #               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     

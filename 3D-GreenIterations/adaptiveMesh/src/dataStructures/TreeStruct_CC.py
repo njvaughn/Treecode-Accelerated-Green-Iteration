@@ -253,6 +253,7 @@ class Tree(object):
                 if ( (Atom.x < Cell.xmax) and (Atom.x > Cell.xmin) and 
                      (Atom.y < Cell.ymax) and (Atom.y > Cell.ymin) and
                      (Atom.z < Cell.zmax) and (Atom.z > Cell.zmin) ):
+                    print('Dividing cell %s because atom is in interior.' %(Cell.uniqueID))
                     xdiv = Atom.x
                     ydiv = Atom.y
                     zdiv = Atom.z
@@ -272,13 +273,18 @@ class Tree(object):
                         if cell.leaf==True:
                             leafCount += 1
                     print('There are now %i leaf cells.' %leafCount)
-                
+                    (ii,jj,kk) = np.shape(Cell.children)
+                    for i in range(ii):
+                        for j in range(jj):
+                            for k in range(kk):
+                                recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
+        
                 else:   
                     if ( ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) )  and 
                          ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ) and
                          ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ) ): # atom is at a vertex.
                         if Cell.level < self.maxDepthAtAtoms: # But have we gone deep enough?
-                            print('Dividing cell %s because it is at depth %i' %(Cell.uniqueID,Cell.level))
+                            print('Dividing cell %s because atom is at corner and it is at depth %i' %(Cell.uniqueID,Cell.level))
                             xdiv = Cell.xmid
                             ydiv = Cell.ymid
                             zdiv = Cell.zmid
@@ -830,7 +836,7 @@ class Tree(object):
         
         def CellupdateVxcAndVeff(cell,exchangeFunctional, correlationFunctional):
             '''
-            After density is updated the convolution gets called to update V_coulomb.
+            After density is updated the convolution gets called to update V_hartree.
             Now I need to update v_xc, then get the new value of v_eff. 
             '''
             
@@ -1006,7 +1012,7 @@ class Tree(object):
         
         V_x = 0.0
         V_c = 0.0
-        V_coulomb = 0.0
+        V_hartree = 0.0
         E_x = 0.0
         E_c = 0.0
         E_electronNucleus = 0.0
@@ -1016,31 +1022,31 @@ class Tree(object):
             if cell.leaf == True:
                 V_x += integrateCellDensityAgainst__(cell,'v_x')
                 V_c += integrateCellDensityAgainst__(cell,'v_c')
-                V_coulomb += integrateCellDensityAgainst__(cell,'v_coulomb')
+                V_hartree += integrateCellDensityAgainst__(cell,'v_hartree')
                 E_x += integrateCellDensityAgainst__(cell,'epsilon_x')
                 E_c += integrateCellDensityAgainst__(cell,'epsilon_c')
                 E_electronNucleus += integrateCellDensityAgainst__(cell,'v_ext')
                 
         self.totalVx = V_x
         self.totalVc = V_c
-        self.totalVcoulomb = V_coulomb
-#         self.totalElectrostatic = -1/2*V_coulomb - V_x - V_c + self.nuclearNuclear + self.totalOrbitalPotential
-        self.totalElectrostatic = 1/2*V_coulomb + self.nuclearNuclear + E_electronNucleus
+        self.totalEhartree = 1/2*V_hartree
+#         self.totalElectrostatic = -1/2*V_hartree - V_x - V_c + self.nuclearNuclear + self.totalOrbitalPotential
+        self.totalElectrostatic = 1/2*V_hartree + self.nuclearNuclear + E_electronNucleus
         self.totalEx = E_x
         self.totalEc = E_c
         self.totalVext = E_electronNucleus
 #         print('Total V_xc : ')
         
         print('Electrostatic Energies:')
-        print('Hartree:         ', 1/2*V_coulomb)
+        print('Hartree:         ', 1/2*V_hartree)
         print('External:        ', E_electronNucleus)
         print('Nuclear-Nuclear: ', self.nuclearNuclear)
 #         print('Sanity check...')
 #         print('Band minus kinetic: ', self.totalBandEnergy - self.totalKinetic)
 #         print('Electrostatic minus external and Nuclear plus V_x and V_c: ', self.totalElectrostatic - self.nuclearNuclear - E_electronNucleus + self.totalVc + self.totalVx)
         
-#         self.totalPotential = -1/2*V_coulomb + E_xc - V_xc 
-#         self.totalPotential = -1/2*V_coulomb + E_x + E_c - V_x - V_c + self.nuclearNuclear
+#         self.totalPotential = -1/2*V_hartree + E_xc - V_xc 
+#         self.totalPotential = -1/2*V_hartree + E_x + E_c - V_x - V_c + self.nuclearNuclear
         self.totalPotential = self.totalElectrostatic +  E_x + E_c # - V_x - V_c 
                 
         
@@ -1057,10 +1063,10 @@ class Tree(object):
     def updateTotalEnergy(self,gradientFree):
         self.computeBandEnergy()
         self.computeTotalPotential()
-        self.totalKinetic = self.totalBandEnergy - self.totalVcoulomb - self.totalVx - self.totalVc - self.totalVext
+        self.totalKinetic = self.totalBandEnergy - 2*self.totalEhartree - self.totalVx - self.totalVc - self.totalVext
         
         if gradientFree==True:
-            self.E = self.totalBandEnergy - 1/2 * self.totalVcoulomb + self.totalEx + self.totalEc - self.totalVx - self.totalVc + self.nuclearNuclear
+            self.E = self.totalBandEnergy - self.totalEhartree + self.totalEx + self.totalEc - self.totalVx - self.totalVc + self.nuclearNuclear
             print('Updating total energy without explicit kinetic evaluation.')
         elif gradientFree==False:
             print('Updating total energy WITH explicit kinetic evaluation.')
@@ -2238,7 +2244,7 @@ class Tree(object):
             print(importIndex)
             print(len(phiNew))
             
-    def importVcoulombOnLeaves(self,V_coulombNew):
+    def importVhartreeOnLeaves(self,V_hartreeNew):
         '''
         Import V_coulomn values, apply to leaves
         '''
@@ -2248,13 +2254,13 @@ class Tree(object):
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
-                    gridpt.v_coulomb = V_coulombNew[importIndex]
+                    gridpt.v_hartree = V_hartreeNew[importIndex]
                     importIndex += 1
 
-        if importIndex != len(V_coulombNew):
-            print('Warning: import index not equal to len(V_coulombNew)')
+        if importIndex != len(V_hartreeNew):
+            print('Warning: import index not equal to len(V_hartreeNew)')
             print(importIndex)
-            print(len(V_coulombNew))
+            print(len(V_hartreeNew))
             
     
                 
@@ -2363,11 +2369,31 @@ class Tree(object):
         phi2 = []
         phi3 = []
         phi4 = []
-#         phi5 = []
-#         phi6 = []
-#         phi7 = []
-#         phi8 = []
-#         phi9 = []
+        phi5 = []
+        phi6 = []
+        phi7 = []
+        phi8 = []
+        phi9 = []
+        phi10 = []
+        phi11 = []
+        phi12 = []
+        phi13 = []
+        phi14 = []
+        phi15 = []
+        phi16 = []
+        phi17 = []
+        phi18 = []
+        phi19 = []
+        phi20 = []
+        phi21 = []
+        phi22 = []
+        phi23 = []
+        phi24 = []
+        phi25 = []
+        phi26 = []
+        phi27 = []
+        phi28 = []
+        phi29 = []
         for _,cell in self.masterList:
             if cell.leaf==True:
                 for i,j,k in cell.PxByPyByPz:
@@ -2382,15 +2408,45 @@ class Tree(object):
                     phi2.append(gp.phi[2])
                     phi3.append(gp.phi[3])
                     phi4.append(gp.phi[4])
-#                     phi5.append(gp.phi[5])
-#                     phi6.append(gp.phi[6])
-#                     phi7.append(gp.phi[7])
-#                     phi8.append(gp.phi[8])
-#                     phi9.append(gp.phi[9])
-        
+                    phi5.append(gp.phi[5])
+                    phi6.append(gp.phi[6])
+                    phi7.append(gp.phi[7])
+                    phi8.append(gp.phi[8])
+                    phi9.append(gp.phi[9])
+                    phi10.append(gp.phi[10])
+                    phi11.append(gp.phi[11])
+                    phi12.append(gp.phi[12])
+                    phi13.append(gp.phi[13])
+                    phi14.append(gp.phi[14])
+                    phi15.append(gp.phi[15])
+                    phi16.append(gp.phi[16])
+                    phi17.append(gp.phi[17])
+                    phi18.append(gp.phi[18])
+                    phi19.append(gp.phi[19])
+                    phi20.append(gp.phi[20])
+                    phi21.append(gp.phi[21])
+                    phi22.append(gp.phi[22])
+                    phi23.append(gp.phi[23])
+                    phi24.append(gp.phi[24])
+                    phi25.append(gp.phi[25])
+                    phi26.append(gp.phi[26])
+                    phi27.append(gp.phi[27])
+                    phi28.append(gp.phi[28])
+                    phi29.append(gp.phi[29])
+                    
+                    
         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
-                    {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),#}) ,
-                    "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4) } )#,
+                    {"rho"  : np.array(rho),       "V" : np.array(v),  
+                    "Phi0"  : np.array(phi0),  "Phi1"  : np.array(phi1),  "Phi2"  : np.array(phi2),  "Phi3"  : np.array(phi3),  "Phi4"  : np.array(phi4),  
+                    "Phi5"  : np.array(phi5),  "Phi6"  : np.array(phi6),  "Phi7"  : np.array(phi7),  "Phi8"  : np.array(phi8),  "Phi9"  : np.array(phi9), 
+                    "Phi10" : np.array(phi10), "Phi11" : np.array(phi11), "Phi12" : np.array(phi12), "Phi13" : np.array(phi13), "Phi14" : np.array(phi14),  
+                    "Phi15" : np.array(phi15), "Phi16" : np.array(phi16), "Phi17" : np.array(phi17), "Phi18" : np.array(phi18), "Phi19" : np.array(phi19), 
+                    "Phi20" : np.array(phi20), "Phi21" : np.array(phi21), "Phi22" : np.array(phi22), "Phi23" : np.array(phi23), "Phi24" : np.array(phi24),  
+                    "Phi25" : np.array(phi25), "Phi26" : np.array(phi26), "Phi27" : np.array(phi27), "Phi28" : np.array(phi28), "Phi29" : np.array(phi29) } )
+        
+#         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
+#                     {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),#}) ,
+#                     "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4) } )#,
 #                      "Phi5" : np.array(phi5), "Phi6" : np.array(phi6),#}) #,
 #                      "Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})
         

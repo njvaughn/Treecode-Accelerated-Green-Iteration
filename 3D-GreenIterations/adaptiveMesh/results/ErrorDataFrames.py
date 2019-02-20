@@ -10,7 +10,7 @@ from cycler import cycler
 import os
 import numpy as np
 
-file='runComparison_K.csv'
+file='runComparison.csv'
 
 
 #### Lithium
@@ -42,8 +42,8 @@ file='runComparison_K.csv'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
 
 #### Krasny Mesh
-resultsDir='/Users/nathanvaughn/Desktop/krasnyMeshTest/Oxygen/'
-
+# resultsDir='/Users/nathanvaughn/Desktop/krasnyMeshTest/Oxygen/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
 
 
 #### Treecode Testing
@@ -454,11 +454,12 @@ def totalEnergyErrors_splitByGradientHandling():
 
 if __name__=="__main__":
     
-#     df = df.loc[df['divideParameter3']==0.05]    
-    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter3')
-#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     df = df.loc[df['depthAtAtoms']==13]    
+    df = df.loc[df['Treecode']==False]    
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter1')
+    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'depthAtAtoms')   
 
-
+ 
 #     df = df.loc[df['gradientFree']==1]
 #     df = df.loc[df['maxDepth']>11]
 #     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
