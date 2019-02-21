@@ -58,6 +58,8 @@ class Cell(object):
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         self.PxByPyByPz_density = [element for element in itertools.product(range(self.pxd),range(self.pyd),range(self.pzd))]
         self.setCellMidpointAndVolume()
+        self.setNearestAtom()
+        
         
         if hasattr(self, "tree"):
 #             print('Cell has attribute tree')
@@ -118,6 +120,19 @@ class Cell(object):
                 
         return L/l
     
+    
+    """ 
+    NEAREST ATOM(S)
+    """
+    
+    def setNearestAtom(self):
+        minDistSq = np.inf
+        for atom in self.tree.atoms:
+            distSq = (self.xmid - atom.x)**2 + (self.ymid - atom.y)**2 + (self.zmid - atom.z)**2 
+            
+            if distSq < minDistSq:
+                self.nearestAtom = atom
+                minDistSq = distSq
     
     """
     NEIGHBOR IDENTIFICATION AN LABELING FUNCTIONS
@@ -498,91 +513,104 @@ class Cell(object):
         maxAbsIntegral = 0.0
         relVariationCause=-2
     
-        for atom in self.tree.atoms:
-            nAtomicOrbitals = atom.nAtomicOrbitals
+#         for atom in self.tree.atoms:
+        atom = self.nearestAtom
+#         nAtomicOrbitals = atom.nAtomicOrbitals
+        if atom.atomicNumber <= 4:
+            nAtomicOrbitals = 2
+        elif atom.atomicNumber <= 10:
+            nAtomicOrbitals = 5
+        elif atom.atomicNumber <= 12:
+            nAtomicOrbitals = 6
+        elif atom.atomicNumber <= 18:
+            nAtomicOrbitals = 9
+        elif atom.atomicNumber <= 20:
+            nAtomicOrbitals = 10
+        else:
+            print('Atom with atomic number %i.  How many wavefunctions should be used in mesh refinement scheme?' %atom.nAtomicOrbitals)
+        
+        for i,j,k in TwoByTwoByTwo:
+            dx = xmm[i]-atom.x
+            dy = ymm[j]-atom.y
+            dz = zmm[k]-atom.z
+            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+            inclination = np.arccos(dz/r)
+            azimuthal = np.arctan2(dy,dx)
             
-            for i,j,k in TwoByTwoByTwo:
-                dx = xmm[i]-atom.x
-                dy = ymm[j]-atom.y
-                dz = zmm[k]-atom.z
-                r = np.sqrt( dx**2 + dy**2 + dz**2 )
-                inclination = np.arccos(dz/r)
-                azimuthal = np.arctan2(dy,dx)
-                
-                density = atom.interpolators['density'](r)
-                 
-                if ( (i==0) and (j==0) and (k==0)): 
-                    maxDensity = density
-                    minDensity = density
-                else:
-                    if density>maxDensity: maxDensity = density
-                    if density<minDensity: minDensity = density
+            density = atom.interpolators['density'](r)
              
-            densityVariation = (maxDensity-minDensity)
-            if densityVariation>maxDensityVariation:
-                maxDensityVariation = densityVariation
-                densityVariationCause = -1
-           
-            singleAtomOrbitalCount=0
-            for nell in aufbauList:
-                
-                if singleAtomOrbitalCount< nAtomicOrbitals:  
-                    n = int(nell[0])
-                    ell = int(nell[1])
-                    psiID = 'psi'+str(n)+str(ell)
-                    for m in range(-ell,ell+1):
-                        
-                        
-                        absIntegral = 0.0
+            if ( (i==0) and (j==0) and (k==0)): 
+                maxDensity = density
+                minDensity = density
+            else:
+                if density>maxDensity: maxDensity = density
+                if density<minDensity: minDensity = density
+         
+        densityVariation = (maxDensity-minDensity)
+        if densityVariation>maxDensityVariation:
+            maxDensityVariation = densityVariation
+            densityVariationCause = -1
+       
+        singleAtomOrbitalCount=0
+        for nell in aufbauList:
+            
+            if singleAtomOrbitalCount< nAtomicOrbitals:  
+                n = int(nell[0])
+                ell = int(nell[1])
+                psiID = 'psi'+str(n)+str(ell)
+                for m in range(-ell,ell+1):
+                    
+                    
+                    absIntegral = 0.0
 
-                        for i,j,k in TwoByTwoByTwo:
-                            dx = xmm[i]-atom.x
-                            dy = ymm[j]-atom.y
-                            dz = zmm[k]-atom.z
-                            r = np.sqrt( dx**2 + dy**2 + dz**2 )
-                            inclination = np.arccos(dz/r)
-                            azimuthal = np.arctan2(dy,dx)
+                    for i,j,k in TwoByTwoByTwo:
+                        dx = xmm[i]-atom.x
+                        dy = ymm[j]-atom.y
+                        dz = zmm[k]-atom.z
+                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                        inclination = np.arccos(dz/r)
+                        azimuthal = np.arctan2(dy,dx)
+                    
                         
-                            
-                        
-                            if m<0:
-                                Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
-                            if m>0:
-                                Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
-                            if ( m==0 ):
-                                Y = sph_harm(m,ell,azimuthal,inclination)
+                    
+                        if m<0:
+                            Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                        if m>0:
+                            Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+                        if ( m==0 ):
+                            Y = sph_harm(m,ell,azimuthal,inclination)
 
 
-                            psi = atom.interpolators[psiID](r)*np.real(Y)
-                            
-                            if ( (i==0) and (j==0) and (k==0)): 
-                                maxPsi = psi
-                                minPsi = psi
-                            else:
-                                if psi>maxPsi: maxPsi = psi
-                                if psi<minPsi: minPsi = psi
-                            
-                            absIntegral += abs(psi)*self.volume/8
-                               
+                        psi = atom.interpolators[psiID](r)*np.real(Y)
+                        
+                        if ( (i==0) and (j==0) and (k==0)): 
+                            maxPsi = psi
+                            minPsi = psi
+                        else:
+                            if psi>maxPsi: maxPsi = psi
+                            if psi<minPsi: minPsi = psi
+                        
+                        absIntegral += abs(psi)*self.volume/8
+                           
 
-                        variation = maxPsi-minPsi
-                        
-                        maxabs = max(abs(maxPsi), abs(minPsi))
-                        relVariation = (maxPsi-minPsi) / maxabs
-                        
-                        
-                        if variation>maxVariation:
-                            maxVariation = variation
-                            variationCause = orbitalIndex
-                        if relVariation>maxRelVariation:
-                            maxRelVariation = relVariation
-                            relVariationCause = orbitalIndex
-                        if absIntegral > maxAbsIntegral:
-                            maxAbsIntegral = absIntegral
-                            absIntegralCause = orbitalIndex
-                        orbitalIndex += 1
-                        singleAtomOrbitalCount += 1
-                        
+                    variation = maxPsi-minPsi
+                    
+                    maxabs = max(abs(maxPsi), abs(minPsi))
+                    relVariation = (maxPsi-minPsi) / maxabs
+                    
+                    
+                    if variation>maxVariation:
+                        maxVariation = variation
+                        variationCause = orbitalIndex
+                    if relVariation>maxRelVariation:
+                        maxRelVariation = relVariation
+                        relVariationCause = orbitalIndex
+                    if absIntegral > maxAbsIntegral:
+                        maxAbsIntegral = absIntegral
+                        absIntegralCause = orbitalIndex
+                    orbitalIndex += 1
+                    singleAtomOrbitalCount += 1
+                    
         return maxVariation, maxDensityVariation, maxAbsIntegral, maxRelVariation, variationCause, densityVariationCause, absIntegralCause, relVariationCause
     
     

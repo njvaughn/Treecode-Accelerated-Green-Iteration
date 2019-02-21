@@ -2410,44 +2410,44 @@ class Tree(object):
                     phi4.append(gp.phi[4])
                     phi5.append(gp.phi[5])
                     phi6.append(gp.phi[6])
-                    phi7.append(gp.phi[7])
-                    phi8.append(gp.phi[8])
-                    phi9.append(gp.phi[9])
-                    phi10.append(gp.phi[10])
-                    phi11.append(gp.phi[11])
-                    phi12.append(gp.phi[12])
-                    phi13.append(gp.phi[13])
-                    phi14.append(gp.phi[14])
-                    phi15.append(gp.phi[15])
-                    phi16.append(gp.phi[16])
-                    phi17.append(gp.phi[17])
-                    phi18.append(gp.phi[18])
-                    phi19.append(gp.phi[19])
-                    phi20.append(gp.phi[20])
-                    phi21.append(gp.phi[21])
-                    phi22.append(gp.phi[22])
-                    phi23.append(gp.phi[23])
-                    phi24.append(gp.phi[24])
-                    phi25.append(gp.phi[25])
-                    phi26.append(gp.phi[26])
-                    phi27.append(gp.phi[27])
-                    phi28.append(gp.phi[28])
-                    phi29.append(gp.phi[29])
+#                     phi7.append(gp.phi[7])
+#                     phi8.append(gp.phi[8])
+#                     phi9.append(gp.phi[9])
+#                     phi10.append(gp.phi[10])
+#                     phi11.append(gp.phi[11])
+#                     phi12.append(gp.phi[12])
+#                     phi13.append(gp.phi[13])
+#                     phi14.append(gp.phi[14])
+#                     phi15.append(gp.phi[15])
+#                     phi16.append(gp.phi[16])
+#                     phi17.append(gp.phi[17])
+#                     phi18.append(gp.phi[18])
+#                     phi19.append(gp.phi[19])
+#                     phi20.append(gp.phi[20])
+#                     phi21.append(gp.phi[21])
+#                     phi22.append(gp.phi[22])
+#                     phi23.append(gp.phi[23])
+#                     phi24.append(gp.phi[24])
+#                     phi25.append(gp.phi[25])
+#                     phi26.append(gp.phi[26])
+#                     phi27.append(gp.phi[27])
+#                     phi28.append(gp.phi[28])
+#                     phi29.append(gp.phi[29])
                     
                     
-        pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
-                    {"rho"  : np.array(rho),       "V" : np.array(v),  
-                    "Phi0"  : np.array(phi0),  "Phi1"  : np.array(phi1),  "Phi2"  : np.array(phi2),  "Phi3"  : np.array(phi3),  "Phi4"  : np.array(phi4),  
-                    "Phi5"  : np.array(phi5),  "Phi6"  : np.array(phi6),  "Phi7"  : np.array(phi7),  "Phi8"  : np.array(phi8),  "Phi9"  : np.array(phi9), 
-                    "Phi10" : np.array(phi10), "Phi11" : np.array(phi11), "Phi12" : np.array(phi12), "Phi13" : np.array(phi13), "Phi14" : np.array(phi14),  
-                    "Phi15" : np.array(phi15), "Phi16" : np.array(phi16), "Phi17" : np.array(phi17), "Phi18" : np.array(phi18), "Phi19" : np.array(phi19), 
-                    "Phi20" : np.array(phi20), "Phi21" : np.array(phi21), "Phi22" : np.array(phi22), "Phi23" : np.array(phi23), "Phi24" : np.array(phi24),  
-                    "Phi25" : np.array(phi25), "Phi26" : np.array(phi26), "Phi27" : np.array(phi27), "Phi28" : np.array(phi28), "Phi29" : np.array(phi29) } )
-        
 #         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
-#                     {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),#}) ,
-#                     "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4) } )#,
-#                      "Phi5" : np.array(phi5), "Phi6" : np.array(phi6),#}) #,
+#                     {"rho"  : np.array(rho),       "V" : np.array(v),  
+#                     "Phi0"  : np.array(phi0),  "Phi1"  : np.array(phi1),  "Phi2"  : np.array(phi2),  "Phi3"  : np.array(phi3),  "Phi4"  : np.array(phi4),  
+#                     "Phi5"  : np.array(phi5),  "Phi6"  : np.array(phi6),  "Phi7"  : np.array(phi7),  "Phi8"  : np.array(phi8),  "Phi9"  : np.array(phi9), 
+#                     "Phi10" : np.array(phi10), "Phi11" : np.array(phi11), "Phi12" : np.array(phi12), "Phi13" : np.array(phi13), "Phi14" : np.array(phi14),  
+#                     "Phi15" : np.array(phi15), "Phi16" : np.array(phi16), "Phi17" : np.array(phi17), "Phi18" : np.array(phi18), "Phi19" : np.array(phi19), 
+#                     "Phi20" : np.array(phi20), "Phi21" : np.array(phi21), "Phi22" : np.array(phi22), "Phi23" : np.array(phi23), "Phi24" : np.array(phi24),  
+#                     "Phi25" : np.array(phi25), "Phi26" : np.array(phi26), "Phi27" : np.array(phi27), "Phi28" : np.array(phi28), "Phi29" : np.array(phi29) } )
+        
+        pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
+                    {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),#}) ,
+                    "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4),#,
+                     "Phi5" : np.array(phi5), "Phi6" : np.array(phi6)  } )
 #                      "Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})
         
         

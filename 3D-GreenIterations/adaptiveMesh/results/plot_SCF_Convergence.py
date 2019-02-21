@@ -13,7 +13,7 @@ import numpy as np
 
 # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
 # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
-# #resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
 # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
 # #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
@@ -46,6 +46,8 @@ import numpy as np
 # # file='BirosG_o7_max15_SCF_.csv'
 # file='BirosG_o7_1em5_SCF_.csv'
 
+
+## Krasny refine for oxygen
 resultsDir = '/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
 plotsDir = resultsDir+'plots/'
 file='ds_krasnyRefine_maxDepth14_3_100_0p03_5000_SCF_.csv'
@@ -167,8 +169,8 @@ def plotSCFconvergence(df, system = 'H2'):
 if __name__=="__main__":
     
 #     plotSCFconvergence(df, system="carbonMonoxide")    
-#    plotSCFconvergence(df, system="Beryllium")    
-    plotSCFconvergence(df, system="Oxygen")    
+    plotSCFconvergence(df, system="Beryllium")    
+#     plotSCFconvergence(df, system="Oxygen")    
 
 
 

@@ -202,9 +202,9 @@ if __name__ == "__main__":
     # param3: absIntegral of wavefunction
     # param4: density variation   
     
-    exportMeshForParaview(domain=20,order=3,
-                        minDepth=3, maxDepth=20, depthAtAtoms=5, divideCriterion='LW5', 
-                        divideParameter1=500, divideParameter2=100, divideParameter3=0.05, divideParameter4=5000,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+    exportMeshForParaview(domain=20,order=6,
+                        minDepth=3, maxDepth=20, depthAtAtoms=15, divideCriterion='Krasny', 
+                        divideParameter1=5, divideParameter2=100, divideParameter3=0.05, divideParameter4=100,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
                         outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/LW5_500')
 
 #     exportMeshForTreecodeTesting(domain=20,order=5,

@@ -3,22 +3,14 @@
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
-cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
-
 DOMAIN=20
 MAXDEPTH=20
-DEPTHATATOMS=13
 MINDEPTH=3
 SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 
 VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 
@@ -27,8 +19,8 @@ GRADIENTFREE='True'
 GPUPRESENT='True'
 
 TREECODE='False'
-TREECODEORDER=7
-THETA=0.8
+TREECODEORDER=0
+THETA=0.0
 MAXPARNODE=8000
 BATCHSIZE=8000
 
@@ -36,23 +28,25 @@ BATCHSIZE=8000
 CELLORDER=5
 GAUSSIANALPHA=1.0
 
-MESHTYPE='LW5'
-MESHPARAM1=500
+MESHTYPE='Krasny'
+MESHPARAM1=5
 MESHPARAM2=100
-MESHPARAM3=0.03
+MESHPARAM3=0.05
 MESHPARAM4=5000
 
-MIXINGPARAMETER=0.5
+MIXINGPARAMETER=0.3  
+ 
+INTRASCFTOLERANCE=1e-7  
+INTERSCFTOLERANCE=5e-6 
+ 
+MIXING='Anderson'   
 
-INTRASCFTOLERANCE=1e7
-INTERSCFTOLERANCE=1e6
+DEPTHATATOMS=15
 
-MIXING='Anderson'
 
-OUTPUTFILE='/home/njvaughn/testing2/testing.csv'
-
+OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/CO/ds_krasnyRefine_maxDepth${DEPTHATATOMS}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
 python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
 															$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 															$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
-															$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4   
-			
+															$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4  
+

@@ -17,7 +17,7 @@ file='runComparison.csv'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/'
 
 #### Beryllium
-##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/'
 
 #### H2
@@ -30,7 +30,7 @@ file='runComparison.csv'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
 
-# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
 
 
 #### Biros Meshes
@@ -43,7 +43,7 @@ file='runComparison.csv'
 
 #### Krasny Mesh
 # resultsDir='/Users/nathanvaughn/Desktop/krasnyMeshTest/Oxygen/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
 
 
 #### Treecode Testing
@@ -226,7 +226,7 @@ def logAversusLogBcolorbyC(df,A,B,C,save=False):
     plt.legend(loc = 'best')
     plt.xlabel(B)
     plt.ylabel(A)
-    plt.ylim([1e-4,1e-2])
+#     plt.ylim([1e-4,5e-2])
     plt.grid()
     
     if save == True:
@@ -454,10 +454,11 @@ def totalEnergyErrors_splitByGradientHandling():
 
 if __name__=="__main__":
     
-#     df = df.loc[df['depthAtAtoms']==13]    
-    df = df.loc[df['Treecode']==False]    
-#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter1')
-    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'depthAtAtoms')   
+#     df = df.loc[df['depthAtAtoms']==15]    
+#     df = df.loc[df['Treecode']==False]    
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter3')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'order')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'depthAtAtoms')   
 
  
 #     df = df.loc[df['gradientFree']==1]
@@ -510,5 +511,9 @@ if __name__=="__main__":
 #     energyErrors_splitByGradientHandling(order=5)
     
     
-    
-    
+    ### Plot effect of gradient-free approach for oxygen atom.
+    # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
+    df = df.loc[df['order']==5]    
+    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'gradientFree')
+#     logAversusLogBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'gradientFree')
+
