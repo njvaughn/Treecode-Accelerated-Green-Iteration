@@ -84,8 +84,8 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, depthAtAtoms, divideC
         for i in range(len(atomData)):
             nElectrons += atomData[i,3]
     
-    nOrbitals = int( np.ceil(nElectrons/2))
-#     nOrbitals = int( np.ceil(nElectrons/2)+1)
+#     nOrbitals = int( np.ceil(nElectrons/2))
+    nOrbitals = int( np.ceil(nElectrons/2)+1)
 
     if inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
         nOrbitals = 30
@@ -202,10 +202,10 @@ if __name__ == "__main__":
     # param3: absIntegral of wavefunction
     # param4: density variation   
     
-    exportMeshForParaview(domain=20,order=6,
-                        minDepth=3, maxDepth=20, depthAtAtoms=15, divideCriterion='Krasny', 
-                        divideParameter1=5, divideParameter2=100, divideParameter3=0.05, divideParameter4=100,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/LW5_500')
+    exportMeshForParaview(domain=20,order=2,
+                        minDepth=1, maxDepth=20, depthAtAtoms=2, divideCriterion='Krasny', 
+                        divideParameter1=5, divideParameter2=5, divideParameter3=0.3, divideParameter4=0.9999,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/krasnyMesh')
 
 #     exportMeshForTreecodeTesting(domain=20,order=5,
 #                         minDepth=3, maxDepth=20, depthAtAtoms=13, divideCriterion='Krasny', 

@@ -112,8 +112,9 @@ def refine_anyWavefunction(atomicNumber, targetWavefunctions, rmax, epsilon1, ep
     AtomicDataPath = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atomicNumber)+'/singleAtomData/'
     print(AtomicDataPath)
     print(os.listdir(AtomicDataPath))
-    mesh = np.linspace(0,rmax,8)
+    mesh = np.linspace(0,rmax,2)
     interpolators={}
+    
     for i in range(nWavefunctions):
         data = np.genfromtxt(AtomicDataPath+targetWavefunctions[i]+'.inp')
     
@@ -123,6 +124,9 @@ def refine_anyWavefunction(atomicNumber, targetWavefunctions, rmax, epsilon1, ep
         
         ### Generate interpolator
         interpolators[targetWavefunctions[i]] = interp1d(data[:,0],data[:,1],fill_value='extrapolate')
+    
+    data = np.genfromtxt(AtomicDataPath+'density.inp')
+    interpolators['density'] = interp1d(data[:,0],data[:,1],fill_value='extrapolate')
 
     
 
@@ -134,7 +138,32 @@ def refine_anyWavefunction(atomicNumber, targetWavefunctions, rmax, epsilon1, ep
         lenMesh = len(mesh)
 #         meshAbs = []
 #         meshRel = []
-        
+        density = interpolators['density'](mesh)
+        meshB = []
+        for i in range(len(mesh)-1):
+            meshB.append(mesh[i])
+            
+            maxDensity = max(density[i+1], density[i])
+            minDensity = min(density[i+1], density[i])
+            relVariation = (maxDensity - minDensity) / maxDensity
+                   
+            midpoint=(mesh[i]+mesh[i+1])/2                                         
+
+                
+            if (relVariation > epsilon2):
+                print('Refining at %e due to density relVar' %midpoint)
+                relVarCounter+=1
+#                 meshRel.append( midpoint)
+                meshB.append( midpoint)
+                
+            if i==len(mesh)-2:
+                meshB.append(mesh[i+1])
+            
+        print('Length of previous mesh:   ', len(mesh))      
+        print('Length of new mesh:        ', len(meshB))
+        print()
+        mesh = np.copy(meshB)
+                
         for j in range(nWavefunctions):
             print('Refining for wavefunction ', targetWavefunctions[j])
             wave = interpolators[targetWavefunctions[j]](mesh)
@@ -145,7 +174,7 @@ def refine_anyWavefunction(atomicNumber, targetWavefunctions, rmax, epsilon1, ep
                 meshB.append(mesh[i])
                 
                 absVariation = np.abs(wave[i+1]-wave[i])
-                relVariation = np.abs(wave[i+1]-wave[i]) / (  (np.abs(wave[i+1])+np.abs(wave[i]))/2  )
+#                 relVariation = np.abs(wave[i+1]-wave[i]) / (  (np.abs(wave[i+1])+np.abs(wave[i]))/2  )
                        
                 midpoint=(mesh[i]+mesh[i+1])/2                                         
                 if ( (absVariation > epsilon1) ):
@@ -194,7 +223,10 @@ def refine_anyWavefunction(atomicNumber, targetWavefunctions, rmax, epsilon1, ep
     plt.title('Applied to all wavefunctions: epsilon1 = %f, epsilon2 = %f' %(epsilon1, epsilon2) )
     for j in range(nWavefunctions):
         wave = interpolators[targetWavefunctions[j]](mesh)
-        plt.plot(mesh, wave, '-')
+        plt.plot(mesh, wave, 'o-')
+#         plt.plot(mesh, wave, 'o-')
+    density = interpolators['density'](mesh)
+    plt.plot(mesh, density, 'o-')
     plt.show()
     
 
@@ -203,8 +235,8 @@ def refine_anyWavefunction(atomicNumber, targetWavefunctions, rmax, epsilon1, ep
 if __name__ == "__main__":
 #     refine(8,'density',10,0.9,2.0)
 #     refine_anyWavefunction(8,['psi10', 'psi21'],15,0.5,1.0)
-#     refine_anyWavefunction(8,['psi21'],15,0.7,1000.0)
+    refine_anyWavefunction(8,['psi10','psi20','psi21'],20,10,0.99)
     
-    refine_singleWavefunction(8,'psi21',15,0.15,1000.0, 500)
+#     refine_singleWavefunction(8,'psi21',15,0.15,1000.0, 500)
     
     

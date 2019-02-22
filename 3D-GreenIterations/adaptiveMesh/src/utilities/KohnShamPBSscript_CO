@@ -9,7 +9,7 @@
 #PBS -q fluxg
 
 
-#PBS -l nodes=1:gpus=1,mem=8gb
+#PBS -l nodes=1:gpus=1:titanv,mem=8gb
 #PBS -l walltime=16:00:00
 #PBS -j oe
 #PBS -V
@@ -34,15 +34,15 @@ cd /home/njvaughn/hybrid-gpu-treecode/src
 make clean;make
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
-
 DOMAIN=20
 MAXDEPTH=20
-MINDEPTH=3
+MINDEPTH=1
 SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
 
 INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+
 
 VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 
@@ -56,34 +56,33 @@ THETA=0.0
 MAXPARNODE=8000
 BATCHSIZE=8000
 
-
-CELLORDER=5
+ 
 GAUSSIANALPHA=1.0
 
 MESHTYPE='Krasny'
-MESHPARAM1=5
-MESHPARAM2=100
-MESHPARAM3=0.05
-MESHPARAM4=5000
 
-MIXINGPARAMETER=0.3  
+
+MIXINGPARAMETER=0.5  
  
 INTRASCFTOLERANCE=1e-7  
 INTERSCFTOLERANCE=5e-6 
  
 MIXING='Anderson'   
+CELLORDER=5
+DEPTHATATOMS=14
 
-DEPTHATATOMS=15
-
+MESHPARAM3=0.03
+MESHPARAM4=0.9999
 
 for MESHPARAM1 in 5 3
 do
-	for MESHPARAM3 in 0.05 0.03
+	for MESHPARAM2 in 3 2
 	do
-		OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/CO/ds_krasnyRefine_maxDepth${DEPTHATATOMS}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
+		OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/CO_4param/ds_krasnyRefine_maxDepth${DEPTHATATOMS}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
 		python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
 																	$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
 																	$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4  
 	done
 done
+			

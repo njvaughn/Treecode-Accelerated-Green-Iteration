@@ -48,9 +48,9 @@ resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Berylliu
 
 
 ## Krasny refine for oxygen
-resultsDir = '/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
+resultsDir = '/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param/'
 plotsDir = resultsDir+'plots/'
-file='ds_krasnyRefine_maxDepth14_3_100_0p03_5000_SCF_.csv'
+file='ds_krasnyRefine_maxDepth14_3_3_0.03_0.9999_SCF_.csv'
  
 ## Beryllium
 #file='LW3_1500_SCF_.csv'
@@ -115,7 +115,7 @@ def plotSCFconvergence(df, system = 'H2'):
 
 
     df['bandEnergyError']=abs(df['bandEnergy']-dftfeBandEnergy)
-    df['kineticEnergyError']=abs(df['kineticEnergy']-dftfeKineticEnergy)
+#     df['kineticEnergyError']=abs(df['kineticEnergy']-dftfeKineticEnergy)
 #     df['electrostaticEnergyError']=abs(df['electrostaticEnergy']-dftfeElectrostaticEnergy)
     df['hartreeEnergyError']=abs(df['hartreeEnergy']-dftfeHartreeEnergy)
     df['exchangeEnergyError']=abs(df['exchangeEnergy']-dftfeExchangeEnergy)
@@ -169,8 +169,8 @@ def plotSCFconvergence(df, system = 'H2'):
 if __name__=="__main__":
     
 #     plotSCFconvergence(df, system="carbonMonoxide")    
-    plotSCFconvergence(df, system="Beryllium")    
-#     plotSCFconvergence(df, system="Oxygen")    
+#     plotSCFconvergence(df, system="Beryllium")    
+    plotSCFconvergence(df, system="Oxygen")    
 
 
 

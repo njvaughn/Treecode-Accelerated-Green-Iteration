@@ -2408,8 +2408,8 @@ class Tree(object):
                     phi2.append(gp.phi[2])
                     phi3.append(gp.phi[3])
                     phi4.append(gp.phi[4])
-                    phi5.append(gp.phi[5])
-                    phi6.append(gp.phi[6])
+#                     phi5.append(gp.phi[5])
+#                     phi6.append(gp.phi[6])
 #                     phi7.append(gp.phi[7])
 #                     phi8.append(gp.phi[8])
 #                     phi9.append(gp.phi[9])
@@ -2444,10 +2444,18 @@ class Tree(object):
 #                     "Phi20" : np.array(phi20), "Phi21" : np.array(phi21), "Phi22" : np.array(phi22), "Phi23" : np.array(phi23), "Phi24" : np.array(phi24),  
 #                     "Phi25" : np.array(phi25), "Phi26" : np.array(phi26), "Phi27" : np.array(phi27), "Phi28" : np.array(phi28), "Phi29" : np.array(phi29) } )
         
+        # 7 wavefunctions (carbon monoxide)
+#         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
+#                     {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),#}) ,
+#                     "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4),#,
+#                      "Phi5" : np.array(phi5), "Phi6" : np.array(phi6)  } )
+        
+        # 5 wavefunctions (oxygen)
         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
-                    {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),#}) ,
-                    "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4),#,
-                     "Phi5" : np.array(phi5), "Phi6" : np.array(phi6)  } )
+                    {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),
+                    "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4)  } )
+        
+        
 #                      "Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})
         
         

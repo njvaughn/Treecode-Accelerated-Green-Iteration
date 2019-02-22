@@ -10,7 +10,7 @@
 
 
 #PBS -l nodes=1:gpus=1,mem=8gb
-#PBS -l walltime=16:00:00
+#PBS -l walltime=12:00:00
 #PBS -j oe
 #PBS -V
 
@@ -55,7 +55,7 @@ VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 GRADIENTFREE='True'
 GPUPRESENT='True'
 
-TREECODE='False'
+TREECODE='True'
 TREECODEORDER=0
 THETA=0.0
 MAXPARNODE=8000
@@ -71,20 +71,21 @@ MIXINGPARAMETER=0.5
  
 INTRASCFTOLERANCE=1e-7  
 INTERSCFTOLERANCE=5e-6 
-  
+ 
 MIXING='Anderson'   
-CELLORDER=6
+CELLORDER=5
 DEPTHATATOMS=14
 
-MESHPARAM1=5
-MESHPARAM4=0.9999 
+MESHPARAM1=3
+MESHPARAM2=2
+MESHPARAM3=0.03
+MESHPARAM4=0.9999
 
-
-for MESHPARAM2 in 5 3
+for TREECODEORDER in 6 7 8
 do
-	for MESHPARAM3 in 0.5 0.3
+	for THETA in 0.8 0.9
 	do
-		OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param/ds_krasnyRefine_cellOrder${CELLORDER}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
+		OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Oxygen_treecode/ds_krasnyRefine_tcOrder${TREECODEORDER}_theta${THETA}.csv"
 		python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
 																	$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \

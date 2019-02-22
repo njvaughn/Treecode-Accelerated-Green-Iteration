@@ -508,10 +508,10 @@ class Cell(object):
         orbitalIndex=0
         
         maxVariation = 0.0
-        maxDensityVariation = 0.0
-        maxRelVariation = 0.0
+        maxRelDensityVariation = 0.0
+        maxSqVariation = 0.0
         maxAbsIntegral = 0.0
-        relVariationCause=-2
+        sqVariationCause=-2
     
 #         for atom in self.tree.atoms:
         atom = self.nearestAtom
@@ -534,6 +534,16 @@ class Cell(object):
             dy = ymm[j]-atom.y
             dz = zmm[k]-atom.z
             r = np.sqrt( dx**2 + dy**2 + dz**2 )
+            if r==0:  # nudge the point 10% in towrads the cell center, just to avoid 1/0 cases
+                dx = 0.99*(xmm[i]-atom.x) + 0.01*(xmm[(i+1)%2]-atom.x)
+                dy = 0.99*(ymm[j]-atom.y) + 0.01*(ymm[(j+1)%2]-atom.y)
+                dz = 0.99*(zmm[k]-atom.z) + 0.01*(zmm[(k+1)%2]-atom.z)
+                r = np.sqrt( dx**2 + dy**2 + dz**2 )
+#                 print('x: ', xmm)
+#                 print('y: ', ymm)
+#                 print('z: ', zmm)
+#                 print('nudged r = ', r)
+
             inclination = np.arccos(dz/r)
             azimuthal = np.arctan2(dy,dx)
             
@@ -546,10 +556,10 @@ class Cell(object):
                 if density>maxDensity: maxDensity = density
                 if density<minDensity: minDensity = density
          
-        densityVariation = (maxDensity-minDensity)
-        if densityVariation>maxDensityVariation:
-            maxDensityVariation = densityVariation
-            densityVariationCause = -1
+        relDensityVariation = (maxDensity-minDensity)/maxDensity
+        if relDensityVariation>maxRelDensityVariation:
+            maxRelDensityVariation = relDensityVariation
+            relDensityVariationCause = -1
        
         singleAtomOrbitalCount=0
         for nell in aufbauList:
@@ -568,6 +578,11 @@ class Cell(object):
                         dy = ymm[j]-atom.y
                         dz = zmm[k]-atom.z
                         r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                        if r==0:  # nudge the point 10% in towrads the cell center, just to avoid 1/0 cases
+                            dx = 0.99*(xmm[i]-atom.x) + 0.01*(xmm[(i+1)%2]-atom.x)
+                            dy = 0.99*(ymm[j]-atom.y) + 0.01*(ymm[(j+1)%2]-atom.y)
+                            dz = 0.99*(zmm[k]-atom.z) + 0.01*(zmm[(k+1)%2]-atom.z)
+                            r = np.sqrt( dx**2 + dy**2 + dz**2 )
                         inclination = np.arccos(dz/r)
                         azimuthal = np.arctan2(dy,dx)
                     
@@ -582,13 +597,18 @@ class Cell(object):
 
 
                         psi = atom.interpolators[psiID](r)*np.real(Y)
+                        psiSq = atom.interpolators[psiID](r)*np.real(Y)
                         
                         if ( (i==0) and (j==0) and (k==0)): 
                             maxPsi = psi
+                            maxPsiSq = psiSq
                             minPsi = psi
+                            minPsiSq = psiSq
                         else:
                             if psi>maxPsi: maxPsi = psi
+                            if psiSq>maxPsiSq: maxPsiSq = psiSq
                             if psi<minPsi: minPsi = psi
+                            if psiSq<minPsiSq: minPsiSq = psiSq
                         
                         absIntegral += abs(psi)*self.volume/8
                            
@@ -596,22 +616,22 @@ class Cell(object):
                     variation = maxPsi-minPsi
                     
                     maxabs = max(abs(maxPsi), abs(minPsi))
-                    relVariation = (maxPsi-minPsi) / maxabs
+                    sqVariation = (maxPsiSq-minPsiSq) 
                     
                     
                     if variation>maxVariation:
                         maxVariation = variation
                         variationCause = orbitalIndex
-                    if relVariation>maxRelVariation:
-                        maxRelVariation = relVariation
-                        relVariationCause = orbitalIndex
+                    if sqVariation>maxSqVariation:
+                        maxSqVariation = sqVariation
+                        sqVariationCause = orbitalIndex
                     if absIntegral > maxAbsIntegral:
                         maxAbsIntegral = absIntegral
                         absIntegralCause = orbitalIndex
                     orbitalIndex += 1
                     singleAtomOrbitalCount += 1
                     
-        return maxVariation, maxDensityVariation, maxAbsIntegral, maxRelVariation, variationCause, densityVariationCause, absIntegralCause, relVariationCause
+        return maxVariation, maxRelDensityVariation, maxAbsIntegral, maxSqVariation, variationCause, relDensityVariationCause, absIntegralCause, sqVariationCause
     
     
     def initializeCellWavefunctions(self):           
@@ -707,44 +727,29 @@ class Cell(object):
 #         self.initializeCellWavefunctions()
 #         self.initializeCellWavefunctionsAtCorners()
 
-        waveVariation, densityVariation, absIntegral, relWaveVariation, variationCause, densityVariationCause, absIntegralCause, relVariationCause = self.wavefunctionVariationAtCorners()
+        waveVariation, relDensityVariation, absIntegral, sqWaveVariation, variationCause, densityVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
         
         
         if waveVariation > divideParameter1:
             self.divideFlag=True
             print('Dividing cell %s because of variation in wavefunction %i.' %(self.uniqueID,variationCause))
             return
-        
-        if densityVariation > divideParameter4:
-            self.divideFlag=True
-            print('Dividing cell %s because of variation in density.' %(self.uniqueID))
-            return
             
-        if relWaveVariation > divideParameter2:
+        if sqWaveVariation > divideParameter2:
             self.divideFlag=True
-            print('Dividing cell %s because of relative variation in wavefunction %i.' %(self.uniqueID,relVariationCause))
+            print('Dividing cell %s because of variation in wavefunction %i squared.' %(self.uniqueID,sqVariationCause))
             return
-        
 
         if absIntegral > divideParameter3:
             self.divideFlag=True
             print('Dividing cell %s because of absIntegral for wavefunction %i.' %(self.uniqueID, absIntegralCause))
             return
         
-#         for m in range(self.tree.nOrbitals):
-# #             waveVariation = self.getWavefunctionVariation(m)
-#             waveVariation = self.getWavefunctionVariationAtCorners(m)
-#             if waveVariation > divideParameter1:
-#                 self.divideFlag=True
-#                 print('Dividing cell %s because of variation in wavefunction %i.' %(self.uniqueID,m))
-#                 return
+        if relDensityVariation > divideParameter4:
+            self.divideFlag=True
+            print('Dividing cell %s because of variation in density.' %(self.uniqueID))
+            return
 
-#         for m in range(self.tree.nOrbitals):
-#             waveIntegral = self.getWavefunctionIntegral(m)
-#             if waveIntegral > divideParameter2:
-#                 self.divideFlag=True
-#                 print('Dividing cell %s because of integral over wavefunction %i.' %(self.uniqueID,m))
-#                 return
             
                         
     def checkIfChebyshevCoefficientsAboveTolerance(self, divideParameter):

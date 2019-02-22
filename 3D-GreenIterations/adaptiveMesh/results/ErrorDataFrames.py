@@ -30,7 +30,7 @@ file='runComparison.csv'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
 
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
 
 
 #### Biros Meshes
@@ -44,6 +44,7 @@ resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradie
 #### Krasny Mesh
 # resultsDir='/Users/nathanvaughn/Desktop/krasnyMeshTest/Oxygen/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param/'
 
 
 #### Treecode Testing
@@ -56,6 +57,7 @@ CorrelationEnergy = -5.4455323568788838e-01
 BandEnergy = -4.0613397710076626e+01
 KineticEnergy =  7.4112730191157425e+01
 ElectrostaticEnergy = -1.4081814437367436e+02
+HartreeEnergy = 36.32506036
 
 df = pd.read_csv(resultsDir+file, header=0)
 print(df)
@@ -112,10 +114,11 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2It
 
 df['BandEnergyError'] = abs( df['BandEnergy'] - BandEnergy)
 df['ExchangeEnergyError'] = abs( df['ExchangeEnergy'] - ExchangeEnergy)
+df['HartreeEnergyError'] = abs( df['HartreeEnergy'] - HartreeEnergy)
 df['CorrelationEnergyError'] = abs( df['CorrelationEnergy'] - CorrelationEnergy)
 df['TotalEnergyError'] = abs( df['TotalEnergy'] - TotalEnergy)
 df['KineticEnergyError'] = abs( df['KineticEnergy'] - KineticEnergy)
-df['ElectrostaticEnergyError'] = abs( df['ElectrostaticEnergy'] - ElectrostaticEnergy)
+# df['ElectrostaticEnergyError'] = abs( df['ElectrostaticEnergy'] - ElectrostaticEnergy)
 
 
 print(df)
@@ -454,9 +457,10 @@ def totalEnergyErrors_splitByGradientHandling():
 
 if __name__=="__main__":
     
-#     df = df.loc[df['depthAtAtoms']==15]    
+#     df = df.loc[df['depthAtAtoms']==2]    
 #     df = df.loc[df['Treecode']==False]    
-#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter3')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter2')
+    logAversusLogBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'depthAtAtoms')
 #     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'order')
 #     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'depthAtAtoms')   
 
@@ -513,7 +517,7 @@ if __name__=="__main__":
     
     ### Plot effect of gradient-free approach for oxygen atom.
     # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
-    df = df.loc[df['order']==5]    
-    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'gradientFree')
+#     df = df.loc[df['order']==5]    
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'gradientFree')
 #     logAversusLogBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'gradientFree')
 
