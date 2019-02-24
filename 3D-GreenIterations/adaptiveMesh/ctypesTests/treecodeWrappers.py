@@ -26,14 +26,14 @@ computeCapability = cuda.cudadrv.driver.Device(0).compute_capability
 
 # _treecodeRoutines = ctypes.CDLL('/Users/nathanvaughn/Documents/GitHub/hybrid-gpu-treecode/lib/libtreedriverWrapper.so')
 
-_treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib/libtreedriverWrapper.so')
+# _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib/libtreedriverWrapper.so')
 
-# if computeCapability==(3,5):
-#     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib35/libtreedriverWrapper.so')
-# elif computeCapability==(7,0):
-#     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib70/libtreedriverWrapper.so')
-# else:
-#     print('Detected GPU with Compute_Capability ', computeCapability, '.  Do not have a compiled OpenACC treecode for this CC.')
+if computeCapability==(3,5):
+    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib35/libtreedriverWrapper.so')
+elif computeCapability==(7,0):
+    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib70/libtreedriverWrapper.so')
+else:
+    print('Detected GPU with Compute_Capability ', computeCapability, '.  Do not have a compiled OpenACC treecode for this CC.')
 
 _treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
         ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),

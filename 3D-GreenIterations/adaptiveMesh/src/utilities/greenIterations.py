@@ -118,7 +118,7 @@ def normalizeOrbitals(V,weights):
 def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize,
                                  mixingScheme, mixingParameter,
-                                subtractSingularity, smoothingN, smoothingEps, inputFile='',outputFile='',
+                                subtractSingularity, gaussianAlpha, inputFile='',outputFile='',
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None): 
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
@@ -179,7 +179,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Integrated density: ', integratedDensity)
 
 #     starthartreeConvolutionTime = timer()
-    alpha = smoothingEps
+    alpha = gaussianAlpha
     alphasq=alpha*alpha
     
     print('Using Gaussian singularity subtraction, alpha = ', alpha)
@@ -222,7 +222,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
         potentialType=0 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
-        alpha = smoothingEps
+        alpha = gaussianAlpha
         V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                        targetX, targetY, targetZ, targetValue, 
                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
@@ -263,7 +263,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
             start = time.time()
             potentialType=2 
-            alpha = smoothingEps
+            alpha = gaussianAlpha
             V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                            targetX, targetY, targetZ, targetValue, 
                                                            sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
@@ -282,9 +282,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     
     ### Write output files that will be used to test the Treecode evaluation ###
-    sourcesTXT = '/Users/nathanvaughn/Documents/testData/H2Sources.txt'
-    targetsTXT = '/Users/nathanvaughn/Documents/testData/H2Targets.txt'
-    hartreePotentialTXT = '/Users/nathanvaughn/Documents/testData/H2HartreePotential.txt'
+#     sourcesTXT = '/Users/nathanvaughn/Documents/testData/H2Sources.txt'
+#     targetsTXT = '/Users/nathanvaughn/Documents/testData/H2Targets.txt'
+#     hartreePotentialTXT = '/Users/nathanvaughn/Documents/testData/H2HartreePotential.txt'
     
 #     np.savetxt(sourcesTXT, sources)
 #     np.savetxt(targetsTXT, targets[:,0:4])
@@ -295,7 +295,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     print('Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell')
     tree.updateOrbitalEnergies(sortByEnergy=False, saveAsReference=True)
-
+    tree.computeBandEnergy()
+    
     tree.sortOrbitalsAndEnergies()
     print('Orbital energies after initial sort: \n', tree.orbitalEnergies)
     print('Kinetic:   ', tree.orbitalKinetic)
@@ -381,7 +382,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         print()
         print('\nSCF Count ', SCFcount)
         print('Orbital Energies: ', tree.orbitalEnergies)
-        if SCFcount > 100:
+        if SCFcount > 0:
+            print('Exiting before first SCF (for testing initialized mesh accuracy)')
             return
         
         if SCFcount>1:
@@ -797,7 +799,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             theta = 0.5
             maxParNode = 500
             batchSize = 500
-            alphasq = smoothingEps**2
+            alphasq = gaussianAlpha**2
             V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                            targetX, targetY, targetZ, targetValue, 
                                                            sourceX, sourceY, sourceZ, sourceValue, sourceWeight,

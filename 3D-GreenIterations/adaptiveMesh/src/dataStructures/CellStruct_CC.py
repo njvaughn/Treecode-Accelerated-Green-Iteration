@@ -749,7 +749,11 @@ class Cell(object):
             self.divideFlag=True
             print('Dividing cell %s because of variation in density.' %(self.uniqueID))
             return
-
+        
+        if relDensityVariation > divideParameter4:
+            self.divideFlag=True
+            print('Dividing cell %s because of variation in density.' %(self.uniqueID))
+            return
             
                         
     def checkIfChebyshevCoefficientsAboveTolerance(self, divideParameter):

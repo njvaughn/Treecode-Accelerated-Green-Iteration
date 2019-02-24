@@ -41,11 +41,11 @@ maxDepth            = int(sys.argv[3])
 depthAtAtoms        = int(sys.argv[4])
 order               = int(sys.argv[5])
 subtractSingularity = int(sys.argv[6])
-smoothingN          = int(sys.argv[7])
-smoothingEps        = float(sys.argv[8])
+smoothingEps        = float(sys.argv[7])
+gaussianAlpha       = float(sys.argv[8])
 divideCriterion     = str(sys.argv[9])
-divideParameter1     = float(sys.argv[10])
-divideParameter2     = float(sys.argv[11])
+divideParameter1    = float(sys.argv[10])
+divideParameter2    = float(sys.argv[11])
 energyTolerance     = float(sys.argv[12])
 scfTolerance        = float(sys.argv[13])
 outputFile          = str(sys.argv[14])
@@ -60,8 +60,8 @@ treecodeOrder       = int(sys.argv[22])
 theta               = float(sys.argv[23])
 maxParNode          = int(sys.argv[24])
 batchSize           = int(sys.argv[25])
-divideParameter3     = float(sys.argv[26])
-divideParameter4     = float(sys.argv[27])
+divideParameter3    = float(sys.argv[26])
+divideParameter4    = float(sys.argv[27])
 
 
 print('gradientFree = ', noGradients)
@@ -132,6 +132,7 @@ def setUpTree(onlyFillOne=False):
                                             # If the final orbital is unoccupied, this amount is enough. 
                                             # If there is a degeneracy leading to teh final orbital being 
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
+                                            
 
 #     nOrbitals=7
 #     print('Setting nOrbitals to six for purposes of testing the adaptivity on the oxygen atom.')
@@ -142,9 +143,14 @@ def setUpTree(onlyFillOne=False):
 
     if inputFile=='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv':
         nOrbitals=5
+        occupations = 2*np.ones(nOrbitals)
+        occupations[2] = 4/3
+        occupations[3] = 4/3
+        occupations[4] = 4/3
+        
     elif inputFile=='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
         nOrbitals=7
-    occupations = 2*np.ones(nOrbitals)
+        occupations = 2*np.ones(nOrbitals)
 #     occupations[-1] = 0
     print('in testBatchGreen..., nOrbitals = ', nOrbitals)
     
@@ -155,7 +161,7 @@ def setUpTree(onlyFillOne=False):
     print(referenceEigenvalues)
     print(np.shape(referenceEigenvalues))
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,maxDepthAtAtoms=depthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
-                coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
+                coordinateFile=coordinateFile,smoothingEps=smoothingEps, inputFile=inputFile)#, iterationOutFile=outputFile)
     tree.referenceEigenvalues = np.copy(referenceEigenvalues)
     tree.occupations = occupations
     print('On the tree, nOrbitals = ', tree.nOrbitals)
@@ -180,11 +186,11 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
     greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, mixingScheme, mixingParameter, subtractSingularity, 
-                                smoothingN, smoothingEps,inputFile=inputFile,outputFile=outputFile, 
+                                gaussianAlpha,inputFile=inputFile,outputFile=outputFile, 
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
 
 #     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
-#                                 smoothingN, smoothingEps,auxiliaryFile=auxiliaryFile, 
+#                                 smoothingEps, gaussianAlpha,auxiliaryFile=auxiliaryFile, 
 #                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
 
     totalKohnShamTime = time.time()-startTime
@@ -192,14 +198,14 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
     header = ['domainSize','minDepth','maxDepth','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
               'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
-              'gaussianAlpha','energyTolerance',
+              'gaussianAlpha','VextSmoothingEpsilon','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
               'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
               divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
-              smoothingEps,energyTolerance,
+              gaussianAlpha,smoothingEps,energyTolerance,
               subtractSingularity,
               tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E,
               treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime]
