@@ -48,8 +48,12 @@ file='runComparison.csv'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param_beforeSCF/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_LW5_smoothedVext/'
 
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_LW5_beforeSCF_smoothingEpsTests/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_LW5_beforeSCF_smoothingEpsTests/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param_beforeSCF_smoothingEpsTests/'
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation_preSCF/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation/'
+
 
 
 #### Treecode Testing
@@ -456,17 +460,22 @@ def totalEnergyErrors_splitByGradientHandling():
 #     ax2.legend(loc = 'best')
 #     ax2.set_xlabel('Number of Cells')
 #     ax2.set_ylabel('Energy Error (Hartree)')
-#     ax2.set_title('Oxygen Atom: Total Energy Error')
+#     ax2.set_title('Oxygen Atom: Total Energy Error') 
     plt.show()
-
+ 
   
 if __name__=="__main__":
     
+    
 #     logAversusBcolorbyC(df,'BandEnergyError', 'VextSmoothingEpsilon', 'numberOfPoints')
 #     logAversusBcolorbyC(df,'TotalEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
-    logAversusLogBcolorbyC(df,'BandEnergyError', 'VextSmoothingEpsilon', 'numberOfPoints')
+
+#     df = df.loc[df['order']==7]  
+#     df = df.loc[df['maxDepth']>=14] 
+#     logAversusBcolorbyC(df,'BandEnergyError', 'maxDepth', 'divideParameter3')
+    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter2') 
     
-#     df = df.loc[df['depthAtAtoms']==2] 
+#     df = df.loc[df['depthAtAtoms']==2]  
 #     print(df['HartreeEnergyError'])   
 #     df = df.loc[df['Treecode']==False]    
 #     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'VextSmoothingEpsilon')

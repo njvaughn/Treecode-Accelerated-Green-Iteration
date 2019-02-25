@@ -382,9 +382,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         print()
         print('\nSCF Count ', SCFcount)
         print('Orbital Energies: ', tree.orbitalEnergies)
-        if SCFcount > 0:
-            print('Exiting before first SCF (for testing initialized mesh accuracy)')
-            return
+#         if SCFcount > 0:
+#             print('Exiting before first SCF (for testing initialized mesh accuracy)')
+#             return
         
         if SCFcount>1:
             inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (numberOfGridpoints,1))), axis=1)

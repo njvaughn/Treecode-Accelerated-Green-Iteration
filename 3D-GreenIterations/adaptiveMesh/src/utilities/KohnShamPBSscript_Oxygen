@@ -1,6 +1,6 @@
 ####  PBS preamble
 
-#PBS -N smoothedCoulomb
+#PBS -N oxygenOrder7
 #PBS -M njvaughn@umich.edu
 #PBS -m a
 
@@ -10,7 +10,7 @@
 
 
 #PBS -l nodes=1:gpus=1,mem=8gb
-#PBS -l walltime=16:00:00
+#PBS -l walltime=12:00:00
 #PBS -j oe
 #PBS -V
 
@@ -36,7 +36,7 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 
 DOMAIN=20
-MAXDEPTH=20
+MAXDEPTH=16
 MINDEPTH=3
 SINGSUBT=1
 SMOOTHINGEPS=0
@@ -72,39 +72,30 @@ INTRASCFTOLERANCE=1e-7
 INTERSCFTOLERANCE=5e-6 
    
 MIXING='Anderson'   
-CELLORDER=5
+CELLORDER=7
+
+DEPTHATATOMS=2
+	
 
 
-MESHPARAM1=3
-MESHPARAM2=1
-MESHPARAM3=1
-MESHPARAM4=0.9999 
-
-#DEPTHATATOMS=2
-#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Oxygen_LW5_smoothedVext_beforeFirstSCF/ds_LW5_${MESHPARAM1}_smoothed_1em1.csv"
-#python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
-#															$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-#															$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
-#															$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 
-
-for SMOOTHINGEPS in 0.0 1e-2 1e-4 1e-6 1e-1 1e-3 1e-5
-#for SMOOTHINGEPS in 0.0 1e-2 1e-4 1e-6 
-#for SMOOTHINGEPS in 1e-1 1e-3 1e-5 
-do
-for DEPTHATATOMS in 2
+for MAXDEPTH in 13 14 15 
+do													
+for MESHPARAM4 in 100000
 do
 	for MESHPARAM2 in 3
 	do
-		for MESHPARAM3 in 0.3
+		for MESHPARAM3 in 0.5 0.2
 		do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param_beforeSCF_smoothingEpsTests/ds_smoothing${SMOOTHINGEPS}_cellOrder${CELLORDER}_depthAtAtoms${DEPTHATATOMS}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
+			for MESHPARAM1 in 5  
+			do
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation/ds_cellOrder${CELLORDER}_maxDepth${MAXDEPTH}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
 																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4  
+			done
 		done
 	done
 done
-done
-				
+done		
 	

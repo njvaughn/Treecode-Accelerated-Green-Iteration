@@ -736,7 +736,8 @@ class Tree(object):
                     minDepthAchieved = min(minDepthAchieved, Cell.level)
                     
             else: 
-                Cell.initializeCellWavefunctions() 
+                Cell.initializeCellWavefunctions()
+                print("Cell %s at max depth.  Cell volume**(1/3) = %f" %(Cell.uniqueID, Cell.volume**(1/3)))
                        
             maxDepthAchieved = max(maxDepthAchieved, Cell.level)                                                                                                                                                       
             return maxDepthAchieved, minDepthAchieved, levelCounter

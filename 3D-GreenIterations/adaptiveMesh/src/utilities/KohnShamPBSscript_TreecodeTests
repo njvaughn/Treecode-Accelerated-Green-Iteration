@@ -1,6 +1,6 @@
 ####  PBS preamble
 
-#PBS -N batchGreenIterations
+#PBS -N GI_with_tree_test
 #PBS -M njvaughn@umich.edu
 #PBS -m a
 
@@ -42,8 +42,8 @@ SINGSUBT=1
 SMOOTHINGN=0
 SMOOTHINGEPS=0
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
@@ -55,7 +55,7 @@ VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 GRADIENTFREE='True'
 GPUPRESENT='True'
 
-TREECODE='True'
+TREECODE='False'
 TREECODEORDER=0
 THETA=0.0
 MAXPARNODE=8000
@@ -64,7 +64,7 @@ BATCHSIZE=8000
 
 GAUSSIANALPHA=1.0
 
-MESHTYPE='Krasny'
+MESHTYPE='LW5'
 
 
 MIXINGPARAMETER=0.5  
@@ -76,16 +76,25 @@ MIXING='Anderson'
 CELLORDER=5
 DEPTHATATOMS=14
 
-MESHPARAM1=3
+MESHPARAM1=1500
 MESHPARAM2=2
 MESHPARAM3=0.03
 MESHPARAM4=0.9999
 
+
+#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/CO_LW5_treecode/ds_LW5_${MESHPARAM1}.csv"
+#python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
+#															$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+#															$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
+#															$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 
+
+
+TREECODE='True'
 for TREECODEORDER in 6 7 8
 do
 	for THETA in 0.8 0.9
 	do
-		OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Oxygen_treecode/ds_krasnyRefine_tcOrder${TREECODEORDER}_theta${THETA}.csv"
+		OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Oxygen_treecode/tc_LW5_${MESHPARAM1}_tcOrder${TREECODEORDER}_theta${THETA}.csv"
 		python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
 																	$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \

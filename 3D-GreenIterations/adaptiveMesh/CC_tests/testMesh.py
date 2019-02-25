@@ -203,8 +203,8 @@ if __name__ == "__main__":
     # param4: density variation   
     
     exportMeshForParaview(domain=20,order=2,
-                        minDepth=1, maxDepth=20, depthAtAtoms=2, divideCriterion='Krasny', 
-                        divideParameter1=5, divideParameter2=5, divideParameter3=0.3, divideParameter4=0.9999,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+                        minDepth=3, maxDepth=14, depthAtAtoms=2, divideCriterion='Krasny', 
+                        divideParameter1=5, divideParameter2=3, divideParameter3=0.5, divideParameter4=100000,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
                         outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/krasnyMesh')
 
 #     exportMeshForTreecodeTesting(domain=20,order=5,

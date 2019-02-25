@@ -509,6 +509,7 @@ class Cell(object):
         
         maxVariation = 0.0
         maxRelDensityVariation = 0.0
+        maxPsiVextVariation = 0.0
         maxSqVariation = 0.0
         maxAbsIntegral = 0.0
         sqVariationCause=-2
@@ -538,6 +539,8 @@ class Cell(object):
                 dx = 0.99*(xmm[i]-atom.x) + 0.01*(xmm[(i+1)%2]-atom.x)
                 dy = 0.99*(ymm[j]-atom.y) + 0.01*(ymm[(j+1)%2]-atom.y)
                 dz = 0.99*(zmm[k]-atom.z) + 0.01*(zmm[(k+1)%2]-atom.z)
+                
+        
                 r = np.sqrt( dx**2 + dy**2 + dz**2 )
 #                 print('x: ', xmm)
 #                 print('y: ', ymm)
@@ -577,11 +580,19 @@ class Cell(object):
                         dx = xmm[i]-atom.x
                         dy = ymm[j]-atom.y
                         dz = zmm[k]-atom.z
+                        
+                        xtemp = xmm[i]
+                        ytemp = ymm[j]
+                        ztemp = zmm[k]
                         r = np.sqrt( dx**2 + dy**2 + dz**2 )
                         if r==0:  # nudge the point 10% in towrads the cell center, just to avoid 1/0 cases
                             dx = 0.99*(xmm[i]-atom.x) + 0.01*(xmm[(i+1)%2]-atom.x)
                             dy = 0.99*(ymm[j]-atom.y) + 0.01*(ymm[(j+1)%2]-atom.y)
                             dz = 0.99*(zmm[k]-atom.z) + 0.01*(zmm[(k+1)%2]-atom.z)
+                            
+                            xtemp = 0.99*(xmm[i]) + 0.01*(xmm[(i+1)%2])
+                            ytemp = 0.99*(ymm[j]) + 0.01*(ymm[(j+1)%2])
+                            ztemp = 0.99*(zmm[k]) + 0.01*(zmm[(k+1)%2])
                             r = np.sqrt( dx**2 + dy**2 + dz**2 )
                         inclination = np.arccos(dz/r)
                         azimuthal = np.arctan2(dy,dx)
@@ -598,23 +609,29 @@ class Cell(object):
 
                         psi = atom.interpolators[psiID](r)*np.real(Y)
                         psiSq = atom.interpolators[psiID](r)*np.real(Y)
+                        Vext = atom.V(xtemp,ytemp,ztemp)
                         
                         if ( (i==0) and (j==0) and (k==0)): 
                             maxPsi = psi
                             maxPsiSq = psiSq
                             minPsi = psi
                             minPsiSq = psiSq
+                            maxPsiVext = psi*Vext
+                            minPsiVext = psi*Vext
                         else:
                             if psi>maxPsi: maxPsi = psi
                             if psiSq>maxPsiSq: maxPsiSq = psiSq
                             if psi<minPsi: minPsi = psi
                             if psiSq<minPsiSq: minPsiSq = psiSq
+                            if psi*Vext>maxPsiVext: maxPsiVext = psi*Vext
+                            if psi*Vext<minPsiVext: minPsiVext = psi*Vext
+
                         
                         absIntegral += abs(psi)*self.volume/8
                            
 
                     variation = maxPsi-minPsi
-                    
+                    psiVextVariation = maxPsiVext - minPsiVext
                     maxabs = max(abs(maxPsi), abs(minPsi))
                     sqVariation = (maxPsiSq-minPsiSq) 
                     
@@ -622,6 +639,10 @@ class Cell(object):
                     if variation>maxVariation:
                         maxVariation = variation
                         variationCause = orbitalIndex
+                    if psiVextVariation>maxPsiVextVariation:
+                        maxPsiVextVariation = psiVextVariation
+                        maxVariation = variation
+                        psiVextVariationCause = orbitalIndex
                     if sqVariation>maxSqVariation:
                         maxSqVariation = sqVariation
                         sqVariationCause = orbitalIndex
@@ -631,7 +652,8 @@ class Cell(object):
                     orbitalIndex += 1
                     singleAtomOrbitalCount += 1
                     
-        return maxVariation, maxRelDensityVariation, maxAbsIntegral, maxSqVariation, variationCause, relDensityVariationCause, absIntegralCause, sqVariationCause
+#         return maxVariation, maxRelDensityVariation, maxAbsIntegral, maxSqVariation, variationCause, relDensityVariationCause, absIntegralCause, sqVariationCause
+        return maxVariation, maxPsiVextVariation, maxAbsIntegral, maxSqVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause
     
     
     def initializeCellWavefunctions(self):           
@@ -727,7 +749,8 @@ class Cell(object):
 #         self.initializeCellWavefunctions()
 #         self.initializeCellWavefunctionsAtCorners()
 
-        waveVariation, relDensityVariation, absIntegral, sqWaveVariation, variationCause, densityVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+#         waveVariation, relDensityVariation, absIntegral, sqWaveVariation, variationCause, densityVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+        waveVariation, psiVextVariation, absIntegral, sqWaveVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
         
         
         if waveVariation > divideParameter1:
@@ -745,14 +768,14 @@ class Cell(object):
             print('Dividing cell %s because of absIntegral for wavefunction %i.' %(self.uniqueID, absIntegralCause))
             return
         
-        if relDensityVariation > divideParameter4:
-            self.divideFlag=True
-            print('Dividing cell %s because of variation in density.' %(self.uniqueID))
-            return
+#         if relDensityVariation > divideParameter4:
+#             self.divideFlag=True
+#             print('Dividing cell %s because of variation in density.' %(self.uniqueID))
+#             return
         
-        if relDensityVariation > divideParameter4:
+        if psiVextVariation > divideParameter4:
             self.divideFlag=True
-            print('Dividing cell %s because of variation in density.' %(self.uniqueID))
+            print('Dividing cell %s because of psi*Vext variation for wavefunction %i.' %(self.uniqueID, psiVextVariationCause))
             return
             
                         
