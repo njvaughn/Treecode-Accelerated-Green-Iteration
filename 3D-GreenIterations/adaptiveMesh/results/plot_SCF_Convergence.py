@@ -13,7 +13,7 @@ import numpy as np
 
 # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
 # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+# # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
 # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
 # #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
@@ -46,12 +46,23 @@ resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Berylliu
 # # file='BirosG_o7_max15_SCF_.csv'
 # file='BirosG_o7_1em5_SCF_.csv'
 
+resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
+file='BirosGN2_o5_1em1_SCF_.csv'
+
 
 ## Krasny refine for oxygen
-resultsDir = '/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param/'
-plotsDir = resultsDir+'plots/'
-file='ds_krasnyRefine_maxDepth14_3_3_0.03_0.9999_SCF_.csv'
- 
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_densityIntegral4th/'
+# file='ds_cellOrder5_maxDepth15_3_3_0.3_0.03_SCF_.csv'
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation/'
+# # file='ds_cellOrder5maxDepth12_2_2_0.2_50000_SCF_.csv'
+# file='ds_cellOrder7_maxDepth13_5_5_0.5_100000_SCF_.csv'
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
+# file='ds_krasnyRefine_maxDepth14_5_100_0p05_5000_SCF_.csv'
+
+
+
 ## Beryllium
 #file='LW3_1500_SCF_.csv'
 
@@ -61,6 +72,9 @@ file='ds_krasnyRefine_maxDepth14_3_3_0.03_0.9999_SCF_.csv'
 
 df = pd.read_csv(resultsDir+file, header=0)
 # df = df.drop(df.index[14]) 
+
+plotsDir = resultsDir+'plots/'
+
     
 def plotSCFconvergence(df, system = 'H2'):
     
@@ -96,8 +110,8 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeCorrelationEnergy = -5.4455323568788838e-01
         dftfeBandEnergy = -4.0613397710076626e+01
         dftfeKineticEnergy =  7.4112730191157425e+01
-#         dftfeElectrostaticEnergy = -1.4081814437367436e+02
-        dftfeHartreeEnergy = 36.32506036
+        dftfeElectrostaticEnergy = -1.4081814437367436e+02
+#         dftfeHartreeEnergy = 36.32506036
         
     if system == "carbonMonoxide":
 #         # these taken from mesh size 0.125 run
@@ -116,8 +130,8 @@ def plotSCFconvergence(df, system = 'H2'):
 
     df['bandEnergyError']=abs(df['bandEnergy']-dftfeBandEnergy)
 #     df['kineticEnergyError']=abs(df['kineticEnergy']-dftfeKineticEnergy)
-#     df['electrostaticEnergyError']=abs(df['electrostaticEnergy']-dftfeElectrostaticEnergy)
-    df['hartreeEnergyError']=abs(df['hartreeEnergy']-dftfeHartreeEnergy)
+    df['electrostaticEnergyError']=abs(df['electrostaticEnergy']-dftfeElectrostaticEnergy)
+#     df['hartreeEnergyError']=abs(df['hartreeEnergy']-dftfeHartreeEnergy)
     df['exchangeEnergyError']=abs(df['exchangeEnergy']-dftfeExchangeEnergy)
     df['correlationEnergyError']=abs(df['correlationEnergy']-dftfeCorrelationEnergy)
     df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/1
@@ -138,8 +152,8 @@ def plotSCFconvergence(df, system = 'H2'):
     f2, ax2 = plt.subplots(1, 1, figsize=(10,6))
     df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='o')
 #     df.plot(x='Iteration', y='kineticEnergyError', logy=True,ax=ax2, style='o-')
-#     df.plot(x='Iteration', y='electrostaticEnergyError', logy=True,ax=ax2, style='o')
-    df.plot(x='Iteration', y='hartreeEnergyError', logy=True,ax=ax2, style='o')
+    df.plot(x='Iteration', y='electrostaticEnergyError', logy=True,ax=ax2, style='o')
+#     df.plot(x='Iteration', y='hartreeEnergyError', logy=True,ax=ax2, style='o')
     df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='o')
     df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='o')
     df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='o')
@@ -162,7 +176,7 @@ def plotSCFconvergence(df, system = 'H2'):
 
     ax1.grid()
     ax2.grid()
-    plt.ylim([5e-7,2e-2])
+#     plt.ylim([5e-7,2e-2])
     plt.show()
     
 

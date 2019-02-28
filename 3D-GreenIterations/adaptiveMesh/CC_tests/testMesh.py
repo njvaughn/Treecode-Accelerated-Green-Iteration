@@ -199,13 +199,13 @@ if __name__ == "__main__":
     
     # param1: wavefunction variation
     # param2: wavefunction relative variation
-    # param3: absIntegral of wavefunction
+    # param3: absIntegral of wavefunction 
     # param4: density variation   
     
-    exportMeshForParaview(domain=20,order=2,
-                        minDepth=3, maxDepth=14, depthAtAtoms=2, divideCriterion='Krasny', 
-                        divideParameter1=5, divideParameter2=3, divideParameter3=0.5, divideParameter4=100000,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/krasnyMesh')
+    exportMeshForParaview(domain=20,order=3,
+                        minDepth=4, maxDepth=17, depthAtAtoms=2, divideCriterion='Krasny', 
+                        divideParameter1=2, divideParameter2=2, divideParameter3=0.2, divideParameter4=50000,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/krasny_lowOrder')
 
 #     exportMeshForTreecodeTesting(domain=20,order=5,
 #                         minDepth=3, maxDepth=20, depthAtAtoms=13, divideCriterion='Krasny', 

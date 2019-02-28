@@ -38,7 +38,7 @@ file='runComparison.csv'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenDepthTest/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaussianAlphaTest/'
-# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
+resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
 
 #### Krasny Mesh
@@ -52,10 +52,16 @@ file='runComparison.csv'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param_beforeSCF_smoothingEpsTests/'
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation_preSCF/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_noSphHarmonics_preSCF/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_densityIntegral4th/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_integralSqrtDensity/' 
 
 
 
+
+ 
 #### Treecode Testing
 # resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
 
@@ -123,11 +129,11 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2It
 
 df['BandEnergyError'] = abs( df['BandEnergy'] - BandEnergy)
 df['ExchangeEnergyError'] = abs( df['ExchangeEnergy'] - ExchangeEnergy)
-df['HartreeEnergyError'] = abs( df['HartreeEnergy'] - HartreeEnergy)
+# df['HartreeEnergyError'] = abs( df['HartreeEnergy'] - HartreeEnergy)
 df['CorrelationEnergyError'] = abs( df['CorrelationEnergy'] - CorrelationEnergy)
 df['TotalEnergyError'] = abs( df['TotalEnergy'] - TotalEnergy)
 df['KineticEnergyError'] = abs( df['KineticEnergy'] - KineticEnergy)
-# df['ElectrostaticEnergyError'] = abs( df['ElectrostaticEnergy'] - ElectrostaticEnergy)
+df['ElectrostaticEnergyError'] = abs( df['ElectrostaticEnergy'] - ElectrostaticEnergy)
 
 
 print(df)
@@ -470,15 +476,26 @@ if __name__=="__main__":
 #     logAversusBcolorbyC(df,'BandEnergyError', 'VextSmoothingEpsilon', 'numberOfPoints')
 #     logAversusBcolorbyC(df,'TotalEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
 
-#     df = df.loc[df['order']==7]  
-#     df = df.loc[df['maxDepth']>=14] 
-#     logAversusBcolorbyC(df,'BandEnergyError', 'maxDepth', 'divideParameter3')
-    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter2') 
-    
+    df = df.loc[df['order']==7]  
 #     df = df.loc[df['depthAtAtoms']==2]  
+#     df = df.loc[df['divideParameter1']==2]  
+#     df = df.loc[df['divideParameter3']==0.1]  
+#     df = df.loc[df['divideParameter2']==3]  
+#     df = df.loc[df['divideParameter4']==100000]  
+#     df = df.loc[df['maxDepth']>=14] 
+#     logAversusBcolorbyC(df,'BandEnergyError', 'maxDepth', 'divideParameter1') 
+
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints','maxDepth') 
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'order') 
+#     logAversusLogBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'divideParameter4') 
+#     logAversusLogBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
+#     logAversusLogBcolorbyC(df,'CorrelationEnergyError', 'numberOfPoints', 'order') 
+#     logAversusLogBcolorbyC(df,'ExchangeEnergyError', 'numberOfPoints', 'order') 
+    
+#     df = df.loc[df['depthAtAtoms']==2]   
 #     print(df['HartreeEnergyError'])   
 #     df = df.loc[df['Treecode']==False]    
-#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'VextSmoothingEpsilon')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
 #     logAversusLogBcolorbyC(df,'BandEnergyError', 'VextSmoothingEpsilon', 'depthAtAtoms')
     
 #     logAversusLogBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'depthAtAtoms')
@@ -492,7 +509,7 @@ if __name__=="__main__":
  
 #     df = df.loc[df['gradientFree']==1]
 #     df = df.loc[df['maxDepth']>11]
-#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
+    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
     
     
 # #     print( df['numberOfPoints'] )

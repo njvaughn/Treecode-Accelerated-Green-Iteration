@@ -707,16 +707,18 @@ class Tree(object):
                     elif divideCriterion=='BirosK':
                         Cell.checkIfChebyshevCoefficientsAboveTolerance_allIndicesAboveQ(divideParameter)
                     elif divideCriterion=='BirosN':
-                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ(divideParameter)
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_rho_sqrtRho(divideParameter1, divideParameter2)
                     elif divideCriterion=='BirosG':
 #                         Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_sumOfWavefunctions(divideParameter)
                         Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_sumOfWavefunctions(divideParameter)
                     elif divideCriterion=='BirosGN':
-                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho(divideParameter)
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho(divideParameter1, divideParameter2)
                     elif divideCriterion=='BirosGN2':
                         Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho_or_v(divideParameter)
                     elif divideCriterion=='Krasny':
                         Cell.checkWavefunctionVariation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                    elif divideCriterion=='Nathan':
+                        Cell.checkIfAboveDensityRange(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
                     
@@ -771,7 +773,7 @@ class Tree(object):
                         gp = cell.gridpoints[i,j,k]
                         r = np.sqrt( gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
                         if r < closestToOrigin:
-                            closestToOrigin = np.copy(r)
+                            closestToOrigin = np.copy(r)  
                             closestCoords = [gp.x, gp.y, gp.z]
                             closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
         
@@ -811,7 +813,10 @@ class Tree(object):
             print("Tree build completed. \n"
                   "Domain Size:                                 [%.1f, %.1f] \n"
                   "Divide Criterion:                            %s \n"
-                  "Divide Parameter:                            %1.2e \n"
+                  "Divide Parameter1:                           %1.2e \n"
+                  "Divide Parameter2:                           %1.2e \n"
+                  "Divide Parameter3:                           %1.2e \n"
+                  "Divide Parameter4:                           %1.2e \n"
                   "Total Number of Cells:                       %i \n"
                   "Total Number of Leaf Cells:                  %i \n"
                   "Total Number of Gridpoints:                  %i \n"
@@ -821,7 +826,7 @@ class Tree(object):
                   "Cell Order:                                  %i \n"
                   "Construction time:                           %.3g seconds."
                    
-                  %(self.xmin, self.xmax, divideCriterion,divideParameter, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved, 
+                  %(self.xmin, self.xmax, divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved, 
                     self.maxDepthAtAtoms, self.px, timer.elapsedTime))
             print('Closest gridpoint to origin: ', closestCoords)
             print('For a distance of: ', closestToOrigin)

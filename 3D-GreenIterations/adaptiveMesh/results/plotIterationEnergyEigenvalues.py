@@ -64,16 +64,27 @@ import numpy as np
 # file='LW5o5_2000_7_orbitals_noGIanderson_GREEN_.csv'
 
 # ## Oxygen -- Biros
-# # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
-resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
-plotsDir = resultsDir+'plots/'
-# # # file='Biros_o7_1em4_solo_SCF_.csv'
-# # # file='Biros_o7_7em5_alpha_1p5_SCF_.csv'
-# # # file='BirosN_o7_1em3_SCF_.csv'
-# # # file='BirosN_o7_2em4_SCF_.csv'
-# file='BirosG_o7_max15_SCF_.csv'
-# file='BirosG_o7_1em5_GREEN_.csv'
-file='BirosGN_o7_1em2_GREEN_.csv'
+# # # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+# plotsDir = resultsDir+'plots/'
+# # # # file='Biros_o7_1em4_solo_SCF_.csv'
+# # # # file='Biros_o7_7em5_alpha_1p5_SCF_.csv'
+# # # # file='BirosN_o7_1em3_SCF_.csv'
+# # # # file='BirosN_o7_2em4_SCF_.csv'
+# # file='BirosG_o7_max15_SCF_.csv'
+# # file='BirosG_o7_1em5_GREEN_.csv'
+# file='BirosGN_o7_1em2_GREEN_.csv'
+
+
+### Oxygen 4 parameter
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_densityIntegral4th/'
+# file='ds_cellOrder5_maxDepth15_3_3_0.3_0.03_GREEN_.csv'
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation/'
+# file='ds_cellOrder5maxDepth12_2_2_0.1_50000_GREEN_.csv'
+
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_integralSqrtDensity/'
+file='ds_cellOrder5maxDepth15_2_3_0.3_0.05_GREEN_.csv'
 
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
@@ -237,23 +248,25 @@ df['eigenvalue4'] = eigenvaluesMatrix[:,4]
 ##    pass
 
 def plotFirstSCF(df):
-    f, ax = plt.subplots(1,1, figsize=(12,6))
-    df.plot(y='eigenvalue0',ax=ax,label='Phi0')
-    df.plot(y='eigenvalue1',ax=ax,label='Phi1')
-    df.plot(y='eigenvalue2',ax=ax,label='Phi2')
-    df.plot(y='eigenvalue3',ax=ax,label='Phi3')
-    df.plot(y='eigenvalue4',ax=ax,label='Phi4')
-#     df.plot(y='eigenvalue5',ax=ax,label='Phi5')
-#     df.plot(y='eigenvalue6',ax=ax,label='Phi6')
-#     df.plot(y='eigenvalue7',ax=ax,label='Phi7')
-#     df.plot(y='eigenvalue8',ax=ax,label='Phi8')
-#     df.plot(y='eigenvalue9',ax=ax,label='Phi9')
     
-    for i in range(len(referenceEnergies)):
-        ax.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5)
-    ax.set_xlabel('Iteration Number')
-    ax.set_ylabel('Eigenvalues')
-    ax.set_title('Eigenvalues During First SCF Iteration')
+    
+#     f, ax = plt.subplots(1,1, figsize=(12,6))
+#     df.plot(y='eigenvalue0',ax=ax,label='Phi0')
+#     df.plot(y='eigenvalue1',ax=ax,label='Phi1')
+#     df.plot(y='eigenvalue2',ax=ax,label='Phi2')
+#     df.plot(y='eigenvalue3',ax=ax,label='Phi3')
+#     df.plot(y='eigenvalue4',ax=ax,label='Phi4')
+# #     df.plot(y='eigenvalue5',ax=ax,label='Phi5')
+# #     df.plot(y='eigenvalue6',ax=ax,label='Phi6')
+# #     df.plot(y='eigenvalue7',ax=ax,label='Phi7')
+# #     df.plot(y='eigenvalue8',ax=ax,label='Phi8')
+# #     df.plot(y='eigenvalue9',ax=ax,label='Phi9')
+#     
+#     for i in range(len(referenceEnergies)):
+#         ax.axhline(y=referenceEnergies[i],color='k',linestyle='--',linewidth=0.5)
+#     ax.set_xlabel('Iteration Number')
+#     ax.set_ylabel('Eigenvalues')
+#     ax.set_title('Eigenvalues During First SCF Iteration')
     
 #     plt.show()
 #     return

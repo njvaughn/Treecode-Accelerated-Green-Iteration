@@ -513,6 +513,40 @@ class Cell(object):
         maxSqVariation = 0.0
         maxAbsIntegral = 0.0
         sqVariationCause=-2
+        densityIntegralCause=-2
+        
+        
+        ### Compute Density terms based on all atoms
+        
+        densityIntegral = 0.0
+        sqrtDensityIntegral = 0.0
+        for i,j,k in TwoByTwoByTwo:
+            density=0.0
+            for atom in self.tree.atoms:
+                dx = xmm[i]-atom.x
+                dy = ymm[j]-atom.y
+                dz = zmm[k]-atom.z
+                r = np.sqrt( dx**2 + dy**2 + dz**2 )
+    
+                
+                density +=  atom.interpolators['density'](r)
+                
+            densityIntegral += density/8*self.volume
+            sqrtDensityIntegral += np.sqrt(density)/8*self.volume
+             
+            if ( (i==0) and (j==0) and (k==0)): 
+                maxDensity = density
+                minDensity = density
+            else:
+                if density>maxDensity: maxDensity = density
+                if density<minDensity: minDensity = density
+             
+            relDensityVariation = (maxDensity-minDensity)/maxDensity
+            if relDensityVariation>maxRelDensityVariation:
+                maxRelDensityVariation = relDensityVariation
+                relDensityVariationCause = -1
+            
+            
     
 #         for atom in self.tree.atoms:
         atom = self.nearestAtom
@@ -530,39 +564,7 @@ class Cell(object):
         else:
             print('Atom with atomic number %i.  How many wavefunctions should be used in mesh refinement scheme?' %atom.nAtomicOrbitals)
         
-        for i,j,k in TwoByTwoByTwo:
-            dx = xmm[i]-atom.x
-            dy = ymm[j]-atom.y
-            dz = zmm[k]-atom.z
-            r = np.sqrt( dx**2 + dy**2 + dz**2 )
-            if r==0:  # nudge the point 10% in towrads the cell center, just to avoid 1/0 cases
-                dx = 0.99*(xmm[i]-atom.x) + 0.01*(xmm[(i+1)%2]-atom.x)
-                dy = 0.99*(ymm[j]-atom.y) + 0.01*(ymm[(j+1)%2]-atom.y)
-                dz = 0.99*(zmm[k]-atom.z) + 0.01*(zmm[(k+1)%2]-atom.z)
-                
         
-                r = np.sqrt( dx**2 + dy**2 + dz**2 )
-#                 print('x: ', xmm)
-#                 print('y: ', ymm)
-#                 print('z: ', zmm)
-#                 print('nudged r = ', r)
-
-            inclination = np.arccos(dz/r)
-            azimuthal = np.arctan2(dy,dx)
-            
-            density = atom.interpolators['density'](r)
-             
-            if ( (i==0) and (j==0) and (k==0)): 
-                maxDensity = density
-                minDensity = density
-            else:
-                if density>maxDensity: maxDensity = density
-                if density<minDensity: minDensity = density
-         
-        relDensityVariation = (maxDensity-minDensity)/maxDensity
-        if relDensityVariation>maxRelDensityVariation:
-            maxRelDensityVariation = relDensityVariation
-            relDensityVariationCause = -1
        
         singleAtomOrbitalCount=0
         for nell in aufbauList:
@@ -594,21 +596,24 @@ class Cell(object):
                             ytemp = 0.99*(ymm[j]) + 0.01*(ymm[(j+1)%2])
                             ztemp = 0.99*(zmm[k]) + 0.01*(zmm[(k+1)%2])
                             r = np.sqrt( dx**2 + dy**2 + dz**2 )
-                        inclination = np.arccos(dz/r)
-                        azimuthal = np.arctan2(dy,dx)
-                    
-                        
-                    
-                        if m<0:
-                            Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
-                        if m>0:
-                            Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
-                        if ( m==0 ):
-                            Y = sph_harm(m,ell,azimuthal,inclination)
-
-
+#                         inclination = np.arccos(dz/r)
+#                         azimuthal = np.arctan2(dy,dx)
+#                     
+#                         
+#                     
+#                         if m<0:
+#                             Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+#                         if m>0:
+#                             Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+#                         if ( m==0 ):
+#                             Y = sph_harm(m,ell,azimuthal,inclination)
+#
+                        Y = sph_harm(0,ell,0,0)
                         psi = atom.interpolators[psiID](r)*np.real(Y)
                         psiSq = atom.interpolators[psiID](r)*np.real(Y)
+
+#                         psi = atom.interpolators[psiID](r)
+#                         psiSq = atom.interpolators[psiID](r)
                         Vext = atom.V(xtemp,ytemp,ztemp)
                         
                         if ( (i==0) and (j==0) and (k==0)): 
@@ -654,6 +659,8 @@ class Cell(object):
                     
 #         return maxVariation, maxRelDensityVariation, maxAbsIntegral, maxSqVariation, variationCause, relDensityVariationCause, absIntegralCause, sqVariationCause
         return maxVariation, maxPsiVextVariation, maxAbsIntegral, maxSqVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause
+#         return maxVariation, densityIntegral, maxAbsIntegral, maxSqVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause
+#         return maxVariation, sqrtDensityIntegral, maxAbsIntegral, maxSqVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause
     
     
     def initializeCellWavefunctions(self):           
@@ -751,6 +758,8 @@ class Cell(object):
 
 #         waveVariation, relDensityVariation, absIntegral, sqWaveVariation, variationCause, densityVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
         waveVariation, psiVextVariation, absIntegral, sqWaveVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+#         waveVariation, densityIntegral, absIntegral, sqWaveVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+#         waveVariation, sqrtDensityIntegral, absIntegral, sqWaveVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
         
         
         if waveVariation > divideParameter1:
@@ -777,6 +786,16 @@ class Cell(object):
             self.divideFlag=True
             print('Dividing cell %s because of psi*Vext variation for wavefunction %i.' %(self.uniqueID, psiVextVariationCause))
             return
+
+#         if densityIntegral > divideParameter4:
+#             self.divideFlag=True
+#             print('Dividing cell %s because of density integral.' %(self.uniqueID))
+#             return
+        
+#         if sqrtDensityIntegral > divideParameter4:
+#             self.divideFlag=True
+#             print('Dividing cell %s because of density integral.' %(self.uniqueID))
+#             return
             
                         
     def checkIfChebyshevCoefficientsAboveTolerance(self, divideParameter):
@@ -884,7 +903,7 @@ class Cell(object):
                 print('Dividing cell %s because of wavefunction %i.' %(self.uniqueID,m))
                 return
             
-    def checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho(self, divideParameter):
+    def checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho(self, divideParameter1, divideParameter2):
         self.divideFlag = False
         
         
@@ -899,9 +918,11 @@ class Cell(object):
                 except ValueError:
                     rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
         
-        densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(rho,(self.px-1)  )
-        if densityCoefficientSum > divideParameter:
+#         densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(rho,(self.px-1)  )
+        densityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
+        if densityCoefficientSum > divideParameter1:
             self.divideFlag=True
+            print('Cell %s dividing because of density coefficients.' %self.uniqueID)
             return
                     
         
@@ -917,12 +938,49 @@ class Cell(object):
 #         densityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
         wavefunctionCoefficientSum = 0.0
         for m in range(self.tree.nOrbitals):
-            wavefunctionCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(phi[:,:,:,m],(self.px-1)  )
+#             wavefunctionCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(phi[:,:,:,m],(self.px-1)  )
+            wavefunctionCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(phi[:,:,:,m],(self.px-1)  )
         
 
-            if wavefunctionCoefficientSum > divideParameter:
+            if wavefunctionCoefficientSum > divideParameter2:
                 self.divideFlag=True
+                print('Cell %s dividing because of wavefunction %i coefficients.' %(self.uniqueID,m))
                 return
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_rho_sqrtRho(self, divideParameter1, divideParameter2):
+        self.divideFlag = False
+        
+        
+        rho = np.zeros((self.px,self.py,self.pz))
+        sqrtrho = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    d = atom.interpolators['density'](r)
+                    rho[i,j,k] += d
+                    sqrtrho[i,j,k] += np.sqrt( d ) 
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+                    sqrtrho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+#         densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(rho,(self.px-1)  )
+        densityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
+        if densityCoefficientSum > divideParameter1:
+            self.divideFlag=True
+            print('Cell %s dividing because of density coefficients.' %self.uniqueID)
+            return
+        
+        sqrtDensityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
+        if sqrtDensityCoefficientSum > divideParameter2:
+            self.divideFlag=True
+            print('Cell %s dividing because of sqrt(density) coefficients.' %self.uniqueID)
+            return
+                    
+        
+    
             
     def checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho_or_v(self, divideParameter):
         self.divideFlag = False

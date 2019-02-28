@@ -1,6 +1,6 @@
 ####  PBS preamble
 
-#PBS -N batchGreenIterations
+#PBS -N birosMeshTests
 #PBS -M njvaughn@umich.edu
 #PBS -m a
 
@@ -10,28 +10,36 @@
 
 
 #PBS -l nodes=1:gpus=1,mem=8gb
-#PBS -l walltime=24:00:00
+#PBS -l walltime=12:00:00 
 #PBS -j oe
 #PBS -V
 
 ####  End PBS preamble
 
 if [ -s "$PBS_NODEFILE" ] ; then
-    echo "Running on"
-    uniq -c $PBS_NODEFILE
+    echo "Running on" 
+    uniq -c $PBS_NODEFILE 
 fi
 
 if [ -d "$PBS_O_WORKDIR" ] ; then
     cd $PBS_O_WORKDIR
     echo "Running from $PBS_O_WORKDIR"
-fi
+fi 
 
+
+
+#!/bin/bash
+
+#cd /home/njvaughn/hybrid-gpu-treecode/src
+#make clean;make
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
+
+DOMAIN=20
+MAXDEPTH=20
 MINDEPTH=3
 SINGSUBT=1
-SMOOTHINGN=0
-
+SMOOTHINGEPS=0
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
@@ -40,39 +48,55 @@ INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
-GRADIENTFREE='True'
-GPUPRESENT='True'
-
-
-
-
-MIXINGPARAMETER=0.5
-
-INTRASCFTOLERANCE=1e-6
-INTERSCFTOLERANCE=1e-5
-
-MIXING='Anderson'	
 VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 
 
-ORDER=7
-MAXDEPTH=15
-SMOOTHINGEPS=1.0
-DOMAIN=20
-MESHTYPE='Krasny'
+GRADIENTFREE='True'
+GPUPRESENT='True'
 
+TREECODE='False'
+TREECODEORDER=0
+THETA=0.0
+MAXPARNODE=8000
+BATCHSIZE=8000
+
+
+GAUSSIANALPHA=1.0
+
+MESHTYPE='BirosN'
+
+
+MIXINGPARAMETER=0.5  
  
+INTRASCFTOLERANCE=1e-7  
+INTERSCFTOLERANCE=5e-6 
+   
+MIXING='Anderson'   
+CELLORDER=6
 
-MESHPARAM=5e-1
-OUTPUTFILE='/home/njvaughn/LWvsBiros/Oxygen_feb5/Krasny_o7_5em1.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER $GPUPRESENT
-	
-MESHPARAM=3e-1
-OUTPUTFILE='/home/njvaughn/LWvsBiros/Oxygen_feb5/Krasny_o7_4em1.csv'
-python -u testBatchGreenIterations_KS.py $DOMAIN $MINDEPTH $MAXDEPTH $ORDER $SINGSUBT \
-	$SMOOTHINGN $SMOOTHINGEPS $MESHTYPE $MESHPARAM $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER $GPUPRESENT
+DEPTHATATOMS=2
 	
 
+SMOOTHINGEPS=0.0
+for MAXDEPTH in 13
+do								  					
+for MESHPARAM1 in 0.01
+do
+	for MESHPARAM2 in 0.001 
+	do   
+		for MESHPARAM3 in 0.0
+		do
+			for MESHPARAM4 in 0.0
+			   
+			do
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/birosMeshTests/birosN/ds_cellOrder${CELLORDER}maxDepth${MAXDEPTH}_depthAtAtom${DEPTHATATOMS}_${MESHPARAM1}_${MESHPARAM2}.csv"
+			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
+																		$SMOOTHINGEPS $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
+																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4  
+			done
+		done
+	done
+done
+done		  
+	

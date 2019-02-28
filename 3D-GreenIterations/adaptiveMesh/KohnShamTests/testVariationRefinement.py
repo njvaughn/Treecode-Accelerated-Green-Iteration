@@ -231,11 +231,119 @@ def refine_anyWavefunction(atomicNumber, targetWavefunctions, rmax, epsilon1, ep
     
 
 
+def refine_densityRange(atomicNumber, targetWavefunction, rmax, maxDepth):
+    
+    ### Extract radial wavefunction data
+    AtomicDataPath = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atomicNumber)+'/singleAtomData/'
+    print(AtomicDataPath)
+    print(os.listdir(AtomicDataPath))
+    
+    ## Density
+    data = np.genfromtxt(AtomicDataPath+targetWavefunction+'.inp')
+    r_density = data[:,0]
+    density = data[:,1]
+    interpolator = interp1d(data[:,0],np.abs(data[:,1]),fill_value='extrapolate')
+    
+    ## Wavefunction
+    data = np.genfromtxt(AtomicDataPath+'psi10.inp')
+    interpolatorPsi10 = interp1d(data[:,0],data[:,1],fill_value='extrapolate')
+    
+    data = np.genfromtxt(AtomicDataPath+'psi20.inp')
+    interpolatorPsi20 = interp1d(data[:,0],data[:,1],fill_value='extrapolate')
+    
+    data = np.genfromtxt(AtomicDataPath+'psi21.inp')
+    interpolatorPsi21 = interp1d(data[:,0],data[:,1],fill_value='extrapolate')
+
+    
+    mesh = np.linspace(0,rmax,8)
+    wave = interpolator(mesh)
+    maxDensity = interpolator(0.0)
+    print(wave)
+  
+    needToRefine=True
+    depth=1
+    while needToRefine==True:
+        meshB = []
+ 
+    
+        for i in range(len(mesh)-1):
+            meshB.append(mesh[i])
+            
+#             absVariation = np.abs(wave[i+1]-wave[i])
+#             relVariation = np.abs(wave[i+1]-wave[i]) / (  (np.abs(wave[i+1])+np.abs(wave[i]))/2  )
+#             integralPsi = (np.abs(wave[i+1])+np.abs(wave[i]))/2 * (mesh[i+1]-mesh[i]) # trapezoid rule over interval
+                   
+            midpoint=(mesh[i]+mesh[i+1])/2  
+            midpointDensity = interpolator(midpoint)
+#             midpointDensity = max(interpolator(mesh[i]), interpolator(mesh[i+1]) )                                     
+            if ( (midpointDensity/maxDensity > (depth)/maxDepth) ):
+                print('Refining at %e due to density' %midpoint)
+                meshB.append( midpoint)
+            else:
+#                 sqrtDensity = max( np.sqrt(interpolator(mesh[i])), np.sqrt(interpolator(mesh[i+1]) ) )                                     
+                sqrtDensity = np.sqrt(interpolator(midpoint))                                     
+                if ( (sqrtDensity/np.sqrt(maxDensity) > (depth)/maxDepth) ):
+                    print('Refining at %e due to sqrt(density)=%f' %(midpoint,sqrtDensity))
+                    meshB.append( midpoint)
+            
+    
+            
+            
+            if i==len(mesh)-2:
+                meshB.append(mesh[i+1])
+        
+        print('Length of previous mesh:   ', len(mesh))      
+        print('Length of new mesh:        ', len(meshB))
+        print()
+        
+        
+                
+        waveB = interpolator(meshB)
+    
+        
+        if len(meshB)==len(mesh):
+            needToRefine=False
+        mesh = np.copy(meshB)
+        wave = np.copy(waveB)
+        depth+=1
+        
+        
+    plt.figure()
+    plt.plot(r_density,density,'k-')
+    plt.plot(r_density,np.sqrt(density),'b-')
+    plt.plot(mesh,wave,'go')
+    plt.plot(mesh,np.sqrt(wave),'bo')
+    plt.plot(mesh,np.zeros_like(mesh),'kx')
+    plt.title(targetWavefunction + ', maxDepth = %i' %(maxDepth) )
+    
+    psi10 = interpolatorPsi10(mesh)
+    psi20 = interpolatorPsi20(mesh)
+    psi21 = interpolatorPsi21(mesh)
+    plt.figure()
+#     plt.plot(r_density,density,'k-')
+#     plt.plot(mesh,wave,'go')
+    plt.plot(mesh,psi10,'o')
+    plt.plot(mesh,psi20,'o')
+    plt.plot(mesh,psi21,'o')
+#     plt.plot(mesh,np.zeros_like(mesh),'kx')
+#     plt.title(targetWavefunction + ', epsilon1 = %1.2f, epsilon2 = %1.2f, epsilon3 = %1.2f' %(epsilon1, epsilon2,epsilon3) )
+    plt.title(targetWavefunction + ', maxDepth = %i' %(maxDepth) )
+    
+    
+    plt.show()
+
 
 if __name__ == "__main__":
+    
+    
+    refine_densityRange(8, 'density', 20, 13)
+#     refine_densityRange(8, 'psi10', 20, 13)
+    
+    
+    
 #     refine(8,'density',10,0.9,2.0)
 #     refine_anyWavefunction(8,['psi10', 'psi21'],15,0.5,1.0)
-    refine_anyWavefunction(8,['psi10','psi20','psi21'],20,10,0.99)
+#     refine_anyWavefunction(8,['psi10','psi20','psi21'],20,10,0.99)
     
 #     refine_singleWavefunction(8,'psi21',15,0.15,1000.0, 500)
     
