@@ -28,14 +28,20 @@ class Atom(object):
         self.smoothingEpsilon = smoothingEpsilon
         if self.smoothingEpsilon != 0.0:
             print('Warning: smoothing epsilon for atom is set to ', self.smoothingEpsilon,'. Is that intentional?')
-        
+       
        
     def V(self,x,y,z):
-        r = np.sqrt( self.smoothingEpsilon**2 + (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
+#         r = np.sqrt( self.smoothingEpsilon**2 + (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
+        r = np.sqrt( (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         if r ==0.0:
             print('Warning, evaluating potential at singularity!')
             return 0.0
-        return -self.atomicNumber/r
+        
+        if self.smoothingEpsilon==0.0:
+            return -self.atomicNumber/r
+        else:
+            c = ( 0.00435*self.smoothingEpsilon / self.atomicNumber**5) **(1/3)
+            return -self.atomicNumber*u(r/c)/c
 
 
     
@@ -89,19 +95,3 @@ class Atom(object):
                 self.interpolators[singleAtomData[:7]] = interp1d(data[:,0],data[:,1],fill_value='extrapolate')
         
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-         
-            
-            
-        

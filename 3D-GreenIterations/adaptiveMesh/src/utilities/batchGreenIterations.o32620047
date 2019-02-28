@@ -1,0 +1,131 @@
+Running on
+      1 nyx7509
+Running from /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities
+os.uname()[1] =  nyx7509.arc-ts.umich.edu
+Unable to import directSumWrappers due to OSError
+Unable to import treecodeWrapper due to OSError
+gradientFree =  True
+Mixing scheme =  Anderson
+vtk directory =  /home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes
+======================================================================
+======================================================================
+====================================================================== 
+
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/berylliumAtom.csv
+in testBatchGreen..., nOrbitals =  2
+['../src/utilities/molecularConfigurations/berylliumAtom.csv', '/home/njvaughn/LWMeshes/Beryllium_LW5o5_500.csv', 4.0, 2, -14.446201118081863, -2.2903921833555341, -0.22343205529440757, -8.1232305760491457, -0.5]
+[-3.85561542 -0.20599987 -0.07579017]
+(3,)
+Reading atomic coordinates from:  ../src/utilities/molecularConfigurations/berylliumAtom.csv
+Using single atom data from:
+/home/njvaughn/AtomicData/allElectron/z4/singleAtomData/
+Gauge shift  -0.5
+Nuclear energy:  0.0
+Atom is contained in cell    which has no children.  Divide at atomic location.
+There are now 8 leaf cells.
+After aspect ratio divide there are 8 leaf cells.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the tree, nOrbitals =  2
+type:  <class 'int'>
+max depth  15
+Number of gridpoints:  267000
+max density:  34.6267056246
+Integrated density before normalization:  4.00004763028
+Integrated density after normalization:  4.0
+Initializing density EXTERNALLY took 1.996 seconds.
+Initializing orbitals for atom Z = 4 located at (x, y, z) = ( 0.000,  0.000,  0.000)
+Orbital index = 0
+Orbital 0 filled with (n,ell,m) = (1,0,0) 
+Orbital 1 filled with (n,ell,m) = (2,0,0) 
+Initializing orbitals EXTERNAL to Tree Structure took 2.009 seconds.
+Tree build completed. 
+Domain Size:                 [-20.0, 20.0] 
+Divide Criterion:             LW5 
+Divide Parameter:            5.00e+02 
+Total Number of Cells:       2441 
+Total Number of Leaf Cells:  2136 
+Total Number of Gridpoints:  267000 
+Minimum Depth                3 levels 
+Maximum Depth:               11 levels 
+Cell Order:                  5 
+Construction time:           11.7 seconds.
+Closest gridpoint to origin:  [-0.00047796370805514021, -0.00047796370805514021, -0.00047796370805514021]
+For a distance of:  0.0008278574265255207
+Part of a cell centered at:  [-0.009765625, -0.009765625, -0.009765625]
+
+Entering greenIterations_KohnSham_SCF()
+
+Number of targets:    267000
+Threads per block:    512
+Blocks per grid:      522
+[14.309060170370618, -2.2903921833555341, -0.22343205529440757, -26.241437049802535, -14.446201118081863, -0.5]
+Integrated density:  4.0
+Using Gaussian singularity subtraction, alpha =  1
+GPUpresent set to  True
+Type:  <class 'bool'>
+Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell
+Computing orbital kinetics using Gradients
+Orbital Energy:            [-4.35579081 -0.70600495]
+Sorted eigenvalues:  [-4.35579081 -0.70600495]
+New order:  [0 1]
+Orbital energies after initial sort: 
+ [-4.35579081 -0.70600495]
+Kinetic:    [ 6.58728674  0.56744561]
+Potential:  [-10.94307755  -1.27345055]
+Computing band energy.  Current orbital energies are:  [-4.35579081 -0.70600495]
+Electrostatic Energies:
+Hartree:          7.11517885603
+External:         -33.3573270862
+Nuclear-Nuclear:  0.0
+Updating total energy WITH explicit kinetic evaluation.
+Orbital Energies:  [-4.35579081 -0.70600495]
+Orbital Energy Errors after initialization:  [ -1.75396633e-04  -5.07555810e-06]
+Updated V_x:                           -3.0538438990 Hartree
+Updated V_c:                           -0.2522041023 Hartree
+Updated Band Energy:                   -8.1235915204 H, -2.2432651691e+01 H
+Updated Kinetic Energy:                 14.3094258551 H, 1.6599818038e+01 H
+Updated E_x:                           -2.2903829243 H, -2.0669508690e+00 H
+Updated E_c:                           -0.2234318106 H, 2.6018005239e+01 H
+Updated totalElectrostatic:            -26.2421482302 H, -1.1795947112e+01 H
+Total Energy:                          -14.4465371100 H, -1.3946537110e+01 H
+
+
+
+SCF Count  1
+Orbital Energies:  [-4.35579081 -0.70600495]
+Working on orbital 0
+Using singularity subtraction.  Convolution time:  8.78960633277893
+Norm of psiNew =  1.00000266943
+Traceback (most recent call last):
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/numba/targets/options.py", line 16, in from_dict
+    ctor = self.OPTIONS[k]
+KeyError: 'parallel'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "testBatchGreenIterations_KS.py", line 249, in <module>
+    testGreenIterationsGPU(tree,vtkExport=False)
+  File "testBatchGreenIterations_KS.py", line 158, in testGreenIterationsGPU
+    onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+  File "../src/utilities/greenIterations.py", line 507, in greenIterations_KohnSham_SCF
+    orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/numba/dispatcher.py", line 286, in _compile_for_args
+    return self.compile(tuple(argtypes))
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/numba/dispatcher.py", line 532, in compile
+    cres = self._compiler.compile(args, return_type)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/numba/dispatcher.py", line 73, in compile
+    self.targetdescr.options.parse_as_flags(flags, self.targetoptions)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/numba/targets/options.py", line 26, in parse_as_flags
+    opt.from_dict(options)
+  File "/sw/lsa/centos7/python-anaconda3/created-20170424/lib/python3.5/site-packages/numba/targets/options.py", line 19, in from_dict
+    raise KeyError(fmt % k)
+KeyError: "Does not support option: 'parallel'"

@@ -32,17 +32,18 @@ except ImportError:
 except OSError:
     print('Unable to import directSumWrappers due to OSError')
     
-# try:
-#     import treecodeWrappers
-# except ImportError:
-#     print('Unable to import treecodeWrapper due to ImportError')
-# except OSError:
-#     print('Unable to import treecodeWrapper due to OSError')
-#     
-import treecodeWrappers
+try:
+    import treecodeWrappers
+except ImportError:
+    print('Unable to import treecodeWrapper due to ImportError')
+except OSError:
+    print('Unable to import treecodeWrapper due to OSError')
+    
+     
+# import treecodeWrappers
 
 
-@jit(nopython=True,parallel=True)
+# @jit(nopython=True,parallel=True)
 def modifiedGramSchrmidt(V,weights):
     n,k = np.shape(V)
     U = np.zeros_like(V)
@@ -56,7 +57,7 @@ def modifiedGramSchrmidt(V,weights):
         
     return U
 
-@njit(parallel=False)
+# @njit(parallel=False)
 def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, n, k):
     U = V[:,targetOrbital]
     for j in range(targetOrbital):
@@ -114,12 +115,16 @@ def normalizeOrbitals(V,weights):
 
 
 
-def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, mixingScheme, mixingParameter,
-                                subtractSingularity, smoothingN, smoothingEps, inputFile='',outputFile='',
+def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, 
+                                 treecode, treecodeOrder, theta, maxParNode, batchSize,
+                                 mixingScheme, mixingParameter,
+                                subtractSingularity, gaussianAlpha, inputFile='',outputFile='',
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None): 
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
+    
+#     return
     
 
     if hasattr(tree, 'referenceEigenvalues'):
@@ -161,8 +166,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     Eold = -0.5 + gaugeShift
 
 #     [Etrue, ExTrue, EcTrue, Eband] = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[4:8]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[4:10]
-    print([Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal])
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal] = np.genfromtxt(inputFile)[3:9]
+    print([Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal])
 
     ### COMPUTE THE INITIAL HAMILTONIAN ###
     targets = tree.extractLeavesDensity()  
@@ -173,8 +178,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
     print('Integrated density: ', integratedDensity)
 
-#     startCoulombConvolutionTime = timer()
-    alpha = 1
+#     starthartreeConvolutionTime = timer()
+    alpha = gaussianAlpha
     alphasq=alpha*alpha
     
     print('Using Gaussian singularity subtraction, alpha = ', alpha)
@@ -205,65 +210,93 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         start = time.time()
         
         
-#         alphasq = 0.5
-#         V_coulombNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
+#         V_hartreeNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
 #                                                                                                   targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
-# #         V_coulombNew += targets[:,3]* (4*np.pi)* alphasq/2  # Wrong
-#         V_coulombNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)
+# #         V_hartreeNew += targets[:,3]* (4*np.pi)* alphasq/2  # Wrong
+#         V_hartreeNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
 
 
-#         V_coulombNew = directSumWrappers.callCompiledC_directSum_Poisson(numTargets, numSources, 
+#         V_hartreeNew = directSumWrappers.callCompiledC_directSum_Poisson(numTargets, numSources, 
 #                                                                         targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
-        potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
-        order=3
-        theta = 0.5
-        maxParNode = 500
-        batchSize = 500
-        alphasq = 1.0
-        V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+        potentialType=0 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
+        alpha = gaussianAlpha
+        V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                        targetX, targetY, targetZ, targetValue, 
                                                        sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                       potentialType, alphasq, order, theta, maxParNode, batchSize)
-        
+                                                       potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+          
         if potentialType==2:
-            V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
+            V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
 
         
-#         print('First few terms of V_coulombNew: ', V_coulombNew[:8])
+#         print('First few terms of V_hartreeNew: ', V_hartreeNew[:8])
         print('Convolution time: ', time.time()-start)
         
 #         return
         
         
     elif GPUpresent==True:
-        V_coulombNew = np.zeros((len(targets)))
-        gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+        if treecode==False:
+            V_hartreeNew = np.zeros((len(targets)))
+            start = time.time()
+            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_hartreeNew,alphasq)
+            print('Convolution time: ', time.time()-start)
+#             return
+        elif treecode==True:
+            numTargets = len(targets)
+            numSources = len(sources)
+            sourceX = np.copy(sources[:,0])
+
+            sourceY = np.copy(sources[:,1])
+            sourceZ = np.copy(sources[:,2])
+            sourceValue = np.copy(sources[:,3])
+            sourceWeight = np.copy(sources[:,4])
+            
+            targetX = np.copy(targets[:,0])
+            targetY = np.copy(targets[:,1])
+            targetZ = np.copy(targets[:,2])
+            targetValue = np.copy(targets[:,3])
+            targetWeight = np.copy(targets[:,4])
+            
+            start = time.time()
+            potentialType=2 
+            alpha = gaussianAlpha
+            V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                           targetX, targetY, targetZ, targetValue, 
+                                                           sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                           potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+            print('Convolution time: ', time.time()-start)
+            
+        else:
+            print('treecode True or False?')
+            return
     
 
-#     CoulombConvolutionTime = timer() - startCoulombConvolutionTime
-#     print('Computing Vcoulomb took:    %.4f seconds. ' %CoulombConvolutionTime)
-    tree.importVcoulombOnLeaves(V_coulombNew)
+#     hartreeConvolutionTime = timer() - starthartreeConvolutionTime
+#     print('Computing Vhartree took:    %.4f seconds. ' %hartreeConvolutionTime)
+    tree.importVhartreeOnLeaves(V_hartreeNew)
     tree.updateVxcAndVeffAtQuadpoints()
     
     
     ### Write output files that will be used to test the Treecode evaluation ###
-    sourcesTXT = '/Users/nathanvaughn/Documents/testData/H2Sources.txt'
-    targetsTXT = '/Users/nathanvaughn/Documents/testData/H2Targets.txt'
-    hartreePotentialTXT = '/Users/nathanvaughn/Documents/testData/H2HartreePotential.txt'
+#     sourcesTXT = '/Users/nathanvaughn/Documents/testData/H2Sources.txt'
+#     targetsTXT = '/Users/nathanvaughn/Documents/testData/H2Targets.txt'
+#     hartreePotentialTXT = '/Users/nathanvaughn/Documents/testData/H2HartreePotential.txt'
     
 #     np.savetxt(sourcesTXT, sources)
 #     np.savetxt(targetsTXT, targets[:,0:4])
-#     np.savetxt(hartreePotentialTXT, V_coulombNew)
+#     np.savetxt(hartreePotentialTXT, V_hartreeNew)
 #     
 #     return
 
 
     print('Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell')
     tree.updateOrbitalEnergies(sortByEnergy=False, saveAsReference=True)
-
+    tree.computeBandEnergy()
+    
     tree.sortOrbitalsAndEnergies()
     print('Orbital energies after initial sort: \n', tree.orbitalEnergies)
     print('Kinetic:   ', tree.orbitalKinetic)
@@ -282,22 +315,23 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('Updated V_c:                           %.10f Hartree' %tree.totalVc)
     
     print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalBandEnergy, tree.totalBandEnergy-Eband) )
-    print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Ekinetic) )
+#     print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Ekinetic) )
+    print('Updated E_H:                            %.10f H, %.10e H' %(tree.totalEhartree, tree.totalEhartree-Ehartree) )
     print('Updated E_x:                           %.10f H, %.10e H' %(tree.totalEx, tree.totalEx-Eexchange) )
     print('Updated E_c:                           %.10f H, %.10e H' %(tree.totalEc, tree.totalEc-Ecorrelation) )
-    print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
+#     print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
     print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
     
-    return
+#     return
     
     printInitialEnergies=True
 
     if printInitialEnergies==True:
         header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
-                  'exchangeEnergy', 'correlationEnergy', 'electrostaticEnergy', 'totalEnergy']
+                  'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy']
     
         myData = [0, 1, tree.orbitalEnergies, tree.totalBandEnergy, tree.totalKinetic, 
-                  tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
+                  tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E]
         
     
         if not os.path.isfile(SCFiterationOutFile):
@@ -338,17 +372,19 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     inputIntraSCFtolerance = np.copy(intraScfTolerance)
 
+    energyResidual=1
     
     residuals = 10*np.ones_like(tree.orbitalEnergies)
     SCFcount=0
-    while ( densityResidual > interScfTolerance ):
+    while ( (densityResidual > interScfTolerance) or (energyResidual > interScfTolerance) ):  # terminate SCF when both energy and density are converged.
         SCFcount += 1
         print()
         print()
         print('\nSCF Count ', SCFcount)
         print('Orbital Energies: ', tree.orbitalEnergies)
-        if SCFcount > 100:
-            return
+#         if SCFcount > 0:
+#             print('Exiting before first SCF (for testing initialized mesh accuracy)')
+#             return
         
         if SCFcount>1:
             inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (numberOfGridpoints,1))), axis=1)
@@ -389,7 +425,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 orbitalResidual = 1
                 eigenvalueResidual = 1
                 greenIterationsCount = 1
-                max_GreenIterationsCount = 50
+                max_GreenIterationsCount = 999
                 
     
             
@@ -431,7 +467,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             print('Using singularity skipping')
                             gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
                         elif subtractSingularity==1:
-                            if tree.orbitalEnergies[m] < -0.25: 
+                            if tree.orbitalEnergies[m] < 10.25: 
                                 
                                 
                                 if GPUpresent==False:
@@ -452,36 +488,68 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                     targetValue = np.copy(targets[:,3])
                                     targetWeight = np.copy(targets[:,4])
                                     
-#                                     phiNew = directSumWrappers.callCompiledC_directSum_HelmholtzSingularitySubtract(numTargets, numSources, k, 
-#                                                                                                                           targetX, targetY, targetZ, targetValue, targetWeight, 
-#                                                                                                                           sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
-#                                     phiNew += 4*np.pi*targets[:,3]/k**2
+                                    phiNew = directSumWrappers.callCompiledC_directSum_HelmholtzSingularitySubtract(numTargets, numSources, k, 
+                                                                                                                          targetX, targetY, targetZ, targetValue, targetWeight, 
+                                                                                                                          sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+                                    phiNew += 4*np.pi*targets[:,3]/k**2
 
 #                                     phiNew = directSumWrappers.callCompiledC_directSum_Helmholtz(numTargets, numSources, k, 
 #                                                                                               targetX, targetY, targetZ, targetValue, targetWeight, 
 #                                                                                               sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
 
-                                    potentialType=3
-                                    order=3
-                                    kappa = k
-                                    theta = 0.5
-                                    maxParNode = 500
-                                    batchSize = 500
-                                    start = time.time()
-                                    phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
-                                                                                   targetX, targetY, targetZ, targetValue, 
-                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                                                   potentialType, kappa, order, theta, maxParNode, batchSize)
-                                    print('Convolution time: ', time.time()-start)
-                                    if potentialType==3:
-                                        phiNew += 4*np.pi*targets[:,3]/k**2
+#                                     potentialType=3
+#                                     order=3
+#                                     kappa = k
+#                                     theta = 0.5
+#                                     maxParNode = 500
+#                                     batchSize = 500
+#                                     start = time.time()
+#                                     phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+#                                                                                    targetX, targetY, targetZ, targetValue, 
+#                                                                                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+#                                                                                    potentialType, kappa, order, theta, maxParNode, batchSize)
+#                                     print('Convolution time: ', time.time()-start)
+#                                     if potentialType==3:
+#                                         phiNew += 4*np.pi*targets[:,3]/k**2
                                     phiNew /= (4*np.pi)
-                                else:
-                                    startTime = time.time()
-                                    gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-                                    convolutionTime = time.time()-startTime
-                                    print('Using singularity subtraction.  Convolution time: ', convolutionTime)
+                                elif GPUpresent==True:
+                                    if treecode==False:
+                                        startTime = time.time()
+                                        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                                        convolutionTime = time.time()-startTime
+                                        print('Using singularity subtraction.  Convolution time: ', convolutionTime)
+                                    elif treecode==True:
+                                        numTargets = len(targets)
+                                        numSources = len(sources)
+    
+                                        sourceX = np.copy(sources[:,0])
+    
+                                        sourceY = np.copy(sources[:,1])
+                                        sourceZ = np.copy(sources[:,2])
+                                        sourceValue = np.copy(sources[:,3])
+                                        sourceWeight = np.copy(sources[:,4])
+                                        
+                                        targetX = np.copy(targets[:,0])
+                                        targetY = np.copy(targets[:,1])
+                                        targetZ = np.copy(targets[:,2])
+                                        targetValue = np.copy(targets[:,3])
+                                        targetWeight = np.copy(targets[:,4])
+                                    
+ 
+                                        potentialType=3
+                                        kappa = k
+                                        start = time.time()
+                                        phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                                                       targetX, targetY, targetZ, targetValue, 
+                                                                                       sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                                                       potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
+                                        print('Convolution time: ', time.time()-start)
+                                        phiNew /= (4*np.pi)
+                                    
+                                    else: 
+                                        print('treecode true or false?')
+                                        return
                             else:
                                 print('Using singularity skipping because energy too close to 0')
                                 gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)
@@ -637,8 +705,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         # sort by energy and compute new occupations
         tree.sortOrbitalsAndEnergies()
-#         tree.computeOccupations()
-        occupations = computeOccupations(tree.orbitalEnergies, tree.nElectrons, Temperature)
+        tree.computeOccupations()
+#         occupations = computeOccupations(tree.orbitalEnergies, tree.nElectrons, Temperature)
         
         
         ##  DO I HAVE ENOUGH ORBITALS?  CHECK, AND ADD ONE IF NOT.
@@ -716,14 +784,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         """ 
         Compute new electron-electron potential and update pointwise potential values 
         """
-#         startCoulombConvolutionTime = timer()
+#         starthartreeConvolutionTime = timer()
 
         sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
         targets = np.copy(sources)
         
         if GPUpresent==True:
-            V_coulombNew = np.zeros((len(targets)))
-            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_coulombNew,alphasq)
+            V_hartreeNew = np.zeros((len(targets)))
+            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_hartreeNew,alphasq)
             
         else:
             potentialType=2 # shoud be 0.  Set to 1, 2, or 3 just to test other kernels quickly
@@ -731,20 +799,20 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             theta = 0.5
             maxParNode = 500
             batchSize = 500
-            alphasq = 1.0
-            V_coulombNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+            alphasq = gaussianAlpha**2
+            V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                            targetX, targetY, targetZ, targetValue, 
                                                            sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                            potentialType, alphasq, order, theta, maxParNode, batchSize)
             if potentialType==2:
-                V_coulombNew += targets[:,3]* (4*np.pi) / alphasq/2
+                V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
         
         
       
-        tree.importVcoulombOnLeaves(V_coulombNew)
+        tree.importVhartreeOnLeaves(V_hartreeNew)
         tree.updateVxcAndVeffAtQuadpoints()
-#         CoulombConvolutionTime = timer() - startCoulombConvolutionTime
-#         print('Computing Vcoulomb and updating Veff took:    %.4f seconds. ' %CoulombConvolutionTime)
+#         hartreeConvolutionTime = timer() - starthartreeConvolutionTime
+#         print('Computing Vhartree and updating Veff took:    %.4f seconds. ' %hartreeConvolutionTime)
 
         
         """ 
@@ -775,10 +843,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         print('Updated V_c:                           %.10f Hartree' %tree.totalVc)
         
         print('Updated Band Energy:                   %.10f H, %.10e H' %(tree.totalBandEnergy, tree.totalBandEnergy-Eband) )
-        print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Ekinetic) )
+#         print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(tree.totalKinetic, tree.totalKinetic-Ekinetic) )
+        print('Updated E_Hartree:                      %.10f H, %.10e H' %(tree.totalEhartree, tree.totalEhartree-Ehartree) )
         print('Updated E_x:                           %.10f H, %.10e H' %(tree.totalEx, tree.totalEx-Eexchange) )
         print('Updated E_c:                           %.10f H, %.10e H' %(tree.totalEc, tree.totalEc-Ecorrelation) )
-        print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
+#         print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
         print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
         print('Energy Residual:                        %.3e' %energyResidual)
         print('Density Residual:                       %.3e\n\n'%densityResidual)
@@ -794,10 +863,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
         if printEachIteration==True:
             header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
-                      'exchangeEnergy', 'correlationEnergy', 'electrostaticEnergy', 'totalEnergy']
+                      'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy']
         
             myData = [SCFcount, densityResidual, tree.orbitalEnergies, tree.totalBandEnergy, tree.totalKinetic, 
-                      tree.totalEx, tree.totalEc, tree.totalElectrostatic, tree.E]
+                      tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E]
             
         
             if not os.path.isfile(SCFiterationOutFile):

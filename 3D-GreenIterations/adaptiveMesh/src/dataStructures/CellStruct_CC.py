@@ -5,13 +5,16 @@ Created on Mar 5, 2018
 '''
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
+from scipy.special import sph_harm
 import itertools
 import bisect
 
 from hydrogenAtom import potential
 from meshUtilities import meshDensity, weights3D, unscaledWeights, ChebGradient3D, ChebyshevPoints,computeDerivativeMatrix,\
-    computeLaplacianMatrix, ChebLaplacian3D
+    computeLaplacianMatrix, ChebLaplacian3D, sumChebyshevCoefficicentsGreaterThanOrderQ, sumChebyshevCoefficicentsEachGreaterThanOrderQ, sumChebyshevCoefficicentsAnyGreaterThanOrderQ,\
+    sumChebyshevCoefficicentsGreaterThanOrderQZeroZero
 from GridpointStruct import GridPoint, DensityPoint
+from mpmath import psi
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 TwoByTwoByTwo = [element for element in itertools.product(range(2),range(2),range(2))]
@@ -55,6 +58,8 @@ class Cell(object):
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         self.PxByPyByPz_density = [element for element in itertools.product(range(self.pxd),range(self.pyd),range(self.pzd))]
         self.setCellMidpointAndVolume()
+        self.setNearestAtom()
+        
         
         if hasattr(self, "tree"):
 #             print('Cell has attribute tree')
@@ -115,6 +120,19 @@ class Cell(object):
                 
         return L/l
     
+    
+    """ 
+    NEAREST ATOM(S)
+    """
+    
+    def setNearestAtom(self):
+        minDistSq = np.inf
+        for atom in self.tree.atoms:
+            distSq = (self.xmid - atom.x)**2 + (self.ymid - atom.y)**2 + (self.zmid - atom.z)**2 
+            
+            if distSq < minDistSq:
+                self.nearestAtom = atom
+                minDistSq = distSq
     
     """
     NEIGHBOR IDENTIFICATION AN LABELING FUNCTIONS
@@ -319,6 +337,27 @@ class Cell(object):
             if self.gridpoints[i,j,k].rho > maxRho: maxRho = self.gridpoints[i,j,k].rho
         
         return maxRho - minRho
+    
+    def getWavefunctionVariation(self,m):
+        minPsi = self.gridpoints[0,0,0].phi[m]
+        maxPsi = self.gridpoints[0,0,0].phi[m]
+        maxAbsPsi = 0.0
+        for i,j,k in self.PxByPyByPz:
+            if self.gridpoints[i,j,k].phi[m] < minPsi: minPsi = self.gridpoints[i,j,k].phi[m]
+            if self.gridpoints[i,j,k].phi[m] > maxPsi: maxPsi = self.gridpoints[i,j,k].phi[m]
+#             if abs(self.gridpoints[i,j,k].phi[m]) > maxAbsPsi: maxAbsPsi = self.gridpoints[i,j,k].phi[m]
+        
+        return (maxPsi - minPsi)
+
+    def getWavefunctionIntegral(self,m):
+        absIntegral = 0.0
+        for i,j,k in self.PxByPyByPz:
+            absIntegral += abs( self.gridpoints[i,j,k].phi[m]*self.w[i,j,k] )
+        return absIntegral
+    
+    
+#         return (maxPsi - minPsi)/maxAbsPsi
+#         return min( (maxPsi - minPsi)/maxAbsPsi, (maxPsi - minPsi))
         
     def getTestFunctionVariation(self):
         minValue = self.gridpoints[0,0,0].testFunctionValue
@@ -446,15 +485,598 @@ class Cell(object):
     def checkIfAboveMeshDensity(self,divideParameter,divideCriterion):
         self.divideFlag = False
         for atom in self.tree.atoms:
-#             r_arr = np.zeros(np.shape(self.gridpoints))
-#             for i,j,k in self.PxByPyByPz:
-#                 gp = self.gridpoints[i,j,k]
-#                 r_arr[i,j,k] = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
-#             
-#             r = np.min(r_arr)
+
             r = np.sqrt( (self.xmid-atom.x)**2 + (self.ymid-atom.y)**2 + (self.zmid-atom.z)**2 )
             if 1/self.volume < meshDensity(r,divideParameter,divideCriterion):
                 self.divideFlag=True
+     
+    
+    def wavefunctionVariationAtCorners(self):   
+        
+        xmm = [self.xmin, self.xmax]
+        ymm = [self.ymin, self.ymax]
+        zmm = [self.zmin, self.zmax]        
+        
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
+
+        orbitalIndex=0
+        
+        maxVariation = 0.0
+        maxRelDensityVariation = 0.0
+        maxPsiVextVariation = 0.0
+        maxSqVariation = 0.0
+        maxAbsIntegral = 0.0
+        sqVariationCause=-2
+        densityIntegralCause=-2
+        
+        
+        ### Compute Density terms based on all atoms
+        
+        densityIntegral = 0.0
+        sqrtDensityIntegral = 0.0
+        for i,j,k in TwoByTwoByTwo:
+            density=0.0
+            for atom in self.tree.atoms:
+                dx = xmm[i]-atom.x
+                dy = ymm[j]-atom.y
+                dz = zmm[k]-atom.z
+                r = np.sqrt( dx**2 + dy**2 + dz**2 )
+    
+                
+                density +=  atom.interpolators['density'](r)
+                
+            densityIntegral += density/8*self.volume
+            sqrtDensityIntegral += np.sqrt(density)/8*self.volume
+             
+            if ( (i==0) and (j==0) and (k==0)): 
+                maxDensity = density
+                minDensity = density
+            else:
+                if density>maxDensity: maxDensity = density
+                if density<minDensity: minDensity = density
+             
+            relDensityVariation = (maxDensity-minDensity)/maxDensity
+            if relDensityVariation>maxRelDensityVariation:
+                maxRelDensityVariation = relDensityVariation
+                relDensityVariationCause = -1
+            
+            
+    
+#         for atom in self.tree.atoms:
+        atom = self.nearestAtom
+#         nAtomicOrbitals = atom.nAtomicOrbitals
+        if atom.atomicNumber <= 4:
+            nAtomicOrbitals = 2
+        elif atom.atomicNumber <= 10:
+            nAtomicOrbitals = 5
+        elif atom.atomicNumber <= 12:
+            nAtomicOrbitals = 6
+        elif atom.atomicNumber <= 18:
+            nAtomicOrbitals = 9
+        elif atom.atomicNumber <= 20:
+            nAtomicOrbitals = 10
+        else:
+            print('Atom with atomic number %i.  How many wavefunctions should be used in mesh refinement scheme?' %atom.nAtomicOrbitals)
+        
+        
+       
+        singleAtomOrbitalCount=0
+        for nell in aufbauList:
+            
+            if singleAtomOrbitalCount< nAtomicOrbitals:  
+                n = int(nell[0])
+                ell = int(nell[1])
+                psiID = 'psi'+str(n)+str(ell)
+                for m in range(-ell,ell+1):
+                    
+                    
+                    absIntegral = 0.0
+
+                    for i,j,k in TwoByTwoByTwo:
+                        dx = xmm[i]-atom.x
+                        dy = ymm[j]-atom.y
+                        dz = zmm[k]-atom.z
+                        
+                        xtemp = xmm[i]
+                        ytemp = ymm[j]
+                        ztemp = zmm[k]
+                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                        if r==0:  # nudge the point 10% in towrads the cell center, just to avoid 1/0 cases
+                            dx = 0.99*(xmm[i]-atom.x) + 0.01*(xmm[(i+1)%2]-atom.x)
+                            dy = 0.99*(ymm[j]-atom.y) + 0.01*(ymm[(j+1)%2]-atom.y)
+                            dz = 0.99*(zmm[k]-atom.z) + 0.01*(zmm[(k+1)%2]-atom.z)
+                            
+                            xtemp = 0.99*(xmm[i]) + 0.01*(xmm[(i+1)%2])
+                            ytemp = 0.99*(ymm[j]) + 0.01*(ymm[(j+1)%2])
+                            ztemp = 0.99*(zmm[k]) + 0.01*(zmm[(k+1)%2])
+                            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+#                         inclination = np.arccos(dz/r)
+#                         azimuthal = np.arctan2(dy,dx)
+#                     
+#                         
+#                     
+#                         if m<0:
+#                             Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+#                         if m>0:
+#                             Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+#                         if ( m==0 ):
+#                             Y = sph_harm(m,ell,azimuthal,inclination)
+#
+                        Y = sph_harm(0,ell,0,0)
+                        psi = atom.interpolators[psiID](r)*np.real(Y)
+                        psiSq = atom.interpolators[psiID](r)*np.real(Y)
+
+#                         psi = atom.interpolators[psiID](r)
+#                         psiSq = atom.interpolators[psiID](r)
+                        Vext = atom.V(xtemp,ytemp,ztemp)
+                        
+                        if ( (i==0) and (j==0) and (k==0)): 
+                            maxPsi = psi
+                            maxPsiSq = psiSq
+                            minPsi = psi
+                            minPsiSq = psiSq
+                            maxPsiVext = psi*Vext
+                            minPsiVext = psi*Vext
+                        else:
+                            if psi>maxPsi: maxPsi = psi
+                            if psiSq>maxPsiSq: maxPsiSq = psiSq
+                            if psi<minPsi: minPsi = psi
+                            if psiSq<minPsiSq: minPsiSq = psiSq
+                            if psi*Vext>maxPsiVext: maxPsiVext = psi*Vext
+                            if psi*Vext<minPsiVext: minPsiVext = psi*Vext
+
+                        
+                        absIntegral += abs(psi)*self.volume/8
+                           
+
+                    variation = maxPsi-minPsi
+                    psiVextVariation = maxPsiVext - minPsiVext
+                    maxabs = max(abs(maxPsi), abs(minPsi))
+                    sqVariation = (maxPsiSq-minPsiSq) 
+                    
+                    
+                    if variation>maxVariation:
+                        maxVariation = variation
+                        variationCause = orbitalIndex
+                    if psiVextVariation>maxPsiVextVariation:
+                        maxPsiVextVariation = psiVextVariation
+                        maxVariation = variation
+                        psiVextVariationCause = orbitalIndex
+                    if sqVariation>maxSqVariation:
+                        maxSqVariation = sqVariation
+                        sqVariationCause = orbitalIndex
+                    if absIntegral > maxAbsIntegral:
+                        maxAbsIntegral = absIntegral
+                        absIntegralCause = orbitalIndex
+                    orbitalIndex += 1
+                    singleAtomOrbitalCount += 1
+                    
+#         return maxVariation, maxRelDensityVariation, maxAbsIntegral, maxSqVariation, variationCause, relDensityVariationCause, absIntegralCause, sqVariationCause
+        return maxVariation, maxPsiVextVariation, maxAbsIntegral, maxSqVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause
+#         return maxVariation, densityIntegral, maxAbsIntegral, maxSqVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause
+#         return maxVariation, sqrtDensityIntegral, maxAbsIntegral, maxSqVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause
+    
+    
+    def initializeCellWavefunctions(self):           
+        
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
+
+        orbitalIndex=0
+
+    
+        for atom in self.tree.atoms:
+            nAtomicOrbitals = atom.nAtomicOrbitals
+            
+#             dx=[]
+#             dy=[]
+#             dz=[]
+#             for i,j,k in self.PxByPyByPz:
+#                 gp = self.gridpoints[i,j,k]
+#                 dx = np.append(dx, gp.x-atom.x)
+#                 dy = np.append(dy,gp.y-atom.y)
+#                 dz = np.append(dz,gp.z-atom.z)
+#             r = np.sqrt( dx**2 + dy**2 + dz**2 )
+#             inclination = np.arccos(dz/r)
+#             azimuthal = np.arctan2(dy,dx)
+                
+            
+            
+#             print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+#                       %(atom.atomicNumber, atom.x,atom.y,atom.z))
+#             print('Orbital index = %i'%orbitalIndex)            
+            singleAtomOrbitalCount=0
+            for nell in aufbauList:
+                
+                if singleAtomOrbitalCount< nAtomicOrbitals:  
+                    n = int(nell[0])
+                    ell = int(nell[1])
+                    psiID = 'psi'+str(n)+str(ell)
+#                     print('Using ', psiID)
+                    for m in range(-ell,ell+1):
+#                         for _,cell in self.masterList:
+#                             if cell.leaf==True:
+
+                        for i,j,k in self.PxByPyByPz:
+                            gp = self.gridpoints[i,j,k]
+                            dx = gp.x-atom.x
+                            dy = gp.y-atom.y
+                            dz = gp.z-atom.z
+                            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                            inclination = np.arccos(dz/r)
+                            azimuthal = np.arctan2(dy,dx)
+                        
+                            
+                        
+#                                     Y = sph_harm(m,ell,azimuthal,inclination)*np.exp(-1j*m*azimuthal)
+                            if m<0:
+                                Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                            if m>0:
+                                Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+    #                                     if ( (m==0) and (ell>1) ):
+                            if ( m==0 ):
+                                Y = sph_harm(m,ell,azimuthal,inclination)
+    #                                     if ( (m==0) and (ell<=1) ):
+    #                                         Y = 1
+    #                         if abs(np.imag(Y)) > 1e-14:
+    #                             print('imag(Y) ', np.imag(Y))
+    #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+                            try:
+                                gp.phi[orbitalIndex] = atom.interpolators[psiID](r)*np.real(Y)
+                            except ValueError:
+                                gp.phi[orbitalIndex] = 0.0
+                               
+#                             count=0 
+#                             for i,j,k in self.PxByPyByPz:
+#                                 gp.phi[orbitalIndex] = phi[count]
+#                                 count += 1
+                                        
+                        
+                        
+#                         print('Cell %s Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(self.uniqueID,orbitalIndex,n,ell,m))
+                        orbitalIndex += 1
+                        singleAtomOrbitalCount += 1
+                        
+                        
+    def checkWavefunctionVariation(self, divideParameter1, divideParameter2, divideParameter3, divideParameter4):
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+#         print('Working on Cell %s' %(self.uniqueID))
+        self.divideFlag = False
+#         self.initializeCellWavefunctions()
+#         self.initializeCellWavefunctionsAtCorners()
+
+#         waveVariation, relDensityVariation, absIntegral, sqWaveVariation, variationCause, densityVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+        waveVariation, psiVextVariation, absIntegral, sqWaveVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+#         waveVariation, densityIntegral, absIntegral, sqWaveVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+#         waveVariation, sqrtDensityIntegral, absIntegral, sqWaveVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+        
+        
+        if waveVariation > divideParameter1:
+            self.divideFlag=True
+            print('Dividing cell %s because of variation in wavefunction %i.' %(self.uniqueID,variationCause))
+            return
+            
+        if sqWaveVariation > divideParameter2:
+            self.divideFlag=True
+            print('Dividing cell %s because of variation in wavefunction %i squared.' %(self.uniqueID,sqVariationCause))
+            return
+
+        if absIntegral > divideParameter3:
+            self.divideFlag=True
+            print('Dividing cell %s because of absIntegral for wavefunction %i.' %(self.uniqueID, absIntegralCause))
+            return
+        
+#         if relDensityVariation > divideParameter4:
+#             self.divideFlag=True
+#             print('Dividing cell %s because of variation in density.' %(self.uniqueID))
+#             return
+        
+        if psiVextVariation > divideParameter4:
+            self.divideFlag=True
+            print('Dividing cell %s because of psi*Vext variation for wavefunction %i.' %(self.uniqueID, psiVextVariationCause))
+            return
+
+#         if densityIntegral > divideParameter4:
+#             self.divideFlag=True
+#             print('Dividing cell %s because of density integral.' %(self.uniqueID))
+#             return
+        
+#         if sqrtDensityIntegral > divideParameter4:
+#             self.divideFlag=True
+#             print('Dividing cell %s because of density integral.' %(self.uniqueID))
+#             return
+            
+                        
+    def checkIfChebyshevCoefficientsAboveTolerance(self, divideParameter):
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+        self.divideFlag = False
+        
+        
+        # intialize density on this cell
+        rho = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+        # measure density first...
+        densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQ(rho,(self.px-1) + (self.py-1) + (self.pz-1) - 1  )
+        
+        
+#         print('Density Coefficient Sum = ', coefficientSum)
+#         print()
+        if densityCoefficientSum > divideParameter:
+            self.divideFlag=True
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_allIndicesAboveQ(self, divideParameter):
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+#         print('Working on Cell %s' %(self.uniqueID))
+        self.divideFlag = False
+        
+        
+        # intialize density on this cell
+        rho = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+        # measure density first...
+        densityCoefficientSum = sumChebyshevCoefficicentsEachGreaterThanOrderQ(rho,(self.px-1)  )
+        
+
+        if densityCoefficientSum > divideParameter:
+            self.divideFlag=True
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ(self, divideParameter):
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+#         print('Working on Cell %s' %(self.uniqueID))
+        self.divideFlag = False
+        
+        
+        # intialize density on this cell
+        rho = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+        # measure density first...
+        densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(rho,(self.px-1)  )
+        
+
+        if densityCoefficientSum > divideParameter:
+            self.divideFlag=True
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_sumOfWavefunctions(self, divideParameter):
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+#         print('Working on Cell %s' %(self.uniqueID))
+        self.divideFlag = False
+        self.initializeCellWavefunctions()
+        
+        
+        # intialize density on this cell
+#         rho = np.zeros((self.px,self.py,self.pz))
+        phi = np.zeros((self.px,self.py,self.pz,self.tree.nOrbitals))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            
+            for m in range(self.tree.nOrbitals):
+                phi[i,j,k,m] = gp.phi[m]
+        
+        # measure density first...
+#         densityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
+        wavefunctionCoefficientSum = 0.0
+        for m in range(self.tree.nOrbitals):
+#             wavefunctionCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(phi[:,:,:,m],(self.px-1)  )
+            wavefunctionCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQ(phi[:,:,:,m],(self.px)  )
+        
+
+            if wavefunctionCoefficientSum > divideParameter:
+                self.divideFlag=True
+                print('Dividing cell %s because of wavefunction %i.' %(self.uniqueID,m))
+                return
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho(self, divideParameter1, divideParameter2):
+        self.divideFlag = False
+        
+        
+        rho = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+#         densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(rho,(self.px-1)  )
+        densityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
+        if densityCoefficientSum > divideParameter1:
+            self.divideFlag=True
+            print('Cell %s dividing because of density coefficients.' %self.uniqueID)
+            return
+                    
+        
+        self.initializeCellWavefunctions()
+          
+        phi = np.zeros((self.px,self.py,self.pz,self.tree.nOrbitals))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]                
+            for m in range(self.tree.nOrbitals):
+                phi[i,j,k,m] = gp.phi[m]
+        
+        # measure density first...
+#         densityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
+        wavefunctionCoefficientSum = 0.0
+        for m in range(self.tree.nOrbitals):
+#             wavefunctionCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(phi[:,:,:,m],(self.px-1)  )
+            wavefunctionCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(phi[:,:,:,m],(self.px-1)  )
+        
+
+            if wavefunctionCoefficientSum > divideParameter2:
+                self.divideFlag=True
+                print('Cell %s dividing because of wavefunction %i coefficients.' %(self.uniqueID,m))
+                return
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_rho_sqrtRho(self, divideParameter1, divideParameter2):
+        self.divideFlag = False
+        
+        
+        rho = np.zeros((self.px,self.py,self.pz))
+        sqrtrho = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    d = atom.interpolators['density'](r)
+                    rho[i,j,k] += d
+                    sqrtrho[i,j,k] += np.sqrt( d ) 
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+                    sqrtrho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+#         densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(rho,(self.px-1)  )
+        densityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
+        if densityCoefficientSum > divideParameter1:
+            self.divideFlag=True
+            print('Cell %s dividing because of density coefficients.' %self.uniqueID)
+            return
+        
+        sqrtDensityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
+        if sqrtDensityCoefficientSum > divideParameter2:
+            self.divideFlag=True
+            print('Cell %s dividing because of sqrt(density) coefficients.' %self.uniqueID)
+            return
+                    
+        
+    
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho_or_v(self, divideParameter):
+        self.divideFlag = False
+        
+        
+        rho = np.zeros((self.px,self.py,self.pz))
+        vext = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            gp.setExternalPotential(self.tree.atoms)
+            vext[i,j,k] = gp.v_ext
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+        externalPotentialCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(vext,(self.px-1)  )
+        if externalPotentialCoefficientSum > divideParameter:
+            print('Dividing cell %s because of the external potential.' %self.uniqueID)
+            self.divideFlag=True
+            return
+        
+        densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(rho,(self.px-1)  )
+        if densityCoefficientSum > divideParameter:
+            print('Dividing cell %s because of the density.' %self.uniqueID)
+            self.divideFlag=True
+            return
+                    
+        
+        self.initializeCellWavefunctions()
+          
+        phi = np.zeros((self.px,self.py,self.pz,self.tree.nOrbitals))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]                
+            for m in range(self.tree.nOrbitals):
+                phi[i,j,k,m] = gp.phi[m]
+        
+        # measure density first...
+#         densityCoefficientSum = sumChebyshevCoefficicentsAnyGreaterThanOrderQ(rho,(self.px-1)  )
+        wavefunctionCoefficientSum = 0.0
+        for m in range(self.tree.nOrbitals):
+            wavefunctionCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(phi[:,:,:,m],(self.px-1)  )
+        
+
+            if wavefunctionCoefficientSum > divideParameter:
+                print('Dividing cell %s because of wavefunction %i.' %(self.uniqueID,m))
+                self.divideFlag=True
+                return
+            
+            
+    def checkIfChebyshevCoefficientsAboveTolerance_DensityAndWavefunctions(self, divideParameter):
+#         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
+        self.divideFlag = False
+        
+        self.initializeCellWavefunctions()
+        
+        # intialize density on this cell
+        rho = np.zeros((self.px,self.py,self.pz))
+        phi = np.zeros((self.px,self.py,self.pz,self.tree.nOrbitals))
+#         phi0 = np.zeros((self.px,self.py,self.pz))
+#         phi1 = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            for atom in self.tree.atoms:
+                r = np.sqrt( (gp.x-atom.x)**2 + (gp.y-atom.y)**2 + (gp.z-atom.z)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+#                     phi0[i,j,k] += atom.interpolators['phi10'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+                    
+            for m in range(self.tree.nOrbitals):
+                phi[i,j,k,m] = gp.phi[m]
+        
+        # measure density first...
+        densityCoefficientSum = sumChebyshevCoefficicentsGreaterThanOrderQ(rho,(self.px-1) + (self.py-1) + (self.pz-1) - 1  )
+        
+        
+        # Now the wavefunctions
+        wavefunctionCoefficientSum = 0.0
+        for m in range(self.tree.nOrbitals):
+            wavefunctionCoefficientSum += sumChebyshevCoefficicentsGreaterThanOrderQ(phi[:,:,:,m],(self.px-1) + (self.py-1) + (self.pz-1) - 1  )
+        
+#         print('Cell ID: ', self.uniqueID)
+#         print('Density Coefficient Sum = ', densityCoefficientSum)
+#         print('Wavefunction Coefficient Sum = ', wavefunctionCoefficientSum)
+#         print()
+#         if wavefunctionCoefficientSum > densityCoefficientSum:
+#             print('wavefunctino sum greater than density sum.')
+        if (densityCoefficientSum+wavefunctionCoefficientSum) > divideParameter:
+            self.divideFlag=True
+#         if (densityCoefficientSum) > divideParameter:
+#             self.divideFlag=True
                
     
     """
@@ -891,6 +1513,8 @@ class Cell(object):
         elif noneCount == 2:
 #             print('Using divideInto2... are you sure?')
             divideInto2(self, xdiv, ydiv, zdiv, printNumberOfCells)
+        elif noneCount == 3:
+            print('Not acutally dividing because xdiv=ydiv=zdiv=None.  Happens when trying to divide at a nucleus that is already at a vertex.')
 
     def divideIfAspectRatioExceeds(self, tolerance):
         
@@ -925,16 +1549,17 @@ class Cell(object):
 #                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
 #             elif (dz <= max(dx,dy)): # z is shortest dimension
 #                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
-#                
-# #               Should I divide children?  Maybe it's okay if a child still has a bad aspect ratio because
-# #               at least no one side  
-#  
+#                 
+#               Should I divide children?  Maybe it's okay if a child still has a bad aspect ratio because
+#               at least no one side  
+  
 #             if hasattr(self, "children"):
 #                 (ii,jj,kk) = np.shape(self.children)
 #                 for i in range(ii):
 #                     for j in range(jj):
 #                         for k in range(kk):
 #                             self.children[i,j,k].divideIfAspectRatioExceeds(tolerance)
+                
                 
 #             locate longest dimension.  Divide, then check aspect ratio of children.  
             if (dx >= max(dy,dz)): # x is longest dimension.

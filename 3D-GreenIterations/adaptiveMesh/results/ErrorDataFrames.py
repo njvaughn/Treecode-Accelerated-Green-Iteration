@@ -17,7 +17,7 @@ file='runComparison.csv'
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/'
 
 #### Beryllium
-##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/'
 
 #### H2
@@ -27,10 +27,52 @@ file='runComparison.csv'
 #### Oxygen
 ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/'
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
 
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
+
+
+#### Biros Meshes
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Beryllium/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenDepthTest/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaussianAlphaTest/'
+resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
+
+#### Krasny Mesh
+# resultsDir='/Users/nathanvaughn/Desktop/krasnyMeshTest/Oxygen/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param_beforeSCF_smoothedVextHarrison/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param_beforeSCF/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_LW5_smoothedVext/'
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_LW5_beforeSCF_smoothingEpsTests/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_4param_beforeSCF_smoothingEpsTests/'
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation_preSCF/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_noSphHarmonics_preSCF/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_densityIntegral4th/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_integralSqrtDensity/' 
+
+
+
+
+ 
+#### Treecode Testing
+# resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
+
+# Oxygen
+TotalEnergy = -7.4469337501098821e+01  # Oxygen Atom
+ExchangeEnergy = -7.2193700828939980e+00
+CorrelationEnergy = -5.4455323568788838e-01
+BandEnergy = -4.0613397710076626e+01
+KineticEnergy =  7.4112730191157425e+01
+ElectrostaticEnergy = -1.4081814437367436e+02
+HartreeEnergy = 36.32506036  
 
 df = pd.read_csv(resultsDir+file, header=0)
 print(df)
@@ -44,7 +86,8 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Lith
 
 
 # if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/':
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/':
+# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/':
+if resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Beryllium/':
     TotalEnergy = -1.4446201118081863e+01
     ExchangeEnergy = -2.2903921833555341e+00
     CorrelationEnergy = -2.2343205529440757e-01
@@ -52,7 +95,7 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_g
     KineticEnergy =   1.4309060170370618e+01
     ElectrostaticEnergy = -2.6241437049802535e+01
     
-    df.drop(df.index[24], inplace=True)  # 24th row is bad in Beryllium gradient free data
+#     df.drop(df.index[24], inplace=True)  # 24th row is bad in Beryllium gradient free data
 
 
 
@@ -60,7 +103,13 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_g
 ##if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/':
 # if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/':
 # if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/':
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/':
+# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/':
+if ( (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/') or 
+     (resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/' ) or
+     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/') or
+     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenDepthTest/')or
+     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/')or
+     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaussianAlphaTest/') ):
 # if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/':
 
     TotalEnergy = -7.4469337501098821e+01
@@ -80,6 +129,7 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2It
 
 df['BandEnergyError'] = abs( df['BandEnergy'] - BandEnergy)
 df['ExchangeEnergyError'] = abs( df['ExchangeEnergy'] - ExchangeEnergy)
+# df['HartreeEnergyError'] = abs( df['HartreeEnergy'] - HartreeEnergy)
 df['CorrelationEnergyError'] = abs( df['CorrelationEnergy'] - CorrelationEnergy)
 df['TotalEnergyError'] = abs( df['TotalEnergy'] - TotalEnergy)
 df['KineticEnergyError'] = abs( df['KineticEnergy'] - KineticEnergy)
@@ -162,10 +212,14 @@ def logAversusBcolorbyC(df,A,B,C,save=False):
     fig.suptitle('Log %s versus %s colored by %s' %(A,B,C))
     grouped = df.groupby(C)
     for name,group in grouped:
-        group['logA'] = np.log10(np.abs(group[A]))
-        group.plot(x=B, y='logA', style='o', ax=ax, label='%s = %.2f'%(C,name))
+#         group['logA'] = np.log10(np.abs(group[A]))
+        group.plot(x=B, y=A, logy=True, style='o', ax=ax, label='%s = %.2f'%(C,name))
 ##        group.plot(x=B, y='logA', style='o', ax=ax, label='%s = %s'%(C,name))
     plt.legend(loc = 'best')
+    plt.xlabel(B)
+    plt.ylabel(A)
+#     plt.ylim([1e-3,1e-2])
+    plt.grid()
 
     if save == True:
         saveID = 'log'+A+'Vs'+B+'ColoredBy'+C
@@ -190,7 +244,9 @@ def logAversusLogBcolorbyC(df,A,B,C,save=False):
     plt.legend(loc = 'best')
     plt.xlabel(B)
     plt.ylabel(A)
-
+#     plt.ylim([1e-4,5e-2])
+    plt.grid()
+    
     if save == True:
         saveID = 'log'+A+'VsLog'+B+'ColoredBy'+C
         plt.savefig(plotsDir+saveID+'.pdf', bbox_inches='tight',format='pdf')
@@ -410,16 +466,100 @@ def totalEnergyErrors_splitByGradientHandling():
 #     ax2.legend(loc = 'best')
 #     ax2.set_xlabel('Number of Cells')
 #     ax2.set_ylabel('Energy Error (Hartree)')
-#     ax2.set_title('Oxygen Atom: Total Energy Error')
+#     ax2.set_title('Oxygen Atom: Total Energy Error') 
     plt.show()
-
-
+ 
+  
 if __name__=="__main__":
-#     energyErrors()
+    
+    
+#     logAversusBcolorbyC(df,'BandEnergyError', 'VextSmoothingEpsilon', 'numberOfPoints')
+#     logAversusBcolorbyC(df,'TotalEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
 
-    totalEnergyErrors_splitByGradientHandling()
+    df = df.loc[df['order']==7]  
+#     df = df.loc[df['depthAtAtoms']==2]  
+#     df = df.loc[df['divideParameter1']==2]  
+#     df = df.loc[df['divideParameter3']==0.1]  
+#     df = df.loc[df['divideParameter2']==3]  
+#     df = df.loc[df['divideParameter4']==100000]  
+#     df = df.loc[df['maxDepth']>=14] 
+#     logAversusBcolorbyC(df,'BandEnergyError', 'maxDepth', 'divideParameter1') 
+
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints','maxDepth') 
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'order') 
+#     logAversusLogBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'divideParameter4') 
+#     logAversusLogBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
+#     logAversusLogBcolorbyC(df,'CorrelationEnergyError', 'numberOfPoints', 'order') 
+#     logAversusLogBcolorbyC(df,'ExchangeEnergyError', 'numberOfPoints', 'order') 
+    
+#     df = df.loc[df['depthAtAtoms']==2]   
+#     print(df['HartreeEnergyError'])   
+#     df = df.loc[df['Treecode']==False]    
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
+#     logAversusLogBcolorbyC(df,'BandEnergyError', 'VextSmoothingEpsilon', 'depthAtAtoms')
+    
+#     logAversusLogBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'depthAtAtoms')
+#     logAversusLogBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'depthAtAtoms')
+#     logAversusLogBcolorbyC(df,'ExchangeEnergyError', 'numberOfPoints', 'depthAtAtoms')
+#     logAversusLogBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'depthAtAtoms')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'order')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'depthAtAtoms')   
+
+ 
+#     df = df.loc[df['gradientFree']==1]
+#     df = df.loc[df['maxDepth']>11]
+    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
+    
+    
+# #     print( df['numberOfPoints'] )
+#     df = df.loc[df['numberOfPoints']==666000]
+#     df = df.loc[df['treecodeOrder']>0.0]
+#  
+#     df['TreecodeError'] = np.abs( df['TotalEnergy'] + 74.4706852 )
+# #     print(df['TreecodeError'])
+#     logAversusBcolorbyC(df,'TreecodeError', 'theta', 'treecodeOrder')
+
+
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'theta', 'Treecode')
+#     logAversusBcolorbyC(df,'TotalEnergyError', 'theta', 'treecodeOrder')
+
+  
+#     energyErrors()
+#     df = df.loc[df['gradientFree']==1]
+#     df = df.loc[df['maxDepth']>11]
+#     df = df.loc[df['order'].isin([7,5])]
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
+
+    
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5', 'BirosN','BirosG'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['BirosN','BirosG'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5', 'BirosN', 'BirosG', 'BirosGN', 'BirosGN2'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['BirosGN2'])]
+#     df_LW_and_BirosN = df[df['divideCriterion'].isin(['LW5','BirosN', 'BirosGN'])]
+#     print(df_LW_and_BirosN)
+#     logAversusLogBcolorbyC(df.loc[df['order']==7],'TotalEnergyError', 'numberOfPoints', 'divideParameter')
+#     logAversusLogBcolorbyC(df.loc[df['order']==7],'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter')
+#     logAversusLogBcolorbyC(df.loc[df['gradientFree']==1],'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
+#     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
+#     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'order')
+#     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'gaussianAlpha')
+#     logAversusBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'gaussianAlpha', 'maxDepth')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'gradientFree')
+#     logAversusLogBcolorbyC(df_LW_and_BirosN,'TotalEnergyError', 'numberOfPoints', 'divideParameter')
+
+    
+
+#     totalEnergyErrors_splitByGradientHandling()
 #     energyErrors_splitByGradientHandling(order=5)
     
     
-    
-    
+    ### Plot effect of gradient-free approach for oxygen atom.
+    # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
+#     df = df.loc[df['order']==5]    
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'gradientFree')
+#     logAversusLogBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'gradientFree')
+

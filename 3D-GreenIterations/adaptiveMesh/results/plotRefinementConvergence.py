@@ -11,7 +11,7 @@ import os
 import numpy as np
 
 
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_fradientFree/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/'
 file = 'CO_refinement_results.csv'
 
 # df = pd.read_csv(resultsDir+file, header=0)

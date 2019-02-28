@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-/.ptp-sync/
-=======
-/.ptp-sync/
->>>>>>> refs/remotes/eclipse_auto/master
+adaptiveMesh/src/utilities/*.o3*
+adaptiveMesh/src/utilities/tree_order*
+adaptiveMesh/src/utilities/*.pyc

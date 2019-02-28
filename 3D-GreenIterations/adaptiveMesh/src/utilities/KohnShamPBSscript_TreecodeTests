@@ -1,0 +1,105 @@
+####  PBS preamble
+
+#PBS -N GI_with_tree_test
+#PBS -M njvaughn@umich.edu
+#PBS -m a
+
+#PBS -A krasny_fluxg
+#PBS -l qos=flux
+#PBS -q fluxg
+
+
+#PBS -l nodes=1:gpus=1,mem=8gb
+#PBS -l walltime=12:00:00
+#PBS -j oe
+#PBS -V
+
+####  End PBS preamble
+
+if [ -s "$PBS_NODEFILE" ] ; then
+    echo "Running on"
+    uniq -c $PBS_NODEFILE
+fi
+
+if [ -d "$PBS_O_WORKDIR" ] ; then
+    cd $PBS_O_WORKDIR
+    echo "Running from $PBS_O_WORKDIR"
+fi
+
+
+
+#!/bin/bash
+
+#cd /home/njvaughn/hybrid-gpu-treecode/src
+#make clean;make
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
+
+DOMAIN=20
+MAXDEPTH=20
+MINDEPTH=1
+SINGSUBT=1
+SMOOTHINGN=0
+SMOOTHINGEPS=0
+
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+
+VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
+
+
+GRADIENTFREE='True'
+GPUPRESENT='True'
+
+TREECODE='False'
+TREECODEORDER=0
+THETA=0.0
+MAXPARNODE=8000
+BATCHSIZE=8000
+
+
+GAUSSIANALPHA=1.0
+
+MESHTYPE='LW5'
+
+
+MIXINGPARAMETER=0.5  
+ 
+INTRASCFTOLERANCE=1e-7  
+INTERSCFTOLERANCE=5e-6 
+ 
+MIXING='Anderson'   
+CELLORDER=5
+DEPTHATATOMS=14
+
+MESHPARAM1=1500
+MESHPARAM2=2
+MESHPARAM3=0.03
+MESHPARAM4=0.9999
+
+
+#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/CO_LW5_treecode/ds_LW5_${MESHPARAM1}.csv"
+#python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
+#															$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+#															$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
+#															$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 
+
+
+TREECODE='True'
+for TREECODEORDER in 6 7 8
+do
+	for THETA in 0.8 0.9
+	do
+		OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Oxygen_treecode/tc_LW5_${MESHPARAM1}_tcOrder${TREECODEORDER}_theta${THETA}.csv"
+		python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
+																	$SMOOTHINGN $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+																	$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
+																	$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4  
+	done
+done
+				
+	

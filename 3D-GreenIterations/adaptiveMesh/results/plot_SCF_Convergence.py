@@ -11,29 +11,56 @@ import os
 import numpy as np
 
 
-# # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
-# # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
-# # #resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
-# # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
-# # #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
+# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/carbonMonoxide/iterationResults/'
+# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/'
+# # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
+# ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
+# #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
 # plotsDir = resultsDir+'plots/'
 # # file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
-# file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
+# # file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
+# file='LW5_2000_andersonMixing_p5_1em76_SCF_.csv'
 
-
-## Carbon Monoxide
-resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
-plotsDir = resultsDir+'plots/'
-# file ='LW5_1500o5_GradientFree_eigRes_looseThenTight_titan_SCF_.csv'
-# file ='LW5o5_1500_SCF_.csv'
-# file='LW5o5_1500_largeDomain_SCF_.csv'
-# file='LW5o5_1000_fixedMesh_only7_looseInit_SCF_.csv'
-# file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_SCF_.csv'
-# file='LW5o4_1000_only7_tightFromStart_GIanderson_afterSCF1_SCF_.csv'
-# file='LW5o5_2000_only7_tightFromStart_GIandersonAfterSCF1_SCF_.csv'
+# ## Carbon Monoxide
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
+# plotsDir = resultsDir+'plots/'
+# # file ='LW5_1500o5_GradientFree_eigRes_looseThenTight_titan_SCF_.csv'
+# # file ='LW5o5_1500_SCF_.csv'
+# # file='LW5o5_1500_largeDomain_SCF_.csv'
+# # file='LW5o5_1000_fixedMesh_only7_looseInit_SCF_.csv'
+# # file='LW5o5_1500_fixedAtomicPositions_only7_looseInit_SCF_.csv'
+# # file='LW5o4_1000_only7_tightFromStart_GIanderson_afterSCF1_SCF_.csv'
+# # file='LW5o5_2000_only7_tightFromStart_GIandersonAfterSCF1_SCF_.csv'
 # file='LW5o5_2000_6_orbitals_SCF_.csv'
-file='LW5o5_2000_7_orbitals_noGIanderson_SCF_.csv'
+# # file='LW5o5_2000_7_orbitals_noGIanderson_SCF_.csv'
+
+# ## Oxygen -- Biros
+# # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
+# plotsDir = resultsDir+'plots/'
+# # # # file='Biros_o7_1em4_solo_SCF_.csv'
+# # # # file='Biros_o7_7em5_alpha_1p5_SCF_.csv'
+# # # # file='BirosN_o7_1em3_SCF_.csv'
+# # # # file='BirosN_o7_2em4_SCF_.csv'
+# # file='BirosG_o7_max15_SCF_.csv'
+# file='BirosG_o7_1em5_SCF_.csv'
+
+resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
+file='BirosGN2_o5_1em1_SCF_.csv'
+
+
+## Krasny refine for oxygen
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_densityIntegral4th/'
+# file='ds_cellOrder5_maxDepth15_3_3_0.3_0.03_SCF_.csv'
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation/'
+# # file='ds_cellOrder5maxDepth12_2_2_0.2_50000_SCF_.csv'
+# file='ds_cellOrder7_maxDepth13_5_5_0.5_100000_SCF_.csv'
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_Hartree/'
+# file='ds_krasnyRefine_maxDepth14_5_100_0p05_5000_SCF_.csv'
+
 
 
 ## Beryllium
@@ -45,6 +72,9 @@ file='LW5o5_2000_7_orbitals_noGIanderson_SCF_.csv'
 
 df = pd.read_csv(resultsDir+file, header=0)
 # df = df.drop(df.index[14]) 
+
+plotsDir = resultsDir+'plots/'
+
     
 def plotSCFconvergence(df, system = 'H2'):
     
@@ -81,6 +111,7 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeBandEnergy = -4.0613397710076626e+01
         dftfeKineticEnergy =  7.4112730191157425e+01
         dftfeElectrostaticEnergy = -1.4081814437367436e+02
+#         dftfeHartreeEnergy = 36.32506036
         
     if system == "carbonMonoxide":
 #         # these taken from mesh size 0.125 run
@@ -98,11 +129,12 @@ def plotSCFconvergence(df, system = 'H2'):
 
 
     df['bandEnergyError']=abs(df['bandEnergy']-dftfeBandEnergy)
-    df['kineticEnergyError']=abs(df['kineticEnergy']-dftfeKineticEnergy)
+#     df['kineticEnergyError']=abs(df['kineticEnergy']-dftfeKineticEnergy)
     df['electrostaticEnergyError']=abs(df['electrostaticEnergy']-dftfeElectrostaticEnergy)
+#     df['hartreeEnergyError']=abs(df['hartreeEnergy']-dftfeHartreeEnergy)
     df['exchangeEnergyError']=abs(df['exchangeEnergy']-dftfeExchangeEnergy)
     df['correlationEnergyError']=abs(df['correlationEnergy']-dftfeCorrelationEnergy)
-    df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/2
+    df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/1
 
     print("band energy errors:")
     print(df['bandEnergyError'])
@@ -118,13 +150,14 @@ def plotSCFconvergence(df, system = 'H2'):
 # Combined error plot
     f1, ax1 = plt.subplots(1, 1, figsize=(10,6))
     f2, ax2 = plt.subplots(1, 1, figsize=(10,6))
-    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='o-')
+    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='o')
 #     df.plot(x='Iteration', y='kineticEnergyError', logy=True,ax=ax2, style='o-')
-    df.plot(x='Iteration', y='electrostaticEnergyError', logy=True,ax=ax2, style='o-')
-    df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='o-')
-    df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='o-')
-    df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='o-')
-    df.plot(x='Iteration', y='densityResidual', logy=True,ax=ax1, style='o-')
+    df.plot(x='Iteration', y='electrostaticEnergyError', logy=True,ax=ax2, style='o')
+#     df.plot(x='Iteration', y='hartreeEnergyError', logy=True,ax=ax2, style='o')
+    df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='o')
+    df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='o')
+    df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='o')
+    df.plot(x='Iteration', y='densityResidual', logy=True,ax=ax1, style='o')
     
     ax2.legend(loc='lower left')
 ##    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='bo')
@@ -141,16 +174,17 @@ def plotSCFconvergence(df, system = 'H2'):
     ax1.set_title('Oxygen Atom: Density Residual Norm')
     ax1.set_ylabel('Density Residual Norm')
 
-
-    
+    ax1.grid()
+    ax2.grid()
+#     plt.ylim([5e-7,2e-2])
     plt.show()
     
 
 if __name__=="__main__":
     
-    plotSCFconvergence(df, system="carbonMonoxide")    
-#    plotSCFconvergence(df, system="Beryllium")    
-#     plotSCFconvergence(df, system="Oxygen")    
+#     plotSCFconvergence(df, system="carbonMonoxide")    
+#     plotSCFconvergence(df, system="Beryllium")    
+    plotSCFconvergence(df, system="Oxygen")    
 
 
 

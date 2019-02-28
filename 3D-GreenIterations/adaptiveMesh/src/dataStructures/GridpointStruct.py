@@ -22,7 +22,7 @@ class GridPoint(object):
         self.rho = 0
 
         
-        self.v_coulomb = 0.0
+        self.v_hartree = 0.0
         self.v_x = 0.0
         self.v_c = 0.0
         self.v_ext = 0.0
@@ -49,10 +49,10 @@ class GridPoint(object):
     
             
     def updateVeff(self):
-#             # zero out v_coulomb and v_xc for testing purposes
-#             self.v_coulomb = 0.0
+#             # zero out v_hartree and v_xc for testing purposes
+#             self.v_hartree = 0.0
 #             self.v_xc = 0.0
-            self.v_eff = self.v_coulomb + self.v_x + self.v_c + self.v_ext + self.gaugeShift # v_gauge
+            self.v_eff = self.v_hartree + self.v_x + self.v_c + self.v_ext + self.gaugeShift # v_gauge
            
     def setPhi(self, phi, orbitalNumber):
         self.phi[orbitalNumber] = phi
