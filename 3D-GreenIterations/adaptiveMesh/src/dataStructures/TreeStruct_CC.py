@@ -688,7 +688,7 @@ class Tree(object):
                         for k in range(kk):
                             maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], 
                                                                                 maxLevels, divideCriterion, divideParameter, 
-                                                                                levelCounter, printNumberOfCells, maxDepthAchieved, 
+                                                                                levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved, 
                                                                                 minDepthAchieved)
             
             elif Cell.level < maxLevels:
@@ -738,7 +738,7 @@ class Tree(object):
                     for i in range(ii):
                         for j in range(jj):
                             for k in range(kk):
-                                maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved)
+                                maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved)
                 else:
                     minDepthAchieved = min(minDepthAchieved, Cell.level)
                     
@@ -755,7 +755,7 @@ class Tree(object):
         maxDepthCounter=0
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize, self.maxDepthCounter = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
         
-#         print('Number of cells at max depth: ', self.maxDepthCounter)
+        print('Number of cells at max depth: ', self.maxDepthCounter)
 #         self.initialDivideBasedOnNuclei(self)
         self.initialDivideBasedOnNuclei(self.coordinateFile)
 #         refineRadius = 0.01
