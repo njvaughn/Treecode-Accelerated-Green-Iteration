@@ -420,12 +420,15 @@ class Tree(object):
             print("max density: ", max(abs(rho)))
             self.importDensityOnLeaves(rho)
 #             print('Should I normalize density??')
-            self.normalizeDensityToValue(totalElectrons) 
+#             self.normalizeDensityToValue(totalElectrons) 
             sources = self.extractLeavesDensity()
             rho = np.copy(sources[:,3])
         
 #         print("max density: ", max(abs(rho)))
-#         self.importDensityOnLeaves(rho)  
+#         self.importDensityOnLeaves(rho) 
+
+        self.normalizeDensityToValue(totalElectrons)
+         
         timer.stop()
         print('Initializing density EXTERNALLY took %.3f seconds.' %timer.elapsedTime)  
         
@@ -673,7 +676,7 @@ class Tree(object):
         
         divideParameter = divideParameter1 # for methods that use only one divide parameter.
         timer = Timer()
-        def recursiveDivide(self, Cell, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
+        def recursiveDivide(self, Cell, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
             levelCounter += 1
             
             if hasattr(Cell, "children"):
@@ -683,7 +686,7 @@ class Tree(object):
                 for i in range(ii):
                     for j in range(jj):
                         for k in range(kk):
-                            maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], 
+                            maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], 
                                                                                 maxLevels, divideCriterion, divideParameter, 
                                                                                 levelCounter, printNumberOfCells, maxDepthAchieved, 
                                                                                 minDepthAchieved)
@@ -717,6 +720,8 @@ class Tree(object):
                         Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho_or_v(divideParameter)
                     elif divideCriterion=='Krasny':
                         Cell.checkWavefunctionVariation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                    elif divideCriterion=='Krasny_Vext':
+                        Cell.checkWavefunctionVariation_Vext(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                     elif divideCriterion=='Nathan':
                         Cell.checkIfAboveDensityRange(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                     else:                        
@@ -733,22 +738,24 @@ class Tree(object):
                     for i in range(ii):
                         for j in range(jj):
                             for k in range(kk):
-                                maxDepthAchieved, minDepthAchieved, levelCounter = recursiveDivide(self,Cell.children[i,j,k], maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved)
+                                maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved)
                 else:
                     minDepthAchieved = min(minDepthAchieved, Cell.level)
                     
             else: 
-                Cell.initializeCellWavefunctions()
-                print("Cell %s at max depth.  Cell volume**(1/3) = %f" %(Cell.uniqueID, Cell.volume**(1/3)))
+#                 Cell.initializeCellWavefunctions()
+#                 print("Cell %s at max depth.  Cell volume**(1/3) = %f" %(Cell.uniqueID, Cell.volume**(1/3)))
+                maxDepthCounter +=1
                        
             maxDepthAchieved = max(maxDepthAchieved, Cell.level)                                                                                                                                                       
-            return maxDepthAchieved, minDepthAchieved, levelCounter
+            return maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter
         
         timer.start()
         levelCounter=0
-        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
+        maxDepthCounter=0
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize, self.maxDepthCounter = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
         
-        
+#         print('Number of cells at max depth: ', self.maxDepthCounter)
 #         self.initialDivideBasedOnNuclei(self)
         self.initialDivideBasedOnNuclei(self.coordinateFile)
 #         refineRadius = 0.01
@@ -778,6 +785,8 @@ class Tree(object):
                             closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
         
         self.rmin = closestToOrigin
+        
+        self.countCellsAtEachDepth()
         
         
                         
@@ -832,7 +841,23 @@ class Tree(object):
             print('For a distance of: ', closestToOrigin)
             print('Part of a cell centered at: ', closestMidpoint) 
 
-
+    
+    def countCellsAtEachDepth(self):
+        levelCounts = {}
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                if cell.level in levelCounts:
+                    levelCounts[cell.level] += 1
+                else:
+                    levelCounts[cell.level] = 1
+                    print('Added level %i to dictionary.' %cell.level)
+        
+        print('Number of cells at each level: ')
+        print(levelCounts)
+        
+        self.levelCounts=levelCounts
+        return
+        
     
     """
     UPDATE DENSITY AND EFFECTIVE POTENTIAL AT GRIDPOINTS

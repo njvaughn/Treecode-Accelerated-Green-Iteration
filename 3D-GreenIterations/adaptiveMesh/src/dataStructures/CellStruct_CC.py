@@ -490,12 +490,14 @@ class Cell(object):
             if 1/self.volume < meshDensity(r,divideParameter,divideCriterion):
                 self.divideFlag=True
      
-    
-    def wavefunctionVariationAtCorners(self):   
+    def wavefunctionVariationAtCorners_Vext(self):   
         
         xmm = [self.xmin, self.xmax]
         ymm = [self.ymin, self.ymax]
-        zmm = [self.zmin, self.zmax]        
+        zmm = [self.zmin, self.zmax] 
+        xm = (xmm[0]+xmm[1])/2
+        ym = (ymm[0]+ymm[1])/2
+        zm = (zmm[0]+zmm[1])/2       
         
         aufbauList = ['10',                                     # n+ell = 1
                       '20',                                     # n+ell = 2
@@ -515,37 +517,62 @@ class Cell(object):
         sqVariationCause=-2
         densityIntegralCause=-2
         
+        VextVariation=0.0
+        VextVariationCause = -1
+        
+        VextIntegral = 0.0
+        VextIntegralCause=-1
+        
         
         ### Compute Density terms based on all atoms
         
         densityIntegral = 0.0
         sqrtDensityIntegral = 0.0
         for i,j,k in TwoByTwoByTwo:
+            Vext = 0.0
             density=0.0
             for atom in self.tree.atoms:
+                xm = (xmm[0]+xmm[1])/2
+                Rsq =  (xm-atom.x)**2 + (ym-atom.y)**2 + (zm-atom.z)**2  # distance between atom and cell midpoint
                 dx = xmm[i]-atom.x
                 dy = ymm[j]-atom.y
                 dz = zmm[k]-atom.z
                 r = np.sqrt( dx**2 + dy**2 + dz**2 )
-    
+                if r==0:  # nudge the point 10% in towrads the cell center, just to avoid 1/0 cases
+                    dx = 0.99*(xmm[i]-atom.x) + 0.01*(xmm[(i+1)%2]-atom.x)
+                    dy = 0.99*(ymm[j]-atom.y) + 0.01*(ymm[(j+1)%2]-atom.y)
+                    dz = 0.99*(zmm[k]-atom.z) + 0.01*(zmm[(k+1)%2]-atom.z)
+                    
+                    xtemp = 0.99*(xmm[i]) + 0.01*(xmm[(i+1)%2])
+                    ytemp = 0.99*(ymm[j]) + 0.01*(ymm[(j+1)%2])
+                    ztemp = 0.99*(zmm[k]) + 0.01*(zmm[(k+1)%2])
+                    r = np.sqrt( dx**2 + dy**2 + dz**2 )
                 
+                if Rsq < 0.1: Vext += atom.V(xmm[i],ymm[j],zmm[k])  # only increment Vext if cell is with R=2 ball of the atom
                 density +=  atom.interpolators['density'](r)
                 
             densityIntegral += density/8*self.volume
+            VextIntegral += np.abs(Vext)/8*self.volume
             sqrtDensityIntegral += np.sqrt(density)/8*self.volume
              
             if ( (i==0) and (j==0) and (k==0)): 
                 maxDensity = density
                 minDensity = density
+                maxVext = Vext
+                minVext = Vext
             else:
                 if density>maxDensity: maxDensity = density
                 if density<minDensity: minDensity = density
+                
+                if Vext > maxVext: maxVext = Vext
+                if Vext < minVext: minVext = Vext
              
             relDensityVariation = (maxDensity-minDensity)/maxDensity
             if relDensityVariation>maxRelDensityVariation:
                 maxRelDensityVariation = relDensityVariation
                 relDensityVariationCause = -1
             
+            VextVariation = maxVext-minVext
             
     
 #         for atom in self.tree.atoms:
@@ -658,10 +685,194 @@ class Cell(object):
                     singleAtomOrbitalCount += 1
                     
 #         return maxVariation, maxRelDensityVariation, maxAbsIntegral, maxSqVariation, variationCause, relDensityVariationCause, absIntegralCause, sqVariationCause
-        return maxVariation, maxPsiVextVariation, maxAbsIntegral, maxSqVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause
+#         return maxVariation, maxPsiVextVariation, maxAbsIntegral, maxSqVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause
+        return maxVariation, maxAbsIntegral, VextIntegral, densityIntegral, variationCause, absIntegralCause,VextIntegralCause, densityIntegralCause
+    
+    
+    
+    def wavefunctionVariationAtCorners(self):   
+        
+        xmm = [self.xmin, self.xmax]
+        ymm = [self.ymin, self.ymax]
+        zmm = [self.zmin, self.zmax]        
+        
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
+
+        orbitalIndex=0
+        
+        maxVariation = 0.0
+        maxRelDensityVariation = 0.0
+        maxPsiVextVariation = 0.0
+        maxSqVariation = 0.0
+        maxAbsIntegral = 0.0
+        sqVariationCause=-2
+        densityIntegralCause=-2
+        
+        VextVariation=0.0
+        VextVariationCause = -1
+        
+        
+        ### Compute Density terms based on all atoms
+        
+        densityIntegral = 0.0
+        sqrtDensityIntegral = 0.0
+        for i,j,k in TwoByTwoByTwo:
+            Vext = 0.0
+            density=0.0
+            for atom in self.tree.atoms:
+                dx = xmm[i]-atom.x
+                dy = ymm[j]-atom.y
+                dz = zmm[k]-atom.z
+                r = np.sqrt( dx**2 + dy**2 + dz**2 )
+    
+                Vext += atom.V(xmm[i],ymm[j],zmm[k])
+                density +=  atom.interpolators['density'](r)
+                
+            densityIntegral += density/8*self.volume
+            sqrtDensityIntegral += np.sqrt(density)/8*self.volume
+             
+            if ( (i==0) and (j==0) and (k==0)): 
+                maxDensity = density
+                minDensity = density
+                maxVext = Vext
+                minVext = Vext
+            else:
+                if density>maxDensity: maxDensity = density
+                if density<minDensity: minDensity = density
+                
+                if Vext > maxVext: maxVext = Vext
+                if Vext < minVext: minVext = Vext
+             
+            relDensityVariation = (maxDensity-minDensity)/maxDensity
+            if relDensityVariation>maxRelDensityVariation:
+                maxRelDensityVariation = relDensityVariation
+                relDensityVariationCause = -1
+            
+            VextVariation = maxVext-minVext
+            
+    
+#         for atom in self.tree.atoms:
+        atom = self.nearestAtom
+#         nAtomicOrbitals = atom.nAtomicOrbitals
+        if atom.atomicNumber <= 4:
+            nAtomicOrbitals = 2
+        elif atom.atomicNumber <= 10:
+            nAtomicOrbitals = 5
+        elif atom.atomicNumber <= 12:
+            nAtomicOrbitals = 6
+        elif atom.atomicNumber <= 18:
+            nAtomicOrbitals = 9
+        elif atom.atomicNumber <= 20:
+            nAtomicOrbitals = 10
+        else:
+            print('Atom with atomic number %i.  How many wavefunctions should be used in mesh refinement scheme?' %atom.nAtomicOrbitals)
+        
+        
+       
+        singleAtomOrbitalCount=0
+        for nell in aufbauList:
+            
+            if singleAtomOrbitalCount< nAtomicOrbitals:  
+                n = int(nell[0])
+                ell = int(nell[1])
+                psiID = 'psi'+str(n)+str(ell)
+                for m in range(-ell,ell+1):
+                    
+                    
+                    absIntegral = 0.0
+
+                    for i,j,k in TwoByTwoByTwo:
+                        dx = xmm[i]-atom.x
+                        dy = ymm[j]-atom.y
+                        dz = zmm[k]-atom.z
+                        
+                        xtemp = xmm[i]
+                        ytemp = ymm[j]
+                        ztemp = zmm[k]
+                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                        if r==0:  # nudge the point 10% in towrads the cell center, just to avoid 1/0 cases
+                            dx = 0.99*(xmm[i]-atom.x) + 0.01*(xmm[(i+1)%2]-atom.x)
+                            dy = 0.99*(ymm[j]-atom.y) + 0.01*(ymm[(j+1)%2]-atom.y)
+                            dz = 0.99*(zmm[k]-atom.z) + 0.01*(zmm[(k+1)%2]-atom.z)
+                            
+                            xtemp = 0.99*(xmm[i]) + 0.01*(xmm[(i+1)%2])
+                            ytemp = 0.99*(ymm[j]) + 0.01*(ymm[(j+1)%2])
+                            ztemp = 0.99*(zmm[k]) + 0.01*(zmm[(k+1)%2])
+                            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+#                         inclination = np.arccos(dz/r)
+#                         azimuthal = np.arctan2(dy,dx)
+#                     
+#                         
+#                     
+#                         if m<0:
+#                             Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+#                         if m>0:
+#                             Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+#                         if ( m==0 ):
+#                             Y = sph_harm(m,ell,azimuthal,inclination)
+#
+                        Y = sph_harm(0,ell,0,0)
+                        psi = atom.interpolators[psiID](r)*np.real(Y)
+                        psiSq = atom.interpolators[psiID](r)*np.real(Y)
+
+#                         psi = atom.interpolators[psiID](r)
+#                         psiSq = atom.interpolators[psiID](r)
+                        Vext = atom.V(xtemp,ytemp,ztemp)
+                        
+                        if ( (i==0) and (j==0) and (k==0)): 
+                            maxPsi = psi
+                            maxPsiSq = psiSq
+                            minPsi = psi
+                            minPsiSq = psiSq
+                            maxPsiVext = psi*Vext
+                            minPsiVext = psi*Vext
+                        else:
+                            if psi>maxPsi: maxPsi = psi
+                            if psiSq>maxPsiSq: maxPsiSq = psiSq
+                            if psi<minPsi: minPsi = psi
+                            if psiSq<minPsiSq: minPsiSq = psiSq
+                            if psi*Vext>maxPsiVext: maxPsiVext = psi*Vext
+                            if psi*Vext<minPsiVext: minPsiVext = psi*Vext
+
+                        
+                        absIntegral += abs(psi)*self.volume/8
+                           
+
+                    variation = maxPsi-minPsi
+                    psiVextVariation = maxPsiVext - minPsiVext
+                    maxabs = max(abs(maxPsi), abs(minPsi))
+                    sqVariation = (maxPsiSq-minPsiSq) 
+                    
+                    
+                    if variation>maxVariation:
+                        maxVariation = variation
+                        variationCause = orbitalIndex
+                    if psiVextVariation>maxPsiVextVariation:
+                        maxPsiVextVariation = psiVextVariation
+                        maxVariation = variation
+                        psiVextVariationCause = orbitalIndex
+                    if sqVariation>maxSqVariation:
+                        maxSqVariation = sqVariation
+                        sqVariationCause = orbitalIndex
+                    if absIntegral > maxAbsIntegral:
+                        maxAbsIntegral = absIntegral
+                        absIntegralCause = orbitalIndex
+                    orbitalIndex += 1
+                    singleAtomOrbitalCount += 1
+                    
+#         return maxVariation, maxRelDensityVariation, maxAbsIntegral, maxSqVariation, variationCause, relDensityVariationCause, absIntegralCause, sqVariationCause
+#         return maxVariation, maxPsiVextVariation, maxAbsIntegral, maxSqVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause
+#         return maxVariation, VextVariation, maxAbsIntegral, maxSqVariation, variationCause, VextVariationCause, absIntegralCause, sqVariationCause
 #         return maxVariation, densityIntegral, maxAbsIntegral, maxSqVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause
 #         return maxVariation, sqrtDensityIntegral, maxAbsIntegral, maxSqVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause
     
+        return maxVariation, maxAbsIntegral, densityIntegral, VextVariation, variationCause, absIntegralCause, densityIntegralCause, VextVariationCause
     
     def initializeCellWavefunctions(self):           
         
@@ -757,24 +968,26 @@ class Cell(object):
 #         self.initializeCellWavefunctionsAtCorners()
 
 #         waveVariation, relDensityVariation, absIntegral, sqWaveVariation, variationCause, densityVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
-        waveVariation, psiVextVariation, absIntegral, sqWaveVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+#         waveVariation, psiVextVariation, absIntegral, sqWaveVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+#         waveVariation, VextVariation, absIntegral, sqWaveVariation, variationCause, VextVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
+        waveVariation, waveIntegral, densityIntegral, VextVariation, variationCause, waveIntegralCause, densityIntegralCause, VextVariationCause = self.wavefunctionVariationAtCorners()
 #         waveVariation, densityIntegral, absIntegral, sqWaveVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
 #         waveVariation, sqrtDensityIntegral, absIntegral, sqWaveVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
         
         
         if waveVariation > divideParameter1:
             self.divideFlag=True
-            print('Dividing cell %s because of variation in wavefunction %i.' %(self.uniqueID,variationCause))
+#             print('Dividing cell %s because of variation in wavefunction %i.' %(self.uniqueID,variationCause))
             return
             
-        if sqWaveVariation > divideParameter2:
+        if waveIntegral > divideParameter2:
             self.divideFlag=True
-            print('Dividing cell %s because of variation in wavefunction %i squared.' %(self.uniqueID,sqVariationCause))
+#             print('Dividing cell %s because of Integral for wavefunction %i.' %(self.uniqueID, waveIntegralCause))
             return
 
-        if absIntegral > divideParameter3:
+        if densityIntegral > divideParameter3:
             self.divideFlag=True
-            print('Dividing cell %s because of absIntegral for wavefunction %i.' %(self.uniqueID, absIntegralCause))
+#             print('Dividing cell %s because of density integral.' %(self.uniqueID))
             return
         
 #         if relDensityVariation > divideParameter4:
@@ -782,9 +995,14 @@ class Cell(object):
 #             print('Dividing cell %s because of variation in density.' %(self.uniqueID))
 #             return
         
-        if psiVextVariation > divideParameter4:
+#         if psiVextVariation > divideParameter4:
+#             self.divideFlag=True
+#             print('Dividing cell %s because of psi*Vext variation for wavefunction %i.' %(self.uniqueID, psiVextVariationCause))
+#             return
+        
+        if VextVariation > divideParameter4:
             self.divideFlag=True
-            print('Dividing cell %s because of psi*Vext variation for wavefunction %i.' %(self.uniqueID, psiVextVariationCause))
+#             print('Dividing cell %s because of Vext variation.' %(self.uniqueID))
             return
 
 #         if densityIntegral > divideParameter4:
@@ -796,6 +1014,36 @@ class Cell(object):
 #             self.divideFlag=True
 #             print('Dividing cell %s because of density integral.' %(self.uniqueID))
 #             return
+
+    def checkWavefunctionVariation_Vext(self, divideParameter1, divideParameter2, divideParameter3, divideParameter4):
+        self.divideFlag = False
+
+        waveVariation, absIntegral, VextIntegral, densityIntegral, variationCause, absIntegralCause, VextVariationCause, densityIntegralCause = self.wavefunctionVariationAtCorners_Vext()
+
+        
+        if waveVariation > divideParameter1:
+            self.divideFlag=True
+            print('Dividing cell %s because of variation in wavefunction %i.' %(self.uniqueID,variationCause))
+            return
+            
+
+        if absIntegral > divideParameter2:
+            self.divideFlag=True
+            print('Dividing cell %s because of absIntegral for wavefunction %i.' %(self.uniqueID, absIntegralCause))
+            return
+
+        
+        if VextIntegral > divideParameter3:
+            self.divideFlag=True
+            print('Dividing cell %s because of Vext integral.' %(self.uniqueID))
+            return
+
+        if densityIntegral > divideParameter4:
+            self.divideFlag=True
+            print('Dividing cell %s because of density integral.' %(self.uniqueID))
+            return
+        
+
             
                         
     def checkIfChebyshevCoefficientsAboveTolerance(self, divideParameter):

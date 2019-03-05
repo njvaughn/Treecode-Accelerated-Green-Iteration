@@ -38,7 +38,7 @@ file='runComparison.csv'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenDepthTest/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaussianAlphaTest/'
-resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
 
 #### Krasny Mesh
@@ -59,23 +59,50 @@ resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_integralSqrtDensity/' 
 
 
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_VextVariation/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_VextRegularized/'
+
+
+# Beryllium Mesh Tests
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_VextVariation/'
+
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_baseScaling_VextVariation/'
+# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_LW5/'
+
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_extrapolation_VextRegularization/'
+
+
 
 
  
 #### Treecode Testing
 # resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
 
-# Oxygen
-TotalEnergy = -7.4469337501098821e+01  # Oxygen Atom
-ExchangeEnergy = -7.2193700828939980e+00
-CorrelationEnergy = -5.4455323568788838e-01
-BandEnergy = -4.0613397710076626e+01
-KineticEnergy =  7.4112730191157425e+01
-ElectrostaticEnergy = -1.4081814437367436e+02
-HartreeEnergy = 36.32506036  
+# # Oxygen
+# TotalEnergy = -7.4469337501098821e+01  # Oxygen Atom
+# ExchangeEnergy = -7.2193700828939980e+00
+# CorrelationEnergy = -5.4455323568788838e-01
+# BandEnergy = -4.0613397710076626e+01
+# KineticEnergy =  7.4112730191157425e+01
+# ElectrostaticEnergy = -1.4081814437367436e+02
+# HartreeEnergy = 36.32506036  
+
+
+# Beryllium
+TotalEnergy = -1.4446201118081863e+01
+ExchangeEnergy = -2.2903921833555341e+00
+CorrelationEnergy = -2.2343205529440757e-01
+BandEnergy = -8.1232305760491457e+00
+KineticEnergy =  1.4309060170370618e+01
+ElectrostaticEnergy = -8.1232305760491457e+00
+HartreeEnergy = 7.115165052  
+
+
 
 df = pd.read_csv(resultsDir+file, header=0)
-print(df)
+# print(df)
 
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
@@ -127,16 +154,35 @@ if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2It
     BandEnergy = -7.5499497178953057e-01
 
 
-df['BandEnergyError'] = abs( df['BandEnergy'] - BandEnergy)
-df['ExchangeEnergyError'] = abs( df['ExchangeEnergy'] - ExchangeEnergy)
-# df['HartreeEnergyError'] = abs( df['HartreeEnergy'] - HartreeEnergy)
-df['CorrelationEnergyError'] = abs( df['CorrelationEnergy'] - CorrelationEnergy)
-df['TotalEnergyError'] = abs( df['TotalEnergy'] - TotalEnergy)
-df['KineticEnergyError'] = abs( df['KineticEnergy'] - KineticEnergy)
-df['ElectrostaticEnergyError'] = abs( df['ElectrostaticEnergy'] - ElectrostaticEnergy)
+df['absBandEnergyError'] = abs( df['BandEnergy'] - BandEnergy)
+df['absExchangeEnergyError'] = abs( df['ExchangeEnergy'] - ExchangeEnergy)
+try: 
+    df['absHartreeEnergyError'] = abs( df['HartreeEnergy'] - HartreeEnergy)
+except Exception as e:
+    print(e, ' not present.')
+df['absCorrelationEnergyError'] = abs( df['CorrelationEnergy'] - CorrelationEnergy)
+df['absTotalEnergyError'] = abs( df['TotalEnergy'] - TotalEnergy)
+df['absKineticEnergyError'] = abs( df['KineticEnergy'] - KineticEnergy)
+try: 
+    df['absElectrostaticEnergyError'] = abs( df['ElectrostaticEnergy'] - ElectrostaticEnergy)
+except Exception as e:
+    print(e, ' not present.')
+    
+df['BandEnergyError'] = ( df['BandEnergy'] - BandEnergy)
+df['ExchangeEnergyError'] = ( df['ExchangeEnergy'] - ExchangeEnergy)
+try: 
+    df['HartreeEnergyError'] = ( df['HartreeEnergy'] - HartreeEnergy)
+except Exception as e:
+    print(e, ' not present.')
+df['CorrelationEnergyError'] = ( df['CorrelationEnergy'] - CorrelationEnergy)
+df['TotalEnergyError'] = ( df['TotalEnergy'] - TotalEnergy)
+df['KineticEnergyError'] = ( df['KineticEnergy'] - KineticEnergy)
+try: 
+    df['ElectrostaticEnergyError'] = ( df['ElectrostaticEnergy'] - ElectrostaticEnergy)
+except Exception as e:
+    print(e, ' not present.')
 
-
-print(df)
+# print(df)
 
 def energyAndHOMO():
     nwchemEnergy  = -1.1372499
@@ -244,7 +290,8 @@ def logAversusLogBcolorbyC(df,A,B,C,save=False):
     plt.legend(loc = 'best')
     plt.xlabel(B)
     plt.ylabel(A)
-#     plt.ylim([1e-4,5e-2])
+#     plt.xlim([1e5,2e6])
+#     plt.ylim([1e-5,1e-2])
     plt.grid()
     
     if save == True:
@@ -468,15 +515,98 @@ def totalEnergyErrors_splitByGradientHandling():
 #     ax2.set_ylabel('Energy Error (Hartree)')
 #     ax2.set_title('Oxygen Atom: Total Energy Error') 
     plt.show()
+    
+    
+def extrapolate_Vext_regularization(df,X,Y,degree,plot=True):
+    q=np.polyfit(df[X],df[Y],degree)
+#     print(q)
+    p = np.poly1d(q)
+    
+    print(p)
+    
+    print('Extrapolated value to epsilon = 0: ', p(0.0))
+    if Y=='TotalEnergy':
+        print('Error in extrapolated value:       ', p(0.0)-TotalEnergy)
+    elif Y=='BandEnergy':
+        print('Error in extrapolated value:       ', p(0.0)-BandEnergy)
+    elif Y=='HartreeEnergy':
+        print('Error in extrapolated value:       ', p(0.0)-HartreeEnergy)
+    
+    
+    if plot==True:
+        fig, ax = plt.subplots(figsize=(8,6))
+        fig.suptitle('%s versus %s with Extrapolated Value' %(Y,X))
+        df.plot(x=X, y=Y, logy=False, style='o', ax=ax)
+        plt.legend(loc = 'best')
+        plt.xlabel(X)
+        plt.ylabel(Y)
+        plt.grid()
+        
+        plt.plot(0.0, p(0.0), 'ro')
+        if Y=='TotalEnergy': plt.axhline(y=TotalEnergy,color='k')
+        if Y=='BandEnergy': plt.axhline(y=BandEnergy,color='k')
+        if Y=='HartreeEnergy': plt.axhline(y=HartreeEnergy,color='k')
+    
+        plt.show()
+    
+    return
  
   
 if __name__=="__main__":
     
+#     df = df.loc[df['divideParameter4']==20000000]  
+# #     df = df.loc[df['divideParameter4']==200]  
+#     df_extrap = df.loc[df['VextSmoothingEpsilon']>=1e-4] 
+# #     df_extrap = df_extrap.loc[df_extrap['VextSmoothingEpsilon']>=2e-3] 
+# #     extrapolate_Vext_regularization(df_extrap, 'HartreeEnergy', 'VextSmoothingEpsilon',len(df_extrap.index)-1)
+# #     extrapolate_Vext_regularization(df_extrap, 'BandEnergy', 'VextSmoothingEpsilon',len(df_extrap.index)-1)
+#     extrapolate_Vext_regularization(df_extrap, 'VextSmoothingEpsilon', 'TotalEnergy', len(df_extrap.index)-1)
+# #     logAversusLogBcolorbyC(df_extrap,'absTotalEnergyError', 'VextSmoothingEpsilon', 'maxDepth')
     
-#     logAversusBcolorbyC(df,'BandEnergyError', 'VextSmoothingEpsilon', 'numberOfPoints')
+    
+#     df = df.loc[df['gradientFree']==True]  
+    df = df.loc[df['order']==5]  
+#     logAversusLogBcolorbyC(df,'absElectrostaticEnergyError', 'numberOfPoints', 'divideParameter')
+#     AversusBcolorbyC(df,'ElectrostaticEnergyError', 'numberOfPoints', 'divideParameter')
+    
+    df = df.loc[df['VextSmoothingEpsilon']==0.0] 
+    df = df.loc[df['maxDepth']==14] 
+#     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'divideParameter1')
+#     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'divideParameter1')
+    logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'divideParameter1')
+    AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'divideParameter1')
+#     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+
+
+    ## Vext Investigations
+     
+#     df = df.loc[df['divideParameter1']==2.0]  
+#     df = df.loc[df['order']==5]  
+#     df = df.loc[df['maxDepth']==12]  
+#     df = df.loc[df['divideParameter3']<=0.01]  
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter1')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'order')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
+
+#     df_extrap = df.loc[df['VextSmoothingEpsilon']>=1e-4] 
+#     extrapolate_Vext_regularization(df_extrap, 'HartreeEnergy', 'VextSmoothingEpsilon',2)
+#     extrapolate_Vext_regularization(df_extrap, 'BandEnergy', 'VextSmoothingEpsilon',2)
+#     extrapolate_Vext_regularization(df_extrap, 'TotalEnergy', 'VextSmoothingEpsilon',2)
+#     logAversusLogBcolorbyC(df,'absBandEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
+    
+    
+#     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
+#     logAversusLogBcolorbyC(df,'absBandEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
+#     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
+ 
+
+    
+#     logAversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter')
 #     logAversusBcolorbyC(df,'TotalEnergyError', 'VextSmoothingEpsilon', 'divideParameter1')
 
-    df = df.loc[df['order']==7]  
+#     df = df.loc[df['order']==7]  
 #     df = df.loc[df['depthAtAtoms']==2]  
 #     df = df.loc[df['divideParameter1']==2]  
 #     df = df.loc[df['divideParameter3']==0.1]  
@@ -509,7 +639,7 @@ if __name__=="__main__":
  
 #     df = df.loc[df['gradientFree']==1]
 #     df = df.loc[df['maxDepth']>11]
-    logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
+#     logAversusLogBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
     
     
 # #     print( df['numberOfPoints'] )

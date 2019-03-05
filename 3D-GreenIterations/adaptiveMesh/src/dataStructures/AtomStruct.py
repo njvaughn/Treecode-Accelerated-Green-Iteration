@@ -31,17 +31,19 @@ class Atom(object):
        
        
     def V(self,x,y,z):
-#         r = np.sqrt( self.smoothingEpsilon**2 + (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
-        r = np.sqrt( (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
-        if r ==0.0:
-            print('Warning, evaluating potential at singularity!')
-            return 0.0
+        r = np.sqrt( self.smoothingEpsilon**2 + (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
+        return -self.atomicNumber/r
         
-        if self.smoothingEpsilon==0.0:
-            return -self.atomicNumber/r
-        else:
-            c = ( 0.00435*self.smoothingEpsilon / self.atomicNumber**5) **(1/3)
-            return -self.atomicNumber*u(r/c)/c
+#         r = np.sqrt( (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
+#         if r ==0.0:
+#             print('Warning, evaluating potential at singularity!')
+#             return 0.0
+#         
+#         if self.smoothingEpsilon==0.0:
+#             return -self.atomicNumber/r
+#         else:
+#             c = ( 0.00435*self.smoothingEpsilon / self.atomicNumber**5) **(1/3)
+#             return -self.atomicNumber*u(r/c)/c
 
 
     

@@ -14,7 +14,8 @@ ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3
 from TreeStruct_CC import Tree
 
 
-def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, divideParameter1, divideParameter2, divideParameter3, divideParameter4, inputFile):
+def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, divideParameter1, divideParameter2, divideParameter3, divideParameter4, inputFile,
+                                 smoothingEpsilon=0.0):
 
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
     [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
@@ -34,10 +35,10 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, 
     print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=depthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
-                coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
+                coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
     
-    
-    
+     
+     
 
     
     print('max depth ', maxDepth)
@@ -50,8 +51,9 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, 
 #     sourcesTXT = '../examples/S%ipy.txt' %tree.numberOfGridpoints
 #     targetsTXT = '../examples/T%ipy.txt' %tree.numberOfGridpoints
     
-    sourcesTXT = '/Users/nathanvaughn/Documents/GitHub/hybrid-gpu-treecode/examplesOxygenAtom/S%ipy.txt' %tree.numberOfGridpoints
-    targetsTXT = '/Users/nathanvaughn/Documents/GitHub/hybrid-gpu-treecode/examplesOxygenAtom/T%ipy.txt' %tree.numberOfGridpoints
+#     sourcesTXT = '/Users/nathanvaughn/Documents/GitHub/hybrid-gpu-treecode/examplesOxygenAtom/S%ipy.txt' %tree.numberOfGridpoints
+    sourcesTXT = '/Users/nathanvaughn/Desktop/S%ipy.txt' %tree.numberOfGridpoints
+    targetsTXT = '/Users/nathanvaughn/Desktop/T%ipy.txt' %tree.numberOfGridpoints
     
     Sources = tree.extractLeavesDensity()
     Targets = tree.extractLeavesDensity()
@@ -66,7 +68,10 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, 
     print('Meshes Exported.')    
 
 
-def exportMeshForParaview(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, inputFile='', outputFile=''):    
+def exportMeshForParaview(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, 
+                          divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
+                          smoothingEpsilon=0.0, 
+                          inputFile='', outputFile=''):    
     
     
 #     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
@@ -93,7 +98,7 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, depthAtAtoms, divideC
     print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=depthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
-                coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
+                coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
 
     
     print('max depth ', maxDepth)
@@ -198,18 +203,24 @@ if __name__ == "__main__":
 #                           divideParameter=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
     
     # param1: wavefunction variation
-    # param2: wavefunction relative variation
-    # param3: absIntegral of wavefunction 
-    # param4: density variation   
+    # param2: wavefunction integral
+    # param3: density integral   
+    # param4: Vext integral   
     
-    exportMeshForParaview(domain=20,order=3,
-                        minDepth=4, maxDepth=17, depthAtAtoms=2, divideCriterion='Krasny', 
-                        divideParameter1=2, divideParameter2=2, divideParameter3=0.2, divideParameter4=50000,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+    exportMeshForParaview(domain=20,order=5,
+                        minDepth=3, maxDepth=10, depthAtAtoms=2, divideCriterion='Krasny', 
+                        divideParameter1=4.0, divideParameter2=0.1, divideParameter3=0.2, divideParameter4=20000,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
                         outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/krasny_lowOrder')
+    
+#     exportMeshForParaview(domain=20,order=3,
+#                         minDepth=4, maxDepth=17, depthAtAtoms=2, divideCriterion='LW5', 
+#                         divideParameter1=1000, divideParameter2=2, divideParameter3=0.2, divideParameter4=50000,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/LW5_lowOrder')
 
-#     exportMeshForTreecodeTesting(domain=20,order=5,
-#                         minDepth=3, maxDepth=20, depthAtAtoms=13, divideCriterion='Krasny', 
-#                         divideParameter1=5, divideParameter2=100, divideParameter3=0.03, divideParameter4=5000,
+#     exportMeshForTreecodeTesting(domain=20,order=7,
+#                         minDepth=3, maxDepth=20, depthAtAtoms=13, divideCriterion='LW5', 
+#                         divideParameter1=2000, divideParameter2=100, divideParameter3=0.03, divideParameter4=5000,
 #                         inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
 
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')

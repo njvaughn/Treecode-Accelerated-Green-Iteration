@@ -62,6 +62,14 @@ maxParNode          = int(sys.argv[24])
 batchSize           = int(sys.argv[25])
 divideParameter3    = float(sys.argv[26])
 divideParameter4    = float(sys.argv[27])
+base                = float(sys.argv[28])
+
+
+
+divideParameter1 *= base
+divideParameter2 *= base
+divideParameter3 *= base
+divideParameter4 *= base
 
 
 print('gradientFree = ', noGradients)
@@ -134,6 +142,7 @@ def setUpTree(onlyFillOne=False):
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
                                             
 
+    occupations = 2*np.ones(nOrbitals)
 #     nOrbitals=7
 #     print('Setting nOrbitals to six for purposes of testing the adaptivity on the oxygen atom.')
 #     print('Setting nOrbitals to seven for purposes of running Carbon monoxide.')
@@ -147,6 +156,11 @@ def setUpTree(onlyFillOne=False):
         occupations[2] = 4/3
         occupations[3] = 4/3
         occupations[4] = 4/3
+        
+    elif inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
+        nOrbitals=21
+        occupations = 2*np.ones(nOrbitals)
+    
         
     elif inputFile=='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
         nOrbitals=7

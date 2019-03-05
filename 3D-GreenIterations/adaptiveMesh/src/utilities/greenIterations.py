@@ -141,8 +141,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     
 
-    greenIterationOutFile = outputFile[:-4]+'_GREEN_'+outputFile[-4:]
-    SCFiterationOutFile = outputFile[:-4]+'_SCF_'+outputFile[-4:]
+    greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(tree.numberOfGridpoints)+outputFile[-4:]
+    SCFiterationOutFile = outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     
 
     # Initialize density history arrays
@@ -209,33 +209,38 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         start = time.time()
         
-        
-#         V_hartreeNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
-#                                                                                                   targetX, targetY, targetZ, targetValue,targetWeight, 
-#                                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+        if treecode==False:
+            V_hartreeNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
+                                                                                                  targetX, targetY, targetZ, targetValue,targetWeight, 
+                                                                                                  sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+
+            V_hartreeNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
+
+        elif treecode==True:
+            
+            
 # #         V_hartreeNew += targets[:,3]* (4*np.pi)* alphasq/2  # Wrong
-#         V_hartreeNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
 
 
 #         V_hartreeNew = directSumWrappers.callCompiledC_directSum_Poisson(numTargets, numSources, 
 #                                                                         targetX, targetY, targetZ, targetValue,targetWeight, 
 #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
-        potentialType=0 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
-        alpha = gaussianAlpha
-        V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
-                                                       targetX, targetY, targetZ, targetValue, 
-                                                       sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                       potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
-          
-        if potentialType==2:
-            V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
+            potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
+            alpha = gaussianAlpha
+            V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                           targetX, targetY, targetZ, targetValue, 
+                                                           sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                           potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+               
+            if potentialType==2:
+                V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
 
         
 #         print('First few terms of V_hartreeNew: ', V_hartreeNew[:8])
         print('Convolution time: ', time.time()-start)
         
-#         return
+        
         
         
     elif GPUpresent==True:
@@ -322,7 +327,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #     print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
     print('Total Energy:                          %.10f H, %.10e H' %(tree.E, tree.E-Etotal))
     
-#     return
+    
     
     printInitialEnergies=True
 
@@ -361,6 +366,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         tree.exportGridpoints(filename)
         
     
+#     if GPUpresent==False:
+#         print('Exiting after initialization because no GPU present.')
+#         return
 
     initialWaveData = tree.extractPhi(0)
     initialPsi0 = np.copy(initialWaveData[:,3])
@@ -690,6 +698,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         print('Turning on Anderson Mixing for wavefunction %i' %m)
                     ### EXIT CONDITIONS ###
 
+#                     if SCFcount==1:
+#                         print('Loosening Greens iteration tolerance in SCF #1')
+#                         orbitalResidual*=1000
                     if orbitalResidual < intraScfTolerance:
                         print('Used %i iterations for orbital %i.\n\n\n' %(greenIterationsCount,m))
                         
@@ -790,22 +801,46 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         targets = np.copy(sources)
         
         if GPUpresent==True:
-            V_hartreeNew = np.zeros((len(targets)))
-            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_hartreeNew,alphasq)
+            if treecode==False:
+                V_hartreeNew = np.zeros((len(targets)))
+                gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_hartreeNew,alphasq)
+            else:
+                print('Need treecode for Hartree solve after first SCF...')
+                return
             
         else:
-            potentialType=2 # shoud be 0.  Set to 1, 2, or 3 just to test other kernels quickly
-            order=3
-            theta = 0.5
-            maxParNode = 500
-            batchSize = 500
-            alphasq = gaussianAlpha**2
-            V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
-                                                           targetX, targetY, targetZ, targetValue, 
-                                                           sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                           potentialType, alphasq, order, theta, maxParNode, batchSize)
-            if potentialType==2:
-                V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
+            if treecode==False:
+                sourceX = np.copy(sources[:,0])
+                sourceY = np.copy(sources[:,1])
+                sourceZ = np.copy(sources[:,2])
+                sourceValue = np.copy(sources[:,3])
+                sourceWeight = np.copy(sources[:,4])
+                
+                targetX = np.copy(targets[:,0])
+                targetY = np.copy(targets[:,1])
+                targetZ = np.copy(targets[:,2])
+                targetValue = np.copy(targets[:,3])
+                targetWeight = np.copy(targets[:,4])
+                V_hartreeNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
+                                                                                                  targetX, targetY, targetZ, targetValue,targetWeight, 
+                                                                                                  sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
+
+                V_hartreeNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
+
+                
+            else:
+                potentialType=2 # shoud be 0.  Set to 1, 2, or 3 just to test other kernels quickly
+                order=3
+                theta = 0.5
+                maxParNode = 500
+                batchSize = 500
+                alphasq = gaussianAlpha**2
+                V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                               targetX, targetY, targetZ, targetValue, 
+                                                               sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                               potentialType, alphasq, order, theta, maxParNode, batchSize)
+                if potentialType==2:
+                    V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
         
         
       
