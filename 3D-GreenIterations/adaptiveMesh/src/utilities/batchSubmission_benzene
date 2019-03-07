@@ -43,7 +43,7 @@ INTRASCFTOLERANCE=5e-5
 INTERSCFTOLERANCE=1e-6 
    
 MIXING='Anderson'    
-CELLORDER=4
+CELLORDER=5
  
 DEPTHATATOMS=2 
 	 
@@ -56,7 +56,7 @@ for MESHPARAM4 in 0
 do
 	for MESHPARAM3 in 0
 	do   
-		for MESHPARAM2 in 0
+		for MESHPARAM2 in 0 
 		do 
 			for MESHPARAM1 in 500
 			    

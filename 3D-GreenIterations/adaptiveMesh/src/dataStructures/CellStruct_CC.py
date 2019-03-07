@@ -14,7 +14,7 @@ from meshUtilities import meshDensity, weights3D, unscaledWeights, ChebGradient3
     computeLaplacianMatrix, ChebLaplacian3D, sumChebyshevCoefficicentsGreaterThanOrderQ, sumChebyshevCoefficicentsEachGreaterThanOrderQ, sumChebyshevCoefficicentsAnyGreaterThanOrderQ,\
     sumChebyshevCoefficicentsGreaterThanOrderQZeroZero
 from GridpointStruct import GridPoint, DensityPoint
-from mpmath import psi
+# from mpmath import psi
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 TwoByTwoByTwo = [element for element in itertools.product(range(2),range(2),range(2))]
@@ -730,12 +730,21 @@ class Cell(object):
                 dy = ymm[j]-atom.y
                 dz = zmm[k]-atom.z
                 r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                if r==0:  # nudge the point 10% in towrads the cell center, just to avoid 1/0 cases
+                    dx = 0.99*(xmm[i]-atom.x) + 0.01*(xmm[(i+1)%2]-atom.x)
+                    dy = 0.99*(ymm[j]-atom.y) + 0.01*(ymm[(j+1)%2]-atom.y)
+                    dz = 0.99*(zmm[k]-atom.z) + 0.01*(zmm[(k+1)%2]-atom.z)
+                    
+                    xtemp = 0.99*(xmm[i]) + 0.01*(xmm[(i+1)%2])
+                    ytemp = 0.99*(ymm[j]) + 0.01*(ymm[(j+1)%2])
+                    ztemp = 0.99*(zmm[k]) + 0.01*(zmm[(k+1)%2])
+                    r = np.sqrt( dx**2 + dy**2 + dz**2 )
     
                 Vext += atom.V(xmm[i],ymm[j],zmm[k])
                 density +=  atom.interpolators['density'](r)
                 
-            densityIntegral += density/8*self.volume
-            sqrtDensityIntegral += np.sqrt(density)/8*self.volume
+            densityIntegral += density*(1 + 1/r)/8*self.volume
+            sqrtDensityIntegral += density**(4/5)/8*self.volume
              
             if ( (i==0) and (j==0) and (k==0)): 
                 maxDensity = density
@@ -749,7 +758,9 @@ class Cell(object):
                 if Vext > maxVext: maxVext = Vext
                 if Vext < minVext: minVext = Vext
              
-            relDensityVariation = (maxDensity-minDensity)/maxDensity
+#             relDensityVariation = (maxDensity-minDensity)/maxDensity
+#             relDensityVariation = (maxDensity-minDensity)
+            relDensityVariation = ( np.sqrt(maxDensity)-np.sqrt(minDensity) ) / np.sqrt(maxDensity)
             if relDensityVariation>maxRelDensityVariation:
                 maxRelDensityVariation = relDensityVariation
                 relDensityVariationCause = -1
@@ -872,7 +883,9 @@ class Cell(object):
 #         return maxVariation, densityIntegral, maxAbsIntegral, maxSqVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause
 #         return maxVariation, sqrtDensityIntegral, maxAbsIntegral, maxSqVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause
     
-        return maxVariation, maxAbsIntegral, densityIntegral, VextVariation, variationCause, absIntegralCause, densityIntegralCause, VextVariationCause
+#         return maxVariation, sqrtDensityIntegral, densityIntegral, VextVariation, variationCause, densityIntegralCause, densityIntegralCause, VextVariationCause
+        return maxVariation, sqrtDensityIntegral, relDensityVariation, VextVariation, variationCause, densityIntegralCause, densityIntegralCause, VextVariationCause
+#         return maxVariation, maxAbsIntegral, densityIntegral, VextVariation, variationCause, absIntegralCause, densityIntegralCause, VextVariationCause
     
     def initializeCellWavefunctions(self):           
         
@@ -970,23 +983,27 @@ class Cell(object):
 #         waveVariation, relDensityVariation, absIntegral, sqWaveVariation, variationCause, densityVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
 #         waveVariation, psiVextVariation, absIntegral, sqWaveVariation, variationCause, psiVextVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
 #         waveVariation, VextVariation, absIntegral, sqWaveVariation, variationCause, VextVariationCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
-        waveVariation, waveIntegral, densityIntegral, VextVariation, variationCause, waveIntegralCause, densityIntegralCause, VextVariationCause = self.wavefunctionVariationAtCorners()
+#         waveVariation, waveIntegral, densityIntegral, VextVariation, variationCause, waveIntegralCause, densityIntegralCause, VextVariationCause = self.wavefunctionVariationAtCorners()
+        waveVariation, sqrtDensityIntegral, densityIntegral, VextVariation, variationCause, sqrtDensityIntegralIntegralCause, densityIntegralCause, VextVariationCause = self.wavefunctionVariationAtCorners()
 #         waveVariation, densityIntegral, absIntegral, sqWaveVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
 #         waveVariation, sqrtDensityIntegral, absIntegral, sqWaveVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
         
         
         if waveVariation > divideParameter1:
-            self.divideFlag=True
+            print('Excluding criteria 1 for now...')
+#             self.divideFlag=True
+#             self.childrenRefineCause=1
 #             print('Dividing cell %s because of variation in wavefunction %i.' %(self.uniqueID,variationCause))
-            return
+#             return
             
-        if waveIntegral > divideParameter2:
-            self.divideFlag=True
-#             print('Dividing cell %s because of Integral for wavefunction %i.' %(self.uniqueID, waveIntegralCause))
-            return
+#         if waveIntegral > divideParameter2:
+#             self.divideFlag=True
+# #             print('Dividing cell %s because of Integral for wavefunction %i.' %(self.uniqueID, waveIntegralCause))
+#             return
 
         if densityIntegral > divideParameter3:
             self.divideFlag=True
+            self.childrenRefineCause=3
 #             print('Dividing cell %s because of density integral.' %(self.uniqueID))
             return
         
@@ -1001,19 +1018,23 @@ class Cell(object):
 #             return
         
         if VextVariation > divideParameter4:
-            self.divideFlag=True
+            print('Excluding criteria 4 for now...')
+
+#             self.divideFlag=True
+#             self.childrenRefineCause=4
 #             print('Dividing cell %s because of Vext variation.' %(self.uniqueID))
-            return
+#             return
 
 #         if densityIntegral > divideParameter4:
 #             self.divideFlag=True
 #             print('Dividing cell %s because of density integral.' %(self.uniqueID))
 #             return
         
-#         if sqrtDensityIntegral > divideParameter4:
-#             self.divideFlag=True
-#             print('Dividing cell %s because of density integral.' %(self.uniqueID))
-#             return
+        if sqrtDensityIntegral > divideParameter2:
+            self.divideFlag=True
+            self.childrenRefineCause=2
+#             print('Dividing cell %s because of sqrt(density) integral.' %(self.uniqueID))
+            return
 
     def checkWavefunctionVariation_Vext(self, divideParameter1, divideParameter2, divideParameter3, divideParameter4):
         self.divideFlag = False
@@ -1440,6 +1461,8 @@ class Cell(object):
                                            ybounds[j], ybounds[j+1], cell.py,
                                            zbounds[k], zbounds[k+1], cell.pz)
                 children[i,j,k].parent = cell # children should point to their parent
+                if hasattr(cell, "childrenRefineCause"):
+                    children[i,j,k].refineCause = cell.childrenRefineCause
                 if hasattr(cell, "uniqueID"):
                     children[i,j,k].setUniqueID(i,j,k)
                     children[i,j,k].setNeighborList()
@@ -1503,6 +1526,8 @@ class Cell(object):
                                            ybounds[j], ybounds[j+1], cell.py,
                                            cell.zmin, cell.zmax, cell.pz, tree = cell.tree)
                     children[i,j,0].parent = cell # children should point to their parent
+                    if hasattr(cell, "childrenRefineCause"):
+                        children[i,j,0].refineCause = cell.childrenRefineCause
                     children[i,j,0].setUniqueID(i,j,0)  # neighbor lists going to be ruined once no longer dividing into 8
                     children[i,j,0].setNeighborList()
         
@@ -1542,6 +1567,8 @@ class Cell(object):
                                            cell.ymin, cell.ymax, cell.py,
                                            zbounds[k], zbounds[k+1], cell.pz, tree = cell.tree)
                     children[i,0,k].parent = cell # children should point to their parent
+                    if hasattr(cell, "childrenRefineCause"):
+                        children[i,0,k].refineCause = cell.childrenRefineCause
                     children[i,0,k].setUniqueID(i,0,k)  # neighbor lists going to be ruined once no longer dividing into 8
                     children[i,0,k].setNeighborList()
         
@@ -1582,6 +1609,8 @@ class Cell(object):
                                            ybounds[j], ybounds[j+1], cell.py,
                                            zbounds[k], zbounds[k+1], cell.pz, tree = cell.tree)
                     children[0,j,k].parent = cell # children should point to their parent
+                    if hasattr(cell, "childrenRefineCause"):
+                        children[0,j,k].refineCause = cell.childrenRefineCause
                     children[0,j,k].setUniqueID(0,j,k)  # neighbor lists going to be ruined once no longer dividing into 8
                     children[0,j,k].setNeighborList()
         
@@ -1631,6 +1660,8 @@ class Cell(object):
                                            cell.ymin, cell.ymax, cell.py,
                                            cell.zmin, cell.zmax, cell.pz, tree = cell.tree)
                     children[i,0,0].parent = cell # children should point to their parent
+                    if hasattr(cell, "childrenRefineCause"):
+                        children[i,0,0].refineCause = cell.childrenRefineCause
                     children[i,0,0].setUniqueID(i,0,0)  # neighbor lists going to be ruined once no longer dividing into 8
                     children[i,0,0].setNeighborList()
         
@@ -1674,6 +1705,8 @@ class Cell(object):
                                            ybounds[j], ybounds[j+1], cell.py,
                                            cell.zmin, cell.zmax, cell.pz, tree = cell.tree)
                     children[0,j,0].parent = cell # children should point to their parent
+                    if hasattr(cell, "childrenRefineCause"):
+                        children[0,j,0].refineCause = cell.childrenRefineCause
                     children[0,j,0].setUniqueID(0,j,0)  # neighbor lists going to be ruined once no longer dividing into 8
                     children[0,j,0].setNeighborList()
         
@@ -1717,6 +1750,8 @@ class Cell(object):
                                            cell.ymin, cell.ymax, cell.py,
                                            zbounds[k], zbounds[k+1], cell.pz, tree = cell.tree)
                     children[0,0,k].parent = cell # children should point to their parent
+                    if hasattr(cell, "childrenRefineCause"):
+                        children[0,0,k].refineCause = cell.childrenRefineCause
                     children[0,0,k].setUniqueID(0,0,k)  # neighbor lists going to be ruined once no longer dividing into 8
                     children[0,0,k].setNeighborList()
         

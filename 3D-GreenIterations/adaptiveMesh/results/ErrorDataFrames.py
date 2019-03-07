@@ -66,12 +66,17 @@ file='runComparison.csv'
 # Beryllium Mesh Tests
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_VextVariation/'
 
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_baseScaling_VextVariation/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_baseScaling_VextVariation/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_LW5/'
 
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_extrapolation_VextRegularization/'
+
+
+#  Meshes designed with distribution plots
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_density_roottwothirds/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_root_45/'
 
 
 
@@ -554,6 +559,13 @@ def extrapolate_Vext_regularization(df,X,Y,degree,plot=True):
   
 if __name__=="__main__":
     
+    logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'depthAtAtoms')
+#     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'divideParameter3')
+#     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'divideParameter3')
+#     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter3')
+#     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'divideParameter3')
+#     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'divideParameter3')
+    
 #     df = df.loc[df['divideParameter4']==20000000]  
 # #     df = df.loc[df['divideParameter4']==200]  
 #     df_extrap = df.loc[df['VextSmoothingEpsilon']>=1e-4] 
@@ -565,17 +577,17 @@ if __name__=="__main__":
     
     
 #     df = df.loc[df['gradientFree']==True]  
-    df = df.loc[df['order']==5]  
+#     df = df.loc[df['order']==3]  
 #     logAversusLogBcolorbyC(df,'absElectrostaticEnergyError', 'numberOfPoints', 'divideParameter')
 #     AversusBcolorbyC(df,'ElectrostaticEnergyError', 'numberOfPoints', 'divideParameter')
     
-    df = df.loc[df['VextSmoothingEpsilon']==0.0] 
-    df = df.loc[df['maxDepth']==14] 
+#     df = df.loc[df['VextSmoothingEpsilon']==0.0] 
+#     df = df.loc[df['maxDepth']==11] 
 #     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'divideParameter1')
-#     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'divideParameter1')
-    logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'divideParameter1')
-    AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'divideParameter1')
-#     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'divideParameter1')
+#     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'order')
 #     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
 
 

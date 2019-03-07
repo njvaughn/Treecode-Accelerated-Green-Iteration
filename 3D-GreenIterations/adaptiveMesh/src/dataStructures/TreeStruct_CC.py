@@ -844,6 +844,17 @@ class Tree(object):
     
     def countCellsAtEachDepth(self):
         levelCounts = {}
+        criteria1 = {}
+        criteria2 = {}
+        criteria3 = {}
+        criteria4 = {}
+        
+        for level in range(self.minDepth, self.maxDepthAchieved):
+            levelCounts[level] = 0
+            criteria1[level] = 0
+            criteria2[level] = 0
+            criteria3[level] = 0
+            criteria4[level] = 0
         for _,cell in self.masterList:
             if cell.leaf==True:
                 if cell.level in levelCounts:
@@ -851,11 +862,42 @@ class Tree(object):
                 else:
                     levelCounts[cell.level] = 1
                     print('Added level %i to dictionary.' %cell.level)
+                if hasattr(cell, "refineCause"):
+                    if cell.refineCause==1:
+                        if cell.level in criteria1:
+                            criteria1[cell.level] += 1
+                        else:
+                            criteria1[cell.level] = 1
+                            print('Added level %i to criteria1 dictionary.' %cell.level)
+                    
+                    if cell.refineCause==2:
+                        if cell.level in criteria2:
+                            criteria2[cell.level] += 1
+                        else:
+                            criteria2[cell.level] = 1
+                            print('Added level %i to criteria2 dictionary.' %cell.level)
+                    if cell.refineCause==3:
+                        if cell.level in criteria3:
+                            criteria3[cell.level] += 1
+                        else:
+                            criteria3[cell.level] = 1
+                            print('Added level %i to criteria3 dictionary.' %cell.level)
+                    if cell.refineCause==4:
+                        if cell.level in criteria4:
+                            criteria4[cell.level] += 1
+                        else:
+                            criteria4[cell.level] = 1
+                            print('Added level %i to criteria4 dictionary.' %cell.level)
+                        
         
         print('Number of cells at each level: ')
         print(levelCounts)
         
         self.levelCounts=levelCounts
+        self.criteria1=criteria1
+        self.criteria2=criteria2
+        self.criteria3=criteria3
+        self.criteria4=criteria4
         return
         
     
