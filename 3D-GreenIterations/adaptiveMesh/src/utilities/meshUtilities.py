@@ -47,6 +47,12 @@ def meshDensity(r,divideParameter,divideCriterion):
         eta = np.sqrt(2*0.34)
         k = 5
         return phaniMeshDensity(divideParameter, N, eta,k, r)
+    
+    elif divideCriterion == 'Krasny_density':
+        return divideParameter*(np.exp(-r))/r
+#         return ( 1/r + divideParameter*np.exp(-0.5*r) )
+#         return divideParameter/r
+    
     else:
         print('Invalid Mesh type...')
         return

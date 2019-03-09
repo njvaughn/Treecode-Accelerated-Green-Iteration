@@ -38,7 +38,7 @@ from greenIterations import greenIterations_KohnSham_SCF#,greenIterations_KohnSh
 domainSize          = int(sys.argv[1])
 minDepth            = int(sys.argv[2])
 maxDepth            = int(sys.argv[3])
-depthAtAtoms        = int(sys.argv[4])
+additionalDepthAtAtoms        = int(sys.argv[4])
 order               = int(sys.argv[5])
 subtractSingularity = int(sys.argv[6])
 smoothingEps        = float(sys.argv[7])
@@ -62,6 +62,17 @@ maxParNode          = int(sys.argv[24])
 batchSize           = int(sys.argv[25])
 divideParameter3    = float(sys.argv[26])
 divideParameter4    = float(sys.argv[27])
+base                = float(sys.argv[28])
+
+
+
+divideParameter1 *= 1/base
+divideParameter2 *= 1/base
+divideParameter3 *= 1/base
+divideParameter4 *= 1/base
+
+# depthAtAtoms += int(np.log2(base))
+# print('Depth at atoms: ', depthAtAtoms)
 
 
 print('gradientFree = ', noGradients)
@@ -134,6 +145,7 @@ def setUpTree(onlyFillOne=False):
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
                                             
 
+    occupations = 2*np.ones(nOrbitals)
 #     nOrbitals=7
 #     print('Setting nOrbitals to six for purposes of testing the adaptivity on the oxygen atom.')
 #     print('Setting nOrbitals to seven for purposes of running Carbon monoxide.')
@@ -148,6 +160,11 @@ def setUpTree(onlyFillOne=False):
         occupations[3] = 4/3
         occupations[4] = 4/3
         
+    elif inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
+        nOrbitals=21
+        occupations = 2*np.ones(nOrbitals)
+    
+        
     elif inputFile=='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
         nOrbitals=7
         occupations = 2*np.ones(nOrbitals)
@@ -160,7 +177,7 @@ def setUpTree(onlyFillOne=False):
     referenceEigenvalues = np.array( np.genfromtxt(referenceEigenvaluesFile,delimiter=',',dtype=float) )
     print(referenceEigenvalues)
     print(np.shape(referenceEigenvalues))
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,maxDepthAtAtoms=depthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,smoothingEps=smoothingEps, inputFile=inputFile)#, iterationOutFile=outputFile)
     tree.referenceEigenvalues = np.copy(referenceEigenvalues)
     tree.occupations = occupations
@@ -196,14 +213,14 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
     totalKohnShamTime = time.time()-startTime
     print('Total Time: ', totalKohnShamTime)
 
-    header = ['domainSize','minDepth','maxDepth','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
+    header = ['domainSize','minDepth','maxDepth','additionalDepthAtAtoms','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
               'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
               'gaussianAlpha','VextSmoothingEpsilon','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
               'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime']
     
-    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
+    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.additionalDepthAtAtoms,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
               divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
               gaussianAlpha,smoothingEps,energyTolerance,
               subtractSingularity,

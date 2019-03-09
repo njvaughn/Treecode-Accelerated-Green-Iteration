@@ -2,16 +2,15 @@
 
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+
 DOMAIN=20
-MAXDEPTH=16
 MINDEPTH=3
 SINGSUBT=1
-SMOOTHINGEPS=0
 
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -30,38 +29,46 @@ BATCHSIZE=8000
 
 GAUSSIANALPHA=1.0
 
-MESHTYPE='Krasny'
+MESHTYPE='Krasny_density'
 
 
-MIXINGPARAMETER=0.5  
+MIXINGPARAMETER=0.5   
  
 INTRASCFTOLERANCE=1e-7  
 INTERSCFTOLERANCE=5e-6 
    
-MIXING='Anderson'   
+MIXING='Anderson'    
 CELLORDER=5
+SMOOTHINGEPS=0.0
+ADDITIONALDEPTHATATOMS=5  
 
-DEPTHATATOMS=2
-	
-
-
-for MAXDEPTH in 10 11 12 13 14 15 
-do													
-for MESHPARAM4 in 100000
+for ADDITIONALDEPTHATATOMS in 4 5 6
 do
-	for MESHPARAM2 in 3
-	do
-		for MESHPARAM3 in 0.2
-		do
-			for MESHPARAM1 in 3  
+for CELLORDER in 5 
+do	 
+for BASE in 1
+do
+for MAXDEPTH in 20   
+do								  					 
+for MESHPARAM4 in 999 
+do 
+	for MESHPARAM3 in 999
+	do    
+		for MESHPARAM2 in 999
+		do 
+			for MESHPARAM1 in 20 50 100	200 500 		    
 			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Oxygen_noSphHarmonics_preSCF/ds_cellOrder${CELLORDER}_maxDepth${MAXDEPTH}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
-			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Beryllium_krasnyDensity/ds_cellOrder${CELLORDER}_base${BASE}_smoothingEps${SMOOTHINGEPS}_maxDepth${MAXDEPTH}additionalDepth${ADDITIONALDEPTHATATOMS}_minDepth${MINDEPTH}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
+			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
-																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4  
+																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE
 			done
 		done
-	done
+	done 
+	
 done
-done		
+done
+done
+done
+done
