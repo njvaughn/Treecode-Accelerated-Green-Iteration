@@ -76,7 +76,10 @@ file='runComparison.csv'
 
 #  Meshes designed with distribution plots
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_density_roottwothirds/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_root_45/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_root_45/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_root_45_additional3/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_nathan/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_nathan2/'
 
 
 
@@ -559,14 +562,17 @@ def extrapolate_Vext_regularization(df,X,Y,degree,plot=True):
   
 if __name__=="__main__":
     
-    logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'depthAtAtoms')
+#     df = df.loc[df['additionalDepthAtAtoms']==3]
+#     df = df.loc[df['order']==5]
+    logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
 #     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'divideParameter3')
 #     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'divideParameter3')
-#     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'divideParameter3')
-#     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'divideParameter3')
-#     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'divideParameter3')
+    AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
+    AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms') 
+    AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
+
     
-#     df = df.loc[df['divideParameter4']==20000000]  
+#     df = df.loc[df['divideParameter4']==20000000]   
 # #     df = df.loc[df['divideParameter4']==200]  
 #     df_extrap = df.loc[df['VextSmoothingEpsilon']>=1e-4] 
 # #     df_extrap = df_extrap.loc[df_extrap['VextSmoothingEpsilon']>=2e-3] 

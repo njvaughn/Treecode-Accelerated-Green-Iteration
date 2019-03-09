@@ -71,7 +71,7 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, 
     print('Meshes Exported.')    
 
 
-def exportMeshForParaview(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, 
+def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
                           divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
                           smoothingEpsilon=0.0, 
                           inputFile='', outputFile=''):    
@@ -100,7 +100,7 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, depthAtAtoms, divideC
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
-    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=depthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
 
     
@@ -207,7 +207,7 @@ def timingTestsForOrbitalOrthogonalizations(domain,order,minDepth, maxDepth, div
     print('Max diff between internal and external: ', np.max( np.abs(phiA3 - phiB3 )))
     
 
-def meshDistributions(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, 
+def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
                           divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
                           smoothingEpsilon=0.0, base=1.0,
                           inputFile=''):    
@@ -239,7 +239,7 @@ def meshDistributions(domain,order,minDepth, maxDepth, depthAtAtoms, divideCrite
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
-    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=depthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
 
     
@@ -260,31 +260,28 @@ def meshDistributions(domain,order,minDepth, maxDepth, depthAtAtoms, divideCrite
     plt.ylabel('Number of Cells')
     if divideCriterion=='Krasny':
         plt.title('Mesh Type: 4 parameters (%1.2f,%1.2f,%1.2f,%1.2f)' %(divideParameter1,divideParameter2,divideParameter3,divideParameter4))
+    if divideCriterion=='Nathan':
+        plt.title('Mesh Type: 2 parameters (%1.2f,%1.2f)' %(divideParameter1,divideParameter2))
     elif divideCriterion=='LW5':
         plt.title('Mesh Type: LW5 - %1.2f' %(divideParameter1))
         
-    fig, axes = plt.subplots(2, 2)
-    axes[0,0].bar(list(tree.criteria1.keys()),list(tree.criteria1.values()) )
-    axes[0,1].bar(list(tree.criteria2.keys()),list(tree.criteria2.values()) )
-    axes[1,0].bar(list(tree.criteria3.keys()),list(tree.criteria3.values()) )
-    axes[1,1].bar(list(tree.criteria4.keys()),list(tree.criteria4.values()) )
-    
-    axes[0,0].set_title('Psi Variation')
-    axes[0,1].set_title('sqrt(rho) integral')
-    axes[1,0].set_title('rho integral')
-    axes[1,1].set_title('Vext Variation')
-    
-    axes[0,0].set_ylim([0, int(1.1*maxHeight)])
-    axes[0,1].set_ylim([0, int(1.1*maxHeight)])
-    axes[1,0].set_ylim([0, int(1.1*maxHeight)])
-    axes[1,1].set_ylim([0, int(1.1*maxHeight)])
+    fig, axes = plt.subplots(2, 1)
+    axes[0].bar(list(tree.criteria1.keys()),list(tree.criteria1.values()) )
+    axes[1].bar(list(tree.criteria2.keys()),list(tree.criteria2.values()) )
+#     axes[1,0].bar(list(tree.criteria3.keys()),list(tree.criteria3.values()) )
+#     axes[1,1].bar(list(tree.criteria4.keys()),list(tree.criteria4.values()) )
+     
+    axes[0].set_title('Vext*sqrt(rho) Integral')
+    axes[1].set_title('sqrt(rho) integral')
+#     axes[1,0].set_title('rho integral')
+#     axes[1,1].set_title('Vext Variation')
+     
+    axes[0].set_ylim([0, int(1.1*maxHeight)])
+    axes[1].set_ylim([0, int(1.1*maxHeight)])
+#     axes[1,0].set_ylim([0, int(1.1*maxHeight)])
+#     axes[1,1].set_ylim([0, int(1.1*maxHeight)])
     plt.tight_layout()
-#     plt.xlabel('Refinement Depth')
-#     plt.ylabel('Number of Cells')
-#     if divideCriterion=='Krasny':
-#         plt.suptitle('Mesh Type: 4 parameters (%1.2f,%1.2f,%1.2f,%1.2f)' %(divideParameter1,divideParameter2,divideParameter3,divideParameter4))
-#     elif divideCriterion=='LW5':
-#         plt.suptitle('Mesh Type: LW5 - %1.2f' %(divideParameter1))   
+  
     plt.show()
     
     
@@ -322,10 +319,10 @@ if __name__ == "__main__":
     
 #     plot_LW_density()
     
-    meshDistributions(domain=20,order=3,
-                        minDepth=3, maxDepth=20, depthAtAtoms=12, divideCriterion='Krasny', 
-                        divideParameter1=100.0, divideParameter2=0.01, divideParameter3=100, divideParameter4=2000,
-                        smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
+#     meshDistributions(domain=20,order=3,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=3, divideCriterion='Nathan', 
+#                         divideParameter1=0.1/5, divideParameter2=10.1/1, divideParameter3=100, divideParameter4=100,
+#                         smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
     
     
 #     timingTestsForOrbitalInitializations(domain=20,order=5,
@@ -342,11 +339,11 @@ if __name__ == "__main__":
     # param3: density integral   
     # param4: Vext integral   
     
-#     exportMeshForParaview(domain=20,order=5,
-#                         minDepth=3, maxDepth=12, depthAtAtoms=2, divideCriterion='Krasny', 
-#                         divideParameter1=2.0, divideParameter2=0.1, divideParameter3=0.2, divideParameter4=200,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/krasny_lowOrder')
+    exportMeshForParaview(domain=20,order=5,
+                        minDepth=3, maxDepth=15, additionalDepthAtAtoms=0, divideCriterion='Krasny_density', 
+                        divideParameter1=100, divideParameter2=1000.1, divideParameter3=1000.2, divideParameter4=20000,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/LW5_1500')
     
 
 

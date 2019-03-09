@@ -971,7 +971,66 @@ class Cell(object):
 #                         print('Cell %s Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(self.uniqueID,orbitalIndex,n,ell,m))
                         orbitalIndex += 1
                         singleAtomOrbitalCount += 1
-                        
+     
+    def checkDensityIntegral(self, divideParameter1, divideParameter2):                    
+        self.divideFlag=False
+        
+        midpointDensity=0.0
+        VextIntegral=0.0
+        for atom in self.tree.atoms:
+            dx = self.xmid-atom.x
+            dy = self.ymid-atom.y
+            dz = self.zmid-atom.z
+            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+
+            midpointDensity +=  atom.interpolators['density'](r)
+            VextIntegral += self.volume * np.abs(atom.V(dx,dy,dz))*midpointDensity**(1/2)
+            
+            x = min( abs(self.xmin - atom.x), abs(self.xmax-atom.x))
+            X = max( abs(self.xmin - atom.x), abs(self.xmax-atom.x))
+            y = min( abs(self.ymin - atom.y), abs(self.ymax-atom.y))
+            Y = max( abs(self.ymin - atom.y), abs(self.ymax-atom.y))
+            z = min( abs(self.zmin - atom.z), abs(self.zmax-atom.z))
+            Z = max( abs(self.zmin - atom.z), abs(self.zmax-atom.z))
+            
+            r = np.sqrt( x*x + y*y + z*z )
+            R = np.sqrt( X*X + Y*Y + Z*Z )
+
+#         densityIntegral1 = self.volume * (midpointDensity * np.sqrt(r) )
+#         VextIntegral = self.volume * np.abs(midpointVext)*midpointDensity
+
+
+        densityIntegral2 = self.volume * (midpointDensity)**(1/2)
+        
+        
+
+        
+        if VextIntegral > divideParameter1:
+#         if rsq >= Rsq: print('Warning, rsq >= Rsq.  This should not happen.')
+#         if (1/np.sqrt(r)-1/np.sqrt(R)) > divideParameter1:
+#         if (R - r)*midpointDensity > divideParameter1:
+            self.divideFlag = True
+            self.childrenRefineCause=1
+            return
+        if densityIntegral2 > divideParameter2:
+            self.divideFlag = True
+            self.childrenRefineCause=2
+            return
+    
+    def checkMeshDensity_Nathan(self, divideParameter1, divideParameter2):                    
+        self.divideFlag=False
+        
+        for atom in self.tree.atoms:
+            dx = self.xmid-atom.x
+            dy = self.ymid-atom.y
+            dz = self.zmid-atom.z
+            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+
+            
+            if self.volume > divideParameter1*np.exp(r)/r:
+                self.divideFlag = True
+                
+            return
                         
     def checkWavefunctionVariation(self, divideParameter1, divideParameter2, divideParameter3, divideParameter4):
 #         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
@@ -989,8 +1048,8 @@ class Cell(object):
 #         waveVariation, sqrtDensityIntegral, absIntegral, sqWaveVariation, variationCause, densityIntegralCause, absIntegralCause, sqVariationCause = self.wavefunctionVariationAtCorners()
         
         
-        if waveVariation > divideParameter1:
-            print('Excluding criteria 1 for now...')
+#         if waveVariation > divideParameter1:
+#             print('Excluding criteria 1 for now...')
 #             self.divideFlag=True
 #             self.childrenRefineCause=1
 #             print('Dividing cell %s because of variation in wavefunction %i.' %(self.uniqueID,variationCause))
@@ -1017,8 +1076,8 @@ class Cell(object):
 #             print('Dividing cell %s because of psi*Vext variation for wavefunction %i.' %(self.uniqueID, psiVextVariationCause))
 #             return
         
-        if VextVariation > divideParameter4:
-            print('Excluding criteria 4 for now...')
+#         if VextVariation > divideParameter4:
+#             print('Excluding criteria 4 for now...')
 
 #             self.divideFlag=True
 #             self.childrenRefineCause=4

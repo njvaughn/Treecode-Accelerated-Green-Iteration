@@ -62,7 +62,7 @@ class Tree(object):
     """
     
     
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,maxDepthAtAtoms,minDepth,gaugeShift=0.0,
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,additionalDepthAtAtoms,minDepth,gaugeShift=0.0,
                  coordinateFile='',smoothingEps=0.0,inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
                  printTreeProperties = True):
@@ -85,7 +85,7 @@ class Tree(object):
         self.nElectrons = nElectrons
         self.nOrbitals = nOrbitals
         self.gaugeShift = gaugeShift
-        self.maxDepthAtAtoms = maxDepthAtAtoms
+        self.additionalDepthAtAtoms = additionalDepthAtAtoms
         self.minDepth = minDepth
         
         self.coordinateFile = coordinateFile
@@ -318,7 +318,9 @@ class Tree(object):
 #             if cell.leaf==True:
 #                 cellCount += 1
 #         print('Number of cell after minDepth refine: ', cellCount)
-
+        
+        self.maxDepthAtAtoms = self.additionalDepthAtAtoms + self.maxDepthAchieved
+        print('Refining an additional %i levels, from %i to %i' %(self.additionalDepthAtAtoms,self.maxDepthAchieved, self.maxDepthAtAtoms ))
         self.nAtoms = 0
         for atom in self.atoms:
             recursiveDivideByAtom(self,atom,self.root)
@@ -700,7 +702,7 @@ class Tree(object):
 #                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
                 else:  
                     if ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or (divideCriterion == 'LW3_modified') or 
-                         (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') ):
+                         (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') or (divideCriterion == 'Krasny_density') ):
 #                         print('checking divide criterion for cell ', Cell.uniqueID)
                         Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
                     elif divideCriterion=='Biros':
@@ -723,7 +725,9 @@ class Tree(object):
                     elif divideCriterion=='Krasny_Vext':
                         Cell.checkWavefunctionVariation_Vext(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                     elif divideCriterion=='Nathan':
-                        Cell.checkIfAboveDensityRange(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                        Cell.checkDensityIntegral(divideParameter1, divideParameter2)
+                    elif divideCriterion=='Nathan2':
+                        Cell.checkMeshDensity_Nathan(divideParameter1, divideParameter2)
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
                     

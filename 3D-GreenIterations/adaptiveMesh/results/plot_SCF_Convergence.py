@@ -16,11 +16,11 @@ import numpy as np
 # # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/'
 # ##resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/'
 # #resultsDir = '/Users/nathanvaughn/Desktop/scratch/O_Gaussian/'
-# resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
+resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/'
 # plotsDir = resultsDir+'plots/'
 # # file='LW5_1000_andersonMixing_p5_1em76_SCF_.csv'
 # # file='LW5_1500_andersonMixing_p5_1em8_SCF_.csv'
-# file='LW5_2000_andersonMixing_p5_1em76_SCF_.csv'
+file='LW5_2000_andersonMixing_p5_1em76_SCF_.csv'
 
 # ## Carbon Monoxide
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/'
@@ -46,8 +46,8 @@ import numpy as np
 # # file='BirosG_o7_max15_SCF_.csv'
 # file='BirosG_o7_1em5_SCF_.csv'
 
-resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
-file='BirosGN2_o5_1em1_SCF_.csv'
+# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
+# file='BirosGN2_o5_1em1_SCF_.csv'
 
 
 ## Krasny refine for oxygen
