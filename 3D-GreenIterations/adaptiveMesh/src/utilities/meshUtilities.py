@@ -569,7 +569,7 @@ def interpolator3Dchebyshev(x,y,z,f):
     nz = len(z)
     wz = np.ones(nz)
     for k in range(nz):
-        wz[k] = (-1)**k * np.sin(  (2*k+1)*np.pi / (2*(nk-1)+2)  )
+        wz[k] = (-1)**k * np.sin(  (2*k+1)*np.pi / (2*(nz-1)+2)  )
     
     def P3(xt,yt,zt):  # 2D interpolator.  
         
@@ -577,8 +577,8 @@ def interpolator3Dchebyshev(x,y,z,f):
         for i in range(nx):
             numY = 0
             for j in range(ny):
+                numZ = 0
                 for k in range(nz):
-                    numZ = 0
                     numZ += ( wz[k]/(zt-z[k])*f[i,j,k] )
                     
                 numY += ( wy[j]/(yt-y[j]) )*numZ
