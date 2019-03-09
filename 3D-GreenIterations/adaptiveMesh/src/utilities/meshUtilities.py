@@ -555,6 +555,53 @@ def interpolator2Dchebyshev_oneStep(x,y,f):
 
     return np.vectorize(P)
 
+def interpolator3Dchebyshev(x,y,z,f):
+    nx = len(x)
+    wx = np.ones(nx)
+    for i in range(nx):
+        wx[i] = (-1)**i * np.sin(  (2*i+1)*np.pi / (2*(nx-1)+2)  )
+    
+    ny = len(y)
+    wy = np.ones(ny)
+    for j in range(ny):
+        wy[j] = (-1)**j * np.sin(  (2*j+1)*np.pi / (2*(ny-1)+2)  )
+        
+    nz = len(z)
+    wz = np.ones(nz)
+    for k in range(nz):
+        wz[k] = (-1)**k * np.sin(  (2*k+1)*np.pi / (2*(nk-1)+2)  )
+    
+    def P3(xt,yt,zt):  # 2D interpolator.  
+        
+        num = 0
+        for i in range(nx):
+            numY = 0
+            for j in range(ny):
+                for k in range(nz):
+                    numZ = 0
+                    numZ += ( wz[k]/(zt-z[k])*f[i,j,k] )
+                    
+                numY += ( wy[j]/(yt-y[j]) )*numZ
+            num +=  ( wx[i]/(xt-x[i]) )*numY
+        
+        denX=0
+        for i in range(nx):
+            denX += wx[i]/(xt-x[i])
+        
+        denY=0
+        for j in range(ny):
+            denY += wy[j]/(yt-y[j])
+            
+        denZ=0
+        for k in range(nz):
+            denZ += wz[k]/(zt-z[k])
+        
+        den = denX*denY*denZ
+            
+        return num/den
+
+    return np.vectorize(P3)
+
 def interpolator1Duniform(x,f):
     n = len(x)
     w = np.ones(n)
