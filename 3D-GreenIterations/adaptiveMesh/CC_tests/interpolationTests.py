@@ -15,7 +15,7 @@ matplotlib.use("TKAgg")
 import matplotlib.pyplot as plt
 
 from meshUtilities import weights, ChebyshevPoints, interpolator1Dchebyshev, interpolator1Duniform,\
-    interpolator2Dchebyshev, interpolator2Dchebyshev_oneStep
+    interpolator2Dchebyshev, interpolator2Dchebyshev_oneStep, interpolator3Dchebyshev
 # from interpolation import interpolator1D
 
 class TestInterpolation(unittest.TestCase):
@@ -281,21 +281,24 @@ class TestInterpolation(unittest.TestCase):
 #         plt.show()
 
 
+
+
+
     @unittest.skip("Skipping the convergence plotter")
     def testOrderVersusRefinement(self):
         def func(x,y):
             r = np.sqrt(x**2+y**2)
 #             return np.exp(-np.sqrt(x**2+y**2))
-            return np.exp(-r)/(r) 
-#             return np.exp(-r) 
+#             return np.exp(-r)/(r) 
+            return np.exp(-r) 
 
 #         def func(x,y,xt,yt):
 #             r = np.sqrt((x-xt)**2+(y-yt)**2)
 #             return np.exp(-r)/(r) 
 
 #         title = r"$f(x,y) = exp(-\sqrt{x^2+y^2})$"
-        title = r"$f(r) = exp(-r)/r$"
-#         title = r"$f(r) = exp(-r)$"
+#         title = r"$f(r) = exp(-r)/r$"
+        title = r"$f(r) = exp(-r)$"
 
         npoints = 201
 
@@ -519,7 +522,10 @@ class TestInterpolation(unittest.TestCase):
         
 
         plt.show()
-        
+     
+    
+    
+    @unittest.skip("Skipping singularity at target-point test")   
     def testSingularityAtTargetPoint(self):
 #         def func(x,y):
 #             r = np.sqrt(x**2+y**2)
@@ -530,13 +536,13 @@ class TestInterpolation(unittest.TestCase):
         def func(x,y,xt,yt):
             r = np.sqrt((x-xt)**2+(y-yt)**2)
             if r>0.0:
-                return np.exp(-r)/(r)
+                return np.exp(-r)#/(r)
             else:
                 return 0.0
 
 #         title = r"$f(x,y) = exp(-\sqrt{x^2+y^2})$"
-        title = r"$f(r) = exp(-r)/r$"
-#         title = r"$f(r) = exp(-r)$"
+#         title = r"$f(r) = exp(-r)/r$"
+        title = r"$f(r) = exp(-r)$"
 
         npoints = 201
 
@@ -557,8 +563,14 @@ class TestInterpolation(unittest.TestCase):
         
         xCheb = ChebyshevPoints(xmin, xmax, nChebPtsA)
         yCheb = ChebyshevPoints(ymin, ymax, nChebPtsA)
-        xt = xCheb[3]
-        yt = yCheb[3]
+#         xt = xCheb[3]
+#         yt = yCheb[3]
+        
+        # center cusp at (0,0), divide at (-1/2, 1/2)
+        xt = 0
+        yt = 0
+        xd = -1/2
+        yd = 1/2
         xChebMesh1A, yChebMesh1A = np.meshgrid(xCheb,yCheb)
         
         for i in range(npoints):
@@ -632,9 +644,9 @@ class TestInterpolation(unittest.TestCase):
                 currentAxes = ax23
         
             xminA = -1
-            xmaxA = xt
+            xmaxA = xd
             yminA =  0
-            ymaxA =  yt
+            ymaxA =  yd
             testXpointsA = np.linspace(xminA,xmaxA,int(npoints/2))
             testYpointsA = np.linspace(yminA,ymaxA,int(npoints/2))
             testfA = np.zeros((int(npoints/2),int(npoints/2)))
@@ -651,7 +663,7 @@ class TestInterpolation(unittest.TestCase):
                 for j in range(nChebPts):
                     fChebA[i,j] = func(xChebA[i],yChebA[j],xt,yt)      
             PA = interpolator2Dchebyshev_oneStep(xChebA, yChebA, fChebA)
-            xg, yg = np.meshgrid(testXpointsA, testYpointsA, indexing='ij')`
+            xg, yg = np.meshgrid(testXpointsA, testYpointsA, indexing='ij')
             interpResultA = PA(xg, yg)
             currentAxes.scatter(xg.flatten(),yg.flatten(),marker='.',
                      c=np.log10(abs(interpResultA-testfA)).flatten(),cmap="inferno",vmin=-11, vmax=0,s=1)
@@ -659,8 +671,8 @@ class TestInterpolation(unittest.TestCase):
             
             
             xminB = -1
-            xmaxB =  xt
-            yminB =  yt
+            xmaxB =  xd
+            yminB =  yd
             ymaxB =  1
             testXpointsB = np.linspace(xminB,xmaxB,int(npoints/2))
             testYpointsB = np.linspace(yminB,ymaxB,int(npoints/2))
@@ -686,10 +698,10 @@ class TestInterpolation(unittest.TestCase):
 
             
             
-            xminC = xt
+            xminC = xd
             xmaxC =  0
             yminC =  0
-            ymaxC =  yt
+            ymaxC =  yd
             testXpointsC = np.linspace(xminC,xmaxC,npoints/2)
             testYpointsC = np.linspace(yminC,ymaxC,npoints/2)
             testfC = np.zeros((int(npoints/2),int(npoints/2)))
@@ -714,9 +726,9 @@ class TestInterpolation(unittest.TestCase):
 
             
             
-            xminD =  xt
+            xminD =  xd
             xmaxD =  0
-            yminD =  yt
+            yminD =  yd
             ymaxD =  1
             testXpointsD = np.linspace(xminD,xmaxD,npoints/2)
             testYpointsD = np.linspace(yminD,ymaxD,npoints/2)
@@ -764,7 +776,78 @@ class TestInterpolation(unittest.TestCase):
         
 
         plt.show()
-     
+   
+   
+    def test3DInterpolation(self):
+        def func(x,y,z):
+            r = np.sqrt(x**2+y**2 + z**2)
+#             return np.exp(-np.sqrt(x**2+y**2))
+#             return np.exp(-r)/(r) 
+#             return np.exp(-r) 
+            return r**2 
+
+#         def func(x,y,xt,yt):
+#             r = np.sqrt((x-xt)**2+(y-yt)**2)
+#             return np.exp(-r)/(r) 
+
+#         title = r"$f(x,y) = exp(-\sqrt{x^2+y^2})$"
+#         title = r"$f(r) = exp(-r)/r$"
+        title = r"$f(r) = exp(-r)$"
+
+        npoints = 11
+
+        xmin = 0
+        ymin = 0
+        zmin = 0
+        xmax =  1
+        ymax =  1
+        zmax =  1
+        testXpoints = np.linspace(xmin,xmax,npoints)
+        testYpoints = np.linspace(ymin,ymax,npoints)
+        testZpoints = np.linspace(zmin,zmax,npoints)
+        testf = np.zeros((npoints,npoints,npoints))
+        for i in range(npoints):
+            for j in range(npoints):
+                for k in range(npoints):
+                    testf[i,j,k] = func(testXpoints[i],testYpoints[j], testZpoints[k])
+                
+        nChebPtsA = 5
+        
+        
+        
+        xCheb = ChebyshevPoints(xmin, xmax, nChebPtsA)
+        yCheb = ChebyshevPoints(ymin, ymax, nChebPtsA)
+        zCheb = ChebyshevPoints(zmin, zmax, nChebPtsA)
+        xChebMesh1A, yChebMesh1A, zChebMesh1A = np.meshgrid(xCheb,yCheb,zCheb)
+
+        fCheb = np.zeros((nChebPtsA,nChebPtsA,nChebPtsA)) 
+        for i in range(nChebPtsA):
+            for j in range(nChebPtsA):
+                for k in range(nChebPtsA):
+                    fCheb[i,j,k] = func(xCheb[i],yCheb[j],zCheb[k])      
+        P1A = interpolator3Dchebyshev(xCheb, yCheb, zCheb, fCheb)
+        
+        
+       
+        
+        xg1, yg1, zg1 = np.meshgrid(testXpoints, testYpoints,  testZpoints, indexing='ij')
+        interpResult1A = P1A(xg1, yg1, zg1)
+        
+        
+        diff = np.abs(interpResult1A-testf)
+        print(interpResult1A[0,0,0])
+#         print(interpResult1A)
+        print(testf[0,0,0])
+#         print(testf)
+#         print(diff[0,0,0])
+#         print('shape: ', np.shape(diff.flatten()))
+#         print('shape: ', np.shape(xg1.flatten()))
+        idx = np.argmax(diff.flatten())
+        print('Max error: ', diff.flatten()[idx])
+        print('Occured at: ', xg1.flatten()[idx], yg1.flatten()[idx], zg1.flatten()[idx])
+        
+
+      
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

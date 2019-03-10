@@ -2021,7 +2021,23 @@ class Cell(object):
                                                 self.ymin, self.ymax, self.py,
                                                 self.zmin, self.zmax, self.pz)
         
-#         self.inverseLaplacian = np.linalg.inv(self.laplacian)
-
+        
+    def setDensityInterpolator(self):
+        rho = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            rho[i,j,k] = self.gridpoints[i,j,k].rho
+        
+        x = np.zeros(self.px)    
+        y = np.zeros(self.py)    
+        z = np.zeros(self.pz)    
+        for i in range(self.px):  # Assumes px=py=pz
+            x[i] = self.gridpoints[i,0,0].x
+            y[i] = self.gridpoints[0,i,0].y
+            z[i] = self.gridpoints[0,0,i].z
+            
+         
+  
+        self.densityInterpolator = self.interpolator(x, y, z, rho)
+        
 
         

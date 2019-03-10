@@ -283,6 +283,70 @@ def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, d
     plt.tight_layout()
   
     plt.show()
+
+def densityInterpolation(xi,yi,zi,xf,yf,zf,numpts,
+                         domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
+                          divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
+                          smoothingEpsilon=0.0, base=1.0,
+                          inputFile=''):    
+    
+    
+    divideParameter1 *= base
+    divideParameter2 *= base
+    divideParameter3 *= base
+    divideParameter4 *= base
+    
+    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+
+
+    print('Reading atomic coordinates from: ', coordinateFile)
+    atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+    if np.shape(atomData)==(5,):
+        nElectrons = atomData[3]
+    else:
+        nElectrons = 0
+        for i in range(len(atomData)):
+            nElectrons += atomData[i,3]
+    
+#     nOrbitals = int( np.ceil(nElectrons/2))
+    nOrbitals = int( np.ceil(nElectrons/2)+1)
+
+    if inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
+        nOrbitals = 30
+    print('nElectrons = ', nElectrons)
+    print('nOrbitals  = ', nOrbitals)
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+                coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
+
+    
+    print('max depth ', maxDepth)
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+                    divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
+                    printTreeProperties=True,onlyFillOne=False)
+    
+    r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf,numpts,plot=False)
+    
+    
+    initialRho = np.zeros_like(r)
+    x = np.linspace(xi,xf,numpts)
+    y = np.linspace(yi,yf,numpts)
+    z = np.linspace(zi,zf,numpts)
+    for atom in tree.atoms:
+        rtemp = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2 )
+        try:
+            initialRho += atom.interpolators['density'](rtemp)
+        except ValueError:
+            initialRho += 0.0   # if outside the interpolation range, assume 0.
+            
+    plt.figure()
+    plt.plot(r,rho,'bo')
+    plt.plot(r,initialRho,'rx')
+    
+    plt.figure()
+    plt.semilogy(r,abs( rho-initialRho )/initialRho,'ko')
+    plt.show()
     
     
 def plot_LW_density():
@@ -318,6 +382,11 @@ def plot_LW_density():
 if __name__ == "__main__":
     
 #     plot_LW_density()
+    densityInterpolation(-5.1,0,0,5.1,0,0,2000,
+                    domain=20,order=8,
+                    minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+                    divideParameter1=500, divideParameter2=10.1/1, divideParameter3=100, divideParameter4=100,
+                    smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
     
 #     meshDistributions(domain=20,order=3,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=3, divideCriterion='Nathan', 
@@ -339,12 +408,12 @@ if __name__ == "__main__":
     # param3: density integral   
     # param4: Vext integral   
     
-    exportMeshForParaview(domain=20,order=5,
-                        minDepth=3, maxDepth=15, additionalDepthAtAtoms=0, divideCriterion='Krasny_density', 
-                        divideParameter1=100, divideParameter2=1000.1, divideParameter3=1000.2, divideParameter4=20000,
-                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/LW5_1500')
-    
+#     exportMeshForParaview(domain=20,order=5,
+#                         minDepth=3, maxDepth=15, additionalDepthAtAtoms=0, divideCriterion='Krasny_density', 
+#                         divideParameter1=100, divideParameter2=1000.1, divideParameter3=1000.2, divideParameter4=20000,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/LW5_1500')
+#     
 
 
 #     exportMeshForTreecodeTesting(domain=20,order=7,
