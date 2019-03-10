@@ -113,7 +113,9 @@ def normalizeOrbitals(V,weights):
 #     print("Located at:           ", xinf, yinf, zinf)
 #     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-
+xi=yi=zi=-3.1
+xf=yf=zf=3.1
+numpts=3000
 
 def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize,
@@ -143,7 +145,19 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
     greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     SCFiterationOutFile = outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+outputFile[-4:]
+    densityPlotsDir = outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+'_plots'
     
+    try:
+        os.mkdir(densityPlotsDir)
+    except OSError:
+        print('Unable to make directory ', densityPlotsDir)
+        
+    plotSliceOfDensity=True
+        
+    if plotSliceOfDensity==True:
+        savefile = densityPlotsDir+'/iteration0'
+        print()
+        r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=True, save=savefile)
 
     # Initialize density history arrays
     inputDensities = np.zeros((numberOfGridpoints,1))
@@ -915,6 +929,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             with myFile:
                 writer = csv.writer(myFile)
                 writer.writerow(myData)
+                
+        
+        if plotSliceOfDensity==True:
+            savefile = densityPlotsDir+'/iteration'+str(SCFcount)
+            print()
+            r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=True, save=savefile)
                 
         """ END WRITING INDIVIDUAL ITERATION TO FILE """
      

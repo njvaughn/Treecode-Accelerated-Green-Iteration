@@ -12,6 +12,8 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 '''
 
 import numpy as np
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.special import sph_harm
@@ -2621,7 +2623,7 @@ class Tree(object):
         writer.Write()
         print('Done writing ', filename)
         
-    def interpolateDensity(self, xi,yi,zi, xf,yf,zf, numpts, plot=False):
+    def interpolateDensity(self, xi,yi,zi, xf,yf,zf, numpts, plot=False, save=False):
         
         # generate linspace from endpoint to endpoint
         x = np.linspace(xi,xf,numpts)
@@ -2653,10 +2655,15 @@ class Tree(object):
 #                 
 #                 initialRho += atom.d
         if plot==True:
-            plt.figure()
+            fig = plt.figure()
             plt.plot(r,rho)
             plt.title('Density along line from (%1.2f, %1.2f, %1.2f) to (%1.2f, %1.2f, %1.2f)' %(xi,yi,zi,xf,yf,zf))
-            plt.show()
+            if save==False:
+                plt.show()
+            else:
+                print('Saving figure to ', save)
+                plt.savefig(save+'.pdf',format='pdf',bbox_inches='tight')
+                plt.close(fig)
         return r, rho
     
     def findOwner(self,x,y,z):
