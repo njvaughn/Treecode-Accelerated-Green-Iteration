@@ -794,7 +794,7 @@ class TestInterpolation(unittest.TestCase):
 #         title = r"$f(r) = exp(-r)/r$"
         title = r"$f(r) = exp(-r)$"
 
-        npoints = 20
+        npoints = 11
 
         xmin = 0
         ymin = 0

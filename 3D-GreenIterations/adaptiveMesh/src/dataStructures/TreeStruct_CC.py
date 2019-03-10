@@ -12,6 +12,7 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 '''
 
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.special import sph_harm
 from scipy.optimize import broyden1, anderson, brentq
@@ -2619,6 +2620,53 @@ class Tree(object):
 
         writer.Write()
         print('Done writing ', filename)
+        
+    def interpolateDensity(self, xi,yi,zi, xf,yf,zf, numpts, plot=False):
+        
+        # generate linspace from endpoint to endpoint
+        x = np.linspace(xi,xf,numpts)
+        y = np.linspace(yi,yf,numpts)
+        z = np.linspace(zi,zf,numpts)
+        
+        r = np.sqrt( (x-xi)**2 + (y-yi)**2 + (z-zi)**2 )
+        rho = np.empty_like(r)
+        
+        # For each point, locate leaf cell that owns it
+        for i in range(numpts):
+            # point is at (x[i],y[i],z[i])
+            cell = self.findOwner(x[i],y[i],z[i])
+    
+            # Construct density interpolator if necessary
+            if not hasattr(Cell, "densityInterpolator"):
+                cell.setDensityInterpolator()
+            
+            rho[i] = cell.densityInterpolator(x[i],y[i],z[i])
+            
+            # evaluate at point to get rho value
+#         if referenceRho==True:
+#             initialRho = np.zeros_like(r)
+#             
+#             for atom in self.atoms:
+#                 dx = x-atom.x
+#                 dy = y-atom.y
+#                 dz = z-atom.z
+#                 
+#                 initialRho += atom.d
+        if plot==True:
+            plt.figure()
+            plt.plot(r,rho)
+            plt.title('Density along line from (%1.2f, %1.2f, %1.2f) to (%1.2f, %1.2f, %1.2f)' %(xi,yi,zi,xf,yf,zf))
+            plt.show()
+        return r, rho
+    
+    def findOwner(self,x,y,z):
+        # This could be optimized if needed.
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                if ( (cell.xmin<=x) and (cell.xmax>=x) ):
+                    if ( (cell.ymin<=y) and (cell.ymax>=y) ):
+                        if ( (cell.zmin<=z) and (cell.zmax>=z) ):
+                            return cell
                                     
 def TestTreeForProfiling():
     xmin = ymin = zmin = -12
