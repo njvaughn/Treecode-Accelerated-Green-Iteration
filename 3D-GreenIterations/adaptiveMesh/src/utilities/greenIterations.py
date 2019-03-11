@@ -43,7 +43,7 @@ except OSError:
 # import treecodeWrappers
 
 
-# @jit(nopython=True,parallel=True)
+@jit(parallel=True)
 def modifiedGramSchrmidt(V,weights):
     n,k = np.shape(V)
     U = np.zeros_like(V)
@@ -57,7 +57,7 @@ def modifiedGramSchrmidt(V,weights):
         
     return U
 
-# @njit(parallel=False)
+@jit(parallel=False)
 def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, n, k):
     U = V[:,targetOrbital]
     for j in range(targetOrbital):
