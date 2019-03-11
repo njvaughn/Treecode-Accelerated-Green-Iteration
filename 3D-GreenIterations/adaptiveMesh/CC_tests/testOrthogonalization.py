@@ -147,8 +147,11 @@ def timingTestsForOrbitalOrthogonalizations(domain,order,minDepth, maxDepth, div
     
     start = time.time()
     n,k = np.shape(orbitals)
+    threadsPerBlock = 64
+    blocksPerGrid = (n + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
+    
     orthonormalOrbitals = np.zeros_like(orbitals)
-    modifiedGramSchmidt_GPU(orbitals,orthonormalOrbitals,weights,n,k)
+    modifiedGramSchmidt_GPU[blocksPerGrid, threadsPerBlock](orbitals,orthonormalOrbitals,weights,n,k)
     gputime = time.time()-start
     print('Time for initial orthogonalization on GPU: ', gputime)
     testOrbital = 20
