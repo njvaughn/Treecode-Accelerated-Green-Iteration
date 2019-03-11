@@ -265,22 +265,22 @@ def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, d
     elif divideCriterion=='LW5':
         plt.title('Mesh Type: LW5 - %1.2f' %(divideParameter1))
         
-    fig, axes = plt.subplots(2, 1)
-    axes[0].bar(list(tree.criteria1.keys()),list(tree.criteria1.values()) )
-    axes[1].bar(list(tree.criteria2.keys()),list(tree.criteria2.values()) )
-#     axes[1,0].bar(list(tree.criteria3.keys()),list(tree.criteria3.values()) )
-#     axes[1,1].bar(list(tree.criteria4.keys()),list(tree.criteria4.values()) )
-     
-    axes[0].set_title('Vext*sqrt(rho) Integral')
-    axes[1].set_title('sqrt(rho) integral')
-#     axes[1,0].set_title('rho integral')
-#     axes[1,1].set_title('Vext Variation')
-     
-    axes[0].set_ylim([0, int(1.1*maxHeight)])
-    axes[1].set_ylim([0, int(1.1*maxHeight)])
-#     axes[1,0].set_ylim([0, int(1.1*maxHeight)])
-#     axes[1,1].set_ylim([0, int(1.1*maxHeight)])
-    plt.tight_layout()
+#     fig, axes = plt.subplots(2, 1)
+#     axes[0].bar(list(tree.criteria1.keys()),list(tree.criteria1.values()) )
+#     axes[1].bar(list(tree.criteria2.keys()),list(tree.criteria2.values()) )
+# #     axes[1,0].bar(list(tree.criteria3.keys()),list(tree.criteria3.values()) )
+# #     axes[1,1].bar(list(tree.criteria4.keys()),list(tree.criteria4.values()) )
+#      
+#     axes[0].set_title('Vext*sqrt(rho) Integral')
+#     axes[1].set_title('sqrt(rho) integral')
+# #     axes[1,0].set_title('rho integral')
+# #     axes[1,1].set_title('Vext Variation')
+#      
+#     axes[0].set_ylim([0, int(1.1*maxHeight)])
+#     axes[1].set_ylim([0, int(1.1*maxHeight)])
+# #     axes[1,0].set_ylim([0, int(1.1*maxHeight)])
+# #     axes[1,1].set_ylim([0, int(1.1*maxHeight)])
+#     plt.tight_layout()
   
     plt.show()
 
@@ -382,16 +382,16 @@ def plot_LW_density():
 if __name__ == "__main__":
     
 #     plot_LW_density()
-    densityInterpolation(-5.1,0,0,5.1,0,0,2000,
-                    domain=20,order=8,
-                    minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-                    divideParameter1=500, divideParameter2=10.1/1, divideParameter3=100, divideParameter4=100,
-                    smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
+#     densityInterpolation(-5.1,0,0,5.1,0,0,2000,
+#                     domain=20,order=8,
+#                     minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#                     divideParameter1=500, divideParameter2=10.1/1, divideParameter3=100, divideParameter4=100,
+#                     smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
     
-#     meshDistributions(domain=20,order=3,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=3, divideCriterion='Nathan', 
-#                         divideParameter1=0.1/5, divideParameter2=10.1/1, divideParameter3=100, divideParameter4=100,
-#                         smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
+    meshDistributions(domain=20,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=12, divideCriterion='Krasny_density', 
+                        divideParameter1=20, divideParameter2=100, divideParameter3=100, divideParameter4=100,
+                        smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
     
     
 #     timingTestsForOrbitalInitializations(domain=20,order=5,
@@ -409,10 +409,10 @@ if __name__ == "__main__":
     # param4: Vext integral   
     
 #     exportMeshForParaview(domain=20,order=5,
-#                         minDepth=3, maxDepth=15, additionalDepthAtAtoms=0, divideCriterion='Krasny_density', 
-#                         divideParameter1=100, divideParameter2=1000.1, divideParameter3=1000.2, divideParameter4=20000,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/LW5_1500')
+#                         minDepth=3, maxDepth=15, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#                         divideParameter1=1000, divideParameter2=1000.1, divideParameter3=1000.2, divideParameter4=20000,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/LW5_1000')
 #     
 
 

@@ -79,7 +79,11 @@ file='runComparison.csv'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_root_45/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_root_45_additional3/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_nathan/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_nathan2/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_nathan2/'
+
+
+# Meshes generated with mesh density functions
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Be_krasny_density3/'
 
 
 
@@ -563,13 +567,13 @@ def extrapolate_Vext_regularization(df,X,Y,degree,plot=True):
 if __name__=="__main__":
     
 #     df = df.loc[df['additionalDepthAtAtoms']==3]
-#     df = df.loc[df['order']==5]
-    logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
-#     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'divideParameter3')
-#     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'divideParameter3')
-    AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
-    AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms') 
-    AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
+    df = df.loc[df['order']==5]
+    logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'maxDepth')
+    logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'maxDepth')
+    logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'maxDepth')
+#     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
+#     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')
 
     
 #     df = df.loc[df['divideParameter4']==20000000]   
