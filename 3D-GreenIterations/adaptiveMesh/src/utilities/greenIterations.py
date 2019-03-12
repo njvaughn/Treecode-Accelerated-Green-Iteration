@@ -424,12 +424,21 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         for m in range(nOrbitals):
             # fill in orbitals
             targets = tree.extractPhi(m)
+            weights = np.copy(targets[:,5])
             oldOrbitals[:,m] = np.copy(targets[:,3])
             orbitals[:,m] = np.copy(targets[:,3])
             
         
 
         for m in range(nOrbitals): 
+            
+            # Orthonormalize orbital m before beginning Green's iteration
+#             targets = tree.extractPhi(m)
+#             orbitals[:,m] = np.copy(targets[:,3])
+            n,k = np.shape(orbitals)
+            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+            orbitals[:,m] = np.copy(orthWavefunction)
+            tree.importPhiOnLeaves(orbitals[:,m], m)
             
             firstGreenIteration=True
             
@@ -465,6 +474,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     targets = np.copy(sources)
                     weights = np.copy(targets[:,5])
                     
+                    
+                            
+                            
                     oldOrbitals[:,m] = np.copy(targets[:,3])
     
                     if GIandersonMixing==True:
@@ -708,11 +720,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     
                     
                     # If wavefunction residual is low then start using Anderson Mixing
-                    if ((GIandersonMixing==False) and (orbitalResidual < 1e-3) ):
+                    if ((GIandersonMixing==False) and (orbitalResidual < 3e-3) ): 
                         GIandersonMixing = True
                         print('Turning on Anderson Mixing for wavefunction %i' %m)
                     ### EXIT CONDITIONS ###
-
+ 
 #                     if SCFcount==1:
 #                         print('Loosening Greens iteration tolerance in SCF #1')
 #                         orbitalResidual*=1000
@@ -974,6 +986,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
         if SCFcount >= 1:
             print('Setting density residual to -1 to exit after the First SCF just to test treecode')
+            energyResidual = -1
             densityResidual = -1
         
 

@@ -7,10 +7,10 @@ DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -26,7 +26,7 @@ TREECODE='True'
 GAUSSIANALPHA=1.0
 
 MESHTYPE='LW5'
-MESHPARAM1=500
+MESHPARAM1=1500
 MESHPARAM2=0
 MESHPARAM3=0
 MESHPARAM4=0
@@ -49,15 +49,15 @@ for BASE in 1
 do
 for MAXDEPTH in 20   
 do								  					 
-for TREECODEORDER in 7 8 
+for TREECODEORDER in 6 8 10  
 do 
-	for THETA in 0.8
+	for THETA in 0.8 0.7
 	do    
-		for MAXPARNODE in 800
+		for MAXPARNODE in 8000
 		do 
-			for BATCHSIZE in 800 		    
+			for BATCHSIZE in 8000 		    
 			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Be_testing/tc_tcOrder${TREECODEORDER}_theta${THETA}_maxparnode${MAXPARNODE}_batchsize${BATCHSIZE}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/tc_tcOrder${TREECODEORDER}_theta${THETA}_maxparnode${MAXPARNODE}_batchsize${BATCHSIZE}.csv"
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \

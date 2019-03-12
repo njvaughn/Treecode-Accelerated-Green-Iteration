@@ -2669,7 +2669,7 @@ class Tree(object):
 #                 initialRho += atom.d
         if plot==True:
             fig = plt.figure()
-            plt.plot(r,rho)
+            plt.semilogy(r,rho)
             plt.title('Density along line from (%1.2f, %1.2f, %1.2f) to (%1.2f, %1.2f, %1.2f)' %(xi,yi,zi,xf,yf,zf))
             if save==False:
                 plt.show()
