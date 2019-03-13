@@ -538,7 +538,9 @@ class Tree(object):
 #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
                         phi = atom.interpolators[psiID](r)*np.real(Y)
                         
+                        
                         self.importPhiOnLeaves(phi, orbitalIndex)
+                        self.normalizeOrbital(orbitalIndex)
                         
                         print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
                         orbitalIndex += 1
@@ -555,7 +557,7 @@ class Tree(object):
             print('Filling extra orbitals with random initial data.')
             for ii in range(orbitalIndex, self.nOrbitals):
                 self.initializeOrbitalsRandomly(targetOrbital=ii)
-                self.orthonormalizeOrbitals(targetOrbital=ii)
+#                 self.orthonormalizeOrbitals(targetOrbital=ii)
         if orbitalIndex > self.nOrbitals:
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
@@ -1670,6 +1672,8 @@ class Tree(object):
         
         def orthogonalizeOrbitals(tree,m,n):
             
+#             return
+#             print('Orthogonalizing %i against %i' %(m,n))
 #             print('Orthogonalizing orbital %i against %i' %(m,n))
             """ Compute the overlap, integral phi_r * phi_s """
             B = 0.0
@@ -1722,14 +1726,21 @@ class Tree(object):
 #                         A += cell.gridpoints[i,j,k].phi[m]**2*cell.w[i,j,k]
 #             print('Integral of phi%i**2 = ' %m, A )
         
+        print('DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
+        print('DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
+        print('DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
+        print('DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
+        print('DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
         if targetOrbital==None:
 #         print('Orthonormalizing orbitals within tree structure up to orbital %i.' %maxOrbital)
             for m in range(self.nOrbitals):
                 if external==True:
+                    normalizeOrbital(self,m)
                     sources = self.extractPhi(m)
                     phi_m = np.copy(sources[:,3])
                     weights = np.copy(sources[:,5])
                     for n in range(m):
+                        normalizeOrbital(self,n)
                         sources = self.extractPhi(n)
                         phi_n = np.copy(sources[:,3])
                         orthogonalizeOrbitals_external(self,phi_m,phi_n,weights,targetOrbital=m)
@@ -1738,6 +1749,7 @@ class Tree(object):
                 else:
                     normalizeOrbital(self,m)
                     for n in range(m):
+                        normalizeOrbital(self,n)
                         orthogonalizeOrbitals(self,m,n)
                         normalizeOrbital(self,m)
         else:
@@ -1753,9 +1765,10 @@ class Tree(object):
 #                     else:
 #                         print('Not orthogonalizing orbital %i against %i because energy is lower.' %(targetOrbital,n))
                 else:
-                    
+                    normalizeOrbital(self,n)
                     orthogonalizeOrbitals(self,targetOrbital,n)
                     normalizeOrbital(self,targetOrbital)
+#                     orthogonalizeOrbitals(self,targetOrbital,n)
             normalizeOrbital(self,targetOrbital)  # orthonormalize once more at the end (important for psi0)
             
         

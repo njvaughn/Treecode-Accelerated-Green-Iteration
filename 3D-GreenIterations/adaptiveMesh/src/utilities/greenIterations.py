@@ -43,7 +43,7 @@ except OSError:
 # import treecodeWrappers
 
 
-# @jit(nopython=True,parallel=True)
+@jit(parallel=True)
 def modifiedGramSchrmidt(V,weights):
     n,k = np.shape(V)
     U = np.zeros_like(V)
@@ -57,7 +57,7 @@ def modifiedGramSchrmidt(V,weights):
         
     return U
 
-# @njit(parallel=False)
+@jit()
 def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, n, k):
     U = V[:,targetOrbital]
     for j in range(targetOrbital):
@@ -139,7 +139,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     # Store Tree variables locally
     numberOfGridpoints = tree.numberOfGridpoints
     gaugeShift = tree.gaugeShift
-    Temperature = 200  # set to 200 Kelvin
+    Temperature = 100  # set to 200 Kelvin
     
     
 
@@ -184,11 +184,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print([Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal])
 
     ### COMPUTE THE INITIAL HAMILTONIAN ###
-    targets = tree.extractLeavesDensity()  
-    sources = tree.extractLeavesDensity()
+    density_targets = tree.extractLeavesDensity()  
+    density_sources = np.copy(density_targets)
 #     sources = tree.extractDenstiySecondaryMesh()   # extract density on secondary mesh
 
-    integratedDensity = np.sum( sources[:,3]*sources[:,4] )
+    integratedDensity = np.sum( density_sources[:,3]*density_sources[:,4] )
 #     densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
     print('Integrated density: ', integratedDensity)
 
@@ -201,25 +201,25 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     print('GPUpresent set to ', GPUpresent)
     print('Type: ', type(GPUpresent))
     if GPUpresent==False:
-        numTargets = len(targets)
-        numSources = len(sources)
+        numTargets = len(density_targets)
+        numSources = len(density_sources)
 #         print('numTargets = ', numTargets)
 #         print(targets[:10,:])
 #         print('numSources = ', numSources)
 #         print(sources[:10,:])
-        sourceX = np.copy(sources[:,0])
+        sourceX = np.copy(density_sources[:,0])
 #         print(np.shape(sourceX))
 #         print('sourceX = ', sourceX[0:10])
-        sourceY = np.copy(sources[:,1])
-        sourceZ = np.copy(sources[:,2])
-        sourceValue = np.copy(sources[:,3])
-        sourceWeight = np.copy(sources[:,4])
+        sourceY = np.copy(density_sources[:,1])
+        sourceZ = np.copy(density_sources[:,2])
+        sourceValue = np.copy(density_sources[:,3])
+        sourceWeight = np.copy(density_sources[:,4])
         
-        targetX = np.copy(targets[:,0])
-        targetY = np.copy(targets[:,1])
-        targetZ = np.copy(targets[:,2])
-        targetValue = np.copy(targets[:,3])
-        targetWeight = np.copy(targets[:,4])
+        targetX = np.copy(density_targets[:,0])
+        targetY = np.copy(density_targets[:,1])
+        targetZ = np.copy(density_targets[:,2])
+        targetValue = np.copy(density_targets[:,3])
+        targetWeight = np.copy(density_targets[:,4])
         
         start = time.time()
         
@@ -259,26 +259,26 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
     elif GPUpresent==True:
         if treecode==False:
-            V_hartreeNew = np.zeros((len(targets)))
+            V_hartreeNew = np.zeros((len(density_targets)))
             start = time.time()
-            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_hartreeNew,alphasq)
+            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](density_targets,density_sources,V_hartreeNew,alphasq)
             print('Convolution time: ', time.time()-start)
 #             return
         elif treecode==True:
-            numTargets = len(targets)
-            numSources = len(sources)
-            sourceX = np.copy(sources[:,0])
+            numTargets = len(density_targets)
+            numSources = len(density_sources)
+            sourceX = np.copy(density_sources[:,0])
 
-            sourceY = np.copy(sources[:,1])
-            sourceZ = np.copy(sources[:,2])
-            sourceValue = np.copy(sources[:,3])
-            sourceWeight = np.copy(sources[:,4])
+            sourceY = np.copy(density_sources[:,1])
+            sourceZ = np.copy(density_sources[:,2])
+            sourceValue = np.copy(density_sources[:,3])
+            sourceWeight = np.copy(density_sources[:,4])
             
-            targetX = np.copy(targets[:,0])
-            targetY = np.copy(targets[:,1])
-            targetZ = np.copy(targets[:,2])
-            targetValue = np.copy(targets[:,3])
-            targetWeight = np.copy(targets[:,4])
+            targetX = np.copy(density_targets[:,0])
+            targetY = np.copy(density_targets[:,1])
+            targetZ = np.copy(density_targets[:,2])
+            targetValue = np.copy(density_targets[:,3])
+            targetWeight = np.copy(density_targets[:,4])
             
             start = time.time()
             potentialType=2 
@@ -398,6 +398,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     residuals = 10*np.ones_like(tree.orbitalEnergies)
     SCFcount=0
+    tree.totalIterationCount = 0
     while ( (densityResidual > interScfTolerance) or (energyResidual > interScfTolerance) ):  # terminate SCF when both energy and density are converged.
         SCFcount += 1
         print()
@@ -423,12 +424,21 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         for m in range(nOrbitals):
             # fill in orbitals
             targets = tree.extractPhi(m)
+            weights = np.copy(targets[:,5])
             oldOrbitals[:,m] = np.copy(targets[:,3])
             orbitals[:,m] = np.copy(targets[:,3])
             
         
 
         for m in range(nOrbitals): 
+            
+            # Orthonormalize orbital m before beginning Green's iteration
+#             targets = tree.extractPhi(m)
+#             orbitals[:,m] = np.copy(targets[:,3])
+            n,k = np.shape(orbitals)
+            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+            orbitals[:,m] = np.copy(orthWavefunction)
+            tree.importPhiOnLeaves(orbitals[:,m], m)
             
             firstGreenIteration=True
             
@@ -457,13 +467,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
    
                 previousResidual = 1
                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) ):
-                
+                    tree.totalIterationCount += 1
                     orbitalResidual = 0.0
     
                     sources = tree.extractPhi(m)
                     targets = np.copy(sources)
                     weights = np.copy(targets[:,5])
                     
+                    
+                            
+                            
                     oldOrbitals[:,m] = np.copy(targets[:,3])
     
                     if GIandersonMixing==True:
@@ -707,11 +720,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     
                     
                     # If wavefunction residual is low then start using Anderson Mixing
-                    if ((GIandersonMixing==False) and (orbitalResidual < 1e-3) ):
+                    if ((GIandersonMixing==False) and (orbitalResidual < 3e-3) ): 
                         GIandersonMixing = True
                         print('Turning on Anderson Mixing for wavefunction %i' %m)
                     ### EXIT CONDITIONS ###
-
+ 
 #                     if SCFcount==1:
 #                         print('Loosening Greens iteration tolerance in SCF #1')
 #                         orbitalResidual*=1000
@@ -775,8 +788,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         print('Integrated density: ', integratedDensity)
         print('Density Residual ', densityResidual)
         
-        densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
-        print('Density Residual from arrays ', densityResidual)
+#         densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
+#         print('Density Residual from arrays ', densityResidual)
         print('Shape of density histories: ', np.shape(outputDensities), np.shape(inputDensities))
         
         # Now compute new mixing with anderson scheme, then import onto tree. 
@@ -811,35 +824,58 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         """
 #         starthartreeConvolutionTime = timer()
 
-        sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
-        targets = np.copy(sources)
+        density_sources = tree.extractLeavesDensity()  # extract the source point locations.  Currently, these are just all the leaf midpoints
+        density_targets = np.copy(sources)
         
         if GPUpresent==True:
             if treecode==False:
                 V_hartreeNew = np.zeros((len(targets)))
-                gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,V_hartreeNew,alphasq)
-            else:
-                print('Need treecode for Hartree solve after first SCF...')
-                return
-            
-        else:
-            if treecode==False:
-                sourceX = np.copy(sources[:,0])
-                sourceY = np.copy(sources[:,1])
-                sourceZ = np.copy(sources[:,2])
-                sourceValue = np.copy(sources[:,3])
-                sourceWeight = np.copy(sources[:,4])
+                gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,density_sources,V_hartreeNew,alphasq)
+            elif treecode==True:
+                numTargets = len(density_targets)
+                numSources = len(density_sources)
+                sourceX = np.copy(density_sources[:,0])
+    
+                sourceY = np.copy(density_sources[:,1])
+                sourceZ = np.copy(density_sources[:,2])
+                sourceValue = np.copy(density_sources[:,3])
+                sourceWeight = np.copy(density_sources[:,4])
                 
-                targetX = np.copy(targets[:,0])
-                targetY = np.copy(targets[:,1])
-                targetZ = np.copy(targets[:,2])
-                targetValue = np.copy(targets[:,3])
-                targetWeight = np.copy(targets[:,4])
+                targetX = np.copy(density_targets[:,0])
+                targetY = np.copy(density_targets[:,1])
+                targetZ = np.copy(density_targets[:,2])
+                targetValue = np.copy(density_targets[:,3])
+                targetWeight = np.copy(density_targets[:,4])
+                
+                start = time.time()
+                potentialType=2 
+                alpha = gaussianAlpha
+                V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                               targetX, targetY, targetZ, targetValue, 
+                                                               sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                               potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+                print('Convolution time: ', time.time()-start)
+                
+        else:
+            
+            sourceX = np.copy(density_sources[:,0])
+            sourceY = np.copy(density_sources[:,1])
+            sourceZ = np.copy(density_sources[:,2])
+            sourceValue = np.copy(density_sources[:,3])
+            sourceWeight = np.copy(density_sources[:,4])
+            
+            targetX = np.copy(density_targets[:,0])
+            targetY = np.copy(density_targets[:,1])
+            targetZ = np.copy(density_targets[:,2])
+            targetValue = np.copy(density_targets[:,3])
+            targetWeight = np.copy(density_targets[:,4])
+                
+            if treecode==False:
                 V_hartreeNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
                                                                                                   targetX, targetY, targetZ, targetValue,targetWeight, 
                                                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
 
-                V_hartreeNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
+                V_hartreeNew += density_targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
 
                 
             else:
@@ -854,7 +890,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                                potentialType, alphasq, order, theta, maxParNode, batchSize)
                 if potentialType==2:
-                    V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
+                    V_hartreeNew += density_targets[:,3]* (4*np.pi) / alphasq/2
         
         
       
@@ -946,6 +982,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         if SCFcount >= 150:
             print('Setting density residual to -1 to exit after the 150th SCF')
+            densityResidual = -1
+            
+        if SCFcount >= 1:
+            print('Setting density residual to -1 to exit after the First SCF just to test treecode')
+            energyResidual = -1
             densityResidual = -1
         
 

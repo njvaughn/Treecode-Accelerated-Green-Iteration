@@ -5,7 +5,7 @@ import time
 from numba import cuda
 
 computeCapability = cuda.cudadrv.driver.Device(0).compute_capability
-
+print('Compute Capability ', computeCapability)
 #  Suppose there is a compiled C file treecode.c function with the header:
 #
 #

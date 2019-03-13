@@ -81,6 +81,7 @@ file='runComparison.csv'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_nathan/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_nathan2/'
 
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Be_krasny_density3/'
 
 # Meshes generated with mesh density functions
 resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Be_krasny_density3/'
@@ -91,9 +92,8 @@ resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Be_combined/'
 
-
- 
-#### Treecode Testing
+## Treecode accuracy tests
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
 # resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
 
@@ -115,6 +115,16 @@ BandEnergy = -8.1232305760491457e+00
 KineticEnergy =  1.4309060170370618e+01
 ElectrostaticEnergy = -8.1232305760491457e+00
 HartreeEnergy = 7.115165052  
+
+
+# Carbon Monoxide
+TotalEnergy = -1.4446201118081863e+01
+ExchangeEnergy = -2.2903921833555341e+00
+CorrelationEnergy = -2.2343205529440757e-01
+BandEnergy = -8.1232305760491457e+00
+KineticEnergy =  1.4309060170370618e+01
+ElectrostaticEnergy = -8.1232305760491457e+00
+HartreeEnergy = 7.115165052 
 
 
 
@@ -308,7 +318,7 @@ def logAversusLogBcolorbyC(df,A,B,C,save=False):
     plt.xlabel(B)
     plt.ylabel(A)
 #     plt.xlim([1e5,2e6])
-#     plt.ylim([1e-5,1e-2])
+    plt.ylim([1e-5,1e-2])
     plt.grid()
     
     if save == True:
@@ -584,6 +594,7 @@ if __name__=="__main__":
 #     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
 #     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
 #     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')
+
 
     
 #     df = df.loc[df['divideParameter4']==20000000]   

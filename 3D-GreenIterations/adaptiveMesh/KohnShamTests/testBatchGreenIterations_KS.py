@@ -218,14 +218,14 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
               'gaussianAlpha','VextSmoothingEpsilon','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
-              'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime']
+              'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','totalIterationCount']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.additionalDepthAtAtoms,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
               divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
               gaussianAlpha,smoothingEps,energyTolerance,
               subtractSingularity,
               tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E,
-              treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime]
+              treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime,tree.totalIterationCount]
 #               tree.E, tree.
 #               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     
