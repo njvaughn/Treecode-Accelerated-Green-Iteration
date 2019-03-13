@@ -164,21 +164,27 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     
     
-    
+    if maxOrbitals==1:
+        nOrbitals = 1
+    else:
+        nOrbitals = tree.nOrbitals
+            
     if restartFile!=None:
-        orbitals = np.load(wavefunctionFile)
+        orbitals = np.load(wavefunctionFile+'.npy')
         oldOrbitals = np.copy(orbitals)
-        density = np.load(densityFile)
+        density = np.load(densityFile+'.npy')
         tree.importDensityOnLeaves(density)
         
-        V_hartreeNew = np.load(vHartreeFile)
+        V_hartreeNew = np.load(vHartreeFile+'.npy')
         tree.importVhartreeOnLeaves(V_hartreeNew)
+        tree.updateVxcAndVeffAtQuadpoints()
         
         
         # make and save dictionary
-        auxiliaryRestartData = np.load(auxiliaryFile)
+        auxiliaryRestartData = np.load(auxiliaryFile+'.npy').item()
+        print('type of aux: ', type(auxiliaryRestartData))
         SCFcount = auxiliaryRestartData['SCFcount']
-        tree.totalIterationCountauxiliaryRestartData['totalIterationCount']
+        tree.totalIterationCount = auxiliaryRestartData['totalIterationCount']
         tree.orbitalEnergies = auxiliaryRestartData['eigenvalues'] 
         Eold = auxiliaryRestartData['Eold']
     
@@ -188,13 +194,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         tree.totalIterationCount = 0
         
         # Initialize orbital matrix
+        targets = tree.extractLeavesDensity()
         orbitals = np.zeros((len(targets),tree.nOrbitals))
         oldOrbitals = np.zeros((len(targets),tree.nOrbitals))
         
-        if maxOrbitals==1:
-            nOrbitals = 1
-        else:
-            nOrbitals = tree.nOrbitals      
+              
         for m in range(nOrbitals):
             # fill in orbitals
             targets = tree.extractPhi(m)
@@ -217,6 +221,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     outputDensities = np.zeros((numberOfGridpoints,1))
     
     targets = tree.extractLeavesDensity() 
+    weights = targets[:,4]
     inputDensities[:,0] = np.copy(targets[:,3])
     
     
@@ -1056,7 +1061,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             densityResidual = -1
             
         if SCFcount >= 1:
-            print('Setting density residual to -1 to exit after the First SCF just to test treecode')
+            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
             energyResidual = -1
             densityResidual = -1
         

@@ -35,7 +35,7 @@ MESHTYPE='LW5'
 
 MIXINGPARAMETER=0.5   
  
-INTRASCFTOLERANCE=1e-7  
+INTRASCFTOLERANCE=1e-5  
 INTERSCFTOLERANCE=5e-6 
    
 MIXING='Anderson'    
@@ -57,7 +57,7 @@ do
 	do    
 		for MESHPARAM2 in 999
 		do 
-			for MESHPARAM1 in 500			    
+			for MESHPARAM1 in 200			    
 			do
 			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/restartTesting/Be_LW5_500_${MESHPARAM1}.csv"
 
