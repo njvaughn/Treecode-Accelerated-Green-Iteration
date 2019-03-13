@@ -149,8 +149,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     restartFilesDir =       outputFile[:-4]+'_'+str(tree.numberOfGridpoints)+'_restart'
     wavefunctionFile =      restartFilesDir+'/wavefunctions'
     densityFile =           restartFilesDir+'/density'
+    inputDensityFile =      restartFilesDir+'/inputdensity'
+    outputDensityFile =     restartFilesDir+'/outputdensity'
     vHartreeFile =          restartFilesDir+'/vHartree'
-    auxiliaryFile =          restartFilesDir+'/auxiliary'
+    auxiliaryFile =         restartFilesDir+'/auxiliary'
     
     try:
         os.mkdir(densityPlotsDir)
@@ -174,6 +176,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         oldOrbitals = np.copy(orbitals)
         density = np.load(densityFile+'.npy')
         tree.importDensityOnLeaves(density)
+        
+        inputDensities = np.load(inputDensityFile)
+        outputDensities = np.load(outputDensityFile)
         
         V_hartreeNew = np.load(vHartreeFile+'.npy')
         tree.importVhartreeOnLeaves(V_hartreeNew)
@@ -205,6 +210,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             weights = np.copy(targets[:,5])
             oldOrbitals[:,m] = np.copy(targets[:,3])
             orbitals[:,m] = np.copy(targets[:,3])
+            
+        # Initialize density history arrays
+        inputDensities = np.zeros((numberOfGridpoints,1))
+        outputDensities = np.zeros((numberOfGridpoints,1))
+        
+        targets = tree.extractLeavesDensity() 
+        weights = targets[:,4]
+        inputDensities[:,0] = np.copy(targets[:,3])
 
     
     
@@ -216,13 +229,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         print()
         r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=True, save=savefile)
 
-    # Initialize density history arrays
-    inputDensities = np.zeros((numberOfGridpoints,1))
-    outputDensities = np.zeros((numberOfGridpoints,1))
     
-    targets = tree.extractLeavesDensity() 
-    weights = targets[:,4]
-    inputDensities[:,0] = np.copy(targets[:,3])
     
     
 
@@ -1028,6 +1035,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         sources = tree.extractLeavesDensity()
         np.save(densityFile, sources[:,3])
+        np.save(outputDensityFile, outputDensities)
+        np.save(inputDensityFile, inputDensities)
         
         np.save(vHartreeFile, V_hartreeNew)
         
@@ -1060,10 +1069,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
             
-        if SCFcount >= 1:
-            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-            energyResidual = -1
-            densityResidual = -1
+#         if SCFcount >= 1:
+#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+#             energyResidual = -1
+#             densityResidual = -1
         
 
 
