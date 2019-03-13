@@ -379,11 +379,16 @@ def plot_LW_density():
     
         
         plt.plot(r,density, label = 'N = %i'%N)
+    
+    nathanDensity = np.zeros_like(r)
+    for i in range(len(nathanDensity)):
+        nathanDensity[i] = meshDensity(r[i],4,'Nathan_density')
+    plt.plot(r,nathanDensity,label='Nathan')
         
 #         plt.plot(r, 1000/3697.1*(np.exp(-2*r)*50258250/r**10)**(3/13), label='exp(-2*r)/r_sq')
-    k = np.sqrt(2*0.2)
-    plt.plot(r, 1000/3697.1*exp(-k*r)* (2224 - 9018/r + 16789/r**2 + 117740/r**3 + 733430/r**4 + 3917040/r**5 + 16879920/r**6
-               + 49186500/r**7 + 91604250/r**8 + 100516500/r**9 + 50258250/r**10) **(3/13), label='2')
+#     k = np.sqrt(2*0.2)
+#     plt.plot(r, 1000/3697.1*exp(-k*r)* (2224 - 9018/r + 16789/r**2 + 117740/r**3 + 733430/r**4 + 3917040/r**5 + 16879920/r**6
+#                + 49186500/r**7 + 91604250/r**8 + 100516500/r**9 + 50258250/r**10) **(3/13), label='2')
 #         plt.plot(r, 1000/3697.1*(np.exp(-2*r)* (50258250/r**10) )**(3/13), label='LW5_truncated')
         
 
@@ -402,16 +407,16 @@ def plot_LW_density():
 if __name__ == "__main__":
     
 #     plot_LW_density()
-    densityInterpolation(-6.1,1,0,6.1,1,0,1000,
-                    domain=20,order=5,
-                    minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-                    divideParameter1=500, divideParameter2=10.1/1, divideParameter3=100, divideParameter4=100,
-                    smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
+#     densityInterpolation(-6.1,1,0,6.1,1,0,1000,
+#                     domain=20,order=5,
+#                     minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#                     divideParameter1=1500, divideParameter2=10.1/1, divideParameter3=100, divideParameter4=100,
+#                     smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
-#     meshDistributions(domain=20,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-#                         divideParameter1=1200, divideParameter2=100, divideParameter3=100, divideParameter4=100,
-#                         smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
+    meshDistributions(domain=20,order=3,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=3, divideCriterion='Nathan_density', 
+                        divideParameter1=0.5, divideParameter2=100, divideParameter3=100, divideParameter4=100,
+                        smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/OxygenAtomAuxiliary.csv')
     
     
 #     timingTestsForOrbitalInitializations(domain=20,order=5,

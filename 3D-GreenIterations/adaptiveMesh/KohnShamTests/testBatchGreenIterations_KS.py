@@ -63,6 +63,7 @@ batchSize           = int(sys.argv[25])
 divideParameter3    = float(sys.argv[26])
 divideParameter4    = float(sys.argv[27])
 base                = float(sys.argv[28])
+restart             = str(sys.argv[29])
 
 
 
@@ -85,6 +86,13 @@ elif noGradients=='False':
     gradientFree=False
 else:
     print('Warning, not correct input for gradientFree')
+
+if restart=='True':
+    restart=True
+elif restart=='False':
+    restart=False
+else:
+    print('Warning, not correct input for restart')
     
 if GPUpresent=='True':
     GPUpresent=True
@@ -194,7 +202,7 @@ def setUpTree(onlyFillOne=False):
     return tree
     
     
-def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None):
+def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
     
     
     startTime = time.time()
@@ -203,7 +211,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
     greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, mixingScheme, mixingParameter, subtractSingularity, 
-                                gaussianAlpha,inputFile=inputFile,outputFile=outputFile, 
+                                gaussianAlpha,inputFile=inputFile,outputFile=outputFile, restartFile=restart,
                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
 
 #     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 

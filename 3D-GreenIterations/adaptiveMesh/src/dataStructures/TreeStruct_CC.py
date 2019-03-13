@@ -708,7 +708,8 @@ class Tree(object):
 #                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
                 else:  
                     if ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or (divideCriterion == 'LW3_modified') or 
-                         (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') or (divideCriterion == 'Krasny_density') ):
+                         (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') 
+                         or (divideCriterion == 'Krasny_density') or (divideCriterion == 'Nathan_density') ):
 #                         print('checking divide criterion for cell ', Cell.uniqueID)
                         Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
                     elif divideCriterion=='Biros':
@@ -761,14 +762,14 @@ class Tree(object):
             return maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter
         
         timer.start()
-        self.initialDivideBasedOnNuclei(self.coordinateFile)
+#         self.initialDivideBasedOnNuclei(self.coordinateFile)
         levelCounter=0
         maxDepthCounter=0
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize, self.maxDepthCounter = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
         
         print('Number of cells at max depth: ', self.maxDepthCounter)
 #         self.initialDivideBasedOnNuclei(self)
-#         self.initialDivideBasedOnNuclei(self.coordinateFile)
+        self.initialDivideBasedOnNuclei(self.coordinateFile)
 #         refineRadius = 0.01
 #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
 #         self.uniformlyRefineWithinRadius(refineRadius)

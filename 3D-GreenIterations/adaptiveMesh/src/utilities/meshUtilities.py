@@ -58,7 +58,7 @@ def meshDensity(r,divideParameter,divideCriterion):
                    + 49186500/r**7 + 91604250/r**8 + 100516500/r**9 + 50258250/r**10) **(3/13)
 
 #         k=2
-        return divideParameter*(np.exp(-2*r))*(1/r**2)
+#         return divideParameter*(np.exp(-2*r))*(1/r**2)
 #         return divideParameter*(np.exp(-k*r))*(1+1/r**2)
 #         return divideParameter*(np.exp(-1*k*r))*(k+1/r**1)
 
@@ -69,6 +69,20 @@ def meshDensity(r,divideParameter,divideCriterion):
 #         return ( 1/r + divideParameter*np.exp(-0.5*r) )
 #         return divideParameter/r
     
+    
+    elif divideCriterion == 'Nathan_density':
+        
+        rho0 = 308.88
+        rhoC = 1.085
+        rC = 0.5
+        k1 = 8
+        k2 = 0.824
+        
+        if r < rC:
+            return rho0*k1*divideParameter *np.exp(-k1*r)
+        else:
+            return  (rho0*k1*divideParameter *np.exp(-k1*rC)  /  (rhoC*k2*divideParameter *np.exp( -k2*(rC-rC) ))  )  * rhoC*k2*divideParameter *np.exp( -k2*(r-rC) )
+        
     else:
         print('Invalid Mesh type...')
         return
