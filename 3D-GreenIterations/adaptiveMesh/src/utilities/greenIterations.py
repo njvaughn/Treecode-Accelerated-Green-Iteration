@@ -120,7 +120,7 @@ numpts=3000
 def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize,
                                  mixingScheme, mixingParameter,
-                                subtractSingularity, gaussianAlpha, inputFile='',outputFile='',restartFile=None,
+                                subtractSingularity, gaussianAlpha, inputFile='',outputFile='',restartFile=False,
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None): 
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
@@ -171,7 +171,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     else:
         nOrbitals = tree.nOrbitals
             
-    if restartFile!=None:
+    if restartFile!=False:
         orbitals = np.load(wavefunctionFile+'.npy')
         oldOrbitals = np.copy(orbitals)
         density = np.load(densityFile+'.npy')
@@ -262,7 +262,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     alphasq=alpha*alpha
     
     
-    if restartFile==None: # need to do initial Vhartree solve
+    if restartFile==False: # need to do initial Vhartree solve
         print('Using Gaussian singularity subtraction, alpha = ', alpha)
         
         print('GPUpresent set to ', GPUpresent)
