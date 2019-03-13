@@ -19,15 +19,16 @@ class Test(unittest.TestCase):
 
 #     @unittest.skip('Skipping the plotting of radial data')
     def testReadingRadialData(self):
-        atomicNumber = 12 
+        atomicNumber = 8 
         AtomicDataPath = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atomicNumber)+'/singleAtomData/'
         print(AtomicDataPath)
         print(os.listdir(AtomicDataPath))
         
         plt.figure()  
         data = np.genfromtxt(AtomicDataPath+'density.inp')
+        print('rho[0] = ', data[0,1])
         plt.semilogy(data[:,0],data[:,1],label='Density')
-#         plt.plot(data[:,0],np.sqrt(data[:,1]),label='sqrt(Density)')
+#         plt.semilogy(data[:,0],np.sqrt(data[:,1]),label='sqrt(Density)')
 #         plt.plot(data[:,0],np.sqrt(data[:,1])*(1+1/data[:,0]),label='sqrt(Density)')
 #         plt.plot(data[:,0],(data[:,1])*(1+1/data[:,0]),label='(Density)(1+1/r)')
 #         plt.plot(data[:,0],(data[:,1])*(data[:,0]**2),label='(Density)*r**2')
@@ -57,8 +58,8 @@ class Test(unittest.TestCase):
 #             if orbital[:5]=='psi32':
                 print(orbital)
                 data = np.genfromtxt(AtomicDataPath+orbital)
-#                 plt.semilogy(data[:,0],np.abs(data[:,1]),label=orbital[:-4])
-                plt.semilogy(data[:,0],np.abs(data[:,1]**2),label=orbital[:-4])
+                plt.semilogy(data[:,0],np.abs(data[:,1]),label=orbital[:-4])
+#                 plt.semilogy(data[:,0],np.abs(data[:,1]**2),label=orbital[:-4]+' squared')
 #                 plt.plot(data[:,0],np.sign(data[-1,1])*data[:,1],label=orbital[:-4])
 #         xi = np.sqrt(2*0.2)
 #         plt.plot(data[:,0], np.sqrt(xi**3/np.pi) *np.exp(-xi*atomicNumber*data[:,0]), 'r-')

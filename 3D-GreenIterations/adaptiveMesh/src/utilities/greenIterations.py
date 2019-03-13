@@ -207,6 +207,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #         print(targets[:10,:])
 #         print('numSources = ', numSources)
 #         print(sources[:10,:])
+        copystart = time.time()
         sourceX = np.copy(density_sources[:,0])
 #         print(np.shape(sourceX))
 #         print('sourceX = ', sourceX[0:10])
@@ -220,7 +221,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         targetZ = np.copy(density_targets[:,2])
         targetValue = np.copy(density_targets[:,3])
         targetWeight = np.copy(density_targets[:,4])
-        
+        copytime=time.time()-copystart
+        print('Copy time before convolution: ', copytime)
         start = time.time()
         
         if treecode==False:
@@ -265,6 +267,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print('Convolution time: ', time.time()-start)
 #             return
         elif treecode==True:
+            copystart=time.time()
             numTargets = len(density_targets)
             numSources = len(density_sources)
             sourceX = np.copy(density_sources[:,0])
@@ -279,7 +282,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             targetZ = np.copy(density_targets[:,2])
             targetValue = np.copy(density_targets[:,3])
             targetWeight = np.copy(density_targets[:,4])
-            
+            copytime = time.time()-copystart
+            print('Copy time before calling treecode: ', copytime)
             start = time.time()
             potentialType=2 
             alpha = gaussianAlpha
@@ -457,7 +461,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 orbitalResidual = 1
                 eigenvalueResidual = 1
                 greenIterationsCount = 1
-                max_GreenIterationsCount = 999
+                max_GreenIterationsCount = 150
                 
     
             
@@ -469,7 +473,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) ):
                     tree.totalIterationCount += 1
                     orbitalResidual = 0.0
-    
+      
                     sources = tree.extractPhi(m)
                     targets = np.copy(sources)
                     weights = np.copy(targets[:,5])
@@ -555,6 +559,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                         convolutionTime = time.time()-startTime
                                         print('Using singularity subtraction.  Convolution time: ', convolutionTime)
                                     elif treecode==True:
+                                        
+                                        copyStart = time.time()
                                         numTargets = len(targets)
                                         numSources = len(sources)
     
@@ -571,7 +577,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                         targetValue = np.copy(targets[:,3])
                                         targetWeight = np.copy(targets[:,4])
                                     
- 
+                                        copytime=time.time()-copyStart
+                                        print('Time spent copying arrays for treecode call: ', copytime)
                                         potentialType=3
                                         kappa = k
                                         start = time.time()

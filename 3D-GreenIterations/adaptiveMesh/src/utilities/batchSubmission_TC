@@ -39,7 +39,6 @@ INTERSCFTOLERANCE=5e-6
 MIXING='Anderson'    
 CELLORDER=5
 SMOOTHINGEPS=0.0
-ADDITIONALDEPTHATATOMS=5  
 
 for ADDITIONALDEPTHATATOMS in 0
 do
@@ -49,9 +48,9 @@ for BASE in 1
 do
 for MAXDEPTH in 20   
 do								  					 
-for TREECODEORDER in 6 8 10  
+for TREECODEORDER in 5 10  
 do 
-	for THETA in 0.8 0.7
+	for THETA in 0.8 0.7 0.5
 	do    
 		for MAXPARNODE in 8000
 		do 
@@ -66,7 +65,7 @@ do
 		done
 	done 
 	
-done
+done 
 done
 done
 done
