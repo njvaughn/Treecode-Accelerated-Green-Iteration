@@ -84,13 +84,18 @@ file='runComparison.csv'
 
 # Meshes generated with mesh density functions
 resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Be_krasny_density3/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Be_krasny_density4/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_krasny_density3/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Ox_krasny_density4/'
 
 
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Be_combined/'
 
 
  
 #### Treecode Testing
 # resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
 
 # # Oxygen
 # TotalEnergy = -7.4469337501098821e+01  # Oxygen Atom
@@ -565,9 +570,14 @@ def extrapolate_Vext_regularization(df,X,Y,degree,plot=True):
  
   
 if __name__=="__main__":
+#     df = df.loc[df['treecodeOrder'].isin([1,8])]
+#     df = df.loc[df['theta'].isin([0.7,1.0])]
+#     AversusBcolorbyC(df,'TotalEnergy', 'theta', 'treecodeOrder')
+#     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
+#     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')
     
 #     df = df.loc[df['additionalDepthAtAtoms']==3]
-    df = df.loc[df['order']==5]
+#     df = df.loc[df['order']==5]
     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'maxDepth')
     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'maxDepth')
     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'maxDepth')

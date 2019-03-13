@@ -113,8 +113,8 @@ def normalizeOrbitals(V,weights):
 #     print("Located at:           ", xinf, yinf, zinf)
 #     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-xi=yi=zi=-3.1
-xf=yf=zf=3.1
+xi=yi=zi=-6.1
+xf=yf=zf=6.1
 numpts=3000
 
 def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, 

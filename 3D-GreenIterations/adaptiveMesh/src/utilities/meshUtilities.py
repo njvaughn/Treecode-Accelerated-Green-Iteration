@@ -49,12 +49,22 @@ def meshDensity(r,divideParameter,divideCriterion):
         return phaniMeshDensity(divideParameter, N, eta,k, r)
     
     elif divideCriterion == 'Krasny_density':
-        k = np.sqrt(2*0.2)
-#         k=2
-#         return divideParameter*(np.exp(-k*r))*(1+1/r**2)
-        return divideParameter*(np.exp(-1*k*r))*(k+1/r**1)
+#         return divideParameter/3697.1*50258250**(3/13)*(np.exp(-6*r/13)/r**(30/13))
+                                                   
+        k = np.sqrt(2*0.1)
+#         k = np.sqrt(2*0.2)
+#         return divideParameter/3697.1*50258250**(3/13)*(np.exp(-k*r)/r**(30/13))
+        return divideParameter/3697.1*exp(-k*r)* (2224 - 9018/r + 16789/r**2 + 117740/r**3 + 733430/r**4 + 3917040/r**5 + 16879920/r**6
+                   + 49186500/r**7 + 91604250/r**8 + 100516500/r**9 + 50258250/r**10) **(3/13)
 
-        return divideParameter*1/r**(2)
+#         k=2
+        return divideParameter*(np.exp(-2*r))*(1/r**2)
+#         return divideParameter*(np.exp(-k*r))*(1+1/r**2)
+#         return divideParameter*(np.exp(-1*k*r))*(k+1/r**1)
+
+#         return divideParameter*1/r**(2)
+#         return divideParameter*(np.exp(-1*r))/r**2
+
 #         return divideParameter*(np.exp(-0.3*r))/r**2
 #         return ( 1/r + divideParameter*np.exp(-0.5*r) )
 #         return divideParameter/r

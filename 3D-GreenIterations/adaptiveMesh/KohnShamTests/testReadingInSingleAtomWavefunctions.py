@@ -19,15 +19,15 @@ class Test(unittest.TestCase):
 
 #     @unittest.skip('Skipping the plotting of radial data')
     def testReadingRadialData(self):
-        atomicNumber = 8 
+        atomicNumber = 12 
         AtomicDataPath = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atomicNumber)+'/singleAtomData/'
         print(AtomicDataPath)
         print(os.listdir(AtomicDataPath))
         
         plt.figure()  
         data = np.genfromtxt(AtomicDataPath+'density.inp')
-        plt.plot(data[:,0],data[:,1],label='Density')
-        plt.plot(data[:,0],np.sqrt(data[:,1]),label='sqrt(Density)')
+        plt.semilogy(data[:,0],data[:,1],label='Density')
+#         plt.plot(data[:,0],np.sqrt(data[:,1]),label='sqrt(Density)')
 #         plt.plot(data[:,0],np.sqrt(data[:,1])*(1+1/data[:,0]),label='sqrt(Density)')
 #         plt.plot(data[:,0],(data[:,1])*(1+1/data[:,0]),label='(Density)(1+1/r)')
 #         plt.plot(data[:,0],(data[:,1])*(data[:,0]**2),label='(Density)*r**2')
@@ -50,15 +50,16 @@ class Test(unittest.TestCase):
         print('Integrated density: ', trap)
         
         
-#         plt.figure()
-#         
-#         for orbital in os.listdir(AtomicDataPath):
-#             if orbital[:3]=='psi':
-# #             if orbital[:5]=='psi32':
-#                 print(orbital)
-#                 data = np.genfromtxt(AtomicDataPath+orbital)
-#                 plt.plot(data[:,0],data[:,1],label=orbital[:-4])
-# #                 plt.plot(data[:,0],np.sign(data[-1,1])*data[:,1],label=orbital[:-4])
+#         plt.figure() 
+         
+        for orbital in os.listdir(AtomicDataPath):
+            if orbital[:3]=='psi':
+#             if orbital[:5]=='psi32':
+                print(orbital)
+                data = np.genfromtxt(AtomicDataPath+orbital)
+#                 plt.semilogy(data[:,0],np.abs(data[:,1]),label=orbital[:-4])
+                plt.semilogy(data[:,0],np.abs(data[:,1]**2),label=orbital[:-4])
+#                 plt.plot(data[:,0],np.sign(data[-1,1])*data[:,1],label=orbital[:-4])
 #         xi = np.sqrt(2*0.2)
 #         plt.plot(data[:,0], np.sqrt(xi**3/np.pi) *np.exp(-xi*atomicNumber*data[:,0]), 'r-')
 #                 
@@ -76,8 +77,8 @@ class Test(unittest.TestCase):
 # #         plt.figure()
 # #         plt.plot(r0,psi0,'b',label='psi10')
 # #         plt.plot(r1,psi1,'g',label='psi20')
-#         plt.legend()
-#         plt.xlabel('radius')
+        plt.legend()
+        plt.xlabel('radius')
         plt.show()
         
     @unittest.skip('Skipping the printing of the interpolators')
