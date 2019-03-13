@@ -177,8 +177,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         density = np.load(densityFile+'.npy')
         tree.importDensityOnLeaves(density)
         
-        inputDensities = np.load(inputDensityFile)
-        outputDensities = np.load(outputDensityFile)
+        inputDensities = np.load(inputDensityFile+'.npy')
+        outputDensities = np.load(outputDensityFile+'.npy')
         
         V_hartreeNew = np.load(vHartreeFile+'.npy')
         tree.importVhartreeOnLeaves(V_hartreeNew)
@@ -219,7 +219,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         weights = targets[:,4]
         inputDensities[:,0] = np.copy(targets[:,3])
 
-    
+    targets = tree.extractLeavesDensity() 
+    weights = targets[:,4]
     
         
     plotSliceOfDensity=True
@@ -479,6 +480,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #             return
         
         if SCFcount>1:
+            targets = tree.extractLeavesDensity()
             inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (numberOfGridpoints,1))), axis=1)
         
      
