@@ -7,10 +7,10 @@ DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -20,7 +20,7 @@ VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 GRADIENTFREE='True'
 GPUPRESENT='True'
 
-TREECODE='False'
+TREECODE='True'
 TREECODEORDER=6
 THETA=0.8
 MAXPARNODE=8000
@@ -40,10 +40,11 @@ INTERSCFTOLERANCE=5e-6
    
 MIXING='Anderson'    
 SMOOTHINGEPS=0.0
-
 for ADDITIONALDEPTHATATOMS in 0
 do
 for CELLORDER in 4
+
+RESTART='False'
 
 do	 
 for BASE in 1
@@ -58,12 +59,12 @@ do
 		do 
 			for MESHPARAM1 in 200			    
 			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/restartTesting/Be_LW5_200_yesRestart_AndersonMixing_${MESHPARAM1}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/Be_LW5_200_yesRestart_AndersonMixing_${MESHPARAM1}.csv"
 
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
-																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE
+																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE $RESTART
 			done  
 		done
 	done 
