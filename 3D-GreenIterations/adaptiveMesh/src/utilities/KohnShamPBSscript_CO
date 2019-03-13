@@ -1,6 +1,6 @@
 ####  PBS preamble
 
-#PBS -N batchGreenIterations
+#PBS -N CO_direct_sum_reference
 #PBS -M njvaughn@umich.edu
 #PBS -m a
 
@@ -50,17 +50,15 @@ GRADIENTFREE='True'
 GPUPRESENT='True'
 
 TREECODE='False'
-TREECODEORDER=0
-THETA=0.0
-MAXPARNODE=8000
-BATCHSIZE=8000
 
 
 GAUSSIANALPHA=1.0
 
-MESHTYPE='Krasny_density'
 MESHTYPE='LW5'
-
+MESHPARAM1=1500
+MESHPARAM2=0
+MESHPARAM3=0
+MESHPARAM4=0
 
 MIXINGPARAMETER=0.5   
  
@@ -80,15 +78,15 @@ for BASE in 1
 do
 for MAXDEPTH in 20   
 do								  					 
-for MESHPARAM4 in 999 
+for TREECODEORDER in 1 
 do 
-	for MESHPARAM3 in 999
+	for THETA in 1
 	do    
-		for MESHPARAM2 in 999
+		for MAXPARNODE in 8000
 		do 
-			for MESHPARAM1 in 500		    
+			for BATCHSIZE in 8000 		    
 			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/CO_densitySliceTests/ds_cellOrder${CELLORDER}_base${BASE}_smoothingEps${SMOOTHINGEPS}_maxDepth${MAXDEPTH}additionalDepth${ADDITIONALDEPTHATATOMS}_minDepth${MINDEPTH}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/ds_LW5_1500_reference.csv"
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
@@ -101,4 +99,4 @@ done
 done
 done
 done
-done		
+done	

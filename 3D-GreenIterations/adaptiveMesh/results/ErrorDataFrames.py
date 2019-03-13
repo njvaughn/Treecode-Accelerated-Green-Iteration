@@ -79,13 +79,13 @@ file='runComparison.csv'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_root_45/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_root_45_additional3/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_nathan/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_nathan2/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_nathan2/'
+
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Be_krasny_density3/'
 
 
-
-
- 
-#### Treecode Testing
+## Treecode accuracy tests
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
 # resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
 
 # # Oxygen
@@ -106,6 +106,16 @@ BandEnergy = -8.1232305760491457e+00
 KineticEnergy =  1.4309060170370618e+01
 ElectrostaticEnergy = -8.1232305760491457e+00
 HartreeEnergy = 7.115165052  
+
+
+# Carbon Monoxide
+TotalEnergy = -1.4446201118081863e+01
+ExchangeEnergy = -2.2903921833555341e+00
+CorrelationEnergy = -2.2343205529440757e-01
+BandEnergy = -8.1232305760491457e+00
+KineticEnergy =  1.4309060170370618e+01
+ElectrostaticEnergy = -8.1232305760491457e+00
+HartreeEnergy = 7.115165052 
 
 
 
@@ -299,7 +309,7 @@ def logAversusLogBcolorbyC(df,A,B,C,save=False):
     plt.xlabel(B)
     plt.ylabel(A)
 #     plt.xlim([1e5,2e6])
-#     plt.ylim([1e-5,1e-2])
+    plt.ylim([1e-5,1e-2])
     plt.grid()
     
     if save == True:
@@ -561,15 +571,18 @@ def extrapolate_Vext_regularization(df,X,Y,degree,plot=True):
  
   
 if __name__=="__main__":
+## CO Treecode Testing
+#     AversusBcolorbyC(df,'TotalEnergy', 'theta', 'treecodeOrder')
     
 #     df = df.loc[df['additionalDepthAtAtoms']==3]
 #     df = df.loc[df['order']==5]
+
     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
 #     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'divideParameter3')
 #     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'divideParameter3')
-    AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
-    AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms') 
-    AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
+#     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
+#     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms') 
+#     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'additionalDepthAtAtoms')
 
     
 #     df = df.loc[df['divideParameter4']==20000000]   
