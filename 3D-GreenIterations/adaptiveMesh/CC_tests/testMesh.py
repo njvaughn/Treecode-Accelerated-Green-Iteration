@@ -260,27 +260,29 @@ def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, d
     plt.ylabel('Number of Cells')
     if divideCriterion=='Krasny':
         plt.title('Mesh Type: 4 parameters (%1.2f,%1.2f,%1.2f,%1.2f)' %(divideParameter1,divideParameter2,divideParameter3,divideParameter4))
-    if divideCriterion=='Nathan':
+    elif divideCriterion=='Nathan':
         plt.title('Mesh Type: 2 parameters (%1.2f,%1.2f)' %(divideParameter1,divideParameter2))
     elif divideCriterion=='LW5':
         plt.title('Mesh Type: LW5 - %1.2f' %(divideParameter1))
+    elif divideCriterion=='Krasny_density':
+        plt.title('Mesh Type: HOMO LW5 - %1.2f' %(divideParameter1))
         
-    fig, axes = plt.subplots(2, 1)
-    axes[0].bar(list(tree.criteria1.keys()),list(tree.criteria1.values()) )
-    axes[1].bar(list(tree.criteria2.keys()),list(tree.criteria2.values()) )
-#     axes[1,0].bar(list(tree.criteria3.keys()),list(tree.criteria3.values()) )
-#     axes[1,1].bar(list(tree.criteria4.keys()),list(tree.criteria4.values()) )
-     
-    axes[0].set_title('Vext*sqrt(rho) Integral')
-    axes[1].set_title('sqrt(rho) integral')
-#     axes[1,0].set_title('rho integral')
-#     axes[1,1].set_title('Vext Variation')
-     
-    axes[0].set_ylim([0, int(1.1*maxHeight)])
-    axes[1].set_ylim([0, int(1.1*maxHeight)])
-#     axes[1,0].set_ylim([0, int(1.1*maxHeight)])
-#     axes[1,1].set_ylim([0, int(1.1*maxHeight)])
-    plt.tight_layout()
+#     fig, axes = plt.subplots(2, 1)
+#     axes[0].bar(list(tree.criteria1.keys()),list(tree.criteria1.values()) )
+#     axes[1].bar(list(tree.criteria2.keys()),list(tree.criteria2.values()) )
+# #     axes[1,0].bar(list(tree.criteria3.keys()),list(tree.criteria3.values()) )
+# #     axes[1,1].bar(list(tree.criteria4.keys()),list(tree.criteria4.values()) )
+#      
+#     axes[0].set_title('Vext*sqrt(rho) Integral')
+#     axes[1].set_title('sqrt(rho) integral')
+# #     axes[1,0].set_title('rho integral')
+# #     axes[1,1].set_title('Vext Variation')
+#      
+#     axes[0].set_ylim([0, int(1.1*maxHeight)])
+#     axes[1].set_ylim([0, int(1.1*maxHeight)])
+# #     axes[1,0].set_ylim([0, int(1.1*maxHeight)])
+# #     axes[1,1].set_ylim([0, int(1.1*maxHeight)])
+#     plt.tight_layout()
   
     plt.show()
 
@@ -341,21 +343,24 @@ def densityInterpolation(xi,yi,zi,xf,yf,zf,numpts,
             initialRho += 0.0   # if outside the interpolation range, assume 0.
             
     plt.figure()
-    plt.plot(r,rho,'bo')
-    plt.plot(r,initialRho,'rx')
+    plt.semilogy(r,rho,'bo')
+#     plt.semilogy(r,initialRho,'rx')
+    plt.title('Density along Line')
     
     plt.figure()
     plt.semilogy(r,abs( rho-initialRho )/initialRho,'ko')
+    plt.title('Relative Error in Interpolation from Cells and Interpolation from Initial Data')
     plt.show()
     
     
 def plot_LW_density():
     r = np.linspace(1e-1,1,1000)
     
-    
+#     plt.rc('text', usetex=True)
+#     plt.rc('font', family='serif')
     
     plt.figure()
-    for N in [3,4,5]:
+    for N in [5]:
         density = np.zeros(len(r))
         if N==3:
             A = 648.82
@@ -371,26 +376,41 @@ def plot_LW_density():
         
         density *= np.exp(-2*r)
         density = 1000/A*density**(3/(2*N+3))
-        
+    
         
         plt.plot(r,density, label = 'N = %i'%N)
+        
+#         plt.plot(r, 1000/3697.1*(np.exp(-2*r)*50258250/r**10)**(3/13), label='exp(-2*r)/r_sq')
+    k = np.sqrt(2*0.2)
+    plt.plot(r, 1000/3697.1*exp(-k*r)* (2224 - 9018/r + 16789/r**2 + 117740/r**3 + 733430/r**4 + 3917040/r**5 + 16879920/r**6
+               + 49186500/r**7 + 91604250/r**8 + 100516500/r**9 + 50258250/r**10) **(3/13), label='2')
+#         plt.plot(r, 1000/3697.1*(np.exp(-2*r)* (50258250/r**10) )**(3/13), label='LW5_truncated')
+        
+
+#     plt.plot(r,(density[0] / (1/r[0]) ) *1/r, label='1/r')
+#     plt.plot(r,(density[0] / (np.exp(-r[0])/r[0]) ) *np.exp(-r)/r, label='exp(-r)/r')
+#     k = np.sqrt(2*0.2)
+#     plt.plot(r,(density[0] / (np.exp(-k*r[0])/r[0]**2) ) *np.exp(-k*r)/r**2, label='exp(-k*r)/r_sq')
+#     plt.plot(r,(density[0] / (np.exp(-2*r[0])/r[0]**2) ) *np.exp(-2*r)/r**2, label='exp(-2*r)/r_sq')
+#     plt.plot(r,(density[0] / (r[0] + np.exp(-k*r[0])/r[0]**2) ) *(r+np.exp(-k*r))/r**2, label='(r+exp(-k*r))/r_sq')
     plt.legend()
     plt.xlabel('Distance from nucleus')
     plt.ylabel('LW Mesh Density')
+    plt.title('Mesh Density Functions')
     plt.show()
 
 if __name__ == "__main__":
     
 #     plot_LW_density()
-    densityInterpolation(-5.1,0,0,5.1,0,0,2000,
-                    domain=20,order=8,
+    densityInterpolation(-6.1,1,0,6.1,1,0,1000,
+                    domain=20,order=5,
                     minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
                     divideParameter1=500, divideParameter2=10.1/1, divideParameter3=100, divideParameter4=100,
                     smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
     
-#     meshDistributions(domain=20,order=3,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=3, divideCriterion='Nathan', 
-#                         divideParameter1=0.1/5, divideParameter2=10.1/1, divideParameter3=100, divideParameter4=100,
+#     meshDistributions(domain=20,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#                         divideParameter1=1200, divideParameter2=100, divideParameter3=100, divideParameter4=100,
 #                         smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
     
     
@@ -409,10 +429,10 @@ if __name__ == "__main__":
     # param4: Vext integral   
     
 #     exportMeshForParaview(domain=20,order=5,
-#                         minDepth=3, maxDepth=15, additionalDepthAtAtoms=0, divideCriterion='Krasny_density', 
-#                         divideParameter1=100, divideParameter2=1000.1, divideParameter3=1000.2, divideParameter4=20000,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/LW5_1500')
+#                         minDepth=3, maxDepth=15, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#                         divideParameter1=1000, divideParameter2=1000.1, divideParameter3=1000.2, divideParameter4=20000,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/LW5_1000')
 #     
 
 

@@ -90,6 +90,7 @@ class Tree(object):
         self.gaugeShift = gaugeShift
         self.additionalDepthAtAtoms = additionalDepthAtAtoms
         self.minDepth = minDepth
+        self.maxDepthAchieved = 0
         
         self.coordinateFile = coordinateFile
         
@@ -760,13 +761,14 @@ class Tree(object):
             return maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter
         
         timer.start()
+        self.initialDivideBasedOnNuclei(self.coordinateFile)
         levelCounter=0
         maxDepthCounter=0
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize, self.maxDepthCounter = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
         
         print('Number of cells at max depth: ', self.maxDepthCounter)
 #         self.initialDivideBasedOnNuclei(self)
-        self.initialDivideBasedOnNuclei(self.coordinateFile)
+#         self.initialDivideBasedOnNuclei(self.coordinateFile)
 #         refineRadius = 0.01
 #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
 #         self.uniformlyRefineWithinRadius(refineRadius)
