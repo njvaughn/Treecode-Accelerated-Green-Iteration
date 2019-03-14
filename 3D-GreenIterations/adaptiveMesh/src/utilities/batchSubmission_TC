@@ -52,7 +52,7 @@ for MAXDEPTH in 20
 do								  					 
 for TREECODEORDER in 7  
 do 
-	for THETA in 0.85
+	for THETA in 0.8
 	do    
 		for MAXPARNODE in 8000
 		do 
