@@ -483,9 +483,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             targets = tree.extractLeavesDensity()
             
 #             if SCFcount < mixingHistoryCutoff:
-            inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (numberOfGridpoints,1))), axis=1)
+#             inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (numberOfGridpoints,1))), axis=1)
 #             else:
 #                 inputDensities
+
+            if (SCFcount-1)<mixingHistoryCutoff:
+                inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (numberOfGridpoints,1))), axis=1)
+                print('Concatenated inputDensity.  Now has shape: ', np.shape(inputDensities))
+            else:
+                print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
+#                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
+                inputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = np.copy(targets[:,3])
         
      
         
@@ -859,7 +867,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         if SCFcount==1: # not okay anymore because output density gets reset when tolerances get reset.
             outputDensities[:,0] = np.copy(newDensity)
         else:
-            outputDensities = np.concatenate( ( outputDensities, np.reshape(np.copy(newDensity), (numberOfGridpoints,1)) ), axis=1)
+#             outputDensities = np.concatenate( ( outputDensities, np.reshape(np.copy(newDensity), (numberOfGridpoints,1)) ), axis=1)
+            
+            if (SCFcount-1)<mixingHistoryCutoff:
+                outputDensities = np.concatenate( (outputDensities, np.reshape(np.copy(newDensity), (numberOfGridpoints,1))), axis=1)
+                print('Concatenated inputDensity.  Now has shape: ', np.shape(outputDensities))
+            else:
+                print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
+#                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
+                outputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = newDensity
             
         integratedDensity = np.sum( newDensity*weights )
         densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
