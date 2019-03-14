@@ -146,7 +146,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+'_plots'
-    restartFilesDir =       outputFile[:-4]+'_'+str(tree.numberOfGridpoints)+'_restart'
+    restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(tree.numberOfGridpoints)
     wavefunctionFile =      restartFilesDir+'/wavefunctions'
     densityFile =           restartFilesDir+'/density'
     inputDensityFile =      restartFilesDir+'/inputdensity'
@@ -154,10 +154,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     vHartreeFile =          restartFilesDir+'/vHartree'
     auxiliaryFile =         restartFilesDir+'/auxiliary'
     
-    try:
-        os.mkdir(densityPlotsDir)
-    except OSError:
-        print('Unable to make directory ', densityPlotsDir)
+    plotSliceOfDensity=False
+    if plotSliceOfDensity==True:
+        try:
+            os.mkdir(densityPlotsDir)
+        except OSError:
+            print('Unable to make directory ', densityPlotsDir)
         
     try:
         os.mkdir(restartFilesDir)
@@ -223,7 +225,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     weights = targets[:,4]
     
         
-    plotSliceOfDensity=True
+    
         
     if plotSliceOfDensity==True:
         savefile = densityPlotsDir+'/iteration0'
@@ -1115,10 +1117,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
             
-#         if SCFcount >= 1:
-#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-#             energyResidual = -1
-#             densityResidual = -1
+        if SCFcount >= 1:
+            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+            energyResidual = -1
+            densityResidual = -1
         
 
 

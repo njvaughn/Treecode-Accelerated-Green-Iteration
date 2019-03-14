@@ -51,9 +51,9 @@ for BASE in 1
 do
 for MAXDEPTH in 20   
 do								  					 
-for TREECODEORDER in 8  
+for TREECODEORDER in 10 7 9
 do 
-	for THETA in 0.8
+	for THETA in 0.8 0.7 
 	do    
 		for MAXPARNODE in 8000
 		do 
