@@ -113,8 +113,8 @@ def normalizeOrbitals(V,weights):
 #     print("Located at:           ", xinf, yinf, zinf)
 #     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-xi=yi=zi=-6.1
-xf=yf=zf=6.1
+xi=yi=zi=-1.1
+xf=yf=zf=1.1
 numpts=3000
 
 def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, 
@@ -154,7 +154,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     vHartreeFile =          restartFilesDir+'/vHartree'
     auxiliaryFile =         restartFilesDir+'/auxiliary'
     
-    plotSliceOfDensity=False
+    plotSliceOfDensity=True
     if plotSliceOfDensity==True:
         try:
             os.mkdir(densityPlotsDir)
@@ -228,11 +228,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
         
     if plotSliceOfDensity==True:
-        savefile = densityPlotsDir+'/iteration0'
+        densitySliceSavefile = densityPlotsDir+'/densities'
         print()
-        r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=True, save=savefile)
+        r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
+        
+        densities = np.concatenate( (np.reshape(r, (numpts,1)), np.reshape(rho, (numpts,1))), axis=1)
+        np.save(densitySliceSavefile,densities)
 
-    
     
     
 
@@ -1078,32 +1080,39 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         ## Write the restart files
         
         # save arrays 
-        
-        np.save(wavefunctionFile, orbitals)
-        
-        sources = tree.extractLeavesDensity()
-        np.save(densityFile, sources[:,3])
-        np.save(outputDensityFile, outputDensities)
-        np.save(inputDensityFile, inputDensities)
-        
-        np.save(vHartreeFile, V_hartreeNew)
-        
-        
-        
-        # make and save dictionary
-        auxiliaryRestartData = {}
-        auxiliaryRestartData['SCFcount'] = SCFcount
-        auxiliaryRestartData['totalIterationCount'] = tree.totalIterationCount
-        auxiliaryRestartData['eigenvalues'] = tree.orbitalEnergies
-        auxiliaryRestartData['Eold'] = Eold
-
-        np.save(auxiliaryFile, auxiliaryRestartData)
+        try:
+            np.save(wavefunctionFile, orbitals)
+            
+            sources = tree.extractLeavesDensity()
+            np.save(densityFile, sources[:,3])
+            np.save(outputDensityFile, outputDensities)
+            np.save(inputDensityFile, inputDensities)
+            
+            np.save(vHartreeFile, V_hartreeNew)
+            
+            
+            
+            # make and save dictionary
+            auxiliaryRestartData = {}
+            auxiliaryRestartData['SCFcount'] = SCFcount
+            auxiliaryRestartData['totalIterationCount'] = tree.totalIterationCount
+            auxiliaryRestartData['eigenvalues'] = tree.orbitalEnergies
+            auxiliaryRestartData['Eold'] = Eold
+    
+            np.save(auxiliaryFile, auxiliaryRestartData)
+        except FileNotFoundError:
+            pass
                 
         
         if plotSliceOfDensity==True:
-            savefile = densityPlotsDir+'/iteration'+str(SCFcount)
-            print()
-            r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=True, save=savefile)
+#             densitySliceSavefile = densityPlotsDir+'/iteration'+str(SCFcount)
+            r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
+        
+#
+            densities = np.load(densitySliceSavefile+'.npy')
+            densities = np.concatenate( (densities, np.reshape(rho, (numpts,1))), axis=1)
+            np.save(densitySliceSavefile,densities)
+    
                 
         """ END WRITING INDIVIDUAL ITERATION TO FILE """
      
@@ -1117,10 +1126,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
             
-        if SCFcount >= 1:
-            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-            energyResidual = -1
-            densityResidual = -1
+#         if SCFcount >= 1:
+#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+#             energyResidual = -1
+#             densityResidual = -1
         
 
 
