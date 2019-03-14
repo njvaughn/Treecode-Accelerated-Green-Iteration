@@ -113,8 +113,8 @@ def normalizeOrbitals(V,weights):
 #     print("Located at:           ", xinf, yinf, zinf)
 #     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-xi=yi=zi=-6.1
-xf=yf=zf=6.1
+xi=yi=zi=-1.1
+xf=yf=zf=1.1
 numpts=3000
 
 def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, 
@@ -146,7 +146,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+'_plots'
-    restartFilesDir =       outputFile[:-4]+'_'+str(tree.numberOfGridpoints)+'_restart'
+    restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(tree.numberOfGridpoints)
     wavefunctionFile =      restartFilesDir+'/wavefunctions'
     densityFile =           restartFilesDir+'/density'
     inputDensityFile =      restartFilesDir+'/inputdensity'
@@ -154,10 +154,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     vHartreeFile =          restartFilesDir+'/vHartree'
     auxiliaryFile =         restartFilesDir+'/auxiliary'
     
-    try:
-        os.mkdir(densityPlotsDir)
-    except OSError:
-        print('Unable to make directory ', densityPlotsDir)
+    plotSliceOfDensity=True
+    if plotSliceOfDensity==True:
+        try:
+            os.mkdir(densityPlotsDir)
+        except OSError:
+            print('Unable to make directory ', densityPlotsDir)
         
     try:
         os.mkdir(restartFilesDir)
@@ -223,14 +225,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     weights = targets[:,4]
     
         
-    plotSliceOfDensity=True
+    
         
     if plotSliceOfDensity==True:
-        savefile = densityPlotsDir+'/iteration0'
+        densitySliceSavefile = densityPlotsDir+'/densities'
         print()
-        r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=True, save=savefile)
+        r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
+        
+        densities = np.concatenate( (np.reshape(r, (numpts,1)), np.reshape(rho, (numpts,1))), axis=1)
+        np.save(densitySliceSavefile,densities)
 
-    
     
     
 
@@ -388,6 +392,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         tree.computeBandEnergy()
         
         tree.sortOrbitalsAndEnergies()
+        for m in range(nOrbitals):
+            # fill in orbitals
+            targets = tree.extractPhi(m)
+            weights = np.copy(targets[:,5])
+            oldOrbitals[:,m] = np.copy(targets[:,3])
+            orbitals[:,m] = np.copy(targets[:,3])
         print('Orbital energies after initial sort: \n', tree.orbitalEnergies)
         print('Kinetic:   ', tree.orbitalKinetic)
         print('Potential: ', tree.orbitalPotential)
@@ -830,6 +840,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         # sort by energy and compute new occupations
         tree.sortOrbitalsAndEnergies()
         tree.computeOccupations()
+        for m in range(nOrbitals):
+            # fill in orbitals
+            targets = tree.extractPhi(m)
+            weights = np.copy(targets[:,5])
+            oldOrbitals[:,m] = np.copy(targets[:,3])
+            orbitals[:,m] = np.copy(targets[:,3])
 #         occupations = computeOccupations(tree.orbitalEnergies, tree.nElectrons, Temperature)
         
         
@@ -1064,32 +1080,39 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         ## Write the restart files
         
         # save arrays 
-        
-        np.save(wavefunctionFile, orbitals)
-        
-        sources = tree.extractLeavesDensity()
-        np.save(densityFile, sources[:,3])
-        np.save(outputDensityFile, outputDensities)
-        np.save(inputDensityFile, inputDensities)
-        
-        np.save(vHartreeFile, V_hartreeNew)
-        
-        
-        
-        # make and save dictionary
-        auxiliaryRestartData = {}
-        auxiliaryRestartData['SCFcount'] = SCFcount
-        auxiliaryRestartData['totalIterationCount'] = tree.totalIterationCount
-        auxiliaryRestartData['eigenvalues'] = tree.orbitalEnergies
-        auxiliaryRestartData['Eold'] = Eold
-
-        np.save(auxiliaryFile, auxiliaryRestartData)
+        try:
+            np.save(wavefunctionFile, orbitals)
+            
+            sources = tree.extractLeavesDensity()
+            np.save(densityFile, sources[:,3])
+            np.save(outputDensityFile, outputDensities)
+            np.save(inputDensityFile, inputDensities)
+            
+            np.save(vHartreeFile, V_hartreeNew)
+            
+            
+            
+            # make and save dictionary
+            auxiliaryRestartData = {}
+            auxiliaryRestartData['SCFcount'] = SCFcount
+            auxiliaryRestartData['totalIterationCount'] = tree.totalIterationCount
+            auxiliaryRestartData['eigenvalues'] = tree.orbitalEnergies
+            auxiliaryRestartData['Eold'] = Eold
+    
+            np.save(auxiliaryFile, auxiliaryRestartData)
+        except FileNotFoundError:
+            pass
                 
         
         if plotSliceOfDensity==True:
-            savefile = densityPlotsDir+'/iteration'+str(SCFcount)
-            print()
-            r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=True, save=savefile)
+#             densitySliceSavefile = densityPlotsDir+'/iteration'+str(SCFcount)
+            r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
+        
+#
+            densities = np.load(densitySliceSavefile+'.npy')
+            densities = np.concatenate( (densities, np.reshape(rho, (numpts,1))), axis=1)
+            np.save(densitySliceSavefile,densities)
+    
                 
         """ END WRITING INDIVIDUAL ITERATION TO FILE """
      
