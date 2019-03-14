@@ -388,6 +388,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         tree.computeBandEnergy()
         
         tree.sortOrbitalsAndEnergies()
+        for m in range(nOrbitals):
+            # fill in orbitals
+            targets = tree.extractPhi(m)
+            weights = np.copy(targets[:,5])
+            oldOrbitals[:,m] = np.copy(targets[:,3])
+            orbitals[:,m] = np.copy(targets[:,3])
         print('Orbital energies after initial sort: \n', tree.orbitalEnergies)
         print('Kinetic:   ', tree.orbitalKinetic)
         print('Potential: ', tree.orbitalPotential)
@@ -830,6 +836,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         # sort by energy and compute new occupations
         tree.sortOrbitalsAndEnergies()
         tree.computeOccupations()
+        for m in range(nOrbitals):
+            # fill in orbitals
+            targets = tree.extractPhi(m)
+            weights = np.copy(targets[:,5])
+            oldOrbitals[:,m] = np.copy(targets[:,3])
+            orbitals[:,m] = np.copy(targets[:,3])
 #         occupations = computeOccupations(tree.orbitalEnergies, tree.nElectrons, Temperature)
         
         
