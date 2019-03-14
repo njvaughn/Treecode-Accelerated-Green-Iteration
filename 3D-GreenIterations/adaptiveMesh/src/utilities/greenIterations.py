@@ -119,8 +119,8 @@ numpts=3000
 
 def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize,
-                                 mixingScheme, mixingParameter,
-                                subtractSingularity, gaussianAlpha, inputFile='',outputFile='',restartFile=None,
+                                 mixingScheme, mixingParameter, mixingHistoryCutoff,
+                                subtractSingularity, gaussianAlpha, inputFile='',outputFile='',restartFile=False,
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None): 
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
@@ -171,7 +171,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     else:
         nOrbitals = tree.nOrbitals
             
-    if restartFile!=None:
+    if restartFile!=False:
         orbitals = np.load(wavefunctionFile+'.npy')
         oldOrbitals = np.copy(orbitals)
         density = np.load(densityFile+'.npy')
@@ -262,7 +262,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     alphasq=alpha*alpha
     
     
-    if restartFile==None: # need to do initial Vhartree solve
+    if restartFile==False: # need to do initial Vhartree solve
         print('Using Gaussian singularity subtraction, alpha = ', alpha)
         
         print('GPUpresent set to ', GPUpresent)
@@ -481,7 +481,19 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
         if SCFcount>1:
             targets = tree.extractLeavesDensity()
-            inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (numberOfGridpoints,1))), axis=1)
+            
+#             if SCFcount < mixingHistoryCutoff:
+#             inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (numberOfGridpoints,1))), axis=1)
+#             else:
+#                 inputDensities
+
+            if (SCFcount-1)<mixingHistoryCutoff:
+                inputDensities = np.concatenate( (inputDensities, np.reshape(targets[:,3], (numberOfGridpoints,1))), axis=1)
+                print('Concatenated inputDensity.  Now has shape: ', np.shape(inputDensities))
+            else:
+                print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
+#                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
+                inputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = np.copy(targets[:,3])
         
      
         
@@ -543,9 +555,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             inputWavefunctions[:,0] = np.copy(oldOrbitals[:,m]) # fill first column of inputWavefunctions
                             firstInputWavefunction=False
                         else:
-                            inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(oldOrbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
-                    
-    
+                            if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
+                                inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(oldOrbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
+                                print('Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
+                            else:
+                                print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
+#                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
+                                inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(oldOrbitals[:,m])
     
                     sources = tree.extractGreenIterationIntegrand(m)
                     targets = np.copy(sources)
@@ -733,8 +749,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             outputWavefunctions[:,0] = np.copy(orbitals[:,m]) # fill first column of outputWavefunctions
                             firstOutputWavefunction=False
                         else:
-                            outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(orbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
-                        
+#                             outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(orbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
+                            
+                            if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
+                                outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(orbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
+                                print('Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
+                            else:
+                                print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
+#                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
+                                outputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(orbitals[:,m])
                         
                     if vtkExport != False:
                         if m>-1:
@@ -784,6 +807,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     # If wavefunction residual is low then start using Anderson Mixing
                     if ((GIandersonMixing==False) and (orbitalResidual < 3e-3) ): 
                         GIandersonMixing = True
+                        mixingStart = greenIterationsCount
                         print('Turning on Anderson Mixing for wavefunction %i' %m)
                     ### EXIT CONDITIONS ###
  
@@ -843,7 +867,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         if SCFcount==1: # not okay anymore because output density gets reset when tolerances get reset.
             outputDensities[:,0] = np.copy(newDensity)
         else:
-            outputDensities = np.concatenate( ( outputDensities, np.reshape(np.copy(newDensity), (numberOfGridpoints,1)) ), axis=1)
+#             outputDensities = np.concatenate( ( outputDensities, np.reshape(np.copy(newDensity), (numberOfGridpoints,1)) ), axis=1)
+            
+            if (SCFcount-1)<mixingHistoryCutoff:
+                outputDensities = np.concatenate( (outputDensities, np.reshape(np.copy(newDensity), (numberOfGridpoints,1))), axis=1)
+                print('Concatenated inputDensity.  Now has shape: ', np.shape(outputDensities))
+            else:
+                print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
+#                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
+                outputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = newDensity
             
         integratedDensity = np.sum( newDensity*weights )
         densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )

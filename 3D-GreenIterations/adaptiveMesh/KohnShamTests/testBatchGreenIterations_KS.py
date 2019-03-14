@@ -34,36 +34,37 @@ from greenIterations import greenIterations_KohnSham_SCF#,greenIterations_KohnSh
 # from hydrogenPotential import trueWavefunction
 
 # ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
-
-domainSize          = int(sys.argv[1])
-minDepth            = int(sys.argv[2])
-maxDepth            = int(sys.argv[3])
-additionalDepthAtAtoms        = int(sys.argv[4])
-order               = int(sys.argv[5])
-subtractSingularity = int(sys.argv[6])
-smoothingEps        = float(sys.argv[7])
-gaussianAlpha       = float(sys.argv[8])
-divideCriterion     = str(sys.argv[9])
-divideParameter1    = float(sys.argv[10])
-divideParameter2    = float(sys.argv[11])
-energyTolerance     = float(sys.argv[12])
-scfTolerance        = float(sys.argv[13])
-outputFile          = str(sys.argv[14])
-inputFile           = str(sys.argv[15])
-vtkDir              = str(sys.argv[16])
-noGradients         = str(sys.argv[17])
-mixingScheme        = str(sys.argv[18])
-mixingParameter     = float(sys.argv[19])
-GPUpresent          = str(sys.argv[20])
-treecode            = str(sys.argv[21])
-treecodeOrder       = int(sys.argv[22])
-theta               = float(sys.argv[23])
-maxParNode          = int(sys.argv[24])
-batchSize           = int(sys.argv[25])
-divideParameter3    = float(sys.argv[26])
-divideParameter4    = float(sys.argv[27])
-base                = float(sys.argv[28])
-restart             = str(sys.argv[29])
+n=1
+domainSize          = int(sys.argv[n]); n+=1
+minDepth            = int(sys.argv[n]); n+=1
+maxDepth            = int(sys.argv[n]); n+=1
+additionalDepthAtAtoms        = int(sys.argv[n]); n+=1
+order               = int(sys.argv[n]); n+=1
+subtractSingularity = int(sys.argv[n]); n+=1
+smoothingEps        = float(sys.argv[n]); n+=1
+gaussianAlpha       = float(sys.argv[n]); n+=1
+divideCriterion     = str(sys.argv[n]); n+=1
+divideParameter1    = float(sys.argv[n]); n+=1
+divideParameter2    = float(sys.argv[n]); n+=1
+energyTolerance     = float(sys.argv[n]); n+=1
+scfTolerance        = float(sys.argv[n]); n+=1
+outputFile          = str(sys.argv[n]); n+=1
+inputFile           = str(sys.argv[n]); n+=1
+vtkDir              = str(sys.argv[n]); n+=1
+noGradients         = str(sys.argv[n]) ; n+=1
+mixingScheme        = str(sys.argv[n]); n+=1
+mixingParameter     = float(sys.argv[n]); n+=1
+mixingHistoryCutoff = int(sys.argv[n]) ; n+=1
+GPUpresent          = str(sys.argv[n]); n+=1
+treecode            = str(sys.argv[n]); n+=1
+treecodeOrder       = int(sys.argv[n]); n+=1
+theta               = float(sys.argv[n]); n+=1
+maxParNode          = int(sys.argv[n]); n+=1
+batchSize           = int(sys.argv[n]); n+=1
+divideParameter3    = float(sys.argv[n]); n+=1
+divideParameter4    = float(sys.argv[n]); n+=1
+base                = float(sys.argv[n]); n+=1
+restart             = str(sys.argv[n]); n+=1
 
 
 
@@ -210,9 +211,11 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, mixingScheme, mixingParameter, subtractSingularity, 
-                                gaussianAlpha,inputFile=inputFile,outputFile=outputFile, restartFile=restart,
-                                onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+                                 mixingScheme, mixingParameter, mixingHistoryCutoff,
+                                 subtractSingularity, gaussianAlpha,
+                                 inputFile=inputFile,outputFile=outputFile, restartFile=restart,
+                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
 
 #     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
 #                                 smoothingEps, gaussianAlpha,auxiliaryFile=auxiliaryFile, 
