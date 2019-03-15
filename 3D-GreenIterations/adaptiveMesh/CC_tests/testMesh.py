@@ -415,7 +415,7 @@ if __name__ == "__main__":
     
     meshDistributions(domain=20,order=3,
                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=3, divideCriterion='Nathan_density', 
-                        divideParameter1=0.5, divideParameter2=100, divideParameter3=100, divideParameter4=100,
+                        divideParameter1=2, divideParameter2=100, divideParameter3=100, divideParameter4=100,
                         smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/OxygenAtomAuxiliary.csv')
     
     

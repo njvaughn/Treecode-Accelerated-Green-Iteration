@@ -17,6 +17,8 @@ import time
 import densityMixingSchemes as densityMixing
 from fermiDiracDistribution import computeOccupations
 import sys
+# from guppy import hpy 
+import resource
 sys.path.append('../ctypesTests')
 sys.path.append('../ctypesTests/lib')
 
@@ -127,7 +129,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     '''
     
 #     return
-    
+    print('MEMORY USAGE: ')
+    print( resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+    print()
+    print()
+    print()
 
     if hasattr(tree, 'referenceEigenvalues'):
         referenceEigenvalues = tree.referenceEigenvalues
@@ -548,6 +554,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
    
                 previousResidual = 1
                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) ):
+                    print()
+                    print()                    
+                    print('MEMORY USAGE: ')
+                    print( resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                    print()
+                    print()
                     tree.totalIterationCount += 1
                     orbitalResidual = 0.0
       
@@ -1126,10 +1138,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
             
-#         if SCFcount >= 1:
-#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-#             energyResidual = -1
-#             densityResidual = -1
+        if SCFcount >= 1:
+            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+            energyResidual = -1
+            densityResidual = -1
         
 
 

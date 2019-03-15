@@ -887,6 +887,54 @@ class Cell(object):
         return maxVariation, sqrtDensityIntegral, relDensityVariation, VextVariation, variationCause, densityIntegralCause, densityIntegralCause, VextVariationCause
 #         return maxVariation, maxAbsIntegral, densityIntegral, VextVariation, variationCause, absIntegralCause, densityIntegralCause, VextVariationCause
     
+    
+    
+    def computeLogDensityVariation(self):   
+        
+        xmm = [self.xmin, self.xmax]
+        ymm = [self.ymin, self.ymax]
+        zmm = [self.zmin, self.zmax]        
+        
+ 
+        logDensityVariation = 0.0
+        
+        
+        
+        ### Compute Density terms based on all atoms
+
+        for i in range(2):
+            for j in range(2):
+                for k in range(2):
+                    density=0.0
+                    for atom in self.tree.atoms:
+                        dx = xmm[i]-atom.x
+                        dy = ymm[j]-atom.y
+                        dz = zmm[k]-atom.z
+                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
+        
+            
+                        density +=  atom.interpolators['density'](r)
+                        
+                
+                    if ( (i==0) and (j==0) and (k==0)): 
+                        maxDensity = density
+                        minDensity = density
+                        
+                    else:
+                        if density>maxDensity: maxDensity = density
+                        if density<minDensity: minDensity = density
+                        
+
+            
+        logDensityVariation = np.log(maxDensity)-np.log(minDensity)
+            
+    
+
+        return logDensityVariation
+    
+    
+    
+    
     def initializeCellWavefunctions(self):           
         
         aufbauList = ['10',                                     # n+ell = 1
@@ -1031,6 +1079,16 @@ class Cell(object):
                 self.divideFlag = True
                 
             return
+    
+    def  checkLogDensityVariation(self, divideParameter1, divideParameter2, divideParameter3, divideParameter4):
+        self.divideFlag = False
+        LogDensityVariation = self.computeLogDensityVariation()
+        
+        if LogDensityVariation > divideParameter1:
+            self.divideFlag=True
+            self.childrenRefineCause=1
+            
+        return
                         
     def checkWavefunctionVariation(self, divideParameter1, divideParameter2, divideParameter3, divideParameter4):
 #         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
