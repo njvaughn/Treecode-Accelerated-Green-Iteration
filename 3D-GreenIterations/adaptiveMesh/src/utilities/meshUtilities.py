@@ -78,10 +78,18 @@ def meshDensity(r,divideParameter,divideCriterion):
         k1 = 8
         k2 = 0.824
         
+        
+        
         if r < rC:
-            return rho0*k1*divideParameter *np.exp(-k1*r)
+            return (k1*divideParameter* ( np.log(rho0)-np.log(rhoC) )/ np.log(rho0)**2)**3
         else:
-            return  (rho0*k1*divideParameter *np.exp(-k1*rC)  /  (rhoC*k2*divideParameter *np.exp( -k2*(rC-rC) ))  )  * rhoC*k2*divideParameter *np.exp( -k2*(r-rC) )
+            return (k2*divideParameter / np.log(rho0) )**3
+   
+   
+#         if r < rC:
+#             return rho0*k1*divideParameter *np.exp(-k1*r)
+#         else:
+#             return  (rho0*k1*divideParameter *np.exp(-k1*rC)  /  (rhoC*k2*divideParameter *np.exp( -k2*(rC-rC) ))  )  * rhoC*k2*divideParameter *np.exp( -k2*(r-rC) )
         
     else:
         print('Invalid Mesh type...')

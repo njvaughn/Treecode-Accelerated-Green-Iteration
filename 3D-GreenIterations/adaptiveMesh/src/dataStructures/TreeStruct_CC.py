@@ -731,6 +731,8 @@ class Tree(object):
                         Cell.checkWavefunctionVariation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                     elif divideCriterion=='Krasny_Vext':
                         Cell.checkWavefunctionVariation_Vext(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                    elif divideCriterion=='Krasny_log_rho':
+                        Cell.checkLogDensityVariation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                     elif divideCriterion=='Nathan':
                         Cell.checkDensityIntegral(divideParameter1, divideParameter2)
                     elif divideCriterion=='Nathan2':
