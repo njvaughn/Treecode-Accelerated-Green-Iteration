@@ -82,9 +82,15 @@ import numpy as np
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_psiVextVariation/'
 # file='ds_cellOrder5maxDepth12_2_2_0.1_50000_GREEN_.csv'
+# 
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_integralSqrtDensity/'
+# file='ds_cellOrder5maxDepth15_2_3_0.3_0.05_GREEN_.csv'
 
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Oxygen_integralSqrtDensity/'
-file='ds_cellOrder5maxDepth15_2_3_0.3_0.05_GREEN_.csv'
+
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'  
+file='tc_gaugeShift0p5_tcOrder8_theta0.8_LW5_500_mixingHistory10_GREEN_1485000.csv'
+# file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_GREEN_2787000.csv'
+
 
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':

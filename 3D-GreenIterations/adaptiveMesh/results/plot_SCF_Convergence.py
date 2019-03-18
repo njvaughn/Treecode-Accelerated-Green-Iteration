@@ -70,6 +70,16 @@ file='LW5_2000_andersonMixing_p5_1em76_SCF_.csv'
 ##file='LW3_2500_SCF_.csv'
 
 
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'  
+# file='tc_gaugeShift0p5_tcOrder8_theta0.8_LW5_500_mixingHistory10_SCF_1485000.csv'
+# file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_SCF_2787000.csv'
+
+
+# parent-child integral
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral/'
+file='Be_order5_0.000001_SCF_260000.csv'
+
+
 df = pd.read_csv(resultsDir+file, header=0)
 # df = df.drop(df.index[14]) 
 
@@ -95,6 +105,7 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeExchangeEnergy = -2.2902495359115198e+00
         dftfeCorrelationEnergy = -2.2341044592808737e-01
         dftfeBandEnergy = -8.1239182420318166e+00
+        dftfeHartreeEnergy = 7.115165052
 
     if system == "Oxygen":
 #         dftfeTotalEnergy = -7.4469012607372008e+01
@@ -111,7 +122,7 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeBandEnergy = -4.0613397710076626e+01
         dftfeKineticEnergy =  7.4112730191157425e+01
         dftfeElectrostaticEnergy = -1.4081814437367436e+02
-#         dftfeHartreeEnergy = 36.32506036
+        dftfeHartreeEnergy = 36.32506036
         
     if system == "carbonMonoxide":
 #         # these taken from mesh size 0.125 run
@@ -126,15 +137,25 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeCorrelationEnergy = -9.4214407530225852e-01 # Correlation Energy 
         dftfeElectrostaticEnergy = -2.1138290579726365e+02 # Electrostatic Energy
         dftfeTotalEnergy = -1.1247144323799400e+02 # Total Energy 
+        
+    if system == "Benzene":
+        
+        dftfeBandEnergy = -1.3426386757791246e+02 # Band energy 
+        dftfeKineticEnergy = 0 # Kinetic energy 
+        dftfeExchangeEnergy = -2.9942603449328043e+01 # Exchange energy 
+        dftfeCorrelationEnergy = -2.6706730815123834e+00 # Correlation Energy 
+        dftfeElectrostaticEnergy = -2.1138290579726365e+02 # Electrostatic Energy
+        dftfeHartreeEnergy = 312.915135214420
+        dftfeTotalEnergy = -230.188349460044 # Total Energy 
 
 
     df['bandEnergyError']=abs(df['bandEnergy']-dftfeBandEnergy)
 #     df['kineticEnergyError']=abs(df['kineticEnergy']-dftfeKineticEnergy)
-    df['electrostaticEnergyError']=abs(df['electrostaticEnergy']-dftfeElectrostaticEnergy)
-#     df['hartreeEnergyError']=abs(df['hartreeEnergy']-dftfeHartreeEnergy)
+#     df['electrostaticEnergyError']=abs(df['electrostaticEnergy']-dftfeElectrostaticEnergy)
+    df['hartreeEnergyError']=abs(df['hartreeEnergy']-dftfeHartreeEnergy)
     df['exchangeEnergyError']=abs(df['exchangeEnergy']-dftfeExchangeEnergy)
     df['correlationEnergyError']=abs(df['correlationEnergy']-dftfeCorrelationEnergy)
-    df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/1
+    df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/12
 
     print("band energy errors:")
     print(df['bandEnergyError'])
@@ -152,8 +173,8 @@ def plotSCFconvergence(df, system = 'H2'):
     f2, ax2 = plt.subplots(1, 1, figsize=(10,6))
     df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='o')
 #     df.plot(x='Iteration', y='kineticEnergyError', logy=True,ax=ax2, style='o-')
-    df.plot(x='Iteration', y='electrostaticEnergyError', logy=True,ax=ax2, style='o')
-#     df.plot(x='Iteration', y='hartreeEnergyError', logy=True,ax=ax2, style='o')
+#     df.plot(x='Iteration', y='electrostaticEnergyError', logy=True,ax=ax2, style='o')
+    df.plot(x='Iteration', y='hartreeEnergyError', logy=True,ax=ax2, style='o')
     df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='o')
     df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='o')
     df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='o')
@@ -169,7 +190,7 @@ def plotSCFconvergence(df, system = 'H2'):
     ax2.set_title(system + ': Energy Errors After Each SCF')
     ax2.set_ylabel('Energy (H)')
     ax2.set_xlabel('SCF Number')
-    plt.savefig(plotsDir+system+'Errors_combined'+'.pdf', bbox_inches='tight',format='pdf')
+#     plt.savefig(plotsDir+system+'Errors_combined'+'.pdf', bbox_inches='tight',format='pdf')
     
     ax1.set_title('Oxygen Atom: Density Residual Norm')
     ax1.set_ylabel('Density Residual Norm')
@@ -183,8 +204,9 @@ def plotSCFconvergence(df, system = 'H2'):
 if __name__=="__main__":
     
 #     plotSCFconvergence(df, system="carbonMonoxide")    
-#     plotSCFconvergence(df, system="Beryllium")    
-    plotSCFconvergence(df, system="Oxygen")    
+    plotSCFconvergence(df, system="Beryllium")    
+#     plotSCFconvergence(df, system="Oxygen")    
+#     plotSCFconvergence(df, system="Benzene")    
 
 
 

@@ -68,7 +68,7 @@ file='runComparison.csv'
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_baseScaling_VextVariation/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/'
-# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_LW5/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_LW5/'
 
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_extrapolation_VextRegularization/'
@@ -93,9 +93,19 @@ file='runComparison.csv'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Be_combined/'
 
 ## Treecode accuracy tests
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
 # resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
+
+
+
+## Parent-Child integral tests
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_onlyThird/'
+
+## Benzene
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'
+
 
 # # Oxygen
 # TotalEnergy = -7.4469337501098821e+01  # Oxygen Atom
@@ -108,23 +118,23 @@ resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/
 
 
 # # Beryllium
-# TotalEnergy = -1.4446201118081863e+01
-# ExchangeEnergy = -2.2903921833555341e+00
-# CorrelationEnergy = -2.2343205529440757e-01
-# BandEnergy = -8.1232305760491457e+00
-# KineticEnergy =  1.4309060170370618e+01
-# ElectrostaticEnergy = -8.1232305760491457e+00
-# HartreeEnergy = 7.115165052  
-
-
-# Carbon Monoxide
 TotalEnergy = -1.4446201118081863e+01
 ExchangeEnergy = -2.2903921833555341e+00
 CorrelationEnergy = -2.2343205529440757e-01
 BandEnergy = -8.1232305760491457e+00
 KineticEnergy =  1.4309060170370618e+01
 ElectrostaticEnergy = -8.1232305760491457e+00
-HartreeEnergy = 7.115165052 
+HartreeEnergy = 7.115165052  
+
+
+# # Carbon Monoxide
+# TotalEnergy = -1.4446201118081863e+01
+# ExchangeEnergy = -2.2903921833555341e+00
+# CorrelationEnergy = -2.2343205529440757e-01
+# BandEnergy = -8.1232305760491457e+00
+# KineticEnergy =  1.4309060170370618e+01
+# ElectrostaticEnergy = -8.1232305760491457e+00
+# HartreeEnergy = 7.115165052 
 
 
 
@@ -583,19 +593,22 @@ if __name__=="__main__":
 #     df = df.loc[df['treecodeOrder'].isin([1,8])]
 #     df = df.loc[df['theta'].isin([0.7,1.0])]
 #     AversusBcolorbyC(df,'TotalEnergy', 'theta', 'treecodeOrder')
-    AversusBcolorbyC(df,'BandEnergyError', 'theta', 'treecodeOrder') 
+#     AversusBcolorbyC(df,'BandEnergyError', 'theta', 'treecodeOrder') 
 #     AversusBcolorbyC(df,'HartreeEnergyError', 'theta', 'treecodeOrder')
 #     AversusBcolorbyC(df,'ExchangeEnergyError', 'theta', 'treecodeOrder')
 #     AversusBcolorbyC(df,'CorrelationEnergyError', 'theta', 'treecodeOrder')
     
 #     df = df.loc[df['additionalDepthAtAtoms']==3]
-#     df = df.loc[df['order']==5]
+    df = df.loc[df['maxDepth']>=13]
+    df = df.loc[df['order']==5]
 #     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'maxDepth')
 #     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'maxDepth')
 #     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'maxDepth')
-#     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
-#     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
-#     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')
+    AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+    AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
+    AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')
+    AversusBcolorbyC(df,'ExchangeEnergyError', 'numberOfPoints', 'maxDepth')
+    AversusBcolorbyC(df,'CorrelationEnergyError', 'numberOfPoints', 'maxDepth')
 
 
     

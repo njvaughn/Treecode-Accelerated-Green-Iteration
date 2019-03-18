@@ -209,7 +209,7 @@ def timingTestsForOrbitalOrthogonalizations(domain,order,minDepth, maxDepth, div
 
 def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
                           divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
-                          smoothingEpsilon=0.0, base=1.0,
+                          smoothingEpsilon=0.0, base=1.0, causeFigure=False,
                           inputFile=''):    
     
     
@@ -267,22 +267,23 @@ def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, d
     elif divideCriterion=='Krasny_density':
         plt.title('Mesh Type: HOMO LW5 - %1.2f' %(divideParameter1))
         
-#     fig, axes = plt.subplots(2, 1)
-#     axes[0].bar(list(tree.criteria1.keys()),list(tree.criteria1.values()) )
-#     axes[1].bar(list(tree.criteria2.keys()),list(tree.criteria2.values()) )
-# #     axes[1,0].bar(list(tree.criteria3.keys()),list(tree.criteria3.values()) )
-# #     axes[1,1].bar(list(tree.criteria4.keys()),list(tree.criteria4.values()) )
-#      
-#     axes[0].set_title('Vext*sqrt(rho) Integral')
-#     axes[1].set_title('sqrt(rho) integral')
-# #     axes[1,0].set_title('rho integral')
-# #     axes[1,1].set_title('Vext Variation')
-#      
-#     axes[0].set_ylim([0, int(1.1*maxHeight)])
-#     axes[1].set_ylim([0, int(1.1*maxHeight)])
-# #     axes[1,0].set_ylim([0, int(1.1*maxHeight)])
-# #     axes[1,1].set_ylim([0, int(1.1*maxHeight)])
-#     plt.tight_layout()
+    if causeFigure==True:
+        fig, axes = plt.subplots(2, 2)
+        axes[0,0].bar(list(tree.criteria1.keys()),list(tree.criteria1.values()) )
+        axes[0,1].bar(list(tree.criteria2.keys()),list(tree.criteria2.values()) )
+        axes[1,0].bar(list(tree.criteria3.keys()),list(tree.criteria3.values()) )
+        axes[1,1].bar(list(tree.criteria4.keys()),list(tree.criteria4.values()) )
+            
+        axes[0,0].set_title('Criteria 1')
+        axes[0,1].set_title('Criteria 2')
+        axes[1,0].set_title('Criteria 3')
+        axes[1,1].set_title('Criteria 4')
+            
+        axes[0,0].set_ylim([0, int(1.1*maxHeight)])
+        axes[0,1].set_ylim([0, int(1.1*maxHeight)])
+        axes[1,0].set_ylim([0, int(1.1*maxHeight)])
+        axes[1,1].set_ylim([0, int(1.1*maxHeight)])
+        plt.tight_layout()
   
     plt.show()
 
@@ -413,10 +414,11 @@ if __name__ == "__main__":
 #                     divideParameter1=1500, divideParameter2=10.1/1, divideParameter3=100, divideParameter4=100,
 #                     smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
-    meshDistributions(domain=20,order=3,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=3, divideCriterion='Nathan_density', 
-                        divideParameter1=2, divideParameter2=100, divideParameter3=100, divideParameter4=100,
-                        smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/OxygenAtomAuxiliary.csv')
+    
+    meshDistributions(domain=20,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=1e-7, divideParameter2=1e-6, divideParameter3=1e-7, divideParameter4=0,
+                        smoothingEpsilon=0.0,base=1.0, causeFigure=True, inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
     
     
 #     timingTestsForOrbitalInitializations(domain=20,order=5,

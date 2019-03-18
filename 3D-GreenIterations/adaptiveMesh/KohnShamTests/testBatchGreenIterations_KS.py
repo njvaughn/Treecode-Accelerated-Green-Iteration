@@ -68,10 +68,10 @@ restart             = str(sys.argv[n]); n+=1
 
 
 
-divideParameter1 *= 1/base
-divideParameter2 *= 1/base
-divideParameter3 *= 1/base
-divideParameter4 *= 1/base
+divideParameter1 *= base
+divideParameter2 *= base
+divideParameter3 *= base
+divideParameter4 *= base
 
 # depthAtAtoms += int(np.log2(base))
 # print('Depth at atoms: ', depthAtAtoms)
