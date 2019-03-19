@@ -102,6 +102,7 @@ resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/
 ## Parent-Child integral tests
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_onlyThird/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_onlyThird_oxygen/'
 
 ## Benzene
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'
@@ -311,7 +312,7 @@ def logAversusBcolorbyC(df,A,B,C,save=False):
 
 def logAversusLogBcolorbyC(df,A,B,C,save=False):
     fig, ax = plt.subplots(figsize=(8,6))
-    fig.suptitle('Log %s versus Log %s colored by %s' %(A,B,C))
+    fig.suptitle('%s versus %s colored by %s' %(A,B,C))
     grouped = df.groupby(C)
     for name,group in grouped:
 ##        group['logA'] = np.log10(np.abs(group[A]))
@@ -327,7 +328,7 @@ def logAversusLogBcolorbyC(df,A,B,C,save=False):
     plt.legend(loc = 'best')
     plt.xlabel(B)
     plt.ylabel(A)
-#     plt.xlim([1e5,2e6])
+    plt.xlim([1e5,2e6])
     plt.ylim([1e-5,1e-2])
     plt.grid()
     
@@ -590,6 +591,10 @@ def extrapolate_Vext_regularization(df,X,Y,degree,plot=True):
  
   
 if __name__=="__main__":
+    df = df.loc[df['gradientFree']==True]  
+    df = df.loc[df['order']==5]  
+    
+    
 #     df = df.loc[df['treecodeOrder'].isin([1,8])]
 #     df = df.loc[df['theta'].isin([0.7,1.0])]
 #     AversusBcolorbyC(df,'TotalEnergy', 'theta', 'treecodeOrder')
@@ -599,16 +604,16 @@ if __name__=="__main__":
 #     AversusBcolorbyC(df,'CorrelationEnergyError', 'theta', 'treecodeOrder')
     
 #     df = df.loc[df['additionalDepthAtAtoms']==3]
-    df = df.loc[df['maxDepth']>=13]
-    df = df.loc[df['order']==5]
-#     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'maxDepth')
-#     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'maxDepth')
-#     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'maxDepth')
-    AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
-    AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
-    AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')
-    AversusBcolorbyC(df,'ExchangeEnergyError', 'numberOfPoints', 'maxDepth')
-    AversusBcolorbyC(df,'CorrelationEnergyError', 'numberOfPoints', 'maxDepth')
+#     df = df.loc[df['maxDepth']>=13]
+#     df = df.loc[df['order']==5]
+    logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'maxDepth')
+    logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'maxDepth')
+    logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'maxDepth')
+#     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
+#     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
+#     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')
+#     AversusBcolorbyC(df,'ExchangeEnergyError', 'numberOfPoints', 'maxDepth')
+#     AversusBcolorbyC(df,'CorrelationEnergyError', 'numberOfPoints', 'maxDepth')
 
 
     
@@ -622,8 +627,7 @@ if __name__=="__main__":
 # #     logAversusLogBcolorbyC(df_extrap,'absTotalEnergyError', 'VextSmoothingEpsilon', 'maxDepth')
     
     
-#     df = df.loc[df['gradientFree']==True]  
-#     df = df.loc[df['order']==3]  
+    
 #     logAversusLogBcolorbyC(df,'absElectrostaticEnergyError', 'numberOfPoints', 'divideParameter')
 #     AversusBcolorbyC(df,'ElectrostaticEnergyError', 'numberOfPoints', 'divideParameter')
     

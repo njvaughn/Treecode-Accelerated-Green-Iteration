@@ -145,7 +145,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     # Store Tree variables locally
     numberOfGridpoints = tree.numberOfGridpoints
     gaugeShift = tree.gaugeShift
-    Temperature = 100  # set to 200 Kelvin
+    Temperature = 200  # set to 200 Kelvin
     
     
 
@@ -907,12 +907,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
             if (SCFcount-1)<mixingHistoryCutoff:
                 outputDensities = np.concatenate( (outputDensities, np.reshape(np.copy(newDensity), (numberOfGridpoints,1))), axis=1)
-                print('Concatenated inputDensity.  Now has shape: ', np.shape(outputDensities))
+                print('Concatenated outputDensity.  Now has shape: ', np.shape(outputDensities))
             else:
                 print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
 #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                 outputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = newDensity
-            
+        
+        print('Sample of output densities:')
+        print(outputDensities[0,:])    
         integratedDensity = np.sum( newDensity*weights )
         densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
         print('Integrated density: ', integratedDensity)

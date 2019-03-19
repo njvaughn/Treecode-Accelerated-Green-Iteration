@@ -417,7 +417,7 @@ if __name__ == "__main__":
     
     meshDistributions(domain=20,order=5,
                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=1e-7, divideParameter2=1e-6, divideParameter3=1e-7, divideParameter4=0,
+                        divideParameter1=1e-6, divideParameter2=1e-6, divideParameter3=1e-6, divideParameter4=0,
                         smoothingEpsilon=0.0,base=1.0, causeFigure=True, inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
     
     
