@@ -15,9 +15,19 @@ file='runComparison.csv'
 
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Be_combined/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Ox_combined/'
-df1 = pd.read_csv(resultsDir+'LWruns.csv', header=0)
-df2 = pd.read_csv(resultsDir+'KD4runs.csv', header=0)
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Ox_combined/'
+resultsDir = '/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentIntegral_vs_LW5/'
+
+
+df1 = pd.read_csv(resultsDir+'Oxygen_PC.csv', header=0)
+df2 = pd.read_csv(resultsDir+'Oxygen_Biros_and_LW.csv', header=0)
+
+# df1 = pd.read_csv(resultsDir+'Be_PC.csv', header=0)
+# df2 = pd.read_csv(resultsDir+'Be_LW.csv', header=0)
+
+
+df2 = df2[df2['divideCriterion'].isin(['LW5'])]
+
 
 
  
@@ -189,14 +199,17 @@ def logAversusLogBcolorbyC(df1,df2, A,B,C,save=False):
 
  
   
-if __name__=="__main__":
+if __name__=="__main__":   
     
 #     df = df.loc[df['additionalDepthAtAtoms']==3]
     df1 = df1.loc[df1['order']==5]
+    df2 = df2.loc[df2['order']==5]
+    df2 = df2.loc[df2['gradientFree']==True]
+    
     logAversusLogBcolorbyC(df1,df2,'absTotalEnergyError', 'numberOfPoints', 'divideCriterion')
     logAversusLogBcolorbyC(df1,df2,'absBandEnergyError', 'numberOfPoints', 'divideCriterion')
-    logAversusLogBcolorbyC(df1,df2,'absHartreeEnergyError', 'numberOfPoints', 'divideCriterion')
-    
-    AversusBcolorbyC(df1,df2,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
-    AversusBcolorbyC(df1,df2,'BandEnergyError', 'numberOfPoints', 'divideCriterion') 
-    AversusBcolorbyC(df1,df2,'HartreeEnergyError', 'numberOfPoints', 'divideCriterion')
+#     logAversusLogBcolorbyC(df1,df2,'absHartreeEnergyError', 'numberOfPoints', 'divideCriterion')
+#     
+#     AversusBcolorbyC(df1,df2,'TotalEnergyError', 'numberOfPoints', 'divideCriterion')
+#     AversusBcolorbyC(df1,df2,'BandEnergyError', 'numberOfPoints', 'divideCriterion') 
+#     AversusBcolorbyC(df1,df2,'HartreeEnergyError', 'numberOfPoints', 'divideCriterion')

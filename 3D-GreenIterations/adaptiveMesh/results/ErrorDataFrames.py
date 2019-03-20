@@ -39,7 +39,8 @@ file='runComparison.csv'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenDepthTest/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaussianAlphaTest/'
 # resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/'
-# resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
+
+resultsDir = '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/'
 
 #### Krasny Mesh
 # resultsDir='/Users/nathanvaughn/Desktop/krasnyMeshTest/Oxygen/'
@@ -68,7 +69,7 @@ file='runComparison.csv'
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_baseScaling_VextVariation/'
 # resultsDir = '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_LW5/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_LW5/'
 
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Beryllium_extrapolation_VextRegularization/'
@@ -104,28 +105,33 @@ resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_onlyThird/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_onlyThird_oxygen/'
 
+
+# resultsDir = '/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentIntegral_vs_LW5/'
+# file='Oxygen_Combined.csv'
+
+
 ## Benzene
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'
 
 
-# # Oxygen
-# TotalEnergy = -7.4469337501098821e+01  # Oxygen Atom
-# ExchangeEnergy = -7.2193700828939980e+00
-# CorrelationEnergy = -5.4455323568788838e-01
-# BandEnergy = -4.0613397710076626e+01
-# KineticEnergy =  7.4112730191157425e+01
-# ElectrostaticEnergy = -1.4081814437367436e+02
-# HartreeEnergy = 36.32506036  
+# Oxygen
+TotalEnergy = -7.4469337501098821e+01  # Oxygen Atom
+ExchangeEnergy = -7.2193700828939980e+00
+CorrelationEnergy = -5.4455323568788838e-01
+BandEnergy = -4.0613397710076626e+01
+KineticEnergy =  7.4112730191157425e+01
+ElectrostaticEnergy = -1.4081814437367436e+02
+HartreeEnergy = 36.32506036  
 
 
-# # Beryllium
-TotalEnergy = -1.4446201118081863e+01
-ExchangeEnergy = -2.2903921833555341e+00
-CorrelationEnergy = -2.2343205529440757e-01
-BandEnergy = -8.1232305760491457e+00
-KineticEnergy =  1.4309060170370618e+01
-ElectrostaticEnergy = -8.1232305760491457e+00
-HartreeEnergy = 7.115165052  
+# # # Beryllium
+# TotalEnergy = -1.4446201118081863e+01
+# ExchangeEnergy = -2.2903921833555341e+00
+# CorrelationEnergy = -2.2343205529440757e-01
+# BandEnergy = -8.1232305760491457e+00
+# KineticEnergy =  1.4309060170370618e+01
+# ElectrostaticEnergy = -8.1232305760491457e+00
+# HartreeEnergy = 7.115165052  
 
 
 # # Carbon Monoxide
@@ -328,8 +334,8 @@ def logAversusLogBcolorbyC(df,A,B,C,save=False):
     plt.legend(loc = 'best')
     plt.xlabel(B)
     plt.ylabel(A)
-    plt.xlim([1e5,2e6])
-    plt.ylim([1e-5,1e-2])
+    plt.xlim([3e5,2e6])
+    plt.ylim([5e-5,1e-2])
     plt.grid()
     
     if save == True:
@@ -591,10 +597,11 @@ def extrapolate_Vext_regularization(df,X,Y,degree,plot=True):
  
   
 if __name__=="__main__":
+    print(df)
     df = df.loc[df['gradientFree']==True]  
     df = df.loc[df['order']==5]  
-    
-    
+    df = df[df['divideCriterion'].isin(['LW5'])] 
+     
 #     df = df.loc[df['treecodeOrder'].isin([1,8])]
 #     df = df.loc[df['theta'].isin([0.7,1.0])]
 #     AversusBcolorbyC(df,'TotalEnergy', 'theta', 'treecodeOrder')
@@ -606,9 +613,9 @@ if __name__=="__main__":
 #     df = df.loc[df['additionalDepthAtAtoms']==3]
 #     df = df.loc[df['maxDepth']>=13]
 #     df = df.loc[df['order']==5]
-    logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'maxDepth')
-    logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'maxDepth')
-    logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'maxDepth')
+    logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'divideCriterion')
+#     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'maxDepth')
 #     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
 #     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
 #     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')
