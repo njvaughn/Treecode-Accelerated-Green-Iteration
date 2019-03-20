@@ -10,10 +10,33 @@ Created on Mar 13, 2018
 import os
 import sys
 import time
+import resource
+
 # from docutils.nodes import reference
 sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
 sys.path.append('../ctypesTests/src')
+sys.path.append('../ctypesTests')
+sys.path.append('../ctypesTests/lib')
+
+
+try:
+    from convolution import *
+except ImportError:
+    print('Unable to import JIT GPU Convolutions')
+try:
+    import directSumWrappers
+except ImportError:
+    print('Unable to import directSumWrappers due to ImportError')
+except OSError:
+    print('Unable to import directSumWrappers due to OSError')
+    
+try:
+    import treecodeWrappers
+except ImportError:
+    print('Unable to import treecodeWrapper due to ImportError')
+except OSError:
+    print('Unable to import treecodeWrapper due to OSError')
 
 
 global rootDirectory
@@ -35,51 +58,35 @@ from greenIterations import greenIterations_KohnSham_SCF#,greenIterations_KohnSh
 
 # ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 n=1
-domainSize          = int(sys.argv[n]); n+=1
-minDepth            = int(sys.argv[n]); n+=1
-maxDepth            = int(sys.argv[n]); n+=1
-additionalDepthAtAtoms        = int(sys.argv[n]); n+=1
-order               = int(sys.argv[n]); n+=1
-subtractSingularity = int(sys.argv[n]); n+=1
-smoothingEps        = float(sys.argv[n]); n+=1
-gaussianAlpha       = float(sys.argv[n]); n+=1
-divideCriterion     = str(sys.argv[n]); n+=1
-divideParameter1    = float(sys.argv[n]); n+=1
-divideParameter2    = float(sys.argv[n]); n+=1
-energyTolerance     = float(sys.argv[n]); n+=1
-scfTolerance        = float(sys.argv[n]); n+=1
-outputFile          = str(sys.argv[n]); n+=1
-inputFile           = str(sys.argv[n]); n+=1
-vtkDir              = str(sys.argv[n]); n+=1
-noGradients         = str(sys.argv[n]) ; n+=1
-mixingScheme        = str(sys.argv[n]); n+=1
-mixingParameter     = float(sys.argv[n]); n+=1
-mixingHistoryCutoff = int(sys.argv[n]) ; n+=1
-GPUpresent          = str(sys.argv[n]); n+=1
-treecode            = str(sys.argv[n]); n+=1
-treecodeOrder       = int(sys.argv[n]); n+=1
-theta               = float(sys.argv[n]); n+=1
-maxParNode          = int(sys.argv[n]); n+=1
-batchSize           = int(sys.argv[n]); n+=1
-divideParameter3    = float(sys.argv[n]); n+=1
-divideParameter4    = float(sys.argv[n]); n+=1
-base                = float(sys.argv[n]); n+=1
-restart             = str(sys.argv[n]); n+=1
+domainSize          = 20
+minDepth            = 3
+maxDepth            = 20
+additionalDepthAtAtoms        = 0
+order               = 4
+subtractSingularity = 1
+smoothingEps        = 0.0
+gaussianAlpha       = 1.0
+divideCriterion     = 'LW5'
+divideParameter1    = 500
+divideParameter2    = 0
+noGradients         = True
+GPUpresent          = True
+treecode            = True
+treecodeOrder       = 8
+theta               = 0.8
+maxParNode          = 8000
+batchSize           = 2000
+divideParameter3    = 0
+divideParameter4    = 0
+
+inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 
 
-
-divideParameter1 *= base
-divideParameter2 *= base
-divideParameter3 *= base
-divideParameter4 *= base
 
 # depthAtAtoms += int(np.log2(base))
 # print('Depth at atoms: ', depthAtAtoms)
 
 
-print('gradientFree = ', noGradients)
-print('Mixing scheme = ', mixingScheme)
-print('vtk directory = ', vtkDir)
 
 if noGradients=='True':
     gradientFree=True
@@ -88,12 +95,7 @@ elif noGradients=='False':
 else:
     print('Warning, not correct input for gradientFree')
 
-if restart=='True':
-    restart=True
-elif restart=='False':
-    restart=False
-else:
-    print('Warning, not correct input for restart')
+
     
 if GPUpresent=='True':
     GPUpresent=True
@@ -180,8 +182,8 @@ def setUpTree(onlyFillOne=False):
 #     occupations[-1] = 0
     print('in testBatchGreen..., nOrbitals = ', nOrbitals)
     
-    print([coordinateFile, outputFile, nElectrons, nOrbitals, 
-     Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+#     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
+#      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     
     referenceEigenvalues = np.array( np.genfromtxt(referenceEigenvaluesFile,delimiter=',',dtype=float) )
     print(referenceEigenvalues)
@@ -203,59 +205,165 @@ def setUpTree(onlyFillOne=False):
     return tree
     
     
-def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
+def testMemory(tree):
+    
+    numberOfTargets = tree.numberOfGridpoints
+    
+    print()
+    print()    
+    print('~~~~~~~MEMORY USAGE~~~~~~~~ ')
+    print( 'Peak:        ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+    print( 'Current:     ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+    print()
+    print()
+
+    if hasattr(tree, 'referenceEigenvalues'):
+        referenceEigenvalues = tree.referenceEigenvalues
+    else:
+        print('Tree did not have attribute referenceEigenvalues')
+        referenceEigenvalues = np.zeros(tree.nOrbitals)
+        return
+    
+    # Store Tree variables locally
+    numberOfGridpoints = tree.numberOfGridpoints
+    gaugeShift = tree.gaugeShift
+    Temperature = 100  # set to 200 Kelvin
     
     
-    startTime = time.time()
-    tree.E = -1.0 # set initial energy guess
 
 
-    numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
-                                 mixingScheme, mixingParameter, mixingHistoryCutoff,
-                                 subtractSingularity, gaussianAlpha,
-                                 inputFile=inputFile,outputFile=outputFile, restartFile=restart,
-                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
 
-#     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
-#                                 smoothingEps, gaussianAlpha,auxiliaryFile=auxiliaryFile, 
-#                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
-
-    totalKohnShamTime = time.time()-startTime
-    print('Total Time: ', totalKohnShamTime)
-
-    header = ['domainSize','minDepth','maxDepth','additionalDepthAtAtoms','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
-              'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
-              'gaussianAlpha','VextSmoothingEpsilon','energyTolerance',
-              'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
-              'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
-              'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','totalIterationCount']
     
-    myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.additionalDepthAtAtoms,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
-              divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
-              gaussianAlpha,smoothingEps,energyTolerance,
-              subtractSingularity,
-              tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E,
-              treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime,tree.totalIterationCount]
-#               tree.E, tree.
-#               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
+    # Initialize orbital matrix
+    targets = tree.extractLeavesDensity()
+    orbitals = np.zeros((len(targets),tree.nOrbitals))
+    oldOrbitals = np.zeros((len(targets),tree.nOrbitals))
+    
+          
+
+        
+    # Initialize density history arrays
+    inputDensities = np.zeros((numberOfGridpoints,1))
+    outputDensities = np.zeros((numberOfGridpoints,1))
+    
+    targets = tree.extractLeavesDensity() 
+    weights = targets[:,4]
+    inputDensities[:,0] = np.copy(targets[:,3])
+
+ 
+    
+        
+
+    threadsPerBlock = 512
+    blocksPerGrid = (numberOfTargets + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
     
 
-    runComparisonFile = os.path.split(outputFile)[0] + '/runComparison.csv'
+
+    ### COMPUTE THE INITIAL HAMILTONIAN ###
+    density_targets = tree.extractLeavesDensity()  
+    density_sources = np.copy(density_targets)
+
+    alpha = gaussianAlpha
+    alphasq=alpha*alpha
     
-    if not os.path.isfile(runComparisonFile):
-        myFile = open(runComparisonFile, 'a')
-        with myFile:
-            writer = csv.writer(myFile)
-            writer.writerow(header) 
+    print('GPUpresent set to ', GPUpresent)
+    print('Type: ', type(GPUpresent))
+    
+    count=0
+    while count < 100:
+        count+=1
+        print()
+        print()    
+        print('MEMORY USAGE: ')
+        print( resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+        print()
+        print()
         
         
+        if GPUpresent==False:
+            numTargets = len(density_targets)
+            numSources = len(density_sources)
+
+            copystart = time.time()
+            sourceX = np.copy(density_sources[:,0])
+
+            sourceY = np.copy(density_sources[:,1])
+            sourceZ = np.copy(density_sources[:,2])
+            sourceValue = np.copy(density_sources[:,3])
+            sourceWeight = np.copy(density_sources[:,4])
+            
+            targetX = np.copy(density_targets[:,0])
+            targetY = np.copy(density_targets[:,1])
+            targetZ = np.copy(density_targets[:,2])
+            targetValue = np.copy(density_targets[:,3])
+            targetWeight = np.copy(density_targets[:,4])
+            copytime=time.time()-copystart
+            print('Copy time before convolution: ', copytime)
+            start = time.time()
+            
+            if treecode==False:
+                V_hartreeNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
+                                                                                                      targetX, targetY, targetZ, targetValue,targetWeight, 
+                                                                                                      sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
     
-    myFile = open(runComparisonFile, 'a')
-    with myFile:
-        writer = csv.writer(myFile)
-        writer.writerow(myData)    
+                V_hartreeNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
     
+            elif treecode==True:
+                
+
+    
+                potentialType=0 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
+                alpha = gaussianAlpha
+                V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                               targetX, targetY, targetZ, targetValue, 
+                                                               sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                               potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+                   
+                if potentialType==2:
+                    V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
+    
+            
+    #         print('First few terms of V_hartreeNew: ', V_hartreeNew[:8])
+            print('Convolution time: ', time.time()-start)
+            
+            
+            
+            
+        elif GPUpresent==True:
+            if treecode==False:
+                V_hartreeNew = np.zeros((len(density_targets)))
+                start = time.time()
+                gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](density_targets,density_sources,V_hartreeNew,alphasq)
+                print('Convolution time: ', time.time()-start)
+    #             return
+            elif treecode==True:
+                copystart=time.time()
+                numTargets = len(density_targets)
+                numSources = len(density_sources)
+                sourceX = np.copy(density_sources[:,0])
+    
+                sourceY = np.copy(density_sources[:,1])
+                sourceZ = np.copy(density_sources[:,2])
+                sourceValue = np.copy(density_sources[:,3])
+                sourceWeight = np.copy(density_sources[:,4])
+                
+                targetX = np.copy(density_targets[:,0])
+                targetY = np.copy(density_targets[:,1])
+                targetZ = np.copy(density_targets[:,2])
+                targetValue = np.copy(density_targets[:,3])
+                targetWeight = np.copy(density_targets[:,4])
+                copytime = time.time()-copystart
+                print('Copy time before calling treecode: ', copytime)
+                start = time.time()
+                potentialType=2 
+                alpha = gaussianAlpha
+                V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+                                                               targetX, targetY, targetZ, targetValue, 
+                                                               sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                                                               potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+                print('Convolution time: ', time.time()-start)
+                
+            
 
 
     
@@ -312,5 +420,5 @@ if __name__ == "__main__":
     tree = setUpTree()  
     
 #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)
-    testGreenIterationsGPU(tree,vtkExport=False)
-
+#     testGreenIterationsGPU(tree,vtkExport=False)
+    testMemory(tree)

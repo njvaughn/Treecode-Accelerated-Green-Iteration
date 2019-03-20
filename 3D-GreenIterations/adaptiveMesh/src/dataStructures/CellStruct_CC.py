@@ -489,6 +489,17 @@ class Cell(object):
             r = np.sqrt( (self.xmid-atom.x)**2 + (self.ymid-atom.y)**2 + (self.zmid-atom.z)**2 )
             if 1/self.volume < meshDensity(r,divideParameter,divideCriterion):
                 self.divideFlag=True
+    
+    def compareMeshDensityToDensity(self,divideParameter):
+        self.divideFlag = False
+        for atom in self.tree.atoms:
+
+            r = np.sqrt( (self.xmid-atom.x)**2 + (self.ymid-atom.y)**2 + (self.zmid-atom.z)**2 )
+            if 1/self.volume < divideParameter*np.sqrt( atom.interpolators['density'](r) ):
+                self.divideFlag=True
+                
+            if 1/self.volume < 10*divideParameter*atom.interpolators['density'](r):
+                self.divideFlag=True
      
     def wavefunctionVariationAtCorners_Vext(self):   
         
@@ -887,6 +898,119 @@ class Cell(object):
         return maxVariation, sqrtDensityIntegral, relDensityVariation, VextVariation, variationCause, densityIntegralCause, densityIntegralCause, VextVariationCause
 #         return maxVariation, maxAbsIntegral, densityIntegral, VextVariation, variationCause, absIntegralCause, densityIntegralCause, VextVariationCause
     
+    
+    
+    def computeLogDensityVariation(self):   
+        
+        xmm = [self.xmin, self.xmax]
+        ymm = [self.ymin, self.ymax]
+        zmm = [self.zmin, self.zmax]        
+        
+ 
+        logDensityVariation = 0.0
+        
+        
+        
+        ### Compute Density terms based on all atoms
+
+        for i in range(2):
+            for j in range(2):
+                for k in range(2):
+                    density=0.0
+                    for atom in self.tree.atoms:
+                        dx = xmm[i]-atom.x
+                        dy = ymm[j]-atom.y
+                        dz = zmm[k]-atom.z
+                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
+        
+            
+                        density +=  atom.interpolators['density'](r)
+                        
+                
+                    if ( (i==0) and (j==0) and (k==0)): 
+                        maxDensity = density
+                        minDensity = density
+                        
+                    else:
+                        if density>maxDensity: maxDensity = density
+                        if density<minDensity: minDensity = density
+                        
+
+            
+        logDensityVariation = np.log(maxDensity)-np.log(minDensity)
+            
+    
+
+        return logDensityVariation
+    
+    def computeDensitySplitByNearAndFar(self):   
+        
+        xmm = [self.xmin, self.xmax]
+        ymm = [self.ymin, self.ymax]
+        zmm = [self.zmin, self.zmax]        
+        
+ 
+        densityVariation = 0.0
+        sqrtDensityIntegral=0.0
+        densityIntegral=0.0
+        
+        
+        ### Compute Density terms based on all atoms
+
+        for i in range(2):
+            for j in range(2):
+                for k in range(2):
+                    density=0.0
+                    for atom in self.tree.atoms:
+                        dx = xmm[i]-atom.x
+                        dy = ymm[j]-atom.y
+                        dz = zmm[k]-atom.z
+                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
+        
+            
+                        density +=  atom.interpolators['density'](r)
+                        
+                        
+                    sqrtDensityIntegral += np.sqrt(density)/8*self.volume   
+                    densityIntegral += density/8*self.volume   
+                
+                    if ( (i==0) and (j==0) and (k==0)): 
+                        maxDensity = density
+                        minDensity = density
+                        
+                    else:
+                        if density>maxDensity: maxDensity = density
+                        if density<minDensity: minDensity = density
+                        
+
+        diagdist = np.sqrt( (xmm[0]-xmm[1])**2 + (ymm[0]-ymm[1])**2 + (zmm[0]-zmm[1])**2 )    
+#         densityVariation = (maxDensity-minDensity)*diagdist
+
+#         densityVariation = (maxDensity-minDensity)*self.volume
+        densityVariation = (maxDensity-minDensity)
+        
+        density = 0.0
+        for atom in self.tree.atoms:
+            dx = self.xmid-atom.x
+            dy = self.ymid-atom.y
+            dz = self.zmid-atom.z
+            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+
+
+            density +=  atom.interpolators['density'](r)
+        # apply one criteria if rho>1, other if <1    
+        if density>=1.0:
+            sqrtDensityIntegral = 0.0
+        else:
+            densityVariation = 0.0
+            densityIntegral = 0.0
+
+#         return densityVariation, sqrtDensityIntegral
+        return densityIntegral, sqrtDensityIntegral
+    
+    
+    
+    
     def initializeCellWavefunctions(self):           
         
         aufbauList = ['10',                                     # n+ell = 1
@@ -972,6 +1096,76 @@ class Cell(object):
                         orbitalIndex += 1
                         singleAtomOrbitalCount += 1
      
+     
+    def checkDensityInterpolation(self, divideParameter1, divideParameter2, divideParameter3, divideParameter4):                    
+        self.divideFlag=False
+        
+        xmm = [self.xmin, self.xmax]
+        ymm = [self.ymin, self.ymax]
+        zmm = [self.zmin, self.zmax] 
+        
+        midpointDensity=0.0
+        midpointSqrtDensity=0.0
+        interpolatedDensity = 0.0
+        interpolatedSqrtDensity=0.0
+        cornerDensities = np.zeros((2,2,2))
+        for atom in self.tree.atoms:
+            densitySum = 0.0
+            dx = self.xmid-atom.x
+            dy = self.ymid-atom.y
+            dz = self.zmid-atom.z
+            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+
+            midpointDensity +=  atom.interpolators['density'](r)
+            midpointSqrtDensity +=  np.sqrt( atom.interpolators['density'](r) )
+            
+            for i,j,k in TwoByTwoByTwo:
+                dx = xmm[i]-atom.x
+                dy = ymm[j]-atom.y
+                dz = zmm[k]-atom.z
+                
+                r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                
+                interpolatedDensity += atom.interpolators['density'](r) 
+                interpolatedSqrtDensity += np.sqrt( atom.interpolators['density'](r) )
+            
+                
+            
+        interpolatedDensity /= 8 # for trilinear interpolation at midpoint, just use the average value.
+        interpolatedSqrtDensity /= 8
+        
+        interpolationError = np.abs(midpointDensity - interpolatedDensity)
+        relInterpolationError = np.abs(midpointDensity - interpolatedDensity)/midpointDensity
+        sqrtInterpolationError = np.abs(midpointSqrtDensity - interpolatedSqrtDensity)
+        relSqrtInterpolationError = np.abs(midpointSqrtDensity - interpolatedSqrtDensity)/midpointSqrtDensity
+    
+
+    
+        if interpolationError > divideParameter1:
+
+            self.divideFlag = True
+            self.childrenRefineCause=1
+            return
+        
+        if sqrtInterpolationError > divideParameter2:
+
+            self.divideFlag = True
+            self.childrenRefineCause=2
+            return
+        
+        if relInterpolationError > divideParameter3:
+
+            self.divideFlag = True
+            self.childrenRefineCause=3
+            return
+        
+        if relSqrtInterpolationError > divideParameter4:
+
+            self.divideFlag = True
+            self.childrenRefineCause=4
+            return
+        
+     
     def checkDensityIntegral(self, divideParameter1, divideParameter2):                    
         self.divideFlag=False
         
@@ -1031,6 +1225,32 @@ class Cell(object):
                 self.divideFlag = True
                 
             return
+    
+    def  checkLogDensityVariation(self, divideParameter1, divideParameter2, divideParameter3, divideParameter4):
+        self.divideFlag = False
+        LogDensityVariation = self.computeLogDensityVariation()
+        
+        if LogDensityVariation > divideParameter1:
+            self.divideFlag=True
+            self.childrenRefineCause=1
+            
+        return
+    
+    def splitNearAndFar(self, divideParameter1, divideParameter2, divideParameter3, divideParameter4):
+        self.divideFlag = False
+        LogDensityVariation = self.computeLogDensityVariation()
+        
+        densityVariation, sqrtDensityIntegral = self.computeDensitySplitByNearAndFar()
+        
+        if densityVariation > divideParameter1:
+            self.divideFlag=True
+            self.childrenRefineCause=1
+            
+        if sqrtDensityIntegral > divideParameter2:
+            self.divideFlag=True
+            self.childrenRefineCause=2
+            
+        return
                         
     def checkWavefunctionVariation(self, divideParameter1, divideParameter2, divideParameter3, divideParameter4):
 #         print('Working on Cell centered at (%f,%f,%f) with volume %f' %(self.xmid, self.ymid, self.zmid, self.volume))
@@ -1405,7 +1625,112 @@ class Cell(object):
             self.divideFlag=True
 #         if (densityCoefficientSum) > divideParameter:
 #             self.divideFlag=True
-               
+    
+    def intializeAndIntegrateDensity(self): 
+        rho = np.zeros((self.px,self.py,self.pz))
+        Vext = np.zeros((self.px,self.py,self.pz))
+        weights = np.zeros((self.px,self.py,self.pz))
+        for i,j,k in self.PxByPyByPz:
+            gp = self.gridpoints[i,j,k]
+            weights[i,j,k] = self.w[i,j,k]
+            for atom in self.tree.atoms:
+                dx = gp.x-atom.x
+                dy = gp.y-atom.y
+                dz = gp.z-atom.z
+                r = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
+                try:
+                    rho[i,j,k] += atom.interpolators['density'](r)
+                except ValueError:
+                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+                    
+                Vext[i,j,k] += atom.V(dx,dy,dz)
+                            
+        
+        densityIntegral = np.sum(rho*weights)
+        sqrtDensityIntegral = np.sum(np.sqrt(rho)*weights) 
+        sqrtDensityVextIntegral = np.sum(np.sqrt(rho)*Vext*weights)
+
+        return densityIntegral, sqrtDensityIntegral, sqrtDensityVextIntegral
+        
+     
+    def refineByCheckingParentChildrenIntegrals(self, divideParameter1, divideParameter2, divideParameter3):
+        self.divideFlag = False
+        
+        
+#         parentIntegral = self.intializeAndIntegrateDensity()
+        parentDensityIntegral, parentSqrtDensityIntegral, parentSqrtDensityVextIntegral = self.intializeAndIntegrateDensity()
+        sumChildrenIntegrals = 0.0
+        
+        sumChildDensityIntegral=0.0
+        sumChildSqrtDensityIntegral=0.0
+        sumChildSqrtDensityVextVextIntegral=0.0
+        
+        xdiv = (self.xmax + self.xmin)/2   
+        ydiv = (self.ymax + self.ymin)/2   
+        zdiv = (self.zmax + self.zmin)/2   
+        self.divide(xdiv, ydiv, zdiv, temporaryCell=True)
+        (ii,jj,kk) = np.shape(self.children)
+
+        for i in range(ii):
+            for j in range(jj):
+                for k in range(kk):
+                    childDensityIntegral, childSqrtDensityIntegral, childSqrtDensityVextIntegral = self.children[i,j,k].intializeAndIntegrateDensity()
+                    sumChildDensityIntegral += childDensityIntegral
+                    sumChildSqrtDensityIntegral += childSqrtDensityIntegral
+                    sumChildSqrtDensityVextVextIntegral += childSqrtDensityVextIntegral
+        
+#         print()
+#         print('Cell:                  ', self.uniqueID)
+#         print('Parent Integral:       ', parentIntegral)
+#         print('Children Integral:     ', sumChildrenIntegrals)
+#         print()
+        
+        if np.abs(parentSqrtDensityVextIntegral-sumChildSqrtDensityVextVextIntegral) > divideParameter3:
+            self.childrenRefineCause=3
+            print()
+            print('Cell:                                      ', self.uniqueID)
+            print('Parent sqrt(Density)Vext Integral:         ', parentSqrtDensityVextIntegral)
+            print('Children sqrt(Density)Vext Integral:       ', sumChildSqrtDensityVextVextIntegral)
+            print()
+            self.divideFlag=True
+        
+        
+        
+        
+        elif np.abs(parentSqrtDensityIntegral-sumChildSqrtDensityIntegral) > divideParameter2:
+            self.childrenRefineCause=2
+            print()
+            print('Cell:                                      ', self.uniqueID)
+            print('Parent sqrt(Density) Integral:             ', parentSqrtDensityIntegral)
+            print('Children sqrt(Density) Integral:           ', sumChildSqrtDensityIntegral)
+            print()
+            self.divideFlag=True
+            
+        elif np.abs(parentDensityIntegral-sumChildDensityIntegral) > divideParameter1:
+            self.childrenRefineCause=1
+            print()
+            print('Cell:                                      ', self.uniqueID)
+            print('Parent Density Integral:                   ', parentDensityIntegral)
+            print('Children Density Integral:                 ', sumChildDensityIntegral)
+            print()
+            self.divideFlag=True
+            
+            
+#             for i,j,k in np.shape(self.children):
+#                 self.children[i,j,k].checkParentChildrenIntegrals(divideParameter)
+
+        # clean up by deleting children
+        for i in range(ii):
+            for j in range(jj):
+                for k in range(kk):
+                    child = self.children[i,j,k]
+                    del child
+#         self.children=None
+        delattr(self,"children")
+        self.leaf=True
+            
+            
+
     
     """
     DIVISION FUNCTIONS
@@ -1462,7 +1787,7 @@ class Cell(object):
         
 #         self.interpolator = RegularGridInterpolator((xvec, yvec, zvec), phiCoarse,method='nearest') 
     
-    def divide(self, xdiv, ydiv, zdiv, printNumberOfCells=False, interpolate=False):
+    def divide(self, xdiv, ydiv, zdiv, printNumberOfCells=False, interpolate=False, temporaryCell=False):
                   
         def divideInto8(cell, xdiv, ydiv, zdiv, printNumberOfCells=False, interpolate=False):
             '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
@@ -1510,6 +1835,7 @@ class Cell(object):
             zbounds = np.array([cell.zmin, float(zdiv), cell.zmax])
     
             '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
+            
             for i, j, k in TwoByTwoByTwo:
                 if hasattr(cell, "tree"):
                     children[i,j,k] = Cell(xbounds[i], xbounds[i+1], cell.px, 
@@ -1525,10 +1851,10 @@ class Cell(object):
                 if hasattr(cell, "uniqueID"):
                     children[i,j,k].setUniqueID(i,j,k)
                     children[i,j,k].setNeighborList()
-                
-                if hasattr(cell, "tree"):
-                    if hasattr(cell.tree, 'masterList'):
-                        cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
+                if temporaryCell==False:   
+                    if hasattr(cell, "tree"):
+                        if hasattr(cell.tree, 'masterList'):
+                            cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
     
             '''create new gridpoints wherever necessary.  Also create density points. '''
             newGridpointCount=0
@@ -1590,8 +1916,9 @@ class Cell(object):
                     children[i,j,0].setUniqueID(i,j,0)  # neighbor lists going to be ruined once no longer dividing into 8
                     children[i,j,0].setNeighborList()
         
-                    if hasattr(cell.tree, 'masterList'):
-                        cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,0].uniqueID,]), [children[i,j,0].uniqueID,children[i,j,0]])
+                    if temporaryCell==False:
+                        if hasattr(cell.tree, 'masterList'):
+                            cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,0].uniqueID,]), [children[i,j,0].uniqueID,children[i,j,0]])
         
                 '''create new gridpoints wherever necessary'''
                 newGridpointCount=0
@@ -1631,8 +1958,9 @@ class Cell(object):
                     children[i,0,k].setUniqueID(i,0,k)  # neighbor lists going to be ruined once no longer dividing into 8
                     children[i,0,k].setNeighborList()
         
-                    if hasattr(cell.tree, 'masterList'):
-                        cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,0,k].uniqueID,]), [children[i,0,k].uniqueID,children[i,0,k]])
+                    if temporaryCell==False:
+                        if hasattr(cell.tree, 'masterList'):
+                            cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,0,k].uniqueID,]), [children[i,0,k].uniqueID,children[i,0,k]])
         
         
                 '''create new gridpoints wherever necessary'''
@@ -1672,9 +2000,10 @@ class Cell(object):
                         children[0,j,k].refineCause = cell.childrenRefineCause
                     children[0,j,k].setUniqueID(0,j,k)  # neighbor lists going to be ruined once no longer dividing into 8
                     children[0,j,k].setNeighborList()
-        
-                    if hasattr(cell.tree, 'masterList'):
-                        cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[0,j,k].uniqueID,]), [children[0,j,k].uniqueID,children[0,j,k]])
+                    
+                    if temporaryCell==False:
+                        if hasattr(cell.tree, 'masterList'):
+                            cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[0,j,k].uniqueID,]), [children[0,j,k].uniqueID,children[0,j,k]])
         
                 '''create new gridpoints wherever necessary'''
                 newGridpointCount=0

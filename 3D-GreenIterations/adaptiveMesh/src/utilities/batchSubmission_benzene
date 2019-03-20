@@ -5,7 +5,7 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 
 DOMAIN=30
-MINDEPTH=4
+MINDEPTH=3
 SINGSUBT=1
 
 INPUTFILE='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv'
@@ -25,7 +25,7 @@ GRADIENTFREE='True'
 GPUPRESENT='True'
 
 TREECODE='True'
-TREECODEORDER=8
+TREECODEORDER=7
 THETA=0.8
 MAXPARNODE=8000
 BATCHSIZE=8000
@@ -37,16 +37,17 @@ GAUSSIANALPHA=1.0
 MESHTYPE='LW5'
 
 
-MIXINGPARAMETER=0.5   
+MIXINGPARAMETER=0.75 
+MIXINGHISTORY=6 
  
-INTRASCFTOLERANCE=5e-5  
+INTRASCFTOLERANCE=5e-7  
 INTERSCFTOLERANCE=1e-6 
    
 MIXING='Anderson'    
-CELLORDER=5
+CELLORDER=5 
  
-DEPTHATATOMS=2 
-RESTART='False'	 
+ADDITIONALDEPTHATATOMS=1 
+RESTART='True'	 
 
 for SMOOTHINGEPS in 0.0
 do
@@ -54,22 +55,22 @@ for MAXDEPTH in 20
 do								  					 
 for MESHPARAM4 in 0
 do
-	for MESHPARAM3 in 0
+	for MESHPARAM3 in 0 
 	do   
 		for MESHPARAM2 in 0 
 		do 
 			for MESHPARAM1 in 500
 			    
 			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/tc_tcOrder${TREECODEORDER}_theta${THETA}_LW5_${MESHPARAM1}.csv"
-			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $DEPTHATATOMS $CELLORDER $SINGSUBT \
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/tc_gaugeShift0p5_mindepth3_tcOrder${TREECODEORDER}_theta${THETA}_LW5_${MESHPARAM1}_mixingHistory${MIXINGHISTORY}.csv"
+			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER \
+																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER $MIXINGHISTORY\
 																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE $RESTART
 			done
 		done
 	done
 done
 done
-done		  
+done		   
 		

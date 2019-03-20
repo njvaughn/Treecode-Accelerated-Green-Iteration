@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 resultsFile='densities.npy'
 # resultsDir = '/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Slice_Testing/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Slice_Testing/H2_LW5_200_SCF_91008_plots/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Slice_Testing/Be_LW5_200_SCF_75776_plots/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Slice_Testing/Be_LW5_200_SCF_75776_plots/'
 
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTesting/Be_LW5_200_SCF_75776_plots/'
 
 
 def plotSlicesTogether():

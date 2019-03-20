@@ -709,7 +709,7 @@ class Tree(object):
                 else:  
                     if ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or (divideCriterion == 'LW3_modified') or 
                          (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') 
-                         or (divideCriterion == 'Krasny_density') or (divideCriterion == 'Nathan_density') ):
+                         or (divideCriterion == 'Krasny_density') or (divideCriterion == 'Nathan_density')  ):
 #                         print('checking divide criterion for cell ', Cell.uniqueID)
                         Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
                     elif divideCriterion=='Biros':
@@ -731,10 +731,22 @@ class Tree(object):
                         Cell.checkWavefunctionVariation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                     elif divideCriterion=='Krasny_Vext':
                         Cell.checkWavefunctionVariation_Vext(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                    elif divideCriterion=='Krasny_log_rho':
+                        Cell.checkLogDensityVariation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                     elif divideCriterion=='Nathan':
                         Cell.checkDensityIntegral(divideParameter1, divideParameter2)
                     elif divideCriterion=='Nathan2':
                         Cell.checkMeshDensity_Nathan(divideParameter1, divideParameter2)
+                    elif divideCriterion=='NathanNearFar':
+                        Cell.splitNearAndFar(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                    elif divideCriterion == 'basic_density':
+                        Cell.compareMeshDensityToDensity(divideParameter)
+                    elif divideCriterion=='Krasny_interpolate':
+                        Cell.checkDensityInterpolation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                        
+                    elif divideCriterion=='ParentChildrenIntegral':
+                        Cell.refineByCheckingParentChildrenIntegrals(divideParameter1, divideParameter2, divideParameter3)  
+                    
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
                     

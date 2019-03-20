@@ -87,5 +87,6 @@ def callTreedriver(numTargets, numSources,
 #     double *outputArray, int pot_type, double kappa,
 #     int order, double theta, int maxparnode, int batch_size) {
 
-    
+#     ctypes._reset_cache()
+
     return resultArray

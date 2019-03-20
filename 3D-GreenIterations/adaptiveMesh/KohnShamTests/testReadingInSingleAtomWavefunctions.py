@@ -15,11 +15,18 @@ sys.path.append('../src/utilities')
 from AtomStruct import Atom
 from TreeStruct_CC import Tree
 
+def piecewiseExp(r, rC, k1, k2, m1):
+    
+    if r<=rC:
+        return m1*np.exp(-k1*r)
+    else:
+        return (m1*np.exp(-k1*rC) ) *np.exp(-k2*(r-rC))
+
 class Test(unittest.TestCase):
 
 #     @unittest.skip('Skipping the plotting of radial data')
     def testReadingRadialData(self):
-        atomicNumber = 8 
+        atomicNumber = 20 
         AtomicDataPath = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(atomicNumber)+'/singleAtomData/'
         print(AtomicDataPath)
         print(os.listdir(AtomicDataPath))
@@ -28,7 +35,15 @@ class Test(unittest.TestCase):
         data = np.genfromtxt(AtomicDataPath+'density.inp')
         print('rho[0] = ', data[0,1])
         plt.semilogy(data[:,0],data[:,1],label='Density')
-#         plt.semilogy(data[:,0],np.sqrt(data[:,1]),label='sqrt(Density)')
+        
+#         r = data[:,0]
+#         P = np.zeros_like(r)
+#         k2 = np.sqrt(2*0.4)
+#         for i in range(len(r)):
+#             P[i] = piecewiseExp(r[i], 0.45, 2*atomicNumber, 2*k2, data[0,1])
+#         plt.semilogy(r,P,label='Piecewise Exponential')
+
+        plt.semilogy(data[:,0],np.sqrt(data[:,1]),label='sqrt(Density)')
 #         plt.plot(data[:,0],np.sqrt(data[:,1])*(1+1/data[:,0]),label='sqrt(Density)')
 #         plt.plot(data[:,0],(data[:,1])*(1+1/data[:,0]),label='(Density)(1+1/r)')
 #         plt.plot(data[:,0],(data[:,1])*(data[:,0]**2),label='(Density)*r**2')
@@ -52,7 +67,7 @@ class Test(unittest.TestCase):
         
         
 #         plt.figure() 
-         
+          
         for orbital in os.listdir(AtomicDataPath):
             if orbital[:3]=='psi':
 #             if orbital[:5]=='psi32':
