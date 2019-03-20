@@ -141,13 +141,22 @@ def plotSCFconvergence(df, system = 'H2'):
         
     if system == "Benzene":
         
-        dftfeBandEnergy = -1.3426386757791246e+02 # Band energy 
+        
+#         dftfeBandEnergy = -1.3426386757791246e+02 # Band energy 
+#         dftfeExchangeEnergy = -2.9942603449328043e+01 # Exchange energy 
+#         dftfeCorrelationEnergy = -2.6706730815123834e+00 # Correlation Energy 
+#         dftfeElectrostaticEnergy = -2.1138290579726365e+02 # Electrostatic Energy
+
+        ### SOME OF THESE VALUES COMING FROM BIKASH'S NWChem RUN
+        dftfeBandEnergy = -130.8981224  
         dftfeKineticEnergy = 0 # Kinetic energy 
-        dftfeExchangeEnergy = -2.9942603449328043e+01 # Exchange energy 
-        dftfeCorrelationEnergy = -2.6706730815123834e+00 # Correlation Energy 
-        dftfeElectrostaticEnergy = -2.1138290579726365e+02 # Electrostatic Energy
+        dftfeExchangeEnergy = 0 # Exchange energy 
+        dftfeCorrelationEnergy = 0 # Correlation Energy 
+        dftfeElectrostaticEnergy = 0 # Electrostatic Energy
         dftfeHartreeEnergy = 312.915135214420
         dftfeTotalEnergy = -230.188349460044 # Total Energy 
+        
+        nAtoms=12
 
 
     df['bandEnergyError']=abs(df['bandEnergy']-dftfeBandEnergy)
@@ -157,7 +166,9 @@ def plotSCFconvergence(df, system = 'H2'):
     df['exchangeEnergyError']=abs(df['exchangeEnergy']-dftfeExchangeEnergy)
     df['correlationEnergyError']=abs(df['correlationEnergy']-dftfeCorrelationEnergy)
     df['totalEnergyError']=abs(df['totalEnergy']-dftfeTotalEnergy)
-    df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/12
+    df['totalEnergyErrorPerAtom']=abs(df['totalEnergy']-dftfeTotalEnergy)/nAtoms
+    df['bandEnergyErrorPerAtom']=abs(df['bandEnergy']-dftfeBandEnergy)/nAtoms
+    df['hartreeEnergyErrorPerAtom']=abs(df['hartreeEnergy']-dftfeHartreeEnergy)/nAtoms
 
     print("band energy errors:")
     print(df['bandEnergyError'])
@@ -173,15 +184,22 @@ def plotSCFconvergence(df, system = 'H2'):
 # Combined error plot
     f1, ax1 = plt.subplots(1, 1, figsize=(10,6))
     f2, ax2 = plt.subplots(1, 1, figsize=(10,6))
-    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='o')
-#     df.plot(x='Iteration', y='kineticEnergyError', logy=True,ax=ax2, style='o-')
-#     df.plot(x='Iteration', y='electrostaticEnergyError', logy=True,ax=ax2, style='o')
-    df.plot(x='Iteration', y='hartreeEnergyError', logy=True,ax=ax2, style='o')
-    df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='o')
-    df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='o')
-#     df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='o')
-    df.plot(x='Iteration', y='totalEnergyError',logy=True, ax=ax2, style='o')
+    
+#     df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='o')
+# #     df.plot(x='Iteration', y='kineticEnergyError', logy=True,ax=ax2, style='o-')
+# #     df.plot(x='Iteration', y='electrostaticEnergyError', logy=True,ax=ax2, style='o')
+#     df.plot(x='Iteration', y='hartreeEnergyError', logy=True,ax=ax2, style='o')
+#     df.plot(x='Iteration', y='exchangeEnergyError', logy=True,ax=ax2, style='o')
+#     df.plot(x='Iteration', y='correlationEnergyError',logy=True, ax=ax2, style='o')
+# #     df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='o')
+#     df.plot(x='Iteration', y='totalEnergyError',logy=True, ax=ax2, style='o')
+    
+    df.plot(x='Iteration', y='totalEnergyErrorPerAtom',logy=True, ax=ax2, style='o')
+    df.plot(x='Iteration', y='bandEnergyErrorPerAtom',logy=True, ax=ax2, style='o')
+    df.plot(x='Iteration', y='hartreeEnergyErrorPerAtom',logy=True, ax=ax2, style='o')
+
     df.plot(x='Iteration', y='densityResidual', logy=True,ax=ax1, style='o')
+
     
     ax2.legend(loc='lower left')
 ##    df.plot(x='Iteration', y='bandEnergyError', logy=True,ax=ax2, style='bo')
