@@ -439,17 +439,17 @@ if __name__ == "__main__":
     # param3: density integral   
     # param4: Vext integral   
     
-#     exportMeshForParaview(domain=30,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='ParentChildrenIntegral', 
-#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI')
-    
-    exportMeshForParaview(domain=31,order=3,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-                        divideParameter1=500, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
+    exportMeshForParaview(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/LW5')
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI')
+    
+#     exportMeshForParaview(domain=31,order=3,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#                         divideParameter1=500, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/LW5')
 #     
 
 

@@ -1639,7 +1639,7 @@ class Cell(object):
                 dy = gp.y-atom.y
                 dz = gp.z-atom.z
                 r[i,j,k] = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
-                Vext[i,j,k] += atom.V(dx,dy,dz)
+                Vext[i,j,k] += atom.V(gp.x,gp.y,gp.z)
 #                 try:
 #                     rho[i,j,k] += atom.interpolators['density'](r)
 #                 except ValueError:
