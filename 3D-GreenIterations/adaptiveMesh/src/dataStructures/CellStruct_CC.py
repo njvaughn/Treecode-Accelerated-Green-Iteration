@@ -1628,22 +1628,25 @@ class Cell(object):
     
     def intializeAndIntegrateDensity(self): 
         rho = np.zeros((self.px,self.py,self.pz))
+        r = np.zeros((self.px,self.py,self.pz))
         Vext = np.zeros((self.px,self.py,self.pz))
         weights = np.zeros((self.px,self.py,self.pz))
-        for i,j,k in self.PxByPyByPz:
-            gp = self.gridpoints[i,j,k]
-            weights[i,j,k] = self.w[i,j,k]
-            for atom in self.tree.atoms:
+        for atom in self.tree.atoms:
+            for i,j,k in self.PxByPyByPz:
+                gp = self.gridpoints[i,j,k]
+                weights[i,j,k] = self.w[i,j,k]
                 dx = gp.x-atom.x
                 dy = gp.y-atom.y
                 dz = gp.z-atom.z
-                r = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
-                try:
-                    rho[i,j,k] += atom.interpolators['density'](r)
-                except ValueError:
-                    rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
-                    
+                r[i,j,k] = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
                 Vext[i,j,k] += atom.V(dx,dy,dz)
+#                 try:
+#                     rho[i,j,k] += atom.interpolators['density'](r)
+#                 except ValueError:
+#                     rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+        
+            rho += atom.interpolators['density'](r)    # increment rho for each atom    
+                
                             
         
         densityIntegral = np.sum(rho*weights)
@@ -1658,7 +1661,13 @@ class Cell(object):
         
         
 #         parentIntegral = self.intializeAndIntegrateDensity()
+#         if not hasattr(self, "DensityIntegral"):
         parentDensityIntegral, parentSqrtDensityIntegral, parentSqrtDensityVextIntegral = self.intializeAndIntegrateDensity()
+#         else:
+#             print('Not recomputing parent integrals...')
+#             parentDensityIntegral = self.DensityIntegral
+#             parentSqrtDensityIntegral = self.SqrtDensityIntegral
+#             parentSqrtDensityVextIntegral = self.SqrtDensityVextIntegral
         sumChildrenIntegrals = 0.0
         
         sumChildDensityIntegral=0.0
@@ -1675,6 +1684,9 @@ class Cell(object):
             for j in range(jj):
                 for k in range(kk):
                     childDensityIntegral, childSqrtDensityIntegral, childSqrtDensityVextIntegral = self.children[i,j,k].intializeAndIntegrateDensity()
+                    self.children[i,j,k].DensityIntegral = childDensityIntegral
+                    self.children[i,j,k].SqrtDensityIntegral = childSqrtDensityIntegral
+                    self.children[i,j,k].SqrtDensityVextIntegral = childSqrtDensityVextIntegral
                     sumChildDensityIntegral += childDensityIntegral
                     sumChildSqrtDensityIntegral += childSqrtDensityIntegral
                     sumChildSqrtDensityVextVextIntegral += childSqrtDensityVextIntegral

@@ -544,7 +544,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 orbitalResidual = 1
                 eigenvalueResidual = 1
                 greenIterationsCount = 1
-                max_GreenIterationsCount = 150
+                max_GreenIterationsCount = 15000  # set very high.  Don't ever stop green iterations before convergence.
                 
     
             
@@ -556,7 +556,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 previousResidual = 1
                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) 
 #                         and (np.abs(psiNewNorm-1) > intraScfTolerance) 
-                        and (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) > 1/10000)):
+                        and (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) > 1/1000000)):
                     print()
                     print()                    
                     print('MEMORY USAGE: ')
@@ -833,7 +833,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     
                     
                     # If wavefunction residual is low then start using Anderson Mixing
-                    if ((GIandersonMixing==False) and (orbitalResidual < 1e-3) ): 
+                    if ((GIandersonMixing==False) and (orbitalResidual < 1e-30) ): 
                         GIandersonMixing = True
                         mixingStart = greenIterationsCount
                         print('Turning on Anderson Mixing for wavefunction %i' %m)

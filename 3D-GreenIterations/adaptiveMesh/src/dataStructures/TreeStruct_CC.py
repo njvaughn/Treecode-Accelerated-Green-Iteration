@@ -254,13 +254,20 @@ class Tree(object):
   
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
 #                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
-                if ( (Atom.x < Cell.xmax) and (Atom.x > Cell.xmin) and 
-                     (Atom.y < Cell.ymax) and (Atom.y > Cell.ymin) and
-                     (Atom.z < Cell.zmax) and (Atom.z > Cell.zmin) ):
-                    print('Dividing cell %s because atom is in interior.' %(Cell.uniqueID))
+                if ( (Atom.x <= Cell.xmax) and (Atom.x >= Cell.xmin) and 
+                     (Atom.y <= Cell.ymax) and (Atom.y >= Cell.ymin) and
+                     (Atom.z <= Cell.zmax) and (Atom.z >= Cell.zmin) ):
+                    
                     xdiv = Atom.x
                     ydiv = Atom.y
                     zdiv = Atom.z
+                    
+                    if ( (Atom.x==Cell.xmax) or (Atom.x==Cell.xmin) ):
+                        xdiv=None
+                    if ( (Atom.y==Cell.ymax) or (Atom.y==Cell.ymin) ):
+                        ydiv=None
+                    if ( (Atom.z==Cell.zmax) or (Atom.z==Cell.zmin) ):
+                        zdiv=None
 #                     if ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) ):
 #                         xdiv = None
 #                     if ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ):
@@ -269,35 +276,40 @@ class Tree(object):
 #                         zdiv = None
         
         
-#                     if ( (xdiv!=None) or (ydiv!=None) or (zdiv!=None) ):    
-                    Cell.divide(xdiv, ydiv, zdiv)
+                    if ( (xdiv!=None) or (ydiv!=None) or (zdiv!=None) ): 
+                        print('Dividing cell %s because atom is in interior.' %(Cell.uniqueID))   
+                        Cell.divide(xdiv, ydiv, zdiv)
+                    else: 
+                        print('Not dividing cell %s because atom is apparently at corner.' %(Cell.uniqueID))
             
                     leafCount = 0
                     for _,cell in self.masterList:
                         if cell.leaf==True:
                             leafCount += 1
                     print('There are now %i leaf cells.' %leafCount)
-                    (ii,jj,kk) = np.shape(Cell.children)
-                    for i in range(ii):
-                        for j in range(jj):
-                            for k in range(kk):
-                                recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
+                    
+                    
+#                     (ii,jj,kk) = np.shape(Cell.children)
+#                     for i in range(ii):
+#                         for j in range(jj):
+#                             for k in range(kk):
+#                                 recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
         
-                else:   
-                    if ( ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) )  and 
-                         ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ) and
-                         ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ) ): # atom is at a vertex.
-                        if Cell.level < self.maxDepthAtAtoms: # But have we gone deep enough?
-                            print('Dividing cell %s because atom is at corner and it is at depth %i' %(Cell.uniqueID,Cell.level))
-                            xdiv = Cell.xmid
-                            ydiv = Cell.ymid
-                            zdiv = Cell.zmid
-                            Cell.divide(xdiv, ydiv, zdiv)
-                            (ii,jj,kk) = np.shape(Cell.children)
-                            for i in range(ii):
-                                for j in range(jj):
-                                    for k in range(kk):
-                                        recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
+#                 else:   
+#                     if ( ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) )  and 
+#                          ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ) and
+#                          ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ) ): # atom is at a vertex.
+#                         if Cell.level < self.maxDepthAtAtoms: # But have we gone deep enough?
+#                             print('Dividing cell %s because atom is at corner and it is at depth %i' %(Cell.uniqueID,Cell.level))
+#                             xdiv = Cell.xmid
+#                             ydiv = Cell.ymid
+#                             zdiv = Cell.zmid
+#                             Cell.divide(xdiv, ydiv, zdiv)
+#                             (ii,jj,kk) = np.shape(Cell.children)
+#                             for i in range(ii):
+#                                 for j in range(jj):
+#                                     for k in range(kk):
+#                                         recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
         
 #         print('Reading atomic coordinates from: ', coordinateFile)
 #         atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
@@ -327,8 +339,10 @@ class Tree(object):
         print('Refining an additional %i levels, from %i to %i' %(self.additionalDepthAtAtoms,self.maxDepthAchieved, self.maxDepthAtAtoms ))
         self.nAtoms = 0
         for atom in self.atoms:
-            recursiveDivideByAtom(self,atom,self.root)
             self.nAtoms += 1
+            print('Searching for cell containing atom ', self.nAtoms)
+            recursiveDivideByAtom(self,atom,self.root)
+            
             
         self.computeNuclearNuclearEnergy()
 #         
@@ -781,6 +795,7 @@ class Tree(object):
         
         print('Number of cells at max depth: ', self.maxDepthCounter)
 #         self.initialDivideBasedOnNuclei(self)
+        self.countCellsAtEachDepth()    
         self.initialDivideBasedOnNuclei(self.coordinateFile)
 #         refineRadius = 0.01
 #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
