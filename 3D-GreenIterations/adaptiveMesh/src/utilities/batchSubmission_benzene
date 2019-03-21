@@ -40,14 +40,14 @@ MESHTYPE='LW5'
 MIXINGPARAMETER=0.75 
 MIXINGHISTORY=6 
  
-INTRASCFTOLERANCE=5e-7  
+INTRASCFTOLERANCE=5e-4 
 INTERSCFTOLERANCE=1e-6 
    
 MIXING='Anderson'    
 CELLORDER=5 
  
-ADDITIONALDEPTHATATOMS=1 
-RESTART='True'	 
+ADDITIONALDEPTHATATOMS=0 
+RESTART='False'	 
 
 for SMOOTHINGEPS in 0.0
 do
@@ -56,10 +56,10 @@ do
 for MESHPARAM4 in 0
 do
 	for MESHPARAM3 in 0 
-	do   
+	do    
 		for MESHPARAM2 in 0 
 		do 
-			for MESHPARAM1 in 500
+			for MESHPARAM1 in 1000
 			    
 			do
 			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/tc_gaugeShift0p5_mindepth3_tcOrder${TREECODEORDER}_theta${THETA}_LW5_${MESHPARAM1}_mixingHistory${MIXINGHISTORY}.csv"

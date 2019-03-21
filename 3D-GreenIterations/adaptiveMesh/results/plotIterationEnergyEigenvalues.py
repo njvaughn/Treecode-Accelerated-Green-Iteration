@@ -89,7 +89,8 @@ import numpy as np
 
 resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'  
 # file='tc_gaugeShift0p5_tcOrder8_theta0.8_LW5_500_mixingHistory10_GREEN_1485000.csv'
-file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_GREEN_2787000.csv'
+# file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_GREEN_2787000.csv'
+file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_1000_mixingHistory6_GREEN_2948000.csv'
 
 
 
@@ -348,7 +349,7 @@ def plotFirstSCF(df):
     df.plot(y='eigenvalue3',ax=ax1,logy=False,label='Phi3')
     df.plot(y='eigenvalue4',ax=ax1,logy=False,label='Phi4')
     df.plot(y='eigenvalue5',ax=ax1,logy=False,label='Phi5')
-    df.plot(y='eigenvalue6',ax=ax1,logy=False,label='Phi6')
+    df.plot(y='eigenvalue6',ax=ax1,logy=False,label='Phi6') 
     df.plot(y='eigenvalue7',ax=ax1,logy=False,label='Phi7')
     df.plot(y='eigenvalue8',ax=ax1,logy=False,label='Phi8')
     df.plot(y='eigenvalue9',ax=ax1,logy=False,label='Phi9')
@@ -364,12 +365,12 @@ def plotFirstSCF(df):
     df.plot(y='eigenvalue19',ax=ax1,logy=False,label='Phi19')
     df.plot(y='eigenvalue20',ax=ax1,logy=False,label='Phi20')
     ax1.set_xlabel('Iteration Number')
-    ax1.set_ylabel('Energy (Hartree)')
+    ax1.set_ylabel('Energy (Hartree)')   
 ##    ax1.set_ylim([1e-4,2e-2])
     ax1.set_title('Wavefunction Eigenvalues')
 
 ##    plt.suptitle('Using Singularity Skipping, LW3-800')
-##    plt.suptitle('Using Singularity Subtraction, LW3-800, minDepth 3')
+##    plt.suptitle('Using Singularity Subtraction, LW3-800, minDepth 3') 
 ##    plt.suptitle(file)
 ##    plt.suptitle('Convergence of Green Iterations for Oxygen -- Coarse')
 #     plt.suptitle('Convergence of Green Iterations for Carbon Monoxide')

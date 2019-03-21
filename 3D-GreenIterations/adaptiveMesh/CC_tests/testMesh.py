@@ -114,6 +114,10 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
     print(tree.levelCounts.keys())
     print()
     print(tree.levelCounts.values())
+    
+    print()
+    print()
+    print('Memory footprint of tree: ')
     plt.bar(list(tree.levelCounts.keys()),list(tree.levelCounts.values()) )
     plt.xlabel('Refinement Depth')
     plt.ylabel('Number of Cells')
@@ -415,10 +419,10 @@ if __name__ == "__main__":
 #                     smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
     
-    meshDistributions(domain=20,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
-                        smoothingEpsilon=0.0,base=1.0, causeFigure=True, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+#     meshDistributions(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-3, divideParameter4=0,
+#                         smoothingEpsilon=0.0,base=1.0, causeFigure=True, inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
     
     
 #     timingTestsForOrbitalInitializations(domain=20,order=5,
@@ -435,11 +439,17 @@ if __name__ == "__main__":
     # param3: density integral   
     # param4: Vext integral   
     
-#     exportMeshForParaview(domain=20,order=5,
-#                         minDepth=3, maxDepth=15, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-#                         divideParameter1=1000, divideParameter2=1000.1, divideParameter3=1000.2, divideParameter4=20000,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/oxygen/LW5_1000')
+#     exportMeshForParaview(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI')
+    
+    exportMeshForParaview(domain=31,order=3,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+                        divideParameter1=500, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/LW5')
 #     
 
 
