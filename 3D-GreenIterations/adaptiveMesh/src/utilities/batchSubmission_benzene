@@ -53,9 +53,9 @@ for SMOOTHINGEPS in 0.0
 do
 for MAXDEPTH in 20 
 do								  					 
-for MESHPARAM4 in 0
+for MESHPARAM4 in 0   
 do
-	for MESHPARAM3 in 3e-6 
+	for MESHPARAM3 in 1e-2 
 	do    
 		for MESHPARAM2 in 1e6 
 		do 
