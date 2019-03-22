@@ -833,7 +833,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     
                     
                     # If wavefunction residual is low then start using Anderson Mixing
-                    if ((GIandersonMixing==False) and (orbitalResidual < 1e-3) ): 
+                    if ((GIandersonMixing==False) and (orbitalResidual < 2e-3) ): 
                         GIandersonMixing = True
                         mixingStart = greenIterationsCount
                         print('Turning on Anderson Mixing for wavefunction %i' %m)

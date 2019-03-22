@@ -714,11 +714,21 @@ class Tree(object):
 #             return
  
         
-    def buildTree(self,maxLevels, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',saveList=None,printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
+    def buildTree(self,maxLevels, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',savedMesh='',printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         # N is roughly the number of grid points.  It is used to generate the density function.
 #         print('saveList = ', saveList)
+        
+        if savedMesh!='':
+            try:
+                saveList = list( np.load('/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
+            except Exception:
+                saveList = list( np.load('/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
+            
+            print(saveList[0:10])
+        else:
+            saveList=None
         divideParameter = divideParameter1 # for methods that use only one divide parameter.
         timer = Timer()
         def recursiveDivide(self, Cell, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
@@ -832,10 +842,19 @@ class Tree(object):
         print('Number of cells at max depth: ', self.maxDepthCounter)
         
         print('Saving mesh to tree.saveList')
-        self.saveList = ['']
+        self.saveList = [''] 
         for _,cell in self.masterList:
             if cell.leaf==True:
                 self.saveList.insert(bisect.bisect_left(self.saveList, cell.uniqueID), cell.uniqueID )
+        print(os.getcwd())
+        saveListFile_local = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
+        saveListFile_flux = '/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
+        try:
+            np.save(saveListFile_local, self.saveList)
+        except Exception:
+            np.save(saveListFile_flux, self.saveList)
+            
+        print(self.saveList[0:10])
         #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
 
 #         self.initialDivideBasedOnNuclei(self)

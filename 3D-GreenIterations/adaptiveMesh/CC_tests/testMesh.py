@@ -212,7 +212,7 @@ def testTreeSaveAndReconstruction(domain,order,minDepth, maxDepth, additionalDep
     
     tree2.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-                    saveList=tree.saveList, printTreeProperties=True,onlyFillOne=False)
+                    savedMesh='LW5_100_1000000.0_0.001_0.npy', printTreeProperties=True,onlyFillOne=False)
     
     
     return tree, tree2
@@ -521,12 +521,21 @@ if __name__ == "__main__":
     # param3: density integral   
     # param4: Vext integral  
     
+    
+    # ParentChildrenIntegral
     tree, tree2 = testTreeSaveAndReconstruction(domain=30,order=5,
                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='LW5', 
-                        divideParameter1=200, divideParameter2=1e6, divideParameter3=1e-2, divideParameter4=0,
+                        divideParameter1=100, divideParameter2=1e6, divideParameter3=1e-3, divideParameter4=0,
                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
                         outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI') 
     
+#     for i in range(len(tree2.saveList)):
+#         if tree.saveList[i] != tree2.saveList[i]:
+#             print('i = ', i)
+#             print('tree', tree.saveList[i])
+#             print('tree2', tree2.saveList[i])
+            
+            
 #     tree = exportMeshForParaview(domain=30,order=5,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='LW5', 
 #                         divideParameter1=200, divideParameter2=1e6, divideParameter3=1e-2, divideParameter4=0,

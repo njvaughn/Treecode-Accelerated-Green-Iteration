@@ -252,7 +252,7 @@ class Cell(object):
         def findStr(a, x):
 #             'Locate the leftmost value exactly equal to x'
             i = bisect.bisect_left(a, x)
-            if i != len(a) and a[i] == x:
+            if i != len(a) and a[i].startswith(x) == True:
                 return i
             else:
                 return-1
@@ -264,7 +264,13 @@ class Cell(object):
 #         i = bisect.bisect_left(saveList, self.uniqueID+'111')
 #         print('completed bisect')
         i = findStr(saveList, self.uniqueID+'111')  # search for x child.  Could also search for self ID, then see if next thing in list is longer.
+#         i = findStr(saveList, self.uniqueID)  # search for x child.  Could also search for self ID, then see if next thing in list is longer.
         
+#         if ( ( i<(len(saveList)-1) )  and (i!=-1) ):
+#             if len(saveList[i+1]) > len(saveList[i]):
+#                 if saveList[i+1].startswith(self.uniqueID):
+#                     self.divideFlag=True
+
         if i!=-1:
             self.divideFlag=True
 #         print('Returning: divideFlag = ', self.divideFlag)
