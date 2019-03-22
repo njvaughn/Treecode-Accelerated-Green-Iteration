@@ -22,6 +22,7 @@ TwoByTwo = [element for element in itertools.product(range(2),range(2))]
 FiveByFiveByFive = [element for element in itertools.product(range(5),range(5),range(5))]
  
  
+ 
 class Cell(object):
     '''
     Cell object.  Cells are composed of gridpoint objects.  Trees are composed of Cells (as the nodes).
@@ -241,6 +242,33 @@ class Cell(object):
             return neighborList
 
         self.neighbors = getNeighbors3D(self)
+     
+    def checkIfChildrenInSaveList(self, saveList): 
+        
+#         print('Enertering cell.checkIfChildrenInSaveList...')
+#         print('saveList = ', saveList[0:10])
+        
+        
+        def findStr(a, x):
+#             'Locate the leftmost value exactly equal to x'
+            i = bisect.bisect_left(a, x)
+            if i != len(a) and a[i] == x:
+                return i
+            else:
+                return-1
+#             raise ValueError
+        
+        
+        self.divideFlag=False
+#         print('calling bisect')
+#         i = bisect.bisect_left(saveList, self.uniqueID+'111')
+#         print('completed bisect')
+        i = findStr(saveList, self.uniqueID+'111')  # search for x child.  Could also search for self ID, then see if next thing in list is longer.
+        
+        if i!=-1:
+            self.divideFlag=True
+#         print('Returning: divideFlag = ', self.divideFlag)
+        return
                 
     def fillInNeighbors(self, gridpoints): 
         '''

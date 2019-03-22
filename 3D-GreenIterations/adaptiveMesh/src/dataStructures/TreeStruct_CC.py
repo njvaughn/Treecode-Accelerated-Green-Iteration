@@ -20,6 +20,7 @@ from scipy.special import sph_harm
 from scipy.optimize import broyden1, anderson, brentq
 import pylibxc
 import itertools
+import bisect
 import os
 import sys
 import csv
@@ -688,17 +689,39 @@ class Tree(object):
     
 
         
-
+#     def buildTreeFromSave(self, saveList):
+#         
+#         def recursiveCheckForChildren(self,Cell):
+#             # Check if should divide
+#             
+#             # Divide
+#             if Cell.divideFlag == True:
+#                 xdiv = (Cell.xmax + Cell.xmin)/2   
+#                 ydiv = (Cell.ymax + Cell.ymin)/2   
+#                 zdiv = (Cell.zmax + Cell.zmin)/2   
+#                 Cell.divide(xdiv, ydiv, zdiv, printNumberOfCells)
+# 
+#                 (ii,jj,kk) = np.shape(Cell.children)
+#                 for i in range(ii):
+#                     for j in range(jj):
+#                         for k in range(kk):
+#                             recursiveCheckForChildren(self,Cell.children[i,j,k])
+# #                             maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved)
+#                 
+#                 
+#                 # Call recursiveCheckForChildren( ) for each child
+#             
+#             return
  
         
-    def buildTree(self,maxLevels, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
+    def buildTree(self,maxLevels, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',saveList=None,printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         # N is roughly the number of grid points.  It is used to generate the density function.
-        
+#         print('saveList = ', saveList)
         divideParameter = divideParameter1 # for methods that use only one divide parameter.
         timer = Timer()
-        def recursiveDivide(self, Cell, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
+        def recursiveDivide(self, Cell, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
             levelCounter += 1
             
             if hasattr(Cell, "children"):
@@ -710,7 +733,7 @@ class Tree(object):
                         for k in range(kk):
                             maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], 
                                                                                 maxLevels, divideCriterion, divideParameter, 
-                                                                                levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved, 
+                                                                                levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved, 
                                                                                 minDepthAchieved)
             
             elif Cell.level < maxLevels:
@@ -720,8 +743,13 @@ class Tree(object):
                 if Cell.level < self.minDepth:
                     Cell.divideFlag = True 
 #                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
-                else:  
-                    if ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or (divideCriterion == 'LW3_modified') or 
+                else:
+                    if saveList!=None:
+#                         print('Checking saveList for cell ', Cell.uniqueID)
+                        Cell.checkIfChildrenInSaveList(saveList)
+                        # do the search
+#                         return
+                    elif ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or (divideCriterion == 'LW3_modified') or 
                          (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') 
                          or (divideCriterion == 'Krasny_density') or (divideCriterion == 'Nathan_density')  ):
 #                         print('checking divide criterion for cell ', Cell.uniqueID)
@@ -780,7 +808,10 @@ class Tree(object):
                     for i in range(ii):
                         for j in range(jj):
                             for k in range(kk):
-                                maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved, minDepthAchieved)
+                                maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], maxLevels, 
+                                                                                                                    divideCriterion, divideParameter, levelCounter, 
+                                                                                                                    maxDepthCounter, saveList, printNumberOfCells, 
+                                                                                                                    maxDepthAchieved, minDepthAchieved)
                 else:
                     minDepthAchieved = min(minDepthAchieved, Cell.level)
                     
@@ -796,9 +827,17 @@ class Tree(object):
 #         self.initialDivideBasedOnNuclei(self.coordinateFile)
         levelCounter=0
         maxDepthCounter=0
-        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize, self.maxDepthCounter = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize, self.maxDepthCounter = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
         
         print('Number of cells at max depth: ', self.maxDepthCounter)
+        
+        print('Saving mesh to tree.saveList')
+        self.saveList = ['']
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                self.saveList.insert(bisect.bisect_left(self.saveList, cell.uniqueID), cell.uniqueID )
+        #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
+
 #         self.initialDivideBasedOnNuclei(self)
         self.countCellsAtEachDepth()    
         self.initialDivideBasedOnNuclei(self.coordinateFile)

@@ -10,12 +10,20 @@ import itertools
 import time
 import numpy as np
 import matplotlib.pyplot as plt
+import bisect
 
 from meshUtilities import *
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 
 from TreeStruct_CC import Tree
 
+
+def find(a, x):
+    'Locate the leftmost value exactly equal to x'
+    i = bisect.bisect_left(a, [x,])
+    if i != len(a) and a[i][0] == x:
+        return i
+    raise ValueError
 
 def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, divideParameter1, divideParameter2, divideParameter3, divideParameter4, inputFile,
                                  smoothingEpsilon=0.0):
@@ -134,6 +142,80 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
 #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
 
     print('Meshes Exported.')
+    
+#     tree.saveList = ['']
+#     for _,cell in tree.masterList:
+#         if cell.leaf==True:
+#             tree.saveList.insert(bisect.bisect_left(cell.tree.saveList, cell.uniqueID), [cell.uniqueID] )
+    #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
+
+    
+    return tree
+
+def testTreeSaveAndReconstruction(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
+                          divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
+                          smoothingEpsilon=0.0, 
+                          inputFile='', outputFile=''):    
+    
+    
+#     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+#     nElectrons = int(nElectrons)
+#     nOrbitals = int(nOrbitals)
+
+    print('Reading atomic coordinates from: ', coordinateFile)
+    atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+    if np.shape(atomData)==(5,):
+        nElectrons = atomData[3]
+    else:
+        nElectrons = 0
+        for i in range(len(atomData)):
+            nElectrons += atomData[i,3]
+    
+#     nOrbitals = int( np.ceil(nElectrons/2))
+    nOrbitals = int( np.ceil(nElectrons/2)+1)
+
+    if inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
+        nOrbitals = 30
+    print('nElectrons = ', nElectrons)
+    print('nOrbitals  = ', nOrbitals)
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+                coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
+
+    
+    print('max depth ', maxDepth)
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+                    divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
+                    printTreeProperties=True,onlyFillOne=False)
+    
+    print(tree.levelCounts)
+    print()
+    print(tree.levelCounts.keys())
+    print()
+    print(tree.levelCounts.values())
+    
+
+    print('Meshes Exported.')
+    
+#     tree.saveList = ['']
+#     for _,cell in tree.masterList:
+#         if cell.leaf==True:
+#             tree.saveList.insert(bisect.bisect_left(cell.tree.saveList, cell.uniqueID), cell.uniqueID )
+#     #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
+
+    
+    tree2 = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+                coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
+
+    
+    tree2.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+                    divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
+                    saveList=tree.saveList, printTreeProperties=True,onlyFillOne=False)
+    
+    
+    return tree, tree2
     
 def timingTestsForOrbitalInitializations(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, divideParameter,inputFile):
     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
@@ -437,13 +519,19 @@ if __name__ == "__main__":
     # param1: wavefunction variation
     # param2: wavefunction integral
     # param3: density integral   
-    # param4: Vext integral   
+    # param4: Vext integral  
     
-    exportMeshForParaview(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-2, divideParameter4=0,
-                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI')
+    tree, tree2 = testTreeSaveAndReconstruction(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='LW5', 
+                        divideParameter1=200, divideParameter2=1e6, divideParameter3=1e-2, divideParameter4=0,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI') 
+    
+#     tree = exportMeshForParaview(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='LW5', 
+#                         divideParameter1=200, divideParameter2=1e6, divideParameter3=1e-2, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI')
     
 #     exportMeshForParaview(domain=31,order=3,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
