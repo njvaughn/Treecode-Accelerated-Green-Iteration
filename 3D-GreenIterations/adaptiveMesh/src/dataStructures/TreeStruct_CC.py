@@ -723,8 +723,10 @@ class Tree(object):
         if savedMesh!='':
             try:
                 saveList = list( np.load('/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
+                print("Mesh loaded from: ", savedMesh)
             except Exception:
                 saveList = list( np.load('/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
+                print("Mesh loaded from: ", savedMesh)
             
             print(saveList[0:10])
         else:
