@@ -82,7 +82,8 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, 
 def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
                           divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
                           smoothingEpsilon=0.0, 
-                          inputFile='', outputFile=''):    
+                          inputFile='', outputFile='',
+                          savedMesh=''):    
     
     
 #     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
@@ -115,7 +116,7 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
     print('max depth ', maxDepth)
     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-                    printTreeProperties=True,onlyFillOne=False)
+                    savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
     
     print(tree.levelCounts)
     print()
@@ -539,11 +540,19 @@ if __name__ == "__main__":
             
 #             oxygenAtomAuxiliary
             
-    tree = exportMeshForParaview(domain=20,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-6, divideParameter4=0,
-                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_CO_cubic')
+#     tree = exportMeshForParaview(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=3e-6, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_firstConstruction',
+#                         savedMesh='')        
+            
+    tree = exportMeshForParaview(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=999, divideParameter2=999, divideParameter3=999, divideParameter4=0,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
+                        savedMesh='ParentChildrenIntegral_1000000.0_1000000.0_3e-06_0.npy')
     
 #     exportMeshForParaview(domain=31,order=3,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
