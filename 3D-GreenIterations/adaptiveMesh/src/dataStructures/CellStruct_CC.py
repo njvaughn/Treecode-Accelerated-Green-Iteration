@@ -1674,7 +1674,7 @@ class Cell(object):
             dy = self.ymid-atom.y
             dz = self.zmid-atom.z
             distToAtom = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
-            if distToAtom < 5:
+            if distToAtom < 30:
                 for i,j,k in self.PxByPyByPz:
                     gp = self.gridpoints[i,j,k]
                     dx = gp.x-atom.x

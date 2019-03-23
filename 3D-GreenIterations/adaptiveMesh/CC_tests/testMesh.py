@@ -523,11 +523,11 @@ if __name__ == "__main__":
     
     
     # ParentChildrenIntegral
-    tree, tree2 = testTreeSaveAndReconstruction(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='LW5', 
-                        divideParameter1=100, divideParameter2=1e6, divideParameter3=1e-3, divideParameter4=0,
-                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI') 
+#     tree, tree2 = testTreeSaveAndReconstruction(domain=20,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-2, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI') 
     
 #     for i in range(len(tree2.saveList)):
 #         if tree.saveList[i] != tree2.saveList[i]:
@@ -536,11 +536,14 @@ if __name__ == "__main__":
 #             print('tree2', tree2.saveList[i])
             
             
-#     tree = exportMeshForParaview(domain=30,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='LW5', 
-#                         divideParameter1=200, divideParameter2=1e6, divideParameter3=1e-2, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI')
+            
+#             oxygenAtomAuxiliary
+            
+    tree = exportMeshForParaview(domain=20,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-6, divideParameter4=0,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_CO_cubic')
     
 #     exportMeshForParaview(domain=31,order=3,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 

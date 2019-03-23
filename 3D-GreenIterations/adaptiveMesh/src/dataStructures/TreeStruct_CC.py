@@ -797,12 +797,15 @@ class Tree(object):
                         Cell.checkDensityInterpolation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                         
                     elif divideCriterion=='ParentChildrenIntegral':
-                        Cell.checkIfAboveMeshDensity(500,'LW5')
-#                         if not hasattr(Cell, "children"):
-                        if Cell.divideFlag != True:
-                            Cell.refineByCheckingParentChildrenIntegrals(divideParameter1, divideParameter2, divideParameter3)  
-                        else:
-                            print('Cell %s refined by LW scheme.' %Cell.uniqueID)
+                        
+                        Cell.refineByCheckingParentChildrenIntegrals(divideParameter1, divideParameter2, divideParameter3)
+                        
+                        
+#                         Cell.checkIfAboveMeshDensity(500,'LW5')
+#                         if Cell.divideFlag != True:
+#                             Cell.refineByCheckingParentChildrenIntegrals(divideParameter1, divideParameter2, divideParameter3)  
+#                         else:
+#                             print('Cell %s refined by LW scheme.' %Cell.uniqueID)
                     
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)

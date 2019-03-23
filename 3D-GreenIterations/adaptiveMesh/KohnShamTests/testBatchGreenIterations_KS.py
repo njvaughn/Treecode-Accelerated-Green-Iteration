@@ -82,6 +82,9 @@ print('gradientFree = ', noGradients)
 print('Mixing scheme = ', mixingScheme)
 print('vtk directory = ', vtkDir)
 
+if savedMesh == 'None':
+    savedMesh=''
+
 if noGradients=='True':
     gradientFree=True
 elif noGradients=='False':
