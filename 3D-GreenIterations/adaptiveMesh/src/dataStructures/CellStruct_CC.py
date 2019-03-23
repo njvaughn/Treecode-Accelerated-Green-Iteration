@@ -22,6 +22,7 @@ TwoByTwo = [element for element in itertools.product(range(2),range(2))]
 FiveByFiveByFive = [element for element in itertools.product(range(5),range(5),range(5))]
  
  
+ 
 class Cell(object):
     '''
     Cell object.  Cells are composed of gridpoint objects.  Trees are composed of Cells (as the nodes).
@@ -241,6 +242,39 @@ class Cell(object):
             return neighborList
 
         self.neighbors = getNeighbors3D(self)
+     
+    def checkIfChildrenInSaveList(self, saveList): 
+        
+#         print('Enertering cell.checkIfChildrenInSaveList...')
+#         print('saveList = ', saveList[0:10])
+        
+        
+        def findStr(a, x):
+#             'Locate the leftmost value exactly equal to x'
+            i = bisect.bisect_left(a, x)
+            if i != len(a) and a[i].startswith(x) == True:
+                return i
+            else:
+                return-1
+#             raise ValueError
+        
+        
+        self.divideFlag=False
+#         print('calling bisect')
+#         i = bisect.bisect_left(saveList, self.uniqueID+'111')
+#         print('completed bisect')
+        i = findStr(saveList, self.uniqueID+'111')  # search for x child.  Could also search for self ID, then see if next thing in list is longer.
+#         i = findStr(saveList, self.uniqueID)  # search for x child.  Could also search for self ID, then see if next thing in list is longer.
+        
+#         if ( ( i<(len(saveList)-1) )  and (i!=-1) ):
+#             if len(saveList[i+1]) > len(saveList[i]):
+#                 if saveList[i+1].startswith(self.uniqueID):
+#                     self.divideFlag=True
+
+        if i!=-1:
+            self.divideFlag=True
+#         print('Returning: divideFlag = ', self.divideFlag)
+        return
                 
     def fillInNeighbors(self, gridpoints): 
         '''
@@ -1631,32 +1665,42 @@ class Cell(object):
         r = np.zeros((self.px,self.py,self.pz))
         Vext = np.zeros((self.px,self.py,self.pz))
         weights = np.zeros((self.px,self.py,self.pz))
-        for atom in self.tree.atoms:
-            for i,j,k in self.PxByPyByPz:
-                gp = self.gridpoints[i,j,k]
-                weights[i,j,k] = self.w[i,j,k]
-                dx = gp.x-atom.x
-                dy = gp.y-atom.y
-                dz = gp.z-atom.z
-                r[i,j,k] = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
-                Vext[i,j,k] += atom.V(dx,dy,dz)
-#                 try:
-#                     rho[i,j,k] += atom.interpolators['density'](r)
-#                 except ValueError:
-#                     rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
         
-            rho += atom.interpolators['density'](r)    # increment rho for each atom    
+        for i,j,k in self.PxByPyByPz:
+            weights[i,j,k] = self.w[i,j,k]
                 
+        for atom in self.tree.atoms:
+            dx = self.xmid-atom.x
+            dy = self.ymid-atom.y
+            dz = self.zmid-atom.z
+            distToAtom = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
+            if distToAtom < 30:
+                for i,j,k in self.PxByPyByPz:
+                    gp = self.gridpoints[i,j,k]
+                    dx = gp.x-atom.x
+                    dy = gp.y-atom.y
+                    dz = gp.z-atom.z
+                    r[i,j,k] = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
+#                     Vext[i,j,k] += atom.V(gp.x,gp.y,gp.z)
+    #                 try:
+    #                     rho[i,j,k] += atom.interpolators['density'](r)
+    #                 except ValueError:
+    #                     rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
+            
+                rho += atom.interpolators['density'](r)    # increment rho for each atom    
+                Vext += -atom.atomicNumber / r
                             
         
-        densityIntegral = np.sum(rho*weights)
-        sqrtDensityIntegral = np.sum(np.sqrt(rho)*weights) 
+        densityIntegral = 1 #np.sum(rho*weights)
+        sqrtDensityIntegral = 1 #np.sum(np.sqrt(rho)*weights) 
         sqrtDensityVextIntegral = np.sum(np.sqrt(rho)*Vext*weights)
 
         return densityIntegral, sqrtDensityIntegral, sqrtDensityVextIntegral
         
      
     def refineByCheckingParentChildrenIntegrals(self, divideParameter1, divideParameter2, divideParameter3):
+        if self.level>=3:
+            print('Cell:                                      ', self.uniqueID)
         self.divideFlag = False
         
         
@@ -1668,7 +1712,7 @@ class Cell(object):
 #             parentDensityIntegral = self.DensityIntegral
 #             parentSqrtDensityIntegral = self.SqrtDensityIntegral
 #             parentSqrtDensityVextIntegral = self.SqrtDensityVextIntegral
-        sumChildrenIntegrals = 0.0
+        sumChildrenIntegrals = 0.0 
         
         sumChildDensityIntegral=0.0
         sumChildSqrtDensityIntegral=0.0
@@ -1684,9 +1728,9 @@ class Cell(object):
             for j in range(jj):
                 for k in range(kk):
                     childDensityIntegral, childSqrtDensityIntegral, childSqrtDensityVextIntegral = self.children[i,j,k].intializeAndIntegrateDensity()
-                    self.children[i,j,k].DensityIntegral = childDensityIntegral
-                    self.children[i,j,k].SqrtDensityIntegral = childSqrtDensityIntegral
-                    self.children[i,j,k].SqrtDensityVextIntegral = childSqrtDensityVextIntegral
+#                     self.children[i,j,k].DensityIntegral = childDensityIntegral
+#                     self.children[i,j,k].SqrtDensityIntegral = childSqrtDensityIntegral
+#                     self.children[i,j,k].SqrtDensityVextIntegral = childSqrtDensityVextIntegral
                     sumChildDensityIntegral += childDensityIntegral
                     sumChildSqrtDensityIntegral += childSqrtDensityIntegral
                     sumChildSqrtDensityVextVextIntegral += childSqrtDensityVextIntegral
@@ -1699,8 +1743,8 @@ class Cell(object):
         
         if np.abs(parentSqrtDensityVextIntegral-sumChildSqrtDensityVextVextIntegral) > divideParameter3:
             self.childrenRefineCause=3
-            print()
-            print('Cell:                                      ', self.uniqueID)
+#             print()
+#             print('Cell:                                      ', self.uniqueID)
             print('Parent sqrt(Density)Vext Integral:         ', parentSqrtDensityVextIntegral)
             print('Children sqrt(Density)Vext Integral:       ', sumChildSqrtDensityVextVextIntegral)
             print()
@@ -1709,23 +1753,23 @@ class Cell(object):
         
         
         
-        elif np.abs(parentSqrtDensityIntegral-sumChildSqrtDensityIntegral) > divideParameter2:
-            self.childrenRefineCause=2
-            print()
-            print('Cell:                                      ', self.uniqueID)
-            print('Parent sqrt(Density) Integral:             ', parentSqrtDensityIntegral)
-            print('Children sqrt(Density) Integral:           ', sumChildSqrtDensityIntegral)
-            print()
-            self.divideFlag=True
-            
-        elif np.abs(parentDensityIntegral-sumChildDensityIntegral) > divideParameter1:
-            self.childrenRefineCause=1
-            print()
-            print('Cell:                                      ', self.uniqueID)
-            print('Parent Density Integral:                   ', parentDensityIntegral)
-            print('Children Density Integral:                 ', sumChildDensityIntegral)
-            print()
-            self.divideFlag=True
+#         elif np.abs(parentSqrtDensityIntegral-sumChildSqrtDensityIntegral) > divideParameter2:
+#             self.childrenRefineCause=2
+#             print()
+#             print('Cell:                                      ', self.uniqueID)
+#             print('Parent sqrt(Density) Integral:             ', parentSqrtDensityIntegral)
+#             print('Children sqrt(Density) Integral:           ', sumChildSqrtDensityIntegral)
+#             print()
+#             self.divideFlag=True
+#             
+#         elif np.abs(parentDensityIntegral-sumChildDensityIntegral) > divideParameter1:
+#             self.childrenRefineCause=1
+#             print()
+#             print('Cell:                                      ', self.uniqueID)
+#             print('Parent Density Integral:                   ', parentDensityIntegral)
+#             print('Children Density Integral:                 ', sumChildDensityIntegral)
+#             print()
+#             self.divideFlag=True
             
             
 #             for i,j,k in np.shape(self.children):
@@ -1736,6 +1780,10 @@ class Cell(object):
             for j in range(jj):
                 for k in range(kk):
                     child = self.children[i,j,k]
+                    for i2,j2,k2 in child.PxByPyByPz:
+                        gp = child.gridpoints[i2,j2,k2]
+                        del gp
+                        child.gridpoints[i2,j2,k2]=None
                     del child
 #         self.children=None
         delattr(self,"children")

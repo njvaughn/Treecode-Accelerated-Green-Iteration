@@ -65,6 +65,7 @@ divideParameter3    = float(sys.argv[n]); n+=1
 divideParameter4    = float(sys.argv[n]); n+=1
 base                = float(sys.argv[n]); n+=1
 restart             = str(sys.argv[n]); n+=1
+savedMesh           = str(sys.argv[n]); n+=1
 
 
 
@@ -80,6 +81,9 @@ divideParameter4 *= base
 print('gradientFree = ', noGradients)
 print('Mixing scheme = ', mixingScheme)
 print('vtk directory = ', vtkDir)
+
+if savedMesh == 'None':
+    savedMesh=''
 
 if noGradients=='True':
     gradientFree=True
@@ -196,7 +200,7 @@ def setUpTree(onlyFillOne=False):
     print('max depth ', maxDepth)
     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-                    printTreeProperties=True,onlyFillOne=onlyFillOne)
+                    savedMesh=savedMesh,printTreeProperties=True,onlyFillOne=onlyFillOne)
 
 
     
