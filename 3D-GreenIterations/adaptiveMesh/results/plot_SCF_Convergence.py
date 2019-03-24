@@ -72,8 +72,9 @@ import numpy as np
 
 resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'  
 # file='tc_gaugeShift0p5_tcOrder8_theta0.8_LW5_500_mixingHistory10_SCF_1485000.csv'
-file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_SCF_1485000.csv'
+# file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_SCF_1485000.csv'
 # file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_SCF_2787000.csv'
+file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory10_SCF_2172000.csv'
 
 
 # # parent-child integral
@@ -81,10 +82,10 @@ file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_SCF_14
 # file='Be_order5_0.000001_SCF_260000.csv'
 
 
-df = pd.read_csv(resultsDir+file, header=0)
+df = pd.read_csv(resultsDir+file, header=0)   
 # df = df.drop(df.index[14]) 
 
-plotsDir = resultsDir+'plots/'
+plotsDir = resultsDir+'plots/' 
 
     
 def plotSCFconvergence(df, system = 'H2'):

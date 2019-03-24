@@ -540,19 +540,19 @@ if __name__ == "__main__":
             
 #             oxygenAtomAuxiliary
             
+    tree = exportMeshForParaview(domain=20,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_firstConstruction',
+                        savedMesh='')        
+            
 #     tree = exportMeshForParaview(domain=30,order=5,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=3e-6, divideParameter4=0,
+#                         divideParameter1=999, divideParameter2=999, divideParameter3=999, divideParameter4=0,
 #                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_firstConstruction',
-#                         savedMesh='')        
-            
-    tree = exportMeshForParaview(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=999, divideParameter2=999, divideParameter3=999, divideParameter4=0,
-                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
-                        savedMesh='ParentChildrenIntegral_1000000.0_1000000.0_3e-06_0.npy')
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
+#                         savedMesh='ParentChildrenIntegral_1000000.0_1000000.0_3e-06_0.npy')
     
 #     exportMeshForParaview(domain=31,order=3,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 

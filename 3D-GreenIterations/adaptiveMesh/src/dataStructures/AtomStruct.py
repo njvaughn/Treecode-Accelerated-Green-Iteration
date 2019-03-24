@@ -2,7 +2,7 @@
 @author: nathanvaughn
 '''
 import numpy as np
-from scipy.interpolate import interp1d
+from scipy.interpolate import interp1d, InterpolatedUnivariateSpline
 from scipy.special import erf
 import os
 
@@ -91,9 +91,13 @@ class Atom(object):
         for singleAtomData in os.listdir(path): 
             if singleAtomData[:3]=='psi':
                 data = np.genfromtxt(path+singleAtomData)
+#                 self.interpolators[singleAtomData[:5]] = interp1d(data[:,0],data[:,1],fill_value='extrapolate')
                 self.interpolators[singleAtomData[:5]] = interp1d(data[:,0],data[:,1],kind='cubic',fill_value='extrapolate')
+#                 self.interpolators[singleAtomData[:5]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext=0)
             elif singleAtomData[:7]=='density':
                 data = np.genfromtxt(path+singleAtomData)
                 self.interpolators[singleAtomData[:7]] = interp1d(data[:,0],data[:,1],kind='cubic',fill_value='extrapolate')
+#                 self.interpolators[singleAtomData[:7]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext=0)
+#                 self.interpolators[singleAtomData[:7]] = interp1d(data[:,0],data[:,1],kind='cubic',fill_value=0)
         
 
