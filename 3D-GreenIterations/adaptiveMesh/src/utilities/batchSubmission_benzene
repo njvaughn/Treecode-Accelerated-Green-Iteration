@@ -34,8 +34,8 @@ BASE=1.0
 
 GAUSSIANALPHA=1.0
 
-#MESHTYPE='ParentChildrenIntegral'
-MESHTYPE='LW5'
+MESHTYPE='ParentChildrenIntegral'
+#MESHTYPE='LW5'
 
 
 MIXINGPARAMETER=0.5 
@@ -57,14 +57,15 @@ for MAXDEPTH in 20
 do								  					 
 for MESHPARAM4 in 0   
 do
-	for MESHPARAM3 in 1e-06 
+	for MESHPARAM3 in 3e-06
+	 
 	do    
 		for MESHPARAM2 in 1e6 
 		do 
-			for MESHPARAM1 in 500
+			for MESHPARAM1 in 1e6
 			    
 			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/ds_gaugeShift0p5_mindepth3_tcOrder${TREECODEORDER}_theta${THETA}_PCI_${MESHPARAM3}_0random_mixingHistory${MIXINGHISTORY}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/ds_gaugeShift0p25_mindepth3_tcOrder${TREECODEORDER}_theta${THETA}_PCI_${MESHPARAM3}_0random_mixingHistory${MIXINGHISTORY}.csv"
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $MIXING $MIXINGPARAMETER $MIXINGHISTORY\
