@@ -1978,7 +1978,7 @@ class Tree(object):
                             
         return np.array(leaves)
     
-    def extractGreenIterationIntegrand(self,m): 
+    def extractGreenIterationIntegrand(self,m,scaling=1.0): 
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
         '''
@@ -1989,8 +1989,34 @@ class Tree(object):
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
-                    f = -2*gridpt.phi[m]*gridpt.v_eff
+                    f = -2*gridpt.phi[m]*gridpt.v_eff*scaling
                     leaves.append( [gridpt.x, gridpt.y, gridpt.z, f, cell.w[i,j,k] ] )
+                            
+        return np.array(leaves)
+    
+    def extractGreenIterationIntegrand_Deflated(self,m,orbitals,weights): 
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        leaves = []
+        if m>0:
+            dotProducts = np.zeros(m)
+            for n in range(m):
+                dotProducts[n] = np.dot( orbitals[:,m], orbitals[:,n]*weights)
+            print('Dot products: ', dotProducts)
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    
+                    gridpt = cell.gridpoints[i,j,k]
+                    f = -2*gridpt.phi[m]*gridpt.v_eff
+                    
+                    g = 0.0
+                    for n in range(m):
+                        g += 2 * self.orbitalEnergies[n] * gridpt.phi[n] * dotProducts[n]
+                    
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, f+g, cell.w[i,j,k] ] )
                             
         return np.array(leaves)
     

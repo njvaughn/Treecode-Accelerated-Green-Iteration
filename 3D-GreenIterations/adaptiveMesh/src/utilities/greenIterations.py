@@ -182,6 +182,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     if restartFile!=False:
         orbitals = np.load(wavefunctionFile+'.npy')
         oldOrbitals = np.copy(orbitals)
+        for m in range(nOrbitals): 
+            tree.importPhiOnLeaves(orbitals[:,m], m)
         density = np.load(densityFile+'.npy')
         tree.importDensityOnLeaves(density)
         
@@ -520,12 +522,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         for m in range(nOrbitals): 
             
             # Orthonormalize orbital m before beginning Green's iteration
-#             targets = tree.extractPhi(m)
-#             orbitals[:,m] = np.copy(targets[:,3])
+            targets = tree.extractPhi(m)
+            orbitals[:,m] = np.copy(targets[:,3])
             n,k = np.shape(orbitals)
-#             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-#             orbitals[:,m] = np.copy(orthWavefunction)
-#             tree.importPhiOnLeaves(orbitals[:,m], m)
+            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+            orbitals[:,m] = np.copy(orthWavefunction)
+            tree.importPhiOnLeaves(orbitals[:,m], m)
             
             firstGreenIteration=True
             
@@ -590,7 +592,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                                 inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(oldOrbitals[:,m])
     
-                    sources = tree.extractGreenIterationIntegrand(m)
+#                     sources = tree.extractGreenIterationIntegrand(m)
+                    sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
                     targets = np.copy(sources)
     
 
@@ -711,9 +714,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
                             orbitals[:,m] = np.copy(phiNew)
                             
-                            n,k = np.shape(orbitals)
-                            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-                            orbitals[:,m] = np.copy(orthWavefunction)
+#                             n,k = np.shape(orbitals)
+#                             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#                             orbitals[:,m] = np.copy(orthWavefunction)
                             tree.importPhiOnLeaves(orbitals[:,m], m)
 
      
@@ -833,7 +836,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     
                     
                     # If wavefunction residual is low then start using Anderson Mixing
-                    if ((GIandersonMixing==False) and (orbitalResidual < 2e-3) ): 
+                    if ((GIandersonMixing==False) and (orbitalResidual < 2e-30) ): 
                         GIandersonMixing = True
                         mixingStart = greenIterationsCount
                         print('Turning on Anderson Mixing for wavefunction %i' %m)
