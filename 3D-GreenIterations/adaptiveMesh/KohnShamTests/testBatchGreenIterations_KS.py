@@ -174,8 +174,21 @@ def setUpTree(onlyFillOne=False):
         occupations[4] = 4/3
         
     elif inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
-        nOrbitals=21
-        occupations = 2*np.ones(nOrbitals)
+#         nOrbitals=21
+#         occupations = 2*np.ones(nOrbitals)
+        occupations = [2, 2, 2/3 ,2/3 ,2/3, 
+                       2, 2, 2/3 ,2/3 ,2/3,
+                       2, 2, 2/3 ,2/3 ,2/3,
+                       2, 2, 2/3 ,2/3 ,2/3,
+                       2, 2, 2/3 ,2/3 ,2/3,
+                       2, 2, 2/3 ,2/3 ,2/3,
+                       1,
+                       1,
+                       1,
+                       1,
+                       1,
+                       1]
+        
     
         
     elif inputFile=='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
