@@ -49,15 +49,15 @@ ADDITIONALDEPTHATATOMS=5
 for ADDITIONALDEPTHATATOMS in 0
 do
 for CELLORDER in 5
-do	 
-#for BASE in 1e-5 3e-6 1e-6 3e-7
+do	  
+#for BASE in 1e-5 3e-6 1e-6 3e-7 
 for BASE in 1
 do
 for MAXDEPTH in 20   
-do								  					 
+do								  					    
 for MESHPARAM4 in 0 
 do
-	for MESHPARAM3 in 1e-5 3e-6 1e-6 3e-7
+	for MESHPARAM3 in 3e-7 1e-7 3e-8
 	do     
 		for MESHPARAM2 in 1e6
 		do 
