@@ -39,6 +39,7 @@ class Test(unittest.TestCase):
 
 #         plt.semilogy(data[:,0],data[:,1],label='Density')
         plt.plot(data[:,0],data[:,1],'o',label='Density')
+        plt.plot(data[:,0],data[:,0],'o',label='Radial points')
         
 #         r = data[:,0]
 #         P = np.zeros_like(r)

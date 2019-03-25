@@ -523,9 +523,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #             targets = tree.extractPhi(m)
 #             orbitals[:,m] = np.copy(targets[:,3])
             n,k = np.shape(orbitals)
-            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-            orbitals[:,m] = np.copy(orthWavefunction)
-            tree.importPhiOnLeaves(orbitals[:,m], m)
+#             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#             orbitals[:,m] = np.copy(orthWavefunction)
+#             tree.importPhiOnLeaves(orbitals[:,m], m)
             
             firstGreenIteration=True
             

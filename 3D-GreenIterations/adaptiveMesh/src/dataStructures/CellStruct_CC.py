@@ -1686,8 +1686,12 @@ class Cell(object):
     #                     rho[i,j,k] += atom.interpolators['density'](r)
     #                 except ValueError:
     #                     rho[i,j,k] += 0.0   # if outside the interpolation range, assume 0.
-            
-                rho += atom.interpolators['density'](r)    # increment rho for each atom    
+#                 try:
+#                     rho += atom.interpolators['density'](r)    # increment rho for each atom  
+#                 except ValueError:
+#                     rho += 0 
+ 
+                rho += atom.interpolators['density'](r)    # increment rho for each atom 
                 Vext += -atom.atomicNumber / r
                             
         

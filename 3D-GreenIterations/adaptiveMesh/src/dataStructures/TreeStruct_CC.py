@@ -551,7 +551,11 @@ class Tree(object):
                             print('imag(Y) ', np.imag(Y))
                             return
 #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
-                        phi = atom.interpolators[psiID](r)*np.real(Y)
+#                         phi = atom.interpolators[psiID](r)*np.real(Y)
+                        try:
+                            phi = atom.interpolators[psiID](r)*np.real(Y)
+                        except ValueError:
+                            phi = 0.0   # if outside the interpolation range, assume 0.
                         
                         
                         self.importPhiOnLeaves(phi, orbitalIndex)

@@ -70,21 +70,28 @@ import numpy as np
 ##file='LW3_2500_SCF_.csv'
 
 
+
+## BENZENE TESTS
 resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'  
 # file='tc_gaugeShift0p5_tcOrder8_theta0.8_LW5_500_mixingHistory10_SCF_1485000.csv'
-file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_SCF_1485000.csv'
+# file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_SCF_1485000.csv'
 # file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_SCF_2787000.csv'
+file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory10_SCF_2172000.csv'
 
+# ## Carbon Monoxide PCI Testing
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/'
+# file='CO_ds_mixingHistory10_mixingParam0.5_order5_1_1e6_1e6_3e-6_SCF_367625.csv' 
+  
 
 # # parent-child integral
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral/'
 # file='Be_order5_0.000001_SCF_260000.csv'
 
 
-df = pd.read_csv(resultsDir+file, header=0)
+df = pd.read_csv(resultsDir+file, header=0)   
 # df = df.drop(df.index[14]) 
 
-plotsDir = resultsDir+'plots/'
+plotsDir = resultsDir+'plots/' 
 
     
 def plotSCFconvergence(df, system = 'H2'):
@@ -138,6 +145,9 @@ def plotSCFconvergence(df, system = 'H2'):
         dftfeCorrelationEnergy = -9.4214407530225852e-01 # Correlation Energy 
         dftfeElectrostaticEnergy = -2.1138290579726365e+02 # Electrostatic Energy
         dftfeTotalEnergy = -1.1247144323799400e+02 # Total Energy 
+        
+        dftfeHartreeEnergy=76.1983318
+        nAtoms=2
         
     if system == "Benzene":
         
@@ -225,7 +235,7 @@ def plotSCFconvergence(df, system = 'H2'):
 
 if __name__=="__main__":
     
-#     plotSCFconvergence(df, system="carbonMonoxide")    
+#     plotSCFconvergence(df, system="carbonMonoxide")     
 #     plotSCFconvergence(df, system="Beryllium")    
 #     plotSCFconvergence(df, system="Oxygen")    
     plotSCFconvergence(df, system="Benzene")    
