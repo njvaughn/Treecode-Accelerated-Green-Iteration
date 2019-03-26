@@ -616,8 +616,8 @@ if __name__=="__main__":
 #     df = df.loc[df['maxDepth']>=13]
 #     df = df.loc[df['order']==5]
     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'divideCriterion')
-    logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'maxDepth')
-    logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'maxDepth')
+    logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'divideCriterion')
+    logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'divideCriterion')
 #     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
 #     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
 #     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')

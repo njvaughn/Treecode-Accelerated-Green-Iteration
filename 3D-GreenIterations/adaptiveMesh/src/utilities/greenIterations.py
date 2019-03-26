@@ -556,9 +556,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 oldOrbitalResidual = 2.0
                 psiNewNorm = 10
                 previousResidual = 1
+                eigenvalueDiff=1
                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) 
 #                         and (np.abs(psiNewNorm-1) > intraScfTolerance) 
-                        and (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) > 1/1000000)):
+                        and (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) > 1/10000)
+                        and (abs(eigenvalueDiff) > intraScfTolerance/10000) ):
                     print()
                     print()                    
                     print('MEMORY USAGE: ')
@@ -592,8 +594,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                                 inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(oldOrbitals[:,m])
     
-#                     sources = tree.extractGreenIterationIntegrand(m)
-                    sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
+                    sources = tree.extractGreenIterationIntegrand(m)
+#                     sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
                     targets = np.copy(sources)
     
 
@@ -714,9 +716,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
                             orbitals[:,m] = np.copy(phiNew)
                             
-#                             n,k = np.shape(orbitals)
-#                             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-#                             orbitals[:,m] = np.copy(orthWavefunction)
+                            n,k = np.shape(orbitals)
+                            if greenIterationsCount>-5:
+                                orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+                                orbitals[:,m] = np.copy(orthWavefunction)
                             tree.importPhiOnLeaves(orbitals[:,m], m)
 
      
@@ -850,13 +853,20 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     if orbitalResidual < intraScfTolerance:
                         print('Used %i iterations for orbital %i.\n\n\n' %(greenIterationsCount,m))
                         
-
+                    if (abs(eigenvalueDiff) < intraScfTolerance/10000):
+                        print('Eiegnvalue residual smaller than L2 tol/10000, so terminating Green iterations.')
+                    
+                        
+                    
+                    if ( (orbitalResidual<1e-2) and (tree.orbitalEnergies[m]>tree.gaugeShift) ):   # if reached 1e-2 residual and energy is positive, this st
+                        print('Orbtial residual less than 1e-2 and energy is positive, meaning this state is not resolved.  Hopefully unoccupied.  Terminating Green Iterations.')
+                        orbitalResidual=0.0
                         
                     previousResidual = np.copy(orbitalResidual)
                     greenIterationsCount += 1 
                     
                 
-            else:
+            else:     
                 print('orbital %i energy is positive, not updating it anymore.' %m)
         
         
@@ -883,7 +893,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
 
 
-        print()
+        print()  
         print()
 
 

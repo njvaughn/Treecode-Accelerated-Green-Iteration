@@ -1312,6 +1312,25 @@ class Tree(object):
         self.occupations = np.append(self.occupations, 0.0)
         self.orbitalEnergies = np.append(self.orbitalEnergies, self.gaugeShift-0.1)
         self.nOrbitals += 1
+        
+    def decreaseNumberOfWavefunctionsByOne(self):
+        
+        for _,cell in self.masterList:
+            for i,j,k in cell.PxByPyByPz:
+#                 tempPhi = np.zeros(self.nOrbitals-1)
+                gp = cell.gridpoints[i,j,k]
+#                 for m in range(self.nOrbitals-1):
+#                     tempPhi = gp.phi[m]
+#                 gp.phi = tempPhi
+                gp.phi = gp.phi[0:-1]
+        
+#         self.scrambleOrbital(-1)
+        self.occupations = self.occupations[0:,-1]
+        self.orbitalEnergies = self.orbitalEnergies[0:-1]
+        self.nOrbitals -= 1
+        
+        if len(self.orbitalEnergies)!=self.nOrbitals:
+            print('WARNING: decreaseNumberOfWavefunctionByOne did not work as expected.')
     
     def softenOrbital(self,m):
         print('Softening orbital ', m)

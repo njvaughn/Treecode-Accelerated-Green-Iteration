@@ -72,16 +72,18 @@ import numpy as np
 
 
 ## BENZENE TESTS
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'  
-# file='tc_gaugeShift0p5_tcOrder8_theta0.8_LW5_500_mixingHistory10_SCF_1485000.csv'
-# file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_SCF_1485000.csv'
-# file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_SCF_2787000.csv'
-file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory10_SCF_2172000.csv'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'  
+# # file='tc_gaugeShift0p5_tcOrder8_theta0.8_LW5_500_mixingHistory10_SCF_1485000.csv'
+# # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_SCF_1485000.csv'
+# # file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_SCF_2787000.csv'
+# # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory10_SCF_2172000.csv'
+# file='ds_gaugeShift0p25_mindepth3_tcOrder5_theta0.8_LW5_500_1random_mixingHistory10_SCF_1493000.csv'
 
-# ## Carbon Monoxide PCI Testing
-# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/'
+## Carbon Monoxide PCI Testing
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/'
 # file='CO_ds_mixingHistory10_mixingParam0.5_order5_1_1e6_1e6_3e-6_SCF_367625.csv' 
-  
+# file='CO_ds_mixingHistory10_mixingParam0.5_order5_1_1e6_1e6_1e-7_SCF_928500.csv'
+file='CO_10orbitals_mixingHistory10_mixingParam0.5_order5_PCI_3e-7_SCF_661625.csv'
 
 # # parent-child integral
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral/'
@@ -235,10 +237,10 @@ def plotSCFconvergence(df, system = 'H2'):
 
 if __name__=="__main__":
     
-#     plotSCFconvergence(df, system="carbonMonoxide")     
+    plotSCFconvergence(df, system="carbonMonoxide")     
 #     plotSCFconvergence(df, system="Beryllium")    
 #     plotSCFconvergence(df, system="Oxygen")    
-    plotSCFconvergence(df, system="Benzene")    
+#     plotSCFconvergence(df, system="Benzene")    
 
 
 

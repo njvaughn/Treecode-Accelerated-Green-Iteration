@@ -192,10 +192,11 @@ def setUpTree(onlyFillOne=False):
     
         
     elif inputFile=='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
-#         occupations = [2, 2, 4/3 ,4/3 ,4/3, 
-#                        2, 2, 2/3 ,2/3 ,2/3 ]
-        nOrbitals=7
-        occupations = 2*np.ones(nOrbitals)
+        nOrbitals=10
+        occupations = [2, 2, 4/3 ,4/3 ,4/3, 
+                       2, 2, 2/3 ,2/3 ,2/3 ]
+#         nOrbitals=7
+#         occupations = 2*np.ones(nOrbitals)
 #     occupations[-1] = 0
     print('in testBatchGreen..., nOrbitals = ', nOrbitals)
     

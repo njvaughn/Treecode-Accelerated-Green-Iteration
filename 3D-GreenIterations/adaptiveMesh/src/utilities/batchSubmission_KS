@@ -7,10 +7,10 @@ DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -21,18 +21,18 @@ GRADIENTFREE='True'
 GPUPRESENT='True'
 
 TREECODE='False'
-TREECODEORDER=0
-THETA=1.0
+TREECODEORDER=8
+THETA=0.8
 MAXPARNODE=8000
 BATCHSIZE=8000
 
 
 GAUSSIANALPHA=1.0
 
-#MESHTYPE='ParentChildrenIntegral'
-MESHTYPE='LW5'
-RESTART='False'	
-SAVEDMESH='None' 
+MESHTYPE='ParentChildrenIntegral'
+#MESHTYPE='LW5'
+RESTART='True'	
+SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_3e-07_0.0.npy' 
 
 
 MIXINGPARAMETER=0.5 
@@ -44,27 +44,27 @@ INTERSCFTOLERANCE=5e-5
 MIXING='Anderson'    
 CELLORDER=5
 SMOOTHINGEPS=0.0
-ADDITIONALDEPTHATATOMS=5  
+
 
 for ADDITIONALDEPTHATATOMS in 0
 do
 for CELLORDER in 5
 do	  
-#for BASE in 1e-5 3e-6 1e-6 3e-7 
+#for BASE in 1e-5 3e-6 1e-6 3e-7     
 for BASE in 1
 do
 for MAXDEPTH in 20   
 do								  					    
 for MESHPARAM4 in 0 
 do
-	for MESHPARAM3 in 3e-6
+	for MESHPARAM3 in 3e-7
 	do     
 		for MESHPARAM2 in 1e6
 		do 
 			for MESHPARAM1 in 500		    
 			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/deflationTest/Be_noOrth_LW5.csv"
-			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/CO_ds_mixingHistory${MIXINGHISTORY}_mixingParam${MIXINGPARAMETER}_order${CELLORDER}_${BASE}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/deflationTest/Be_noOrth_LW5.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/CO_10orbitals_mixingHistory${MIXINGHISTORY}_mixingParam${MIXINGPARAMETER}_order${CELLORDER}_PCI_${MESHPARAM3}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Be_testing/Ox_T200_mixingHistory${MIXINGHISTORY}_mixingParam${MIXINGPARAMETER}_order${CELLORDER}_${BASE}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}.csv"
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
