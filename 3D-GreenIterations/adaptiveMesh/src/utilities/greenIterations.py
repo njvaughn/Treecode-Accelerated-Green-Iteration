@@ -841,23 +841,28 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     ## Aitken Acceleration Section
                     ##########################################################################################
                     tempOrbital = tree.extractPhi(m)
-                    if greenIterationsCount%3==1:
-                        print('Saving psiA')
-                        psiA = tempOrbital[:,3]
-                        eigA = tree.orbitalEnergies[m]
-                        
-                    if greenIterationsCount%3==2:
-                        print('Saving psiB')
-                        psiB = tempOrbital[:,3]
-                        eigB = tree.orbitalEnergies[m]
-                     
-                    if greenIterationsCount%3==0:
-                        print('Saving psiC and computing Aitken Acceleration')
-                        psiC = tempOrbital[:,3]
-                        eigC = tree.orbitalEnergies[m]
-                        
-                        aitkenPsi = AitkenAcceleration(psiA, psiB, psiC)
-                        aitkenEig = AitkenAcceleration(eigA, eigB, eigC)
+                    aitkenStart=3*1  # keep this a multiple of 3 for now
+                    if greenIterationsCount>aitkenStart: 
+                        if greenIterationsCount%3==1:
+                            print('Saving psiA')
+                            psiA = tempOrbital[:,3]
+                            eigA = tree.orbitalEnergies[m]
+                            if greenIterationsCount>3: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
+                            
+                        if greenIterationsCount%3==2:
+                            print('Saving psiB')
+                            psiB = tempOrbital[:,3]
+                            eigB = tree.orbitalEnergies[m]
+                            if greenIterationsCount>3: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
+    
+                        if greenIterationsCount%3==0:
+                            print('Saving psiC and computing Aitken Acceleration')
+                            psiC = tempOrbital[:,3]
+                            eigC = tree.orbitalEnergies[m]
+                            
+                            aitkenPsi = AitkenAcceleration(psiA, psiB, psiC)
+                            aitkenPsi /= np.sqrt( np.sum( aitkenPsi*aitkenPsi*weights ) )  # normalize the aitken wavefunction
+                            aitkenEig = AitkenAcceleration(eigA, eigB, eigC)
                         
 #                         oldAitkenPsi = AitkenAcceleration(oldPsi, middlePsi, newPsi)
 #                         oldAitkenEig = AitkenAcceleration(oldEig, middleEig, newEig)
@@ -901,16 +906,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     ##########################################################################################
                     ##########################################################################################
 
-                    
-#                     tempOrbital = tree.extractPhi(m)
-#                     orbitals[:,m] = tempOrbital[:,3]
-#                     if symmetricIteration==False:
-#                         print('Computing residual of psi')
-#                         normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
-#                     elif symmetricIteration==True:
-#                         print('Computing residual of psi*sqrtV')
-#                         normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
-#                     eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
+                    else:  # update without aitken
+                        tempOrbital = tree.extractPhi(m)
+                        orbitals[:,m] = tempOrbital[:,3]
+                        if symmetricIteration==False:
+                            print('Computing residual of psi')
+                            normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
+                        elif symmetricIteration==True:
+                            print('Computing residual of psi*sqrtV')
+                            normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
+                        eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
                     
                     
 
