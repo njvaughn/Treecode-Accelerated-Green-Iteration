@@ -119,7 +119,7 @@ xi=yi=zi=-1.1
 xf=yf=zf=1.1
 numpts=3000
 
-def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, GPUpresent, 
+def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize,
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                 subtractSingularity, gaussianAlpha, inputFile='',outputFile='',restartFile=False,
@@ -594,9 +594,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                                 inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(oldOrbitals[:,m])
     
-#                     sources = tree.extractGreenIterationIntegrand(m)
+    
+                    if symmetricIteration==False:
+                        sources = tree.extractGreenIterationIntegrand(m)
+                    elif symmetricIteration == True:
 #                     sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
-                    sources, sqrtV = tree.extractGreenIterationIntegrand_symmetric(m)
+                        sources, sqrtV = tree.extractGreenIterationIntegrand_symmetric(m)
+                    else: 
+                        print("symmetricIteration variable not True or False.  What should it be?")
+                        return
+                    
                     targets = np.copy(sources)
     
 
@@ -659,10 +666,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                 elif GPUpresent==True:
                                     if treecode==False:
                                         startTime = time.time()
-#                                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-                                        gpuHelmholtzConvolutionSubractSingularitySymmetric[blocksPerGrid, threadsPerBlock](targets,sources,sqrtV,phiNew,k) 
-                                        convolutionTime = time.time()-startTime
-                                        print('Using symmetric singularity subtraction.  Convolution time: ', convolutionTime)
+                                        if symmetricIteration==False:
+                                            gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                                            convolutionTime = time.time()-startTime
+                                            print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+                                        elif symmetricIteration==True:
+                                            gpuHelmholtzConvolutionSubractSingularitySymmetric[blocksPerGrid, threadsPerBlock](targets,sources,sqrtV,phiNew,k) 
+                                            phiNew *= -1
+                                            convolutionTime = time.time()-startTime
+                                            print('Using symmetric singularity subtraction.  Convolution time: ', convolutionTime)
+
+                                        
                                     elif treecode==True:
                                         
                                         copyStart = time.time()
@@ -714,9 +728,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             
                             psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*weights))
                             
-                            tree.importPhiNewOnLeaves(phiNew)
-                            tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
-                            orbitals[:,m] = np.copy(phiNew)
+                            if symmetricIteration==False:
+                                tree.importPhiNewOnLeaves(phiNew)
+                                tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+                                orbitals[:,m] = np.copy(phiNew)
+                            elif symmetricIteration==True:
+                                tree.importPhiNewOnLeaves(phiNew/sqrtV)
+                                tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+                                orbitals[:,m] = np.copy(phiNew/sqrtV)
                             
                             n,k = np.shape(orbitals)
                             if greenIterationsCount>-5:
@@ -770,7 +789,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     
                     tempOrbital = tree.extractPhi(m)
                     orbitals[:,m] = tempOrbital[:,3]
-                    normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
+                    if symmetricIteration==False:
+                        print('Computing residual of psi')
+                        normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
+                    elif symmetricIteration==True:
+                        print('Computing residual of psi*sqrtV')
+                        normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
                     eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
                     
                     

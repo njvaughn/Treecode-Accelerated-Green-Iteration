@@ -52,6 +52,7 @@ outputFile          = str(sys.argv[n]); n+=1
 inputFile           = str(sys.argv[n]); n+=1
 vtkDir              = str(sys.argv[n]); n+=1
 noGradients         = str(sys.argv[n]) ; n+=1
+symmetricIteration  = str(sys.argv[n]) ; n+=1
 mixingScheme        = str(sys.argv[n]); n+=1
 mixingParameter     = float(sys.argv[n]); n+=1
 mixingHistoryCutoff = int(sys.argv[n]) ; n+=1
@@ -89,6 +90,13 @@ if noGradients=='True':
     gradientFree=True
 elif noGradients=='False':
     gradientFree=False
+else:
+    print('Warning, not correct input for gradientFree')
+    
+if symmetricIteration=='True':
+    symmetricIteration=True
+elif symmetricIteration=='False':
+    symmetricIteration=False
 else:
     print('Warning, not correct input for gradientFree')
 
@@ -231,7 +239,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
