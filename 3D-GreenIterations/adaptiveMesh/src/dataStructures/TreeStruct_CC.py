@@ -1480,6 +1480,7 @@ class Tree(object):
 #         deltaE /= np.sqrt(normSqOfPsiNew)
         deltaE /= (normSqOfPsiNew)
         print('Norm of psiNew = ', np.sqrt(normSqOfPsiNew))
+        print('Delta E = ', deltaE)
         
 #         print('Previous orbital energy: ', self.orbitalEnergies[targetEnergy])
         self.orbitalEnergies[targetEnergy] += deltaE
@@ -2012,6 +2013,24 @@ class Tree(object):
                     leaves.append( [gridpt.x, gridpt.y, gridpt.z, f, cell.w[i,j,k] ] )
                             
         return np.array(leaves)
+    
+    def extractGreenIterationIntegrand_symmetric(self,m): 
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        leaves = []
+        sqrtV = []
+                
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    f = -2*gridpt.phi[m]*np.sqrt( -gridpt.v_eff )
+                    leaves.append( [gridpt.x, gridpt.y, gridpt.z, f, cell.w[i,j,k] ] )
+                    sqrtV.append( np.sqrt(-gridpt.v_eff))
+                            
+        return np.array(leaves), np.array( sqrtV )
     
     def extractGreenIterationIntegrand_Deflated(self,m,orbitals,weights): 
         '''

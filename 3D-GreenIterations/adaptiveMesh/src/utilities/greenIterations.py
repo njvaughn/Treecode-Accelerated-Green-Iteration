@@ -559,8 +559,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 eigenvalueDiff=1
                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) 
 #                         and (np.abs(psiNewNorm-1) > intraScfTolerance) 
-                        and (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) > 1/10000)
-                        and (abs(eigenvalueDiff) > intraScfTolerance/10000) ):
+                        and (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) > -1/10000)
+                        and (abs(eigenvalueDiff) > -intraScfTolerance/10000) ):
                     print()
                     print()                    
                     print('MEMORY USAGE: ')
@@ -594,8 +594,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                                 inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(oldOrbitals[:,m])
     
-                    sources = tree.extractGreenIterationIntegrand(m)
+#                     sources = tree.extractGreenIterationIntegrand(m)
 #                     sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
+                    sources, sqrtV = tree.extractGreenIterationIntegrand_symmetric(m)
                     targets = np.copy(sources)
     
 
@@ -658,9 +659,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                 elif GPUpresent==True:
                                     if treecode==False:
                                         startTime = time.time()
-                                        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+#                                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                                        gpuHelmholtzConvolutionSubractSingularitySymmetric[blocksPerGrid, threadsPerBlock](targets,sources,sqrtV,phiNew,k) 
                                         convolutionTime = time.time()-startTime
-                                        print('Using singularity subtraction.  Convolution time: ', convolutionTime)
+                                        print('Using symmetric singularity subtraction.  Convolution time: ', convolutionTime)
                                     elif treecode==True:
                                         
                                         copyStart = time.time()
@@ -848,13 +850,13 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                     if SCFcount==1:
 #                         print('Loosening Greens iteration tolerance in SCF #1')
 #                         orbitalResidual*=1000
-                    if (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) <= 1/10000):
-                        print('Relative residual changing by < 0.01%.  Exiting Greens Iteration')
+#                     if (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) <= 1/10000):
+#                         print('Relative residual changing by < 0.01%.  Exiting Greens Iteration')
                     if orbitalResidual < intraScfTolerance:
                         print('Used %i iterations for orbital %i.\n\n\n' %(greenIterationsCount,m))
                         
-                    if (abs(eigenvalueDiff) < intraScfTolerance/10000):
-                        print('Eiegnvalue residual smaller than L2 tol/10000, so terminating Green iterations.')
+#                     if (abs(eigenvalueDiff) < intraScfTolerance/10000):
+#                         print('Eiegnvalue residual smaller than L2 tol/10000, so terminating Green iterations.')
                     
                         
                     
