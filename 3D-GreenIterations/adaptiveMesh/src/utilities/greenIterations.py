@@ -15,6 +15,7 @@ from numba import cuda, jit, njit
 import time
 # from convolution import gpuPoissonConvolution,gpuHelmholtzConvolutionSubractSingularity, cpuHelmholtzSingularitySubtract,cpuHelmholtzSingularitySubtract_allNumerical
 import densityMixingSchemes as densityMixing
+from densityMixingSchemes import AitkenAcceleration
 from fermiDiracDistribution import computeOccupations
 import sys
 # from guppy import hpy 
@@ -566,7 +567,19 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 oldOrbitalResidual = 2.0
                 psiNewNorm = 10
                 previousResidual = 1
-                eigenvalueDiff=1
+                
+                normDiff=1.0
+                eigenvalueDiff=1.0
+                
+                psiA = None
+                psiB = None
+                psiC = None
+                aitkenPsi = None
+                oldAitkenPsi = None
+                aitkenEig = None
+                oldAitkenEig = None
+                    
+                    
                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) 
 #                         and (np.abs(psiNewNorm-1) > intraScfTolerance) 
                         and (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) > -1/10000)
@@ -579,6 +592,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     print()
                     tree.totalIterationCount += 1
 #                     orbitalResidual = 0.0
+                    
                     
                     oldOrbitalResidual = orbitalResidual
       
@@ -802,6 +816,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             print('type: ', type(gradientFree))
         
                         newEigenvalue = tree.orbitalEnergies[m]
+                        
+                        
+                        
                 
 #                         if newEigenvalue > tree.gaugeShift:
                         if newEigenvalue > 0.0:
@@ -820,15 +837,80 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         print('Orbital %i energy greater than zero.  Not performing Green Iterations for it...' %m)
                         
                     
+                    ##########################################################################################
+                    ## Aitken Acceleration Section
+                    ##########################################################################################
                     tempOrbital = tree.extractPhi(m)
-                    orbitals[:,m] = tempOrbital[:,3]
-                    if symmetricIteration==False:
-                        print('Computing residual of psi')
-                        normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
-                    elif symmetricIteration==True:
-                        print('Computing residual of psi*sqrtV')
-                        normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
-                    eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
+                    if greenIterationsCount%3==1:
+                        print('Saving psiA')
+                        psiA = tempOrbital[:,3]
+                        eigA = tree.orbitalEnergies[m]
+                        
+                    if greenIterationsCount%3==2:
+                        print('Saving psiB')
+                        psiB = tempOrbital[:,3]
+                        eigB = tree.orbitalEnergies[m]
+                     
+                    if greenIterationsCount%3==0:
+                        print('Saving psiC and computing Aitken Acceleration')
+                        psiC = tempOrbital[:,3]
+                        eigC = tree.orbitalEnergies[m]
+                        
+                        aitkenPsi = AitkenAcceleration(psiA, psiB, psiC)
+                        aitkenEig = AitkenAcceleration(eigA, eigB, eigC)
+                        
+#                         oldAitkenPsi = AitkenAcceleration(oldPsi, middlePsi, newPsi)
+#                         oldAitkenEig = AitkenAcceleration(oldEig, middleEig, newEig)
+                    
+#                     if greenIterationsCount>3:
+#                         
+#                         oldPsi = np.copy(middlePsi)
+#                         middlePsi = np.copy(newPsi)
+#                         newPsi = tempOrbital[:,3]
+#                         
+#                         oldEig = np.copy(middleEig)
+#                         middleEig = np.copy(newEig)
+#                         newEig = tree.orbitalEnergies[m]
+#                         
+#                         aitkenPsi = AitkenAcceleration(oldPsi, middlePsi, newPsi)
+#                         aitkenEig = AitkenAcceleration(oldEig, middleEig, newEig)
+                        
+                        print('Saving Aitken psi and eigenvalue.')
+                        orbitals[:,m] = aitkenPsi
+                        tree.orbitalEnergies[m] = aitkenEig
+                        
+                        try:
+                            aitkenNormDiff = np.sqrt( np.sum( (aitkenPsi-oldAitkenPsi)**2*weights ) )
+                            aitkenEigDiff = abs( aitkenEig - oldAitkenEig )
+                            
+                            
+                            print('Residual of Aitken Wavefunctions: ', aitkenNormDiff)
+                            print('Residual of Aitken Eigenvalues:   ', aitkenEigDiff)
+                            
+                            
+                            normDiff = aitkenNormDiff
+                            eigenvalueDiff = aitkenEigDiff
+                        except Exception: 
+                            print('Not computing residual of aitken wavefunction.  This is okay if this is only the third iteration.')
+                        
+                        oldAitkenPsi=np.copy(aitkenPsi)
+                        oldAitkenEig = np.copy(aitkenEig)
+                        
+                        print('Aitken Eig:                       ', aitkenEig)
+                        
+                    ##########################################################################################
+                    ##########################################################################################
+
+                    
+#                     tempOrbital = tree.extractPhi(m)
+#                     orbitals[:,m] = tempOrbital[:,3]
+#                     if symmetricIteration==False:
+#                         print('Computing residual of psi')
+#                         normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
+#                     elif symmetricIteration==True:
+#                         print('Computing residual of psi*sqrtV')
+#                         normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
+#                     eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
                     
                     
 

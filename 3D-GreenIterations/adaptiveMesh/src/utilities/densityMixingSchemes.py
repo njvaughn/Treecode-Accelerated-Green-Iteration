@@ -83,6 +83,12 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, 
         return nextDensity, cvec
     elif returnWeights==False:
         return nextDensity
+    
+def AitkenAcceleration(a, b, c):
+    
+    
+#     return new - (middle - old)**2 / (new - 2*middle + old)
+    return a - (b - a)**2 / (a - 2*b + c)
  
 
 def test1():
