@@ -529,6 +529,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             orbitals[:,m] = np.copy(orthWavefunction)
             tree.importPhiOnLeaves(orbitals[:,m], m)
             
+            if symmetricIteration==False:
+                tree.setPhiOldOnLeaves(m)
+            elif symmetricIteration==True:
+                sqrtV = tree.extractSqrtV()
+                psi = targets[:,3]
+                
+                psiSqrtV = psi*sqrtV
+                psiSqrtV /= np.sqrt( np.sum(psiSqrtV*psiSqrtV*weights ))
+                tree.setPhiOldOnLeaves_symmetric(psiSqrtV)
+            
             firstGreenIteration=True
             
             # set GI anderson mixing to false.  Only gets set to true once the orbital residual is below some tolerance.
@@ -733,15 +743,29 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                 tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
                                 orbitals[:,m] = np.copy(phiNew)
                             elif symmetricIteration==True:
-                                tree.importPhiNewOnLeaves(phiNew/sqrtV)
-                                tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+#                                 tree.importPhiNewOnLeaves(phiNew/sqrtV)
+#                                 tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+
+
+                                # import phiNew and compute eigenvalue update
+                                tree.importPhiNewOnLeaves(phiNew)
+                                tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False, symmetric=True)
+                                
+                                # Import normalized psi*sqrtV into phiOld
+                                phiNew /= np.sqrt( np.sum(phiNew*phiNew*weights ))
+                                tree.setPhiOldOnLeaves_symmetric(phiNew)
+                                
+                                
                                 orbitals[:,m] = np.copy(phiNew/sqrtV)
                             
                             n,k = np.shape(orbitals)
-                            if greenIterationsCount>-5:
-                                orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-                                orbitals[:,m] = np.copy(orthWavefunction)
+                            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+                            orbitals[:,m] = np.copy(orthWavefunction)
                             tree.importPhiOnLeaves(orbitals[:,m], m)
+                            if symmetricIteration==False:
+                                tree.setPhiOldOnLeaves(m)
+                            else: # already imported the normalized psi*sqrtV
+                                pass
 
      
                             if greenIterationsCount==1:
@@ -757,9 +781,18 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         elif ( (gradientFree==False) or (SCFcount==-1) ):
  
                             # update the orbital
-                            orbitals[:,m] = np.copy(phiNew)
+                            if symmetricIteration==False:
+                                orbitals[:,m] = np.copy(phiNew)
+                            if symmetricIteration==True:
+                                orbitals[:,m] = np.copy(phiNew/sqrtV)
+                                
+                            n,k = np.shape(orbitals)
+                            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+                            orbitals[:,m] = np.copy(orthWavefunction)
                             tree.importPhiOnLeaves(orbitals[:,m], m)
-                            tree.orthonormalizeOrbitals(targetOrbital=m)
+                            
+#                             tree.importPhiOnLeaves(orbitals[:,m], m)
+#                             tree.orthonormalizeOrbitals(targetOrbital=m)
                             
                             tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
           

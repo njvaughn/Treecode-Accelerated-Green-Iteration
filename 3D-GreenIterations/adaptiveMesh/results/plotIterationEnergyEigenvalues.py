@@ -87,17 +87,24 @@ import numpy as np
 # file='ds_cellOrder5maxDepth15_2_3_0.3_0.05_GREEN_.csv'
 
 
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'  
-# file='tc_gaugeShift0p5_tcOrder8_theta0.8_LW5_500_mixingHistory10_GREEN_1485000.csv' 
-# file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_GREEN_2787000.csv'
-# file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_1000_mixingHistory6_GREEN_2948000.csv'
-# file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_GREEN_1485000.csv'
-# file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory10_GREEN_2172000.csv'
-
-# file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory6_GREEN_2172000.csv'
-
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'  
+# # file='tc_gaugeShift0p5_tcOrder8_theta0.8_LW5_500_mixingHistory10_GREEN_1485000.csv' 
+# # file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_GREEN_2787000.csv'
+# # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_1000_mixingHistory6_GREEN_2948000.csv'
+# # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_GREEN_1485000.csv'
+# # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory10_GREEN_2172000.csv'
+# 
+# # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory6_GREEN_2172000.csv'
+# 
 # file='ds_gaugeShift0p25_mindepth3_tcOrder7_theta0.8_LW5_500_1random_mixingHistory15_GREEN_1493000.csv'
-file='ds_gaugeShift0p25_mindepth3_tcOrder5_theta0.8_LW5_500_1random_mixingHistory10_GREEN_1493000.csv'
+# # file='ds_gaugeShift0p25_mindepth3_tcOrder5_theta0.8_LW5_500_1random_mixingHistory10_GREEN_1493000.csv'
+
+
+
+## Symmertric Green's iterations tests
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/symmetricTest/'
+file='CO_asymm_LW5_GREEN_375500.csv'
+# file='CO_symm_LW5_GREEN_375500.csv'
 
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
@@ -184,10 +191,11 @@ print(df.shape)
 #                                   -3.351419327004790394e-01, -8.275071966753577701e-02,
 #                                   -8.273399296312561324e-02,  7.959071929649078059e-03] )
 
-# referenceEnergies = np.array( [   -1.871953147002199813e+01, -9.907188115343084078e+00,
-#                                   -1.075324514852165958e+00, -5.215419985881135645e-01,
-#                                   -4.455527567163568570e-01, -4.455527560478895199e-01,
-#                                   -3.351419327004790394e-01] )
+nWavefunctions=7
+referenceEnergies = np.array( [   -1.871953147002199813e+01, -9.907188115343084078e+00,
+                                  -1.075324514852165958e+00, -5.215419985881135645e-01,
+                                  -4.455527567163568570e-01, -4.455527560478895199e-01,
+                                  -3.351419327004790394e-01] )
 
 ## OXYGEN
 # referenceEnergies = np.array([psi0,psi1,psi2,psi3,psi4])
@@ -196,38 +204,39 @@ print(df.shape)
 ##referenceEnergies = np.array([-0.3774974859])
 
 
-## Benzene
-referenceEnergies = np.array( [ -9.791997000000000, 
-                                -9.791806000000000,    
-                                -9.791746000000000,    
-                                -9.791384000000000,   
-                                -9.791313000000000,  
-                                -9.791129000000000,   
-                                -0.777636800000000,    
-                                -0.674908000000000,    
-                                -0.674900600000000,    
-                                -0.544847700000000,    
-                                -0.544836100000000,    
-                                -0.478288500000000,    
-                                -0.409873800000000,    
-                                -0.406600100000000,    
-                                -0.378339300000000,    
-                                -0.378337500000000,    
-                                -0.340971300000000,    
-                                -0.304777300000000,    
-                                -0.304703800000000,    
-                                -0.240343300000000,    
-                                -0.240322100000000])
+# ## Benzene
+# nWavefunctions=21
+# referenceEnergies = np.array( [ -9.791997000000000, 
+#                                 -9.791806000000000,    
+#                                 -9.791746000000000,    
+#                                 -9.791384000000000,   
+#                                 -9.791313000000000,  
+#                                 -9.791129000000000,   
+#                                 -0.777636800000000,    
+#                                 -0.674908000000000,    
+#                                 -0.674900600000000,    
+#                                 -0.544847700000000,    
+#                                 -0.544836100000000,    
+#                                 -0.478288500000000,    
+#                                 -0.409873800000000,    
+#                                 -0.406600100000000,    
+#                                 -0.378339300000000,    
+#                                 -0.378337500000000,    
+#                                 -0.340971300000000,    
+#                                 -0.304777300000000,    
+#                                 -0.304703800000000,    
+#                                 -0.240343300000000,    
+#                                 -0.240322100000000])
 
 # residualsMatrix = np.zeros((df.shape[0],10))
 # errorsMatrix = np.zeros((df.shape[0],10))
 # eigenvaluesMatrix = np.zeros((df.shape[0],10))
 # errorsMatrix1st = np.zeros((df.shape[0],10))
 
-residualsMatrix = np.zeros((df.shape[0],21))
-errorsMatrix = np.zeros((df.shape[0],21))
-eigenvaluesMatrix = np.zeros((df.shape[0],21))
-errorsMatrix1st = np.zeros((df.shape[0],21))
+residualsMatrix = np.zeros((df.shape[0],nWavefunctions))
+errorsMatrix = np.zeros((df.shape[0],nWavefunctions))
+eigenvaluesMatrix = np.zeros((df.shape[0],nWavefunctions))
+errorsMatrix1st = np.zeros((df.shape[0],nWavefunctions))
 for i in range(df.shape[0]):
     residualsMatrix[i,:] = np.array(df.orbitalResiduals[i][1:-1].split(),dtype=float)
     errorsMatrix[i,:] = abs( np.array( df.energyEigenvalues[i][1:-1].split(),dtype=float) - referenceEnergies )
@@ -245,22 +254,21 @@ df['residual3'] = residualsMatrix[:,3]
 df['residual4'] = residualsMatrix[:,4]
 df['residual5'] = residualsMatrix[:,5]
 df['residual6'] = residualsMatrix[:,6]
-df['residual7'] = residualsMatrix[:,7]
-df['residual8'] = residualsMatrix[:,8]
-df['residual9'] = residualsMatrix[:,9]
-df['residual10'] = residualsMatrix[:,10]
-df['residual11'] = residualsMatrix[:,11]
-df['residual12'] = residualsMatrix[:,12]
-df['residual13'] = residualsMatrix[:,13]
-df['residual14'] = residualsMatrix[:,14]
-df['residual15'] = residualsMatrix[:,15]
-df['residual16'] = residualsMatrix[:,16]
-df['residual17'] = residualsMatrix[:,17]
-df['residual18'] = residualsMatrix[:,18]
-df['residual19'] = residualsMatrix[:,19]
-df['residual20'] = residualsMatrix[:,20]
+# df['residual7'] = residualsMatrix[:,7]
+# df['residual8'] = residualsMatrix[:,8]
+# df['residual9'] = residualsMatrix[:,9]
+# df['residual10'] = residualsMatrix[:,10]
+# df['residual11'] = residualsMatrix[:,11]
+# df['residual12'] = residualsMatrix[:,12]
+# df['residual13'] = residualsMatrix[:,13]
+# df['residual14'] = residualsMatrix[:,14]
+# df['residual15'] = residualsMatrix[:,15]
+# df['residual16'] = residualsMatrix[:,16]
+# df['residual17'] = residualsMatrix[:,17]
+# df['residual18'] = residualsMatrix[:,18]
+# df['residual19'] = residualsMatrix[:,19]
+# df['residual20'] = residualsMatrix[:,20]
 
-#df['errors0'] = np.copy(df['energyEigenvalues'])
 df['errors0'] = np.abs(errorsMatrix[:,0])
 df['errors1'] = np.abs(errorsMatrix[:,1])
 df['errors2'] = np.abs(errorsMatrix[:,2])
@@ -268,20 +276,20 @@ df['errors3'] = np.abs(errorsMatrix[:,3])
 df['errors4'] = np.abs(errorsMatrix[:,4])
 df['errors5'] = np.abs(errorsMatrix[:,5])
 df['errors6'] = np.abs(errorsMatrix[:,6])
-df['errors7'] = np.abs(errorsMatrix[:,7])
-df['errors8'] = np.abs(errorsMatrix[:,8])
-df['errors9'] = np.abs(errorsMatrix[:,9])
-df['errors10'] = np.abs(errorsMatrix[:,10])
-df['errors11'] = np.abs(errorsMatrix[:,11])
-df['errors12'] = np.abs(errorsMatrix[:,12])
-df['errors13'] = np.abs(errorsMatrix[:,13])
-df['errors14'] = np.abs(errorsMatrix[:,14])
-df['errors15'] = np.abs(errorsMatrix[:,15])
-df['errors16'] = np.abs(errorsMatrix[:,16])
-df['errors17'] = np.abs(errorsMatrix[:,17])
-df['errors18'] = np.abs(errorsMatrix[:,18])
-df['errors19'] = np.abs(errorsMatrix[:,19])
-df['errors20'] = np.abs(errorsMatrix[:,20])
+# df['errors7'] = np.abs(errorsMatrix[:,7])
+# df['errors8'] = np.abs(errorsMatrix[:,8])
+# df['errors9'] = np.abs(errorsMatrix[:,9])
+# df['errors10'] = np.abs(errorsMatrix[:,10])
+# df['errors11'] = np.abs(errorsMatrix[:,11])
+# df['errors12'] = np.abs(errorsMatrix[:,12])
+# df['errors13'] = np.abs(errorsMatrix[:,13])
+# df['errors14'] = np.abs(errorsMatrix[:,14])
+# df['errors15'] = np.abs(errorsMatrix[:,15])
+# df['errors16'] = np.abs(errorsMatrix[:,16])
+# df['errors17'] = np.abs(errorsMatrix[:,17])
+# df['errors18'] = np.abs(errorsMatrix[:,18])
+# df['errors19'] = np.abs(errorsMatrix[:,19])
+# df['errors20'] = np.abs(errorsMatrix[:,20])
 
 df['eigenvalue0'] = eigenvaluesMatrix[:,0]
 df['eigenvalue1'] = eigenvaluesMatrix[:,1]
@@ -290,20 +298,20 @@ df['eigenvalue3'] = eigenvaluesMatrix[:,3]
 df['eigenvalue4'] = eigenvaluesMatrix[:,4]
 df['eigenvalue5'] = eigenvaluesMatrix[:,5]
 df['eigenvalue6'] = eigenvaluesMatrix[:,6]
-df['eigenvalue7'] = eigenvaluesMatrix[:,7]
-df['eigenvalue8'] = eigenvaluesMatrix[:,8]
-df['eigenvalue9'] = eigenvaluesMatrix[:,9]
-df['eigenvalue10'] = eigenvaluesMatrix[:,10]
-df['eigenvalue11'] = eigenvaluesMatrix[:,11]
-df['eigenvalue12'] = eigenvaluesMatrix[:,12]
-df['eigenvalue13'] = eigenvaluesMatrix[:,13]
-df['eigenvalue14'] = eigenvaluesMatrix[:,14]
-df['eigenvalue15'] = eigenvaluesMatrix[:,15]
-df['eigenvalue16'] = eigenvaluesMatrix[:,16]
-df['eigenvalue17'] = eigenvaluesMatrix[:,17]
-df['eigenvalue18'] = eigenvaluesMatrix[:,18]
-df['eigenvalue19'] = eigenvaluesMatrix[:,19]
-df['eigenvalue20'] = eigenvaluesMatrix[:,20]
+# df['eigenvalue7'] = eigenvaluesMatrix[:,7]
+# df['eigenvalue8'] = eigenvaluesMatrix[:,8]
+# df['eigenvalue9'] = eigenvaluesMatrix[:,9]
+# df['eigenvalue10'] = eigenvaluesMatrix[:,10]
+# df['eigenvalue11'] = eigenvaluesMatrix[:,11]
+# df['eigenvalue12'] = eigenvaluesMatrix[:,12]
+# df['eigenvalue13'] = eigenvaluesMatrix[:,13]
+# df['eigenvalue14'] = eigenvaluesMatrix[:,14]
+# df['eigenvalue15'] = eigenvaluesMatrix[:,15]
+# df['eigenvalue16'] = eigenvaluesMatrix[:,16]
+# df['eigenvalue17'] = eigenvaluesMatrix[:,17]
+# df['eigenvalue18'] = eigenvaluesMatrix[:,18]
+# df['eigenvalue19'] = eigenvaluesMatrix[:,19]
+# df['eigenvalue20'] = eigenvaluesMatrix[:,20]
 
 ##try:
 ##    df['1stSCFerrors0'] = np.abs(errorsMatrix1st[:,0])
@@ -350,20 +358,20 @@ def plotFirstSCF(df):
     df.plot(y='residual4',ax=ax0,logy=True,label='psi4',legend=False)
     df.plot(y='residual5',ax=ax0,logy=True,label='psi5',legend=False)
     df.plot(y='residual6',ax=ax0,logy=True,label='psi6',legend=False)
-    df.plot(y='residual7',ax=ax0,logy=True,label='psi7',legend=False)
-    df.plot(y='residual8',ax=ax0,logy=True,label='psi8',legend=False)
-    df.plot(y='residual9',ax=ax0,logy=True,label='psi9',legend=False)
-    df.plot(y='residual10',ax=ax0,logy=True,label='psi10',legend=False)
-    df.plot(y='residual11',ax=ax0,logy=True,label='psi11',legend=False)
-    df.plot(y='residual12',ax=ax0,logy=True,label='psi12',legend=False)
-    df.plot(y='residual13',ax=ax0,logy=True,label='psi13',legend=False)
-    df.plot(y='residual14',ax=ax0,logy=True,label='psi14',legend=False)
-    df.plot(y='residual15',ax=ax0,logy=True,label='psi15',legend=False)
-    df.plot(y='residual16',ax=ax0,logy=True,label='psi16',legend=False)
-    df.plot(y='residual17',ax=ax0,logy=True,label='psi17',legend=False)
-    df.plot(y='residual18',ax=ax0,logy=True,label='psi18',legend=False)
-    df.plot(y='residual19',ax=ax0,logy=True,label='psi19',legend=False)
-    df.plot(y='residual20',ax=ax0,logy=True,label='psi20',legend=False)
+#     df.plot(y='residual7',ax=ax0,logy=True,label='psi7',legend=False)
+#     df.plot(y='residual8',ax=ax0,logy=True,label='psi8',legend=False)
+#     df.plot(y='residual9',ax=ax0,logy=True,label='psi9',legend=False)
+#     df.plot(y='residual10',ax=ax0,logy=True,label='psi10',legend=False)
+#     df.plot(y='residual11',ax=ax0,logy=True,label='psi11',legend=False)
+#     df.plot(y='residual12',ax=ax0,logy=True,label='psi12',legend=False)
+#     df.plot(y='residual13',ax=ax0,logy=True,label='psi13',legend=False)
+#     df.plot(y='residual14',ax=ax0,logy=True,label='psi14',legend=False)
+#     df.plot(y='residual15',ax=ax0,logy=True,label='psi15',legend=False)
+#     df.plot(y='residual16',ax=ax0,logy=True,label='psi16',legend=False)
+#     df.plot(y='residual17',ax=ax0,logy=True,label='psi17',legend=False)
+#     df.plot(y='residual18',ax=ax0,logy=True,label='psi18',legend=False)
+#     df.plot(y='residual19',ax=ax0,logy=True,label='psi19',legend=False)
+#     df.plot(y='residual20',ax=ax0,logy=True,label='psi20',legend=False)
     ax0.set_xlabel('Iteration Number')
     ax0.set_ylabel('Residual L2 Norm')
     ax0.set_title('Orbital Residuals')
@@ -376,20 +384,20 @@ def plotFirstSCF(df):
     df.plot(y='errors4',ax=ax2,logy=True,label='psi4',legend=False)
     df.plot(y='errors5',ax=ax2,logy=True,label='psi5',legend=False)
     df.plot(y='errors6',ax=ax2,logy=True,label='psi6',legend=False)
-    df.plot(y='errors7',ax=ax2,logy=True,label='psi7',legend=False)
-    df.plot(y='errors8',ax=ax2,logy=True,label='psi8',legend=False)
-    df.plot(y='errors9',ax=ax2,logy=True,label='psi9',legend=False)
-    df.plot(y='errors10',ax=ax2,logy=True,label='psi10',legend=False)
-    df.plot(y='errors11',ax=ax2,logy=True,label='psi11',legend=False)
-    df.plot(y='errors12',ax=ax2,logy=True,label='psi12',legend=False)
-    df.plot(y='errors13',ax=ax2,logy=True,label='psi13',legend=False)
-    df.plot(y='errors14',ax=ax2,logy=True,label='psi14',legend=False)
-    df.plot(y='errors15',ax=ax2,logy=True,label='psi15',legend=False)
-    df.plot(y='errors16',ax=ax2,logy=True,label='psi16',legend=False)
-    df.plot(y='errors17',ax=ax2,logy=True,label='psi17',legend=False)
-    df.plot(y='errors18',ax=ax2,logy=True,label='psi18',legend=False)
-    df.plot(y='errors19',ax=ax2,logy=True,label='psi19',legend=False)
-    df.plot(y='errors20',ax=ax2,logy=True,label='psi20',legend=False)
+#     df.plot(y='errors7',ax=ax2,logy=True,label='psi7',legend=False)
+#     df.plot(y='errors8',ax=ax2,logy=True,label='psi8',legend=False)
+#     df.plot(y='errors9',ax=ax2,logy=True,label='psi9',legend=False)
+#     df.plot(y='errors10',ax=ax2,logy=True,label='psi10',legend=False)
+#     df.plot(y='errors11',ax=ax2,logy=True,label='psi11',legend=False)
+#     df.plot(y='errors12',ax=ax2,logy=True,label='psi12',legend=False)
+#     df.plot(y='errors13',ax=ax2,logy=True,label='psi13',legend=False)
+#     df.plot(y='errors14',ax=ax2,logy=True,label='psi14',legend=False)
+#     df.plot(y='errors15',ax=ax2,logy=True,label='psi15',legend=False)
+#     df.plot(y='errors16',ax=ax2,logy=True,label='psi16',legend=False)
+#     df.plot(y='errors17',ax=ax2,logy=True,label='psi17',legend=False)
+#     df.plot(y='errors18',ax=ax2,logy=True,label='psi18',legend=False)
+#     df.plot(y='errors19',ax=ax2,logy=True,label='psi19',legend=False)
+#     df.plot(y='errors20',ax=ax2,logy=True,label='psi20',legend=False)
     ax2.set_xlabel('Iteration Number')
     ax2.set_ylabel('Energy Error (Hartree)')
 ##    ax1.set_ylim([1e-4,2e-2])
@@ -403,20 +411,20 @@ def plotFirstSCF(df):
     df.plot(y='eigenvalue4',ax=ax1,logy=False,label='psi4',legend=False)
     df.plot(y='eigenvalue5',ax=ax1,logy=False,label='psi5',legend=False)
     df.plot(y='eigenvalue6',ax=ax1,logy=False,label='psi6',legend=False) 
-    df.plot(y='eigenvalue7',ax=ax1,logy=False,label='psi7',legend=False)
-    df.plot(y='eigenvalue8',ax=ax1,logy=False,label='psi8',legend=False)
-    df.plot(y='eigenvalue9',ax=ax1,logy=False,label='psi9',legend=False)
-    df.plot(y='eigenvalue10',ax=ax1,logy=False,label='psi10',legend=False)
-    df.plot(y='eigenvalue11',ax=ax1,logy=False,label='psi11',legend=False)
-    df.plot(y='eigenvalue12',ax=ax1,logy=False,label='psi12',legend=False)
-    df.plot(y='eigenvalue13',ax=ax1,logy=False,label='psi13',legend=False)
-    df.plot(y='eigenvalue14',ax=ax1,logy=False,label='psi14',legend=False)
-    df.plot(y='eigenvalue15',ax=ax1,logy=False,label='psi15',legend=False)
-    df.plot(y='eigenvalue16',ax=ax1,logy=False,label='psi16',legend=False)
-    df.plot(y='eigenvalue17',ax=ax1,logy=False,label='psi17',legend=False)
-    df.plot(y='eigenvalue18',ax=ax1,logy=False,label='psi18',legend=False)
-    df.plot(y='eigenvalue19',ax=ax1,logy=False,label='psi19',legend=False)
-    df.plot(y='eigenvalue20',ax=ax1,logy=False,label='psi20',legend=False)
+#     df.plot(y='eigenvalue7',ax=ax1,logy=False,label='psi7',legend=False)
+#     df.plot(y='eigenvalue8',ax=ax1,logy=False,label='psi8',legend=False)
+#     df.plot(y='eigenvalue9',ax=ax1,logy=False,label='psi9',legend=False)
+#     df.plot(y='eigenvalue10',ax=ax1,logy=False,label='psi10',legend=False)
+#     df.plot(y='eigenvalue11',ax=ax1,logy=False,label='psi11',legend=False)
+#     df.plot(y='eigenvalue12',ax=ax1,logy=False,label='psi12',legend=False)
+#     df.plot(y='eigenvalue13',ax=ax1,logy=False,label='psi13',legend=False)
+#     df.plot(y='eigenvalue14',ax=ax1,logy=False,label='psi14',legend=False)
+#     df.plot(y='eigenvalue15',ax=ax1,logy=False,label='psi15',legend=False)
+#     df.plot(y='eigenvalue16',ax=ax1,logy=False,label='psi16',legend=False)
+#     df.plot(y='eigenvalue17',ax=ax1,logy=False,label='psi17',legend=False)
+#     df.plot(y='eigenvalue18',ax=ax1,logy=False,label='psi18',legend=False)
+#     df.plot(y='eigenvalue19',ax=ax1,logy=False,label='psi19',legend=False)
+#     df.plot(y='eigenvalue20',ax=ax1,logy=False,label='psi20',legend=False)
     ax1.set_xlabel('Iteration Number')
     ax1.set_ylabel('Energy (Hartree)')   
 ##    ax1.set_ylim([1e-4,2e-2])
@@ -426,8 +434,8 @@ def plotFirstSCF(df):
 ##    plt.suptitle('Using Singularity Subtraction, LW3-800, minDepth 3') 
 ##    plt.suptitle(file)
 ##    plt.suptitle('Convergence of Green Iterations for Oxygen -- Coarse')
-#     plt.suptitle('Convergence of Green Iterations for Carbon Monoxide')
-    plt.suptitle('Convergence of Green Iterations for Benzene')
+    plt.suptitle('Convergence of Green Iterations for Carbon Monoxide')
+#     plt.suptitle('Convergence of Green Iterations for Benzene')
 #     plt.suptitle('Convergence of Green Iterations for Oxygen')
 
 ##    try:

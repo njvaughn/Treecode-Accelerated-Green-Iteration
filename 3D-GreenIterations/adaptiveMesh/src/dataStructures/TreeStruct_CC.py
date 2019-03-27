@@ -1460,7 +1460,7 @@ class Tree(object):
             self.computeOccupations()
 #             print('Occupations: ', self.occupations)
 
-    def updateOrbitalEnergies_NoGradients(self,targetEnergy,newOccupations=True):
+    def updateOrbitalEnergies_NoGradients(self,targetEnergy,newOccupations=True,symmetric=False):
         
         deltaE = 0.0
         normSqOfPsiNew = 0.0
@@ -1468,14 +1468,24 @@ class Tree(object):
             if cell.leaf==True:
                 phi = np.zeros((cell.px,cell.py,cell.pz))
                 phiNew = np.zeros((cell.px,cell.py,cell.pz))
+                phiOld = np.zeros((cell.px,cell.py,cell.pz))
                 potential = np.zeros((cell.px,cell.py,cell.pz))
                 for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
-                    phi[i,j,k] = gp.phi[targetEnergy]
+#                     phi[i,j,k] = gp.phi[targetEnergy]
                     phiNew[i,j,k] = gp.phiNew
+                    phiOld[i,j,k] = gp.phiOld
                     potential[i,j,k] = gp.v_eff
-                
-                deltaE -= np.sum( phi*potential*(phi-phiNew)*cell.w ) 
+                    
+#                 if symmetric==False:
+#                     deltaE -= np.sum( phi*potential*(phi-phiNew)*cell.w ) 
+#                 if symmetric == True:
+#                     phiOld = phiOld*np.sqrt(-potential)
+                    
+                deltaE -= np.sum( phiOld*potential*(phiOld-phiNew)*cell.w ) 
+#                 if symmetric==True:
+#                     normSqOfPsiNew += np.sum( (phiNew/np.sqrt(-potential))**2 * cell.w)
+#                 else:
                 normSqOfPsiNew += np.sum( phiNew**2 * cell.w)
 #         deltaE /= np.sqrt(normSqOfPsiNew)
         deltaE /= (normSqOfPsiNew)
@@ -2026,11 +2036,26 @@ class Tree(object):
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
-                    f = -2*gridpt.phi[m]*np.sqrt( -gridpt.v_eff )
+#                     f = -2*gridpt.phi[m]*np.sqrt( -gridpt.v_eff )
+                    f = -2*gridpt.phiOld
                     leaves.append( [gridpt.x, gridpt.y, gridpt.z, f, cell.w[i,j,k] ] )
                     sqrtV.append( np.sqrt(-gridpt.v_eff))
                             
         return np.array(leaves), np.array( sqrtV )
+    
+    def extractSqrtV(self): 
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
+        '''
+        sqrtV = []
+                
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    sqrtV.append( np.sqrt(-gridpt.v_eff))
+                            
+        return np.array( sqrtV )
     
     def extractGreenIterationIntegrand_Deflated(self,m,orbitals,weights): 
         '''
@@ -2502,6 +2527,28 @@ class Tree(object):
             print('Warning: import index not equal to len(phiNew)')
             print(importIndex)
             print(len(phiNew))
+            
+    def setPhiOldOnLeaves_symmetric(self, normalizedPsiSqrtV):
+        importIndex = 0        
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    gridpt.phiOld = normalizedPsiSqrtV[importIndex]
+                    importIndex += 1
+
+        if importIndex != len(normalizedPsiSqrtV):
+            print('Warning: import index not equal to len(phiNew)')
+            print(importIndex)
+            print(len(normalizedPsiSqrtV))
+
+    def setPhiOldOnLeaves(self,m):
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    gridpt.phiOld = gridpt.phi[m]
+                    
             
     def importVhartreeOnLeaves(self,V_hartreeNew):
         '''
