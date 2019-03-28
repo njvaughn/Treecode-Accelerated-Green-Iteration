@@ -18,7 +18,7 @@ VTKFILEDIR='/home/njvaughn/O_with_anderson/LW5_1500o5_plots_eigRes'
 
 
 GRADIENTFREE='True'
-SYMMETRICITERATION='True'
+SYMMETRICITERATION='False'
 GPUPRESENT='True'
 
 TREECODE='False' 
