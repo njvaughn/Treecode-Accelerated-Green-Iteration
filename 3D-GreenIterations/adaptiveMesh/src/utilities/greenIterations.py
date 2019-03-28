@@ -130,10 +130,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     '''
     
 #     return
-    print('MEMORY USAGE: ')
-    print( resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
-    print()
-    print()
+    print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
     print()
 
     if hasattr(tree, 'referenceEigenvalues'):
@@ -584,12 +581,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                         and (np.abs(psiNewNorm-1) > intraScfTolerance) 
                         and (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) > -1/10000)
                         and (abs(eigenvalueDiff) > -intraScfTolerance/10000) ):
-                    print()
-                    print()                    
-                    print('MEMORY USAGE: ')
-                    print( resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
-                    print()
-                    print()
+                    print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                     tree.totalIterationCount += 1
 #                     orbitalResidual = 0.0
                     
@@ -841,26 +833,33 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     ## Aitken Acceleration Section
                     ##########################################################################################
                     tempOrbital = tree.extractPhi(m)
-                    aitkenStart=3*1  # keep this a multiple of 3 for now
+                    aitkenStart=3*4*0  # keep this a multiple of 3 for now
                     if greenIterationsCount>aitkenStart: 
-                        if greenIterationsCount%3==1:
-                            print('Saving psiA')
-                            psiA = tempOrbital[:,3]
-                            eigA = tree.orbitalEnergies[m]
-                            if greenIterationsCount>3: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
-                            
-                        if greenIterationsCount%3==2:
-                            print('Saving psiB')
+                        if greenIterationsCount%2==1:
+                            print('Saving psiA from oldOrbitals array')                            
+                            psiA = oldOrbitals[:,m]
+                            print('Saving psiB from newly computed phi')
                             psiB = tempOrbital[:,3]
+#                             print('sum psiA : ', np.sum(psiA))
+                            eigA = oldEigenvalue
                             eigB = tree.orbitalEnergies[m]
-                            if greenIterationsCount>3: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
-    
-                        if greenIterationsCount%3==0:
-                            print('Saving psiC and computing Aitken Acceleration')
+#                             if greenIterationsCount>3+aitkenStart: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
+                            
+                        if greenIterationsCount%2==0:
+                            print('Saving psiC')
                             psiC = tempOrbital[:,3]
+#                             print('sum psiB : ', np.sum(psiB))
                             eigC = tree.orbitalEnergies[m]
+#                             if greenIterationsCount>3+aitkenStart: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
+    
+#                         if greenIterationsCount%3==0:
+#                             print('Saving psiC and computing Aitken Acceleration')
+#                             psiC = tempOrbital[:,3]
+# #                             print('sum psiC : ', np.sum(psiC))
+#                             eigC = tree.orbitalEnergies[m]
                             
                             aitkenPsi = AitkenAcceleration(psiA, psiB, psiC)
+                            print('Norm of aitkenPsi: ', np.sqrt( np.sum( aitkenPsi*aitkenPsi*weights ) ))
                             aitkenPsi /= np.sqrt( np.sum( aitkenPsi*aitkenPsi*weights ) )  # normalize the aitken wavefunction
                             aitkenEig = AitkenAcceleration(eigA, eigB, eigC)
                         
@@ -880,28 +879,30 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                         aitkenPsi = AitkenAcceleration(oldPsi, middlePsi, newPsi)
 #                         aitkenEig = AitkenAcceleration(oldEig, middleEig, newEig)
                         
-                        print('Saving Aitken psi and eigenvalue.')
-                        orbitals[:,m] = aitkenPsi
-                        tree.orbitalEnergies[m] = aitkenEig
-                        
-                        try:
-                            aitkenNormDiff = np.sqrt( np.sum( (aitkenPsi-oldAitkenPsi)**2*weights ) )
-                            aitkenEigDiff = abs( aitkenEig - oldAitkenEig )
+                            print('Saving Aitken psi and eigenvalue.')
+                            orbitals[:,m] = aitkenPsi
+                            tree.importPhiOnLeaves(orbitals[:,m], m)
+                            tree.orbitalEnergies[m] = aitkenEig
+                            tree.setPhiOldOnLeaves(m)
                             
+                            try:
+                                aitkenNormDiff = np.sqrt( np.sum( (aitkenPsi-oldAitkenPsi)**2*weights ) )
+                                aitkenEigDiff = abs( aitkenEig - oldAitkenEig )
+                                
+                                
+                                print('Residual of Aitken Wavefunctions: ', aitkenNormDiff)
+                                print('Residual of Aitken Eigenvalues:   ', aitkenEigDiff)
+                                
+                                
+                                normDiff = aitkenNormDiff
+                                eigenvalueDiff = aitkenEigDiff
+                            except Exception: 
+                                print('Not computing residual of aitken wavefunction.  This is okay if this is only the third iteration.')
                             
-                            print('Residual of Aitken Wavefunctions: ', aitkenNormDiff)
-                            print('Residual of Aitken Eigenvalues:   ', aitkenEigDiff)
+                            oldAitkenPsi=np.copy(aitkenPsi)
+                            oldAitkenEig = np.copy(aitkenEig)
                             
-                            
-                            normDiff = aitkenNormDiff
-                            eigenvalueDiff = aitkenEigDiff
-                        except Exception: 
-                            print('Not computing residual of aitken wavefunction.  This is okay if this is only the third iteration.')
-                        
-                        oldAitkenPsi=np.copy(aitkenPsi)
-                        oldAitkenEig = np.copy(aitkenEig)
-                        
-                        print('Aitken Eig:                       ', aitkenEig)
+                            print('Aitken Eig:                       ', aitkenEig)
                         
                     ##########################################################################################
                     ##########################################################################################

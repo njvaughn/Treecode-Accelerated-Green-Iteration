@@ -7,10 +7,10 @@ DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -64,7 +64,7 @@ do
 		do 
 			for MESHPARAM1 in 500		    
 			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/symmetricTest/CO_symm_LW5.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/symmetricTest/CO_aitken_after_12_LW5.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/CO_10orbitals_mixingHistory${MIXINGHISTORY}_mixingParam${MIXINGPARAMETER}_order${CELLORDER}_PCI_${MESHPARAM3}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Be_testing/Ox_T200_mixingHistory${MIXINGHISTORY}_mixingParam${MIXINGPARAMETER}_order${CELLORDER}_${BASE}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}.csv"
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \

@@ -104,7 +104,9 @@ import numpy as np
 ## Symmertric Green's iterations tests
 resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/symmetricTest/'
 # file='CO_asymm_LW5_GREEN_375500.csv'
-file='CO_symm_LW5_GREEN_375500.csv'
+# file='CO_symm_LW5_GREEN_375500.csv'
+# file='CO_aitken_after_3_LW5_GREEN_375500.csv'
+file='CO_aitken_after_12_LW5_GREEN_375500.csv'
 
 
 if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
