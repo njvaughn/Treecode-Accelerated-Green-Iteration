@@ -85,12 +85,12 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, 
         return nextDensity
     
 def AitkenAcceleration(a, b, c):
-    print('a and b equal? ', np.array_equal(a,b))
-    print('c and b equal? ', np.array_equal(c,b))
+#     print('a and b equal? ', np.array_equal(a,b))
+#     print('c and b equal? ', np.array_equal(c,b))
     correction = (b - a)**2 / (a - 2*b + c)
     
-    print('Max correction: ', np.max(correction))
-    print('Min correction: ', np.min(correction))
+#     print('Max correction: ', np.max(correction))
+#     print('Min correction: ', np.min(correction))
     
 #     return new - (middle - old)**2 / (new - 2*middle + old)
     return a - correction
