@@ -8,6 +8,7 @@ import numpy as np
 from scipy.special import factorial, comb
 
 import matplotlib.pyplot as plt
+from mpmath.calculus.optimization import steffensen
 
 
 def innerProduct(f,g,weights):
@@ -85,15 +86,22 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, 
         return nextDensity
     
 def AitkenAcceleration(a, b, c):
-#     print('a and b equal? ', np.array_equal(a,b))
-#     print('c and b equal? ', np.array_equal(c,b))
-    correction = (b - a)**2 / (a - 2*b + c)
+    numerator = (b - a)**2
+    denominator = (a - 2*b + c)
+#     if abs(denominator)<1e-16: 
+    if abs(denominator).any()<1e-16: 
+        print('Warning, abs(denominator) < 1e-16')
+        return a
+    correction = numerator / denominator
     
-#     print('Max correction: ', np.max(correction))
-#     print('Min correction: ', np.min(correction))
+#     if abs(numerator).all()<1e-16: print('Warning, abs(numerator) < 1e-16')
+#     if abs(denominator).all()<1e-16: print('Warning, abs(denominator) < 1e-16')
+#     if abs(numerator)<1e-16: print('Warning, abs(numerator) < 1e-16')
     
-#     return new - (middle - old)**2 / (new - 2*middle + old)
+#     print('Correction: ', correction)
     return a - correction
+
+#     return (a*c-b*b) / ( c - 2*b + a )
  
 
 def test1():
@@ -210,9 +218,146 @@ def test2():
     plt.show()
 
 
+def testSteffensenScalar():
+    
+    def f(x):
+#         return (x + 2/x) / 2
+        return 6.28 + np.sin(x)
+    
+    xold=-1
+    count=1
+    residual=1
+    while residual>1e-14:
+        xnew = f(xold)
+        residual = abs(xnew-xold)
+        xold = np.copy(xnew)
+        print('Iteration %2i, x = %1.10f, residual = %1.3e' %(count, xnew, residual))
+        count+=1
+        
+    print()
+    print()
+    xold=-1
+    count=1
+    residual=1
+    while residual>1e-14:
+        fx = f(xold)
+        fxx = f(fx)
+        xnew = AitkenAcceleration(xold, fx, fxx)
+        residual = abs(xnew-xold)
+        xold = np.copy(xnew)
+        print('Iteration %2i, x = %1.10f, residual = %1.3e' %(count, xnew, residual))
+        count+=1
+        
+        
+def testSteffenson(N):
+    A = np.random.rand(N,N)
+    A = (A + A.T)/2
+    x = np.random.rand(N)
+    x /= np.linalg.norm(x)
+    xs = np.copy(x)
+    
+    ## preprocess to get an accurate eigenvalue and eigenvector
+    vectorResidual=1
+    eigOld=1
+    t = np.random.rand(N)
+    count=1
+    while vectorResidual>1e-14:
+        y = np.dot(A,t)
+        y /= np.linalg.norm(y)
+        eig = np.dot(y, np.dot(A,y))
+        residual = abs( eig-eigOld )
+        eigOld=eig
+        vectorResidual = np.linalg.norm(t-y)
+#         print(count, ': ', eig, ', residual: ', residual)
+        print('Power Iteration %2i, Eigenvalue: %1.10f, Eigenvector residual: %1.3e, Eigenvalue residual: %1.3e' %(count,eig,vectorResidual,residual))
+        t = np.copy(y)
+        count+=1
+    e = eig
+    print('Converged Eigenfunction and eigenvalue saves as (t,e)')
+    print()
+    print()
+        
+        
+    errorVec = []
+    count=1
+    residual=1
+    eigOld = 100
+    while residual>1e-10:
+        y = np.dot(A,x)
+        y /= np.linalg.norm(y)
+        eig = np.dot(y, np.dot(A,y))
+        residual = abs( eig-eigOld )
+        eigOld=eig
+        vectorResidual = np.linalg.norm(x-y)
+        errorNorm = np.linalg.norm(y-t)
+        errorVec.append(eig-e)
+#         print('Power Iteration %2i, Eigenvalue: %1.10f, Eigenvector residual: %1.3e, Eigenvalue residual: %1.3e' %(count,eig,vectorResidual,residual))
+        print('Power Iteration %2i, Eigenvalue Error: %1.12f, Eigenvector Error: %1.12f' %(count,abs(eig-e),errorNorm))
+        x = np.copy(y)
+        count+=1
+    
+    powerIterationCount = count
+    
+    print() 
+    print(np.array(errorVec))
+    ratioVec = np.zeros(len(errorVec)-1)
+    for i in range(len(errorVec)-1):
+        ratioVec[i] = errorVec[i]/errorVec[i+1]
+    print()
+    print(ratioVec)
+    print() 
+    print()
+    
+    
+    
+    errorVec = []
+    x = np.copy(xs)  
+    count=1
+    residual=1
+    eigOld = 100
+    while residual>1e-10:
+        xold = np.copy(x)
+        
+        y = np.dot(A,x)
+        y /= np.linalg.norm(y)
+#         print('y eig: %1.10f' %(np.dot(y, np.dot(A,y))))py
+        z = np.dot(A,y)
+        z /= np.linalg.norm(z)
+#         print('z eig: %1.10f' %(np.dot(z, np.dot(A,z))))
+        
+        x = AitkenAcceleration(xold,y,z)
+        x /= np.linalg.norm(x)
+#         print('Norm of aitken x: ', np.linalg.norm(x))
+        eig = np.dot(x, np.dot(A,x))
+        residual = abs( eig-eigOld )
+        eigOld=eig
+        vectorResidual = np.linalg.norm(x-xold)
+        errorNorm = np.linalg.norm(x-t)
+        errorVec.append(eig-e)
+#         print('Steffensen Iteration %2i, Eigenvalue: %1.10f, Eigenvector residual: %1.3e, Eigenvalue residual: %1.3e' %(count,eig,vectorResidual,residual))
+        print('Steffensen Iteration %2i, Eigenvalue Error: %1.12f, Eigenvector Error: %1.12f' %(count,abs(eig-e),errorNorm))
+        count+=1
+
+    steffensenCount = count
+    
+    print() 
+    print(np.array(errorVec))
+    ratioVec = np.zeros(len(errorVec)-1)
+    for i in range(len(errorVec)-1):
+        ratioVec[i] = errorVec[i]/errorVec[i+1]
+    print()
+    print(ratioVec)
+    print() 
+    
+    
+    print()
+    print('Power iterations:                                        ', powerIterationCount)
+    print('Steffensen iterations (times 2, since 2 matvecs per):    ', steffensenCount*2)
 if __name__=="__main__":
     
-    test2()
+#     test2()
+#     testSteffenson(5)
+    testSteffensenScalar()
     
 
     
