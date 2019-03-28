@@ -833,24 +833,24 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     ## Aitken Acceleration Section
                     ##########################################################################################
                     tempOrbital = tree.extractPhi(m)
-                    aitkenStart=3*4*0  # keep this a multiple of 3 for now
+                    aitkenStart=2*0  # keep this a multiple of 2 for now
                     if greenIterationsCount>aitkenStart: 
                         if greenIterationsCount%2==1:
                             print('Saving psiA from oldOrbitals array')                            
-                            psiA = oldOrbitals[:,m]
+                            psiA = np.copy(oldOrbitals[:,m])
                             print('Saving psiB from newly computed phi')
-                            psiB = tempOrbital[:,3]
+                            psiB = np.copy(tempOrbital[:,3])
 #                             print('sum psiA : ', np.sum(psiA))
                             eigA = oldEigenvalue
                             eigB = tree.orbitalEnergies[m]
-#                             if greenIterationsCount>3+aitkenStart: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
+#                             if greenIterationsCount>2+aitkenStart: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
                             
                         if greenIterationsCount%2==0:
                             print('Saving psiC')
-                            psiC = tempOrbital[:,3]
+                            psiC = np.copy(tempOrbital[:,3])
 #                             print('sum psiB : ', np.sum(psiB))
                             eigC = tree.orbitalEnergies[m]
-#                             if greenIterationsCount>3+aitkenStart: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
+#                             if greenIterationsCount>2+aitkenStart: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
     
 #                         if greenIterationsCount%3==0:
 #                             print('Saving psiC and computing Aitken Acceleration')
@@ -860,8 +860,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             
                             aitkenPsi = AitkenAcceleration(psiA, psiB, psiC)
                             print('Norm of aitkenPsi: ', np.sqrt( np.sum( aitkenPsi*aitkenPsi*weights ) ))
+                            print('Norm diff between aitken and psiA: ', np.sqrt( np.sum( (aitkenPsi-psiA)**2*weights ) ))
                             aitkenPsi /= np.sqrt( np.sum( aitkenPsi*aitkenPsi*weights ) )  # normalize the aitken wavefunction
-                            aitkenEig = AitkenAcceleration(eigA, eigB, eigC)
+                            
+                            # Reset psiOld and eigOld to input values.  Compute update to Aitken values.
+                            tree.importPhiOnLeaves(psiA,m)
+                            tree.orbitalEnergies[m] = eigA
+                            tree.setPhiOldOnLeaves(m) # Sets phiC to be the old psi
+                            tree.importPhiNewOnLeaves(aitkenPsi) # Sets aitkenPsi to be the new psi
+                            tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)  # computes eigenvalue for transition from psiC to aitkenPsi
+#                             aitkenEig = AitkenAcceleration(eigA, eigB, eigC)
                         
 #                         oldAitkenPsi = AitkenAcceleration(oldPsi, middlePsi, newPsi)
 #                         oldAitkenEig = AitkenAcceleration(oldEig, middleEig, newEig)
@@ -882,27 +890,27 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             print('Saving Aitken psi and eigenvalue.')
                             orbitals[:,m] = aitkenPsi
                             tree.importPhiOnLeaves(orbitals[:,m], m)
-                            tree.orbitalEnergies[m] = aitkenEig
+#                             tree.orbitalEnergies[m] = aitkenEig
                             tree.setPhiOldOnLeaves(m)
                             
                             try:
                                 aitkenNormDiff = np.sqrt( np.sum( (aitkenPsi-oldAitkenPsi)**2*weights ) )
-                                aitkenEigDiff = abs( aitkenEig - oldAitkenEig )
+#                                 aitkenEigDiff = abs( aitkenEig - oldAitkenEig )
                                 
                                 
                                 print('Residual of Aitken Wavefunctions: ', aitkenNormDiff)
-                                print('Residual of Aitken Eigenvalues:   ', aitkenEigDiff)
+#                                 print('Residual of Aitken Eigenvalues:   ', aitkenEigDiff)
                                 
                                 
                                 normDiff = aitkenNormDiff
-                                eigenvalueDiff = aitkenEigDiff
+#                                 eigenvalueDiff = aitkenEigDiff
                             except Exception: 
-                                print('Not computing residual of aitken wavefunction.  This is okay if this is only the third iteration.')
+                                print('Not computing residual of aitken wavefunction.  This is okay if this is only the second iteration.')
                             
                             oldAitkenPsi=np.copy(aitkenPsi)
-                            oldAitkenEig = np.copy(aitkenEig)
-                            
-                            print('Aitken Eig:                       ', aitkenEig)
+#                             oldAitkenEig = np.copy(aitkenEig)
+#                             
+#                             print('Aitken Eig:                       ', aitkenEig)
                         
                     ##########################################################################################
                     ##########################################################################################
