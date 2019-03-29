@@ -1482,7 +1482,7 @@ class Tree(object):
 #                 if symmetric == True:
 #                     phiOld = phiOld*np.sqrt(-potential)
                     
-                deltaE -= np.sum( phiOld*potential*(phi-phiNew)*cell.w ) 
+                deltaE -= np.sum( phi*potential*(phi-phiNew)*cell.w ) 
 #                 deltaE -= np.sum( phiOld*potential*(phiOld-phiNew)*cell.w ) 
 #                 if symmetric==True:
 #                     normSqOfPsiNew += np.sum( (phiNew/np.sqrt(-potential))**2 * cell.w)

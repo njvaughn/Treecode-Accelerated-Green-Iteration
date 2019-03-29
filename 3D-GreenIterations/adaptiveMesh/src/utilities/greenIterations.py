@@ -963,7 +963,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             tree.setPhiOldOnLeaves(m)
                             
                             tree.orbitalEnergies[m] = aitkenEig
-                            eigenvalueDiff = abs(aitkenEig - oldEigenvalue)
+#                             eigenvalueDiff = abs(aitkenEig - oldEigenvalue)
                             
            
                             
@@ -1001,10 +1001,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         tempOrbital = tree.extractPhi(m)
                         orbitals[:,m] = np.copy( tempOrbital[:,3] )
                         if symmetricIteration==False:
-                            print('Computing residual of psi')
+#                             print('Computing residual of psi')
                             normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
                         elif symmetricIteration==True:
-                            print('Computing residual of psi*sqrtV')
+#                             print('Computing residual of psi*sqrtV')
                             normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
                         eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
                     
@@ -1098,7 +1098,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     print('Eigenvalue Previous relative residual = ', previousEigenvalueResidualRatio)
                     print()
                     
-                    ratioTol = 1e-2
+                    ratioTol = 1e-1
                     if aitkenAcceleration==False:
                         try:
                             psiRatio = abs(residualRatio/previousResidualRatio )

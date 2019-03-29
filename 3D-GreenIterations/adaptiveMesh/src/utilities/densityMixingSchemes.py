@@ -95,9 +95,22 @@ def AitkenAcceleration(a, b, c):
         print('Warning, abs(denominator) < 1e-15')
         return a
     correction = numerator / denominator
+    print('Max denominator: ', np.max(np.abs( denominator) ))
+    print('Min denominator: ', np.min(np.abs(denominator) ))
+    print('Max correction: ', np.max(correction))
+    print('Min correction: ', np.min(correction))
     
-    print(np.max(correction))
-    print(np.min(correction))
+    try:
+        for i in range(len(denominator)):
+            if abs(denominator[i]) < 1e-10:
+                numerator[i]=0.0
+        print('After masking small denominator terms:')
+        correction = numerator / denominator
+        print('Max correction: ', np.max(correction))
+        print('Min correction: ', np.min(correction))
+    except TypeError:
+        pass  
+
     
 #     if abs(numerator).all()<1e-16: print('Warning, abs(numerator) < 1e-16')
 #     if abs(denominator).all()<1e-16: print('Warning, abs(denominator) < 1e-16')
