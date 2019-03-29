@@ -544,6 +544,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             firstInputWavefunction=True
             firstOutputWavefunction=True
             
+            aitkenAcceleration=False
+            
             if ( (tree.orbitalEnergies[m] < tree.gaugeShift) or (firstGreenIteration==True) ):
                 
                 firstGreenIteration = False
@@ -564,6 +566,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 oldOrbitalResidual = 2.0
                 psiNewNorm = 10
                 previousResidual = 1
+                previousEigenvalueDiff = 1
                 
                 normDiff=1.0
                 eigenvalueDiff=1.0
@@ -575,7 +578,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 oldAitkenPsi = None
                 aitkenEig = None
                 oldAitkenEig = None
-                    
+                
+                previousResidualRatio = 1
+                previousEigenvalueResidualRatio = 1
                     
                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) 
 #                         and (np.abs(psiNewNorm-1) > intraScfTolerance) 
@@ -587,6 +592,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     
                     
                     oldOrbitalResidual = orbitalResidual
+                    
       
                     sources = tree.extractPhi(m)
                     targets = np.copy(sources)
@@ -746,8 +752,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             
                             if symmetricIteration==False:
                                 tree.importPhiNewOnLeaves(phiNew)
-                                print('Not updating energy, just for testing Steffenson method')
-#                                 tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+#                                 print('Not updating energy, just for testing Steffenson method')
+                                tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
                                 orbitals[:,m] = np.copy(phiNew)
                             elif symmetricIteration==True:
 #                                 tree.importPhiNewOnLeaves(phiNew/sqrtV)
@@ -833,10 +839,14 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     ##########################################################################################
                     ## Aitken Acceleration Section
                     ##########################################################################################
+                    
                     tempOrbital = tree.extractPhi(m)
-                    aitkenStart=2*0  # keep this a multiple of 2 for now
-                    if greenIterationsCount>aitkenStart: 
-                        if greenIterationsCount%2==1:
+#                     aitkenStart=2*0  # keep this a multiple of 2 for now
+                    if aitkenAcceleration==True: 
+                        normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
+                        eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
+                        
+                        if (greenIterationsCount-aitkenStart)%2==1:
                             print('Saving psiA from oldOrbitals array')                            
                             psiA = np.copy(oldOrbitals[:,m])
                             print('Saving psiB from newly computed phi')
@@ -846,7 +856,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             eigB = np.copy( tree.orbitalEnergies[m] )
 #                             if greenIterationsCount>2+aitkenStart: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
                             
-                        if greenIterationsCount%2==0:
+                        if (greenIterationsCount-aitkenStart)%2==0:
                             print('Saving psiC')
                             psiC = np.copy(tempOrbital[:,3])
 #                             print('sum psiB : ', np.sum(psiB))
@@ -856,26 +866,26 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             
                             aitkenPsi = AitkenAcceleration(psiA, psiB, psiC)
                             aitkenEig = AitkenAcceleration(eigA, eigB, eigC)
-                            print('Norm of aitkenPsi: ', np.sqrt( np.sum( aitkenPsi*aitkenPsi*weights ) ))
-                            print('Norm diff between aitken and psiA: ', np.sqrt( np.sum( (aitkenPsi-psiA)**2*weights ) ))
-                            if m==1:
-                                tempOrbital0 = tree.extractPhi(0)
-                                print('psiA overlap with psi0:      ', np.sqrt( np.sum( np.abs(psiA*tempOrbital0[:,3])*weights ) ))
-                                print('psiB overlap with psi0:      ', np.sqrt( np.sum( np.abs(psiB*tempOrbital0[:,3])*weights ) ))
-                                print('psiC overlap with psi0:      ', np.sqrt( np.sum( np.abs(psiC*tempOrbital0[:,3])*weights ) ))
-                                print('psiAitken overlap with psi0: ', np.sqrt( np.sum( np.abs(aitkenPsi*tempOrbital0[:,3])*weights ) ))
-                                epsConv = -0.70603315
-                                print('EigA - Converged: ', (eigA-epsConv))
-                                print('EigB - Converged: ', (eigB-epsConv))
-                                print('EigC - Converged: ', (eigC-epsConv))
-                                print('EigS - Converged: ', (aitkenEig-epsConv))
-                            
-                            if m==0:   
-                                epsConv = -4.356131056
-                                print('EigA - Converged: ', (eigA-epsConv))
-                                print('EigB - Converged: ', (eigB-epsConv))
-                                print('EigC - Converged: ', (eigC-epsConv))
-                                print('EigS - Converged: ', (aitkenEig-epsConv))
+#                             print('Norm of aitkenPsi: ', np.sqrt( np.sum( aitkenPsi*aitkenPsi*weights ) ))
+#                             print('Norm diff between aitken and psiA: ', np.sqrt( np.sum( (aitkenPsi-psiA)**2*weights ) ))
+#                             if m==1:
+#                                 tempOrbital0 = tree.extractPhi(0)
+#                                 print('psiA overlap with psi0:      ', np.sqrt( np.sum( np.abs(psiA*tempOrbital0[:,3])*weights ) ))
+#                                 print('psiB overlap with psi0:      ', np.sqrt( np.sum( np.abs(psiB*tempOrbital0[:,3])*weights ) ))
+#                                 print('psiC overlap with psi0:      ', np.sqrt( np.sum( np.abs(psiC*tempOrbital0[:,3])*weights ) ))
+#                                 print('psiAitken overlap with psi0: ', np.sqrt( np.sum( np.abs(aitkenPsi*tempOrbital0[:,3])*weights ) ))
+#                                 epsConv = -0.70603315
+#                                 print('EigA - Converged: ', (eigA-epsConv))
+#                                 print('EigB - Converged: ', (eigB-epsConv))
+#                                 print('EigC - Converged: ', (eigC-epsConv))
+#                                 print('EigS - Converged: ', (aitkenEig-epsConv))
+#                             
+#                             if m==0:   
+#                                 epsConv = -4.356131056
+#                                 print('EigA - Converged: ', (eigA-epsConv))
+#                                 print('EigB - Converged: ', (eigB-epsConv))
+#                                 print('EigC - Converged: ', (eigC-epsConv))
+#                                 print('EigS - Converged: ', (aitkenEig-epsConv))
                                 
                                 
                             aitkenPsi /= np.sqrt( np.sum( aitkenPsi*aitkenPsi*weights ) )  # normalize the aitken wavefunction
@@ -909,27 +919,30 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             orbitals[:,m] = np.copy( aitkenPsi )
                             tree.importPhiOnLeaves(orbitals[:,m], m)
 #                             tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
-#                             tree.orbitalEnergies[m] = aitkenEig
+                            tree.orbitalEnergies[m] = aitkenEig
                             tree.setPhiOldOnLeaves(m)
+                            
+                            
                             
                             try:
                                 aitkenNormDiff = np.sqrt( np.sum( (aitkenPsi-oldAitkenPsi)**2*weights ) )
-#                                 aitkenEigDiff = abs( aitkenEig - oldAitkenEig )
+                                aitkenEigDiff = abs( aitkenEig - oldAitkenEig )
                                 
                                 
                                 print('Residual of Aitken Wavefunctions: ', aitkenNormDiff)
-#                                 print('Residual of Aitken Eigenvalues:   ', aitkenEigDiff)
+                                print('Residual of Aitken Eigenvalues:   ', aitkenEigDiff)
                                 
                                 
                                 normDiff = aitkenNormDiff
-#                                 eigenvalueDiff = aitkenEigDiff
+                                eigenvalueDiff = aitkenEigDiff
                             except Exception: 
                                 print('Not computing residual of aitken wavefunction.  This is okay if this is only the second iteration.')
+                                
                             
                             oldAitkenPsi=np.copy(aitkenPsi)
-#                             oldAitkenEig = np.copy(aitkenEig)
+                            oldAitkenEig = np.copy(aitkenEig)
 # #                             
-#                             print('Aitken Eig:                       ', aitkenEig)
+                            print('Aitken Eig:                       ', aitkenEig)
                         
                     ##########################################################################################
                     ##########################################################################################
@@ -1024,6 +1037,23 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                         orbitalResidual*=1000
 #                     if (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) <= 1/10000):
 #                         print('Relative residual changing by < 0.01%.  Exiting Greens Iteration')
+
+                    residualRatio = orbitalResidual/oldOrbitalResidual
+                    eigenvalueResidualRatio = eigenvalueDiff/previousEigenvalueDiff
+                    print()
+                    print('Wavefunction Relative Residual =          ', residualRatio)
+                    print('Wavefunction Previous relative residual = ', previousResidualRatio)
+                    print()
+                    print('Eigenvalue Relative Residual =          ', eigenvalueResidualRatio)
+                    print('Eigenvalue Previous relative residual = ', previousEigenvalueResidualRatio)
+                    print()
+                    
+                    ratioTol = 1e-1
+                    if aitkenAcceleration==False:
+                        if ( (abs(1 - abs(residualRatio/previousResidualRatio )) < ratioTol) and (abs(1 - abs(eigenvalueResidualRatio/previousEigenvalueResidualRatio ))) ):
+                            print('Turning on Steffensen acceleration because psi and epsilon are in linear regime.')
+                            aitkenAcceleration=True
+                            aitkenStart = greenIterationsCount
                     if orbitalResidual < intraScfTolerance:
                         print('Used %i iterations for orbital %i.\n\n\n' %(greenIterationsCount,m))
                         
@@ -1037,6 +1067,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         orbitalResidual=0.0
                         
                     previousResidual = np.copy(orbitalResidual)
+                    previousEigenvalueDiff = np.copy(eigenvalueDiff)
+                    previousResidualRatio = np.copy(residualRatio)
+                    previousEigenvalueResidualRatio = np.copy(eigenvalueResidualRatio)
                     greenIterationsCount += 1 
                     
                 
