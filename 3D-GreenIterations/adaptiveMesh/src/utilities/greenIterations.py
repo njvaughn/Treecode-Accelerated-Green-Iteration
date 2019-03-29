@@ -570,6 +570,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             firstOutputWavefunction=True
             
             aitkenAcceleration=False
+            freezeEigenvalue=False
             
             if ( (tree.orbitalEnergies[m] < tree.gaugeShift) or (firstGreenIteration==True) ):
                 
@@ -771,7 +772,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         # update the energy first
                         
                 
-                        if ( (gradientFree==True) and (SCFcount>-1) ):
+                        if ( (gradientFree==True) and (SCFcount>-1) and (freezeEigenvalue==False) ):
                             
                             psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*weights))
                             
@@ -868,6 +869,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     tempOrbital = tree.extractPhi(m)
 #                     aitkenStart=2*0  # keep this a multiple of 2 for now
                     if aitkenAcceleration==True: 
+                        
                         orbitals[:,m] = tempOrbital[:,3]
                         normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
                         eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
@@ -945,16 +947,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         
                             print('Saving Aitken psi and eigenvalue.')
                             
-                            orbitals[:,m] = np.copy( aitkenPsi )
-                            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-                            orbitals[:,m] = np.copy(orthWavefunction)
-                            tree.importPhiOnLeaves(orbitals[:,m], m)
-                            tree.setPhiOldOnLeaves(m)
+#                             orbitals[:,m] = np.copy( aitkenPsi )
+#                             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#                             orbitals[:,m] = np.copy(orthWavefunction)
+#                             tree.importPhiOnLeaves(orbitals[:,m], m)
+#                             tree.setPhiOldOnLeaves(m)
                             
                             tree.orbitalEnergies[m] = aitkenEig
                             
                             print('Setting aitkenAcceleration back to false.')
                             aitkenAcceleration=False
+                            freezeEigenvalue=True
 
 
                             
@@ -1083,7 +1086,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     print('Eigenvalue Previous relative residual = ', previousEigenvalueResidualRatio)
                     print()
                     
-                    ratioTol = 1e-3
+                    ratioTol = 1e-2
                     if aitkenAcceleration==False:
                         if ( 
                             (abs(1 - abs(residualRatio/previousResidualRatio )) < ratioTol) and 
@@ -1091,6 +1094,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                              ):
                             print('Turning on Steffensen acceleration because psi and epsilon are in linear regime.')
                             aitkenAcceleration=True
+                            freezeEigenvalue=False
                             aitkenStart = greenIterationsCount
                     if orbitalResidual < intraScfTolerance:
                         print('Used %i iterations for orbital %i.\n\n\n' %(greenIterationsCount,m))
