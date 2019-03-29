@@ -7,10 +7,10 @@ DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -32,14 +32,14 @@ GAUSSIANALPHA=1.0
 
 #MESHTYPE='ParentChildrenIntegral'
 MESHTYPE='LW5'
-RESTART='False'	
+RESTART='True'	
 SAVEDMESH='None' 
 
 
 MIXINGPARAMETER=0.5 
 MIXINGHISTORY=10 
  
-INTRASCFTOLERANCE=1e-5  
+INTRASCFTOLERANCE=1e-5
 INTERSCFTOLERANCE=5e-5 
    
 MIXING='Anderson'    
