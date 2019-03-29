@@ -837,8 +837,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
           
                             
                         else:
+                            print('Not updating eigenvalue.  Is that intended?')
                             print('Invalid option for gradientFree, which is set to: ', gradientFree)
                             print('type: ', type(gradientFree))
+                            
+                            orbitals[:,m] = np.copy(phiNew)
+                            n,k = np.shape(orbitals)
+                            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+                            orbitals[:,m] = np.copy(orthWavefunction)
+                            tree.importPhiOnLeaves(orbitals[:,m], m)
+                            tree.setPhiOldOnLeaves(m)
+                            
         
                         newEigenvalue = tree.orbitalEnergies[m]
                         
@@ -947,34 +956,37 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         
                             print('Saving Aitken psi and eigenvalue.')
                             
-#                             orbitals[:,m] = np.copy( aitkenPsi )
-#                             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-#                             orbitals[:,m] = np.copy(orthWavefunction)
-#                             tree.importPhiOnLeaves(orbitals[:,m], m)
-#                             tree.setPhiOldOnLeaves(m)
+                            orbitals[:,m] = np.copy( aitkenPsi )
+                            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+                            orbitals[:,m] = np.copy(orthWavefunction)
+                            tree.importPhiOnLeaves(orbitals[:,m], m)
+                            tree.setPhiOldOnLeaves(m)
                             
                             tree.orbitalEnergies[m] = aitkenEig
+                            eigenvalueDiff = abs(aitkenEig - oldEigenvalue)
+                            
+           
                             
                             print('Setting aitkenAcceleration back to false.')
                             aitkenAcceleration=False
-                            freezeEigenvalue=True
+#                             freezeEigenvalue=True
 
 
                             
                             
-                            try:
-                                aitkenNormDiff = np.sqrt( np.sum( (aitkenPsi-oldAitkenPsi)**2*weights ) )
-                                aitkenEigDiff = abs( aitkenEig - oldAitkenEig )
-                                
-                                
-                                print('Residual of Aitken Wavefunctions: ', aitkenNormDiff)
-                                print('Residual of Aitken Eigenvalues:   ', aitkenEigDiff)
-                                
-                                
-#                                 normDiff = aitkenNormDiff
-#                                 eigenvalueDiff = aitkenEigDiff
-                            except Exception: 
-                                print('Not computing residual of aitken wavefunction.  This is okay if this is only the second iteration.')
+#                             try:
+#                                 aitkenNormDiff = np.sqrt( np.sum( (aitkenPsi-oldAitkenPsi)**2*weights ) )
+#                                 aitkenEigDiff = abs( aitkenEig - oldAitkenEig )
+#                                 
+#                                 
+#                                 print('Residual of Aitken Wavefunctions: ', aitkenNormDiff)
+#                                 print('Residual of Aitken Eigenvalues:   ', aitkenEigDiff)
+#                                 
+#                                 
+# #                                 normDiff = aitkenNormDiff
+# #                                 eigenvalueDiff = aitkenEigDiff
+#                             except Exception: 
+#                                 print('Not computing residual of aitken wavefunction.  This is okay if this is only the second iteration.')
                                 
                             
                             oldAitkenPsi=np.copy(aitkenPsi)
@@ -1088,9 +1100,17 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     
                     ratioTol = 1e-2
                     if aitkenAcceleration==False:
+                        try:
+                            psiRatio = abs(residualRatio/previousResidualRatio )
+                        except Exception:
+                            psiRatio = 1
+                        try:
+                            eigRatio = abs(eigenvalueResidualRatio/previousEigenvalueResidualRatio )
+                        except Exception:
+                            eigRatio=1
                         if ( 
-                            (abs(1 - abs(residualRatio/previousResidualRatio )) < ratioTol) and 
-                            (abs(1 - abs(eigenvalueResidualRatio/previousEigenvalueResidualRatio )) < ratioTol)
+                            (abs(1 - psiRatio) < ratioTol) and 
+                            (abs(1 - eigRatio) < ratioTol)
                              ):
                             print('Turning on Steffensen acceleration because psi and epsilon are in linear regime.')
                             aitkenAcceleration=True

@@ -1468,13 +1468,13 @@ class Tree(object):
             if cell.leaf==True:
                 phi = np.zeros((cell.px,cell.py,cell.pz))
                 phiNew = np.zeros((cell.px,cell.py,cell.pz))
-                phiOld = np.zeros((cell.px,cell.py,cell.pz))
+#                 phiOld = np.zeros((cell.px,cell.py,cell.pz))
                 potential = np.zeros((cell.px,cell.py,cell.pz))
                 for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
-#                     phi[i,j,k] = gp.phi[targetEnergy]
+                    phi[i,j,k] = gp.phi[targetEnergy]
                     phiNew[i,j,k] = gp.phiNew
-                    phiOld[i,j,k] = gp.phiOld
+#                     phiOld[i,j,k] = gp.phiOld
                     potential[i,j,k] = gp.v_eff
                     
 #                 if symmetric==False:
@@ -1482,7 +1482,8 @@ class Tree(object):
 #                 if symmetric == True:
 #                     phiOld = phiOld*np.sqrt(-potential)
                     
-                deltaE -= np.sum( phiOld*potential*(phiOld-phiNew)*cell.w ) 
+                deltaE -= np.sum( phiOld*potential*(phi-phiNew)*cell.w ) 
+#                 deltaE -= np.sum( phiOld*potential*(phiOld-phiNew)*cell.w ) 
 #                 if symmetric==True:
 #                     normSqOfPsiNew += np.sum( (phiNew/np.sqrt(-potential))**2 * cell.w)
 #                 else:

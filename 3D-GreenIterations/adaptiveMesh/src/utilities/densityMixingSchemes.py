@@ -91,13 +91,13 @@ def AitkenAcceleration(a, b, c):
 #     print(np.shape(numerator))
 #     print(np.shape(denominator))
 #     if abs(denominator)<1e-16: 
-    if abs(denominator).any()<1e-15: 
+    if abs(denominator).any()<1e-13: 
         print('Warning, abs(denominator) < 1e-15')
         return a
     correction = numerator / denominator
     
-#     print(np.max(correction))
-#     print(np.min(correction))
+    print(np.max(correction))
+    print(np.min(correction))
     
 #     if abs(numerator).all()<1e-16: print('Warning, abs(numerator) < 1e-16')
 #     if abs(denominator).all()<1e-16: print('Warning, abs(denominator) < 1e-16')
