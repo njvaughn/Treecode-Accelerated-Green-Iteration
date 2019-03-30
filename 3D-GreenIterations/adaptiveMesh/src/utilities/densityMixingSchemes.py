@@ -86,30 +86,58 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, 
         return nextDensity
     
 def AitkenAcceleration(a, b, c):
+    
+    # shift up by min value
+    minVal = np.min( [np.min(a), np.min(b), np.min(c)])
+    print('minVal = ', minVal)
+    a+= 2*abs(minVal)
+    b+= 2*abs(minVal)
+    c+= 2*abs(minVal)
+    
     numerator = (b - a)**2
     denominator = (a - 2*b + c)
 #     print(np.shape(numerator))
 #     print(np.shape(denominator))
 #     if abs(denominator)<1e-16: 
-    if abs(denominator).any()<1e-13: 
-        print('Warning, abs(denominator) < 1e-15')
-        return a
+#     if abs(denominator).any()<1e-13: 
+#         print('Warning, abs(denominator) < 1e-15')
+#         return a
     correction = numerator / denominator
     print('Max denominator: ', np.max(np.abs( denominator) ))
     print('Min denominator: ', np.min(np.abs(denominator) ))
     print('Max correction: ', np.max(correction))
     print('Min correction: ', np.min(correction))
+    print('Max relative correction: ', np.max(correction/a))
+    print('Min relative correction: ', np.min(correction/a))
     
-    try:
-        for i in range(len(denominator)):
-            if abs(denominator[i]) < 1e-10:
-                numerator[i]=0.0
-        print('After masking small denominator terms:')
-        correction = numerator / denominator
-        print('Max correction: ', np.max(correction))
-        print('Min correction: ', np.min(correction))
-    except TypeError:
-        pass  
+#     try:
+#         for i in range(len(correction)):
+#             if abs(correction[i]/a[i]) > 0.01:
+#                 correction[i] *= abs(0.01*a[i]/correction[i])
+#         print('After limitting relative correction to 1:')
+# #         correction = numerator / denominator 
+#         print('Max correction: ', np.max(correction))
+#         print('Min correction: ', np.min(correction))
+#         print('Max relative correction: ', np.max(correction/a))
+#         print('Min relative correction: ', np.min(correction/a))
+#         print()
+#     except TypeError:
+#         pass 
+    
+    
+#     try:
+#         for i in range(len(denominator)):
+#             if abs(denominator[i]) < -1e-15:
+#                 numerator[i]=0.0
+#         print('After masking small denominator terms:')
+#         correction = numerator / denominator 
+#         print('Max correction: ', np.max(correction))
+#         print('Min correction: ', np.min(correction))
+#         print('Max relative correction: ', np.max(correction/a))
+#         print('Min relative correction: ', np.min(correction/a))
+#         print()
+#     except TypeError:
+#         pass  
 
     
 #     if abs(numerator).all()<1e-16: print('Warning, abs(numerator) < 1e-16')
@@ -117,7 +145,7 @@ def AitkenAcceleration(a, b, c):
 #     if abs(numerator)<1e-16: print('Warning, abs(numerator) < 1e-16')
     
 #     print('Correction: ', correction)
-    return a - correction
+    return (a - correction) - 2*abs(minVal)
 
 #     return (a*c-b*b) / ( c - 2*b + a )
  
