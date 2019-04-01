@@ -93,11 +93,11 @@ import numpy as np
 # # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_1000_mixingHistory6_GREEN_2948000.csv'
 # # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_GREEN_1485000.csv'
 # # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory10_GREEN_2172000.csv'
-# 
+#  
 # # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory6_GREEN_2172000.csv'
-# 
-# file='ds_gaugeShift0p25_mindepth3_tcOrder7_theta0.8_LW5_500_1random_mixingHistory15_GREEN_1493000.csv'
-# # file='ds_gaugeShift0p25_mindepth3_tcOrder5_theta0.8_LW5_500_1random_mixingHistory10_GREEN_1493000.csv'
+#  
+# # file='ds_gaugeShift0p25_mindepth3_tcOrder7_theta0.8_LW5_500_1random_mixingHistory15_GREEN_1493000.csv'
+# file='ds_gaugeShift0p25_mindepth3_tcOrder5_theta0.8_LW5_500_1random_mixingHistory10_GREEN_1493000.csv'
 
 
 

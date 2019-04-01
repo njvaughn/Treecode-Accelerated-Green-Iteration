@@ -15,7 +15,7 @@ from numba import cuda, jit, njit
 import time
 # from convolution import gpuPoissonConvolution,gpuHelmholtzConvolutionSubractSingularity, cpuHelmholtzSingularitySubtract,cpuHelmholtzSingularitySubtract_allNumerical
 import densityMixingSchemes as densityMixing
-from densityMixingSchemes import AitkenAcceleration
+from densityMixingSchemes import AitkenAcceleration, nathanAcceleration, AitkenPointwiseAcceleration
 from fermiDiracDistribution import computeOccupations
 import sys
 # from guppy import hpy 
@@ -518,7 +518,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
 
         for m in range(nOrbitals): 
-            if m==2:
+            if m==3:
                 print('Saving restart files for after the psi0 and psi1 complete.')
                 # save arrays 
                 try:
@@ -552,6 +552,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             orbitals[:,m] = np.copy(orthWavefunction)
             tree.importPhiOnLeaves(orbitals[:,m], m)
             
+            inputEigenvalues = []
+            
             if symmetricIteration==False:
                 tree.setPhiOldOnLeaves(m)
             elif symmetricIteration==True:
@@ -578,6 +580,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
                 inputWavefunctions = np.zeros((numberOfGridpoints,1))
                 outputWavefunctions = np.zeros((numberOfGridpoints,1))
+                
+#                 inputEigenvalues  = np.zeros((1,))
+#                 outputEigenvalues = np.zeros((1,))
     
                 orbitalResidual = 1
                 eigenvalueResidual = 1
@@ -590,6 +595,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 inputIntraSCFtolerance = np.copy(intraScfTolerance)
                 orbitalResidual = 1.0
                 oldOrbitalResidual = 2.0
+                oldOldOrbitalResidual = 4.0
                 psiNewNorm = 10
                 previousResidual = 1
                 previousEigenvalueDiff = 1
@@ -605,10 +611,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 aitkenEig = None
                 oldAitkenEig = None
                 
-                ratioTol = 1e-2
+                ratioTol = 2e-3
                 
-                previousResidualRatio = 1
-                previousEigenvalueResidualRatio = 1
+                previousResidualRatio = 2
+                previousEigenvalueResidualRatio = 2
                     
                 while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) 
 #                         and (np.abs(psiNewNorm-1) > intraScfTolerance) 
@@ -618,7 +624,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     tree.totalIterationCount += 1
 #                     orbitalResidual = 0.0
                     
-                    
+                    oldOldOrbitalResidual = oldOrbitalResidual
                     oldOrbitalResidual = orbitalResidual
                     
       
@@ -634,15 +640,19 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     if GIandersonMixing==True:
                         if firstInputWavefunction==True:
                             inputWavefunctions[:,0] = np.copy(oldOrbitals[:,m]) # fill first column of inputWavefunctions
+#                             inputEigenvalues[0] = tree.orbitalEnergies[m]
                             firstInputWavefunction=False
                         else:
                             if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
                                 inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(oldOrbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
                                 print('Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
+#                                 inputEigenvalues = np.concatenate( inputEigenvalues, tree.orbitalEnergies[m])
+#                                 print('Concatenated inputeEigenvalues.  Now has shape: ', np.shape(inputeEigenvalues))
                             else:
                                 print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
 #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                                 inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(oldOrbitals[:,m])
+#                                 inputEigenvalues[(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(tree.orbitalEnergies[m])
     
     
                     if symmetricIteration==False:
@@ -889,7 +899,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
                         eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
                         
-                        if (greenIterationsCount-aitkenStart)%3==1:
+                        if (greenIterationsCount-aitkenStart)%4==1:
                             print('Saving psiA from oldOrbitals array')                            
                             psiA = np.copy(oldOrbitals[:,m])
                             print('Saving psiB from newly computed phi')
@@ -899,7 +909,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             eigB = np.copy( tree.orbitalEnergies[m] )
 #                             if greenIterationsCount>2+aitkenStart: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
                             
-                        if (greenIterationsCount-aitkenStart)%3==2:
+                        if (greenIterationsCount-aitkenStart)%4==2:
                             print('Saving psiC')
                             psiC = np.copy(tempOrbital[:,3])
 #                             print('sum psiB : ', np.sum(psiB))
@@ -907,17 +917,39 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 #                             if greenIterationsCount>2+aitkenStart: tree.orbitalEnergies[m] = aitkenEig  # keep eig fixed to previous aitken value
 
                             
-                            aitkenPsi = AitkenAcceleration(psiA, psiB, psiC)
                             aitkenEig = AitkenAcceleration(eigA, eigB, eigC)
+                            aitkenPsi = AitkenAcceleration(psiA, psiB, psiC)
+#                             aitkenPsi = AitkenPointwiseAcceleration(psiA,psiB,psiC)
+                
+#                             aitkenPsi = nathanAcceleration(psiA, psiB, psiC)
+#                             aitkenEig = nathanAcceleration(eigA, eigB, eigC)
+                            
+                            tree.exportAitkenWavefunction(densityPlotsDir+'/aitken_noFilter', tempOrbital[:,0], tempOrbital[:,1], tempOrbital[:,2], psiA, psiB, psiC, aitkenPsi)
                             
                             orbitals[:,m] = np.copy( aitkenPsi )
-                            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-                            orbitals[:,m] = np.copy(orthWavefunction)
+#                             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#                             orbitals[:,m] = np.copy(orthWavefunction)
                             
 #                             print('Norm of aitkenPsi: ', np.sqrt( np.sum( aitkenPsi*aitkenPsi*weights ) ))
                             print('Norm diff between aitken and psiA: ', np.sqrt( np.sum( (aitkenPsi-psiA)**2*weights ) ))
                             print('Norm diff between aitken and psiB: ', np.sqrt( np.sum( (aitkenPsi-psiB)**2*weights ) ))
                             print('Norm diff between aitken and psiC: ', np.sqrt( np.sum( (aitkenPsi-psiC)**2*weights ) ))
+                            
+                            print('Min values of psiA, B, C, Aitken: ', np.min(psiA), np.min(psiB), np.min(psiC), np.min(aitkenPsi) )
+                            print('Max values of psiA, B, C, Aitken: ', np.max(psiA), np.max(psiB), np.max(psiC), np.max(aitkenPsi) )
+                            
+                            idx = np.argmax(aitkenPsi)
+                            print('Location of PsiAitken max: ', x[idx], y[idx], z[idx])
+                            print('psiA at this location: ', psiA[idx])
+                            print('psiB at this location: ', psiB[idx])
+                            print('psiC at this location: ', psiC[idx])
+
+                            idx = np.argmin(aitkenPsi)
+                            print('Location of PsiAitken min: ', x[idx], y[idx], z[idx])
+                            print('psiA at this location: ', psiA[idx])
+                            print('psiB at this location: ', psiB[idx])
+                            print('psiC at this location: ', psiC[idx])
+#                             return
 #                             if m==1:
 #                                 tempOrbital0 = tree.extractPhi(0)
 #                                 print('psiA overlap with psi0:      ', np.sqrt( np.sum( np.abs(psiA*tempOrbital0[:,3])*weights ) ))
@@ -964,7 +996,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             
                             print('Setting aitkenAcceleration back to false.')
                             print('Aitken Eig:                       ', aitkenEig)
-#                             aitkenAcceleration=False
+                            aitkenAcceleration=False
                             freezeEigenvalue=True
 
 
@@ -1013,17 +1045,25 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         
                         if firstOutputWavefunction==True:
                             outputWavefunctions[:,0] = np.copy(orbitals[:,m]) # fill first column of outputWavefunctions
+#                             outputEigenvalues[0] = tree.orbitalEnergies[m]
                             firstOutputWavefunction=False
                         else:
 #                             outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(orbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
                             
                             if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
                                 outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(orbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
+#                                 outputEigenvalues = np.concatenate( outputEigenvalues, tree.orbitalEnergies[m])
                                 print('Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
                             else:
                                 print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
 #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                                 outputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(orbitals[:,m])
+#                                 outputEigenvalues[(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(tree.orbitalEnergies[m])
+                        
+                        #  Try freezing the eigenvalue after some updates.  Possibly prevent oscillations
+                        if greenIterationsCount%3==0:
+                            print('Freezing eigenvalue for next iteration.')
+                            freezeEigenvalue=True
                         
                     if vtkExport != False:
                         if m>-1:
@@ -1043,6 +1083,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, mixingParameter,weights, returnWeights=True)
                         tree.importPhiOnLeaves(andersonOrbital, m)
                         
+#                         andersonEigenvalue, andersonWeights = densityMixing.computeNewDensity(inputEigenvalues, outputEigenvalues, mixingParameter,weights, returnWeights=True)
                         
 
                     print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,tree.orbitalEnergies[m]-referenceEigenvalues[m]-tree.gaugeShift, eigenvalueDiff))
@@ -1070,19 +1111,6 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         writer.writerow(myData)
                     
                     
-                    # If wavefunction residual is low then start using Anderson Mixing
-                    if ((GIandersonMixing==False) and (orbitalResidual < 2e-30) ): 
-                        GIandersonMixing = True
-                        mixingStart = greenIterationsCount
-                        print('Turning on Anderson Mixing for wavefunction %i' %m)
-                    ### EXIT CONDITIONS ###
- 
-#                     if SCFcount==1:
-#                         print('Loosening Greens iteration tolerance in SCF #1')
-#                         orbitalResidual*=1000
-#                     if (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) <= 1/10000):
-#                         print('Relative residual changing by < 0.01%.  Exiting Greens Iteration')
-
                     residualRatio = orbitalResidual/oldOrbitalResidual
                     eigenvalueResidualRatio = eigenvalueDiff/previousEigenvalueDiff
                     print()
@@ -1093,27 +1121,63 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     print('Eigenvalue Previous relative residual = ', previousEigenvalueResidualRatio)
                     print()
                     
-#                     ratioTol = 1e-1
-                    if aitkenAcceleration==False:
+                    # If wavefunction residual is low then start using Anderson Mixing
+                    if ((GIandersonMixing==False)): 
                         try:   
                             psiRatio = abs(residualRatio/previousResidualRatio )
                         except Exception:
-                            psiRatio = 1
+                            psiRatio = 0
                         try:
                             eigRatio = abs(eigenvalueResidualRatio/previousEigenvalueResidualRatio )
                         except Exception:
-                            eigRatio=1
+                            eigRatio=0
                         if ( 
                             (abs(1 - psiRatio) < ratioTol) and 
                             (abs(1 - eigRatio) < ratioTol) and 
                             (eigenvalueResidualRatio<1) and
-                            (residualRatio<1)
+                            (residualRatio<1) 
                              ):
-                            print('Turning on Steffensen acceleration because psi and epsilon are in linear regime.')
-                            aitkenAcceleration=True
-                            freezeEigenvalue=False
-                            aitkenStart = greenIterationsCount
-                            ratioTol = 1e0
+                            if abs(orbitalResidual-oldOrbitalResidual) < abs(oldOrbitalResidual - oldOldOrbitalResidual): # if true, then convergence of residual is slowing down.  Time to accelerate.
+                                                                                                                             # otherwise hold off. Maybe residual will continue to fall (if it's falling)
+                                print('psiRatio = ', psiRatio)
+                                print('eigRatio = ', eigRatio)
+                                print('Tolerance: ', ratioTol)
+                                GIandersonMixing = True
+                                mixingStart = greenIterationsCount
+                                print('Turning on Anderson Mixing for wavefunction %i' %m)
+                    ### EXIT CONDITIONS ###
+ 
+#                     if SCFcount==1:
+#                         print('Loosening Greens iteration tolerance in SCF #1')
+#                         orbitalResidual*=1000
+#                     if (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) <= 1/10000):
+#                         print('Relative residual changing by < 0.01%.  Exiting Greens Iteration')
+
+                    
+                    
+#                     ratioTol = 1e-1
+#                     if ( (aitkenAcceleration==False) and (True==False) ):
+#                         try:   
+#                             psiRatio = abs(residualRatio/previousResidualRatio )
+#                         except Exception:
+#                             psiRatio = 1
+#                         try:
+#                             eigRatio = abs(eigenvalueResidualRatio/previousEigenvalueResidualRatio )
+#                         except Exception:
+#                             eigRatio=1
+#                         if ( 
+#                             (abs(1 - psiRatio) < ratioTol) and 
+#                             (abs(1 - eigRatio) < ratioTol) and 
+#                             (eigenvalueResidualRatio<1) and
+#                             (residualRatio<1)
+#                              ):
+#                             print('Turning on Steffensen acceleration because psi and epsilon are in linear regime.')
+#                             aitkenAcceleration=True
+#                             freezeEigenvalue=False
+#                             aitkenStart = greenIterationsCount
+#                             ratioTol = 1e-1
+
+
                     if orbitalResidual < intraScfTolerance:
                         print('Used %i iterations for orbital %i.\n\n\n' %(greenIterationsCount,m))
                         
@@ -1428,10 +1492,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
             
-#         if SCFcount >= 1:
-#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-#             energyResidual = -1
-#             densityResidual = -1
+        if SCFcount >= 1:
+            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+            energyResidual = -1
+            densityResidual = -1
         
 
 

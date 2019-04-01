@@ -2663,7 +2663,17 @@ class Tree(object):
 
         writer.Write()
         print('Done writing ', filename)
+    
+    def exportAitkenWavefunction(self, filename,x,y,z,psiA,psiB,psiC,psiAitken):
+  
+            
+        pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
+            {"PhiA" : psiA, "PhiB" : psiB,
+            "PhiC" : psiC, "PhiAitken" : psiAitken  } )
         
+        print('Exported aitken wavefunction')
+                    
+            
     def exportGridpoints(self,filename):
         x = []
         y = []

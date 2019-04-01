@@ -84,15 +84,13 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, 
         return nextDensity, cvec
     elif returnWeights==False:
         return nextDensity
-    
+
+
+def nathanAcceleration(a,b,c):
+    return a + 5*(c-a)    
 def AitkenAcceleration(a, b, c):
     
-    # shift up by min value
-    minVal = np.min( [np.min(a), np.min(b), np.min(c)])
-    print('minVal = ', minVal)
-    a+= 2*abs(minVal)
-    b+= 2*abs(minVal)
-    c+= 2*abs(minVal)
+   
     
     numerator = (b - a)**2
     denominator = (a - 2*b + c)
@@ -103,26 +101,43 @@ def AitkenAcceleration(a, b, c):
 #         print('Warning, abs(denominator) < 1e-15')
 #         return a
     correction = numerator / denominator
-    print('Max denominator: ', np.max(np.abs( denominator) ))
-    print('Min denominator: ', np.min(np.abs(denominator) ))
-    print('Max correction: ', np.max(correction))
-    print('Min correction: ', np.min(correction))
-    print('Max relative correction: ', np.max(correction/a))
-    print('Min relative correction: ', np.min(correction/a))
+#     print('Max denominator: ', np.max(np.abs( denominator) ))
+#     print('Min denominator: ', np.min(np.abs(denominator) ))
+#     print('Max correction: ', np.max(correction))
+#     print('Min correction: ', np.min(correction))
+#     print('Max relative correction: ', np.max(correction/a))
+#     print('Min relative correction: ', np.min(correction/a))
+
+
+
+    try:
+        for i in range(len(correction)):
+            if abs(denominator[i]/(a[i]-b[i])) < 0.05:
+                correction[i] = -1*(c[i]-a[i])
+            
+        print('After correcting for when E_AB is almost equal to E_BC:')
+        print('Max correction: ', np.max(correction))
+        print('Min correction: ', np.min(correction))
+        print('Max relative correction: ', np.max(correction/a))
+        print('Min relative correction: ', np.min(correction/a))
+        print()
+    except TypeError:
+        pass 
+
     
-#     try:
-#         for i in range(len(correction)):
-#             if abs(correction[i]/a[i]) > 0.01:
-#                 correction[i] *= abs(0.01*a[i]/correction[i])
-#         print('After limitting relative correction to 1:')
-# #         correction = numerator / denominator 
-#         print('Max correction: ', np.max(correction))
-#         print('Min correction: ', np.min(correction))
-#         print('Max relative correction: ', np.max(correction/a))
-#         print('Min relative correction: ', np.min(correction/a))
-#         print()
-#     except TypeError:
-#         pass 
+    try:
+        for i in range(len(correction)):
+            if abs(correction[i]/a[i]) > 0.3:
+                correction[i] = -1*(c[i]-a[i])
+        print('After limitting relative correction to 0.3:')
+#         correction = numerator / denominator 
+        print('Max correction: ', np.max(correction))
+        print('Min correction: ', np.min(correction))
+        print('Max relative correction: ', np.max(correction/a))
+        print('Min relative correction: ', np.min(correction/a))
+        print()
+    except TypeError:
+        pass 
     
     
 #     try:
@@ -145,9 +160,28 @@ def AitkenAcceleration(a, b, c):
 #     if abs(numerator)<1e-16: print('Warning, abs(numerator) < 1e-16')
     
 #     print('Correction: ', correction)
-    return (a - correction) - 2*abs(minVal)
+    return (a - correction)
 
 #     return (a*c-b*b) / ( c - 2*b + a )
+
+def AitkenPointwiseAcceleration(a, b, c):
+    
+   
+    
+    output = np.zeros(len(a))
+
+    for i in range(len(a)):
+        if abs(1 - abs( (a[i]-b[i]) / (c[i]-b[i]) ) ) < 0.05:
+            output[i] = AitkenAcceleration(a[i],b[i],c[i])
+        
+    print('After pointwise acceleration:')
+    print('Max correction: ', np.max(output-a))
+    print('Min correction: ', np.min(output-a))
+    print('Max relative correction: ', np.max((output-a)/a))
+    print('Min relative correction: ', np.min((output-a)/a))
+    print()
+
+    return output
  
 
 def test1():

@@ -25,8 +25,9 @@ def find(a, x):
         return i
     raise ValueError
 
-def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, divideParameter1, divideParameter2, divideParameter3, divideParameter4, inputFile,
-                                 smoothingEpsilon=0.0):
+def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, divideParameter1, divideParameter2, divideParameter3, divideParameter4, inputFile,
+                                 smoothingEpsilon=0.0,
+                                 savedMesh=''):
 
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
     [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
@@ -45,19 +46,14 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, 
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
-    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=depthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
-    
-     
-     
 
     
     print('max depth ', maxDepth)
-
-#     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, divideParameter=divideParameter, printTreeProperties=True,onlyFillOne=False)
     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-                    printTreeProperties=True,onlyFillOne=False)
+                    savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
     
 #     sourcesTXT = '../examples/S%ipy.txt' %tree.numberOfGridpoints
 #     targetsTXT = '../examples/T%ipy.txt' %tree.numberOfGridpoints
@@ -66,7 +62,7 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, depthAtAtoms, 
     sourcesTXT = '/Users/nathanvaughn/Desktop/S%ipy.txt' %tree.numberOfGridpoints
     targetsTXT = '/Users/nathanvaughn/Desktop/T%ipy.txt' %tree.numberOfGridpoints
     
-    Sources = tree.extractLeavesDensity()
+    Sources = tree.extractLeavesDensity() 
     Targets = tree.extractLeavesDensity()
 
 #     print(Targets[0,:])
@@ -502,10 +498,10 @@ if __name__ == "__main__":
 #                     smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
     
-#     meshDistributions(domain=30,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-3, divideParameter4=0,
-#                         smoothingEpsilon=0.0,base=1.0, causeFigure=True, inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+    meshDistributions(domain=20,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-6, divideParameter4=0,
+                        smoothingEpsilon=0.0,base=1.0, causeFigure=True, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
     
 #     timingTestsForOrbitalInitializations(domain=20,order=5,
@@ -526,8 +522,8 @@ if __name__ == "__main__":
     # ParentChildrenIntegral
 #     tree, tree2 = testTreeSaveAndReconstruction(domain=20,order=5,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=1, divideCriterion='ParentChildrenIntegral', 
-#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-2, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv', 
+#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/PCI') 
     
 #     for i in range(len(tree2.saveList)):
@@ -540,12 +536,12 @@ if __name__ == "__main__":
             
 #             oxygenAtomAuxiliary
             
-    tree = exportMeshForParaview(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
-                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_firstConstruction',
-                        savedMesh='')        
+#     tree = exportMeshForParaview(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_firstConstruction',
+#                         savedMesh='')        
             
 #     tree = exportMeshForParaview(domain=30,order=5,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
@@ -563,9 +559,9 @@ if __name__ == "__main__":
 
 
 #     exportMeshForTreecodeTesting(domain=20,order=7,
-#                         minDepth=3, maxDepth=20, depthAtAtoms=13, divideCriterion='LW5', 
-#                         divideParameter1=2000, divideParameter2=100, divideParameter3=0.03, divideParameter4=5000,
-#                         inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#                         divideParameter1=1000, divideParameter2=100, divideParameter3=0.03, divideParameter4=5000,
+#                         inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
 
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
 #                         divideParameter1=1.0, divideParameter2=1.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
