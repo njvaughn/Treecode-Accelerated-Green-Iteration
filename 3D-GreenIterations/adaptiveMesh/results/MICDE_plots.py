@@ -78,6 +78,20 @@ TotalEnergy = -114.6627537102
 
 
 
+### For treecode order 9 theta 0.7, 
+# Orbital Energies:  [-19.36814367 -10.50463297  -1.68559763  -1.10713083  -1.02023553
+#   -1.02023553  -0.89612904]
+# Updated V_x:                           -16.0262855269 Hartree
+# Updated V_c:                           -1.0514399128 Hartree
+# Updated Band Energy:                   -64.2042104245 H, -1.3055279828e+00 H
+# Updated E_Hartree:                      76.3638212814 H, 1.6548948140e-01 H
+# Updated E_x:                           -12.0197141452 H, -2.2703075574e-02 H
+# Updated E_c:                           -0.9422194712 H, -7.5395869255e-05 H
+# Total Energy:                          -113.9340565920 H, -1.4626133540e+00 H
+# Energy Residual:                        1.039e+02
+# Density Residual:                       2.575e-01
+
+
 
 
 

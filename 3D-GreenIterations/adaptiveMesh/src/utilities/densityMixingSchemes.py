@@ -84,6 +84,13 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, 
         return nextDensity, cvec
     elif returnWeights==False:
         return nextDensity
+    
+def applyWeightsToEigenvalue(eigenvalueHistory,cvec):
+    n = len(eigenvalueHistory)
+    newEigenvalue = np.copy(eigenvalueHistory[n-1])
+    for k in range(0,n-1):
+        newEigenvalue += cvec[k] * (eigenvalueHistory[n-2-k] - eigenvalueHistory[n-1]) 
+    return newEigenvalue
 
 
 def nathanAcceleration(a,b,c):

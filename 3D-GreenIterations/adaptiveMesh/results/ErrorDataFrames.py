@@ -609,6 +609,10 @@ if __name__=="__main__":
 #     df = df.loc[df['theta'].isin([0.7,1.0])]
 
     AversusBcolorbyC(df,'TotalEnergy', 'theta', 'treecodeOrder')
+    AversusBcolorbyC(df,'BandEnergy', 'theta', 'treecodeOrder')
+    AversusBcolorbyC(df,'HartreeEnergy', 'theta', 'treecodeOrder')
+    AversusBcolorbyC(df,'ExchangeEnergy', 'theta', 'treecodeOrder')
+    AversusBcolorbyC(df,'CorrelationEnergy', 'theta', 'treecodeOrder')
 #     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'theta', 'treecodeOrder')
 #     logAversusLogBcolorbyC(df,'absBandEnergyError', 'theta', 'treecodeOrder') 
 #     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'theta', 'treecodeOrder')

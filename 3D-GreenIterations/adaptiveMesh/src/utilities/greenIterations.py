@@ -578,8 +578,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 
                 firstGreenIteration = False
             
-                inputWavefunctions = np.zeros((numberOfGridpoints,1))
-                outputWavefunctions = np.zeros((numberOfGridpoints,1))
+                inputWavefunctions = np.zeros((numberOfGridpoints+1,1))
+                outputWavefunctions = np.zeros((numberOfGridpoints+1,1))
                 
 #                 inputEigenvalues  = np.zeros((1,))
 #                 outputEigenvalues = np.zeros((1,))
@@ -611,7 +611,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 aitkenEig = None
                 oldAitkenEig = None
                 
-                ratioTol = 2e-3
+                ratioTol = 2e3
                 
                 previousResidualRatio = 2
                 previousEigenvalueResidualRatio = 2
@@ -639,19 +639,22 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
                     if GIandersonMixing==True:
                         if firstInputWavefunction==True:
-                            inputWavefunctions[:,0] = np.copy(oldOrbitals[:,m]) # fill first column of inputWavefunctions
+                            temp = np.append( oldOrbitals[:,m], tree.orbitalEnergies[m])
+                            inputWavefunctions[:,0] = np.copy(temp) # fill first column of inputWavefunctions
 #                             inputEigenvalues[0] = tree.orbitalEnergies[m]
                             firstInputWavefunction=False
                         else:
                             if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
-                                inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(oldOrbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
+                                temp = np.append( oldOrbitals[:,m], tree.orbitalEnergies[m])
+                                inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(temp), (numberOfGridpoints+1,1)) ), axis=1)
                                 print('Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
 #                                 inputEigenvalues = np.concatenate( inputEigenvalues, tree.orbitalEnergies[m])
 #                                 print('Concatenated inputeEigenvalues.  Now has shape: ', np.shape(inputeEigenvalues))
                             else:
                                 print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
 #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
-                                inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(oldOrbitals[:,m])
+                                temp = np.append( oldOrbitals[:,m], tree.orbitalEnergies[m])
+                                inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(temp)
 #                                 inputEigenvalues[(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(tree.orbitalEnergies[m])
     
     
@@ -1044,26 +1047,29 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     if GIandersonMixing==True:
                         
                         if firstOutputWavefunction==True:
-                            outputWavefunctions[:,0] = np.copy(orbitals[:,m]) # fill first column of outputWavefunctions
+                            temp = np.append( orbitals[:,m], tree.orbitalEnergies[m])
+                            outputWavefunctions[:,0] = np.copy(temp) # fill first column of outputWavefunctions
 #                             outputEigenvalues[0] = tree.orbitalEnergies[m]
                             firstOutputWavefunction=False
                         else:
 #                             outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(orbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
                             
                             if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
-                                outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(orbitals[:,m]), (numberOfGridpoints,1)) ), axis=1)
-#                                 outputEigenvalues = np.concatenate( outputEigenvalues, tree.orbitalEnergies[m])
+                                temp = np.append( orbitals[:,m], tree.orbitalEnergies[m])
+                                outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(temp), (numberOfGridpoints+1,1)) ), axis=1)
+#                                 outputEigenvalues = np.append( outputEigenvalues, tree.orbitalEnergies[m])
                                 print('Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
                             else:
                                 print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
 #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
-                                outputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(orbitals[:,m])
+                                temp = np.append( orbitals[:,m], tree.orbitalEnergies[m])
+                                outputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(temp)
 #                                 outputEigenvalues[(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(tree.orbitalEnergies[m])
                         
-                        #  Try freezing the eigenvalue after some updates.  Possibly prevent oscillations
-                        if greenIterationsCount%3==0:
-                            print('Freezing eigenvalue for next iteration.')
-                            freezeEigenvalue=True
+#                         #  Try freezing the eigenvalue after some updates.  Possibly prevent oscillations
+#                         if greenIterationsCount%3==0:
+#                             print('Freezing eigenvalue for next iteration.')
+#                             freezeEigenvalue=True
                         
                     if vtkExport != False:
                         if m>-1:
@@ -1080,8 +1086,15 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         
                     if GIandersonMixing==True:
                         print('Anderson mixing on the orbital.')
-                        andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, mixingParameter,weights, returnWeights=True)
-                        tree.importPhiOnLeaves(andersonOrbital, m)
+                        andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, mixingParameter,np.append(weights,1.0), returnWeights=True)
+#                         newEig = densityMixing.applyWeightsToEigenvalue(outputEigenvalues,andersonWeights)
+                        
+#                         print('Anderson weighted eigenvalue: ', newEig)
+#                         tree.orbitalEnergies[m] = newEig
+
+                        # Assuming the orbital occupied first N positions, eigenvalue occupied N+1 position
+                        tree.importPhiOnLeaves(andersonOrbital[:-1], m)
+                        tree.orbitalEnergies[m] = andersonOrbital[-1]
                         
 #                         andersonEigenvalue, andersonWeights = densityMixing.computeNewDensity(inputEigenvalues, outputEigenvalues, mixingParameter,weights, returnWeights=True)
                         
@@ -1332,7 +1345,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                                                potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
                 print('Convolution time: ', time.time()-start)
                 
-        else:
+        elif GPUpresent==False:
             
             sourceX = np.copy(density_sources[:,0])
             sourceY = np.copy(density_sources[:,1])
@@ -1356,19 +1369,23 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 
             else:
                 potentialType=2 # shoud be 0.  Set to 1, 2, or 3 just to test other kernels quickly
-                order=3
-                theta = 0.5
-                maxParNode = 500
-                batchSize = 500
-                alphasq = gaussianAlpha**2
-                V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
-                                                               targetX, targetY, targetZ, targetValue, 
-                                                               sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, alphasq, order, theta, maxParNode, batchSize)
-                if potentialType==2:
-                    V_hartreeNew += density_targets[:,3]* (4*np.pi) / alphasq/2
+                print('NEED TREECODE PARAMS FOR THIS SECTION')
+                return
+#                 order=3
+#                 theta = 0.5
+#                 maxParNode = 500
+#                 batchSize = 500
+#                 alphasq = gaussianAlpha**2
+#                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
+#                                                                targetX, targetY, targetZ, targetValue, 
+#                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+#                                                                potentialType, alphasq, order, theta, maxParNode, batchSize)
+#                 if potentialType==2:
+#                     V_hartreeNew += density_targets[:,3]* (4*np.pi) / alphasq/2
         
-        
+        else:
+            print('Is GPUpresent supposed to be true or false?')
+            return
       
         tree.importVhartreeOnLeaves(V_hartreeNew)
         tree.updateVxcAndVeffAtQuadpoints()
