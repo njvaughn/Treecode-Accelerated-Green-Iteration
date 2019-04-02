@@ -611,7 +611,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 aitkenEig = None
                 oldAitkenEig = None
                 
-                ratioTol = 2e3
+                ratioTol = 2e-2
                 
                 previousResidualRatio = 2
                 previousEigenvalueResidualRatio = 2
@@ -877,6 +877,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         if newEigenvalue > 0.0:
                             if greenIterationsCount < 10:
                                 tree.orbitalEnergies[m] = tree.gaugeShift-0.5
+                                GIandersonMixing=False
                                 print('Setting energy to gauge shift - 0.5 because new value was positive.')
                         
                             else:
@@ -884,6 +885,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                 if greenIterationsCount % 10 == 0:
                                     tree.scrambleOrbital(m)
                                     tree.orthonormalizeOrbitals(targetOrbital=m)
+                                    GIandersonMixing=False
                                     print("Scrambling orbital because it's been a multiple of 10.")
     
                     else:
@@ -1086,7 +1088,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         
                     if GIandersonMixing==True:
                         print('Anderson mixing on the orbital.')
-                        andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, mixingParameter,np.append(weights,1.0), returnWeights=True)
+                        andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, mixingParameter,np.append(weights,10.0), returnWeights=True)
 #                         newEig = densityMixing.applyWeightsToEigenvalue(outputEigenvalues,andersonWeights)
                         
 #                         print('Anderson weighted eigenvalue: ', newEig)
@@ -1095,6 +1097,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         # Assuming the orbital occupied first N positions, eigenvalue occupied N+1 position
                         tree.importPhiOnLeaves(andersonOrbital[:-1], m)
                         tree.orbitalEnergies[m] = andersonOrbital[-1]
+                        print('Anderson eigenvalue = ', andersonOrbital[-1])
                         
 #                         andersonEigenvalue, andersonWeights = densityMixing.computeNewDensity(inputEigenvalues, outputEigenvalues, mixingParameter,weights, returnWeights=True)
                         

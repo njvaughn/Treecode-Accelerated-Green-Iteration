@@ -23,10 +23,11 @@ file='runComparison.csv'
 
 ## MICDE SYMPOSIUM DATA
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/MICDE_Data_2019/berylliumData/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/MICDE_Data_2019/CarbonMonoxideData/'
 
 
 ## Temorary plot-testing data
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
 
 
 # # Oxygen
@@ -58,23 +59,6 @@ HartreeEnergy = 7.115165052
 # ElectrostaticEnergy = 0.0
 # HartreeEnergy = 76.1983318 
 
-## AFTER FIRST SCF, WITH PCI-3e-7 MESH DIRECT SUM
-# Orbital Energies:  [-19.36814634 -10.50463033  -1.68559634  -1.10712973  -1.02023528
-#   -1.02023528  -0.89612828]
-# Updated V_x:                           -16.1371859097 Hartree
-# Updated V_c:                           -1.0559709774 Hartree
-# Updated Band Energy:                   -64.2042031421 H, -1.3055207004e+00 H
-# Updated E_Hartree:                      77.1205323207 H, 9.2220052069e-01 H
-# Updated E_x:                           -12.1028894323 H, -1.0587836267e-01 H
-# Updated E_c:                           -0.9464689928 H, -4.3249175083e-03 H
-# Total Energy:                          -114.6627537102 H, -2.1913104722e+00 H
-# Energy Residual:                        1.047e+02
-# Density Residual:                       2.575e-01
-
-# ExchangeEnergy = -12.1028894323
-# CorrelationEnergy = -0.9464689928
-# BandEnergy = -64.2042031421
-TotalEnergy = -114.6627537102
 
 
 
@@ -92,60 +76,29 @@ TotalEnergy = -114.6627537102
 # Density Residual:                       2.575e-01
 
 
+## AFTER FIRST SCF, WITH PCI-3e-7 MESH DIRECT SUM 
+## Direct sum, mixing parameter 0.5
+# Orbital Energies:  [-19.36814634 -10.50463033  -1.68559589  -1.10712967  -1.02023537
+#   -1.02023522  -0.89612752]
+# Updated V_x:                           -16.0262781591 Hartree
+# Updated V_c:                           -1.0514394177 Hartree
+# Updated Band Energy:                   -64.2042006799 H, -1.3055182382e+00 H
+# Updated E_Hartree:                      76.3637679069 H, 1.6543610687e-01 H
+# Updated E_x:                           -12.0197086193 H, -2.2697549701e-02 H
+# Updated E_c:                           -0.9422190237 H, -7.4948414415e-05 H
+# Total Energy:                          -113.9339953625 H, -1.4625521245e+00 H
+# Energy Residual:                        1.039e+02
+# Density Residual:                       2.575e-01
 
 
+TotalEnergy = -113.9339953625
+BandEnergy = -64.2042006799
+HartreeEnergy = 76.3637679069
 
 df = pd.read_csv(resultsDir+file, header=0)
 # print(df)
 
 
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/LithiumIterationResults/':
-    TotalEnergy = -7.3340536782581447
-    ExchangeEnergy = -1.4916149721121696
-    CorrelationEnergy = -0.15971669832262905
-    BandEnergy = -3.8616389456972078
-
-
-# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/BerylliumIterationResults/':
-# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/Be_gradientFree/Be_gradientFree/':
-if resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Beryllium/':
-    TotalEnergy = -1.4446201118081863e+01
-    ExchangeEnergy = -2.2903921833555341e+00
-    CorrelationEnergy = -2.2343205529440757e-01
-    BandEnergy = -8.1232305760491457e+00
-    KineticEnergy =   1.4309060170370618e+01
-    ElectrostaticEnergy = -2.6241437049802535e+01
-    
-#     df.drop(df.index[24], inplace=True)  # 24th row is bad in Beryllium gradient free data
-
-
-
-
-##if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenIterationResults/':
-# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/OxygenResults/':
-# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/oxygen_with_anderson/':
-# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/':
-if ( (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/Oxygen/') or 
-     (resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_gradientFree/' ) or
-     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/mergedOxygen/') or
-     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenDepthTest/')or
-     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaviniRef/')or
-     (resultsDir == '/Users/nathanvaughn/Desktop/meshTests/LWvsBiros/OxygenGaussianAlphaTest/') ):
-# if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/O_firstSCF_gradientFree/':
-
-    TotalEnergy = -7.4469337501098821e+01
-    ExchangeEnergy = -7.2193700828939980e+00
-    CorrelationEnergy = -5.4455323568788838e-01
-    BandEnergy = -4.0613397710076626e+01
-    KineticEnergy =  7.4112730191157425e+01
-    ElectrostaticEnergy = -1.4081814437367436e+02
-
-
-if resultsDir == '/Users/nathanvaughn/Desktop/ClenshawCurtisGreenIterations/H2IterationResults/':
-    TotalEnergy = -1.1376691191341821e+00
-    ExchangeEnergy = -5.5876966592456134e-01
-    CorrelationEnergy = -9.4268448521496129e-02
-    BandEnergy = -7.5499497178953057e-01
 
 
 df['absBandEnergyError'] = abs( df['BandEnergy'] - BandEnergy)
@@ -257,8 +210,8 @@ def berylliumMeshRefinement(df,A,B,C,save=False):
 #     df2.plot(x=B, y='absTotalEnergyError', style='bo', markerSize=8, ax=ax, loglog=True)
 #     df2.plot(x=B, y='absBandEnergyError', style='ro', markerSize=6, ax=ax, loglog=True,legend=False)
 #     df2.plot(x=B, y='absHartreeEnergyError', style='go', markerSize=8, ax=ax, loglog=True,legend=False)
-    plt.xlabel('Number of Points')
-    plt.ylabel('Energy Error (mH)')
+    plt.xlabel('Quadrature Points')
+    plt.ylabel('Energy Error (Hartree)')
     
 #     plt.xlim([3e5,2e6])
 #     plt.ylim([5e-5,1e-2])
@@ -277,19 +230,20 @@ def treecodeAfterFirstSCF(df,A,B,C,save=False):
     grouped = df.groupby(C)
     for name,group in grouped:
         if isinstance(name,str):
-            group.plot(x=B, y=A, style='o',markerSize=12, ax=ax, loglog=True,label='%s = %s'%(C,name))
+            group.plot(x=B, y=A, style='o',markerSize=12, ax=ax, logy=True,label='%s = %s'%(C,name))
         elif isinstance(name,float):
-            group.plot(x=B, y=A, style='o',markerSize=12, ax=ax, loglog=True,label='%s = %1.3e'%(C,name))
+            group.plot(x=B, y=A, style='o',markerSize=12, ax=ax, logy=True,label='%s = %1.3e'%(C,name))
         elif isinstance(name,int):
-            group.plot(x=B, y=A, style='o',markerSize=12, ax=ax, loglog=True,label='%s = %i'%(C,name))
+            group.plot(x=B, y=A, style='o',markerSize=12, ax=ax, logy=True,label='Order %i'%(name))
     plt.legend() 
     
+    ax.xaxis.set_major_locator(plt.MaxNLocator(3))
+    plt.xlabel(r'$\theta$')
+#     plt.xlabel('Polynomial Order')
+    plt.ylabel('Energy Error (Hartree)') 
     
-    plt.xlabel('Number of Points')
-    plt.ylabel('Energy Error (mH)')
-    
-#     plt.xlim([3e5,2e6])
-#     plt.ylim([5e-5,1e-2])
+    plt.xlim([0.45, 0.75])
+    plt.ylim([1e-6,1e-3])
 #     plt.grid()
     
     plt.show()
@@ -374,5 +328,11 @@ if __name__=="__main__":
 
 #     berylliumMeshRefinement(df,'absTotalEnergyError', 'numberOfPoints', 'divideParameter3')
 
-    
+    df = df.loc[df['treecodeOrder']!=1]
+    df = df.loc[df['treecodeOrder']!=8]
+#     df['timePerIteration'] = df['totalTime']/df['totalIterationCount']
     treecodeAfterFirstSCF(df,'absTotalEnergyError', 'theta', 'treecodeOrder')
+#     treecodeAfterFirstSCF(df,'absBandEnergyError', 'theta', 'treecodeOrder')
+#     treecodeAfterFirstSCF(df,'absHartreeEnergyError', 'theta', 'treecodeOrder')
+#     treecodeAfterFirstSCF(df,'absTotalEnergyError', 'treecodeOrder','theta')
+#     treecodeAfterFirstSCF(df,'absTotalEnergyError', 'totalIterationCount', 'theta')
