@@ -1,5 +1,5 @@
-../src/utilities/molecularConfigurations/carbonMonoxide.csv
-../src/utilities/molecularConfigurations/carbonMonoxideReferenceEigenvalues.csv
+../src/utilities/molecularConfigurations/O2.csv
+../src/utilities/molecularConfigurations/O2ReferenceEigenvalues.csv
 /home/njvaughn/results_CO/results.csv
 -6.2898682441673358e+01 # Band energy 
  1.1185061770418731e+02 # Kinetic energy 

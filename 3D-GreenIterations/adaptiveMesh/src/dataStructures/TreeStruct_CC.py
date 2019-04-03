@@ -718,7 +718,7 @@ class Tree(object):
 #             return
  
         
-    def buildTree(self,maxLevels, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',savedMesh='',printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
+    def buildTree(self,maxLevels, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',savedMesh='', restart=False, printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
         # N is roughly the number of grid points.  It is used to generate the density function.
@@ -916,15 +916,17 @@ class Tree(object):
         
         ### INITIALIZE ORBTIALS AND DENSITY ####
                 # Only need to do this if wavefunctions aren't set during adaptive refinement
-
-        if initializationType=='atomic':
-            if onlyFillOne == True:
-                self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
-            else:
-                self.initializeOrbitalsFromAtomicDataExternally()
-        elif initializationType=='random':
-            self.initializeOrbitalsRandomly()
-
+        # 
+        if restart==False:
+            if initializationType=='atomic':
+                if onlyFillOne == True:
+                    self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
+                else:
+                    self.initializeOrbitalsFromAtomicDataExternally()
+            elif initializationType=='random':
+                self.initializeOrbitalsRandomly()
+        else:
+            print('Not initializing wavefunctions because using a restart file.')
         
         
         timer.stop()

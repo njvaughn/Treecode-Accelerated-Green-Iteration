@@ -43,6 +43,7 @@ order               = int(sys.argv[n]); n+=1
 subtractSingularity = int(sys.argv[n]); n+=1
 smoothingEps        = float(sys.argv[n]); n+=1
 gaussianAlpha       = float(sys.argv[n]); n+=1
+gaugeShift          = float(sys.argv[n]); n+=1
 divideCriterion     = str(sys.argv[n]); n+=1
 divideParameter1    = float(sys.argv[n]); n+=1
 divideParameter2    = float(sys.argv[n]); n+=1
@@ -139,7 +140,7 @@ def setUpTree(onlyFillOne=False):
 #      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift] = np.genfromtxt(inputFile,delimiter=',',dtype=[("|U100","|U100",int,int,float,float,float,float,float)])
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
 #     [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
 #     nElectrons = int(nElectrons)
 #     nOrbitals = int(nOrbitals)
     
@@ -223,7 +224,7 @@ def setUpTree(onlyFillOne=False):
     print('max depth ', maxDepth)
     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-                    savedMesh=savedMesh,printTreeProperties=True,onlyFillOne=onlyFillOne)
+                    savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
 
 
     
@@ -253,14 +254,14 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
     header = ['domainSize','minDepth','maxDepth','additionalDepthAtAtoms','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
               'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
-              'gaussianAlpha','VextSmoothingEpsilon','energyTolerance',
+              'gaussianAlpha','gaugeShift','VextSmoothingEpsilon','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
               'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','totalIterationCount']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.additionalDepthAtAtoms,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
               divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
-              gaussianAlpha,smoothingEps,energyTolerance,
+              gaussianAlpha,gaugeShift,smoothingEps,energyTolerance,
               subtractSingularity,
               tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E,
               treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime,tree.totalIterationCount]

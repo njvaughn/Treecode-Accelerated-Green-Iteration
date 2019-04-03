@@ -120,7 +120,7 @@ xi=yi=zi=-1.1
 xf=yf=zf=1.1
 numpts=3000
 
-def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, 
+def greenIterations_KohnSham_SCF_rootfinding(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize,
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                 subtractSingularity, gaussianAlpha, inputFile='',outputFile='',restartFile=False,
@@ -518,7 +518,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
 
         for m in range(nOrbitals): 
-            if m==2:
+            if m==3:
                 print('Saving restart files for after the psi0 and psi1 complete.')
                 # save arrays 
                 try:
@@ -544,10 +544,6 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 except FileNotFoundError:
                     print('Failed to save restart files.')
             
-            if m==3:
-                print('Scrambling orbital 3...')
-                tree.scrambleOrbital(m)
-                tree.orthonormalizeOrbitals(targetOrbital=m)
             # Orthonormalize orbital m before beginning Green's iteration
             targets = tree.extractPhi(m)
             orbitals[:,m] = np.copy(targets[:,3])
@@ -819,12 +815,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             n,k = np.shape(orbitals)
                             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
                             orbitals[:,m] = np.copy(orthWavefunction)
-                            
-                            print('Single value of orbital: ', orbitals[100000,m])
-                            
-#                             simplyMixedWavefunction = 1/2* ( orbitals[:,m]+ oldOrbitals[:,m])
                             tree.importPhiOnLeaves(orbitals[:,m], m)
-#                             tree.importPhiOnLeaves(simplyMixedWavefunction, m)
                             if symmetricIteration==False:
                                 tree.setPhiOldOnLeaves(m)
                             else: # already imported the normalized psi*sqrtV
@@ -853,7 +844,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
                             orbitals[:,m] = np.copy(orthWavefunction)
                             tree.importPhiOnLeaves(orbitals[:,m], m)
-                            print('Single value of orbital: ', orbitals[100000,m])
+                            
 #                             tree.importPhiOnLeaves(orbitals[:,m], m)
 #                             tree.orthonormalizeOrbitals(targetOrbital=m)
                             
@@ -1044,7 +1035,6 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         if symmetricIteration==False:
 #                             print('Computing residual of psi')
                             normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
-                            sumDiff = np.sum((orbitals[:,m]-oldOrbitals[:,m])*weights )
                         elif symmetricIteration==True:
 #                             print('Computing residual of psi*sqrtV')
                             normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
@@ -1114,7 +1104,6 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
 
                     print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,tree.orbitalEnergies[m]-referenceEigenvalues[m]-tree.gaugeShift, eigenvalueDiff))
                     print('Orbital %i wavefunction residual: %1.3e' %(m, orbitalResidual))
-                    print('SumDiff = ', sumDiff)
                     print()
                     print()
     
