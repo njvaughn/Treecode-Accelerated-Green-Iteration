@@ -168,7 +168,7 @@ def setUpTree(onlyFillOne=False):
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
                         
     # For O2, init 10 orbitals.
-    nOrbitals=10                    
+#     nOrbitals=10                    
 
     occupations = 2*np.ones(nOrbitals)
 #     nOrbitals=7
@@ -201,7 +201,9 @@ def setUpTree(onlyFillOne=False):
 #                        1,
 #                        1]
         
-    
+    elif inputFile=='../src/utilities/molecularConfigurations/O2Auxiliary.csv':
+        nOrbitals=10
+        occupations = [2,2,2,2,4/3,4/3,4/3,4/3,4/3,4/3]
         
     elif inputFile=='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
 #         nOrbitals=10
@@ -242,8 +244,8 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-#     greenIterations_KohnSham_SCF_simultaneous(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
-    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+    greenIterations_KohnSham_SCF_simultaneous(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+#     greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,

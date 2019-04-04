@@ -46,8 +46,30 @@ except OSError:
 # import treecodeWrappers
 
 
+@jit()
+def GramMatrix(V,weights):
+    n,k = np.shape(V)
+    G = np.zeros((k,k))
+    for i in range(k):
+        for j in range(k):
+            G[i,j] = np.dot(V[:,i],V[:,j]*weights)
+        
+    return G
+
+def CholeskyOrthogonalize(V,weights):
+    
+    G = GramMatrix(V, weights)
+    print('Gram Matrix: ', G)
+    
+    L = np.linalg.cholesky(G)
+    print('Cholesky L: ', L)
+    
+    orthV = np.dot( V, L.T)
+    
+    return orthV
+
 @jit(parallel=True)
-def modifiedGramSchrmidt(V,weights):
+def modifiedGramSchmidt(V,weights):
     n,k = np.shape(V)
     U = np.zeros_like(V)
     U[:,0] = V[:,0] / np.dot(V[:,0],V[:,0]*weights)
@@ -653,80 +675,74 @@ def greenIterations_KohnSham_SCF_simultaneous(tree, intraScfTolerance, interScfT
                 # update the energy first
                 
                 
-#                 if ( (gradientFree==True) and (SCFcount>-1) and (freezeEigenvalue==False) ):
-                if ( (gradientFree==True) and (SCFcount>-1) ):
-                    
-                    psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*weights))
-                    
-                    tree.importPhiNewOnLeaves(phiNew)
-                    tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
-                    orbitals[:,m] = np.copy(phiNew)
-                    
-                    n,k = np.shape(orbitals)
-                    orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-                    orbitals[:,m] = np.copy(orthWavefunction)
-                    
-                    
-                    tree.importPhiOnLeaves(orbitals[:,m], m)
-                    tree.setPhiOldOnLeaves(m)
-
-                    print(tree.orbitalEnergies)
-                    
-                    print('Orbital energy after Harrison update: ', tree.orbitalEnergies[m])
-                    
-
-                elif ( (gradientFree==False) or (SCFcount==-1) ):
-
-                    # update the orbital
-                    if symmetricIteration==False:
-                        orbitals[:,m] = np.copy(phiNew)
-                    if symmetricIteration==True:
-                        orbitals[:,m] = np.copy(phiNew/sqrtV)
-                        
-                    n,k = np.shape(orbitals)
-                    orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-                    orbitals[:,m] = np.copy(orthWavefunction)
-                    tree.importPhiOnLeaves(orbitals[:,m], m)
-
-                    
-                    tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
-  
-                    
-        
-                    
-
-                newEigenvalue = tree.orbitalEnergies[m]
-                
-                        
-                        
-                
-                if newEigenvalue > 0.0:
-                    if greenIterationsCount < 10:
-                        tree.orbitalEnergies[m] = tree.gaugeShift-0.5
-                        GIandersonMixing=False
-                        print('Setting energy to gauge shift - 0.5 because new value was positive.')
-                
-                    else:
-                        tree.orbitalEnergies[m] = tree.gaugeShift
-                        if greenIterationsCount % 10 == 0:
-                            tree.scrambleOrbital(m)
-                            tree.orthonormalizeOrbitals(targetOrbital=m)
-                            GIandersonMixing=False
-                            print("Scrambling orbital because it's been a multiple of 10.")
+#                 if ( (gradientFree==True) and (SCFcount>-1) ):
+#                     
+#                     psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*weights))
+#                     
+#                     tree.importPhiNewOnLeaves(phiNew)
+#                     tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+#                     orbitals[:,m] = np.copy(phiNew)
+#                     
+#                     n,k = np.shape(orbitals)
+#                     orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#                     orbitals[:,m] = np.copy(orthWavefunction)
+#                     
+#                     
+#                     tree.importPhiOnLeaves(orbitals[:,m], m)
+#                     tree.setPhiOldOnLeaves(m)
+# 
+#                     print(tree.orbitalEnergies)
+#                     
+#                     print('Orbital energy after Harrison update: ', tree.orbitalEnergies[m])
+#                     
+# 
+#                 elif ( (gradientFree==False) or (SCFcount==-1) ):
+# 
+#                     # update the orbital
+#                     if symmetricIteration==False:
+#                         orbitals[:,m] = np.copy(phiNew)
+#                     if symmetricIteration==True:
+#                         orbitals[:,m] = np.copy(phiNew/sqrtV)
+#                         
+#                     n,k = np.shape(orbitals)
+#                     orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#                     orbitals[:,m] = np.copy(orthWavefunction)
+#                     tree.importPhiOnLeaves(orbitals[:,m], m)
+# 
+#                     
+#                     tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+#   
+#                     
+#         
+#                     
+# 
+#                 newEigenvalue = tree.orbitalEnergies[m]
+#                 
+#                         
+#                         
+#                 
+#                 if newEigenvalue > 0.0:
+#                     if greenIterationsCount < 10:
+#                         tree.orbitalEnergies[m] = tree.gaugeShift-0.5
+#                         GIandersonMixing=False
+#                         print('Setting energy to gauge shift - 0.5 because new value was positive.')
+#                 
+#                     else:
+#                         tree.orbitalEnergies[m] = tree.gaugeShift
+#                         if greenIterationsCount % 10 == 0:
+#                             tree.scrambleOrbital(m)
+#                             tree.orthonormalizeOrbitals(targetOrbital=m)
+#                             GIandersonMixing=False
+#                             print("Scrambling orbital because it's been a multiple of 10.")
 
               
                         
-       
-                tempOrbital = tree.extractPhi(m)
-                orbitals[:,m] = np.copy( tempOrbital[:,3] )
-                if symmetricIteration==False:
-    #                             print('Computing residual of psi')
-                    normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
-                    sumDiff = np.sum((orbitals[:,m]-oldOrbitals[:,m])*weights )
-                elif symmetricIteration==True:
-    #                             print('Computing residual of psi*sqrtV')
-                    normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
-                eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
+                tree.importPhiOnLeaves(phiNew, m)
+                orbitals[:,m] = np.copy( phiNew )
+                normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
+                sumDiff = np.sum((orbitals[:,m]-oldOrbitals[:,m])*weights )
+#                 eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
+                eigenvalueDiff=1
                 
                 
                 previousResidual =  residuals[m]   
@@ -738,7 +754,7 @@ def greenIterations_KohnSham_SCF_simultaneous(tree, intraScfTolerance, interScfT
                         
     
     
-                print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,tree.orbitalEnergies[m]-referenceEigenvalues[m]-tree.gaugeShift, eigenvalueDiff))
+#                 print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,tree.orbitalEnergies[m]-referenceEigenvalues[m]-tree.gaugeShift, eigenvalueDiff))
                 print('Orbital %i wavefunction previous residual:  %1.3e' %(m, previousResidual))
                 print('Orbital %i wavefunction new residual:       %1.3e' %(m, orbitalResidual))
                 print('SumDiff = ', sumDiff)
@@ -748,8 +764,13 @@ def greenIterations_KohnSham_SCF_simultaneous(tree, intraScfTolerance, interScfT
       
   
             
+            orbitals = normalizeOrbitals(orbitals, weights)
+            nonOrthOrbitals = np.copy(orbitals)
+            orbitals = CholeskyOrthogonalize(orbitals, weights)
             
-         
+            for m in range(tree.nOrbitals):
+                tree.importPhiOnLeaves(orbitals[:,m], m)
+            tree.updateOrbitalEnergies()
                     
    
             header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyEigenvalues', 'eigenvalueResidual']
