@@ -615,7 +615,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 aitkenEig = None
                 oldAitkenEig = None
                 
-                ratioTol = 5e-3
+                ratioTol = 5e-30
                 
                 previousResidualRatio = 2
                 previousEigenvalueResidualRatio = 2
@@ -663,7 +663,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     
                     if symmetricIteration==False:
-                        sources = tree.extractGreenIterationIntegrand(m)
+#                         sources = tree.extractGreenIterationIntegrand(m)
+                        sources = tree.extractNathanIterationIntegrand(m)
                     elif symmetricIteration == True:
 #                     sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
                         sources, sqrtV = tree.extractGreenIterationIntegrand_symmetric(m)
@@ -677,7 +678,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
                     if tree.orbitalEnergies[m]<0: 
                         oldEigenvalue =  tree.orbitalEnergies[m] 
-                        k = np.sqrt(-2*tree.orbitalEnergies[m])
+                        k = np.sqrt(-2*tree.orbitalEnergies[m] - 1 )
+                        print('Shifting k by one... attempt at shifted inverse iteration.')
                     
                         phiNew = np.zeros((len(targets)))
                         if subtractSingularity==0: 
@@ -734,7 +736,9 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                     if treecode==False:
                                         startTime = time.time()
                                         if symmetricIteration==False:
-                                            gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+                                            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,alphasq) 
+#                                             gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+
                                             convolutionTime = time.time()-startTime
                                             print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
                                         elif symmetricIteration==True:
@@ -809,6 +813,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                 tree.importPhiNewOnLeaves(phiNew)
                                 tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False, symmetric=True)
                                 
+                                
+#                                 print('Shifting eig up 1 because of inverse iteration attempt')
                                 # Import normalized psi*sqrtV into phiOld
                                 phiNew /= np.sqrt( np.sum(phiNew*phiNew*weights ))
                                 tree.setPhiOldOnLeaves_symmetric(phiNew)

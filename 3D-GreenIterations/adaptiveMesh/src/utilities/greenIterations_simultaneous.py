@@ -542,16 +542,16 @@ def greenIterations_KohnSham_SCF_simultaneous(tree, intraScfTolerance, interScfT
             for m in range(nOrbitals): 
                 
                 # Orthonormalize orbital m before beginning Green's iteration
-                targets = tree.extractPhi(m)
-                orbitals[:,m] = np.copy(targets[:,3])
-                n,k = np.shape(orbitals)
-                orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-                orbitals[:,m] = np.copy(orthWavefunction)
-                tree.importPhiOnLeaves(orbitals[:,m], m)
-                
-                inputEigenvalues = []
-                
-                tree.setPhiOldOnLeaves(m)
+#                 targets = tree.extractPhi(m)
+#                 orbitals[:,m] = np.copy(targets[:,3])
+#                 n,k = np.shape(orbitals)
+#                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#                 orbitals[:,m] = np.copy(orthWavefunction)
+#                 tree.importPhiOnLeaves(orbitals[:,m], m)
+#                 
+#                 inputEigenvalues = []
+#                 
+#                 tree.setPhiOldOnLeaves(m)
                
                 
      
@@ -599,7 +599,8 @@ def greenIterations_KohnSham_SCF_simultaneous(tree, intraScfTolerance, interScfT
                 oldOrbitals[:,m] = np.copy(targets[:,3])
 
 
-                sources = tree.extractGreenIterationIntegrand(m)
+#                 sources = tree.extractGreenIterationIntegrand(m)
+                sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
                 
                 
                 targets = np.copy(sources)
@@ -739,38 +740,45 @@ def greenIterations_KohnSham_SCF_simultaneous(tree, intraScfTolerance, interScfT
                         
                 tree.importPhiOnLeaves(phiNew, m)
                 orbitals[:,m] = np.copy( phiNew )
-                normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
-                sumDiff = np.sum((orbitals[:,m]-oldOrbitals[:,m])*weights )
-#                 eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
-                eigenvalueDiff=1
+#                 orbitals = normalizeOrbitals(orbitals, weights)
+#                 normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
+#                 sumDiff = np.sum((orbitals[:,m]-oldOrbitals[:,m])*weights )
+# #                 eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
+#                 eigenvalueDiff=1
                 
                 
                 previousResidual =  residuals[m]   
                 residuals[m] = normDiff
                 orbitalResidual = np.copy(normDiff)
                 
-                print('residuals: ', residuals)
-                        
-                        
-    
-    
-#                 print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,tree.orbitalEnergies[m]-referenceEigenvalues[m]-tree.gaugeShift, eigenvalueDiff))
-                print('Orbital %i wavefunction previous residual:  %1.3e' %(m, previousResidual))
-                print('Orbital %i wavefunction new residual:       %1.3e' %(m, orbitalResidual))
-                print('SumDiff = ', sumDiff)
-                print()
-                print()
+#                 print('residuals: ', residuals)
+#                         
+#                         
+#     
+#     
+# #                 print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,tree.orbitalEnergies[m]-referenceEigenvalues[m]-tree.gaugeShift, eigenvalueDiff))
+#                 print('Orbital %i wavefunction previous residual:  %1.3e' %(m, previousResidual))
+#                 print('Orbital %i wavefunction new residual:       %1.3e' %(m, orbitalResidual))
+#                 print('SumDiff = ', sumDiff)
+#                 print()
+#                 print()
 
       
   
             
+            
+#             nonOrthOrbitals = np.copy(orbitals)
             orbitals = normalizeOrbitals(orbitals, weights)
-            nonOrthOrbitals = np.copy(orbitals)
             orbitals = CholeskyOrthogonalize(orbitals, weights)
+            orbitals = normalizeOrbitals(orbitals, weights)
             
             for m in range(tree.nOrbitals):
                 tree.importPhiOnLeaves(orbitals[:,m], m)
+                residuals[m] = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
             tree.updateOrbitalEnergies()
+            
+            print('residuals = ')
+            print(residuals)
                     
    
             header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyEigenvalues', 'eigenvalueResidual']
