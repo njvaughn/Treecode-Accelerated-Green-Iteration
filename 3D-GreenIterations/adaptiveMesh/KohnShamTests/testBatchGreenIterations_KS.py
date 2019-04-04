@@ -30,6 +30,7 @@ import csv
 
 from TreeStruct_CC import Tree
 from greenIterations import greenIterations_KohnSham_SCF#,greenIterations_KohnSham_SINGSUB
+from greenIterations_simultaneous import greenIterations_KohnSham_SCF_simultaneous
 
 # from hydrogenPotential import trueWavefunction
 
@@ -165,7 +166,9 @@ def setUpTree(onlyFillOne=False):
                                             # If the final orbital is unoccupied, this amount is enough. 
                                             # If there is a degeneracy leading to teh final orbital being 
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
-                                            
+                        
+    # For O2, init 10 orbitals.
+    nOrbitals=10                    
 
     occupations = 2*np.ones(nOrbitals)
 #     nOrbitals=7
@@ -239,6 +242,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
+#     greenIterations_KohnSham_SCF_simultaneous(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
     greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha,
