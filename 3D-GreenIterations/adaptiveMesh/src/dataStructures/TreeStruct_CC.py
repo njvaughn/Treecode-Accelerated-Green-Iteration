@@ -2038,7 +2038,7 @@ class Tree(object):
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
-                    f = -2*gridpt.phi[m]*(gridpt.v_eff-self.orbitalEnergies[m])
+                    f = -2*gridpt.phi[m]*(gridpt.v_eff-self.orbitalEnergies[m])*(1)
                     leaves.append( [gridpt.x, gridpt.y, gridpt.z, f, cell.w[i,j,k] ] )
                             
         return np.array(leaves)

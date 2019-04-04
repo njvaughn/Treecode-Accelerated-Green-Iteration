@@ -615,7 +615,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 aitkenEig = None
                 oldAitkenEig = None
                 
-                ratioTol = 5e-30
+                ratioTol = 5e-300
                 
                 previousResidualRatio = 2
                 previousEigenvalueResidualRatio = 2
@@ -663,8 +663,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
     
                     if symmetricIteration==False:
-#                         sources = tree.extractGreenIterationIntegrand(m)
-                        sources = tree.extractNathanIterationIntegrand(m)
+                        sources = tree.extractGreenIterationIntegrand(m)
+#                         sources = tree.extractNathanIterationIntegrand(m)
                     elif symmetricIteration == True:
 #                     sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
                         sources, sqrtV = tree.extractGreenIterationIntegrand_symmetric(m)
@@ -678,8 +678,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     
                     if tree.orbitalEnergies[m]<0: 
                         oldEigenvalue =  tree.orbitalEnergies[m] 
-                        k = np.sqrt(-2*tree.orbitalEnergies[m] - 1 )
-                        print('Shifting k by one... attempt at shifted inverse iteration.')
+                        k = np.sqrt(-2*tree.orbitalEnergies[m])
+#                         print('Shifting k by one... attempt at shifted inverse iteration.')
                     
                         phiNew = np.zeros((len(targets)))
                         if subtractSingularity==0: 
@@ -736,9 +736,53 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                     if treecode==False:
                                         startTime = time.time()
                                         if symmetricIteration==False:
-                                            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,alphasq) 
-#                                             gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-
+#                                             gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,alphasq) 
+#                                             phiNew /= (4*np.pi)
+#                                             k = 1
+                                            gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+#                                             orbitals[:,m] = np.copy(phiNew)
+#                                             n,k = np.shape(orbitals)
+# #                                             phiNew = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#                                             tree.importPhiOnLeaves(phiNew,m)
+#                                             
+#                                             # another term in series...
+#                                             phiNew2 = np.zeros((len(targets)))
+#                                             orbitals[:,m] = phiNew
+#                                               
+#                                             sources = tree.extractGreenIterationIntegrand(m)
+#                                             targets=np.copy(sources)
+#                                             gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew2,k) 
+#                                             orbitals[:,m] = phiNew2
+# #                                             n,k = np.shape(orbitals)
+# #                                             phiNew2 = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#                                             tree.importPhiOnLeaves(phiNew2,m)
+# #                                             phiNew = - ( orbitals[:,m] + phiNew  - phiNew2  )
+# 
+#                                             phiNew3 = np.zeros((len(targets)))
+# #                                             tree.importPhiOnLeaves(phiNew2,m)
+#                                             sources = tree.extractGreenIterationIntegrand(m)
+#                                             targets=np.copy(sources)
+#                                             gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew3,k) 
+#                                             orbitals[:,m] = phiNew3
+# #                                             n,k = np.shape(orbitals)
+# #                                             phiNew3 = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#                                             tree.importPhiOnLeaves(phiNew3,m)
+#                                              
+#                                             phiNew4 = np.zeros((len(targets)))
+# #                                             tree.importPhiOnLeaves(phiNew3,m)
+#                                             sources = tree.extractGreenIterationIntegrand(m)
+#                                             targets=np.copy(sources)
+#                                             gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew4,k) 
+#                                             orbitals[:,m] = phiNew4
+# #                                             n,k = np.shape(orbitals)
+# #                                             phiNew4 = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
+#                                             tree.importPhiOnLeaves(phiNew4,m)
+#                                             
+#                                             
+#                                             phiNew =  -(oldOrbitals[:,m] + phiNew  + phiNew2 + phiNew3 + phiNew4)
+#                                             
+#                                             phiNew /= np.sqrt(np.sum( phiNew*phiNew*weights) )
+                                            
                                             convolutionTime = time.time()-startTime
                                             print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
                                         elif symmetricIteration==True:
