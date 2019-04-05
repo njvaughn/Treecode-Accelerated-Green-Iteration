@@ -582,7 +582,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
             if ( (tree.orbitalEnergies[m] < tree.gaugeShift) or (firstGreenIteration==True) ):
                 
-                firstGreenIteration = False
+#                 firstGreenIteration = False
             
                 inputWavefunctions = np.zeros((numberOfGridpoints+1,1))
                 outputWavefunctions = np.zeros((numberOfGridpoints+1,1))
@@ -617,7 +617,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 aitkenEig = None
                 oldAitkenEig = None
                 
-                ratioTol = 1e-3
+                ratioTol = 2e-3
                 
                 previousResidualRatio = 2
                 previousEigenvalueResidualRatio = 2
@@ -647,16 +647,23 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         if SCFcount==1:
                             needSmoothing=True
                             
+                            if ( (m==0) or (m==1) ):
+                                needSmoothing=False
+                    
+                    firstGreenIteration = False      
                     if needSmoothing==True:
                         print('---------SMOOTHING----------')
                         smoothingAlphaSq = 1
                         phiSmoothed = np.zeros(len(targets))
                         gpuGaussianSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,phiSmoothed,smoothingAlphaSq)
+                        phiSmoothed /= np.sqrt( np.sum(phiSmoothed*phiSmoothed*weights) )
                         tree.importPhiOnLeaves(phiSmoothed,m)
                         needSmoothing = tree.computeOrbitalMoments(targetOrbital=m)
                         needSmoothing = False
                         
                         print('Was it better after smoothing?')
+                    sources = tree.extractPhi(m)
+                    targets = np.copy(sources)
                     
                     if sloshing==True:
                         # orthogonalize against sloshingVector

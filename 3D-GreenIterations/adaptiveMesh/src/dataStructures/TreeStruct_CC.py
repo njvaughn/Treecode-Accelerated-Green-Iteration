@@ -450,7 +450,34 @@ class Tree(object):
         timer.stop()
         print('Initializing orbitals randomly inside Tree Structure took %.3f seconds.' %timer.elapsedTime)
                         
+    def initializeOrbitalsToDecayingExponential(self,targetOrbital=None):
+        timer = Timer()
+        timer.start()
+        if targetOrbital==None:
+            print('Initializing all orbitals randomly...')
+            for _,cell in self.masterList:
+                if cell.leaf==True:
+                    for i,j,k in cell.PxByPyByPz:
+                        for m in range(self.nOrbitals):
+                            gp = cell.gridpoints[i,j,k] 
                             
+                            r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
+                            gp.phi[m] = np.exp(-r)
+    #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
+                            
+        else:
+            print('Initializing orbital ',targetOrbital,' randomly...')
+            for _,cell in self.masterList:
+                if cell.leaf==True:
+                    for i,j,k in cell.PxByPyByPz:
+#                         for m in range(self.nOrbitals):
+                        gp = cell.gridpoints[i,j,k]
+#                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
+                        r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
+                        gp.phi[m] = np.exp(-r)
+                        
+        timer.stop()
+        print('Initializing orbitals randomly inside Tree Structure took %.3f seconds.' %timer.elapsedTime)                       
         
     
     def initializeDensityFromAtomicDataExternally(self):
@@ -964,6 +991,8 @@ class Tree(object):
                     self.initializeOrbitalsFromAtomicDataExternally()
             elif initializationType=='random':
                 self.initializeOrbitalsRandomly()
+            elif initializationType=='exponential':
+                self.initializeOrbitalsToDecayingExponential()
         else:
             print('Not initializing wavefunctions because using a restart file.')
         

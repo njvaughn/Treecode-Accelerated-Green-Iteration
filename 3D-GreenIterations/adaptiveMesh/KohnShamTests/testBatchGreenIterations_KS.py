@@ -227,14 +227,14 @@ def setUpTree(onlyFillOne=False):
     print('type: ', type(tree.nOrbitals))
     
     print('max depth ', maxDepth)
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+    tree.buildTree( maxLevels=maxDepth, initializationType='exponential',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
 
 
     
     return tree
-    
+     
     
 def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
     
