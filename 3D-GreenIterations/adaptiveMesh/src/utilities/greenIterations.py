@@ -638,6 +638,26 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     targets = np.copy(sources)
                     weights = np.copy(targets[:,5])
                     
+                    needSmoothing = tree.computeOrbitalMoments(targetOrbital=m)
+                    targets = tree.extractPhi(m)
+                    sources = np.copy(targets)
+                    print('First green iteration: ', firstGreenIteration)
+                    if firstGreenIteration==True:
+                        print('SCF Count: ', SCFcount)
+                        if SCFcount==1:
+                            needSmoothing=True
+                            
+                    if needSmoothing==True:
+                        print('---------SMOOTHING----------')
+                        smoothingAlphaSq = 1
+                        phiSmoothed = np.zeros(len(targets))
+                        gpuGaussianSmoothing[blocksPerGrid, threadsPerBlock](targets,sources,phiSmoothed,smoothingAlphaSq)
+                        tree.importPhiOnLeaves(phiSmoothed,m)
+                        needSmoothing = tree.computeOrbitalMoments(targetOrbital=m)
+                        needSmoothing = False
+                        
+                        print('Was it better after smoothing?')
+                    
                     if sloshing==True:
                         # orthogonalize against sloshingVector
                         tempOrbitals = np.zeros(len(targets),2)
@@ -848,8 +868,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         
                         """ Method where you dont compute kinetics, from Harrison """
                         
-                        # update the energy first
-                        tree.computeOrbitalMoments(targetOrbital=m)
+                        
+                            
                 
                         if ( (gradientFree==True) and (SCFcount>-1) and (freezeEigenvalue==False) ):
                             

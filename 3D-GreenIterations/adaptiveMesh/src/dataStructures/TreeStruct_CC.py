@@ -214,6 +214,14 @@ class Tree(object):
             print('x2 = ', x2)
             print('y2 = ', y2)
             print('z2 = ', z2, '\n')
+            
+            maxMoment = np.max( [np.abs(x1),np.abs(y1),np.abs(z1),np.abs(x2),np.abs(y2),np.abs(z2)])
+            
+            if maxMoment > 1000:
+                needSmoothing=True
+            else:
+                needSmoothing=False
+            return needSmoothing
         else:    
             for m in range(self.nOrbitals):
                 x1 = 0
