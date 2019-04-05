@@ -477,7 +477,7 @@ class Tree(object):
                         gp.phi[m] = np.exp(-r)
                         
         timer.stop()
-        print('Initializing orbitals randomly inside Tree Structure took %.3f seconds.' %timer.elapsedTime)                       
+        print('Initializing orbitals to decaying exponential inside Tree Structure took %.3f seconds.' %timer.elapsedTime)                       
         
     
     def initializeDensityFromAtomicDataExternally(self):

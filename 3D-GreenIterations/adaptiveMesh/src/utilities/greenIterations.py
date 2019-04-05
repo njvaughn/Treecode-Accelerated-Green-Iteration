@@ -617,7 +617,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 aitkenEig = None
                 oldAitkenEig = None
                 
-                ratioTol = 2e-3
+                ratioTol = 2e-2
                 
                 previousResidualRatio = 2
                 previousEigenvalueResidualRatio = 2
