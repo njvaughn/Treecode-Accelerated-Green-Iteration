@@ -518,7 +518,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         
 
         for m in range(nOrbitals): 
-            if m==2:
+            if m>=6:
                 print('Saving restart files for after the psi0 and psi1 complete.')
                 # save arrays 
                 try:
@@ -544,10 +544,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 except FileNotFoundError:
                     print('Failed to save restart files.')
             
-            if m==3:
-                print('Scrambling orbital 3...')
-                tree.scrambleOrbital(m)
-                tree.orthonormalizeOrbitals(targetOrbital=m)
+#             if m==3:
+#                 print('Scrambling orbital 3...')
+#                 tree.scrambleOrbital(m)
+#                 tree.orthonormalizeOrbitals(targetOrbital=m)
             # Orthonormalize orbital m before beginning Green's iteration
             targets = tree.extractPhi(m)
             orbitals[:,m] = np.copy(targets[:,3])
@@ -572,6 +572,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             
             # set GI anderson mixing to false.  Only gets set to true once the orbital residual is below some tolerance.
             GIandersonMixing=False
+            GIsimpleMixing=True
+            sloshing=False
             firstInputWavefunction=True
             firstOutputWavefunction=True
             
@@ -615,7 +617,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 aitkenEig = None
                 oldAitkenEig = None
                 
-                ratioTol = 5e-300
+                ratioTol = 1e-3
                 
                 previousResidualRatio = 2
                 previousEigenvalueResidualRatio = 2
@@ -636,10 +638,20 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     targets = np.copy(sources)
                     weights = np.copy(targets[:,5])
                     
-                    
+                    if sloshing==True:
+                        # orthogonalize against sloshingVector
+                        tempOrbitals = np.zeros(len(targets),2)
+                        tempOrbitals[:,0] = np.copy(sloshingWavefunction)
+                        tempOrbitals[:,1] = np.copy(sources[:,3])
+                        
+                        orthogonalizedWavefunction = modifiedGramSchmidt_singleOrbital(tempOrbitals,weights,1, len(targets), 2)
+                        print('Orthogonalizing against sloshing wavefunction')
+                        tree.importPhiOnLeaves(orthogonalizedWavefunction,m)
+                        sources = tree.extractPhi(m)
+                        targets = np.copy(sources)
+                        orbitals[:,m] = np.copy(orthogonalizedWavefunction)
                             
-                            
-                    oldOrbitals[:,m] = np.copy(targets[:,3])
+                    oldOrbitals[:,m] = np.copy(targets[:,3]) 
     
                     if GIandersonMixing==True:
                         if firstInputWavefunction==True:
@@ -837,7 +849,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         """ Method where you dont compute kinetics, from Harrison """
                         
                         # update the energy first
-                        
+                        tree.computeOrbitalMoments(targetOrbital=m)
                 
                         if ( (gradientFree==True) and (SCFcount>-1) and (freezeEigenvalue==False) ):
                             
@@ -1139,7 +1151,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             tree.exportGridpoints(filename)
 
                                                 
-                    GIsimpleMixing=False
+                    
                     
                     if GIsimpleMixing==True:
                         print('Simple mixing on the orbital.')
@@ -1198,6 +1210,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     print('Eigenvalue Previous relative residual = ', previousEigenvalueResidualRatio)
                     print()
                     
+                    
+                    ##  Detect if sloshing might be occuring.  If so, save the current wavefunction for orthogonalization
+                    
+                    
+                    
                     # If wavefunction residual is low then start using Anderson Mixing
                     if ((GIandersonMixing==False)): 
                         try:   
@@ -1208,6 +1225,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             eigRatio = abs(eigenvalueResidualRatio/previousEigenvalueResidualRatio )
                         except Exception:
                             eigRatio=0
+                            
+                        if psiRatio<0.9:
+                            sloshing=False
+                            sloshingWavefunction=None
                         if ( 
                             (abs(1 - psiRatio) < ratioTol) and 
                             (abs(1 - eigRatio) < ratioTol) and 
@@ -1216,12 +1237,33 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                              ):
                             if abs(orbitalResidual-oldOrbitalResidual) < abs(oldOrbitalResidual - oldOldOrbitalResidual): # if true, then convergence of residual is slowing down.  Time to accelerate.
                                                                                                                              # otherwise hold off. Maybe residual will continue to fall (if it's falling)
-                                print('psiRatio = ', psiRatio)
-                                print('eigRatio = ', eigRatio)
-                                print('Tolerance: ', ratioTol)
-                                GIandersonMixing = True
-                                mixingStart = greenIterationsCount
-                                print('Turning on Anderson Mixing for wavefunction %i' %m)
+                                if orbitalResidual < 3e-3:
+                                    print('psiRatio = ', psiRatio)
+                                    print('eigRatio = ', eigRatio)
+                                    print('Tolerance: ', ratioTol)
+                                    GIandersonMixing = True
+                                    GIsimpleMixing=False
+                                    sloshing=False
+                                    sloshingWavefunction=None
+                                    mixingStart = greenIterationsCount
+                                    print('Turning on Anderson Mixing for wavefunction %i' %m)
+                        
+                        if ( 
+                            (abs(1 - psiRatio) < ratioTol) and 
+                            (abs(1 - eigRatio) < ratioTol) and 
+                            (eigenvalueResidualRatio>1) 
+                             ):  # suspect sloshing.  
+                            print('Suspect sloshing. Swapping orbitals, saving sloshingWavefunction')
+                            sloshing=True
+                            temp = tree.extractPhi(m)
+                            sloshingWavefunction = np.copy(temp[:,3])
+                            
+                            tree.swapWavefunctions(m,m+1)
+                            
+                            temp = np.copy(orbitals[:,m])
+                            orbitals[:,m] = np.copy(orbitals[:,m+1])
+                            orbitals[:,m+1] = np.copy(temp)
+                            
                     ### EXIT CONDITIONS ###
  
 #                     if SCFcount==1:
@@ -1573,10 +1615,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
             
-        if SCFcount >= 1:
-            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-            energyResidual = -1
-            densityResidual = -1
+#         if SCFcount >= 1:
+#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+#             energyResidual = -1
+#             densityResidual = -1
         
 
 

@@ -183,14 +183,17 @@ class Tree(object):
         print('Occupations: ', self.occupations)
     
     
-    def computeOrbitalMoments(self):
-        for m in range(self.nOrbitals):
+    def computeOrbitalMoments(self, targetOrbital=None):
+        if targetOrbital!=None:
+            m = targetOrbital
             x1 = 0
             y1 = 0
             z1 = 0
             x2 = 0
             y2 = 0
             z2 = 0
+            
+            maxPsi = 0.0
             
             for _,cell in self.masterList:
                 if cell.leaf == True:
@@ -211,6 +214,34 @@ class Tree(object):
             print('x2 = ', x2)
             print('y2 = ', y2)
             print('z2 = ', z2, '\n')
+        else:    
+            for m in range(self.nOrbitals):
+                x1 = 0
+                y1 = 0
+                z1 = 0
+                x2 = 0
+                y2 = 0
+                z2 = 0
+                
+                for _,cell in self.masterList:
+                    if cell.leaf == True:
+                        for i,j,k in cell.PxByPyByPz:
+                            gp = cell.gridpoints[i,j,k]
+                            
+                            x1 += gp.phi[m]*gp.x*cell.w[i,j,k]
+                            y1 += gp.phi[m]*gp.y*cell.w[i,j,k]
+                            z1 += gp.phi[m]*gp.z*cell.w[i,j,k]
+                            x2 += gp.phi[m]*gp.x**2*cell.w[i,j,k]
+                            y2 += gp.phi[m]*gp.y**2*cell.w[i,j,k]
+                            z2 += gp.phi[m]*gp.z**2*cell.w[i,j,k]
+                
+                print('\nOrbital ', m, ' moments:')
+                print('x1 = ', x1)
+                print('y1 = ', y1)
+                print('z1 = ', z1)
+                print('x2 = ', x2)
+                print('y2 = ', y2)
+                print('z2 = ', z2, '\n')
             
         return
         
@@ -1507,7 +1538,14 @@ class Tree(object):
             self.computeOccupations()
 #             print('Occupations: ', self.occupations)
 
-
+    def swapWavefunctions(self,m1,m2):
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                for i,j,k in cell.PxByPyByPz:
+                    gp = cell.gridpoints[i,j,k]
+                    temp = gp.phi[m1]
+                    gp.phi[m1] = gp.phi[m2]
+                    gp.phi[m2]=temp
 
     def sortOrbitalsAndEnergies(self, order=None):
         if order==None:

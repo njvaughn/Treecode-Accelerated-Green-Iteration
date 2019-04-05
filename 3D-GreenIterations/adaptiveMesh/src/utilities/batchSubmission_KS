@@ -7,11 +7,11 @@ DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/O2Auxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -22,7 +22,7 @@ GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GPUPRESENT='True'
 
-TREECODE='False' 
+TREECODE='False'  
 TREECODEORDER=0
 THETA=0.8
 MAXPARNODE=8000

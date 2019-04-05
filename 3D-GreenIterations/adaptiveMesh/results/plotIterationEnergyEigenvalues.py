@@ -88,12 +88,13 @@ import numpy as np
 
 
 resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'  
-file='tc_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1493000.csv'
+# file='tc_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1493000.csv'
 # file='tc_gaugeShift0p5_tcOrder8_theta0.8_LW5_500_mixingHistory10_GREEN_1485000.csv' 
 # file='tc_gaugeShift0p5_tcOrder7_theta0.8_LW5_800_mixingHistory6_GREEN_2787000.csv'
 # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_1000_mixingHistory6_GREEN_2948000.csv'
 # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_LW5_500_mixingHistory6_GREEN_1485000.csv'
 # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory10_GREEN_2172000.csv'
+file='tc_gaugeShift-1.0_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv' 
   
 # file='tc_gaugeShift0p5_mindepth3_tcOrder7_theta0.8_PCI_1e-2_9random_mixingHistory6_GREEN_2172000.csv'
   
@@ -105,15 +106,15 @@ file='tc_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1493000.csv'
 # ## Symmertric Green's iterations tests
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/symmetricTest/'
 # # file='CO_asymm_LW5_GREEN_375500.csv' 
-# # file='CO_symm_LW5_GREEN_375500.csv' 
+# file='CO_symm_LW5_GREEN_375500.csv' 
 # # file='CO_aitken_after_3_LW5_GREEN_375500.csv'
-# file='CO_aitken_after_12_LW5_GREEN_375500.csv'
+# # file='CO_aitken_after_12_LW5_GREEN_375500.csv'
 
 
-## Testing simultaneous GI
+# Testing simultaneous GI
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/gaugeShiftTests/'
-# # file='O2_degeneracyTest_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
-# # file='CO_shiftedIteration_simultaneous_gaugeShift-0.0_LW5_500_GREEN_375500.csv'
+# file='O2_degeneracyTest_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
+# file='CO_shiftedIteration_simultaneous_gaugeShift-0.0_LW5_500_GREEN_375500.csv'
 # file = 'CO_TaylorInverseIteration_simultaneous_gaugeShift-0.0_LW5_500_GREEN_375500.csv'
 
 
@@ -214,7 +215,7 @@ print(df.shape)
 ##referenceEnergies = np.array([-0.3774974859])
 
 
-# # ## Benzene
+# ## Benzene
 nWavefunctions=21
 referenceEnergies = np.array( [ -9.791997000000000, 
                                 -9.791806000000000,    
