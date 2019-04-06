@@ -118,7 +118,7 @@ def normalizeOrbitals(V,weights):
 
 xi=yi=zi=-1.1
 xf=yf=zf=1.1
-numpts=3000
+numpts=3000 
 
 def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize,
@@ -551,22 +551,31 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             # Orthonormalize orbital m before beginning Green's iteration
             targets = tree.extractPhi(m)
             orbitals[:,m] = np.copy(targets[:,3])
+            
+#             if symmetricIteration==False:
+#                 orbitals[:,m] = np.copy(targets[:,3])
+#             elif symmetricIteration==True:
+#                 sqrtV = tree.extractSqrtV()
+#                 orbitals[:,m] = np.copy(targets[:,3]*sqrtV)
+                
+#                 psiSqrtV = psi*sqrtV
+#                 psiSqrtV /= np.sqrt( np.sum(psiSqrtV*psiSqrtV*weights ))
+#                 orbitals[:,m] = np.copy(psiSqrtV)
+                
             n,k = np.shape(orbitals)
             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
             orbitals[:,m] = np.copy(orthWavefunction)
+            
             tree.importPhiOnLeaves(orbitals[:,m], m)
+#             if symmetricIteration==False:
+#                 tree.importPhiOnLeaves(orbitals[:,m], m)
+#             elif symmetricIteration==True:
+#                 tree.importPhiOnLeaves(orbitals[:,m]/sqrtV, m)
             
             inputEigenvalues = []
             
-            if symmetricIteration==False:
-                tree.setPhiOldOnLeaves(m)
-            elif symmetricIteration==True:
-                sqrtV = tree.extractSqrtV()
-                psi = targets[:,3]
-                
-                psiSqrtV = psi*sqrtV
-                psiSqrtV /= np.sqrt( np.sum(psiSqrtV*psiSqrtV*weights ))
-                tree.setPhiOldOnLeaves_symmetric(psiSqrtV)
+            
+#                 tree.setPhiOldOnLeaves_symmetric(psiSqrtV)
             
             firstGreenIteration=True
             
@@ -617,7 +626,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 aitkenEig = None
                 oldAitkenEig = None
                 
-                ratioTol = 2e-2
+                ratioTol = 2e-3
                 
                 previousResidualRatio = 2
                 previousEigenvalueResidualRatio = 2
@@ -827,6 +836,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                         elif symmetricIteration==True:
                                             gpuHelmholtzConvolutionSubractSingularitySymmetric[blocksPerGrid, threadsPerBlock](targets,sources,sqrtV,phiNew,k) 
                                             phiNew *= -1
+                                            phiNew /= sqrtV   # Obtain computed psi from computed phi = psi*sqrtV
                                             convolutionTime = time.time()-startTime
                                             print('Using symmetric singularity subtraction.  Convolution time: ', convolutionTime)
 
@@ -834,7 +844,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                     elif treecode==True:
                                         
                                         copyStart = time.time()
-                                        numTargets = len(targets)
+                                        numTargets = len(targets) 
                                         numSources = len(sources)
     
                                         sourceX = np.copy(sources[:,0])
@@ -882,42 +892,42 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             
                             psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*weights))
                             
-                            if symmetricIteration==False:
+                            if ((symmetricIteration==False) or (symmetricIteration==True) ):  # in symmetric case, phiNew has already been modified back to psi
                                 tree.importPhiNewOnLeaves(phiNew)
 #                                 print('Not updating energy, just for testing Steffenson method')
                                 tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
                                 orbitals[:,m] = np.copy(phiNew)
-                            elif symmetricIteration==True:
+#                             elif symmetricIteration==True:
+# #                                 tree.importPhiNewOnLeaves(phiNew/sqrtV)
+# #                                 tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+# 
+# 
+#                                 # import phiNew and compute eigenvalue update
 #                                 tree.importPhiNewOnLeaves(phiNew/sqrtV)
-#                                 tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
-
-
-                                # import phiNew and compute eigenvalue update
-                                tree.importPhiNewOnLeaves(phiNew)
-                                tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False, symmetric=True)
-                                
-                                
-#                                 print('Shifting eig up 1 because of inverse iteration attempt')
-                                # Import normalized psi*sqrtV into phiOld
-                                phiNew /= np.sqrt( np.sum(phiNew*phiNew*weights ))
-                                tree.setPhiOldOnLeaves_symmetric(phiNew)
-                                
-                                
-                                orbitals[:,m] = np.copy(phiNew/sqrtV)
+#                                 tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False, symmetric=True)
+#                                 
+#                                 
+# #                                 print('Shifting eig up 1 because of inverse iteration attempt')
+#                                 # Import normalized psi*sqrtV into phiOld
+#                                 phiNew /= np.sqrt( np.sum(phiNew*phiNew*weights ))
+# #                                 tree.setPhiOldOnLeaves_symmetric(phiNew) 
+#                                 
+#                                  
+#                                 orbitals[:,m] = np.copy(phiNew/sqrtV)
                             
                             n,k = np.shape(orbitals)
                             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
-                            orbitals[:,m] = np.copy(orthWavefunction)
+                            orbitals[:,m] = np.copy(orthWavefunction) 
                             
                             print('Single value of orbital: ', orbitals[100000,m])
                             
 #                             simplyMixedWavefunction = 1/2* ( orbitals[:,m]+ oldOrbitals[:,m])
                             tree.importPhiOnLeaves(orbitals[:,m], m)
 #                             tree.importPhiOnLeaves(simplyMixedWavefunction, m)
-                            if symmetricIteration==False:
-                                tree.setPhiOldOnLeaves(m)
-                            else: # already imported the normalized psi*sqrtV
-                                pass
+#                             if symmetricIteration==False:
+#                                 tree.setPhiOldOnLeaves(m)
+#                             else: # already imported the normalized psi*sqrtV
+#                                 pass
 
      
                             if greenIterationsCount==1:
@@ -933,10 +943,11 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                         elif ( (gradientFree==False) or (SCFcount==-1) ):
  
                             # update the orbital
-                            if symmetricIteration==False:
-                                orbitals[:,m] = np.copy(phiNew)
-                            if symmetricIteration==True:
-                                orbitals[:,m] = np.copy(phiNew/sqrtV)
+                            orbitals[:,m] = np.copy(phiNew)
+#                             if symmetricIteration==False:
+#                                 orbitals[:,m] = np.copy(phiNew)
+#                             if symmetricIteration==True:
+#                                 orbitals[:,m] = np.copy(phiNew/sqrtV)
                                 
                             n,k = np.shape(orbitals)
                             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, k)
@@ -944,7 +955,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             tree.importPhiOnLeaves(orbitals[:,m], m)
                             print('Single value of orbital: ', orbitals[100000,m])
 #                             tree.importPhiOnLeaves(orbitals[:,m], m)
-#                             tree.orthonormalizeOrbitals(targetOrbital=m)
+                            tree.orthonormalizeOrbitals(targetOrbital=m) 
                             
                             tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
           
@@ -1130,13 +1141,19 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     else:  # update without aitken
                         tempOrbital = tree.extractPhi(m)
                         orbitals[:,m] = np.copy( tempOrbital[:,3] )
-                        if symmetricIteration==False:
-#                             print('Computing residual of psi')
-                            normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
-                            sumDiff = np.sum((orbitals[:,m]-oldOrbitals[:,m])*weights )
-                        elif symmetricIteration==True:
-#                             print('Computing residual of psi*sqrtV')
-                            normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
+                        
+                        normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
+                        sumDiff = np.sum((orbitals[:,m]-oldOrbitals[:,m])*weights )
+
+
+#                         if symmetricIteration==False:
+# #                             print('Computing residual of psi')
+#                             normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
+#                             sumDiff = np.sum((orbitals[:,m]-oldOrbitals[:,m])*weights )
+#                         elif symmetricIteration==True:
+# #                             print('Computing residual of psi*sqrtV')
+#                             normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
+#                             sumDiff = np.sum((orbitals[:,m]-oldOrbitals[:,m])*weights )
                         eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
                     
                     
@@ -1182,7 +1199,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     
                     if GIsimpleMixing==True:
                         print('Simple mixing on the orbital.')
-                        simplyMixedOrbital =  (1-mixingParameter)*orbitals[:,m]+ mixingParameter*oldOrbitals[:,m] 
+                        simpleMixingParam = 0.2
+                        simplyMixedOrbital =  (1-simpleMixingParam)*orbitals[:,m]+ simpleMixingParam*oldOrbitals[:,m] 
                         tree.importPhiOnLeaves(simplyMixedOrbital, m)
                         
                     if GIandersonMixing==True:
@@ -1281,15 +1299,16 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             (eigenvalueResidualRatio>1) 
                              ):  # suspect sloshing.  
                             print('Suspect sloshing. Swapping orbitals, saving sloshingWavefunction')
-                            sloshing=True
-                            temp = tree.extractPhi(m)
-                            sloshingWavefunction = np.copy(temp[:,3])
-                            
-                            tree.swapWavefunctions(m,m+1)
-                            
-                            temp = np.copy(orbitals[:,m])
-                            orbitals[:,m] = np.copy(orbitals[:,m+1])
-                            orbitals[:,m+1] = np.copy(temp)
+                            print('Just kidding,nott setting sloshing=True.')
+#                             sloshing=True
+#                             temp = tree.extractPhi(m)
+#                             sloshingWavefunction = np.copy(temp[:,3])
+#                             
+#                             tree.swapWavefunctions(m,m+1)
+#                             
+#                             temp = np.copy(orbitals[:,m])
+#                             orbitals[:,m] = np.copy(orbitals[:,m+1])
+#                             orbitals[:,m+1] = np.copy(temp)
                             
                     ### EXIT CONDITIONS ###
  

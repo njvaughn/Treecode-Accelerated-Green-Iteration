@@ -2130,8 +2130,8 @@ class Tree(object):
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
-#                     f = -2*gridpt.phi[m]*np.sqrt( -gridpt.v_eff )
-                    f = -2*gridpt.phiOld
+                    f = -2*gridpt.phi[m]*np.sqrt( -gridpt.v_eff )
+#                     f = -2*gridpt.phiOld
                     leaves.append( [gridpt.x, gridpt.y, gridpt.z, f, cell.w[i,j,k] ] )
                     sqrtV.append( np.sqrt(-gridpt.v_eff))
                             
