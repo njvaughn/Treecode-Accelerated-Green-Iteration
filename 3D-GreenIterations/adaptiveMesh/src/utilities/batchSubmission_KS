@@ -7,11 +7,11 @@ DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/O2Auxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -49,7 +49,7 @@ SMOOTHINGEPS=0.0
 
 MESHPARAM3=3e-7
 MESHPARAM2=1e6
-for ADDITIONALDEPTHATATOMS in 0
+for ADDITIONALDEPTHATATOMS in 0 
 do
 for CELLORDER in 5
 do	  
@@ -69,7 +69,7 @@ do
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/MICDE_Data_2019/CarbonMonoxideData/mashParam_${MESHPARAM3}_tcOrder${TREECODEORDER}_tcTheta_${THETA}.csv"
 			
 			
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/gaugeShiftTests/CO_smoothed_gaugeShift${GAUGESHIFT}_LW5_${MESHPARAM1}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/gaugeShiftTests/CO_asymmetric_ratioTol2e-2_gaugeShift${GAUGESHIFT}_LW5_${MESHPARAM1}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Be_testing/Ox_T200_mixingHistory${MIXINGHISTORY}_mixingParam${MIXINGPARAMETER}_order${CELLORDER}_${BASE}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}.csv"
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
