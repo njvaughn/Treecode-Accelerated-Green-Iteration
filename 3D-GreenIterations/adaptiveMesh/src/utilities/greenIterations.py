@@ -362,12 +362,12 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 copytime = time.time()-copystart
                 print('Copy time before calling treecode: ', copytime)
                 start = time.time()
-                potentialType=2 
+                potentialType=0 
                 alpha = gaussianAlpha
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)  
                 print('Convolution time: ', time.time()-start)
                 
             else:
@@ -628,7 +628,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     aitkenEig = None
                     oldAitkenEig = None
                     
-                    ratioTol = 1e-4  
+                    ratioTol = 1e-300  
                     
                     previousResidualRatio = 2
                     previousEigenvalueResidualRatio = 2
@@ -864,7 +864,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                         
                                             copytime=time.time()-copyStart
     #                                         print('Time spent copying arrays for treecode call: ', copytime)
-                                            potentialType=3
+    
+                                            potentialType=1
                                             kappa = k
                                             start = time.time()
                                             phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
@@ -1287,7 +1288,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                  ):
                                 if abs(orbitalResidual-oldOrbitalResidual) < abs(oldOrbitalResidual - oldOldOrbitalResidual): # if true, then convergence of residual is slowing down.  Time to accelerate.
                                                                                                                                  # otherwise hold off. Maybe residual will continue to fall (if it's falling)
-                                    if orbitalResidual < 3e-3:
+                                    if orbitalResidual < 3e-2:
                                         print('psiRatio = ', psiRatio)
                                         print('eigRatio = ', eigRatio)
                                         print('Tolerance: ', ratioTol)
@@ -1356,16 +1357,22 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     #                     if (abs(eigenvalueDiff) < intraScfTolerance/10000):
     #                         print('Eiegnvalue residual smaller than L2 tol/10000, so terminating Green iterations.')
                         
-                        ## Detect if drifitng back away from a wavefunction (presumably this isn't the lowest energy state)
-                        if ((GIandersonMixing==False) and (residualRatio>1) and (previousResidualRatio>1) and (abs(orbitalResidual) < 1e-2) ):
-                            print('Wavefunction residual increased over two consecutive iterations.  Freeze it and move on.')
-                            allWavefunctionConverged = False
-                            orbitalResidual=0.0
-                        
-                        if ( (orbitalResidual<1e-2) and (tree.orbitalEnergies[m]>tree.gaugeShift) ):   # if reached 1e-2 residual and energy is positive, this st
-                            print('Orbtial residual less than 1e-2 and energy is positive, meaning this state is not resolved.  Hopefully unoccupied.  Terminating Green Iterations.')
-                            orbitalResidual=0.0
+#                         ## Detect if drifitng back away from a wavefunction (presumably this isn't the lowest energy state)
+#                         if ((GIandersonMixing==False) and (residualRatio>1) and (previousResidualRatio>1) and (abs(orbitalResidual) < 1e-2) ):
+#                             print('Wavefunction residual increased over two consecutive iterations.  Freeze it and move on.')
+#                             allWavefunctionConverged = False
+#                             orbitalResidual=0.0
                             
+#                         if ((GIandersonMixing==True) and ((greenIterationsCount-mixingStart)>40) ):
+#                             print('Anderson mixing has been going for 40 iterations.  If it hasnt converged yet, maybe there is an issue.')
+#                             orbitalResidual=0.0
+                            
+                        
+                        
+                        if ( (orbitalResidual<1e-3) and (tree.orbitalEnergies[m]>tree.gaugeShift) ):   # if reached 1e-2 residual and energy is positive, this st
+                            print('Orbtial residual less than 1e-2 and energy is positive, meaning this state is not resolved.  Hopefully unoccupied.  Terminating Green Iterations.')
+                            orbitalResidual=0.0  
+                             
                         previousResidual = np.copy(orbitalResidual)
                         previousEigenvalueDiff = np.copy(eigenvalueDiff)
                         previousResidualRatio = np.copy(residualRatio)

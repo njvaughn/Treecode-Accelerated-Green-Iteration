@@ -22,11 +22,11 @@ GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GPUPRESENT='True'
  
-TREECODE='True'      
+TREECODE='False'      
 TREECODEORDER=8 
 THETA=0.8  
-MAXPARNODE=8000
-BATCHSIZE=8000
+MAXPARNODE=1000
+BATCHSIZE=1000
 
 
 GAUSSIANALPHA=1.0
@@ -49,9 +49,13 @@ SMOOTHINGEPS=0.0
 
 MESHPARAM3=3e-7
 MESHPARAM2=1e6
+
+NORBITALS=5
+TARGETENERGYEIGENVALUE=-18.72
+
 for ADDITIONALDEPTHATATOMS in 0 
 do
-for CELLORDER in 5
+for CELLORDER in 4
 do	  
 for BASE in 1
 do 
@@ -61,7 +65,7 @@ for MESHPARAM4 in 0
 do
 	for TREECODEORDER in 0
 	do     
-		for GAUGESHIFT in -1.0
+		for GAUGESHIFT in 0.0
 		do 
 			for MESHPARAM1 in 500		    
 			do
@@ -69,17 +73,17 @@ do
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/MICDE_Data_2019/CarbonMonoxideData/mashParam_${MESHPARAM3}_tcOrder${TREECODEORDER}_tcTheta_${THETA}.csv"
 			
 			
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/gaugeShiftTests/CO_noSingSubt_gaugeShift${GAUGESHIFT}_LW5_${MESHPARAM1}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/gaugeShiftTests/CO_asymmetric_ratioTol2e-2_gaugeShift${GAUGESHIFT}_LW5_${MESHPARAM1}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Be_testing/Ox_T200_mixingHistory${MIXINGHISTORY}_mixingParam${MIXINGPARAMETER}_order${CELLORDER}_${BASE}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}.csv"
-			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
+			python -u testComputeSpectrum.py 	$DOMAIN $NORBITALS $TARGETENERGYEIGENVALUE $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
 																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE $RESTART $SAVEDMESH
 			done   
 		done
-	done    
+	done   
 	
-done 
+done
 done
 done
 done 
