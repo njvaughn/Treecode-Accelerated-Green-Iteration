@@ -5,7 +5,7 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 DOMAIN=20
 MINDEPTH=3
-SINGSUBT=0
+SINGSUBT=1
 
 INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
@@ -41,7 +41,7 @@ SAVEDMESH='None'
 MIXINGPARAMETER=0.5 
 MIXINGHISTORY=40 
   
-INTRASCFTOLERANCE=1e-6
+INTRASCFTOLERANCE=1e-10
 INTERSCFTOLERANCE=1e-5 
     
 MIXING='Anderson'    
@@ -50,13 +50,13 @@ SMOOTHINGEPS=0.0
 MESHPARAM3=3e-7
 MESHPARAM2=1e6
 
-NORBITALS=5
-TARGETENERGYEIGENVALUE=-18.72
-
+NORBITALS=3
+TARGETENERGYEIGENVALUE=-10.88
+ 
 for ADDITIONALDEPTHATATOMS in 0 
 do
-for CELLORDER in 4
-do	  
+for CELLORDER in 5
+do	    
 for BASE in 1
 do 
 for MAXDEPTH in 20   
@@ -65,7 +65,7 @@ for MESHPARAM4 in 0
 do
 	for TREECODEORDER in 0
 	do     
-		for GAUGESHIFT in 0.0
+		for GAUGESHIFT in -0.0
 		do 
 			for MESHPARAM1 in 500		    
 			do

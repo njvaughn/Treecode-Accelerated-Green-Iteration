@@ -1583,6 +1583,12 @@ class Tree(object):
                     temp = gp.phi[m1]
                     gp.phi[m1] = gp.phi[m2]
                     gp.phi[m2]=temp
+    
+    def swapOrbitalEnergiess(self,m1,m2):
+        temp = np.copy(self.orbitalEnergies[m1])
+        self.orbitalEnergies[m1] = np.copy(self.orbitalEnergies[m2])
+        self.orbitalEnergies[m2] = np.copy(temp)
+
 
     def sortOrbitalsAndEnergies(self, order=None):
         if order==None:

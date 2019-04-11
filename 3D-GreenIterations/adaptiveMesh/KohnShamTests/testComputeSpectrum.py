@@ -212,7 +212,7 @@ def setUpTree(onlyFillOne=False):
 #         nOrbitals=10
 #         occupations = [2, 2, 4/3 ,4/3 ,4/3, 
 #                        2, 2, 2/3 ,2/3 ,2/3 ]
-        nOrbitals=7
+        nOrbitals=20
         occupations = 2*np.ones(nOrbitals)
     print('in testBatchGreen..., nOrbitals = ', nOrbitals)
     

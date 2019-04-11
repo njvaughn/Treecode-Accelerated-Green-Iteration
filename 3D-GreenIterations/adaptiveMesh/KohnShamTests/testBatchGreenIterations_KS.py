@@ -292,7 +292,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
     
 
 
-    
+     
 
 def updateTree(tree, onlyFillOne=False):
 

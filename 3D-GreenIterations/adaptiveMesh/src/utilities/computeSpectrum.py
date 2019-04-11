@@ -155,6 +155,19 @@ def computeSpectrum(tree, nOrbitals, targetEnergyEigenvalue, intraScfTolerance, 
     print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
     print()
     
+    # Eigenvalues of CO after first SCF iteration
+    referenceEnergies = np.array( [-1.886761702508549021e+01, -1.000441073298974892e+01,
+                                            -1.185545917003633321e+00, -6.070872074377245964e-01,
+                                            -5.201973981507257427e-01, -5.201973981507234113e-01,
+                                            -3.960960368603070325e-01,-1.338775668379516559e-02,
+                                            -7.325760563979200057e-02, 1.721054880813185223e-02,] )
+    deeperStates=0
+    for i in range(len(referenceEnergies)):
+        if (referenceEnergies[i]+tree.gaugeShift) < targetEnergyEigenvalue*1.1:
+            deeperStates+=1
+    
+    print('Number of Deeper states: ', deeperStates)
+    nOrbitals += deeperStates
     tree.nOrbitals = nOrbitals
     tree.orbitalEnergies = np.ones(nOrbitals)
 
@@ -297,7 +310,12 @@ def computeSpectrum(tree, nOrbitals, targetEnergyEigenvalue, intraScfTolerance, 
         if treecode==False:
             V_hartreeNew = np.zeros((len(density_targets)))
             start = time.time()
-            gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](density_targets,density_sources,V_hartreeNew,alphasq)
+            if subtractSingularity==0:
+                print('Using singularity skipping for Hartree solve. ')
+                gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](density_targets,density_sources,V_hartreeNew,alphasq)
+            elif subtractSingularity==1:
+                print('Using singularity subtraction for Hartree solve.')
+                gpuHartreeConvolution[blocksPerGrid, threadsPerBlock](density_targets,density_sources,V_hartreeNew)
 #             print('Convolution time: ', time.time()-start)
 #             return
         elif treecode==True:
@@ -367,7 +385,14 @@ def computeSpectrum(tree, nOrbitals, targetEnergyEigenvalue, intraScfTolerance, 
     
         for m in range(nOrbitals): 
             
-                
+            if m >= deeperStates:
+                k = np.sqrt(-2*targetEnergyEigenvalue)  # same k for all eigenfunctions.
+            else:
+#                 k = np.sqrt(-2*(referenceEnergies[i]+tree.gaugeShift))  # same k for all eigenfunctions.
+                k = np.sqrt(-2*(referenceEnergies[i]))  # same k for all eigenfunctions.
+
+
+            
             orbitalResidual = 1
             greenIterationsCount = 1
             max_GreenIterationsCount = 15000  # set very high.  Don't ever stop green iterations before convergence.
@@ -379,8 +404,8 @@ def computeSpectrum(tree, nOrbitals, targetEnergyEigenvalue, intraScfTolerance, 
             orbitalResidual = 1.0
             oldOrbitalResidual = 2.0
             oldOldOrbitalResidual = 4.0
-            psiNewNorm = 10
-            previousResidual = 1
+            psiNewNorm = 10 
+            previousResidual = 1 
             previousEigenvalueDiff = 1
             
             normDiff=1.0
@@ -420,11 +445,10 @@ def computeSpectrum(tree, nOrbitals, targetEnergyEigenvalue, intraScfTolerance, 
 
             oldEigenvalue =  tree.orbitalEnergies[m] 
 
-            k = np.sqrt(-2*targetEnergyEigenvalue)  # same k for all eigenfunctions.
             
             phiNew = np.zeros((len(targets)))
             if subtractSingularity==0: 
-#                 print('Using singularity skipping')
+                print('Using singularity skipping')
                 gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
             elif subtractSingularity==1:
                     
@@ -436,7 +460,7 @@ def computeSpectrum(tree, nOrbitals, targetEnergyEigenvalue, intraScfTolerance, 
                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
                         convolutionTime = time.time()-startTime
 #                         phiNew /= (4*np.pi)
-#                         print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+                        print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
                     elif symmetricIteration==True:
                         gpuHelmholtzConvolutionSubractSingularitySymmetric[blocksPerGrid, threadsPerBlock](targets,sources,sqrtV,phiNew,k) 
                         phiNew *= -1

@@ -397,7 +397,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         tree.updateOrbitalEnergies(sortByEnergy=False, saveAsReference=True)
         tree.computeBandEnergy()
         
-        tree.sortOrbitalsAndEnergies()
+        print('Not sorting for testing purposes.')
+#         tree.sortOrbitalsAndEnergies()
         for m in range(nOrbitals):
             # fill in orbitals
             targets = tree.extractPhi(m)
@@ -628,7 +629,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     aitkenEig = None
                     oldAitkenEig = None
                     
-                    ratioTol = 1e-300  
+                    ratioTol = 1e-3  
                     
                     previousResidualRatio = 2
                     previousEigenvalueResidualRatio = 2
@@ -1299,23 +1300,23 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                                         mixingStart = greenIterationsCount
                                         print('Turning on Anderson Mixing for wavefunction %i' %m)
                             
-                            if ( 
-                                (abs(1 - psiRatio) < ratioTol) and 
-                                (abs(1 - eigRatio) < ratioTol) and 
-                                (eigenvalueResidualRatio>1) 
-                                 ):  # suspect sloshing.  
-                                print('Suspect sloshing. Swapping orbitals, saving sloshingWavefunction')
-                                print('Just kidding,nott setting sloshing=True.')
-    #                             sloshing=True
-    #                             temp = tree.extractPhi(m)
-    #                             sloshingWavefunction = np.copy(temp[:,3])
-    #                             
-    #                             tree.swapWavefunctions(m,m+1)
-    #                             
-    #                             temp = np.copy(orbitals[:,m])
-    #                             orbitals[:,m] = np.copy(orbitals[:,m+1])
-    #                             orbitals[:,m+1] = np.copy(temp)
-                                
+#                             if ( 
+#                                 (abs(1 - psiRatio) < ratioTol) and 
+#                                 (abs(1 - eigRatio) < ratioTol) and 
+#                                 (eigenvalueResidualRatio>1) 
+#                                  ):  # suspect sloshing.  
+#                                 print('Suspect sloshing. Swapping orbitals, saving sloshingWavefunction')
+#                                 print('Just kidding,nott setting sloshing=True.')
+#                                 sloshing=True
+#                                 temp = tree.extractPhi(m)
+#                                 sloshingWavefunction = np.copy(temp[:,3])
+#                                  
+#                                 tree.swapWavefunctions(m,m+1)
+#                                  
+#                                 temp = np.copy(orbitals[:,m])
+#                                 orbitals[:,m] = np.copy(orbitals[:,m+1])
+#                                 orbitals[:,m+1] = np.copy(temp)
+#                                 
                         ### EXIT CONDITIONS ###
      
     #                     if SCFcount==1:
@@ -1357,11 +1358,19 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     #                     if (abs(eigenvalueDiff) < intraScfTolerance/10000):
     #                         print('Eiegnvalue residual smaller than L2 tol/10000, so terminating Green iterations.')
                         
-#                         ## Detect if drifitng back away from a wavefunction (presumably this isn't the lowest energy state)
-#                         if ((GIandersonMixing==False) and (residualRatio>1) and (previousResidualRatio>1) and (abs(orbitalResidual) < 1e-2) ):
+                        ## Detect if drifitng back away from a wavefunction (presumably this isn't the lowest energy state)
+                        if ((GIandersonMixing==False) and (residualRatio>1) and (previousResidualRatio>1) and (abs(orbitalResidual) < 1e-2) ):
 #                             print('Wavefunction residual increased over two consecutive iterations.  Freeze it and move on.')
+                            print('Wavefunction residual increased over two consecutive iterations.  Swap it out for a later wavefunction.')
 #                             allWavefunctionConverged = False
-#                             orbitalResidual=0.0
+
+                            tree.swapWavefunctions(m,m+1)
+                            tree.swapOrbitalEnergiess(m,m+1)
+                            temp = np.copy(orbitals[:,m])
+                            orbitals[:,m] = np.copy(orbitals[:,m+1])
+                            orbitals[:,m+1] = np.copy(temp)
+                            
+                            orbitalResidual=1.0
                             
 #                         if ((GIandersonMixing==True) and ((greenIterationsCount-mixingStart)>40) ):
 #                             print('Anderson mixing has been going for 40 iterations.  If it hasnt converged yet, maybe there is an issue.')
