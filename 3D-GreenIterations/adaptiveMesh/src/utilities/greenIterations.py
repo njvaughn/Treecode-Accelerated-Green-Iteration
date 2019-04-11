@@ -1285,8 +1285,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             if ( 
                                 (abs(1 - psiRatio) < ratioTol) and 
                                 (abs(1 - eigRatio) < ratioTol) and 
-                                (eigenvalueResidualRatio<1) and
-                                (residualRatio<1) 
+                                (eigenvalueResidualRatio<1.1) and
+                                (residualRatio<1.1) 
                                  ):
                                 if abs(orbitalResidual-oldOrbitalResidual) < abs(oldOrbitalResidual - oldOldOrbitalResidual): # if true, then convergence of residual is slowing down.  Time to accelerate.
                                                                                                                                  # otherwise hold off. Maybe residual will continue to fall (if it's falling)
