@@ -362,7 +362,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 copytime = time.time()-copystart
                 print('Copy time before calling treecode: ', copytime)
                 start = time.time()
-                potentialType=0 
+                potentialType=2
                 alpha = gaussianAlpha
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
@@ -397,8 +397,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
         tree.updateOrbitalEnergies(sortByEnergy=False, saveAsReference=True)
         tree.computeBandEnergy()
         
-        print('Not sorting for testing purposes.')
-#         tree.sortOrbitalsAndEnergies()
+#         print('Not sorting for testing purposes.')
+        tree.sortOrbitalsAndEnergies()
         for m in range(nOrbitals):
             # fill in orbitals
             targets = tree.extractPhi(m)
@@ -629,7 +629,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     aitkenEig = None
                     oldAitkenEig = None
                     
-                    ratioTol = 1e-3  
+                    ratioTol = 1e-3 
                     
                     previousResidualRatio = 2
                     previousEigenvalueResidualRatio = 2
@@ -1209,7 +1209,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                             
                         if GIandersonMixing==True:
                             print('Anderson mixing on the orbital.')
-                            andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, mixingParameter,np.append(weights,1.0), returnWeights=True)
+                            GImixingParameter=0.2
+                            andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(weights,1.0), returnWeights=True)
     #                         newEig = densityMixing.applyWeightsToEigenvalue(outputEigenvalues,andersonWeights)
                             
     #                         print('Anderson weighted eigenvalue: ', newEig)
@@ -1359,7 +1360,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
     #                         print('Eiegnvalue residual smaller than L2 tol/10000, so terminating Green iterations.')
                         
                         ## Detect if drifitng back away from a wavefunction (presumably this isn't the lowest energy state)
-                        if ((GIandersonMixing==False) and (residualRatio>1) and (previousResidualRatio>1) and (abs(orbitalResidual) < 1e-2) ):
+                        if False:
+#                         if ((GIandersonMixing==False) and (residualRatio>1) and (previousResidualRatio>1) and (abs(orbitalResidual) < 1e-2) ):
 #                             print('Wavefunction residual increased over two consecutive iterations.  Freeze it and move on.')
                             print('Wavefunction residual increased over two consecutive iterations.  Swap it out for a later wavefunction.')
 #                             allWavefunctionConverged = False

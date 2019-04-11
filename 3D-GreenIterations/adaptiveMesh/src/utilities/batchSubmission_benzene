@@ -6,7 +6,7 @@ cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptive
 
 DOMAIN=30
 MINDEPTH=3
-SINGSUBT=0
+SINGSUBT=1
 
 INPUTFILE='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv'
 
@@ -25,7 +25,7 @@ GRADIENTFREE='True'
 SYMMETRICITERATION='False' 
 GPUPRESENT='True'
 
-TREECODE='False'
+TREECODE='True'
 TREECODEORDER=8    
 THETA=0.7 
 MAXPARNODE=8000 
@@ -37,7 +37,7 @@ GAUSSIANALPHA=1.0
  
 MESHTYPE='ParentChildrenIntegral'
 #MESHTYPE='LW5'
-GAUGESHIFT=-1.0
+GAUGESHIFT=-0.5
 
 
 MIXINGPARAMETER=0.5 
@@ -50,7 +50,7 @@ MIXING='Anderson'
 CELLORDER=5 
  
 ADDITIONALDEPTHATATOMS=0 
-RESTART='True'	 
+RESTART='False'	 
 SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0.npy' 
 #SAVEDMESH='None' 
 
@@ -68,7 +68,7 @@ do
 			for MESHPARAM1 in 500
 			    
 			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/dc_noSingSubt_gaugeShift${GAUGESHIFT}_tcOrder${TREECODEORDER}_theta${THETA}_PCI_${MESHPARAM3}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/tc_onlySorbitals_gaugeShift${GAUGESHIFT}_tcOrder${TREECODEORDER}_theta${THETA}_PCI_${MESHPARAM3}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/simultaneous_tc_gaugeShift${GAUGESHIFT}_mindepth3_tcOrder${TREECODEORDER}_theta${THETA}_LW5_${MESHPARAM1}.csv"
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

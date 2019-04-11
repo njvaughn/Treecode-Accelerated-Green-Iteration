@@ -474,7 +474,7 @@ class Tree(object):
                         gp = cell.gridpoints[i,j,k]
 #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
                         r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
-                        gp.phi[m] = np.exp(-r)
+                        gp.phi[targetOrbital] = np.exp(-0.1*r)
                         
         timer.stop()
         print('Initializing orbitals to decaying exponential inside Tree Structure took %.3f seconds.' %timer.elapsedTime)                       
@@ -639,9 +639,11 @@ class Tree(object):
                         
         if orbitalIndex < self.nOrbitals:
             print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
-            print('Filling extra orbitals with random initial data.')
+            print('Filling extra orbitals with decaying exponential.')
+#             print('Filling extra orbitals with random initial data.')
             for ii in range(orbitalIndex, self.nOrbitals):
-                self.initializeOrbitalsRandomly(targetOrbital=ii)
+#                 self.initializeOrbitalsRandomly(targetOrbital=ii)
+                self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
 #                 self.orthonormalizeOrbitals(targetOrbital=ii)
         if orbitalIndex > self.nOrbitals:
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
@@ -744,10 +746,12 @@ class Tree(object):
                         
         if orbitalIndex < self.nOrbitals:
             print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
-            print('Filling extra orbitals with random initial data.')
+#             print('Filling extra orbitals with random initial data.')
+            print('Filling extra orbitals with decaying exponential.')
             for ii in range(orbitalIndex, self.nOrbitals):
-                self.initializeOrbitalsRandomly(targetOrbital=ii)
-                self.orthonormalizeOrbitals(targetOrbital=ii)
+                self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
+#                 self.initializeOrbitalsRandomly(targetOrbital=ii)
+#                 self.orthonormalizeOrbitals(targetOrbital=ii)
         if orbitalIndex > self.nOrbitals:
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         

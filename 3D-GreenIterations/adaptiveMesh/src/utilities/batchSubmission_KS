@@ -69,7 +69,7 @@ do
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/MICDE_Data_2019/CarbonMonoxideData/mashParam_${MESHPARAM3}_tcOrder${TREECODEORDER}_tcTheta_${THETA}.csv"
 			
 			
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/gaugeShiftTests/CO_swap_gaugeShift${GAUGESHIFT}_LW5_${MESHPARAM1}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/gaugeShiftTests/CO_gaugeShift${GAUGESHIFT}_LW5_${MESHPARAM1}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Be_testing/Ox_T200_mixingHistory${MIXINGHISTORY}_mixingParam${MIXINGPARAMETER}_order${CELLORDER}_${BASE}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}.csv"
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
