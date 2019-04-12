@@ -233,7 +233,7 @@ def setUpTree(onlyFillOne=False):
     print('type: ', type(tree.nOrbitals))
     
     print('max depth ', maxDepth)
-    tree.buildTree( maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, 
+    tree.buildTree( maxLevels=maxDepth, initializationType='exponential',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
 
@@ -434,20 +434,27 @@ def normalizeOrbitals(V,weights):
 
 def clenshawCurtisNorm(psi):
     global weights
+    
+    appendedWeights = np.append(weights, 10.0)
+    return np.sqrt( np.sum( psi*psi*appendedWeights ) )
+
+
+def clenshawCurtisNorm_withoutEigenvalue(psi):
     return np.sqrt( np.sum( psi*psi*weights ) )
 
 
 
 def greensIteration_FixedPoint(psiIn):
     print('Who called F(x)? ', inspect.stack()[2][3])
-    print('Norm of psiIn:', clenshawCurtisNorm(psiIn))
-    print('Norm of psiIn - what was already in orbitals array: ', clenshawCurtisNorm(psiIn-orbitals[:,m]))
-    print('Norm of psiIn - what was already in oldOrbitals array: ', clenshawCurtisNorm(psiIn-oldOrbitals[:,m]))
+    inputWave = np.copy(psiIn[:-1])
+    print('Norm of psiIn:', clenshawCurtisNorm_withoutEigenvalue(inputWave))
+    print('Norm of psiIn - what was already in orbitals array: ', clenshawCurtisNorm_withoutEigenvalue(inputWave-orbitals[:,m]))
+    print('Norm of psiIn - what was already in oldOrbitals array: ', clenshawCurtisNorm_withoutEigenvalue(inputWave-oldOrbitals[:,m]))
     
-    psiIn /= clenshawCurtisNorm(psiIn)
-    print('Normalizing psiIn...')
-    print('Norm of psiIn - what was already in orbitals array: ', clenshawCurtisNorm(psiIn-orbitals[:,m]))
-    print('Norm of psiIn - what was already in oldOrbitals array: ', clenshawCurtisNorm(psiIn-oldOrbitals[:,m]))
+#     psiIn /= clenshawCurtisNorm(psiIn)
+#     print('Normalizing psiIn...')
+#     print('Norm of psiIn - what was already in orbitals array: ', clenshawCurtisNorm(psiIn-orbitals[:,m]))
+#     print('Norm of psiIn - what was already in oldOrbitals array: ', clenshawCurtisNorm(psiIn-oldOrbitals[:,m]))
     # global data structures
     global tree, orbitals, oldOrbitals, residuals, eigenvalueHistory
     
@@ -460,12 +467,13 @@ def greensIteration_FixedPoint(psiIn):
         tree.totalIterationCount += 1
         
         
-        oldOrbitals[:,m] = np.copy(psiIn)    
-        orbitals[:,m] = np.copy(psiIn)
+        oldOrbitals[:,m] = np.copy(psiIn[:-1])    
+        orbitals[:,m] = np.copy(psiIn[:-1])
         n,M = np.shape(orbitals)
         orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
         orbitals[:,m] = np.copy(orthWavefunction)
         tree.importPhiOnLeaves(orbitals[:,m], m)
+        tree.orbitalEnergies[m] = np.copy(psiIn[-1])
     else:
 #         print('Different function called F(x), not updating tree.')
         print('Not updating tree.')
@@ -685,7 +693,9 @@ def greensIteration_FixedPoint(psiIn):
     orbitals[:,m] = np.copy( tempOrbital[:,3] )
     
         
-    residualVector = orbitals[:,m] - oldOrbitals[:,m]
+#     residualVector = orbitals[:,m] - oldOrbitals[:,m]
+    psiOut = np.append(np.copy(orbitals[:,m]), np.copy(tree.orbitalEnergies[m]))
+    residualVector = psiOut - psiIn
 #     residualVector = -(psiIn - orbitals[:,m])
 
     newEigenvalue = tree.orbitalEnergies[m]
@@ -895,12 +905,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     print('Integrated density: ', integratedDensity)
 
 #     starthartreeConvolutionTime = timer()
-    alpha = gaussianAlpha
-    alphasq=alpha*alpha
+#     alpha = gaussianAlpha
+    alphasq=gaussianAlpha*gaussianAlpha
     
     
     if restartFile==False: # need to do initial Vhartree solve
-        print('Using Gaussian singularity subtraction, alpha = ', alpha)
+        print('Using Gaussian singularity subtraction, alpha = ', gaussianAlpha)
         
         print('GPUpresent set to ', GPUpresent)
         print('Type: ', type(GPUpresent))
@@ -947,11 +957,11 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
     
                 potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
-                alpha = gaussianAlpha
+#                 alpha = gaussianAlpha
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
                    
                 if potentialType==2:
                     V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
@@ -990,11 +1000,10 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                 print('Copy time before calling treecode: ', copytime)
                 start = time.time()
                 potentialType=2 
-                alpha = gaussianAlpha
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
                 print('Convolution time: ', time.time()-start)
                 
             else:
@@ -1150,7 +1159,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             greenIterationsCount=1
 
             
-            for njv in range(10):
+            for njv in range(5):
                 targets = tree.extractPhi(m)
                 sources = tree.extractPhi(m)
                 weights = np.copy(targets[:,5])
@@ -1162,7 +1171,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
                 orbitals[:,m] = np.copy(orthWavefunction)
                 tree.importPhiOnLeaves(orbitals[:,m], m)
-                psiIn = 1/2*(np.copy(orbitals[:,m]) + np.copy(oldOrbitals[:,m]) )
+                psiIn = np.append( np.copy(orbitals[:,m]), tree.orbitalEnergies[m] )
+#                 psiIn = 1/2*(np.copy(orbitals[:,m]) + np.copy(oldOrbitals[:,m]) )
                 r = greensIteration_FixedPoint(psiIn)
                 print('CC norm of residual vector: ', clenshawCurtisNorm(r))
 
@@ -1184,8 +1194,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 #             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=20, w0=0.01, tol_norm=np.linalg.norm, f_tol=1e-3, verbose=True)
 #             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=10, w0=0.01, tol_norm=clenshawCurtisNorm,line_search=None, f_tol=1e-4, verbose=True, callback=printResidual)
 #             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=5, w0=0.1, f_tol=1e-4, verbose=True, callback=printResidual)
-            psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=100, M=10, w0=0.01,tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
-#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=100, M=10, w0=0.01,line_search=None, f_tol=1e-4, verbose=True, callback=updateTree)
+#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=100, M=10, w0=0.01,tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
+            psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=1000, M=10, w0=0.01,line_search=None,tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
 #             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=5, w0=0.01, tol_norm=np.linalg.norm, f_tol=1e-4, verbose=True, callback=printResidual)
             orbitals[:,m] = np.copy(psiOut)
             
@@ -1315,11 +1325,11 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                 
                 start = time.time()
                 potentialType=2 
-                alpha = gaussianAlpha
+#                 alpha = gaussianAlpha
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, alpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
                 print('Convolution time: ', time.time()-start)
                 
         elif GPUpresent==False:
