@@ -10,6 +10,7 @@ Created on Mar 13, 2018
 import os
 import sys
 import time
+from _cffi_backend import callback
 # from docutils.nodes import reference
 sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
@@ -240,7 +241,7 @@ def setUpTree(onlyFillOne=False):
     return tree
      
     
-def testGreenIterationsGPU_rootfinding(vtkExport=vtkDir,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
+def testGreenIterationsGPU_rootfinding(vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
     global tree
     
     startTime = time.time()
@@ -253,7 +254,7 @@ def testGreenIterationsGPU_rootfinding(vtkExport=vtkDir,onTheFlyRefinement=False
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
-                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=False, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
 
 #     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, numberOfTargets, subtractSingularity, 
 #                                 smoothingEps, gaussianAlpha,auxiliaryFile=auxiliaryFile, 
@@ -430,24 +431,35 @@ def normalizeOrbitals(V,weights):
     
     return U
 
+def clenshawCurtisNorm(psi):
+    
+    return np.sqrt( np.sum( psi*psi*weights ) )
+
 
 
 def greensIteration_FixedPoint(psiIn):
     # global data structures
-    global tree, orbitals, oldOrbitals, residuals
+    global tree, orbitals, oldOrbitals, residuals, eigenvalueHistory
     
     # Global constants and counters
     global threadsPerBlock, blocksPerGrid, SCFcount, greenIterationsCount
     global greenIterationOutFile
     
-    greenIterationsCount = 1
+    
     tree.totalIterationCount += 1
     
-    targets = tree.extractPhi(m)
-    oldOrbitals[:,m] = np.copy(targets[:,3])
+    oldOrbitals[:,m] = np.copy(psiIn)    
+    orbitals[:,m] = np.copy(psiIn)
+#     n,M = np.shape(orbitals)
+#     orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
+#     orbitals[:,m] = np.copy(orthWavefunction)
+    tree.importPhiOnLeaves(orbitals[:,m], m)
+#     oldOrbitals[:,m] = np.copy(orbitals[:,m])
+    
+#     targets = tree.extractPhi(m)
+#     sources = np.copy(targets)
 
 
-    print('symmetric iteration: ', symmetricIteration)
     if symmetricIteration==False:
         sources = tree.extractGreenIterationIntegrand(m)
     elif symmetricIteration == True:
@@ -457,7 +469,8 @@ def greensIteration_FixedPoint(psiIn):
         print("symmetricIteration variable not True or False.  What should it be?")
         return
     
-    targets = np.copy(sources)
+    
+    targets=np.copy(sources)
 
 
 
@@ -469,7 +482,7 @@ def greensIteration_FixedPoint(psiIn):
         print('Using singularity skipping')
         gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
     elif subtractSingularity==1:
-        if tree.orbitalEnergies[m] < 10.25: 
+        if tree.orbitalEnergies[m] < 10.25**100: 
             
             
             if GPUpresent==False:
@@ -593,6 +606,7 @@ def greensIteration_FixedPoint(psiIn):
         if greenIterationsCount==1:
             eigenvalueHistory = np.array(tree.orbitalEnergies[m])
         else:
+            
             eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
         print('eigenvalueHistory: \n',eigenvalueHistory)
         
@@ -635,16 +649,18 @@ def greensIteration_FixedPoint(psiIn):
         
        
         eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
+    
+    tempOrbital = tree.extractPhi(m)
+    orbitals[:,m] = np.copy( tempOrbital[:,3] )
+    
         
-    residualVector = orthWavefunction - psiIn
+    residualVector = orbitals[:,m] - oldOrbitals[:,m]
     newEigenvalue = tree.orbitalEnergies[m]
     
     
         
 
-    tempOrbital = tree.extractPhi(m)
-
-    orbitals[:,m] = np.copy( tempOrbital[:,3] )
+    
     if symmetricIteration==False:
         normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
     elif symmetricIteration==True:
@@ -683,7 +699,7 @@ def greensIteration_FixedPoint(psiIn):
         writer.writerow(myData)
     
       
-    
+    greenIterationsCount += 1
     return residualVector
 
 
@@ -1097,7 +1113,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
         for m in range(nOrbitals): 
             print('Working on orbital %i' %m)
             print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
-
+            
+            greenIterationsCount=1
 
             
             targets = tree.extractPhi(m)
@@ -1118,9 +1135,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             # Call anderson mixing on the Green's iteration fixed point function
             psiIn = np.copy(orbitals[:,m])
             
-            psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=10, w0=0.01, tol_norm=np.linalg.norm, f_tol=1e-7, verbose=True)
-            
+#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=20, w0=0.01, tol_norm=np.linalg.norm, f_tol=1e-3, verbose=True)
+#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=10, w0=0.01, tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
+            psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=5, w0=0.01, tol_norm=np.linalg.norm, f_tol=1e-4, verbose=True, callback=printResidual)
             orbitals[:,m] = np.copy(psiOut)
+            
+            print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
         
         # sort by energy and compute new occupations
         tree.sortOrbitalsAndEnergies()
@@ -1341,9 +1361,9 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 
 
             
-        if vtkExport != False:
-            filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
-            tree.exportGridpoints(filename)
+#         if vtkExport != False:
+#             filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
+#             tree.exportGridpoints(filename)
 
         printEachIteration=True
 
@@ -1428,14 +1448,19 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, SCFcount))
     
     
+
+def printResidual(x,f):
+    r = clenshawCurtisNorm(f)
+#     r = np.sqrt( np.sum(f*f*weights) )
+    print('L2 Norm of Residual: ', r)
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
 
     print('='*70)
     print('='*70)
-    print('='*70,'\n')
+    print('='*70,'\n') 
     
-
+ 
     global tree
     tree = setUpTree()  
     

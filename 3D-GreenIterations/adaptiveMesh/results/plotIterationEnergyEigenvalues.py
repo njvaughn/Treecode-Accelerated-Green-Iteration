@@ -112,8 +112,16 @@ import numpy as np
 # # file='CO_aitken_after_12_LW5_GREEN_375500.csv'
  
 # Testing simultaneous GI
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/gaugeShiftTests/'
-file='CO_swap_gaugeShift-1.0_LW5_500_GREEN_375500.csv'
+
+# Testing ScipyAnderson
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/fixedPointImplementation/'
+# file='CO_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
+file='CO_mixingM5_gaugeShift-0.5_LW5_500_GREEN_1493000.csv'
+
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/gaugeShiftTests/'
+# file='CO_swap_gaugeShift-1.0_LW5_500_GREEN_375500.csv'
+
 # file='O2_degeneracyTest_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
 # file='CO_shiftedIteration_simultaneous_gaugeShift-0.0_LW5_500_GREEN_375500.csv'
 # file = 'CO_TaylorInverseIteration_simultaneous_gaugeShift-0.0_LW5_500_GREEN_375500.csv'
@@ -204,11 +212,11 @@ print(df.shape)
 #                                   -8.273399296312561324e-02,  7.959071929649078059e-03] )
 
 ## Carbon Monoxide
-nWavefunctions=7
-referenceEnergies = np.array( [   -1.871953147002199813e+01, -9.907188115343084078e+00,
-                                  -1.075324514852165958e+00, -5.215419985881135645e-01,
-                                  -4.455527567163568570e-01, -4.455527560478895199e-01,
-                                  -3.351419327004790394e-01] )
+# nWavefunctions=7
+# referenceEnergies = np.array( [   -1.871953147002199813e+01, -9.907188115343084078e+00,
+#                                   -1.075324514852165958e+00, -5.215419985881135645e-01,
+#                                   -4.455527567163568570e-01, -4.455527560478895199e-01,
+#                                   -3.351419327004790394e-01] )
 
 ## OXYGEN
 # referenceEnergies = np.array([psi0,psi1,psi2,psi3,psi4])
@@ -218,28 +226,29 @@ referenceEnergies = np.array( [   -1.871953147002199813e+01, -9.9071881153430840
 
 
 # # ## Benzene
-# nWavefunctions=21
-# referenceEnergies = np.array( [ -9.791997000000000, 
-#                                 -9.791806000000000,    
-#                                 -9.791746000000000,    
-#                                 -9.791384000000000,   
-#                                 -9.791313000000000,  
-#                                 -9.791129000000000,   
-#                                 -0.777636800000000,    
-#                                 -0.674908000000000,    
-#                                 -0.674900600000000,    
-#                                 -0.544847700000000,    
-#                                 -0.544836100000000,    
-#                                 -0.478288500000000,     
-#                                 -0.409873800000000,    
-#                                 -0.406600100000000,     
-#                                 -0.378339300000000,    
-#                                 -0.378337500000000,    
-#                                 -0.340971300000000,    
-#                                 -0.304777300000000,    
-#                                 -0.304703800000000,    
-#                                 -0.240343300000000,    
-#                                 -0.240322100000000]) 
+nWavefunctions=22
+referenceEnergies = np.array( [ -9.791997000000000, 
+                                -9.791806000000000,    
+                                -9.791746000000000,    
+                                -9.791384000000000,   
+                                -9.791313000000000,  
+                                -9.791129000000000,   
+                                -0.777636800000000,    
+                                -0.674908000000000,    
+                                -0.674900600000000,    
+                                -0.544847700000000,    
+                                -0.544836100000000,    
+                                -0.478288500000000,     
+                                -0.409873800000000,    
+                                -0.406600100000000,     
+                                -0.378339300000000,    
+                                -0.378337500000000,    
+                                -0.340971300000000,    
+                                -0.304777300000000,    
+                                -0.304703800000000,    
+                                -0.240343300000000,    
+                                -0.240322100000000,
+                                0.0000]) 
 
 # residualsMatrix = np.zeros((df.shape[0],10))
 # errorsMatrix = np.zeros((df.shape[0],10))
