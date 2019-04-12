@@ -21,7 +21,7 @@ INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 VTKFILEDIR='None'
 
 
-GRADIENTFREE='False'
+GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GPUPRESENT='True'
  

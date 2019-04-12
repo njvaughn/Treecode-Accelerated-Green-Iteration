@@ -10,6 +10,7 @@ Created on Mar 13, 2018
 import os
 import sys
 import time
+import inspect
 from _cffi_backend import callback
 # from docutils.nodes import reference
 sys.path.append('../src/dataStructures')
@@ -232,7 +233,7 @@ def setUpTree(onlyFillOne=False):
     print('type: ', type(tree.nOrbitals))
     
     print('max depth ', maxDepth)
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+    tree.buildTree( maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
 
@@ -432,12 +433,21 @@ def normalizeOrbitals(V,weights):
     return U
 
 def clenshawCurtisNorm(psi):
-    
+    global weights
     return np.sqrt( np.sum( psi*psi*weights ) )
 
 
 
 def greensIteration_FixedPoint(psiIn):
+    print('Who called F(x)? ', inspect.stack()[2][3])
+    print('Norm of psiIn:', clenshawCurtisNorm(psiIn))
+    print('Norm of psiIn - what was already in orbitals array: ', clenshawCurtisNorm(psiIn-orbitals[:,m]))
+    print('Norm of psiIn - what was already in oldOrbitals array: ', clenshawCurtisNorm(psiIn-oldOrbitals[:,m]))
+    
+    psiIn /= clenshawCurtisNorm(psiIn)
+    print('Normalizing psiIn...')
+    print('Norm of psiIn - what was already in orbitals array: ', clenshawCurtisNorm(psiIn-orbitals[:,m]))
+    print('Norm of psiIn - what was already in oldOrbitals array: ', clenshawCurtisNorm(psiIn-oldOrbitals[:,m]))
     # global data structures
     global tree, orbitals, oldOrbitals, residuals, eigenvalueHistory
     
@@ -445,16 +455,23 @@ def greensIteration_FixedPoint(psiIn):
     global threadsPerBlock, blocksPerGrid, SCFcount, greenIterationsCount
     global greenIterationOutFile
     
-    
-    tree.totalIterationCount += 1
-    
-    oldOrbitals[:,m] = np.copy(psiIn)    
-    orbitals[:,m] = np.copy(psiIn)
-#     n,M = np.shape(orbitals)
-#     orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
-#     orbitals[:,m] = np.copy(orthWavefunction)
-    tree.importPhiOnLeaves(orbitals[:,m], m)
-#     oldOrbitals[:,m] = np.copy(orbitals[:,m])
+#     if inspect.stack()[2][3]=='nonlin_solve':
+    if True:
+        tree.totalIterationCount += 1
+        
+        
+        oldOrbitals[:,m] = np.copy(psiIn)    
+        orbitals[:,m] = np.copy(psiIn)
+        n,M = np.shape(orbitals)
+        orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
+        orbitals[:,m] = np.copy(orthWavefunction)
+        tree.importPhiOnLeaves(orbitals[:,m], m)
+    else:
+#         print('Different function called F(x), not updating tree.')
+        print('Not updating tree.')
+
+#     tree.importPhiOnLeaves(oldOrbitals[:,m], m)
+# #     oldOrbitals[:,m] = np.copy(orbitals[:,m])
     
 #     targets = tree.extractPhi(m)
 #     sources = np.copy(targets)
@@ -571,7 +588,8 @@ def greensIteration_FixedPoint(psiIn):
     # update the energy first
     
 
-    if ( (gradientFree==True) and (SCFcount>-1) ):                 
+#     if ( (gradientFree==True) and (SCFcount>-1) and False):                 
+    if ( (gradientFree==True) and (SCFcount>-1)):                 
         
         psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*weights))
         
@@ -612,8 +630,9 @@ def greensIteration_FixedPoint(psiIn):
         
         
         print('Orbital energy after Harrison update: ', tree.orbitalEnergies[m])
-        
+         
 
+#     elif ( (gradientFree==False) or (SCFcount==-1) and False ):
     elif ( (gradientFree==False) or (SCFcount==-1) ):
 
         # update the orbital
@@ -637,6 +656,13 @@ def greensIteration_FixedPoint(psiIn):
         print('Not updating eigenvalue.  Is that intended?')
 #                             print('Invalid option for gradientFree, which is set to: ', gradientFree)
 #                             print('type: ', type(gradientFree))
+
+        if greenIterationsCount==1:
+            eigenvalueHistory = np.array(tree.orbitalEnergies[m])
+        else:
+            
+            eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
+        print('eigenvalueHistory: \n',eigenvalueHistory)
         
         orbitals[:,m] = np.copy(phiNew)
         n,M = np.shape(orbitals)
@@ -650,11 +676,18 @@ def greensIteration_FixedPoint(psiIn):
        
         eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
     
+    
+    if tree.orbitalEnergies[m]>0.0:
+        tree.orbitalEnergies[m] = tree.gaugeShift - 0.5
+        print('Energy eigenvalue was positive, setting to gauge shift - 0.5')
+        
     tempOrbital = tree.extractPhi(m)
     orbitals[:,m] = np.copy( tempOrbital[:,3] )
     
         
     residualVector = orbitals[:,m] - oldOrbitals[:,m]
+#     residualVector = -(psiIn - orbitals[:,m])
+
     newEigenvalue = tree.orbitalEnergies[m]
     
     
@@ -1117,6 +1150,24 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             greenIterationsCount=1
 
             
+            for njv in range(10):
+                targets = tree.extractPhi(m)
+                sources = tree.extractPhi(m)
+                weights = np.copy(targets[:,5])
+                orbitals[:,m] = np.copy(targets[:,3])
+                
+            
+                # Orthonormalize orbital m before beginning Green's iteration
+                n,M = np.shape(orbitals)
+                orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
+                orbitals[:,m] = np.copy(orthWavefunction)
+                tree.importPhiOnLeaves(orbitals[:,m], m)
+                psiIn = 1/2*(np.copy(orbitals[:,m]) + np.copy(oldOrbitals[:,m]) )
+                r = greensIteration_FixedPoint(psiIn)
+                print('CC norm of residual vector: ', clenshawCurtisNorm(r))
+
+            
+            # Call anderson mixing on the Green's iteration fixed point function
             targets = tree.extractPhi(m)
             sources = tree.extractPhi(m)
             weights = np.copy(targets[:,5])
@@ -1128,16 +1179,14 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
             orbitals[:,m] = np.copy(orthWavefunction)
             tree.importPhiOnLeaves(orbitals[:,m], m)
-            
-            
-
-            
-            # Call anderson mixing on the Green's iteration fixed point function
             psiIn = np.copy(orbitals[:,m])
             
 #             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=20, w0=0.01, tol_norm=np.linalg.norm, f_tol=1e-3, verbose=True)
-#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=10, w0=0.01, tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
-            psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=5, w0=0.01, tol_norm=np.linalg.norm, f_tol=1e-4, verbose=True, callback=printResidual)
+#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=10, w0=0.01, tol_norm=clenshawCurtisNorm,line_search=None, f_tol=1e-4, verbose=True, callback=printResidual)
+#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=5, w0=0.1, f_tol=1e-4, verbose=True, callback=printResidual)
+            psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=100, M=10, w0=0.01,tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
+#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=100, M=10, w0=0.01,line_search=None, f_tol=1e-4, verbose=True, callback=updateTree)
+#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=5, w0=0.01, tol_norm=np.linalg.norm, f_tol=1e-4, verbose=True, callback=printResidual)
             orbitals[:,m] = np.copy(psiOut)
             
             print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
@@ -1453,6 +1502,17 @@ def printResidual(x,f):
     r = clenshawCurtisNorm(f)
 #     r = np.sqrt( np.sum(f*f*weights) )
     print('L2 Norm of Residual: ', r)
+    
+def updateTree(x,f):
+    global tree, orbitals, oldOrbitals
+    
+    tree.importPhiOnLeaves(x,m)
+    orbitals[:,m] = x.copy()
+    oldOrbitals[:,m] = x.copy()
+    r = clenshawCurtisNorm(f)
+    print('L2 Norm of Residual: ', r)
+    
+    
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
 
