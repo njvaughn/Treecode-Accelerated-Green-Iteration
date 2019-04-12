@@ -233,7 +233,7 @@ def setUpTree(onlyFillOne=False):
     print('type: ', type(tree.nOrbitals))
     
     print('max depth ', maxDepth)
-    tree.buildTree( maxLevels=maxDepth, initializationType='exponential',divideCriterion=divideCriterion, 
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
 
@@ -347,6 +347,7 @@ import csv
 from numba import cuda, jit, njit
 import time
 from scipy.optimize import anderson as scipyAnderson
+from scipy.optimize import newton_krylov as scipyNewtonKrylov
 import densityMixingSchemes as densityMixing
 from fermiDiracDistribution import computeOccupations
 import sys
@@ -1158,8 +1159,9 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             
             greenIterationsCount=1
 
-            
-            for njv in range(5):
+            resNorm=1
+            while resNorm>1e-2:
+#             for njv in range(10):
                 targets = tree.extractPhi(m)
                 sources = tree.extractPhi(m)
                 weights = np.copy(targets[:,5])
@@ -1174,7 +1176,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                 psiIn = np.append( np.copy(orbitals[:,m]), tree.orbitalEnergies[m] )
 #                 psiIn = 1/2*(np.copy(orbitals[:,m]) + np.copy(oldOrbitals[:,m]) )
                 r = greensIteration_FixedPoint(psiIn)
-                print('CC norm of residual vector: ', clenshawCurtisNorm(r))
+                resNorm = clenshawCurtisNorm(r)
+                print('CC norm of residual vector: ', resNorm)
 
             
             # Call anderson mixing on the Green's iteration fixed point function
@@ -1189,15 +1192,13 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
             orbitals[:,m] = np.copy(orthWavefunction)
             tree.importPhiOnLeaves(orbitals[:,m], m)
-            psiIn = np.copy(orbitals[:,m])
+            psiIn = np.append( np.copy(orbitals[:,m]), tree.orbitalEnergies[m] )
             
-#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=20, w0=0.01, tol_norm=np.linalg.norm, f_tol=1e-3, verbose=True)
-#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=10, w0=0.01, tol_norm=clenshawCurtisNorm,line_search=None, f_tol=1e-4, verbose=True, callback=printResidual)
-#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=5, w0=0.1, f_tol=1e-4, verbose=True, callback=printResidual)
-#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=100, M=10, w0=0.01,tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
-            psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=1000, M=10, w0=0.01,line_search=None,tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
-#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn, M=5, w0=0.01, tol_norm=np.linalg.norm, f_tol=1e-4, verbose=True, callback=printResidual)
-            orbitals[:,m] = np.copy(psiOut)
+
+#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=1, M=10, w0=0.01,line_search=None,tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
+            psiOut = scipyNewtonKrylov(greensIteration_FixedPoint,psiIn, f_tol=1e-4, verbose=True, callback=printResidual)            
+            orbitals[:,m] = np.copy(psiOut[:-1])
+            tree.orbitalEnergies[m] = np.copy(psiOut[-1])
             
             print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
         
@@ -1496,10 +1497,10 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
             
-        if SCFcount >= 1:
-            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-            energyResidual = -1
-            densityResidual = -1
+#         if SCFcount >= 1:
+#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+#             energyResidual = -1
+#             densityResidual = -1
         
 
 

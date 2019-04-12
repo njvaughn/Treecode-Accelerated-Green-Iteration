@@ -114,9 +114,11 @@ import numpy as np
 # Testing simultaneous GI
 
 # Testing ScipyAnderson
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/fixedPointImplementation/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'
 # file='CO_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
-file='CO_mixingM5_gaugeShift-0.5_LW5_500_GREEN_1493000.csv'
+# file='CO_mixingM5_gaugeShift-0.5_LW5_500_GREEN_1493000.csv'
+# file='scipyAnderson_10initIterations_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
+file='scipyAnderson_looser_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
 
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/gaugeShiftTests/'
