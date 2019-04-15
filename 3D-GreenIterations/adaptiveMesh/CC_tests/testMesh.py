@@ -30,7 +30,7 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, additionalDept
                                  savedMesh=''):
 
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
 
 
     print('Reading atomic coordinates from: ', coordinateFile)
@@ -45,7 +45,7 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, additionalDept
     nOrbitals = int( np.ceil(nElectrons/2)+1)
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
-    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
 
@@ -84,7 +84,7 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
     
 #     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
 #     nElectrons = int(nElectrons)
 #     nOrbitals = int(nOrbitals)
 
@@ -102,9 +102,13 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
 
     if inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
         nOrbitals = 30
+        
+    if inputFile=='../src/utilities/molecularConfigurations/O2Auxiliary.csv':
+        nOrbitals = 10
+        
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
-    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
 
@@ -157,7 +161,7 @@ def testTreeSaveAndReconstruction(domain,order,minDepth, maxDepth, additionalDep
     
 #     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
 #     nElectrons = int(nElectrons)
 #     nOrbitals = int(nOrbitals)
 
@@ -177,7 +181,7 @@ def testTreeSaveAndReconstruction(domain,order,minDepth, maxDepth, additionalDep
         nOrbitals = 30
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
-    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
 
@@ -216,12 +220,12 @@ def testTreeSaveAndReconstruction(domain,order,minDepth, maxDepth, additionalDep
     
 def timingTestsForOrbitalInitializations(domain,order,minDepth, maxDepth, depthAtAtoms, divideCriterion, divideParameter,inputFile):
     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
-    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[2:]
     nElectrons = int(nElectrons)
     nOrbitals = int(nOrbitals)
     
     print([coordinateFile, nElectrons, nOrbitals, 
-     Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+     Etotal, Eexchange, Ecorrelation, Eband])
     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
 
@@ -251,12 +255,12 @@ def timingTestsForOrbitalInitializations(domain,order,minDepth, maxDepth, depthA
 
 def timingTestsForOrbitalOrthogonalizations(domain,order,minDepth, maxDepth, divideCriterion, divideParameter,inputFile):
     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
-    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
+    [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[2:]
     nElectrons = int(nElectrons)
     nOrbitals = int(nOrbitals)
     
     print([coordinateFile, nElectrons, nOrbitals, 
-     Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+     Etotal, Eexchange, Ecorrelation, Eband])
     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,maxDepthAtAtoms=maxDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,inputFile=inputFile)#, iterationOutFile=outputFile)
 
@@ -302,7 +306,7 @@ def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, d
     divideParameter4 *= base
     
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
 
 
     print('Reading atomic coordinates from: ', coordinateFile)
@@ -321,7 +325,7 @@ def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, d
         nOrbitals = 30
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
-    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
 
@@ -383,7 +387,7 @@ def densityInterpolation(xi,yi,zi,xf,yf,zf,numpts,
     divideParameter4 *= base
     
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
 
 
     print('Reading atomic coordinates from: ', coordinateFile)
@@ -402,7 +406,7 @@ def densityInterpolation(xi,yi,zi,xf,yf,zf,numpts,
         nOrbitals = 30
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
-    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
 
@@ -498,10 +502,10 @@ if __name__ == "__main__":
 #                     smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
     
-    meshDistributions(domain=20,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-6, divideParameter4=0,
-                        smoothingEpsilon=0.0,base=1.0, causeFigure=True, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+#     meshDistributions(domain=20,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-6, divideParameter4=0,
+#                         smoothingEpsilon=0.0,base=1.0, causeFigure=True, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
     
 #     timingTestsForOrbitalInitializations(domain=20,order=5,
@@ -535,20 +539,20 @@ if __name__ == "__main__":
             
             
 #             oxygenAtomAuxiliary
-            
-#     tree = exportMeshForParaview(domain=30,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_firstConstruction',
+    gaugeShift=-0.5 
+#     tree = exportMeshForParaview(domain=20,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#                         divideParameter1=500, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/O2Auxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
 #                         savedMesh='')        
             
-#     tree = exportMeshForParaview(domain=30,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-#                         divideParameter1=999, divideParameter2=999, divideParameter3=999, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
-#                         savedMesh='ParentChildrenIntegral_1000000.0_1000000.0_3e-06_0.npy')
+    tree = exportMeshForParaview(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildIntegral', 
+                        divideParameter1=500, divideParameter2=999, divideParameter3=1e-6, divideParameter4=0,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
+                        savedMesh='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0.npy')
     
 #     exportMeshForParaview(domain=31,order=3,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 

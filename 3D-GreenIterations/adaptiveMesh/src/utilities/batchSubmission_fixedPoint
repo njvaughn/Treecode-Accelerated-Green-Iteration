@@ -10,9 +10,9 @@ SINGSUBT=1
 #INPUTFILE='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv'
 
 
-INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/O2Auxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/O2Auxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
@@ -44,7 +44,7 @@ MIXINGPARAMETER=0.5
 MIXINGHISTORY=40 
   
 INTRASCFTOLERANCE=1e-6
-INTERSCFTOLERANCE=1e-5 
+INTERSCFTOLERANCE=1e-0 
     
 MIXING='Anderson'    
 SMOOTHINGEPS=0.0
@@ -71,7 +71,7 @@ do
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/MICDE_Data_2019/CarbonMonoxideData/mashParam_${MESHPARAM3}_tcOrder${TREECODEORDER}_tcTheta_${THETA}.csv"
 			
 			
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/fixedPointImplementation/testing_Be_mixingM5_ds_LW5_${MESHPARAM1}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/fixedPointImplementation/degenerate_deepest_state_testing_ds_LW5_${MESHPARAM1}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/krasnyMeshTests/Be_testing/Ox_T200_mixingHistory${MIXINGHISTORY}_mixingParam${MIXINGPARAMETER}_order${CELLORDER}_${BASE}_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}.csv"
 			python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

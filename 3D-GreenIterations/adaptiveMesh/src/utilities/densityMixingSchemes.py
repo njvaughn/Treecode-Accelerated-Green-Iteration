@@ -506,6 +506,12 @@ def testSteffenson(N):
     print('Power iterations:                                        ', powerIterationCount)
     print('Steffensen iterations (times 2, since 2 matvecs per):    ', steffensenCount*2)
     plt.show()
+
+
+def testAnderson():
+    
+    return
+
 if __name__=="__main__":
     
 #     test2()

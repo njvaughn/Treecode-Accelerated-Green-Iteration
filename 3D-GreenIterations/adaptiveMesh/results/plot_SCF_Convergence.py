@@ -90,10 +90,19 @@ import numpy as np
 # file='Be_order5_0.000001_SCF_260000.csv'
 
 
-## Symmertric Green's iterations tests
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/symmetricTest/'
-# file='CO_asymm_LW5_SCF_375500.csv'
-file='CO_symm_LW5_SCF_375500.csv'
+# ## Symmertric Green's iterations tests
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/symmetricTest/'
+# # file='CO_asymm_LW5_SCF_375500.csv'
+# file='CO_symm_LW5_SCF_375500.csv'
+
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/fixedPointImplementation/'
+# file='CO_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
+# file='CO_mixingM5_gaugeShift-0.5_LW5_500_GREEN_1493000.csv'
+# file='scipyAnderson_10initIterations_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
+# file='scipyAnderson_looser_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
+file='testing_Be_mixingM5_ds_LW5_500_SCF_375500.csv'
 
 
 df = pd.read_csv(resultsDir+file, header=0)   

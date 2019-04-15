@@ -96,7 +96,16 @@ file='runComparison.csv'
 ## Treecode accuracy tests
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
 # resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
+
+# Testing ScipyAnderson
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/fixedPointImplementation/'
+# file='CO_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
+# file='CO_mixingM5_gaugeShift-0.5_LW5_500_GREEN_1493000.csv'
+# file='scipyAnderson_10initIterations_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
+# file='scipyAnderson_looser_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
+file='testing_Be_mixingM5_ds_LW5_500_SCF_375500.csv'
 
 ## MICDE SYMPOSIUM DATA
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/MICDE_Data_2019/berylliumData/'
@@ -149,6 +158,7 @@ HartreeEnergy = 76.1983318
 
 
 df = pd.read_csv(resultsDir+file, header=0)
+print(df)
 # print(df)
 
 

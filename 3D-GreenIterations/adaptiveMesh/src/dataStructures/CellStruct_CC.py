@@ -2268,7 +2268,7 @@ class Cell(object):
         if aspectRatio > tolerance:  # fix tolerance to 1.5 for now
 #             for atom in self.tree.atoms
 #             distToAtom = np.sqrt(self.xmid-atom.x)
-#             print('Cell ', self.uniqueID,' has apsect ratio of ', aspectRatio,'.  Dividing')
+            print('Cell ', self.uniqueID,' has apsect ratio of ', aspectRatio,'.  Dividing')
             # find longest edge:
             dx = self.xmax-self.xmin
             dy = self.ymax-self.ymin
@@ -2277,13 +2277,13 @@ class Cell(object):
 #             print('dy = ', dy)
 #             print('dz = ', dz)
             
-#             # locate shortest dimension.  Divide, then check aspect ratio of children.  
-#             if (dx <= min(dy,dz)): # x is shortest dimension.
-#                 self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
-#             elif (dy <= min(dx,dz)): # y is shortest dimension
-#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
-#             elif (dz <= max(dx,dy)): # z is shortest dimension
-#                 self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
+            # locate shortest dimension.  Divide, then check aspect ratio of children.  
+            if (dx <= min(dy,dz)): # x is shortest dimension.
+                self.divide(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
+            elif (dy <= min(dx,dz)): # y is shortest dimension
+                self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
+            elif (dz <= max(dx,dy)): # z is shortest dimension
+                self.divide(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
 #                 
 #               Should I divide children?  Maybe it's okay if a child still has a bad aspect ratio because
 #               at least no one side  
@@ -2296,19 +2296,19 @@ class Cell(object):
 #                             self.children[i,j,k].divideIfAspectRatioExceeds(tolerance)
                 
                 
-#             locate longest dimension.  Divide, then check aspect ratio of children.  
-            if (dx >= max(dy,dz)): # x is longest dimension.
-                self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
-            elif (dy >= max(dx,dz)): # y is longest dimension
-                self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
-            elif (dz >= max(dx,dy)): # z is longest dimension
-                self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
-                self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
-                self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
+# #             locate longest dimension.  Divide, then check aspect ratio of children.  
+#             if (dx >= max(dy,dz)): # x is longest dimension.
+#                 self.divide(xdiv = (self.xmax+self.xmin)/2, ydiv=None, zdiv=None)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[1,0,0].divideIfAspectRatioExceeds(tolerance)
+#             elif (dy >= max(dx,dz)): # y is longest dimension
+#                 self.divide(xdiv=None, ydiv = (self.ymax+self.ymin)/2, zdiv=None)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[0,1,0].divideIfAspectRatioExceeds(tolerance)
+#             elif (dz >= max(dx,dy)): # z is longest dimension
+#                 self.divide(xdiv=None, ydiv=None, zdiv = (self.zmax+self.zmin)/2)
+#                 self.children[0,0,0].divideIfAspectRatioExceeds(tolerance)
+#                 self.children[0,0,1].divideIfAspectRatioExceeds(tolerance)
              
     def divideButJustReturnChildren(self):
         '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''

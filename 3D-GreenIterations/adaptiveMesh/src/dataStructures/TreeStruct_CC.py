@@ -146,7 +146,6 @@ class Tree(object):
 # #         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
 #         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
         print('Gauge shift ', self.gaugeShift)
-#         self.initialDivideBasedOnNuclei(coordinateFile)
         if  printTreeProperties == True:
             print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
             print('~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~')
@@ -329,51 +328,6 @@ class Tree(object):
                     print('There are now %i leaf cells.' %leafCount)
                     
                     
-#                     (ii,jj,kk) = np.shape(Cell.children)
-#                     for i in range(ii):
-#                         for j in range(jj):
-#                             for k in range(kk):
-#                                 recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
-        
-#                 else:   
-#                     if ( ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) )  and 
-#                          ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ) and
-#                          ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ) ): # atom is at a vertex.
-#                         if Cell.level < self.maxDepthAtAtoms: # But have we gone deep enough?
-#                             print('Dividing cell %s because atom is at corner and it is at depth %i' %(Cell.uniqueID,Cell.level))
-#                             xdiv = Cell.xmid
-#                             ydiv = Cell.ymid
-#                             zdiv = Cell.zmid
-#                             Cell.divide(xdiv, ydiv, zdiv)
-#                             (ii,jj,kk) = np.shape(Cell.children)
-#                             for i in range(ii):
-#                                 for j in range(jj):
-#                                     for k in range(kk):
-#                                         recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
-        
-#         print('Reading atomic coordinates from: ', coordinateFile)
-#         atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
-# #         print(np.shape(atomData))
-# #         print(len(atomData))
-#         if np.shape(atomData)==(4,):
-#             self.atoms = np.empty((1,),dtype=object)
-#             atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3])
-#             self.atoms[0] = atom
-#         else:
-#             self.atoms = np.empty((len(atomData),),dtype=object)
-#             for i in range(len(atomData)):
-#                 atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3])
-#                 self.atoms[i] = atom
-#                 self.atoms[i] = atom
-        
-        
-#         refineToMinDepth(self,self.root)
-#         
-#         cellCount = 0
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 cellCount += 1
-#         print('Number of cell after minDepth refine: ', cellCount)
         
         self.maxDepthAtAtoms = self.additionalDepthAtAtoms + self.maxDepthAchieved
         print('Refining an additional %i levels, from %i to %i' %(self.additionalDepthAtAtoms,self.maxDepthAchieved, self.maxDepthAtAtoms ))
@@ -397,10 +351,26 @@ class Tree(object):
 #                 cell.level = self.minDepth
 #         
 # #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 cell.divideIfAspectRatioExceeds(4) #283904 for aspect ratio 1.5, but 289280 for aspect ratio 10.0.  BUT, for 9.5, 8, 4, and so on, there are less quad points than 2.0.  So maybe not a bug 
-#         
+
+        def recursiveAspectRatioCheck(self,Cell):
+       
+            if hasattr(Cell, "children"):
+                
+                (ii,jj,kk) = np.shape(Cell.children)
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+                            recursiveAspectRatioCheck(self,Cell.children[i,j,k])
+                
+            else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
+#                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
+                Cell.divideIfAspectRatioExceeds(aspectRatioTolerance)
+                    
+    
+
+#         aspectRatioTolerance = 2.0
+#         recursiveAspectRatioCheck(self,self.root)
+#        
 #         leafCount = 0
 #         for _,cell in self.masterList:
 #             if cell.leaf==True:
@@ -937,8 +907,12 @@ class Tree(object):
         #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
 
 #         self.initialDivideBasedOnNuclei(self)
-        self.countCellsAtEachDepth()    
+        self.countCellsAtEachDepth()
+            
         self.initialDivideBasedOnNuclei(self.coordinateFile)
+#         self.maxDepthAtAtoms=100
+#         self.computeNuclearNuclearEnergy()
+
 #         refineRadius = 0.01
 #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
 #         self.uniformlyRefineWithinRadius(refineRadius)

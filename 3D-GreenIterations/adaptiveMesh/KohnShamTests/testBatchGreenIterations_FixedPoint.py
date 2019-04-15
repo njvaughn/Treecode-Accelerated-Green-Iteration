@@ -192,8 +192,10 @@ def setUpTree(onlyFillOne=False):
         occupations[4] = 4/3
         
     elif inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
-        nOrbitals=22
+        nOrbitals=23
         occupations = 2*np.ones(nOrbitals)
+        occupations[-1]=0
+        occupations[-2]=0
 #         occupations = [2, 2, 2/3 ,2/3 ,2/3, 
 #                        2, 2, 2/3 ,2/3 ,2/3,
 #                        2, 2, 2/3 ,2/3 ,2/3,
@@ -434,10 +436,16 @@ def normalizeOrbitals(V,weights):
     return U
 
 def clenshawCurtisNorm(psi):
-    global weights
-    
+#     return np.max(np.abs(psi))
+#     print('USING CLENSHAW CURTIS NORM CALLED BY ', inspect.stack()[2][3])
+# #     return np.sqrt(np.sum(psi*psi))
+# #     global weights
+#      
     appendedWeights = np.append(weights, 10.0)
-    return np.sqrt( np.sum( psi*psi*appendedWeights ) )
+#     print(appendedWeights[-5:])
+    norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
+#     print('Norm = ', norm)
+    return norm
 
 
 def clenshawCurtisNorm_withoutEigenvalue(psi):
@@ -710,6 +718,8 @@ def greensIteration_FixedPoint(psiIn):
     elif symmetricIteration==True:
         normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
     eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
+    
+    tree.eigenvalueDiff = eigenvalueDiff
     
     
 
@@ -1180,23 +1190,83 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                 print('CC norm of residual vector: ', resNorm)
 
             
-            # Call anderson mixing on the Green's iteration fixed point function
-            targets = tree.extractPhi(m)
-            sources = tree.extractPhi(m)
-            weights = np.copy(targets[:,5])
-            orbitals[:,m] = np.copy(targets[:,3])
             
-        
-            # Orthonormalize orbital m before beginning Green's iteration
-            n,M = np.shape(orbitals)
-            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
-            orbitals[:,m] = np.copy(orthWavefunction)
-            tree.importPhiOnLeaves(orbitals[:,m], m)
-            psiIn = np.append( np.copy(orbitals[:,m]), tree.orbitalEnergies[m] )
             
+            
+            if SCFcount==1: 
+                tol = 1e-6
+            else:
+                tol = 1e-6
+            if m>=6:  # tighten the non-degenerate deepest states for benzene.  Just an idea...
+                tol = 1e-6
+            Done = False
+            while Done==False:
+                try:
+                    # Call anderson mixing on the Green's iteration fixed point function
+                    targets = tree.extractPhi(m)
+                    sources = tree.extractPhi(m)
+                    weights = np.copy(targets[:,5])
+                    orbitals[:,m] = np.copy(targets[:,3])
+                    
+                
+                    # Orthonormalize orbital m before beginning Green's iteration
+                    n,M = np.shape(orbitals)
+                    orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
+                    orbitals[:,m] = np.copy(orthWavefunction)
+                    tree.importPhiOnLeaves(orbitals[:,m], m) 
+                    
+                    psiIn = np.append( np.copy(orbitals[:,m]), tree.orbitalEnergies[m] )
+                    psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,maxiter=10, alpha=1, M=5, w0=0.01, f_tol=tol, verbose=True, callback=printResidual)
+                    Done = True
+                except Exception:
+                    if np.abs(tree.eigenvalueDiff) < tol/10:
+                        print("Rootfinding didn't converge but eigenvalue is converged.  Exiting because this is probably due to degeneracy in the space.")
+                        targets = tree.extractPhi(m)
+                        psiOut = np.append(targets[:,3], tree.orbitalEnergies[m])
+                        Done=True
+                    else:
+                        pass
+#                 if eigenvalueDiff<tol:
+#                     pass
+#                 else:
+#                     print('Anderson didnt converge, eigenvalue not converged, what to do??  Try again?')
+#                     targets = tree.extractPhi(m)
+#                     sources = tree.extractPhi(m)
+#                     weights = np.copy(targets[:,5])
+#                     orbitals[:,m] = np.copy(targets[:,3])
+#                     
+#                 
+#                     # Orthonormalize orbital m before beginning Green's iteration
+#                     n,M = np.shape(orbitals)
+#                     orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M) 
+#                     orbitals[:,m] = np.copy(orthWavefunction)
+#                     tree.importPhiOnLeaves(orbitals[:,m], m) 
+#                     
+#                     psiIn = np.append( np.copy(orbitals[:,m]), tree.orbitalEnergies[m] )
+#                     psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=1, M=5, w0=0.01, max_iter=30, line_search=None, f_tol=tol, verbose=True, callback=printResidual)
 
+
+#                 targets = tree.extractPhi(m)
+#                 sources = tree.extractPhi(m)
+#                 weights = np.copy(targets[:,5])
+#                 orbitals[:,m] = np.copy(targets[:,3])
+#                 
+#             
+#                 # Orthonormalize orbital m before beginning Green's iteration
+#                 n,M = np.shape(orbitals)
+#                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
+#                 orbitals[:,m] = np.copy(orthWavefunction)
+#                 tree.importPhiOnLeaves(orbitals[:,m], m)
+#                 psiIn = np.append( np.copy(orbitals[:,m]), tree.orbitalEnergies[m] )
+# #                 psiIn = 1/2*(np.copy(orbitals[:,m]) + np.copy(oldOrbitals[:,m]) )
+#                 r = greensIteration_FixedPoint(psiIn)
+#                 resNorm = clenshawCurtisNorm(r)
+#                 print('CC norm of residual vector: ', resNorm)
+                
+                
 #             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=1, M=10, w0=0.01,line_search=None,tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
-            psiOut = scipyNewtonKrylov(greensIteration_FixedPoint,psiIn, f_tol=1e-4, verbose=True, callback=printResidual)            
+#             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=1, M=10, w0=0.01,line_search=None, f_tol=1e-4, verbose=True, callback=printResidual)
+#             psiOut = scipyNewtonKrylov(greensIteration_FixedPoint,psiIn, inner_maxiter=4, f_tol=1e-4, tol_norm=clenshawCurtisNorm, verbose=True, callback=printResidual)            
             orbitals[:,m] = np.copy(psiOut[:-1])
             tree.orbitalEnergies[m] = np.copy(psiOut[-1])
             
@@ -1258,8 +1328,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                 outputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = newDensity
         
-        print('Sample of output densities:')
-        print(outputDensities[0,:])    
+#         print('Sample of output densities:')
+#         print(outputDensities[0,:])    
         integratedDensity = np.sum( newDensity*weights )
         densityResidual = np.sqrt( np.sum( (sources[:,3]-oldDensity[:,3])**2*weights ) )
         print('Integrated density: ', integratedDensity)

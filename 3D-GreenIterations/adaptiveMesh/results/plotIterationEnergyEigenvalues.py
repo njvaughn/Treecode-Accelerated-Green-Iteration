@@ -118,8 +118,8 @@ resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'
 # file='CO_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
 # file='CO_mixingM5_gaugeShift-0.5_LW5_500_GREEN_1493000.csv'
 # file='scipyAnderson_10initIterations_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
-file='scipyAnderson_looser_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
-
+# file='scipyAnderson_looser_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
+file='scipyAnderson_init1Sonly_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'  
 
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/gaugeShiftTests/'
 # file='CO_swap_gaugeShift-1.0_LW5_500_GREEN_375500.csv'
@@ -228,7 +228,7 @@ print(df.shape)
 
 
 # # ## Benzene
-nWavefunctions=22
+nWavefunctions=23
 referenceEnergies = np.array( [ -9.791997000000000, 
                                 -9.791806000000000,    
                                 -9.791746000000000,    
@@ -250,6 +250,7 @@ referenceEnergies = np.array( [ -9.791997000000000,
                                 -0.304703800000000,    
                                 -0.240343300000000,    
                                 -0.240322100000000,
+                                0.0000,
                                 0.0000]) 
 
 # residualsMatrix = np.zeros((df.shape[0],10))
