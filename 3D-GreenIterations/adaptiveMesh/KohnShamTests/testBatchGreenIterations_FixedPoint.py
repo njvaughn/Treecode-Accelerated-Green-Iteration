@@ -348,8 +348,12 @@ import os
 import csv
 from numba import cuda, jit, njit
 import time
-from scipy.optimize import anderson as scipyAnderson
-from scipy.optimize import newton_krylov as scipyNewtonKrylov
+# from scipy.optimize import anderson as scipyAnderson
+from scipy.optimize import root as scipyRoot
+from scipy.optimize.nonlin import BroydenFirst, KrylovJacobian
+from scipy.optimize.nonlin import InverseJacobian
+# from scipy.optimize import newton_krylov as scipyNewtonKrylov
+
 import densityMixingSchemes as densityMixing
 from fermiDiracDistribution import computeOccupations
 import sys
@@ -456,9 +460,9 @@ def clenshawCurtisNorm_withoutEigenvalue(psi):
 def greensIteration_FixedPoint(psiIn):
     print('Who called F(x)? ', inspect.stack()[2][3])
     inputWave = np.copy(psiIn[:-1])
-    print('Norm of psiIn:', clenshawCurtisNorm_withoutEigenvalue(inputWave))
-    print('Norm of psiIn - what was already in orbitals array: ', clenshawCurtisNorm_withoutEigenvalue(inputWave-orbitals[:,m]))
-    print('Norm of psiIn - what was already in oldOrbitals array: ', clenshawCurtisNorm_withoutEigenvalue(inputWave-oldOrbitals[:,m]))
+#     print('Norm of psiIn:', clenshawCurtisNorm_withoutEigenvalue(inputWave))
+#     print('Norm of psiIn - what was already in orbitals array: ', clenshawCurtisNorm_withoutEigenvalue(inputWave-orbitals[:,m]))
+#     print('Norm of psiIn - what was already in oldOrbitals array: ', clenshawCurtisNorm_withoutEigenvalue(inputWave-oldOrbitals[:,m]))
     
 #     psiIn /= clenshawCurtisNorm(psiIn)
 #     print('Normalizing psiIn...')
@@ -1166,11 +1170,37 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
         for m in range(nOrbitals): 
             print('Working on orbital %i' %m)
             print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
-            
+#             if m==3:
+#                 print('Saving restart files for after the psi0 and psi1 complete.')
+#                 # save arrays 
+#                 try:
+#                     np.save(wavefunctionFile, orbitals)
+#                     
+#                     sources = tree.extractLeavesDensity()
+#                     np.save(densityFile, sources[:,3])
+#                     np.save(outputDensityFile, outputDensities)
+#                     np.save(inputDensityFile, inputDensities)
+#                     
+#                     np.save(vHartreeFile, V_hartreeNew)
+#                     
+#                     
+#                     
+#                     # make and save dictionary
+#                     auxiliaryRestartData = {}
+#                     auxiliaryRestartData['SCFcount'] = SCFcount
+#                     auxiliaryRestartData['totalIterationCount'] = tree.totalIterationCount
+#                     auxiliaryRestartData['eigenvalues'] = tree.orbitalEnergies
+#                     auxiliaryRestartData['Eold'] = Eold
+#             
+#                     np.save(auxiliaryFile, auxiliaryRestartData)
+#                 except FileNotFoundError:
+#                     print('Failed to save restart files.')
+#                         
+                        
             greenIterationsCount=1
 
             resNorm=1
-            while resNorm>1e-2:
+            while resNorm>1e2:
 #             for njv in range(10):
                 targets = tree.extractPhi(m)
                 sources = tree.extractPhi(m)
@@ -1191,12 +1221,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 
             
             
-            
-            
+            print('Power iteration tolerance met.  Beginning rootfinding now...') 
+             
             if SCFcount==1: 
-                tol = 1e-6
+                tol = 1e-3
             else:
-                tol = 1e-6
+                tol = 2e-5
             if m>=6:  # tighten the non-degenerate deepest states for benzene.  Just an idea...
                 tol = 1e-6
             Done = False
@@ -1207,16 +1237,46 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                     sources = tree.extractPhi(m)
                     weights = np.copy(targets[:,5])
                     orbitals[:,m] = np.copy(targets[:,3])
-                    
-                
+                     
+                 
                     # Orthonormalize orbital m before beginning Green's iteration
                     n,M = np.shape(orbitals)
                     orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
                     orbitals[:,m] = np.copy(orthWavefunction)
                     tree.importPhiOnLeaves(orbitals[:,m], m) 
-                    
+                     
                     psiIn = np.append( np.copy(orbitals[:,m]), tree.orbitalEnergies[m] )
-                    psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,maxiter=10, alpha=1, M=5, w0=0.01, f_tol=tol, verbose=True, callback=printResidual)
+#                     print('Calling scipyAnderson')
+#                     psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,maxiter=5, alpha=1, M=5, w0=0.01, f_tol=tol, verbose=True, callback=printResidual)
+                     
+                     
+                    ### Anderson Options
+                    method='anderson'
+                    jacobianOptions={'alpha':1.0, 'M':5, 'w0':0.01}
+                    solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':20, 'line_search':None, 'disp':True}
+#                     solverOptions={'fatol':1e-6, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions, 'disp':True}
+                     
+#                     ### Krylov Options
+#                     jac = BroydenFirst()
+#                     kjac = KrylovJacobian(inner_M=InverseJacobian(jac))
+# #                     jacobianOptions={'method':'lgmres','inner_M':kjac, 'inner_maxiter':3, 'outer_k':2}
+#                     jacobianOptions={'method':'lgmres', 'inner_maxiter':3, 'outer_k':2}
+#                     method='krylov'
+#                     solverOptions={'fatol':1e-6, 'tol_norm':clenshawCurtisNorm, 'line_search':None, 'disp':True, 'jac_options':jacobianOptions}
+                     
+                     
+                    ### Broyden Options
+#                     method='broyden1'
+#                     jacobianOptions={'alpha':1.0}
+# #                     solverOptions={'fatol':1e-6, 'line_search':None, 'disp':True, 'jac_options':jacobianOptions}
+#                     solverOptions={'fatol':1e-6, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions, 'line_search':None, 'disp':True}
+
+                     
+                    print('Calling scipyRoot with %s method' %method)
+                    sol = scipyRoot(greensIteration_FixedPoint,psiIn, method=method, callback=printResidual, options=solverOptions)
+                    print(sol.success)
+                    print(sol.message)
+                    psiOut = sol.x
                     Done = True
                 except Exception:
                     if np.abs(tree.eigenvalueDiff) < tol/10:
@@ -1226,6 +1286,13 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                         Done=True
                     else:
                         pass
+            orbitals[:,m] = np.copy(psiOut[:-1])
+            tree.orbitalEnergies[m] = np.copy(psiOut[-1])
+             
+            print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
+
+
+
 #                 if eigenvalueDiff<tol:
 #                     pass
 #                 else:
@@ -1267,10 +1334,9 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 #             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=1, M=10, w0=0.01,line_search=None,tol_norm=clenshawCurtisNorm, f_tol=1e-4, verbose=True, callback=printResidual)
 #             psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,alpha=1, M=10, w0=0.01,line_search=None, f_tol=1e-4, verbose=True, callback=printResidual)
 #             psiOut = scipyNewtonKrylov(greensIteration_FixedPoint,psiIn, inner_maxiter=4, f_tol=1e-4, tol_norm=clenshawCurtisNorm, verbose=True, callback=printResidual)            
-            orbitals[:,m] = np.copy(psiOut[:-1])
-            tree.orbitalEnergies[m] = np.copy(psiOut[-1])
             
-            print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
+            
+            
         
         # sort by energy and compute new occupations
         tree.sortOrbitalsAndEnergies()
@@ -1567,10 +1633,10 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
             
-#         if SCFcount >= 1:
-#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-#             energyResidual = -1
-#             densityResidual = -1
+        if SCFcount >= 1:
+            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+            energyResidual = -1
+            densityResidual = -1
         
 
 
