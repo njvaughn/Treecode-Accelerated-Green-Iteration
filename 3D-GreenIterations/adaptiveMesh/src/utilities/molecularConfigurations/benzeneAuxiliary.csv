@@ -7,7 +7,6 @@
  -2.6706730815123834e+00				 # Correlation Energy 
  312.915135214420    # Hartree Energy
 -2.3017676506737371e+02    # Total Energy 
--0.25 # Gauge Shift	
 
 
 
@@ -16,7 +15,8 @@
 #-1.1997011069615391e+01 # Exchange energy 
 #-9.4214407530225852e-01 # Correlation Energy 
 #-2.1138290579726365e+02 # Electrostatic Energy
-#-112.47144323799400     # Total Energy 
+#-112.47144323799400     # Total Energy  
 #-1.0 # Gauge Shift	
 
- 
+   
+    

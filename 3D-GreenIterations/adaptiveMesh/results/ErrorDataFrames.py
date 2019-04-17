@@ -98,13 +98,23 @@ file='runComparison.csv'
 # resultsDir='/Users/nathanvaughn/Desktop/TreecodeTests/KohnShamOxygen/Oxygen/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/CO_treecode_testing/'
 
+# Testing ScipyAnderson
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/fixedPointImplementation/'
+# file='CO_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
+# file='CO_mixingM5_gaugeShift-0.5_LW5_500_GREEN_1493000.csv'
+# file='scipyAnderson_10initIterations_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
+# file='scipyAnderson_looser_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
+file='testing_Be_mixingM5_ds_LW5_500_SCF_375500.csv'
 
+## MICDE SYMPOSIUM DATA
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/MICDE_Data_2019/berylliumData/'
 
 ## Parent-Child integral tests
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_onlyThird/'
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_onlyThird_oxygen/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/'
 
 
 # resultsDir = '/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentIntegral_vs_LW5/'
@@ -125,7 +135,7 @@ resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/
 # HartreeEnergy = 36.32506036  
 
 
-# # # Beryllium
+# # Beryllium
 # TotalEnergy = -1.4446201118081863e+01
 # ExchangeEnergy = -2.2903921833555341e+00
 # CorrelationEnergy = -2.2343205529440757e-01
@@ -135,7 +145,7 @@ resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/
 # HartreeEnergy = 7.115165052  
 
 
-# Carbon Monoxide
+# # Carbon Monoxide
 TotalEnergy = -112.47144323799400
 ExchangeEnergy = -1.1997011069615391e+01
 CorrelationEnergy = -9.4214407530225852e-01
@@ -148,6 +158,7 @@ HartreeEnergy = 76.1983318
 
 
 df = pd.read_csv(resultsDir+file, header=0)
+print(df)
 # print(df)
 
 
@@ -606,18 +617,24 @@ if __name__=="__main__":
      
 #     df = df.loc[df['treecodeOrder'].isin([1,8])]
 #     df = df.loc[df['theta'].isin([0.7,1.0])]
-#     AversusBcolorbyC(df,'TotalEnergy', 'theta', 'treecodeOrder')
-#     AversusBcolorbyC(df,'BandEnergyError', 'theta', 'treecodeOrder') 
-#     AversusBcolorbyC(df,'HartreeEnergyError', 'theta', 'treecodeOrder')
-#     AversusBcolorbyC(df,'ExchangeEnergyError', 'theta', 'treecodeOrder')
-#     AversusBcolorbyC(df,'CorrelationEnergyError', 'theta', 'treecodeOrder')
+
+    AversusBcolorbyC(df,'TotalEnergy', 'theta', 'treecodeOrder')
+    AversusBcolorbyC(df,'BandEnergy', 'theta', 'treecodeOrder')
+    AversusBcolorbyC(df,'HartreeEnergy', 'theta', 'treecodeOrder')
+    AversusBcolorbyC(df,'ExchangeEnergy', 'theta', 'treecodeOrder')
+    AversusBcolorbyC(df,'CorrelationEnergy', 'theta', 'treecodeOrder')
+#     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'theta', 'treecodeOrder')
+#     logAversusLogBcolorbyC(df,'absBandEnergyError', 'theta', 'treecodeOrder') 
+#     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'theta', 'treecodeOrder')
+#     logAversusLogBcolorbyC(df,'absExchangeEnergyError', 'theta', 'treecodeOrder')
+#     logAversusLogBcolorbyC(df,'absCorrelationEnergyError', 'theta', 'treecodeOrder')
     
 #     df = df.loc[df['additionalDepthAtAtoms']==3]
 #     df = df.loc[df['maxDepth']>=13]
 #     df = df.loc[df['order']==5]
-    logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'divideCriterion')
-    logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'maxDepth')
-    logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'maxDepth')
+#     logAversusLogBcolorbyC(df,'absTotalEnergyError', 'numberOfPoints', 'divideParameter3')
+#     logAversusLogBcolorbyC(df,'absBandEnergyError', 'numberOfPoints', 'divideParameter3')
+#     logAversusLogBcolorbyC(df,'absHartreeEnergyError', 'numberOfPoints', 'divideParameter3')
 #     AversusBcolorbyC(df,'TotalEnergyError', 'numberOfPoints', 'maxDepth')
 #     AversusBcolorbyC(df,'BandEnergyError', 'numberOfPoints', 'maxDepth') 
 #     AversusBcolorbyC(df,'HartreeEnergyError', 'numberOfPoints', 'maxDepth')

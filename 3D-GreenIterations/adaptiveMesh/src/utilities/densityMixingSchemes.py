@@ -8,6 +8,7 @@ import numpy as np
 from scipy.special import factorial, comb
 
 import matplotlib.pyplot as plt
+from mpmath.calculus.optimization import steffensen
 
 
 def innerProduct(f,g,weights):
@@ -83,6 +84,111 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, 
         return nextDensity, cvec
     elif returnWeights==False:
         return nextDensity
+    
+def applyWeightsToEigenvalue(eigenvalueHistory,cvec):
+    n = len(eigenvalueHistory)
+    newEigenvalue = np.copy(eigenvalueHistory[n-1])
+    for k in range(0,n-1):
+        newEigenvalue += cvec[k] * (eigenvalueHistory[n-2-k] - eigenvalueHistory[n-1]) 
+    return newEigenvalue
+
+
+def nathanAcceleration(a,b,c):
+    return a + 5*(c-a)    
+def AitkenAcceleration(a, b, c):
+    
+   
+    
+    numerator = (b - a)**2
+    denominator = (a - 2*b + c)
+#     print(np.shape(numerator))
+#     print(np.shape(denominator))
+#     if abs(denominator)<1e-16: 
+#     if abs(denominator).any()<1e-13: 
+#         print('Warning, abs(denominator) < 1e-15')
+#         return a
+    correction = numerator / denominator
+#     print('Max denominator: ', np.max(np.abs( denominator) ))
+#     print('Min denominator: ', np.min(np.abs(denominator) ))
+#     print('Max correction: ', np.max(correction))
+#     print('Min correction: ', np.min(correction))
+#     print('Max relative correction: ', np.max(correction/a))
+#     print('Min relative correction: ', np.min(correction/a))
+
+
+
+    try:
+        for i in range(len(correction)):
+            if abs(denominator[i]/(a[i]-b[i])) < 0.05:
+                correction[i] = -1*(c[i]-a[i])
+            
+        print('After correcting for when E_AB is almost equal to E_BC:')
+        print('Max correction: ', np.max(correction))
+        print('Min correction: ', np.min(correction))
+        print('Max relative correction: ', np.max(correction/a))
+        print('Min relative correction: ', np.min(correction/a))
+        print()
+    except TypeError:
+        pass 
+
+    
+    try:
+        for i in range(len(correction)):
+            if abs(correction[i]/a[i]) > 0.3:
+                correction[i] = -1*(c[i]-a[i])
+        print('After limitting relative correction to 0.3:')
+#         correction = numerator / denominator 
+        print('Max correction: ', np.max(correction))
+        print('Min correction: ', np.min(correction))
+        print('Max relative correction: ', np.max(correction/a))
+        print('Min relative correction: ', np.min(correction/a))
+        print()
+    except TypeError:
+        pass 
+    
+    
+#     try:
+#         for i in range(len(denominator)):
+#             if abs(denominator[i]) < -1e-15:
+#                 numerator[i]=0.0
+#         print('After masking small denominator terms:')
+#         correction = numerator / denominator 
+#         print('Max correction: ', np.max(correction))
+#         print('Min correction: ', np.min(correction))
+#         print('Max relative correction: ', np.max(correction/a))
+#         print('Min relative correction: ', np.min(correction/a))
+#         print()
+#     except TypeError:
+#         pass  
+
+    
+#     if abs(numerator).all()<1e-16: print('Warning, abs(numerator) < 1e-16')
+#     if abs(denominator).all()<1e-16: print('Warning, abs(denominator) < 1e-16')
+#     if abs(numerator)<1e-16: print('Warning, abs(numerator) < 1e-16')
+    
+#     print('Correction: ', correction)
+    return (a - correction)
+
+#     return (a*c-b*b) / ( c - 2*b + a )
+
+def AitkenPointwiseAcceleration(a, b, c):
+    
+   
+    
+    output = np.zeros(len(a))
+
+    for i in range(len(a)):
+        if abs(1 - abs( (a[i]-b[i]) / (c[i]-b[i]) ) ) < 0.05:
+            output[i] = AitkenAcceleration(a[i],b[i],c[i])
+        
+    print('After pointwise acceleration:')
+    print('Max correction: ', np.max(output-a))
+    print('Min correction: ', np.min(output-a))
+    print('Max relative correction: ', np.max((output-a)/a))
+    print('Min relative correction: ', np.min((output-a)/a))
+    print()
+
+    return output
  
 
 def test1():
@@ -199,9 +305,218 @@ def test2():
     plt.show()
 
 
+def testSteffensenScalar():
+    
+    def f(x):
+#         return (np.array(x) + 2/np.array(x)) / 2
+        return 6.28 + np.sin(x)
+    
+    xold=-100
+    count=1
+    residual=1
+    residualVec=[]
+    while residual>1e-14:
+        xnew = f(xold)
+        residual = abs(xnew-xold)
+        residualVec.append(residual)
+        xold = np.copy(xnew)
+        print('Iteration %2i, x = %1.10f, residual = %1.3e' %(count, xnew, residual))
+        count+=1
+    plt.semilogy(residualVec, label='Original')
+    print()
+    print()
+    xold=-100
+    count=1
+    residual=1
+    residualVec=[]
+    while residual>1e-14:
+        fx = f(xold)
+        fxx = f(fx)
+        xnew = AitkenAcceleration(xold, fx, fxx)
+        residual = abs(xnew-xold)
+        residualVec.append(residual)
+        xold = np.copy(xnew)
+        print('Iteration %2i, x = %1.10f, residual = %1.3e' %(count, xnew, residual))
+        count+=1
+    plt.semilogy(residualVec, label='Steffensen')
+    plt.legend()
+    plt.title('Convergence of Fixed Point Iteration: x = 6.28 + sin(x)')
+    plt.xlabel('Iteration Count')
+    plt.ylabel('Residual')
+    plt.show()
+        
+def testSteffenson(N):
+    if N==2:
+        A = np.zeros((2,2))
+        A[0,0]=1
+        A[1,1]=0.9
+        A[1,0]=2
+        A[0,1]=0
+    else:
+        A = np.random.rand(N,N)
+#         A = (A + A.T)/2
+    x = np.random.rand(N)
+    x /= np.linalg.norm(x)
+    xs = np.copy(x)
+    
+    eigs = np.linalg.eigvals(A)
+#     print(eigs)
+    
+    ## preprocess to get an accurate eigenvalue and eigenvector
+    vectorResidual=1
+    eigOld=1
+    t = np.random.rand(N)
+    count=1
+    limit=1000
+
+    while ( (vectorResidual>1e-12) and (count<limit) ):
+        y = np.dot(A,t)
+        y /= np.linalg.norm(y)
+        eig = np.dot(y, np.dot(A,y))
+        residual = abs( eig-eigOld )
+        eigOld=eig
+        vectorResidual = np.linalg.norm(t-y)
+#         print(count, ': ', eig, ', residual: ', residual)
+#         print('Power Iteration %2i, Eigenvalue: %1.10f, Eigenvector residual: %1.3e, Eigenvalue residual: %1.3e' %(count,eig,vectorResidual,residual))
+        t = np.copy(y)
+        count+=1
+    e = eig
+    print('Converged Eigenfunction and eigenvalue saves as (t,e). e=', e)
+    print()
+    print()
+#     e = 1
+    
+        
+    errorVec = []
+    residualVec = []
+    count=1
+    residual=1
+    eigOld = 100
+    vectorResidual=1
+    while ( (vectorResidual>1e-12) and (count<limit) ):
+        y = np.dot(A,x)
+        y /= np.linalg.norm(y)
+        eig = np.dot(y, np.dot(A,y))
+        residual = abs( eig-eigOld )
+        eigOld=eig
+        vectorResidual = np.linalg.norm(x-y)
+        errorNorm = np.linalg.norm(y-t)
+        errorVec.append(eig-e)
+        residualVec.append(vectorResidual)
+#         print('Power Iteration %2i, Eigenvalue: %1.10f, Eigenvector residual: %1.3e, Eigenvalue residual: %1.3e' %(count,eig,vectorResidual,residual))
+#         print('Power Iteration %2i, Eigenvalue Error: %1.12f, Eigenvector Error: %1.12f' %(count,abs(eig-e),errorNorm))
+        x = np.copy(y)
+        count+=1
+    print('Power iteration eig = ', eig)
+    plt.semilogy(residualVec,label="Power Iteration")
+    powerIterationCount = count
+    
+#     print() 
+#     print('Error vec: ')
+#     print(np.array(errorVec))
+#     ratioVec = np.zeros(len(errorVec)-1)
+#     for i in range(len(errorVec)-1):
+#         ratioVec[i] = errorVec[i]/errorVec[i+1]
+#     print()
+#     print('Ratio Vec: ')
+#     print(ratioVec)
+#     print() 
+#     print()
+
+    print() 
+    print('Residual vec: ')
+    print(np.array(residualVec))
+    ratioVec = np.zeros(len(residualVec)-1)
+    for i in range(len(residualVec)-1):
+        ratioVec[i] = residualVec[i]/residualVec[i+1]
+    print()
+    print('Ratio Vec: ')
+    print(ratioVec)
+    print() 
+    print()
+    
+    
+    residualVec = []
+    errorVec = []
+    x = np.copy(xs)  
+    count=1
+    residual=1
+    eigOld = 100
+    vectorResidual=1
+    while ( (vectorResidual>1e-12) and (count<limit) ):
+        xold = np.copy(x)
+        
+        y = np.dot(A,x)
+        y /= np.linalg.norm(y)
+#         print('y eig: %1.10f' %(np.dot(y, np.dot(A,y))))py
+        z = np.dot(A,y)
+        z /= np.linalg.norm(z)
+#         print('z eig: %1.10f' %(np.dot(z, np.dot(A,z))))
+        
+        x = AitkenAcceleration(xold,y,z)
+        x /= np.linalg.norm(x)
+        
+        # Throw in an extra iteration
+        x = np.dot(A,x)
+        x /= np.linalg.norm(x)
+
+#         print('Norm of aitken x: ', np.linalg.norm(x))
+        eig = np.dot(x, np.dot(A,x))
+        residual = abs( eig-eigOld )
+        eigOld=eig
+        vectorResidual = np.linalg.norm(x-xold)
+        residualVec.append(vectorResidual)
+        errorNorm = np.linalg.norm(x-t)
+        errorVec.append(eig-e)
+#         print('Steffensen Iteration %2i, Eigenvalue: %1.10f, Eigenvector residual: %1.3e, Eigenvalue residual: %1.3e' %(count,eig,vectorResidual,residual))
+#         print('Steffensen Iteration %2i, Eigenvalue Error: %1.12f, Eigenvector Error: %1.12f' %(count,abs(eig-e),errorNorm))
+        count+=1
+    print('Steffensen eig = ', eig)
+    plt.semilogy(residualVec,'o',label="Steffensen Accelerated")
+    plt.title('Power Iteration Convergence for Matrix with lamba1=%1.5f, lambda2=%1.5f' %(eigs[0],eigs[1]))
+    plt.xlabel('Iteration Count')
+    plt.ylabel('Eigenvector Residual Norm')
+    plt.legend()
+    
+    steffensenCount = count
+    
+#     print() 
+#     print(np.array(errorVec))
+#     ratioVec = np.zeros(len(errorVec)-1)
+#     for i in range(len(errorVec)-1):
+#         ratioVec[i] = errorVec[i]/errorVec[i+1]
+#     print()
+#     print(ratioVec)
+#     print()
+    
+    print() 
+    print('Residual vec: ')
+    print(np.array(residualVec))
+    ratioVec = np.zeros(len(residualVec)-1)
+    for i in range(len(residualVec)-1):
+        ratioVec[i] = residualVec[i]/residualVec[i+1]
+    print()
+    print('Ratio Vec: ')
+    print(ratioVec)
+    print() 
+    print() 
+    
+    print('True eigenvalues: ', eigs)
+    print()
+    print('Power iterations:                                        ', powerIterationCount)
+    print('Steffensen iterations (times 2, since 2 matvecs per):    ', steffensenCount*2)
+    plt.show()
+
+
+def testAnderson():
+    
+    return
+
 if __name__=="__main__":
     
-    test2()
+#     test2()
+    testSteffenson(10)
+#     testSteffensenScalar()
     
 
     

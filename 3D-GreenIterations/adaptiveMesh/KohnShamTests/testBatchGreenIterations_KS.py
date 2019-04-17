@@ -30,6 +30,7 @@ import csv
 
 from TreeStruct_CC import Tree
 from greenIterations import greenIterations_KohnSham_SCF#,greenIterations_KohnSham_SINGSUB
+from greenIterations_simultaneous import greenIterations_KohnSham_SCF_simultaneous
 
 # from hydrogenPotential import trueWavefunction
 
@@ -43,6 +44,7 @@ order               = int(sys.argv[n]); n+=1
 subtractSingularity = int(sys.argv[n]); n+=1
 smoothingEps        = float(sys.argv[n]); n+=1
 gaussianAlpha       = float(sys.argv[n]); n+=1
+gaugeShift          = float(sys.argv[n]); n+=1
 divideCriterion     = str(sys.argv[n]); n+=1
 divideParameter1    = float(sys.argv[n]); n+=1
 divideParameter2    = float(sys.argv[n]); n+=1
@@ -52,6 +54,7 @@ outputFile          = str(sys.argv[n]); n+=1
 inputFile           = str(sys.argv[n]); n+=1
 vtkDir              = str(sys.argv[n]); n+=1
 noGradients         = str(sys.argv[n]) ; n+=1
+symmetricIteration  = str(sys.argv[n]) ; n+=1
 mixingScheme        = str(sys.argv[n]); n+=1
 mixingParameter     = float(sys.argv[n]); n+=1
 mixingHistoryCutoff = int(sys.argv[n]) ; n+=1
@@ -89,6 +92,13 @@ if noGradients=='True':
     gradientFree=True
 elif noGradients=='False':
     gradientFree=False
+else:
+    print('Warning, not correct input for gradientFree')
+    
+if symmetricIteration=='True':
+    symmetricIteration=True
+elif symmetricIteration=='False':
+    symmetricIteration=False
 else:
     print('Warning, not correct input for gradientFree')
 
@@ -131,7 +141,7 @@ def setUpTree(onlyFillOne=False):
 #      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift] = np.genfromtxt(inputFile,delimiter=',',dtype=[("|U100","|U100",int,int,float,float,float,float,float)])
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
 #     [nElectrons, nOrbitals, Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[2:]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal, gaugeShift] = np.genfromtxt(inputFile)[3:]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
 #     nElectrons = int(nElectrons)
 #     nOrbitals = int(nOrbitals)
     
@@ -156,7 +166,9 @@ def setUpTree(onlyFillOne=False):
                                             # If the final orbital is unoccupied, this amount is enough. 
                                             # If there is a degeneracy leading to teh final orbital being 
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
-                                            
+                        
+    # For O2, init 10 orbitals.
+#     nOrbitals=10                    
 
     occupations = 2*np.ones(nOrbitals)
 #     nOrbitals=7
@@ -174,14 +186,31 @@ def setUpTree(onlyFillOne=False):
         occupations[4] = 4/3
         
     elif inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
-        nOrbitals=21
+        nOrbitals=22
         occupations = 2*np.ones(nOrbitals)
-    
+#         occupations = [2, 2, 2/3 ,2/3 ,2/3, 
+#                        2, 2, 2/3 ,2/3 ,2/3,
+#                        2, 2, 2/3 ,2/3 ,2/3,
+#                        2, 2, 2/3 ,2/3 ,2/3,
+#                        2, 2, 2/3 ,2/3 ,2/3,
+#                        2, 2, 2/3 ,2/3 ,2/3, 
+#                        1,
+#                        1,
+#                        1,
+#                        1,
+#                        1,
+#                        1]
+        
+    elif inputFile=='../src/utilities/molecularConfigurations/O2Auxiliary.csv':
+        nOrbitals=10
+        occupations = [2,2,2,2,4/3,4/3,4/3,4/3,4/3,4/3]
         
     elif inputFile=='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
+#         nOrbitals=10
+#         occupations = [2, 2, 4/3 ,4/3 ,4/3, 
+#                        2, 2, 2/3 ,2/3 ,2/3 ]
         nOrbitals=7
         occupations = 2*np.ones(nOrbitals)
-#     occupations[-1] = 0
     print('in testBatchGreen..., nOrbitals = ', nOrbitals)
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
@@ -200,12 +229,12 @@ def setUpTree(onlyFillOne=False):
     print('max depth ', maxDepth)
     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-                    savedMesh=savedMesh,printTreeProperties=True,onlyFillOne=onlyFillOne)
+                    savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
 
 
     
     return tree
-    
+     
     
 def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
     
@@ -215,7 +244,8 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
 
     numberOfTargets = tree.numberOfGridpoints                # set N to be the number of gridpoints.  These will be all the targets
-    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+#     greenIterations_KohnSham_SCF_simultaneous(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+    greenIterations_KohnSham_SCF(tree, scfTolerance, energyTolerance, numberOfTargets, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
@@ -230,14 +260,14 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
 
     header = ['domainSize','minDepth','maxDepth','additionalDepthAtAtoms','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
               'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
-              'gaussianAlpha','VextSmoothingEpsilon','energyTolerance',
+              'gaussianAlpha','gaugeShift','VextSmoothingEpsilon','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
               'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','totalIterationCount']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.additionalDepthAtAtoms,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
               divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
-              gaussianAlpha,smoothingEps,energyTolerance,
+              gaussianAlpha,gaugeShift,smoothingEps,energyTolerance,
               subtractSingularity,
               tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E,
               treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime,tree.totalIterationCount]
@@ -262,7 +292,7 @@ def testGreenIterationsGPU(tree,vtkExport=vtkDir,onTheFlyRefinement=False, maxOr
     
 
 
-    
+     
 
 def updateTree(tree, onlyFillOne=False):
 

@@ -1,0 +1,9 @@
+../src/utilities/molecularConfigurations/O2.csv
+../src/utilities/molecularConfigurations/O2ReferenceEigenvalues.csv
+/home/njvaughn/results_CO/results.csv
+-6.2898682441673358e+01 # Band energy 
+ 1.1185061770418731e+02 # Kinetic energy 
+-1.1997011069615391e+01 # Exchange energy 
+-9.4214407530225852e-01 # Correlation Energy 
+ 76.1983318 			# Hartree energy
+-112.47144323799400     # Total Energy 
