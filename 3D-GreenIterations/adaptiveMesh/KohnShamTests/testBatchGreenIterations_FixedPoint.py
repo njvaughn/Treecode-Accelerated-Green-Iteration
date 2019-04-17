@@ -1228,7 +1228,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             else:
                 tol = 2e-5
             if m>=6:  # tighten the non-degenerate deepest states for benzene.  Just an idea...
-                tol = 1e-6
+                tol = 2e-5
             Done = False
             while Done==False:
                 try:
@@ -1252,8 +1252,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                      
                     ### Anderson Options
                     method='anderson'
-                    jacobianOptions={'alpha':1.0, 'M':5, 'w0':0.01}
-                    solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':20, 'line_search':None, 'disp':True}
+                    jacobianOptions={'alpha':1.0, 'M':10, 'w0':0.01}
+                    solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':2000, 'line_search':None, 'disp':True}
 #                     solverOptions={'fatol':1e-6, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions, 'disp':True}
                      
 #                     ### Krylov Options
@@ -1285,6 +1285,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                         psiOut = np.append(targets[:,3], tree.orbitalEnergies[m])
                         Done=True
                     else:
+                        print('Not converged.  What to do?')
                         pass
             orbitals[:,m] = np.copy(psiOut[:-1])
             tree.orbitalEnergies[m] = np.copy(psiOut[-1])
