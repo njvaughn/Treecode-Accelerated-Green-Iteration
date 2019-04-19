@@ -44,6 +44,7 @@ def compareTwoIterations(restartDir,iterationA,iterationB):
  
 
 if __name__=="__main__":
+    meshFile='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0.npy'
     restartDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/restartFiles_1416000_after25/'
     compareTwoIterations(restartDir,10,11)
     

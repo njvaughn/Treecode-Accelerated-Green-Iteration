@@ -816,7 +816,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+'_plots'
-    restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(tree.numberOfGridpoints)
+#     restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(tree.numberOfGridpoints)
+    restartFilesDir =       '/Users/nathanvaughn/Documents/synchronizedDataFiles/restartFiles_1416000_after25'
     wavefunctionFile =      restartFilesDir+'/wavefunctions'
     densityFile =           restartFilesDir+'/density'
     inputDensityFile =      restartFilesDir+'/inputdensity'
