@@ -540,19 +540,19 @@ if __name__ == "__main__":
             
 #             oxygenAtomAuxiliary
     gaugeShift=-0.5 
-#     tree = exportMeshForParaview(domain=20,order=5,
+    tree = exportMeshForParaview(domain=20,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+                        divideParameter1=500, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
+                        savedMesh='')        
+             
+#     tree = exportMeshForParaview(domain=30,order=5,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-#                         divideParameter1=500, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/O2Auxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
-#                         savedMesh='')        
-            
-    tree = exportMeshForParaview(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildIntegral', 
-                        divideParameter1=500, divideParameter2=999, divideParameter3=1e-6, divideParameter4=0,
-                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
-                        savedMesh='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0.npy')
+#                         divideParameter1=500, divideParameter2=999, divideParameter3=1e-6, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
+#                         savedMesh='')
     
 #     exportMeshForParaview(domain=31,order=3,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 

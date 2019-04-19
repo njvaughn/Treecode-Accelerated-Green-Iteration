@@ -29,22 +29,25 @@ BASE=1.0
 GAUSSIANALPHA=1.0
  
 MESHTYPE='ParentChildrenIntegral'
-#MESHTYPE='LW5'
+#MESHTYPE='LW5' 
 GAUGESHIFT=-0.5
 
 
 MIXINGPARAMETER=0.2 
 MIXINGHISTORY=10 
  
-INTRASCFTOLERANCE=1e-6 
+INTRASCFTOLERANCE=3e-5
 INTERSCFTOLERANCE=1e-6 
    
 MIXING='Anderson'    
 CELLORDER=5 
  
 ADDITIONALDEPTHATATOMS=0 
-RESTART='True'	 
-SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0.npy' 
+RESTART='False'	 
+#SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0.npy' 
+#SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0_domain30.npy'
+#SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_3e-06_0.0.npy'
+SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_3e-07_0.0.npy'
 #SAVEDMESH='None' 
 
 for SMOOTHINGEPS in 0.0
@@ -53,7 +56,7 @@ for MAXDEPTH in 20
 do								  					 
 for MESHPARAM4 in 0       
 do
-	for MESHPARAM3 in 1e-06
+	for MESHPARAM3 in 3e-07
 	 
 	do    
 		for MESHPARAM2 in 1e6     
@@ -61,7 +64,7 @@ do
 			for MESHPARAM1 in 500
 			      
 			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/scipyAnderson_continueAfter25.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/scipyAnderson_initAtomic_eigensolveTol_take2_${INTRASCFTOLERANCE}_PCI_${MESHPARAM3}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/scipyAnderson_init1Sonly_init1e-3_tcOrder${TREECODEORDER}_theta${THETA}_PCI_${MESHPARAM3}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/simultaneous_tc_gaugeShift${GAUGESHIFT}_mindepth3_tcOrder${TREECODEORDER}_theta${THETA}_LW5_${MESHPARAM1}.csv"
 			python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \

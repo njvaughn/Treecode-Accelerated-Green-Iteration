@@ -155,6 +155,7 @@ def testAndersonOptions(N):
                         [0,0.5,0],
                         [0,0,0.99]
                     ] )
+        psiIn=np.array([1,2,3])
     else:
         weights = np.ones(N)
         A = np.random.rand(N,N)
@@ -162,7 +163,8 @@ def testAndersonOptions(N):
     
     
     
-    psiIn = np.random.rand(N)
+        psiIn = np.random.rand(N)
+    
     
 #     psiPower = np.copy(psiIn)
 #     psiPower /= np.max(np.abs(psiPower))
@@ -183,6 +185,7 @@ def testAndersonOptions(N):
 #     options={'fatol':1e-12, 'disp':True}
     jacobianOptions={'alpha':1.0, 'M':5, 'w0':0.01}
     options={'fatol':1e-12, 'maxiter':10, 'line_search':None, 'disp':True, 'jac_options':jacobianOptions}
+#     options={'fatol':1e-12, 'maxiter':10, 'disp':True, 'jac_options':jacobianOptions}
     print(options)
     method='anderson'
 #     options={'verbose':True}

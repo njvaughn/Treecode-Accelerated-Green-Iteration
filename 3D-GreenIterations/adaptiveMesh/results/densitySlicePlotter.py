@@ -34,7 +34,7 @@ def plotSlicesTogether():
     
     plt.show()
 #     return
-
+ 
 
 if __name__=="__main__":
     plotSlicesTogether()
