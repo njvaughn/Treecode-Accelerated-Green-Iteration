@@ -11,6 +11,9 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import bisect
+from pyevtk.hl import pointsToVTK
+
+
 
 from meshUtilities import *
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -72,7 +75,9 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, additionalDept
     np.savetxt(sourcesTXT, Sources)
     np.savetxt(targetsTXT, Targets[:,0:4])
 
-    print('Meshes Exported.')    
+    print('Meshes Exported.')   
+    
+
 
 
 def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
@@ -151,6 +156,114 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
     #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
 
     
+    return tree
+
+
+def exportMeshToCompareDensity(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
+                          divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
+                          smoothingEpsilon=0.0, 
+                          inputFile='', outputFile='',
+                          savedMesh='', restartFilesDir='',iterationNumber=5):    
+    
+    
+    
+#     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
+#     nElectrons = int(nElectrons)
+#     nOrbitals = int(nOrbitals)
+
+    print('Reading atomic coordinates from: ', coordinateFile)
+    atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+    if np.shape(atomData)==(5,):
+        nElectrons = atomData[3]
+    else:
+        nElectrons = 0
+        for i in range(len(atomData)):
+            nElectrons += atomData[i,3]
+    
+#     nOrbitals = int( np.ceil(nElectrons/2))
+    nOrbitals = int( np.ceil(nElectrons/2)+1)
+
+    if inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
+        nOrbitals = 30
+        
+    if inputFile=='../src/utilities/molecularConfigurations/O2Auxiliary.csv':
+        nOrbitals = 10
+        
+    print('nElectrons = ', nElectrons)
+    print('nOrbitals  = ', nOrbitals)
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+                coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
+
+    
+    print('max depth ', maxDepth)
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+                    divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
+                    savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
+    
+    print(tree.levelCounts)
+    print()
+    print(tree.levelCounts.keys())
+    print()
+    print(tree.levelCounts.values())
+    greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(tree.numberOfGridpoints)+outputFile[-4:]
+    SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+outputFile[-4:]
+    densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+'_plots'
+#     restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(tree.numberOfGridpoints)
+    restartFilesDir =       '/Users/nathanvaughn/Documents/synchronizedDataFiles/restartFiles_1416000_after25'
+
+    wavefunctionFile =      restartFilesDir+'/wavefunctions'
+    densityFile =           restartFilesDir+'/density'
+    inputDensityFile =      restartFilesDir+'/inputdensity'
+    outputDensityFile =     restartFilesDir+'/outputdensity'
+    vHartreeFile =          restartFilesDir+'/vHartree'
+    auxiliaryFile =         restartFilesDir+'/auxiliary'
+    
+    print()
+    print()
+    
+    
+    orbitals = np.load(wavefunctionFile+'.npy')
+    oldOrbitals = np.copy(orbitals)
+#     for m in range(nOrbitals): 
+#         tree.importPhiOnLeaves(orbitals[:,m], m)
+    density = np.load(densityFile+'.npy')
+#     tree.importDensityOnLeaves(density)
+    
+    inputDensities = np.load(inputDensityFile+'.npy')
+    outputDensities = np.load(outputDensityFile+'.npy')
+    
+    V_hartreeNew = np.load(vHartreeFile+'.npy')
+#     tree.importVhartreeOnLeaves(V_hartreeNew)
+#     tree.updateVxcAndVeffAtQuadpoints()
+    
+    
+    # make and save dictionary
+    auxiliaryRestartData = np.load(auxiliaryFile+'.npy').item()
+    print('type of aux: ', type(auxiliaryRestartData))
+    SCFcount = auxiliaryRestartData['SCFcount']
+    tree.totalIterationCount = auxiliaryRestartData['totalIterationCount']
+    tree.orbitalEnergies = auxiliaryRestartData['eigenvalues'] 
+    Eold = auxiliaryRestartData['Eold']
+    
+    
+    targets = tree.extractPhi(0)
+    x = targets[:,0]
+    y = targets[:,1]
+    z = targets[:,2]
+    for iterationNumber in range(100):
+        outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/comparingIOofIteration%i'%(iterationNumber)
+        pointsToVTK(outputFile, np.array(x), np.array(y), np.array(z), data = 
+                        {"rhoResidual"+str(iterationNumber) : np.abs( outputDensities[:,iterationNumber]-inputDensities[:,iterationNumber] )  } )
+    
+    
+#     tree.exportGridpoints(outputFile)
+
+    print('Meshes Exported.')
+    
+
     return tree
 
 def testTreeSaveAndReconstruction(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
@@ -414,7 +527,7 @@ def densityInterpolation(xi,yi,zi,xf,yf,zf,numpts,
     print('max depth ', maxDepth)
     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-                    printTreeProperties=True,onlyFillOne=False)
+                    printTreeProperties=True,onlyFillOne=False,restart=True)
     
     r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf,numpts,plot=False)
     
@@ -543,17 +656,26 @@ if __name__ == "__main__":
 #     tree = exportMeshForParaview(domain=20,order=5,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
 #                         divideParameter1=500, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/O2Auxiliary.csv', 
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv', 
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
 #                         savedMesh='')        
-            
-    tree = exportMeshForParaview(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildIntegral', 
+             
+#     tree = exportMeshForParaview(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=500, divideParameter2=999, divideParameter3=1e-6, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
+#                         savedMesh='')
+    
+    tree = exportMeshToCompareDensity(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
                         divideParameter1=500, divideParameter2=999, divideParameter3=1e-6, divideParameter4=0,
                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
-                        savedMesh='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0.npy')
-    
+                        savedMesh='ParentChildrenIntegral_500_999_1e-06_0__1416000.npy', 
+                        restartFilesDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/restartFiles_1416000_after25/',
+                        iterationNumber=10)
+#     
 #     exportMeshForParaview(domain=31,order=3,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
 #                         divideParameter1=500, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
