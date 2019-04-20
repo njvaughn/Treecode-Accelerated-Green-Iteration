@@ -826,7 +826,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     vHartreeFile =          restartFilesDir+'/vHartree'
     auxiliaryFile =         restartFilesDir+'/auxiliary'
     
-    plotSliceOfDensity=True
+    plotSliceOfDensity=False
     if plotSliceOfDensity==True:
         try:
             os.mkdir(densityPlotsDir)
