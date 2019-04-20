@@ -307,7 +307,7 @@ class Tree(object):
                     if yRatio == np.inf: yRatio = 0.0 
                     if zRatio == np.inf: zRatio = 0.0 
                     
-                    if np.max( [xRatio, yRatio, zRatio]) > 3.0*10**8:
+                    if np.max( [xRatio, yRatio, zRatio]) > 3.0:
                         print('ratio would have been %f if diving at nucleus.' %np.max( [xRatio, yRatio, zRatio]))
 #                         if xRatio>3.0:
 #                             xdiv = 1/3*( 2*Cell.xmid + Atom.x)
@@ -412,9 +412,8 @@ class Tree(object):
             recursiveDivideByAtom(self,atom,self.root)
             
             
-        print('Not fixing aspect ratios.  Trying to recreate old mesh.')
-#         aspectRatioTolerance = 4.0
-#         recursiveAspectRatioCheck(self,self.root)
+        aspectRatioTolerance = 4.0
+        recursiveAspectRatioCheck(self,self.root)
 #        
 #         leafCount = 0
 #         for _,cell in self.masterList:
