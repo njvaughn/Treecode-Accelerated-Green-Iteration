@@ -1194,7 +1194,7 @@ class Tree(object):
              
     def printWavefunctionNearEachAtom(self,m):
         print('Wavefunction %i' %m)
-        targets = self.extractPhi(m)
+        targets = self.extractPhi(m) 
         for Atom in self.atoms:
             loc = self.nearestGridpoints[Atom]
             print('Atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f) ::::::::: psi = %1.3e' %(Atom.atomicNumber, Atom.x, Atom.y, Atom.z, targets[loc,3]))
@@ -1284,7 +1284,7 @@ class Tree(object):
                     A += gp.rho * cell.w[i,j,k]
         print('Integrated density after normalization: ', A)
                 
-    
+     
     def normalizeDensity(self):            
         def integrateDensity(cell):
             rho = np.empty((cell.px,cell.py,cell.pz))

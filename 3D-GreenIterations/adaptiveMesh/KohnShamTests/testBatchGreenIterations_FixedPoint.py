@@ -816,8 +816,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+'_plots'
-#     restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(tree.numberOfGridpoints)
-    restartFilesDir =       '/home/njvaughn/restartFiles/restartFiles_1416000_after25'
+    restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(tree.numberOfGridpoints)
+#     restartFilesDir =       '/home/njvaughn/restartFiles/restartFiles_1416000_after25'
 #     restartFilesDir =       '/Users/nathanvaughn/Documents/synchronizedDataFiles/restartFiles_1416000_after25'
     wavefunctionFile =      restartFilesDir+'/wavefunctions'
     densityFile =           restartFilesDir+'/density'
@@ -1217,7 +1217,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             greenIterationsCount=1
 
             resNorm=1
-            while resNorm>3e-3:
+            while resNorm>1e-2:
 #             for njv in range(10):
                 targets = tree.extractPhi(m)
                 sources = tree.extractPhi(m)
@@ -1270,7 +1270,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                        
                     ### Anderson Options
                     method='anderson'
-                    jacobianOptions={'alpha':1.0, 'M':10, 'w0':0.01} 
+                    jacobianOptions={'alpha':1.0, 'M':5, 'w0':0.01} 
                     solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
 #                     solverOptions={'fatol':tol, 'tol_norm':eigenvalueNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
 #                     solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'disp':True}
@@ -1684,15 +1684,15 @@ def updateTree(x,f):
     print('L2 Norm of Residual: ', r)
     
     
-if __name__ == "__main__":
+if __name__ == "__main__": 
     #import sys;sys.argv = ['', 'Test.testName']
 
-    print('='*70)
-    print('='*70)
-    print('='*70,'\n') 
+    print('='*70) 
+    print('='*70) 
+    print('='*70,'\n')  
     
  
-    global tree
+    global tree 
     tree = setUpTree()  
     
 #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)

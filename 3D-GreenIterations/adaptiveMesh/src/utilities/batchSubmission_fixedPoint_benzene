@@ -43,7 +43,7 @@ MIXING='Anderson'
 CELLORDER=5 
  
 ADDITIONALDEPTHATATOMS=0 
-RESTART='False'	 
+RESTART='True'	 
 #SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0.npy' 
 #SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0_domain30.npy'
 #SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_3e-06_0.0.npy'
