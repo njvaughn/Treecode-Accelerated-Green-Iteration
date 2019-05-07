@@ -7,16 +7,8 @@ DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-#INPUTFILE='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv'
 
-
-INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/O2Auxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 
 VTKFILEDIR='None'
 
@@ -35,44 +27,43 @@ GAUSSIANALPHA=1.0
 GAUGESHIFT=-0.5
 
 MESHTYPE='ParentChildrenIntegral'
-#MESHTYPE='LW5'
 RESTART='False'	
-SAVEDMESH='CO_PCI_3e-7.npy' 
-#SAVEDMESH='None' 
+#SAVEDMESH='CO_PCI_3e-7.npy' 
+SAVEDMESH='None' 
 
 ADDITIONALDEPTHATATOMS=0
 
-MIXINGPARAMETER=0.5 
-MIXINGHISTORY=10 
+MIXINGPARAMETER=0.2 
+MIXINGHISTORY=20 
   
-INTRASCFTOLERANCE=1e-7
-INTERSCFTOLERANCE=1e-0
+INTRASCFTOLERANCE=1e-8
+INTERSCFTOLERANCE=1e-6
     
 MIXING='Anderson'    
 SMOOTHINGEPS=0.0
 
-MESHPARAM3=3e-7
-MESHPARAM2=1e6
+MESHPARAM1=0
+MESHPARAM2=0
+MESHPARAM4=0
+
 for SINGSUBT in 1 
 do
 for CELLORDER in 5
 do	    
 for BASE in 1 
-do 
-for MAXDEPTH in 20    
-do								  					    
-for MESHPARAM4 in 0  
-do 
-	#for TREECODEORDER in 11
+do  
+for MAXDEPTH in 20     
+do								  				 	    
+for GRADIENTFREE in 'True' 'False'   
+do  
 	for TREECODEORDER in 0
-	do      
-		#for THETA in 0.9 0.85 0.8 0.7 0.6 0.5 0.4 0.3  
+	do        
 		for THETA in 0.0  
 		do  
-			for MESHPARAM1 in 500		    
+			for MESHPARAM3 in 7e-7 1e-7 7e-8 3e-8    
 			do
 
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/CarbonMonoxideData/treecodeApproxError2/mashParam_${MESHPARAM3}_tcOrder${TREECODEORDER}_tcTheta_${THETA}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/OxygenData/gradientFree/meshParam_${MESHPARAM3}_gradientFree_${GRADIENTFREE}_mixingParameter_${MIXINGPARAMETER}.csv"
 			
 			python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
@@ -82,7 +73,7 @@ do
 		done 
 	done     
 	
-done  
+done     
 done
 done 
 done    

@@ -271,14 +271,14 @@ def testGreenIterationsGPU_rootfinding(vtkExport=False,onTheFlyRefinement=False,
               'gaussianAlpha','gaugeShift','VextSmoothingEpsilon','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
-              'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','totalIterationCount']
+              'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.additionalDepthAtAtoms,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
               divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
               gaussianAlpha,gaugeShift,smoothingEps,energyTolerance,
               subtractSingularity,
               tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E,
-              treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime,tree.totalIterationCount]
+              treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime,tree.timePerConvolution,tree.totalIterationCount]
 #               tree.E, tree.
 #               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     
@@ -503,8 +503,8 @@ def greensIteration_FixedPoint(psiIn):
 
 
     if symmetricIteration==False:
-#         sources = tree.extractGreenIterationIntegrand(m)
-        sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
+        sources = tree.extractGreenIterationIntegrand(m)
+#         sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
     elif symmetricIteration == True:
 #                     sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
         sources, sqrtV = tree.extractGreenIterationIntegrand_symmetric(m)
@@ -565,7 +565,9 @@ def greensIteration_FixedPoint(psiIn):
                         phiNew *= -1
                         convolutionTime = time.time()-startTime
                         print('Using symmetric singularity subtraction.  Convolution time: ', convolutionTime)
-
+                    convTime=time.time()-startTime
+                    print('Convolution time: ', convTime)
+                    tree.timePerConvolution = convTime
                     
                 elif treecode==True:
                     
@@ -588,14 +590,17 @@ def greensIteration_FixedPoint(psiIn):
                 
                     copytime=time.time()-copyStart
 #                                         print('Time spent copying arrays for treecode call: ', copytime)
+                    
                     potentialType=3
                     kappa = k
-                    start = time.time()
+                    startTime = time.time()
                     phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                    targetX, targetY, targetZ, targetValue, 
                                                                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                                    potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
-                    print('Convolution time: ', time.time()-start)
+                    convTime=time.time()-startTime
+                    print('Convolution time: ', convTime)
+                    tree.timePerConvolution = convTime
                     phiNew /= (4*np.pi)
                 
                 else: 
@@ -1248,6 +1253,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 #             if m>=6:  # tighten the non-degenerate deepest states for benzene.  Just an idea...
 #                 tol = 2e-5
             Done = False
+#             Done = True
+#             print('Actually setting Done==True, and not entering fixed point problem.')
             while Done==False:
                 try:
                     # Call anderson mixing on the Green's iteration fixed point function
@@ -1668,7 +1675,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, SCFcount))
     
     
-
+ 
 def printResidual(x,f):
     r = clenshawCurtisNorm(f)
 #     r = np.sqrt( np.sum(f*f*weights) )

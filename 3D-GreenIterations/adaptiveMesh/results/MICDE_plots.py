@@ -15,15 +15,15 @@ plt.rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})        # use
 from matplotlib import rcParams
 rcParams['font.family'] = 'serif'
 rcParams['font.serif'] = ['Computer Modern']
-rcParams.update({'font.size': 18})
+rcParams.update({'font.size': 12})
 
 
 file='runComparison.csv'
 
 
 ## MICDE SYMPOSIUM DATA
-# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/MICDE_Data_2019/berylliumData/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/MICDE_Data_2019/CarbonMonoxideData/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/MICDE_Data_2019/berylliumData/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/MICDE_Data_2019/CarbonMonoxideData/'
 
 
 ## Temorary plot-testing data
@@ -91,9 +91,9 @@ HartreeEnergy = 7.115165052
 # Density Residual:                       2.575e-01
 
 
-TotalEnergy = -113.9339953625
-BandEnergy = -64.2042006799
-HartreeEnergy = 76.3637679069
+# TotalEnergy = -113.9339953625
+# BandEnergy = -64.2042006799 
+# HartreeEnergy = 76.3637679069 
 
 df = pd.read_csv(resultsDir+file, header=0)
 # print(df)
@@ -326,13 +326,13 @@ if __name__=="__main__":
 #     df = df.loc[df['maxDepth']>=13]
 #     df = df.loc[df['order']==5]
 
-#     berylliumMeshRefinement(df,'absTotalEnergyError', 'numberOfPoints', 'divideParameter3')
+    berylliumMeshRefinement(df,'absTotalEnergyError', 'numberOfPoints', 'divideParameter3')
 
-    df = df.loc[df['treecodeOrder']!=1]
-    df = df.loc[df['treecodeOrder']!=8]
-#     df['timePerIteration'] = df['totalTime']/df['totalIterationCount']
-    treecodeAfterFirstSCF(df,'absTotalEnergyError', 'theta', 'treecodeOrder')
-#     treecodeAfterFirstSCF(df,'absBandEnergyError', 'theta', 'treecodeOrder')
+#     df = df.loc[df['treecodeOrder']!=1]
+#     df = df.loc[df['treecodeOrder']!=8]
+# #     df['timePerIteration'] = df['totalTime']/df['totalIterationCount']
+#     treecodeAfterFirstSCF(df,'absTotalEnergyError', 'theta', 'treecodeOrder')
+# #     treecodeAfterFirstSCF(df,'absBandEnergyError', 'theta', 'treecodeOrder')
 #     treecodeAfterFirstSCF(df,'absHartreeEnergyError', 'theta', 'treecodeOrder')
 #     treecodeAfterFirstSCF(df,'absTotalEnergyError', 'treecodeOrder','theta')
 #     treecodeAfterFirstSCF(df,'absTotalEnergyError', 'totalIterationCount', 'theta')
