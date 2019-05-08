@@ -1439,7 +1439,7 @@ class Tree(object):
         if gradientFree==True:
             self.E = self.totalBandEnergy - self.totalEhartree + self.totalEx + self.totalEc - self.totalVx - self.totalVc + self.nuclearNuclear
             print('Updating total energy without explicit kinetic evaluation.')
-        elif gradientFree==False:
+        elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
             print('Updating total energy WITH explicit kinetic evaluation.')
             self.E = self.totalKinetic + self.totalPotential
         else:
@@ -1471,6 +1471,16 @@ class Tree(object):
                 self.orbitalKinetic += cell.orbitalKE
                 if saveAsReference == True:
                     cell.referenceKinetic = np.copy(cell.orbitalKE[0])
+        
+        self.totalKinetic = np.sum(self.occupations*self.orbitalKinetic)
+        
+    def computeOrbitalKinetics_Laplacian(self,targetEnergy=None):
+        print('Computing orbital kinetics using Laplacian')
+        self.orbitalKinetic = np.zeros(self.nOrbitals)
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                cell.computeOrbitalKinetics_Laplacian(targetEnergy)
+                self.orbitalKinetic += cell.orbitalKE
         
         self.totalKinetic = np.sum(self.occupations*self.orbitalKinetic)
             
@@ -1582,10 +1592,16 @@ class Tree(object):
         return
     
     
-    def updateOrbitalEnergies(self,newOccupations=False,correctPositiveEnergies=False,sortByEnergy=False,targetEnergy=None, saveAsReference=False, sortOrder=None):
+    def updateOrbitalEnergies(self,laplacian=False,newOccupations=False,correctPositiveEnergies=False,sortByEnergy=False,targetEnergy=None, saveAsReference=False, sortOrder=None):
 #         print()
         start = time.time()
-        self.computeOrbitalKinetics(targetEnergy, saveAsReference)
+        if laplacian==False:
+            self.computeOrbitalKinetics(targetEnergy, saveAsReference)
+        elif laplacian=='Laplacian':
+            print('Updating orbital energy using laplacian')
+            self.computeOrbitalKinetics_Laplacian(targetEnergy)
+        else:
+            print('Not updating kinetics.... why?')
         kinTime = time.time()-start
         start=time.time()
         self.computeOrbitalPotentials(targetEnergy, saveAsReference)

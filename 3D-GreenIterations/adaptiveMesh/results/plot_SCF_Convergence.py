@@ -80,9 +80,9 @@ import numpy as np
 # file='ds_gaugeShift0p25_mindepth3_tcOrder5_theta0.8_LW5_500_1random_mixingHistory10_SCF_1493000.csv'
 
 # ## Carbon Monoxide PCI Testing
-# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/'
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/'
 # # file='CO_ds_mixingHistory10_mixingParam0.5_order5_1_1e6_1e6_3e-6_SCF_367625.csv' 
-# # file='CO_ds_mixingHistory10_mixingParam0.5_order5_1_1e6_1e6_1e-7_SCF_928500.csv'
+file='CO_ds_mixingHistory10_mixingParam0.5_order5_1_1e6_1e6_1e-7_SCF_928500.csv'
 # file='CO_10orbitals_mixingHistory10_mixingParam0.5_order5_PCI_3e-7_SCF_661625.csv'
 
 # # parent-child integral
@@ -96,13 +96,13 @@ import numpy as np
 # file='CO_symm_LW5_SCF_375500.csv'
 
 
-# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/fixedPointImplementation/'
-# file='CO_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
-# file='CO_mixingM5_gaugeShift-0.5_LW5_500_GREEN_1493000.csv'
-# file='scipyAnderson_10initIterations_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
-# file='scipyAnderson_looser_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
-file='testing_Be_mixingM5_ds_LW5_500_SCF_375500.csv'
+# # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/benzeneTests/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/fixedPointImplementation/'
+# # file='CO_gaugeShift-0.5_LW5_500_GREEN_375500.csv'
+# # file='CO_mixingM5_gaugeShift-0.5_LW5_500_GREEN_1493000.csv'
+# # file='scipyAnderson_10initIterations_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
+# # file='scipyAnderson_looser_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
+# file='testing_Be_mixingM5_ds_LW5_500_SCF_375500.csv'
 
 
 df = pd.read_csv(resultsDir+file, header=0)   

@@ -95,6 +95,8 @@ if noGradients=='True':
     gradientFree=True
 elif noGradients=='False':
     gradientFree=False
+elif noGradients=='Laplacian':
+    gradientFree='Laplacian'
 else:
     print('Warning, not correct input for gradientFree')
     
@@ -665,8 +667,8 @@ def greensIteration_FixedPoint(psiIn):
          
 
 #     elif ( (gradientFree==False) or (SCFcount==-1) and False ):
-    elif ( (gradientFree==False) or (SCFcount==-1) ):
-
+    elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
+        
         # update the orbital
         if symmetricIteration==False:
             orbitals[:,m] = np.copy(phiNew)
@@ -681,7 +683,7 @@ def greensIteration_FixedPoint(psiIn):
 #                             tree.importPhiOnLeaves(orbitals[:,m], m)
 #                             tree.orthonormalizeOrbitals(targetOrbital=m)
         
-        tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+        tree.updateOrbitalEnergies(laplacian=gradientFree,sortByEnergy=False, targetEnergy=m)
 
         
     else:
