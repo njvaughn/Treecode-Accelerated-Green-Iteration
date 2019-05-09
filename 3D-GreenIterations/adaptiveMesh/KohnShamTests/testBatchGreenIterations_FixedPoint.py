@@ -162,6 +162,7 @@ def setUpTree(onlyFillOne=False):
 
     print('Reading atomic coordinates from: ', coordinateFile)
     atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+    print(atomData)
     if np.shape(atomData)==(5,):
         nElectrons = atomData[3]
     else:
@@ -194,10 +195,9 @@ def setUpTree(onlyFillOne=False):
         occupations[4] = 4/3
         
     elif inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
-        nOrbitals=23
+        nOrbitals=22
         occupations = 2*np.ones(nOrbitals)
         occupations[-1]=0
-        occupations[-2]=0
 #         occupations = [2, 2, 2/3 ,2/3 ,2/3, 
 #                        2, 2, 2/3 ,2/3 ,2/3,
 #                        2, 2, 2/3 ,2/3 ,2/3,
@@ -221,6 +221,11 @@ def setUpTree(onlyFillOne=False):
 #                        2, 2, 2/3 ,2/3 ,2/3 ]
         nOrbitals=7
         occupations = 2*np.ones(nOrbitals)
+    
+    elif inputFile=='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv':
+        nOrbitals=1
+        occupations = [2]
+        
     print('in testBatchGreen..., nOrbitals = ', nOrbitals)
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 

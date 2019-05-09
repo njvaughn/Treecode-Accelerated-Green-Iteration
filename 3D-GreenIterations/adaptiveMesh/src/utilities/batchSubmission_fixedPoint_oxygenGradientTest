@@ -60,7 +60,7 @@ do
 	do        
 		for THETA in 0.0  
 		do  
-			for MESHPARAM3 in 3e-6 1e-6 7e-7 3e-7 1e-7 7e-8 3e-8    
+			for MESHPARAM3 in 3e-8    
 			do
 
 			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/OxygenData/gradientFree/meshParam_${MESHPARAM3}_gradientFree_${GRADIENTFREE}_mixingParameter_${MIXINGPARAMETER}.csv"
