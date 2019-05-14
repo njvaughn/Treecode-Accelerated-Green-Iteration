@@ -95,6 +95,8 @@ if noGradients=='True':
     gradientFree=True
 elif noGradients=='False':
     gradientFree=False
+elif noGradients=='Laplacian':
+    gradientFree='Laplacian'
 else:
     print('Warning, not correct input for gradientFree')
     
@@ -160,6 +162,7 @@ def setUpTree(onlyFillOne=False):
 
     print('Reading atomic coordinates from: ', coordinateFile)
     atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+    print(atomData)
     if np.shape(atomData)==(5,):
         nElectrons = atomData[3]
     else:
@@ -192,10 +195,9 @@ def setUpTree(onlyFillOne=False):
         occupations[4] = 4/3
         
     elif inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
-        nOrbitals=23
+        nOrbitals=22
         occupations = 2*np.ones(nOrbitals)
         occupations[-1]=0
-        occupations[-2]=0
 #         occupations = [2, 2, 2/3 ,2/3 ,2/3, 
 #                        2, 2, 2/3 ,2/3 ,2/3,
 #                        2, 2, 2/3 ,2/3 ,2/3,
@@ -219,6 +221,11 @@ def setUpTree(onlyFillOne=False):
 #                        2, 2, 2/3 ,2/3 ,2/3 ]
         nOrbitals=7
         occupations = 2*np.ones(nOrbitals)
+    
+    elif inputFile=='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv':
+        nOrbitals=1
+        occupations = [2]
+        
     print('in testBatchGreen..., nOrbitals = ', nOrbitals)
     
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
@@ -271,14 +278,14 @@ def testGreenIterationsGPU_rootfinding(vtkExport=False,onTheFlyRefinement=False,
               'gaussianAlpha','gaugeShift','VextSmoothingEpsilon','energyTolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
-              'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','totalIterationCount']
+              'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
     
     myData = [domainSize,tree.minDepthAchieved,tree.maxDepthAchieved,tree.additionalDepthAtAtoms,tree.maxDepthAtAtoms,tree.px,tree.numberOfCells,tree.numberOfGridpoints,gradientFree,
               divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
               gaussianAlpha,gaugeShift,smoothingEps,energyTolerance,
               subtractSingularity,
               tree.orbitalEnergies-tree.gaugeShift, tree.totalBandEnergy, tree.totalKinetic, tree.totalEx, tree.totalEc, tree.totalEhartree, tree.E,
-              treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime,tree.totalIterationCount]
+              treecode,treecodeOrder,theta,maxParNode,batchSize, totalKohnShamTime,tree.timePerConvolution,tree.totalIterationCount]
 #               tree.E, tree.
 #               tree.E, tree.orbitalEnergies[0], abs(tree.E+1.1373748), abs(tree.orbitalEnergies[0]+0.378665)]
     
@@ -503,8 +510,8 @@ def greensIteration_FixedPoint(psiIn):
 
 
     if symmetricIteration==False:
-#         sources = tree.extractGreenIterationIntegrand(m)
-        sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
+        sources = tree.extractGreenIterationIntegrand(m)
+#         sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
     elif symmetricIteration == True:
 #                     sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
         sources, sqrtV = tree.extractGreenIterationIntegrand_symmetric(m)
@@ -565,7 +572,9 @@ def greensIteration_FixedPoint(psiIn):
                         phiNew *= -1
                         convolutionTime = time.time()-startTime
                         print('Using symmetric singularity subtraction.  Convolution time: ', convolutionTime)
-
+                    convTime=time.time()-startTime
+                    print('Convolution time: ', convTime)
+                    tree.timePerConvolution = convTime
                     
                 elif treecode==True:
                     
@@ -588,14 +597,17 @@ def greensIteration_FixedPoint(psiIn):
                 
                     copytime=time.time()-copyStart
 #                                         print('Time spent copying arrays for treecode call: ', copytime)
+                    
                     potentialType=3
                     kappa = k
-                    start = time.time()
+                    startTime = time.time()
                     phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                    targetX, targetY, targetZ, targetValue, 
                                                                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                                                                    potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
-                    print('Convolution time: ', time.time()-start)
+                    convTime=time.time()-startTime
+                    print('Convolution time: ', convTime)
+                    tree.timePerConvolution = convTime
                     phiNew /= (4*np.pi)
                 
                 else: 
@@ -660,8 +672,8 @@ def greensIteration_FixedPoint(psiIn):
          
 
 #     elif ( (gradientFree==False) or (SCFcount==-1) and False ):
-    elif ( (gradientFree==False) or (SCFcount==-1) ):
-
+    elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
+        
         # update the orbital
         if symmetricIteration==False:
             orbitals[:,m] = np.copy(phiNew)
@@ -676,7 +688,7 @@ def greensIteration_FixedPoint(psiIn):
 #                             tree.importPhiOnLeaves(orbitals[:,m], m)
 #                             tree.orthonormalizeOrbitals(targetOrbital=m)
         
-        tree.updateOrbitalEnergies(sortByEnergy=False, targetEnergy=m)
+        tree.updateOrbitalEnergies(laplacian=gradientFree,sortByEnergy=False, targetEnergy=m)
 
         
     else:
@@ -816,8 +828,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+outputFile[-4:]
     densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(tree.numberOfGridpoints)+'_plots'
-#     restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(tree.numberOfGridpoints)
-    restartFilesDir =       '/home/njvaughn/restartFiles/restartFiles_1416000_after25'
+    restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(tree.numberOfGridpoints)
+#     restartFilesDir =       '/home/njvaughn/restartFiles/restartFiles_1416000_after25'
 #     restartFilesDir =       '/Users/nathanvaughn/Documents/synchronizedDataFiles/restartFiles_1416000_after25'
     wavefunctionFile =      restartFilesDir+'/wavefunctions'
     densityFile =           restartFilesDir+'/density'
@@ -1217,7 +1229,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             greenIterationsCount=1
 
             resNorm=1
-            while resNorm>3e-3:
+            while resNorm>1e-2:
 #             for njv in range(10):
                 targets = tree.extractPhi(m)
                 sources = tree.extractPhi(m)
@@ -1248,6 +1260,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 #             if m>=6:  # tighten the non-degenerate deepest states for benzene.  Just an idea...
 #                 tol = 2e-5
             Done = False
+#             Done = True
+#             print('Actually setting Done==True, and not entering fixed point problem.')
             while Done==False:
                 try:
                     # Call anderson mixing on the Green's iteration fixed point function
@@ -1270,7 +1284,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                        
                     ### Anderson Options
                     method='anderson'
-                    jacobianOptions={'alpha':1.0, 'M':10, 'w0':0.01} 
+                    jacobianOptions={'alpha':1.0, 'M':5, 'w0':0.01} 
                     solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
 #                     solverOptions={'fatol':tol, 'tol_norm':eigenvalueNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
 #                     solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'disp':True}
@@ -1668,7 +1682,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, SCFcount))
     
     
-
+ 
 def printResidual(x,f):
     r = clenshawCurtisNorm(f)
 #     r = np.sqrt( np.sum(f*f*weights) )
@@ -1684,15 +1698,15 @@ def updateTree(x,f):
     print('L2 Norm of Residual: ', r)
     
     
-if __name__ == "__main__":
+if __name__ == "__main__": 
     #import sys;sys.argv = ['', 'Test.testName']
 
-    print('='*70)
-    print('='*70)
-    print('='*70,'\n') 
+    print('='*70) 
+    print('='*70) 
+    print('='*70,'\n')  
     
  
-    global tree
+    global tree 
     tree = setUpTree()  
     
 #     testGreenIterationsGPU(tree,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=1, maxSCFIterations=1)

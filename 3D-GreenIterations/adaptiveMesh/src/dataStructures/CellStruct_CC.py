@@ -2397,6 +2397,31 @@ class Cell(object):
                 else:
                     print('Not updating orbital kinetics because occupation < -1e-10')
     
+    def computeOrbitalKinetics_Laplacian(self,targetEnergy=None):
+        
+        phi = np.empty((self.px,self.py,self.pz))
+        
+        if targetEnergy!=None:
+            for i,j,k in self.PxByPyByPz:
+                gp = self.gridpoints[i,j,k]
+                phi[i,j,k] = gp.phi[targetEnergy]
+        
+            laplacianPhi = ChebLaplacian3D(self.DopenX, self.DopenY, self.DopenZ, self.px, phi)
+            
+            self.orbitalKE[targetEnergy] = -1/2*np.sum( self.w * phi*laplacianPhi )
+        else:
+            for m in range(self.tree.nOrbitals):
+                if self.tree.occupations[m] > -1e-10: #otherwise dont update energy
+                    for i,j,k in self.PxByPyByPz:
+                        gp = self.gridpoints[i,j,k]
+                        phi[i,j,k] = gp.phi[m]
+                
+                    laplacianPhi = ChebLaplacian3D(self.DopenX, self.DopenY, self.DopenZ, self.px, phi)
+                    
+                    self.orbitalKE[m] = -1/2*np.sum( self.w * phi*laplacianPhi )
+                else:
+                    print('Not updating orbital kinetics because occupation < -1e-10')
+    
     def computeDerivativeMatrices(self):
         self.DopenX = computeDerivativeMatrix(self.xmin, self.xmax, self.px)
         self.DopenY = computeDerivativeMatrix(self.ymin, self.ymax, self.py)

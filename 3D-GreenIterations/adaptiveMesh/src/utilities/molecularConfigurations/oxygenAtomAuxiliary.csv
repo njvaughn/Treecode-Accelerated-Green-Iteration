@@ -7,7 +7,6 @@
 -5.4455323568788838e-01
 36.32506036 # Hartree energy from NWChem
 -7.4469337501098821e+01
--0.0
 
 
 
@@ -29,4 +28,4 @@
 #-1.4081739574277032e+02 # Electrostatic Energy after first SCF
 #-7.4469012630225393e+01 # Total Energy after first SCF
 #-0
- 
+  

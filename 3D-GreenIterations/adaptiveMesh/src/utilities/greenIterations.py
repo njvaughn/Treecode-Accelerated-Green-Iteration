@@ -611,8 +611,8 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                 
                     print('Working on orbital %i' %m)
                     inputIntraSCFtolerance = np.copy(intraScfTolerance)
-                    orbitalResidual = 1.0
-                    oldOrbitalResidual = 2.0
+                    orbitalResidual = 2.0
+                    oldOrbitalResidual = 3.0
                     oldOldOrbitalResidual = 4.0
                     psiNewNorm = 10
                     previousResidual = 1
@@ -635,7 +635,7 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
                     previousEigenvalueResidualRatio = 2
                         
                     while ( ( orbitalResidual > intraScfTolerance ) and ( greenIterationsCount < max_GreenIterationsCount) 
-    #                         and (np.abs(psiNewNorm-1) > intraScfTolerance) 
+#                             and (greenIterationsCount <= 1) 
                             and (np.abs(oldOrbitalResidual-orbitalResidual)/np.abs(oldOrbitalResidual) > -1/10000)
                             and (abs(eigenvalueDiff) > -intraScfTolerance/10000) ):
                         print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
@@ -1693,10 +1693,10 @@ def greenIterations_KohnSham_SCF(tree, intraScfTolerance, interScfTolerance, num
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
             
-        if SCFcount >= 1:
-            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-            energyResidual = -1
-            densityResidual = -1
+#         if SCFcount >= 1:
+#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+#             energyResidual = -1
+#             densityResidual = -1
         
 
 

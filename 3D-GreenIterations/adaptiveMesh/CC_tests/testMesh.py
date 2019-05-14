@@ -33,7 +33,7 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, additionalDept
                                  savedMesh=''):
 
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:9]
 
 
     print('Reading atomic coordinates from: ', coordinateFile)
@@ -654,9 +654,9 @@ if __name__ == "__main__":
 #             oxygenAtomAuxiliary
     gaugeShift=-0.5 
 #     tree = exportMeshForParaview(domain=20,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-#                         divideParameter1=500, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv', 
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=500, divideParameter2=1e6, divideParameter3=3e-7, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
 #                         savedMesh='')        
              
@@ -667,14 +667,14 @@ if __name__ == "__main__":
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
 #                         savedMesh='')
     
-    tree = exportMeshToCompareDensity(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=500, divideParameter2=999, divideParameter3=1e-6, divideParameter4=0,
-                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
-                        savedMesh='ParentChildrenIntegral_500_999_1e-06_0__1416000.npy', 
-                        restartFilesDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/restartFiles_1416000_after25/',
-                        iterationNumber=10)
+#     tree = exportMeshToCompareDensity(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=500, divideParameter2=999, divideParameter3=1e-6, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/CO/PCI_Benzene_reconstructed',
+#                         savedMesh='ParentChildrenIntegral_500_999_1e-06_0__1416000.npy', 
+#                         restartFilesDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/restartFiles_1416000_after25/',
+#                         iterationNumber=10)
 #     
 #     exportMeshForParaview(domain=31,order=3,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
@@ -684,10 +684,25 @@ if __name__ == "__main__":
 #     
 
 
-#     exportMeshForTreecodeTesting(domain=20,order=7,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-#                         divideParameter1=1000, divideParameter2=100, divideParameter3=0.03, divideParameter4=5000,
-#                         inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+    exportMeshForTreecodeTesting(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-5, divideParameter4=0,
+                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+    
+    exportMeshForTreecodeTesting(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-6, divideParameter4=0,
+                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+    
+    exportMeshForTreecodeTesting(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-7, divideParameter4=0,
+                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+    
+    exportMeshForTreecodeTesting(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-8, divideParameter4=0,
+                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
 
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
 #                         divideParameter1=1.0, divideParameter2=1.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')

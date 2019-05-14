@@ -10,17 +10,17 @@ SINGSUBT=1
 #INPUTFILE='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv'
 
 
-INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/O2Auxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 VTKFILEDIR='None'
 
-
+ 
 GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GPUPRESENT='True'
@@ -32,18 +32,20 @@ BATCHSIZE=8000
 
 
 GAUSSIANALPHA=1.0
+GAUGESHIFT=-0.5
 
-#MESHTYPE='ParentChildrenIntegral'
-MESHTYPE='LW5'
+MESHTYPE='ParentChildrenIntegral'
+#MESHTYPE='LW5'
 RESTART='False'	
 #SAVEDMESH='CO_PCI_3e-7.npy' 
 SAVEDMESH='None' 
 
+ADDITIONALDEPTHATATOMS=0
 
 MIXINGPARAMETER=0.5 
-MIXINGHISTORY=40 
+MIXINGHISTORY=10 
   
-INTRASCFTOLERANCE=1e-5
+INTRASCFTOLERANCE=1e-8
 INTERSCFTOLERANCE=1e-6
     
 MIXING='Anderson'    
@@ -51,35 +53,32 @@ SMOOTHINGEPS=0.0
 
 MESHPARAM3=3e-7
 MESHPARAM2=1e6
-for ADDITIONALDEPTHATATOMS in 0 
+for SINGSUBT in 1 
 do
 for CELLORDER in 5
-do	  
-for BASE in 1
+do	    
+for BASE in 1 
 do 
-for MAXDEPTH in 20   
+for MAXDEPTH in 20    
 do								  					    
-for MESHPARAM4 in 0 
-do
-	for TREECODEORDER in 8
-	do     
-		for GAUGESHIFT in -0.5
-		do 
+for MESHPARAM4 in 0  
+do 
+	for TREECODEORDER in 0 
+	do      
+		for THETA in 0.0  
+		do  
 			for MESHPARAM1 in 500		    
 			do
-			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/MICDE_Data_2019/CarbonMonoxideData_old/co_mixing_with_eig_appended_mashParam_${MESHPARAM3}_tcOrder${TREECODEORDER}_tcTheta_${THETA}.csv"
-			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/MICDE_Data_2019/CarbonMonoxideData/mashParam_${MESHPARAM3}_tcOrder${TREECODEORDER}_tcTheta_${THETA}.csv"
-			
-			
-			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/fixedPointImplementation/CO_initPower_2e-5_anderson_LW5_${MESHPARAM1}.csv"
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/fixedPointImplementation/CO_deflated_JFNK_LW5_${MESHPARAM1}.csv"
+
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/3e-7data/Li_mashParam_${MESHPARAM3}.csv"
+			 
 			python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
 																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE $RESTART $SAVEDMESH
 			done   
-		done
-	done    
+		done 
+	done     
 	
 done  
 done

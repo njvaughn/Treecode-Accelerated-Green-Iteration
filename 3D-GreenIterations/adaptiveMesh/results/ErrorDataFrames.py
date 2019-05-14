@@ -105,7 +105,7 @@ resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/fixedPointImplem
 # file='CO_mixingM5_gaugeShift-0.5_LW5_500_GREEN_1493000.csv'
 # file='scipyAnderson_10initIterations_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
 # file='scipyAnderson_looser_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
-file='testing_Be_mixingM5_ds_LW5_500_SCF_375500.csv'
+# file='testing_Be_mixingM5_ds_LW5_500_SCF_375500.csv'
 
 ## MICDE SYMPOSIUM DATA
 # resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/MICDE_Data_2019/berylliumData/'

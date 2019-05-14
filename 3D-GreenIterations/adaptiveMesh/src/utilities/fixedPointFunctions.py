@@ -184,7 +184,7 @@ def testAndersonOptions(N):
     show_options(solver='root', method='anderson', disp=True)
 #     options={'fatol':1e-12, 'disp':True}
     jacobianOptions={'alpha':1.0, 'M':5, 'w0':0.01}
-    options={'fatol':1e-12, 'maxiter':10, 'line_search':None, 'disp':True, 'jac_options':jacobianOptions}
+    options={'fatol':1e-12, 'line_search':None, 'disp':True, 'jac_options':jacobianOptions}
 #     options={'fatol':1e-12, 'maxiter':10, 'disp':True, 'jac_options':jacobianOptions}
     print(options)
     method='anderson'
@@ -199,22 +199,28 @@ def testAndersonOptions(N):
         print(method + ' number of evals: ', psiOutAndersonRoot.nfev)
         
         
+def precond(psi):      
+    global A
+    print(A)
+    D = np.diag(A)
+    print(D)
+    Dinv = np.linalg.inv(D)
+    print(Dinv)
+    return np.dot(Dinv,psi)
         
 def testKrylovOptions(N):
     global A, psi1, weights
     if N==3:
-        A = np.array( [ [1,0,0],
-                        [0,0.5,0],
-                        [0,0,0.99]
+        A = np.array( [ [1,2,0.15],
+                        [0,0.5,-0.3],
+                        [0,0,1.0]
                     ] )
+        psiIn=np.array([1,2,3])
     else:
         weights = np.ones(N)
         A = np.random.rand(N,N)
         A = A+A.T
-    
-    
-    
-    psiIn = np.random.rand(N)
+        psiIn = np.random.rand(N)
     
     
     jac = BroydenFirst()
@@ -224,8 +230,11 @@ def testKrylovOptions(N):
     show_options(solver='root', method=method, disp=True)
 #     options={'fatol':1e-12, 'disp':True}
 #     jacobianOptions={'method':'lgmres','inner_M':kjac, 'inner_maxiter':500, 'outer_k':3}
-    jacobianOptions={'method':'lgmres', 'inner_maxiter':500, 'outer_k':3}
-    options={'fatol':1e-12, 'line_search':None, 'disp':True, 'maxiter':500, 'jac_options':jacobianOptions}
+#     jacobianOptions={'method':'lgmres', 'inner_maxiter':500, 'outer_k':3}
+#     jacobianOptions={'method':'bicgstab', 'inner_M':precond}
+    jacobianOptions={'method':'bicgstab', 'inner_M':jac}
+    jacobianOptions={'method':'bicgstab'}
+    options={'fatol':1e-12, 'disp':True, 'maxiter':500, 'jac_options':jacobianOptions}
 
     
 #     options={'verbose':True}
@@ -363,7 +372,7 @@ def test(N):
 if __name__=="__main__":
 #     testRootfinders(3)
 #     testRootfinderOptions(3)
-#     testKrylovOptions(3)
-    testAndersonOptions(3)
+    testKrylovOptions(3)
+#     testAndersonOptions(30)
 #     testBroydenOptions(3)
 #     test(10)

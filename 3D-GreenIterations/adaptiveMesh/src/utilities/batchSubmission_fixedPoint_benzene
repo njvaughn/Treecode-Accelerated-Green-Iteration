@@ -9,7 +9,7 @@ SINGSUBT=1
 
 INPUTFILE='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv'
 
-
+  
 
 VTKFILEDIR='None'
 
@@ -21,7 +21,7 @@ GPUPRESENT='True'
 TREECODE='True'
 TREECODEORDER=8    
 THETA=0.7 
-MAXPARNODE=8000 
+MAXPARNODE=8000  
 BATCHSIZE=8000
 BASE=1.0
 
@@ -34,7 +34,7 @@ GAUGESHIFT=-0.5
 
 
 MIXINGPARAMETER=0.2 
-MIXINGHISTORY=10 
+MIXINGHISTORY=20 
  
 INTRASCFTOLERANCE=3e-5
 INTERSCFTOLERANCE=1e-6 
@@ -47,8 +47,8 @@ RESTART='False'
 #SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0.npy' 
 #SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_1e-06_0.0_domain30.npy'
 #SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_3e-06_0.0.npy'
-SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_3e-07_0.0.npy'
-#SAVEDMESH='None' 
+#SAVEDMESH='ParentChildrenIntegral_500.0_1000000.0_3e-07_0.0.npy'
+SAVEDMESH='None' 
 
 for SMOOTHINGEPS in 0.0
 do
@@ -56,17 +56,16 @@ for MAXDEPTH in 20
 do								  					 
 for MESHPARAM4 in 0       
 do
-	for MESHPARAM3 in 3e-07
+	for MESHPARAM3 in 1e-07  
 	 
-	do    
+	do     
 		for MESHPARAM2 in 1e6     
 		do       
 			for MESHPARAM1 in 500
 			      
-			do
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/scipyAnderson_initAtomic_eigensolveTol_take2_${INTRASCFTOLERANCE}_PCI_${MESHPARAM3}.csv"
-			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/scipyAnderson_init1Sonly_init1e-3_tcOrder${TREECODEORDER}_theta${THETA}_PCI_${MESHPARAM3}.csv"
-			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/simultaneous_tc_gaugeShift${GAUGESHIFT}_mindepth3_tcOrder${TREECODEORDER}_theta${THETA}_LW5_${MESHPARAM1}.csv"
+			do 
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/scipyAnderson_initAtomic_eigensolveTol_take2_${INTRASCFTOLERANCE}_PCI_${MESHPARAM3}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/benzeneTests/Benzene_eigensolveTol_${INTRASCFTOLERANCE}_PCI_${MESHPARAM3}.csv"
 			python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
