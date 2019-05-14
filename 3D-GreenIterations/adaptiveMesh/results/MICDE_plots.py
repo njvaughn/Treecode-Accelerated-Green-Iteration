@@ -47,7 +47,7 @@ CorrelationEnergy = -2.2343205529440757e-01
 BandEnergy = -8.1232305760491457e+00
 KineticEnergy =  1.4309060170370618e+01
 ElectrostaticEnergy = -8.1232305760491457e+00
-HartreeEnergy = 7.115165052  
+HartreeEnergy = 7.115210167512 
 
 
 # # Carbon Monoxide
@@ -194,6 +194,7 @@ def berylliumMeshRefinement(df,A,B,C,save=False):
     df.plot(x=B, y='absHartreeEnergyError', style='go', markerSize=8, ax=ax, loglog=True, label='Hartree Energy Error')
     
     
+    
 #     fig.suptitle('%s versus %s colored by %s' %(A,B,C))
 #     grouped = df.groupby(C)
 #     for name,group in grouped:
@@ -210,9 +211,9 @@ def berylliumMeshRefinement(df,A,B,C,save=False):
 #     df2.plot(x=B, y='absTotalEnergyError', style='bo', markerSize=8, ax=ax, loglog=True)
 #     df2.plot(x=B, y='absBandEnergyError', style='ro', markerSize=6, ax=ax, loglog=True,legend=False)
 #     df2.plot(x=B, y='absHartreeEnergyError', style='go', markerSize=8, ax=ax, loglog=True,legend=False)
-    plt.xlabel('Quadrature Points')
+    plt.xlabel('Mesh Refinement Parameter')
     plt.ylabel('Energy Error (Hartree)')
-    
+     
 #     plt.xlim([3e5,2e6])
 #     plt.ylim([5e-5,1e-2])
 #     plt.grid()
@@ -326,7 +327,8 @@ if __name__=="__main__":
 #     df = df.loc[df['maxDepth']>=13]
 #     df = df.loc[df['order']==5]
 
-    berylliumMeshRefinement(df,'absTotalEnergyError', 'numberOfPoints', 'divideParameter3')
+#     berylliumMeshRefinement(df,'absTotalEnergyError', 'numberOfPoints', 'divideParameter3')
+    berylliumMeshRefinement(df,'absTotalEnergyError', 'divideParameter3', 'divideParameter3')
 
 #     df = df.loc[df['treecodeOrder']!=1]
 #     df = df.loc[df['treecodeOrder']!=8]

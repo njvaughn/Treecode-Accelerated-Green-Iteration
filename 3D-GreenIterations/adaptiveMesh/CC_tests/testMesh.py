@@ -654,9 +654,9 @@ if __name__ == "__main__":
 #             oxygenAtomAuxiliary
     gaugeShift=-0.5 
 #     tree = exportMeshForParaview(domain=20,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-#                         divideParameter1=500, divideParameter2=1e6, divideParameter3=1e-5, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv', 
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=500, divideParameter2=1e6, divideParameter3=3e-7, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
 #                         savedMesh='')        
              
@@ -684,10 +684,25 @@ if __name__ == "__main__":
 #     
 
 
-    exportMeshForTreecodeTesting(domain=20,order=5,
+    exportMeshForTreecodeTesting(domain=30,order=5,
                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-5, divideParameter4=0,
-                        inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+    
+    exportMeshForTreecodeTesting(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-6, divideParameter4=0,
+                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+    
+    exportMeshForTreecodeTesting(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-7, divideParameter4=0,
+                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+    
+    exportMeshForTreecodeTesting(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-8, divideParameter4=0,
+                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
 
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
 #                         divideParameter1=1.0, divideParameter2=1.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
