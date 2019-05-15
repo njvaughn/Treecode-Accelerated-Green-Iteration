@@ -9,6 +9,7 @@ sys.path.append('../src/utilities')
 import itertools
 import time
 import numpy as np
+import dask.array as da
 import matplotlib.pyplot as plt
 import bisect
 from pyevtk.hl import pointsToVTK
@@ -119,9 +120,16 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
 
     
     print('max depth ', maxDepth)
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+    tree.minimalBuildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
+    
+    x,y,z,w = tree.extractXYZ()
+    tree=None
+    
+    print(np.shape(x))
+#     treeBuilding.visualize()
+#     treeBuilding.compute()
     
     print(tree.levelCounts)
     print()
@@ -157,6 +165,74 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
 
     
     return tree
+
+def testDask(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
+                          divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
+                          smoothingEpsilon=0.0, 
+                          inputFile='', outputFile='',
+                          savedMesh=''):    
+    
+    
+#     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
+#     nElectrons = int(nElectrons)
+#     nOrbitals = int(nOrbitals)
+
+    print('Reading atomic coordinates from: ', coordinateFile)
+    atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+    if np.shape(atomData)==(5,):
+        nElectrons = atomData[3]
+    else:
+        nElectrons = 0
+        for i in range(len(atomData)):
+            nElectrons += atomData[i,3]
+    
+#     nOrbitals = int( np.ceil(nElectrons/2))
+    nOrbitals = int( np.ceil(nElectrons/2)+1)
+
+    if inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
+        nOrbitals = 30
+        
+    if inputFile=='../src/utilities/molecularConfigurations/O2Auxiliary.csv':
+        nOrbitals = 10
+        
+    print('nElectrons = ', nElectrons)
+    print('nOrbitals  = ', nOrbitals)
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
+    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+                coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
+
+    
+    print('max depth ', maxDepth)
+    tree.minimalBuildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+                    divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
+                    savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
+    
+    x,y,z,w = tree.extractXYZ()
+    return x,y,z,w
+#     from dask.distributed import Client, progress
+#     client = Client(processes=False, threads_per_worker=4,
+#                     n_workers=1, memory_limit='2GB')
+#     client
+    CHUNKSIZE=10000
+    X = da.from_array(x,chunks=(CHUNKSIZE,))
+    Y = da.from_array(y,chunks=(CHUNKSIZE,))
+    Z = da.from_array(z,chunks=(CHUNKSIZE,))
+    W = da.from_array(w,chunks=(CHUNKSIZE,))
+    nPoints = len(x)
+    print(nPoints)
+    print(X)
+    print(type(x))
+    print(type(X))
+    tree=None
+    
+    wavefunctions = da.zeros( (nPoints,nOrbitals), chunks=(CHUNKSIZE,1) )
+    Veff = da.zeros( (nPoints,), chunks=(CHUNKSIZE,))
+    rho = da.zeros( (nPoints,), chunks=(CHUNKSIZE,))
+    
+    
+    return
 
 
 def exportMeshToCompareDensity(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
@@ -653,10 +729,19 @@ if __name__ == "__main__":
             
 #             oxygenAtomAuxiliary
     gaugeShift=-0.5 
+    
+    testDask(domain=20,order=5,
+            minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+            divideParameter1=500, divideParameter2=1e6, divideParameter3=3e-5, divideParameter4=0,
+            smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+            outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
+            savedMesh='') 
+    
+    
 #     tree = exportMeshForParaview(domain=20,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-#                         divideParameter1=500, divideParameter2=1e6, divideParameter3=3e-7, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#                         divideParameter1=500, divideParameter2=1e6, divideParameter3=3e-5, divideParameter4=0,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
 #                         savedMesh='')        
              
@@ -684,25 +769,21 @@ if __name__ == "__main__":
 #     
 
 
-    exportMeshForTreecodeTesting(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-5, divideParameter4=0,
-                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+#     exportMeshForTreecodeTesting(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-5, divideParameter4=0,
+#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+#     
+#     exportMeshForTreecodeTesting(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-6, divideParameter4=0,
+#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+#     
+#     exportMeshForTreecodeTesting(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-7, divideParameter4=0,
+#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
     
-    exportMeshForTreecodeTesting(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-6, divideParameter4=0,
-                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
-    
-    exportMeshForTreecodeTesting(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-7, divideParameter4=0,
-                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
-    
-    exportMeshForTreecodeTesting(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-8, divideParameter4=0,
-                        inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
 
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
 #                         divideParameter1=1.0, divideParameter2=1.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')

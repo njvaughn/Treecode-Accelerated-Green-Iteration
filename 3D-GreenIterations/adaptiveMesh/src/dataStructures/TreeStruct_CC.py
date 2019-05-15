@@ -12,6 +12,7 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 '''
 
 import numpy as np
+import dask as da
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
@@ -876,7 +877,7 @@ class Tree(object):
 #             
 #             return
  
-        
+    @da.delayed    
     def buildTree(self,maxLevels, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',savedMesh='', restart=False, printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
@@ -896,6 +897,8 @@ class Tree(object):
             saveList=None
         divideParameter = divideParameter1 # for methods that use only one divide parameter.
         timer = Timer()
+        
+#         @da.delayed
         def recursiveDivide(self, Cell, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
             levelCounter += 1
             
@@ -909,7 +912,7 @@ class Tree(object):
                             maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], 
                                                                                 maxLevels, divideCriterion, divideParameter, 
                                                                                 levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved, 
-                                                                                minDepthAchieved)
+                                                                                minDepthAchieved)#.compute()
             
             elif Cell.level < maxLevels:
 #             elif currentLevel < maxLevels:
@@ -989,7 +992,7 @@ class Tree(object):
                                 maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], maxLevels, 
                                                                                                                     divideCriterion, divideParameter, levelCounter, 
                                                                                                                     maxDepthCounter, saveList, printNumberOfCells, 
-                                                                                                                    maxDepthAchieved, minDepthAchieved)
+                                                                                                                    maxDepthAchieved, minDepthAchieved)#.compute()
                 else:
                     minDepthAchieved = min(minDepthAchieved, Cell.level)
                     
@@ -1004,7 +1007,7 @@ class Tree(object):
         timer.start()
         levelCounter=0
         maxDepthCounter=0
-        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize, self.maxDepthCounter = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize, self.maxDepthCounter = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )#.compute()
         
         print('Number of cells at max depth: ', self.maxDepthCounter)
         
@@ -1122,6 +1125,252 @@ class Tree(object):
             print('Part of a cell centered at: ', closestMidpoint) 
 
     
+    
+    def minimalBuildTree(self,maxLevels, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',savedMesh='', restart=False, printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
+        # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
+        # regardless of division criteria
+        # N is roughly the number of grid points.  It is used to generate the density function.
+#         print('saveList = ', saveList)
+        
+        if savedMesh!='':
+            try:
+                saveList = list( np.load('/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
+                print("Mesh loaded from: ", savedMesh)
+            except Exception:
+                saveList = list( np.load('/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
+                print("Mesh loaded from: ", savedMesh)
+            
+            print(saveList[0:10])
+        else:
+            saveList=None
+        divideParameter = divideParameter1 # for methods that use only one divide parameter.
+        timer = Timer()
+        
+#         @da.delayed
+        def recursiveDivide(self, Cell, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
+            levelCounter += 1
+            
+            if hasattr(Cell, "children"):
+#                 print('Cell already has children')
+                (ii,jj,kk) = np.shape(Cell.children)
+
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+                            maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], 
+                                                                                maxLevels, divideCriterion, divideParameter, 
+                                                                                levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved, 
+                                                                                minDepthAchieved)#.compute()
+            
+            elif Cell.level < maxLevels:
+#             elif currentLevel < maxLevels:
+                
+#                 if currentLevel < self.minDepth:
+                if Cell.level < self.minDepth:
+                    Cell.divideFlag = True 
+#                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
+                else:
+                    if saveList!=None:
+#                         print('Checking saveList for cell ', Cell.uniqueID)
+                        Cell.checkIfChildrenInSaveList(saveList)
+                        # do the search
+#                         return
+                    elif ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or (divideCriterion == 'LW3_modified') or 
+                         (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') 
+                         or (divideCriterion == 'Krasny_density') or (divideCriterion == 'Nathan_density')  ):
+#                         print('checking divide criterion for cell ', Cell.uniqueID)
+                        Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
+                    elif divideCriterion=='Biros':
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance(divideParameter)
+                    elif divideCriterion=='BirosCombined':
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_DensityAndWavefunctions(divideParameter)
+                    elif divideCriterion=='BirosK':
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_allIndicesAboveQ(divideParameter)
+                    elif divideCriterion=='BirosN':
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_rho_sqrtRho(divideParameter1, divideParameter2)
+                    elif divideCriterion=='BirosG':
+#                         Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_sumOfWavefunctions(divideParameter)
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_sumOfWavefunctions(divideParameter)
+                    elif divideCriterion=='BirosGN':
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho(divideParameter1, divideParameter2)
+                    elif divideCriterion=='BirosGN2':
+                        Cell.checkIfChebyshevCoefficientsAboveTolerance_anyIndicesAboveQ_psi_or_rho_or_v(divideParameter)
+                    elif divideCriterion=='Krasny':
+                        Cell.checkWavefunctionVariation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                    elif divideCriterion=='Krasny_Vext':
+                        Cell.checkWavefunctionVariation_Vext(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                    elif divideCriterion=='Krasny_log_rho':
+                        Cell.checkLogDensityVariation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                    elif divideCriterion=='Nathan':
+                        Cell.checkDensityIntegral(divideParameter1, divideParameter2)
+                    elif divideCriterion=='Nathan2':
+                        Cell.checkMeshDensity_Nathan(divideParameter1, divideParameter2)
+                    elif divideCriterion=='NathanNearFar':
+                        Cell.splitNearAndFar(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                    elif divideCriterion == 'basic_density':
+                        Cell.compareMeshDensityToDensity(divideParameter)
+                    elif divideCriterion=='Krasny_interpolate':
+                        Cell.checkDensityInterpolation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
+                        
+                    elif divideCriterion=='ParentChildrenIntegral':
+                        
+                        Cell.refineByCheckingParentChildrenIntegrals(divideParameter1, divideParameter2, divideParameter3)
+                        
+                        
+#                         Cell.checkIfAboveMeshDensity(500,'LW5')
+#                         if Cell.divideFlag != True:
+#                             Cell.refineByCheckingParentChildrenIntegrals(divideParameter1, divideParameter2, divideParameter3)  
+#                         else:
+#                             print('Cell %s refined by LW scheme.' %Cell.uniqueID)
+                    
+                    else:                        
+                        Cell.checkIfCellShouldDivide(divideParameter)
+                    
+                if Cell.divideFlag == True:
+                    xdiv = (Cell.xmax + Cell.xmin)/2   
+                    ydiv = (Cell.ymax + Cell.ymin)/2   
+                    zdiv = (Cell.zmax + Cell.zmin)/2   
+                    Cell.divide(xdiv, ydiv, zdiv, printNumberOfCells)
+
+#                     for i,j,k in TwoByTwoByTwo:  # what if there aren't 8 children?
+                    (ii,jj,kk) = np.shape(Cell.children)
+                    for i in range(ii):
+                        for j in range(jj):
+                            for k in range(kk):
+                                maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter = recursiveDivide(self,Cell.children[i,j,k], maxLevels, 
+                                                                                                                    divideCriterion, divideParameter, levelCounter, 
+                                                                                                                    maxDepthCounter, saveList, printNumberOfCells, 
+                                                                                                                    maxDepthAchieved, minDepthAchieved)#.compute()
+                else:
+                    minDepthAchieved = min(minDepthAchieved, Cell.level)
+                    
+            else: 
+#                 Cell.initializeCellWavefunctions()
+#                 print("Cell %s at max depth.  Cell volume**(1/3) = %f" %(Cell.uniqueID, Cell.volume**(1/3)))
+                maxDepthCounter +=1
+                       
+            maxDepthAchieved = max(maxDepthAchieved, Cell.level)                                                                                                                                                       
+            return maxDepthAchieved, minDepthAchieved, levelCounter, maxDepthCounter
+        
+        timer.start()
+        levelCounter=0
+        maxDepthCounter=0
+        self.maxDepthAchieved, self.minDepthAchieved, self.treeSize, self.maxDepthCounter = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )#.compute()
+        
+        print('Number of cells at max depth: ', self.maxDepthCounter)
+        
+        print('Saving mesh to tree.saveList')
+        self.saveList = [''] 
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                self.saveList.insert(bisect.bisect_left(self.saveList, cell.uniqueID), cell.uniqueID )
+        print(os.getcwd())
+        saveListFile_local = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
+        saveListFile_flux = '/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
+        try:
+            np.save(saveListFile_local, self.saveList)
+        except Exception:
+            np.save(saveListFile_flux, self.saveList)
+            
+#         print(self.saveList[0:10])
+        #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
+
+        self.countCellsAtEachDepth()
+            
+        self.initialDivideBasedOnNuclei(self.coordinateFile)
+#         self.zeroWeightsBasedOnNuclei(self.coordinateFile)
+#         self.maxDepthAtAtoms=100
+        self.computeNuclearNuclearEnergy()
+
+#         refineRadius = 0.01
+#         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
+#         self.uniformlyRefineWithinRadius(refineRadius)
+#         refineRadius /= 2
+#         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
+#         self.uniformlyRefineWithinRadius(refineRadius)
+        
+        """ Count the number of unique leaf cells and gridpoints and set initial external potential """
+        self.numberOfGridpoints = 0
+        self.numberOfCells = 0
+        closestToOrigin = 10
+        for _,cell in self.masterList:
+            if cell.leaf==True:
+                self.numberOfCells += 1
+                for i,j,k in cell.PxByPyByPz:
+                    if not hasattr(cell.gridpoints[i,j,k], "counted"):
+                        self.numberOfGridpoints += 1
+                        cell.gridpoints[i,j,k].counted = True
+#                         cell.gridpoints[i,j,k].setExternalPotential(self.atoms, self.gaugeShift)
+                        gp = cell.gridpoints[i,j,k]
+                        r = np.sqrt( gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
+                        if r < closestToOrigin:
+                            closestToOrigin = np.copy(r)  
+                            closestCoords = [gp.x, gp.y, gp.z]
+                            closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
+        
+        self.rmin = closestToOrigin
+        
+        self.countCellsAtEachDepth()
+        
+        
+                        
+        for _,cell in self.masterList:
+            for i,j,k in cell.PxByPyByPz:
+                if hasattr(cell.gridpoints[i,j,k], "counted"):
+                    cell.gridpoints[i,j,k].counted = None
+         
+        
+        print('Number of gridpoints: ', self.numberOfGridpoints)
+
+#         self.computeDerivativeMatrices()
+#         self.initializeDensityFromAtomicData()
+
+#         self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
+        
+        ### INITIALIZE ORBTIALS AND DENSITY ####
+                # Only need to do this if wavefunctions aren't set during adaptive refinement
+        # 
+#         if restart==False:
+#             if initializationType=='atomic':
+#                 if onlyFillOne == True:
+#                     self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
+#                 else:
+#                     self.initializeOrbitalsFromAtomicDataExternally()
+#             elif initializationType=='random':
+#                 self.initializeOrbitalsRandomly()
+#             elif initializationType=='exponential':
+#                 self.initializeOrbitalsToDecayingExponential()
+#         else:
+#             print('Not initializing wavefunctions because using a restart file.')
+        
+        
+#         self.findNearestGridpointToEachAtom()
+#         for m in range(self.nOrbitals):
+#             self.printWavefunctionNearEachAtom(m)
+        timer.stop()
+                    
+        if printTreeProperties == True: 
+            print("Tree build completed. \n"
+                  "Domain Size:                                 [%.1f, %.1f] \n"
+                  "Divide Criterion:                            %s \n"
+                  "Divide Parameter1:                           %1.2e \n"
+                  "Divide Parameter2:                           %1.2e \n"
+                  "Divide Parameter3:                           %1.2e \n"
+                  "Divide Parameter4:                           %1.2e \n"
+                  "Total Number of Cells:                       %i \n"
+                  "Total Number of Leaf Cells:                  %i \n"
+                  "Total Number of Gridpoints:                  %i \n"
+                  "Minimum Depth                                %i levels \n"
+                  "Maximum Depth from refinement scheme:        %i levels \n"
+                  "Additional refinement to depth:              %i levels \n"
+                  "Cell Order:                                  %i \n"
+                  "Construction time:                           %.3g seconds."
+                   
+                  %(self.xmin, self.xmax, divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved, 
+                    self.maxDepthAtAtoms, self.px, timer.elapsedTime))
+
+            
+            
     def countCellsAtEachDepth(self):
         levelCounts = {}
         criteria1 = {}
@@ -2204,6 +2453,27 @@ class Tree(object):
                             
         return np.array(leaves)
     
+    def extractXYZ(self):
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        X = [] 
+        Y = []
+        Z = []
+        W = []
+                
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    X.append( gridpt.x)
+                    Y.append( gridpt.y  )
+                    Z.append( gridpt.z  )
+                    W.append( cell.w[i,j,k] )
+                            
+        return np.array(X),np.array(Y),np.array(Z),np.array(W)
+    
     def extractConvolutionIntegrand(self,containing=None): 
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
@@ -3149,7 +3419,11 @@ def TestTreeForProfiling():
     xmax = ymax = zmax = -xmin
     tree = Tree(xmin,xmax,ymin,ymax,zmin,zmax)
     tree.buildTree( maxLevels=4, divideTolerance=0.07,printTreeProperties=True)
-    
+  
+
+def convertTreeToArrays(tree):
+    return
+  
                
 if __name__ == "__main__":
     TestTreeForProfiling()
