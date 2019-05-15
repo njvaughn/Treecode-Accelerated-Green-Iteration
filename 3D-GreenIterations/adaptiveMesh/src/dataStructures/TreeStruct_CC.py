@@ -2546,19 +2546,19 @@ class Tree(object):
                             
         return np.array(leaves), np.array( sqrtV )
     
-    def extractSqrtV(self): 
+    def extractVeff(self): 
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
         '''
-        sqrtV = []
+        Veff = []
                 
         for _,cell in self.masterList:
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
-                    sqrtV.append( np.sqrt(-gridpt.v_eff))
+                    Veff.append( gridpt.v_eff)
                             
-        return np.array( sqrtV )
+        return np.array( Veff )
     
     def extractGreenIterationIntegrand_Deflated(self,m,orbitals,weights): 
         '''

@@ -248,6 +248,9 @@ def setUpTree(onlyFillOne=False):
 
  
     
+    global X,Y,Z,W, nPoints
+    X,Y,Z,W = tree.extractXYZ()
+    nPoints=len(X)
     return tree
      
     
@@ -480,7 +483,8 @@ def greensIteration_FixedPoint(psiIn):
 #     print('Norm of psiIn - what was already in orbitals array: ', clenshawCurtisNorm(psiIn-orbitals[:,m]))
 #     print('Norm of psiIn - what was already in oldOrbitals array: ', clenshawCurtisNorm(psiIn-oldOrbitals[:,m]))
     # global data structures
-    global tree, orbitals, oldOrbitals, residuals, eigenvalueHistory
+    global orbitals, oldOrbitals, residuals, eigenvalueHistory, Veff, Energies, referenceEigenvalues
+    global X, Y, Z, W
     
     # Global constants and counters
     global threadsPerBlock, blocksPerGrid, SCFcount, greenIterationsCount
@@ -488,51 +492,41 @@ def greensIteration_FixedPoint(psiIn):
     
 #     if inspect.stack()[2][3]=='nonlin_solve':
     if True:
-        tree.totalIterationCount += 1
+#         tree.totalIterationCount += 1
         
-        
+         
         oldOrbitals[:,m] = np.copy(psiIn[:-1])    
         orbitals[:,m] = np.copy(psiIn[:-1])
         n,M = np.shape(orbitals)
-        orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
+        orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
         orbitals[:,m] = np.copy(orthWavefunction)
-        tree.importPhiOnLeaves(orbitals[:,m], m)
-        tree.orbitalEnergies[m] = np.copy(psiIn[-1])
+        Energies['orbitalEnergies'][m] = np.copy(psiIn[-1])
     else:
-#         print('Different function called F(x), not updating tree.')
         print('Not updating tree.')
 
-#     tree.importPhiOnLeaves(oldOrbitals[:,m], m)
-# #     oldOrbitals[:,m] = np.copy(orbitals[:,m])
     
-#     targets = tree.extractPhi(m)
-#     sources = np.copy(targets)
 
 
     if symmetricIteration==False:
-        sources = tree.extractGreenIterationIntegrand(m)
-#         sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
-    elif symmetricIteration == True:
-#                     sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
-        sources, sqrtV = tree.extractGreenIterationIntegrand_symmetric(m)
+        f = -2*orbitals[:,m]*Veff
+#     elif symmetricIteration == True:
+# #                     sources = tree.extractGreenIterationIntegrand_Deflated(m,orbitals,weights)
+#         sources, sqrtV = tree.extractGreenIterationIntegrand_symmetric(m)
     else: 
         print("symmetricIteration variable not True or False.  What should it be?")
         return
     
     
-    targets=np.copy(sources)
+    oldEigenvalue =  Energies['orbitalEnergies'][m] 
+    k = np.sqrt(-2*Energies['orbitalEnergies'][m])
+    print('k = ', k)
 
-
-
-    oldEigenvalue =  tree.orbitalEnergies[m] 
-    k = np.sqrt(-2*tree.orbitalEnergies[m])
-
-    phiNew = np.zeros((len(targets)))
+    phiNew = np.zeros(nPoints)
     if subtractSingularity==0: 
         print('Using singularity skipping')
         gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
     elif subtractSingularity==1:
-        if tree.orbitalEnergies[m] < 10.25**100: 
+        if Energies['orbitalEnergies'][m] < 10.25**100: 
             
             
             if GPUpresent==False:
@@ -564,7 +558,12 @@ def greensIteration_FixedPoint(psiIn):
                 if treecode==False:
                     startTime = time.time()
                     if symmetricIteration==False:
-                        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
+#                         print('Shapes:')
+#                         print(np.shape(X))
+#                         print(np.shape(np.array([X,Y,Z,f,W])))
+                        temp=np.transpose( np.array([X,Y,Z,f,W]) )
+#                         print(np.shape(temp))
+                        gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](temp,temp,phiNew,k) 
                         convolutionTime = time.time()-startTime
                         print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
                     elif symmetricIteration==True:
@@ -574,26 +573,11 @@ def greensIteration_FixedPoint(psiIn):
                         print('Using symmetric singularity subtraction.  Convolution time: ', convolutionTime)
                     convTime=time.time()-startTime
                     print('Convolution time: ', convTime)
-                    tree.timePerConvolution = convTime
+                    Times['timePerConvolution'] = convTime
                     
                 elif treecode==True:
                     
                     copyStart = time.time()
-                    numTargets = len(targets)
-                    numSources = len(sources)
-
-                    sourceX = np.copy(sources[:,0])
-
-                    sourceY = np.copy(sources[:,1])
-                    sourceZ = np.copy(sources[:,2])
-                    sourceValue = np.copy(sources[:,3])
-                    sourceWeight = np.copy(sources[:,4])
-                    
-                    targetX = np.copy(targets[:,0])
-                    targetY = np.copy(targets[:,1])
-                    targetZ = np.copy(targets[:,2])
-                    targetValue = np.copy(targets[:,3])
-                    targetWeight = np.copy(targets[:,4])
                 
                     copytime=time.time()-copyStart
 #                                         print('Time spent copying arrays for treecode call: ', copytime)
@@ -601,13 +585,13 @@ def greensIteration_FixedPoint(psiIn):
                     potentialType=3
                     kappa = k
                     startTime = time.time()
-                    phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
-                                                                   targetX, targetY, targetZ, targetValue, 
-                                                                   sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
+                    phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
+                                                                   X, Y, Z, f, 
+                                                                   X, Y, Z, f, W,
                                                                    potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
                     convTime=time.time()-startTime
                     print('Convolution time: ', convTime)
-                    tree.timePerConvolution = convTime
+                    Times['timePerConvolution'] = convTime
                     phiNew /= (4*np.pi)
                 
                 else: 
@@ -615,11 +599,13 @@ def greensIteration_FixedPoint(psiIn):
                     return
         else:
             print('Using singularity skipping because energy too close to 0')
-            gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k)
+            gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](np.array([X,Y,Z,f,W]),np.array([X,Y,Z,f,W]),phiNew,k)
     else:
         print('Invalid option for singularitySubtraction, should be 0 or 1.')
         return
     
+    print('Max phiNew: ', np.max(phiNew))
+    print('Min phiNew: ', np.min(phiNew))
     
     """ Method where you dont compute kinetics, from Harrison """
     
@@ -632,9 +618,16 @@ def greensIteration_FixedPoint(psiIn):
         psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*weights))
         
         if symmetricIteration==False:
-            tree.importPhiNewOnLeaves(phiNew)
+#             tree.importPhiNewOnLeaves(phiNew)
 #                                 print('Not updating energy, just for testing Steffenson method')
-            tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+#             tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+
+            deltaE = -np.sum( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew)*W ) 
+            normSqOfPsiNew = np.sum( phiNew**2 * W)
+            deltaE /= (normSqOfPsiNew)
+            print('Norm of psiNew = ', np.sqrt(normSqOfPsiNew))
+            print('Delta E = ', deltaE)
+            Energies['orbitalEnergies'][m] += deltaE
             orbitals[:,m] = np.copy(phiNew)
         elif symmetricIteration==True:
 #                                 tree.importPhiNewOnLeaves(phiNew/sqrtV)
@@ -656,19 +649,19 @@ def greensIteration_FixedPoint(psiIn):
 #         print('Not orthgonoalizing, relying on deflation instead... (640)')
         orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
         orbitals[:,m] = np.copy(orthWavefunction)
-        tree.importPhiOnLeaves(orbitals[:,m], m)
+#         tree.importPhiOnLeaves(orbitals[:,m], m)
         
 
 
         if greenIterationsCount==1:
-            eigenvalueHistory = np.array(tree.orbitalEnergies[m])
+            eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
         else:
             
-            eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
+            eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
         print('eigenvalueHistory: \n',eigenvalueHistory)
         
         
-        print('Orbital energy after Harrison update: ', tree.orbitalEnergies[m])
+        print('Orbital energy after Harrison update: ', Energies['orbitalEnergies'][m])
          
 
 #     elif ( (gradientFree==False) or (SCFcount==-1) and False ):
@@ -716,18 +709,15 @@ def greensIteration_FixedPoint(psiIn):
         eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
     
     
-    if tree.orbitalEnergies[m]>0.0:
-        tree.orbitalEnergies[m] = tree.gaugeShift - 0.5
+    if Energies['orbitalEnergies'][m]>0.0:
+        Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 0.5
         print('Energy eigenvalue was positive, setting to gauge shift - 0.5')
         
-    tempOrbital = tree.extractPhi(m)
-    orbitals[:,m] = np.copy( tempOrbital[:,3] )
     
-    
-    tree.printWavefunctionNearEachAtom(m)
+#     tree.printWavefunctionNearEachAtom(m)
         
 #     residualVector = orbitals[:,m] - oldOrbitals[:,m]
-    psiOut = np.append(np.copy(orbitals[:,m]), np.copy(tree.orbitalEnergies[m]))
+    psiOut = np.append(np.copy(orbitals[:,m]), np.copy(Energies['orbitalEnergies'][m]))
     residualVector = psiOut - psiIn
     
     
@@ -735,10 +725,10 @@ def greensIteration_FixedPoint(psiIn):
     loc = np.argmax(np.abs(residualVector[:-1]))
     print('Largest residual: ', residualVector[loc])
     print('Value at that point: ', psiOut[loc])
-    print('Location of max residual: ', tempOrbital[loc,0], tempOrbital[loc,1], tempOrbital[loc,2])
+    print('Location of max residual: ', X[loc], Y[loc], Z[loc])
 #     residualVector = -(psiIn - orbitals[:,m])
 
-    newEigenvalue = tree.orbitalEnergies[m]
+    newEigenvalue = Energies['orbitalEnergies'][m]
     
     
         
@@ -748,10 +738,7 @@ def greensIteration_FixedPoint(psiIn):
         normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*weights ) )
     elif symmetricIteration==True:
         normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*weights ) )
-    eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)
-    
-    tree.eigenvalueDiff = eigenvalueDiff
-    
+    eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)    
     
 
     residuals[m] = normDiff
@@ -759,7 +746,7 @@ def greensIteration_FixedPoint(psiIn):
     
     
 
-    print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,tree.orbitalEnergies[m]-tree.referenceEigenvalues[m]-tree.gaugeShift, eigenvalueDiff))
+    print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift'], eigenvalueDiff))
     print('Orbital %i wavefunction residual: %1.3e' %(m, orbitalResidual))
     print()
     print()
@@ -810,7 +797,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
     print()
 
-
+    global referenceEigenvalues
     if hasattr(tree, 'referenceEigenvalues'):
         referenceEigenvalues = tree.referenceEigenvalues
     else:
@@ -1059,6 +1046,8 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     #     print('Computing Vhartree took:    %.4f seconds. ' %hartreeConvolutionTime)
         tree.importVhartreeOnLeaves(V_hartreeNew)
         tree.updateVxcAndVeffAtQuadpoints()
+        global Veff
+        Veff = tree.extractVeff()
         
         
         ### Write output files that will be used to test the Treecode evaluation ###
@@ -1157,8 +1146,11 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     y = np.copy(initialWaveData[:,1])
     z = np.copy(initialWaveData[:,2])
     
-
-
+    global Energies, Times
+    Energies={}
+    Energies['orbitalEnergies'] = tree.orbitalEnergies
+    Energies['gaugeShift'] = tree.gaugeShift
+    Times={}
 
     energyResidual=1
     global residuals
@@ -1229,20 +1221,20 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             greenIterationsCount=1
 
             resNorm=1
-            while resNorm>1e-2:
+            while resNorm>1e-4:
 #             for njv in range(10):
-                targets = tree.extractPhi(m)
-                sources = tree.extractPhi(m)
-                weights = np.copy(targets[:,5])
-                orbitals[:,m] = np.copy(targets[:,3])
+#                 targets = tree.extractPhi(m)
+#                 sources = tree.extractPhi(m)
+#                 weights = np.copy(targets[:,5])
+#                 orbitals[:,m] = np.copy(targets[:,3])
                 
             
                 # Orthonormalize orbital m before beginning Green's iteration
                 n,M = np.shape(orbitals)
                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
                 orbitals[:,m] = np.copy(orthWavefunction)
-                tree.importPhiOnLeaves(orbitals[:,m], m)
-                psiIn = np.append( np.copy(orbitals[:,m]), tree.orbitalEnergies[m] )
+#                 tree.importPhiOnLeaves(orbitals[:,m], m)
+                psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
 #                 psiIn = 1/2*(np.copy(orbitals[:,m]) + np.copy(oldOrbitals[:,m]) )
                 r = greensIteration_FixedPoint(psiIn)
                 resNorm = clenshawCurtisNorm(r)
