@@ -877,7 +877,7 @@ class Tree(object):
 #             
 #             return
  
-    @da.delayed    
+#     @da.delayed    
     def buildTree(self,maxLevels, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',savedMesh='', restart=False, printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
         # max depth returns the maximum depth of the tree.  maxLevels is the limit on how large the tree is allowed to be,
         # regardless of division criteria
