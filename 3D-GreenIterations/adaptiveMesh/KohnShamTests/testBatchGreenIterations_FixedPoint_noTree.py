@@ -578,17 +578,64 @@ def greensIteration_FixedPoint(psiIn):
                 elif treecode==True:
                     
                     copyStart = time.time()
+                    
+#                     tree.orbitalEnergies[m] = Energies['orbitalEnergies'][m]
+#                     sources = tree.extractGreenIterationIntegrand(m)
+#                     targets = np.copy(sources)
+#                     numTargets = len(targets)
+#                     numSources = len(sources)
+# 
+#                     sourceX = np.copy(sources[:,0])
+# 
+#                     sourceY = np.copy(sources[:,1])
+#                     sourceZ = np.copy(sources[:,2])
+#                     sourceValue = np.copy(sources[:,3])
+#                     sourceWeight = np.copy(sources[:,4])
+#                     
+#                     targetX = np.copy(targets[:,0])
+#                     targetY = np.copy(targets[:,1])
+#                     targetZ = np.copy(targets[:,2])
+#                     targetValue = np.copy(targets[:,3])
+#                     targetWeight = np.copy(targets[:,4])
+#                     
+#                     print(np.shape(targetX))
                 
                     copytime=time.time()-copyStart
 #                                         print('Time spent copying arrays for treecode call: ', copytime)
                     
+#                     start = np.random.randint(nPoints-6)
+#                     print(X[start:start+5])
+#                     print(targetX[start:start+5])
+#                     print(max(abs(X-targetX)))
+#                     print(max(abs(Y-targetY)))
+#                     print(max(abs(Z-targetZ)))
                     potentialType=3
                     kappa = k
                     startTime = time.time()
                     phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
-                                                                   X, Y, Z, f, 
-                                                                   X, Y, Z, f, W,
+                                                                   np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
+                                                                   np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
                                                                    potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
+                
+                    copytime=time.time()-copyStart
+#                                         print('Time spent copying arrays for treecode call: ', copytime)
+                    
+#                     potentialType=3
+#                     kappa = k
+#                     startTime = time.time()
+#                     
+#                     print(np.shape(X))
+#                     print(nPoints)
+#                     print(treecodeOrder)
+#                     print(theta)
+#                     
+#                     sources = tree.extractGreenIterationIntegrand(m)
+#                     f = np.copy(sources[:,3])
+#                     
+#                     phiNew = treecodeWrappers.callTreedriver(  nPoints, nPoints, 
+#                                                                X, Y, Z, f, 
+#                                                                X, Y, Z, f, W,
+#                                                                potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
                     convTime=time.time()-startTime
                     print('Convolution time: ', convTime)
                     Times['timePerConvolution'] = convTime
@@ -630,20 +677,22 @@ def greensIteration_FixedPoint(psiIn):
             Energies['orbitalEnergies'][m] += deltaE
             orbitals[:,m] = np.copy(phiNew)
         elif symmetricIteration==True:
-#                                 tree.importPhiNewOnLeaves(phiNew/sqrtV)
-#                                 tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
-
-
-            # import phiNew and compute eigenvalue update
-            tree.importPhiNewOnLeaves(phiNew)
-            tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False, symmetric=True)
-            
-            # Import normalized psi*sqrtV into phiOld
-            phiNew /= np.sqrt( np.sum(phiNew*phiNew*weights ))
-            tree.setPhiOldOnLeaves_symmetric(phiNew)
-            
-            
-            orbitals[:,m] = np.copy(phiNew/sqrtV)
+            print('Symmetric not set up for tree-free')
+            return
+# #                                 tree.importPhiNewOnLeaves(phiNew/sqrtV)
+# #                                 tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False)
+# 
+# 
+#             # import phiNew and compute eigenvalue update
+#             tree.importPhiNewOnLeaves(phiNew)
+#             tree.updateOrbitalEnergies_NoGradients(m, newOccupations=False, symmetric=True)
+#             
+#             # Import normalized psi*sqrtV into phiOld
+#             phiNew /= np.sqrt( np.sum(phiNew*phiNew*weights ))
+#             tree.setPhiOldOnLeaves_symmetric(phiNew)
+#             
+#             
+#             orbitals[:,m] = np.copy(phiNew/sqrtV)
         
         n,M = np.shape(orbitals)
 #         print('Not orthgonoalizing, relying on deflation instead... (640)')
@@ -666,47 +715,49 @@ def greensIteration_FixedPoint(psiIn):
 
 #     elif ( (gradientFree==False) or (SCFcount==-1) and False ):
     elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
-        
-        # update the orbital
-        if symmetricIteration==False:
-            orbitals[:,m] = np.copy(phiNew)
-        if symmetricIteration==True:
-            orbitals[:,m] = np.copy(phiNew/sqrtV)
-            
-        n,M = np.shape(orbitals)
-        orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
-        orbitals[:,m] = np.copy(orthWavefunction)
-        tree.importPhiOnLeaves(orbitals[:,m], m)
-        
-#                             tree.importPhiOnLeaves(orbitals[:,m], m)
-#                             tree.orthonormalizeOrbitals(targetOrbital=m)
-        
-        tree.updateOrbitalEnergies(laplacian=gradientFree,sortByEnergy=False, targetEnergy=m)
+        print('gradient and laplacian methods not set up for tree-free')
+        return
+#         # update the orbital
+#         if symmetricIteration==False:
+#             orbitals[:,m] = np.copy(phiNew)
+#         if symmetricIteration==True:
+#             orbitals[:,m] = np.copy(phiNew/sqrtV)
+#             
+#         n,M = np.shape(orbitals)
+#         orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
+#         orbitals[:,m] = np.copy(orthWavefunction)
+#         tree.importPhiOnLeaves(orbitals[:,m], m)
+#         
+# #                             tree.importPhiOnLeaves(orbitals[:,m], m)
+# #                             tree.orthonormalizeOrbitals(targetOrbital=m)
+#         
+#         tree.updateOrbitalEnergies(laplacian=gradientFree,sortByEnergy=False, targetEnergy=m)
 
         
     else:
         print('Not updating eigenvalue.  Is that intended?')
+        return
 #                             print('Invalid option for gradientFree, which is set to: ', gradientFree)
 #                             print('type: ', type(gradientFree))
 
-        if greenIterationsCount==1:
-            eigenvalueHistory = np.array(tree.orbitalEnergies[m])
-        else:
-            
-            eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
-        print('eigenvalueHistory: \n',eigenvalueHistory)
-        
-        orbitals[:,m] = np.copy(phiNew)
-        n,M = np.shape(orbitals)
-        orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
-        orbitals[:,m] = np.copy(orthWavefunction)
-        
-        
-        tree.importPhiOnLeaves(orbitals[:,m], m)
-        tree.setPhiOldOnLeaves(m)
-        
-       
-        eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
+#         if greenIterationsCount==1:
+#             eigenvalueHistory = np.array(tree.orbitalEnergies[m])
+#         else:
+#             
+#             eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
+#         print('eigenvalueHistory: \n',eigenvalueHistory)
+#         
+#         orbitals[:,m] = np.copy(phiNew)
+#         n,M = np.shape(orbitals)
+#         orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
+#         orbitals[:,m] = np.copy(orthWavefunction)
+#         
+#         
+#         tree.importPhiOnLeaves(orbitals[:,m], m)
+#         tree.setPhiOldOnLeaves(m)
+#         
+#        
+#         eigenvalueHistory = np.append(eigenvalueHistory, tree.orbitalEnergies[m])
     
     
     if Energies['orbitalEnergies'][m]>0.0:
@@ -756,7 +807,7 @@ def greensIteration_FixedPoint(psiIn):
     header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyEigenvalues', 'eigenvalueResidual']
 
     myData = [m, greenIterationsCount, residuals,
-              tree.orbitalEnergies-tree.gaugeShift, eigenvalueDiff]
+              Energies['orbitalEnergies']-Energies['gaugeShift'], eigenvalueDiff]
 
     if not os.path.isfile(greenIterationOutFile):
         myFile = open(greenIterationOutFile, 'a')
@@ -1221,7 +1272,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             greenIterationsCount=1
 
             resNorm=1
-            while resNorm>1e-4:
+            while resNorm>1e-3:
 #             for njv in range(10):
 #                 targets = tree.extractPhi(m)
 #                 sources = tree.extractPhi(m)

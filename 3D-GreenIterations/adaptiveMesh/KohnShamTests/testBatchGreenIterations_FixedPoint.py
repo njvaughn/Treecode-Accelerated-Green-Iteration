@@ -594,6 +594,8 @@ def greensIteration_FixedPoint(psiIn):
                     targetZ = np.copy(targets[:,2])
                     targetValue = np.copy(targets[:,3])
                     targetWeight = np.copy(targets[:,4])
+                    
+                    print(np.shape(targetX))
                 
                     copytime=time.time()-copyStart
 #                                         print('Time spent copying arrays for treecode call: ', copytime)
