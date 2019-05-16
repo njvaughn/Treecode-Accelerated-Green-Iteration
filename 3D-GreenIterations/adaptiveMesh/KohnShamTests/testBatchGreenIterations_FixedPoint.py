@@ -1231,7 +1231,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             greenIterationsCount=1
 
             resNorm=1
-            while resNorm>1e-2:
+            while resNorm>1e-3:
 #             for njv in range(10):
                 targets = tree.extractPhi(m)
                 sources = tree.extractPhi(m)

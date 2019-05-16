@@ -2462,6 +2462,8 @@ class Tree(object):
         Y = []
         Z = []
         W = []
+        RHO = []
+        WAVEFUNCTIONS = []
                 
         for _,cell in self.masterList:
             if cell.leaf == True:
@@ -2471,8 +2473,10 @@ class Tree(object):
                     Y.append( gridpt.y  )
                     Z.append( gridpt.z  )
                     W.append( cell.w[i,j,k] )
+                    RHO.append(gridpt.rho)
+                    WAVEFUNCTIONS.append(gridpt.phi)
                             
-        return np.array(X),np.array(Y),np.array(Z),np.array(W)
+        return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(WAVEFUNCTIONS)
     
     def extractConvolutionIntegrand(self,containing=None): 
         '''
