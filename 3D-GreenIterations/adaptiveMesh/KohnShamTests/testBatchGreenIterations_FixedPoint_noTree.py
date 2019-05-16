@@ -558,11 +558,8 @@ def greensIteration_FixedPoint(psiIn):
                 if treecode==False:
                     startTime = time.time()
                     if symmetricIteration==False:
-#                         print('Shapes:')
-#                         print(np.shape(X))
-#                         print(np.shape(np.array([X,Y,Z,f,W])))
+
                         temp=np.transpose( np.array([X,Y,Z,f,W]) )
-#                         print(np.shape(temp))
                         gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](temp,temp,phiNew,k) 
                         convolutionTime = time.time()-startTime
                         print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
@@ -577,38 +574,7 @@ def greensIteration_FixedPoint(psiIn):
                     
                 elif treecode==True:
                     
-                    copyStart = time.time()
-                    
-#                     tree.orbitalEnergies[m] = Energies['orbitalEnergies'][m]
-#                     sources = tree.extractGreenIterationIntegrand(m)
-#                     targets = np.copy(sources)
-#                     numTargets = len(targets)
-#                     numSources = len(sources)
-# 
-#                     sourceX = np.copy(sources[:,0])
-# 
-#                     sourceY = np.copy(sources[:,1])
-#                     sourceZ = np.copy(sources[:,2])
-#                     sourceValue = np.copy(sources[:,3])
-#                     sourceWeight = np.copy(sources[:,4])
-#                     
-#                     targetX = np.copy(targets[:,0])
-#                     targetY = np.copy(targets[:,1])
-#                     targetZ = np.copy(targets[:,2])
-#                     targetValue = np.copy(targets[:,3])
-#                     targetWeight = np.copy(targets[:,4])
-#                     
-#                     print(np.shape(targetX))
-                
-                    copytime=time.time()-copyStart
-#                                         print('Time spent copying arrays for treecode call: ', copytime)
-                    
-#                     start = np.random.randint(nPoints-6)
-#                     print(X[start:start+5])
-#                     print(targetX[start:start+5])
-#                     print(max(abs(X-targetX)))
-#                     print(max(abs(Y-targetY)))
-#                     print(max(abs(Z-targetZ)))
+
                     potentialType=3
                     kappa = k
                     startTime = time.time()
@@ -618,24 +584,7 @@ def greensIteration_FixedPoint(psiIn):
                                                                    potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
                 
                     copytime=time.time()-copyStart
-#                                         print('Time spent copying arrays for treecode call: ', copytime)
-                    
-#                     potentialType=3
-#                     kappa = k
-#                     startTime = time.time()
-#                     
-#                     print(np.shape(X))
-#                     print(nPoints)
-#                     print(treecodeOrder)
-#                     print(theta)
-#                     
-#                     sources = tree.extractGreenIterationIntegrand(m)
-#                     f = np.copy(sources[:,3])
-#                     
-#                     phiNew = treecodeWrappers.callTreedriver(  nPoints, nPoints, 
-#                                                                X, Y, Z, f, 
-#                                                                X, Y, Z, f, W,
-#                                                                potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
+
                     convTime=time.time()-startTime
                     print('Convolution time: ', convTime)
                     Times['timePerConvolution'] = convTime
@@ -1308,19 +1257,19 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             while Done==False:
                 try:
                     # Call anderson mixing on the Green's iteration fixed point function
-                    targets = tree.extractPhi(m)
-                    sources = tree.extractPhi(m)
-                    weights = np.copy(targets[:,5])
-                    orbitals[:,m] = np.copy(targets[:,3])
+#                     targets = tree.extractPhi(m)
+#                     sources = tree.extractPhi(m)
+#                     weights = np.copy(targets[:,5])
+#                     orbitals[:,m] = np.copy(targets[:,3])
                      
                  
                     # Orthonormalize orbital m before beginning Green's iteration
                     n,M = np.shape(orbitals)
                     orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
                     orbitals[:,m] = np.copy(orthWavefunction)
-                    tree.importPhiOnLeaves(orbitals[:,m], m) 
+#                     tree.importPhiOnLeaves(orbitals[:,m], m) 
                      
-                    psiIn = np.append( np.copy(orbitals[:,m]), tree.orbitalEnergies[m] )
+                    psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
 #                     print('Calling scipyAnderson')
 #                     psiOut = scipyAnderson(greensIteration_FixedPoint,psiIn,maxiter=5, alpha=1, M=5, w0=0.01, f_tol=tol, verbose=True, callback=printResidual)
                       
@@ -1361,14 +1310,14 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                 except Exception:
                     if np.abs(tree.eigenvalueDiff) < tol/10:
                         print("Rootfinding didn't converge but eigenvalue is converged.  Exiting because this is probably due to degeneracy in the space.")
-                        targets = tree.extractPhi(m)
-                        psiOut = np.append(targets[:,3], tree.orbitalEnergies[m])
+#                         targets = tree.extractPhi(m)
+                        psiOut = np.append(orbitals[:,m], Energies['orbitalEnergies'][m])
                         Done=True
                     else:
                         print('Not converged.  What to do?')
                         return
             orbitals[:,m] = np.copy(psiOut[:-1])
-            tree.orbitalEnergies[m] = np.copy(psiOut[-1])
+            Energies['orbitalEnergies'][m] = np.copy(psiOut[-1])
              
             print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
 
