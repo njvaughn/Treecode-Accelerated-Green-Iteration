@@ -147,10 +147,13 @@ global Temperature, KB, Sigma
 Temperature = 200
 KB = 1/315774.6
 Sigma = Temperature*KB
-def fermiObjectiveFunction(fermiEnergy):
-            exponentialArg = (Energies['orbitalEnergies']-fermiEnergy)/Sigma
-            temp = 1/(1+np.exp( exponentialArg ) )
-            return nElectrons - 2 * np.sum(temp)
+
+def fermiObjectiveFunctionClosure(Energies):
+    def fermiObjectiveFunction(fermiEnergy):
+                exponentialArg = (Energies['orbitalEnergies']-fermiEnergy)/Sigma
+                temp = 1/(1+np.exp( exponentialArg ) )
+                return nElectrons - 2 * np.sum(temp)
+    return fermiObjectiveFunction
 
 def setUpTree(onlyFillOne=False):
     '''
@@ -290,7 +293,7 @@ def testGreenIterationsGPU_rootfinding(vtkExport=False,onTheFlyRefinement=False,
     
 
     
-    greenIterations_KohnSham_SCF_rootfinding(scfTolerance, energyTolerance, nPoints, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+    Energies, Times = greenIterations_KohnSham_SCF_rootfinding(scfTolerance, energyTolerance, nPoints, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha, gaugeShift,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
@@ -420,7 +423,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     print('Does X exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(X))
     print('Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))
     
-    global Energies, Times
+#     global Energies, Times
     Energies={}
     Energies['orbitalEnergies'] = np.zeros(nOrbitals)
     Energies['gaugeShift'] = gaugeShift
@@ -983,7 +986,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
         
         
         
-        
+        fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies)        
         eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
         print('Fermi energy: ', eF)
         exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
@@ -1232,15 +1235,16 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
             
-        if SCFcount >= 1:
-            print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-            energyResidual = -1
-            densityResidual = -1
+#         if SCFcount >= 1:
+#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+#             energyResidual = -1
+#             densityResidual = -1
         
 
 
         
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, SCFcount))
+    return Energies, Times
     
     
  
