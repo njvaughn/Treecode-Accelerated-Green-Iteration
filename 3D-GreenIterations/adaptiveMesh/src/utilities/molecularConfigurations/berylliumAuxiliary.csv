@@ -1,5 +1,5 @@
-../src/utilities/molecularConfigurations/berylliumAtom.csv
-../src/utilities/molecularConfigurations/berylliumAtomReferenceEigenvalues.csv
+/utilities/molecularConfigurations/berylliumAtom.csv
+/utilities/molecularConfigurations/berylliumAtomReferenceEigenvalues.csv
 /home/njvaughn/results_Be/results.csv
 -8.1232305760491457e+00
  1.4309060170370618e+01
@@ -16,7 +16,7 @@
 
 #-8.1232305760491457e+00
 # 1.4309060170370618e+01
-#-2.2903921833555341e+00
+#-2.2903921833555341e+00    
 #-2.2343205529440757e-01
 #-2.6241437049802535e+01  # Electrostatuc from DFT-FE
 #-1.4446201118081863e+01
