@@ -9,6 +9,7 @@ SINGSUBT=1
 
 
 INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 
 VTKFILEDIR='None'
 
@@ -47,7 +48,7 @@ MESHPARAM4=0
 
 for SINGSUBT in 1 
 do
-for CELLORDER in 3 
+for CELLORDER in 5 
 do	      
 for BASE in 1 
 do   
