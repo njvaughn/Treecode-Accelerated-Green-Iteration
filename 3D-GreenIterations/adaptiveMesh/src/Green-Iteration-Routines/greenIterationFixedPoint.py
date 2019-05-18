@@ -24,10 +24,6 @@ except OSError:
 
 from orthogonalizationRoutines import *
 
-def clenshawCurtisNorm(psi):
-    appendedWeights = np.append(W, 10.0)
-    norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
-    return norm
 
 
 def greensIteration_FixedPoint_Closure(gi_args):
