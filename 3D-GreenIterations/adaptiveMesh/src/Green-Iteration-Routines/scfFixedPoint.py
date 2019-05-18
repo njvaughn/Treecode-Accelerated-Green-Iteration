@@ -63,7 +63,7 @@ def printResidual(x,f):
     
 def scfFixedPointClosure(scf_args):   
     
-    def scfFixedPoint(RHO):
+    def scfFixedPoint(RHO,scf_args):
         
         ## Unpack scf_args
         inputDensities = scf_args['inputDensities']

@@ -8,8 +8,8 @@ MINDEPTH=3
 SINGSUBT=1
 
 SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
-INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
-#INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
+#INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
 
 VTKFILEDIR='None'
 
@@ -48,7 +48,7 @@ MESHPARAM4=0
 
 for SINGSUBT in 1 
 do
-for CELLORDER in 3 
+for CELLORDER in 5 
 do	      
 for BASE in 1 
 do   

@@ -15,7 +15,6 @@ import resource
 
 
 
-global rootDirectory
 if os.uname()[1] == 'Nathans-MacBook-Pro.local':
     rootDirectory = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/'
 else:
@@ -27,6 +26,8 @@ import pylibxc
 from timeit import default_timer as timer
 import itertools
 import csv
+from scipy.optimize import anderson
+from scipy.optimize import root as scipyRoot
 
 
 
@@ -139,7 +140,11 @@ else:
 # vtkFileBase         = str(sys.argv[17])
 vtkFileBase='/home/njvaughn/results_CO/orbitals'
 
-
+def clenshawCurtisNormClosure(W):
+    def clenshawCurtisNorm(psi):
+        norm = np.sqrt( np.sum( psi*psi*W ) )
+        return norm
+    return clenshawCurtisNorm
 
 def setUpTree(onlyFillOne=False):
     '''
@@ -327,14 +332,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
-#     global tree, weights
-    #global threadsPerBlock, blocksPerGrid, SCFcount, m #greenIterationsCount
-    #global greenIterationOutFile
-    #global Veff, Vx, Vc, Vext
-    
-    #global RHO # Needed because this function sets RHO = np.zeros(nPoints) at some point, so without 'global' it thinks it's a local variable.
-    #global occupations
-    
+
     polarization="unpolarized"
     exchangeFunctional="LDA_X"
     correlationFunctional="LDA_C_PZ"
@@ -348,7 +346,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     print('Does X exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(X))
     print('Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))
     
-#     global Energies, Times
     Energies={}
     Energies['orbitalEnergies'] = np.zeros(nOrbitals)
     Energies['gaugeShift'] = gaugeShift
@@ -479,218 +476,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     [Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal] = np.genfromtxt(inputFile)[3:9]
     print([Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal])
 
-#     ### COMPUTE THE INITIAL HAMILTONIAN ###
-# #     density_targets = tree.extractLeavesDensity()  
-# #     density_sources = np.copy(density_targets)
-# #     sources = tree.extractDenstiySecondaryMesh()   # extract density on secondary mesh
-# 
-#     integratedDensity = np.sum( RHO*W )
-#     print('Integrated density: ', integratedDensity)
-# 
-# #     starthartreeConvolutionTime = timer()
-# #     alpha = gaussianAlpha
-#     alphasq=gaussianAlpha*gaussianAlpha
-#     
-#     
-#     if restartFile==False: # need to do initial Vhartree solve
-#         print('Using Gaussian singularity subtraction, alpha = ', gaussianAlpha)
-#         
-#         print('GPUpresent set to ', GPUpresent)
-#         print('Type: ', type(GPUpresent))
-#         if GPUpresent==False:
-#             numTargets = len(density_targets)
-#             numSources = len(density_sources)
-#     #         print('numTargets = ', numTargets)
-#     #         print(targets[:10,:])
-#     #         print('numSources = ', numSources)
-#     #         print(sources[:10,:])
-#             copystart = time.time()
-#             sourceX = np.copy(density_sources[:,0])
-#     #         print(np.shape(sourceX))
-#     #         print('sourceX = ', sourceX[0:10])
-#             sourceY = np.copy(density_sources[:,1])
-#             sourceZ = np.copy(density_sources[:,2])
-#             sourceValue = np.copy(density_sources[:,3])
-#             sourceWeight = np.copy(density_sources[:,4])
-#             
-#             targetX = np.copy(density_targets[:,0])
-#             targetY = np.copy(density_targets[:,1])
-#             targetZ = np.copy(density_targets[:,2])
-#             targetValue = np.copy(density_targets[:,3])
-#             targetWeight = np.copy(density_targets[:,4])
-#             copytime=time.time()-copystart
-#             print('Copy time before convolution: ', copytime)
-#             start = time.time()
-#             
-#             if treecode==False:
-#                 V_hartreeNew = directSumWrappers.callCompiledC_directSum_PoissonSingularitySubtract(numTargets, numSources, alphasq, 
-#                                                                                                       targetX, targetY, targetZ, targetValue,targetWeight, 
-#                                                                                                       sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
-#     
-#                 V_hartreeNew += targets[:,3]* (4*np.pi)/ alphasq/ 2   # Correct for exp(-r*r/alphasq)  # DONT TRUST
-#     
-#             elif treecode==True:
-#                 
-#                 
-#     # #         V_hartreeNew += targets[:,3]* (4*np.pi)* alphasq/2  # Wrong
-#     
-#     
-#     #         V_hartreeNew = directSumWrappers.callCompiledC_directSum_Poisson(numTargets, numSources, 
-#     #                                                                         targetX, targetY, targetZ, targetValue,targetWeight, 
-#     #                                                                         sourceX, sourceY, sourceZ, sourceValue, sourceWeight)
-#     
-#                 potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
-# #                 alpha = gaussianAlpha
-#                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
-#                                                                targetX, targetY, targetZ, targetValue, 
-#                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-#                                                                potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
-#                    
-#                 if potentialType==2:
-#                     V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
-#     
-#             
-#     #         print('First few terms of V_hartreeNew: ', V_hartreeNew[:8])
-#             print('Convolution time: ', time.time()-start)
-#             
-#             
-#             
-#             
-#         elif GPUpresent==True:
-#             if treecode==False:
-#                 V_hartreeNew = np.zeros(nPoints)
-#                 start = time.time()
-#                 densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
-#                 gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](densityInput,densityInput,V_hartreeNew,alphasq)
-#                 print('Convolution time: ', time.time()-start)
-#     #             return
-#             elif treecode==True:
-# 
-#                 start = time.time()
-#                 potentialType=2 
-#                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
-#                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-#                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-#                                                                potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
-#                 
-#                 
-#                 print('Convolution time: ', time.time()-start)
-#                 
-#             else:
-#                 print('treecode True or False?')
-#                 return
-#         
-#         
-#         ## Energy update after computing Vhartree
-#         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
-# 
-# 
-#         exchangeOutput = exchangeFunctional.compute(RHO)
-#         correlationOutput = correlationFunctional.compute(RHO)
-#         Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
-#         Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
-#         
-#         Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
-#         Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
-#         
-#         Energies['Vx'] = np.sum(W * RHO * Vx)
-#         Energies['Vc'] = np.sum(W * RHO * Vc)
-#         
-#         Veff = V_hartreeNew + Vx + Vc + Vext + gaugeShift
-#         
-#         
-#     
-#     
-#         print('Update orbital energies after computing the initial Veff.  Save them as the reference values for each cell')
-# #         tree.updateOrbitalEnergies(sortByEnergy=False, saveAsReference=True)
-# #         tree.computeBandEnergy()
-#         for m in range(nOrbitals):
-#             Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
-#         Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
-#         
-# #         tree.sortOrbitalsAndEnergies()
-# #         for m in range(nOrbitals):
-# #             # fill in orbitals
-# #             targets = tree.extractPhi(m)
-# #             weights = np.copy(targets[:,5])
-# #             oldOrbitals[:,m] = np.copy(targets[:,3])
-# #             orbitals[:,m] = np.copy(targets[:,3])
-# #         print('Orbital energies after initial sort: \n', Energies['orbitalEnergies'])
-# #         print('Kinetic:   ', tree.orbitalKinetic)
-# #         print('Potential: ', tree.orbitalPotential)
-# #         tree.updateTotalEnergy(gradientFree=False)
-# 
-#         Energies['Etotal'] = Energies['Eband'] - Energies['Ehartree'] + Energies['Ex'] + Energies['Ec'] - Energies['Vx'] - Energies['Vc'] + Energies['Enuclear']
-#         
-#         
-#         """
-#     
-#         Print results before SCF 1
-#         """
-#     
-#         print('Orbital Energies: ', Energies['orbitalEnergies']) 
-#     
-#         print('Orbital Energy Errors after initialization: ', Energies['orbitalEnergies']-referenceEigenvalues[:nOrbitals]-gaugeShift)
-#     
-#         print('Updated V_x:                           %.10f Hartree' %Energies['Vx'])
-#         print('Updated V_c:                           %.10f Hartree' %Energies['Vc'])
-#         
-#         print('Updated Band Energy:                   %.10f H, %.10e H' %(Energies['Eband'], Energies['Eband']-Eband) )
-#     #     print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(Energies['kinetic'], Energies['kinetic']-Ekinetic) )
-#         print('Updated E_H:                            %.10f H, %.10e H' %(Energies['Ehartree'], Energies['Ehartree']-Ehartree) )
-#         print('Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-Eexchange) )
-#         print('Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-Ecorrelation) )
-#     #     print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
-#         print('Total Energy:                          %.10f H, %.10e H' %(Energies['Etotal'], Energies['Etotal']-Etotal))
-#         
-#         
-#         
-#         printInitialEnergies=True
-#     
-#         if printInitialEnergies==True:
-#             header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
-#                       'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy']
-#         
-#             myData = [0, 1, Energies['orbitalEnergies'], Energies['Eband'], Energies['kinetic'], 
-#                       Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal']]
-#             
-#         
-#             if not os.path.isfile(SCFiterationOutFile):
-#                 myFile = open(SCFiterationOutFile, 'a')
-#                 with myFile:
-#                     writer = csv.writer(myFile)
-#                     writer.writerow(header) 
-#                 
-#             
-#             myFile = open(SCFiterationOutFile, 'a')
-#             with myFile:
-#                 writer = csv.writer(myFile)
-#                 writer.writerow(myData)
-#     
-#     
-#         for m in range(nOrbitals):
-#             if Energies['orbitalEnergies'][m] > Energies['gaugeShift']:
-#                 Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 1.0
-#     
-#         
-#         
-#     
-#         
-#     
-# #         if vtkExport != False:
-# #             filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
-# #             Energies['Etotal']xportGridpoints(filename)
-#             
-#         
-#     #     if GPUpresent==False:
-#     #         print('Exiting after initialization because no GPU present.')
-#     #         return
-# 
-#   
-#     
+ 
 
     energyResidual=1
-#     global residuals
     residuals = 10*np.ones_like(Energies['orbitalEnergies'])
     
     referenceEnergies = {'Etotal':Etotal,'Eband':Eband,'Ehartree':Ehartree,'Eexchange':Eexchange,'Ecorrelation':Ecorrelation}
@@ -706,75 +494,87 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     
 
     
+    clenshawCurtisNorm = clenshawCurtisNormClosure(W)
+    method='anderson'
+    jacobianOptions={'alpha':1.0, 'M':10, 'w0':0.01} 
+    solverOptions={'fatol':interScfTolerance, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
 
     
-    while ( (densityResidual > interScfTolerance) or (energyResidual > interScfTolerance) ):  # terminate SCF when both energy and density are converged.
-        
-        ## CALL SCF FIXED POINT FUNCTION
-#         if SCFcount > 0:
-#             print('Exiting before first SCF (for testing initialized mesh accuracy)')
+    print('Calling scipyRoot with %s method' %method)
+    scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
+#     print(np.shaoe(RHO))
+    sol = scipyRoot(scfFixedPoint,RHO, args=scf_args, method=method, options=solverOptions)
+    print(sol.success)
+    print(sol.message)
+    RHO = sol.x
+    
+#     while ( (densityResidual > interScfTolerance) or (energyResidual > interScfTolerance) ):  # terminate SCF when both energy and density are converged.
+#         
+#         ## CALL SCF FIXED POINT FUNCTION
+# #         if SCFcount > 0:
+# #             print('Exiting before first SCF (for testing initialized mesh accuracy)')
+# #             return
+#         scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
+#         densityResidualVector = scfFixedPoint(RHO)
+#         densityResidual=scf_args['densityResidual']
+#         energyResidual=scf_args['energyResidual']
+#         
+# #         densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
+# #         print('Density Residual from arrays ', densityResidual)
+#         print('Shape of density histories: ', np.shape(outputDensities), np.shape(inputDensities))
+#         
+#         # Now compute new mixing with anderson scheme, then import onto tree. 
+#   
+#     
+#         if mixingScheme == 'Simple':
+#             print('Using simple mixing, from the input/output arrays')
+#             simpleMixingDensity = mixingParameter*scf_args['inputDensities'][:,SCFcount-1] + (1-mixingParameter)*scf_args['outputDensities'][:,SCFcount-1]
+#             integratedDensity = np.sum( simpleMixingDensity*W )
+#             print('Integrated simple mixing density: ', integratedDensity)
+#     #             tree.importDensityOnLeaves(simpleMixingDensity)
+#             RHO = np.copy(simpleMixingDensity)
+#         
+#         elif mixingScheme == 'Anderson':
+#             print('Using anderson mixing.')
+#             andersonDensity = densityMixing.computeNewDensity(scf_args['inputDensities'], scf_args['outputDensities'], mixingParameter,W)
+#             integratedDensity = np.sum( andersonDensity*W )
+#             print('Integrated anderson density: ', integratedDensity)
+#     #             tree.importDensityOnLeaves(andersonDensity)
+#             RHO = np.copy(andersonDensity)
+#         
+#         elif mixingScheme == 'None':
+#             RHO += densityResidualVector
+#              
+#         
+#         
+#         else:
+#             print('Mixing must be set to either Simple, Anderson, or None')
 #             return
-        scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
-        densityResidualVector = scfFixedPoint(RHO)
-        densityResidual=scf_args['densityResidual']
-        energyResidual=scf_args['energyResidual']
-        
-#         densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
-#         print('Density Residual from arrays ', densityResidual)
-        print('Shape of density histories: ', np.shape(outputDensities), np.shape(inputDensities))
-        
-        # Now compute new mixing with anderson scheme, then import onto tree. 
-  
-    
-        if mixingScheme == 'Simple':
-            print('Using simple mixing, from the input/output arrays')
-            simpleMixingDensity = mixingParameter*scf_args['inputDensities'][:,SCFcount-1] + (1-mixingParameter)*scf_args['outputDensities'][:,SCFcount-1]
-            integratedDensity = np.sum( simpleMixingDensity*W )
-            print('Integrated simple mixing density: ', integratedDensity)
-    #             tree.importDensityOnLeaves(simpleMixingDensity)
-            RHO = np.copy(simpleMixingDensity)
-        
-        elif mixingScheme == 'Anderson':
-            print('Using anderson mixing.')
-            andersonDensity = densityMixing.computeNewDensity(scf_args['inputDensities'], scf_args['outputDensities'], mixingParameter,W)
-            integratedDensity = np.sum( andersonDensity*W )
-            print('Integrated anderson density: ', integratedDensity)
-    #             tree.importDensityOnLeaves(andersonDensity)
-            RHO = np.copy(andersonDensity)
-        
-        elif mixingScheme == 'None':
-            RHO += densityResidualVector
-             
-        
-        
-        else:
-            print('Mixing must be set to either Simple, Anderson, or None')
-            return
-    
-                
-        """ END WRITING INDIVIDUAL ITERATION TO FILE """
-     
-        
-        if Energies['Etotal'] > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
-            print('Warning, Energy is positive')
-            Energies['Etotal'] = -0.5
-            
-        
-        if SCFcount >= 150:
-            print('Setting density residual to -1 to exit after the 150th SCF')
-            densityResidual = -1
-            
-#         if SCFcount >= 1:
-#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-#             energyResidual = -1
+#     
+#                 
+#         """ END WRITING INDIVIDUAL ITERATION TO FILE """
+#      
+#         
+#         if Energies['Etotal'] > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
+#             print('Warning, Energy is positive')
+#             Energies['Etotal'] = -0.5
+#             
+#         
+#         if SCFcount >= 150:
+#             print('Setting density residual to -1 to exit after the 150th SCF')
 #             densityResidual = -1
-        
-
-
-
-    
-    
-    print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, SCFcount))
+#             
+# #         if SCFcount >= 1:
+# #             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+# #             energyResidual = -1
+# #             densityResidual = -1
+#         
+# 
+# 
+# 
+#     
+#     
+#     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, SCFcount))
     return Energies, Times
     
     
