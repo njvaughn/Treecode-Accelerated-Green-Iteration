@@ -289,7 +289,6 @@ def greensIteration_FixedPoint_Closure(gi_args):
         gi_args['eigenvalueHistory']=eigenvalueHistory
         
         
-        gi_args['Dummy'] = 1
         
         return residualVector
     

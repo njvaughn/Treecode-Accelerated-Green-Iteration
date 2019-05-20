@@ -51,7 +51,7 @@ def fermiObjectiveFunctionClosure(Energies,nElectrons):
 
 def clenshawCurtisNormClosure(W):
     def clenshawCurtisNorm(psi):
-        appendedWeights = np.append(W, 10.0)
+        appendedWeights = np.append(W, 1.0)
         norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
         return norm
     return clenshawCurtisNorm
@@ -59,6 +59,22 @@ def clenshawCurtisNormClosure(W):
 def printResidual(x,f):
     r = clenshawCurtisNorm(f)
     print('L2 Norm of Residual: ', r)
+    
+def sortByEigenvalue(orbitals,orbitalEnergies):
+    newOrder = np.argsort(orbitalEnergies)
+    oldEnergies = np.copy(orbitalEnergies)
+    for m in range(len(orbitalEnergies)):
+        orbitalEnergies[m] = oldEnergies[newOrder[m]]
+    print('Sorted eigenvalues: ', orbitalEnergies)
+    print('New order: ', newOrder)
+    
+    newOrbitals = np.zeros_like(orbitals)
+    for m in range(len(orbitalEnergies)):
+        newOrbitals[:,m] = orbitals[:,newOrder[m]]
+#         if newOrder[m]!=m:
+            
+   
+    return newOrbitals, orbitalEnergies
     
     
 def scfFixedPointClosure(scf_args):   
@@ -117,6 +133,7 @@ def scfFixedPointClosure(scf_args):
         print()
         print('\nSCF Count ', SCFcount)
         print('Orbital Energies: ', Energies['orbitalEnergies'])
+        
         
         if SCFcount>1:
             
@@ -190,6 +207,7 @@ def scfFixedPointClosure(scf_args):
             for m in range(nOrbitals):
                 Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
 #             Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
+            orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
         
         
            
@@ -212,12 +230,8 @@ def scfFixedPointClosure(scf_args):
             
             
             resNorm=1 
-            while resNorm>1e-3:
-    #             for njv in range(10):
-    #                 targets = tree.extractPhi(m)
-    #                 sources = tree.extractPhi(m)
-    #                 weights = np.copy(targets[:,5])
-    #                 orbitals[:,m] = np.copy(targets[:,3])
+            while resNorm>1e-2:
+
                 
             
                 # Orthonormalize orbital m before beginning Green's iteration
@@ -229,15 +243,11 @@ def scfFixedPointClosure(scf_args):
         
         
                 greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
-                print('Before: ', gi_args['greenIterationsCount'])
                 r = greensIteration_FixedPoint(psiIn, gi_args)
                 clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                 resNorm = clenshawCurtisNorm(r)
                 print('CC norm of residual vector: ', resNorm)
-    #                 print(gi_args_out)
-                print('After: ', gi_args['greenIterationsCount'])
-                print('Dummy: ', gi_args['Dummy']) 
-    #                 print(gi_args_out['greenIterationsCount'])
+
              
              
             print('Power iteration tolerance met.  Beginning rootfinding now...') 
@@ -285,7 +295,8 @@ def scfFixedPointClosure(scf_args):
             
     
         
-        
+        ## Sort by eigenvalue
+        orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
         eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
@@ -300,7 +311,7 @@ def scfFixedPointClosure(scf_args):
     
         print()  
         print()
-    
+     
     
         
     
