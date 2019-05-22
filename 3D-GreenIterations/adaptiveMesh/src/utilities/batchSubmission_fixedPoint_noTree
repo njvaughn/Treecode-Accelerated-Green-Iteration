@@ -3,14 +3,15 @@
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
 
-DOMAIN=20
+DOMAIN=30
 MINDEPTH=3
 SINGSUBT=1
 
 SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
 #INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
-INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+#INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
+INPUTFILE='utilities/molecularConfigurations/benzeneAuxiliary.csv'
 
 VTKFILEDIR='None'
 
@@ -19,16 +20,16 @@ GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GPUPRESENT='True'
  
-TREECODE='False'      
-MAXPARNODE=4000
-BATCHSIZE=4000
+TREECODE='True'      
+MAXPARNODE=16000
+BATCHSIZE=16000
 
 
 GAUSSIANALPHA=1.0
 GAUGESHIFT=-0.5
- 
-#MESHTYPE='ParentChildrenIntegral'
-MESHTYPE='LW5'
+
+MESHTYPE='ParentChildrenIntegral'
+#MESHTYPE='LW5'
 RESTART='False'	
 SAVEDMESH='None' 
 
@@ -37,7 +38,7 @@ ADDITIONALDEPTHATATOMS=0
 MIXINGPARAMETER=0.5 
 MIXINGHISTORY=20 
   
-INTRASCFTOLERANCE=5e-7
+INTRASCFTOLERANCE=5e-5
 INTERSCFTOLERANCE=5e-6
      
 MIXING='Anderson'    
@@ -59,12 +60,13 @@ for GRADIENTFREE in 'True'
 do  
 	for TREECODEORDER in 8
 	do         
-		for THETA in 0.8  
+		for THETA in 0.7  
 		do  
-			for MESHPARAM3 in 3e-7  
+			for MESHPARAM3 in 1e-7  
 			do
 
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/O_yesScipySCF_history20_PCI_meshParam_${MESHPARAM3}.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_PCI_meshParam_${MESHPARAM3}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/no_gp_phi_PCI_meshParam_${MESHPARAM3}.csv"
 			
 			#python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 			python -u testBatchGreenIterations_FixedPoint_noTree.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
@@ -75,7 +77,7 @@ do
 		done 
 	done     
 	
-done     
+done      
 done
 done 
 done    

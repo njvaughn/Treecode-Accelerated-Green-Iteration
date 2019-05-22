@@ -43,6 +43,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
         GPUpresent = gi_args['GPUpresent']
         subtractSingularity = gi_args['subtractSingularity']
         treecode = gi_args['treecode']
+        treecodeOrder = gi_args['treecodeOrder']
+        theta = gi_args['theta']
+        maxParNode=gi_args['maxParNode']
+        batchSize=gi_args['batchSize']
         nPoints = gi_args['nPoints']
         X = gi_args['X']
         Y = gi_args['Y']
@@ -75,9 +79,9 @@ def greensIteration_FixedPoint_Closure(gi_args):
          
         oldOrbitals[:,m] = np.copy(psiIn[:-1])    
         orbitals[:,m] = np.copy(psiIn[:-1])
-        n,M = np.shape(orbitals)
-        orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
-        orbitals[:,m] = np.copy(orthWavefunction)
+#         n,M = np.shape(orbitals)
+#         orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
+#         orbitals[:,m] = np.copy(orthWavefunction)
         Energies['orbitalEnergies'][m] = np.copy(psiIn[-1])
         
     
@@ -203,8 +207,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
     
         
         if Energies['orbitalEnergies'][m]>0.0:
-            Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 0.5
-            print('Energy eigenvalue was positive, setting to gauge shift - 0.5')
+            Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - np.random.randint(10)
+            print('Energy eigenvalue was positive, setting to gauge shift - 2.5')
             
         
     #     tree.printWavefunctionNearEachAtom(m)

@@ -14,8 +14,7 @@ from scipy.optimize import broyden1, anderson, brentq
 from fermiDiracDistribution import computeOccupations
 import sys
 import resource
-sys.path.append('../ctypesTests')
-sys.path.append('../ctypesTests/lib')
+
 
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 from orthogonalizationRoutines import *
@@ -77,7 +76,7 @@ def sortByEigenvalue(orbitals,orbitalEnergies):
     return newOrbitals, orbitalEnergies
     
     
-def scfFixedPointClosure(scf_args):   
+def scfFixedPointClosure(scf_args): 
     
     def scfFixedPoint(RHO,scf_args):
         
@@ -95,7 +94,7 @@ def scfFixedPointClosure(scf_args):
         theta=scf_args['theta']
         maxParNode=scf_args['maxParNode']
         batchSize=scf_args['batchSize']
-        alphasq=scf_args['alphasq']
+        gaussianAlpha=scf_args['gaussianAlpha']
         Energies=scf_args['Energies']
         exchangeFunctional=scf_args['exchangeFunctional']
         correlationFunctional=scf_args['correlationFunctional']
@@ -154,13 +153,13 @@ def scfFixedPointClosure(scf_args):
         Compute new electron-electron potential and update pointwise potential values 
         """
     #         starthartreeConvolutionTime = timer()
-    
+        
         
         if GPUpresent==True:
             if treecode==False:
                 V_hartreeNew = np.zeros(nPoints)
                 densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
-                gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](densityInput,densityInput,V_hartreeNew,alphasq)
+                gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
             elif treecode==True:
                 start = time.time()
                 potentialType=2 
@@ -205,8 +204,8 @@ def scfFixedPointClosure(scf_args):
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
             for m in range(nOrbitals):
-                Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
-#             Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
+                Energies['orbitalEnergies'][m] = -10
+#                 Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
         
         
@@ -223,7 +222,8 @@ def scfFixedPointClosure(scf_args):
             greenIterationsCount=1
             gi_args = {'orbitals':orbitals,'oldOrbitals':oldOrbitals, 'Energies':Energies, 'Times':Times, 'Veff':Veff, 
                            'symmetricIteration':symmetricIteration,'GPUpresent':GPUpresent,'subtractSingularity':subtractSingularity,
-                           'treecode':treecode, 'nPoints':nPoints, 'm':m, 'X':X,'Y':Y,'Z':Z,'W':W,'gradientFree':gradientFree,
+                           'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta, 'maxParNode':maxParNode,'batchSize':batchSize,
+                           'nPoints':nPoints, 'm':m, 'X':X,'Y':Y,'Z':Z,'W':W,'gradientFree':gradientFree,
                            'SCFcount':SCFcount,'greenIterationsCount':greenIterationsCount,'residuals':residuals,
                            'greenIterationOutFile':greenIterationOutFile, 'blocksPerGrid':blocksPerGrid,'threadsPerBlock':threadsPerBlock,
                            'referenceEigenvalues':referenceEigenvalues   } 
@@ -269,7 +269,7 @@ def scfFixedPointClosure(scf_args):
                     ### Anderson Options
                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                     method='anderson'
-                    jacobianOptions={'alpha':1.0, 'M':5, 'w0':0.01} 
+                    jacobianOptions={'alpha':1.0, 'M':20, 'w0':0.01} 
                     solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
     
                     

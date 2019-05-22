@@ -31,6 +31,12 @@ from scipy.optimize import root as scipyRoot
 
 
 
+# global domainSize,minDepth,maxDepth,additionalDepthAtAtoms,order,subtractSingularity,smoothingEps
+# global gaussianAlpha,gaugeShift,divideCriterion,divideParameter1,divideParameter2,energyTolerance
+# global scfTolerance,outputFile,inputFile,srcdir,vtkDir,noGradients,symmetricIteration,mixingScheme
+# global mixingParameter,mixingHistoryCutoff,GPUpresent,treecode,treecodeOrder,theta,maxParNode
+# global batchSize,divideParameter3,divideParameter4,base,restart,savedMesh
+  
 n=1
 domainSize          = int(sys.argv[n]); n+=1
 minDepth            = int(sys.argv[n]); n+=1
@@ -42,7 +48,7 @@ smoothingEps        = float(sys.argv[n]); n+=1
 gaussianAlpha       = float(sys.argv[n]); n+=1
 gaugeShift          = float(sys.argv[n]); n+=1
 divideCriterion     = str(sys.argv[n]); n+=1
-divideParameter1    = float(sys.argv[n]); n+=1
+divideParameter1    = float(sys.argv[n]); n+=1 
 divideParameter2    = float(sys.argv[n]); n+=1
 energyTolerance     = float(sys.argv[n]); n+=1
 scfTolerance        = float(sys.argv[n]); n+=1
@@ -81,6 +87,9 @@ sys.path.append(srcdir+'dataStructures')
 sys.path.append(srcdir+'Green-Iteration-Routines')
 sys.path.append(srcdir+'utilities')
 sys.path.append(srcdir+'../ctypesTests/src')
+
+sys.path.append(srcdir+'../ctypesTests')
+sys.path.append(srcdir+'../ctypesTests/lib') 
 
 from TreeStruct_CC import Tree
 import densityMixingSchemes as densityMixing
@@ -167,8 +176,8 @@ def setUpTree(onlyFillOne=False):
         for i in range(len(atomData)):
             nElectrons += atomData[i,3]
     
-    nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
-#     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.  
+#     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
+    nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.   
                                             # If the final orbital is unoccupied, this amount is enough. 
                                             # If there is a degeneracy leading to teh final orbital being 
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
@@ -184,7 +193,7 @@ def setUpTree(onlyFillOne=False):
     
 #     nOrbitals = 6
 
-    if inputFile=='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv':
+    if inputFile==srcdir+'utilities/molecularConfigurations/oxygenAtomAuxiliary.csv':
         nOrbitals=5
         occupations = 2*np.ones(nOrbitals)
         occupations[2] = 4/3
@@ -192,7 +201,7 @@ def setUpTree(onlyFillOne=False):
         occupations[4] = 4/3
         print('For oxygen atom, nOrbitals = ', nOrbitals)
         
-    elif inputFile=='utilities/molecularConfigurations/benzeneAuxiliary.csv':
+    elif inputFile==srcdir+'utilities/molecularConfigurations/benzeneAuxiliary.csv':
         nOrbitals=22
         occupations = 2*np.ones(nOrbitals)
         occupations[-1]=0
@@ -209,23 +218,24 @@ def setUpTree(onlyFillOne=False):
 #                        1,
 #                        1]
         
-    elif inputFile=='utilities/molecularConfigurations/O2Auxiliary.csv':
+    elif inputFile==srcdir+'utilities/molecularConfigurations/O2Auxiliary.csv':
         nOrbitals=10
         occupations = [2,2,2,2,4/3,4/3,4/3,4/3,4/3,4/3]
         
-    elif inputFile=='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
+    elif inputFile==srcdir+'utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
 #         nOrbitals=10
 #         occupations = [2, 2, 4/3 ,4/3 ,4/3, 
 #                        2, 2, 2/3 ,2/3 ,2/3 ]
         nOrbitals=7
         occupations = 2*np.ones(nOrbitals)
     
-    elif inputFile=='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv':
+    elif inputFile==srcdir+'utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv':
         nOrbitals=1
         occupations = [2]
-        
-    print('in testBatchGreen..., nOrbitals = ', nOrbitals) 
     
+#     print('inputFile == '+inputFile)
+    print('in testBatchGreen..., nOrbitals = ', nOrbitals) 
+#     return
     print([coordinateFile, outputFile, nElectrons, nOrbitals, 
      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     
@@ -245,8 +255,13 @@ def setUpTree(onlyFillOne=False):
 
  
     
-    X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
-    (nPoints, nOrbitals) = np.shape(orbitals)
+#     X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
+    X,Y,Z,W,RHO = tree.extractXYZ()
+    nPoints = len(X)
+#     orbitals = np.random.rand(nPoints,nOrbitals)
+    orbitals = np.zeros((nPoints,nOrbitals))
+    for m in range(nOrbitals):
+        orbitals[:,m] = np.exp(-(X*X+Y*Y+Z*Z))
     print('nPoints: ', nPoints)
     print('nOrbitals: ', nOrbitals)
     atoms = tree.atoms
@@ -344,8 +359,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     for atom in atoms:
         Vext += atom.V(X,Y,Z)
         
-    print('Does X exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(X))
-    print('Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))
+#     print('Does X exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(X))
+#     print('Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))
     
     Energies={}
     Energies['orbitalEnergies'] = np.zeros(nOrbitals)
@@ -437,7 +452,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
         
         Energies['Vx'] = np.sum(W * RHO * Vx)
         Energies['Vc'] = np.sum(W * RHO * Vc)
-        
+         
         Veff = V_hartreeNew + Vx + Vc + Vext + gaugeShift
         
         
@@ -484,7 +499,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     
     referenceEnergies = {'Etotal':Etotal,'Eband':Eband,'Ehartree':Ehartree,'Eexchange':Eexchange,'Ecorrelation':Ecorrelation}
     scf_args={'inputDensities':inputDensities,'outputDensities':outputDensities,'SCFcount':SCFcount,'nPoints':nPoints,'nOrbitals':nOrbitals,'mixingHistoryCutoff':mixingHistoryCutoff,
-               'GPUpresent':GPUpresent,'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta,'maxParNode':maxParNode,'batchSize':batchSize,'alphasq':gaussianAlpha*gaussianAlpha,
+               'GPUpresent':GPUpresent,'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta,'maxParNode':maxParNode,'batchSize':batchSize,'gaussianAlpha':gaussianAlpha,
                'Energies':Energies,'Times':Times,'exchangeFunctional':exchangeFunctional,'correlationFunctional':correlationFunctional,
                'Vext':Vext,'gaugeShift':gaugeShift,'orbitals':orbitals,'oldOrbitals':oldOrbitals,'subtractSingularity':subtractSingularity,
                'X':X,'Y':Y,'Z':Z,'W':W,'gradientFree':gradientFree,'residuals':residuals,'greenIterationOutFile':greenIterationOutFile,
