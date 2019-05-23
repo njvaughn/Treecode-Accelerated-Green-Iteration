@@ -3,15 +3,15 @@
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
 
-DOMAIN=30
+DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
 SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
-#INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
-INPUTFILE='utilities/molecularConfigurations/benzeneAuxiliary.csv'
+#INPUTFILE='utilities/molecularConfigurations/benzeneAuxiliary.csv'
 
 VTKFILEDIR='None'
 
@@ -20,7 +20,7 @@ GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GPUPRESENT='True'
  
-TREECODE='True'      
+TREECODE='False'      
 MAXPARNODE=16000
 BATCHSIZE=16000
 

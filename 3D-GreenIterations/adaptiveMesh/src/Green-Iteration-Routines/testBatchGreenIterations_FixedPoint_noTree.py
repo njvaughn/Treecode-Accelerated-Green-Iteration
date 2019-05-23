@@ -23,11 +23,11 @@ else:
 import unittest
 import numpy as np
 import pylibxc
-from timeit import default_timer as timer
 import itertools
 import csv
 from scipy.optimize import anderson
 from scipy.optimize import root as scipyRoot
+from scipy.special import sph_harm
 
 
 
@@ -155,6 +155,99 @@ def clenshawCurtisNormClosure(W):
         return norm
     return clenshawCurtisNorm
 
+def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z): 
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
+
+        orbitalIndex=0
+    
+        for atom in atoms:
+            nAtomicOrbitals = atom.nAtomicOrbitals
+                
+            
+            
+            print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+                      %(atom.atomicNumber, atom.x,atom.y,atom.z))
+            print('Orbital index = %i'%orbitalIndex)            
+            singleAtomOrbitalCount=0
+            for nell in aufbauList:
+                
+                if singleAtomOrbitalCount< nAtomicOrbitals:  
+                    n = int(nell[0])
+                    ell = int(nell[1])
+                    psiID = 'psi'+str(n)+str(ell)
+#                     print('Using ', psiID)
+                    for m in range(-ell,ell+1):
+                        
+                        dx = X-atom.x
+                        dy = Y-atom.y
+                        dz = Z-atom.z
+                        phi = np.zeros(len(dx))
+                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                        inclination = np.arccos(dz/r)
+                        print('Type(dx): ', type(dx))
+                        print('Type(dy): ', type(dy))
+                        print('Shape(dx): ', np.shape(dx))
+                        print('Shape(dy): ', np.shape(dy))
+                        azimuthal = np.arctan2(dy,dx)
+                        
+                        if m<0:
+                            Ysp = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                        if m>0:
+                            Ysp = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+#                                     if ( (m==0) and (ell>1) ):
+                        if ( m==0 ):
+                            Ysp = sph_harm(m,ell,azimuthal,inclination)
+#                                     if ( (m==0) and (ell<=1) ):
+#                                         Y = 1
+                        if np.max( abs(np.imag(Ysp)) ) > 1e-14:
+                            print('imag(Y) ', np.imag(Ysp))
+                            return
+#                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+#                         phi = atom.interpolators[psiID](r)*np.real(Y)
+                        try:
+                            phi = atom.interpolators[psiID](r)*np.real(Ysp)
+                        except ValueError:
+                            phi = 0.0   # if outside the interpolation range, assume 0.
+                        
+                        
+                        orbitals[:,orbitalIndex] = np.copy(phi)
+#                         self.importPhiOnLeaves(phi, orbitalIndex)
+#                         self.normalizeOrbital(orbitalIndex)
+                        
+                        print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
+                        orbitalIndex += 1
+                        singleAtomOrbitalCount += 1
+                    
+#                 else:
+#                     n = int(nell[0])
+#                     ell = int(nell[1])
+#                     psiID = 'psi'+str(n)+str(ell)
+#                     print('Not using ', psiID)
+                        
+        if orbitalIndex < nOrbitals:
+            print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
+            print('Filling extra orbitals with decaying exponential.')
+#             print('Filling extra orbitals with random initial data.')
+#             for ii in range(orbitalIndex, nOrbitals):
+#                 self.initializeOrbitalsRandomly(targetOrbital=ii)
+#                 self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
+#                 self.orthonormalizeOrbitals(targetOrbital=ii)
+        if orbitalIndex > nOrbitals:
+            print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
+                        
+
+#         
+#         for m in range(self.nOrbitals):
+#             self.normalizeOrbital(m)
+
+        return orbitals
+
 def setUpTree(onlyFillOne=False):
     '''
     setUp() gets called before every test below.
@@ -176,8 +269,8 @@ def setUpTree(onlyFillOne=False):
         for i in range(len(atomData)):
             nElectrons += atomData[i,3]
     
-#     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
-    nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.   
+    nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
+#     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.   
                                             # If the final orbital is unoccupied, this amount is enough. 
                                             # If there is a degeneracy leading to teh final orbital being 
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
@@ -257,14 +350,16 @@ def setUpTree(onlyFillOne=False):
     
 #     X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
     X,Y,Z,W,RHO = tree.extractXYZ()
+    atoms = tree.atoms
     nPoints = len(X)
 #     orbitals = np.random.rand(nPoints,nOrbitals)
     orbitals = np.zeros((nPoints,nOrbitals))
-    for m in range(nOrbitals):
-        orbitals[:,m] = np.exp(-(X*X+Y*Y+Z*Z))
+#     for m in range(nOrbitals):
+#         orbitals[:,m] = np.exp(-(X*X+Y*Y+Z*Z))
+
+    orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
     print('nPoints: ', nPoints)
     print('nOrbitals: ', nOrbitals)
-    atoms = tree.atoms
     return X,Y,Z,W,RHO,orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
      
     
@@ -324,19 +419,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,nOrbit
 
     
 
- 
 
-    
-     
-# import treecodeWrappers
-
-
-
-
-
-xi=yi=zi=-1.1
-xf=yf=zf=1.1
-numpts=3000
 
 from scfFixedPoint import scfFixedPointClosure
 
