@@ -207,8 +207,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
     
         
         if Energies['orbitalEnergies'][m]>0.0:
-            Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - np.random.randint(10)
-            print('Energy eigenvalue was positive, setting to gauge shift - 2.5')
+#             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - np.random.randint(10)
+            rand = np.random.rand(1)
+            Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - rand
+            print('Energy eigenvalue was positive, setting to gauge shift - ', rand)
             
         
     #     tree.printWavefunctionNearEachAtom(m)

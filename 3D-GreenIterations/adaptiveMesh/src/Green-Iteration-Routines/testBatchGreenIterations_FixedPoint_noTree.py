@@ -234,7 +234,9 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z):
             print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
             print('Filling extra orbitals with decaying exponential.')
 #             print('Filling extra orbitals with random initial data.')
-#             for ii in range(orbitalIndex, nOrbitals):
+            for ii in range(orbitalIndex, nOrbitals):
+                R = np.sqrt(X*X+Y*Y+Z*Z)
+                orbitals[:,ii] = np.exp(-R)*np.sin(R)
 #                 self.initializeOrbitalsRandomly(targetOrbital=ii)
 #                 self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
 #                 self.orthonormalizeOrbitals(targetOrbital=ii)
