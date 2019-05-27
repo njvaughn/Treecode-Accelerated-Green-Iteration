@@ -14,7 +14,10 @@ from scipy.optimize import broyden1, anderson, brentq
 from fermiDiracDistribution import computeOccupations
 import sys
 import resource
-
+# sys.path.append(srcdir+'../ctypesTests/src')
+# 
+# sys.path.append(srcdir+'../ctypesTests')
+# sys.path.append(srcdir+'../ctypesTests/lib') 
 
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 from orthogonalizationRoutines import *
@@ -22,19 +25,19 @@ try:
     from convolution import *
 except ImportError:
     print('Unable to import JIT GPU Convolutions')
-try:
-    import directSumWrappers
-except ImportError:
-    print('Unable to import directSumWrappers due to ImportError')
-except OSError:
-    print('Unable to import directSumWrappers due to OSError')
-    
-try:
-    import treecodeWrappers
-except ImportError:
-    print('Unable to import treecodeWrapper due to ImportError')
-except OSError:
-    print('Unable to import treecodeWrapper due to OSError')
+# try:
+#     import directSumWrappers
+# except ImportError:
+#     print('Unable to import directSumWrappers due to ImportError')
+# except OSError:
+#     print('Unable to import directSumWrappers due to OSError')
+#     
+# try:
+#     import treecodeWrappers
+# except ImportError:
+#     print('Unable to import treecodeWrapper due to ImportError')
+# except OSError:
+#     print('Unable to import treecodeWrapper due to OSError')
 
 
 Temperature = 200

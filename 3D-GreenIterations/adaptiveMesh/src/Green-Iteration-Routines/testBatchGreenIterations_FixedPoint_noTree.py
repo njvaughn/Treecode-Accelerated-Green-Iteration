@@ -91,6 +91,22 @@ sys.path.append(srcdir+'../ctypesTests/src')
 sys.path.append(srcdir+'../ctypesTests')
 sys.path.append(srcdir+'../ctypesTests/lib') 
 
+try:
+    import directSumWrappers
+except ImportError:
+    print('Unable to import directSumWrappers due to ImportError')
+except OSError:
+    print('Unable to import directSumWrappers due to OSError')
+    
+try:
+    import treecodeWrappers
+except ImportError:
+    print('Unable to import treecodeWrapper due to ImportError')
+except OSError:
+    print('Unable to import treecodeWrapper due to OSError')
+    import treecodeWrappers
+    
+
 from TreeStruct_CC import Tree
 import densityMixingSchemes as densityMixing
 

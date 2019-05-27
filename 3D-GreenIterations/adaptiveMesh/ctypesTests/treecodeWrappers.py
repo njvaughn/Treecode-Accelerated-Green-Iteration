@@ -29,13 +29,13 @@ print('Compute Capability ', computeCapability)
 # _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib/libtreedriverWrapper.so')
 
 if computeCapability==(3,5):
-    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib35/libtreedriverWrapper.so')
+    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib35/libtreedriverWrapper.so')
 elif computeCapability==(3,7):
-    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib37/libtreedriverWrapper.so')
+    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib37/libtreedriverWrapper.so')
 elif computeCapability==(6,0):
-    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib60/libtreedriverWrapper.so')
+    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib60/libtreedriverWrapper.so')
 elif computeCapability==(7,0):
-    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib70/libtreedriverWrapper.so')
+    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib70/libtreedriverWrapper.so')
 else:
     print('Detected GPU with Compute_Capability ', computeCapability, '.  Do not have a compiled OpenACC treecode for this CC.')
 
