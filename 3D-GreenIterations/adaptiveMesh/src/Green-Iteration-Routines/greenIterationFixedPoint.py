@@ -178,7 +178,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 print('Symmetric not set up for tree-free')
                 return
     
-            n,M = np.shape(orbitals)
+            n,M = np.shape(orbitals) 
             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
             orbitals[:,m] = np.copy(orthWavefunction)
     #         tree.importPhiOnLeaves(orbitals[:,m], m)
@@ -298,4 +298,4 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         return residualVector
     
-    return greensIteration_FixedPoint, gi_args
+    return greensIteration_FixedPoint, gi_args 

@@ -1,11 +1,12 @@
 #!/bin/bash
 
 
-cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
 
 DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
+SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
 
 
 INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
@@ -13,7 +14,6 @@ INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 VTKFILEDIR='None'
 
 
-GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GPUPRESENT='True'
  
@@ -54,21 +54,23 @@ for BASE in 1
 do  
 for MAXDEPTH in 20    
 do								  					    
-for GRADIENTFREE in 'Laplacian'    
+for GRADIENTFREE in 'Laplacian' 'False' 'True'    
 do  
 	for TREECODEORDER in 0
 	do        
-		for THETA in 0.0  
+		for THETA in 0.0   
 		do  
-			for MESHPARAM3 in 3e-8    
+			for MESHPARAM3 in 3e-5 3e-6 3e-7 3e-8    
 			do
 
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/OxygenData/gradientFree/meshParam_${MESHPARAM3}_gradientFree_${GRADIENTFREE}_mixingParameter_${MIXINGPARAMETER}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/OxygenData/gradientFree_redo/meshParam_${MESHPARAM3}_gradientFree_${GRADIENTFREE}_mixingParameter_${MIXINGPARAMETER}.csv"
 			
-			python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
+			python -u testBatchGreenIterations_FixedPoint_noTree.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
+																		$OUTPUTFILE $INPUTFILE $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
 																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE $RESTART $SAVEDMESH
+																		
+
 			done   
 		done 
 	done     

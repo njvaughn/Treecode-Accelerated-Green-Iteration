@@ -287,8 +287,8 @@ def setUpTree(onlyFillOne=False):
         for i in range(len(atomData)):
             nElectrons += atomData[i,3]
     
-    nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
-#     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.   
+#     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
+    nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.   
                                             # If the final orbital is unoccupied, this amount is enough. 
                                             # If there is a degeneracy leading to teh final orbital being 
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
@@ -616,7 +616,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     jacobianOptions={'alpha':1.0, 'M':mixingHistoryCutoff, 'w0':0.01} 
     solverOptions={'fatol':interScfTolerance, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
 
-    
+    """
     print('Calling scipyRoot with %s method' %method)
     scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
 #     print(np.shaoe(RHO))
@@ -637,6 +637,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
         densityResidualVector = scfFixedPoint(RHO,scf_args)
         densityResidual=scf_args['densityResidual']
         energyResidual=scf_args['energyResidual'] 
+        SCFcount=scf_args['SCFcount']
           
 #         densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
 #         print('Density Residual from arrays ', densityResidual)
@@ -693,7 +694,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
       
       
     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, SCFcount))
-    """
+#     """
     return Energies, Times
     
     
@@ -710,6 +711,5 @@ if __name__ == "__main__":
     
  
     X,Y,Z,W,RHO,orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = setUpTree() 
-    print('Does RHO exist? ', len(RHO)) 
     testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues)
 

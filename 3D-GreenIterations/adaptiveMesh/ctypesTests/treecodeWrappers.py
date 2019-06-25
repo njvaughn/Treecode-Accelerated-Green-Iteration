@@ -43,7 +43,7 @@ _treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
         ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
         ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
         ctypes.POINTER(ctypes.c_double), ctypes.c_int, ctypes.c_double, 
-        ctypes.c_int, ctypes.c_double,  ctypes.c_int, ctypes.c_int )
+        ctypes.c_int, ctypes.c_double,  ctypes.c_int, ctypes.c_int, ctypes.c_int )
 
 # void treedriverWrapper(int numTargets, int numSources,
 #         double *targetX, double *targetY, double *targetZ, double *targetValue,
@@ -79,11 +79,13 @@ def callTreedriver(numTargets, numSources,
     resultArray = np.zeros(numTargets)
     resultArray_p = resultArray.ctypes.data_as(c_double_p)
 
+    numDevices=2 
     _treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets), ctypes.c_int(numSources),
                                                  targetX_p, targetY_p, targetZ_p, targetValue_p,
                                                  sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
                                                  resultArray_p, ctypes.c_int(potentialType), ctypes.c_double(kappa),
-                                                 ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode),  ctypes.c_int(batchSize))
+                                                 ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode),
+                                                 ctypes.c_int(batchSize), ctypes.c_int(numDevices) )
     
 # void treedriverWrapper(int numTargets, int numSources,
 #     double *targetX, double *targetY, double *targetZ, double *targetValue,

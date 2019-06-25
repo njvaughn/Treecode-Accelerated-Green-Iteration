@@ -1,5 +1,5 @@
-/utilities/molecularConfigurations/berylliumAtom.csv
-/utilities/molecularConfigurations/berylliumAtomReferenceEigenvalues.csv
+../src/utilities/molecularConfigurations/berylliumAtom.csv
+../src/utilities/molecularConfigurations/berylliumAtomReferenceEigenvalues.csv
 /home/njvaughn/results_Be/results.csv
 -8.1232305760491457e+00
  1.4309060170370618e+01

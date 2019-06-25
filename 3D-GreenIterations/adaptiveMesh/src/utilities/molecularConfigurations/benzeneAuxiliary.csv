@@ -1,4 +1,4 @@
-../src/utilities/molecularConfigurations/benzene.csv
+../src/utilities/molecularConfigurations/benzene_rotated.csv
 ../src/utilities/molecularConfigurations/benzeneReferenceEigenvalues.csv
 /home/njvaughn/results_CO/results.csv
  -1.3426386757791246e+02				 # Band energy 

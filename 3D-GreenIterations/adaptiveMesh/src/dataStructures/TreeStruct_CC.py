@@ -1277,7 +1277,8 @@ class Tree(object):
 
         self.countCellsAtEachDepth()
             
-        self.initialDivideBasedOnNuclei(self.coordinateFile)
+        print('Not refining at nuclei.')
+#         self.initialDivideBasedOnNuclei(self.coordinateFile)
 #         self.zeroWeightsBasedOnNuclei(self.coordinateFile)
 #         self.maxDepthAtAtoms=100
         self.computeNuclearNuclearEnergy()
@@ -1321,7 +1322,7 @@ class Tree(object):
          
         
         print('Number of gridpoints: ', self.numberOfGridpoints)
-
+        self.maxDepthAtAtoms=0
 #         self.computeDerivativeMatrices()
 #         self.initializeDensityFromAtomicData()
 

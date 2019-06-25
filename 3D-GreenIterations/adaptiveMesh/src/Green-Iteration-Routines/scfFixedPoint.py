@@ -19,6 +19,7 @@ import resource
 # sys.path.append(srcdir+'../ctypesTests')
 # sys.path.append(srcdir+'../ctypesTests/lib') 
 
+import treecodeWrappers
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 from orthogonalizationRoutines import *
 try:
@@ -54,7 +55,8 @@ def fermiObjectiveFunctionClosure(Energies,nElectrons):
 def clenshawCurtisNormClosure(W):
     def clenshawCurtisNorm(psi):
         appendedWeights = np.append(W, 1.0)
-        norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
+#         norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
+        norm = np.sqrt( np.sum( psi[-1]*psi[-1]*appendedWeights[-1] ) )
         return norm
     return clenshawCurtisNorm
 
@@ -233,7 +235,8 @@ def scfFixedPointClosure(scf_args):
             
             
             resNorm=1 
-            while resNorm>1e-2:
+#             while resNorm>2e-30:
+            while resNorm>intraScfTolerance:
 
                 
             
@@ -252,11 +255,11 @@ def scfFixedPointClosure(scf_args):
                 print('CC norm of residual vector: ', resNorm)
 
              
-             
+            psiOut = np.append(orbitals[:,m],Energies['orbitalEnergies'][m])
             print('Power iteration tolerance met.  Beginning rootfinding now...') 
             tol=intraScfTolerance
     
-            Done = False
+            Done = True
             while Done==False:
                 try:
                     # Call anderson mixing on the Green's iteration fixed point function

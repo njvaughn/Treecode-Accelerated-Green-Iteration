@@ -13,7 +13,15 @@ import dask.array as da
 import matplotlib.pyplot as plt
 import bisect
 from pyevtk.hl import pointsToVTK
-
+try:
+    from pyevtk.hl import pointsToVTK
+except ImportError:
+    sys.path.append('/home/njvaughn')
+    try:
+        from pyevtk.hl import pointsToVTK
+    except ImportError:
+        print("Wasn't able to import pyevtk.hl.pointsToVTK, even after appending '/home/njvaughn' to path.")
+    pass
 
 
 from meshUtilities import *
@@ -124,34 +132,34 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
     
-    x,y,z,w = tree.extractXYZ()
-    tree=None
+    X,Y,Z,W,RHO = tree.extractXYZ()
+
+    x=[]
+    y=[]
+    z=[]
+    w=[]
+    rho=[]
+    for i in range(len(X)):
+        if ( (Z[i]>=-0.3) and (Z[i]<0.3) ):
+            newPoint=True
+#             for j in range(min(len(x),100)):
+#                 if ( (X[i] == x[-j]) and (Y[i] == y[-j]) ): 
+#                     newPoint=False
+#                     print('This (x,y) has already been added.')
+            if newPoint==True: 
+                
+                x.append(X[i])
+                y.append(Y[i])
+#                 z.append(Z[i])
+                z.append(0)
+                w.append(W[i])
+                rho.append(RHO[i])
+    print('Number of plotting points: ', len(x))
     
-    print(np.shape(x))
-#     treeBuilding.visualize()
-#     treeBuilding.compute()
-    
-    print(tree.levelCounts)
-    print()
-    print(tree.levelCounts.keys())
-    print()
-    print(tree.levelCounts.values())
-    
-    print()
-    print()
-    print('Memory footprint of tree: ')
-    plt.bar(list(tree.levelCounts.keys()),list(tree.levelCounts.values()) )
-    plt.xlabel('Refinement Depth')
-    plt.ylabel('Number of Cells')
-    if divideCriterion=='Krasny':
-        plt.title('Mesh Type: 4 parameters (%1.2f,%1.2f,%1.2f,%1.2f)' %(divideParameter1,divideParameter2,divideParameter3,divideParameter4))
-    elif divideCriterion=='LW5':
-        plt.title('Mesh Type: LW5 - %1.2f' %(divideParameter1))
-    plt.show()
-#     tree.sortOrbitalsAndEnergies(order = [5,0,6,1,2,8,9,3,4,7])
-    
-#     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/Biros/Beryllium_order5_1em4')
-    tree.exportGridpoints(outputFile)
+    print('About to export mesh.')
+    pointsToVTK(outputFile, np.array(x), np.array(y), np.array(z), data = 
+                    {"rho" : np.array(rho)} )
+#     tree.exportGridpoints(outputFile)
 #     tree.orthonormalizeOrbitals()
 #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
 
@@ -486,7 +494,7 @@ def timingTestsForOrbitalOrthogonalizations(domain,order,minDepth, maxDepth, div
 def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
                           divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
                           smoothingEpsilon=0.0, base=1.0, causeFigure=False,
-                          inputFile=''):    
+                          inputFile='',savedMesh=''):    
     
     
     divideParameter1 *= base
@@ -522,7 +530,7 @@ def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, d
     print('max depth ', maxDepth)
     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-                    printTreeProperties=True,onlyFillOne=False)
+                    savedMesh=savedMesh,printTreeProperties=True,onlyFillOne=False)
     
     print(tree.levelCounts)
     print()
@@ -561,6 +569,7 @@ def meshDistributions(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, d
         axes[1,1].set_ylim([0, int(1.1*maxHeight)])
         plt.tight_layout()
   
+    plt.savefig('distribution.png', bbox_inches='tight')
     plt.show()
 
 def densityInterpolation(xi,yi,zi,xf,yf,zf,numpts,
@@ -682,7 +691,7 @@ def plot_LW_density():
     plt.show()
 
 if __name__ == "__main__":
-    
+    gaugeShift=-0.5
 #     plot_LW_density()
 #     densityInterpolation(-6.1,1,0,6.1,1,0,1000,
 #                     domain=20,order=5,
@@ -694,7 +703,8 @@ if __name__ == "__main__":
 #     meshDistributions(domain=20,order=5,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
 #                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-6, divideParameter4=0,
-#                         smoothingEpsilon=0.0,base=1.0, causeFigure=True, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+#                         smoothingEpsilon=0.0,base=1.0, causeFigure=False, inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv',
+#                         savedMesh='benzene_1e-6_rotated.npy')
     
     
 #     timingTestsForOrbitalInitializations(domain=20,order=5,
@@ -728,22 +738,45 @@ if __name__ == "__main__":
             
             
 #             oxygenAtomAuxiliary
-    gaugeShift=-0.5 
+     
     
-    testDask(domain=20,order=5,
-            minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-            divideParameter1=500, divideParameter2=1e6, divideParameter3=3e-5, divideParameter4=0,
-            smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
-            outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
-            savedMesh='') 
+#     testDask(domain=20,order=5,
+#             minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#             divideParameter1=500, divideParameter2=1e6, divideParameter3=3e-5, divideParameter4=0,
+#             smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
+#             outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
+#             savedMesh='') 
     
+    #ParentChildrenIntegral
+#     tree = exportMeshForParaview(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1500, divideParameter2=0, divideParameter3=1e-3, divideParameter4=3,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forPaper/benzene_1e-3_rotated2D',
+#                         savedMesh='')   
+#     
+#     tree = exportMeshForParaview(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1500, divideParameter2=0, divideParameter3=1e-4, divideParameter4=4,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forPaper/benzene_1e-4_rotated2D',
+#                         savedMesh='')   
+#     
+#     tree = exportMeshForParaview(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1500, divideParameter2=0, divideParameter3=1e-5, divideParameter4=5,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forPaper/benzene_1e-5_rotated2D',
+#                         savedMesh='')  
     
-#     tree = exportMeshForParaview(domain=20,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-#                         divideParameter1=500, divideParameter2=1e6, divideParameter3=3e-5, divideParameter4=0,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/O2/aspectRatioTesting',
-#                         savedMesh='')        
+    tree = exportMeshForParaview(domain=30,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=1500, divideParameter2=0, divideParameter3=1e-7, divideParameter4=4,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/forPaper/benzene_1e-7_rotated2D',
+                        savedMesh='')    
+#                         savedMesh='benzene_1e-6_rotated.npy')        
+#                         savedMesh='ParentChildrenIntegral_500_0_0.0001_0.npy')        
              
 #     tree = exportMeshForParaview(domain=30,order=5,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
