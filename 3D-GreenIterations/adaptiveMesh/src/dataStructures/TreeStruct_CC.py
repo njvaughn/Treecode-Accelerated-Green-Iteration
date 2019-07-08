@@ -2464,10 +2464,16 @@ class Tree(object):
         Z = []
         W = []
         RHO = []
+        
+        XV = []
+        YV = []
+        ZV = []
+        quadIdx = []
 #         WAVEFUNCTIONS = []
-                
+        cellCount=0
         for _,cell in self.masterList:
             if cell.leaf == True:
+                
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
                     X.append( gridpt.x)
@@ -2477,13 +2483,21 @@ class Tree(object):
                     RHO.append(gridpt.rho)
 #                     WAVEFUNCTIONS.append(gridpt.phi)
                     cell.gridpoints[i,j,k]=None
+                XV = XV + [cell.xmin,cell.xmax,cell.xmin,cell.xmax,cell.xmin,cell.xmax,cell.xmin,cell.xmax] # 01010101
+                YV = YV + [cell.ymin,cell.ymin,cell.ymax,cell.ymax,cell.ymin,cell.ymin,cell.ymax,cell.ymax] # 00110011
+                ZV = ZV + [cell.zmin,cell.zmin,cell.zmin,cell.zmin,cell.zmax,cell.zmax,cell.zmax,cell.zmax] # 00001111
+                offset = cell.px*cell.py*cell.pz * cellCount
+                p = cell.px
+                quadIdx = quadIdx+ [p**0-1, p**1-1, p**0-1 + p*(p-1), p**1-1 + p*(p-1),
+                                 p**0-1+p*p*(p-1), p**1-1+p*p*(p-1), p**0-1 + p*(p-1)+p*p*(p-1), p**1-1 + p*(p-1)+p*p*(p-1) ] 
+                cellCount += 1
         
         for _,cell in self.masterList:
             if cell.leaf == False:
                 for i,j,k in cell.PxByPyByPz:
                     cell.gridpoints[i,j,k]=None
                             
-        return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO)#, np.array(WAVEFUNCTIONS)
+        return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx)#, np.array(WAVEFUNCTIONS)
     
     def extractConvolutionIntegrand(self,containing=None): 
         '''

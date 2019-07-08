@@ -23,6 +23,9 @@ except ImportError:
         print("Wasn't able to import pyevtk.hl.pointsToVTK, even after appending '/home/njvaughn' to path.")
     pass
 
+from pyevtk.hl import unstructuredGridToVTK
+from pyevtk.vtk import VtkTriangle, VtkQuad, VtkPolygon, VtkVoxel, VtkHexahedron
+
 
 from meshUtilities import *
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -71,8 +74,8 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, additionalDept
 #     targetsTXT = '../examples/T%ipy.txt' %tree.numberOfGridpoints
     
 #     sourcesTXT = '/Users/nathanvaughn/Documents/GitHub/hybrid-gpu-treecode/examplesOxygenAtom/S%ipy.txt' %tree.numberOfGridpoints
-    sourcesTXT = '/Users/nathanvaughn/Desktop/S%ipy.txt' %tree.numberOfGridpoints
-    targetsTXT = '/Users/nathanvaughn/Desktop/T%ipy.txt' %tree.numberOfGridpoints
+    sourcesTXT = '/Users/nathanvaughn/Desktop/S%i.txt' %tree.numberOfGridpoints
+    targetsTXT = '/Users/nathanvaughn/Desktop/T%i.txt' %tree.numberOfGridpoints
     
     Sources = tree.extractLeavesDensity() 
     Targets = tree.extractLeavesDensity()
@@ -132,36 +135,64 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
     
-    X,Y,Z,W,RHO = tree.extractXYZ()
+    X,Y,Z,W,RHO, XV, YV, ZV, quadIdx = tree.extractXYZ()
 
-    x=[]
-    y=[]
-    z=[]
-    w=[]
-    rho=[]
-    for i in range(len(X)):
-        if ( (Z[i]>=-0.3) and (Z[i]<0.3) ):
-            newPoint=True
-#             for j in range(min(len(x),100)):
-#                 if ( (X[i] == x[-j]) and (Y[i] == y[-j]) ): 
-#                     newPoint=False
-#                     print('This (x,y) has already been added.')
-            if newPoint==True: 
-                
-                x.append(X[i])
-                y.append(Y[i])
-#                 z.append(Z[i])
-                z.append(0)
-                w.append(W[i])
-                rho.append(RHO[i])
-    print('Number of plotting points: ', len(x))
+    print(XV)
+    print(YV)
+    print(ZV)
+    print(len(XV))
+    print(XV.size)
+    conn=np.zeros(XV.size)
+    for i in range(len(conn)):
+        conn[i] = i
+    offset=np.zeros(int(XV.size/8))
+    for i in range(len(offset)):
+        offset[i] = 8*(i+1)
+    ctype = np.zeros(len(offset))
+    for i in range(len(ctype)):
+        ctype[i] = VtkVoxel.tid
+    pointVals = {"density":np.zeros(XV.size)}
+    x1=y1=z1=-1
+    x2=y2=z2=1
+    for i in range(len(XV)):
+        r1 = np.sqrt(  (XV[i]-x1)*(XV[i]-x1) + (YV[i]-y1)*(YV[i]-y1) + (ZV[i]-z1)*(ZV[i]-z1) )
+        r2 = np.sqrt(  (XV[i]-x2)*(XV[i]-x2) + (YV[i]-y2)*(YV[i]-y2) + (ZV[i]-z2)*(ZV[i]-z2) )
+#         print(r)
+        pointVals["density"][i] = np.exp( - r1) + np.exp( - 2*r2)
     
-    print('About to export mesh.')
-    pointsToVTK(outputFile, np.array(x), np.array(y), np.array(z), data = 
-                    {"rho" : np.array(rho)} )
-#     tree.exportGridpoints(outputFile)
-#     tree.orthonormalizeOrbitals()
-#     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
+#     savefile="/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium"
+    unstructuredGridToVTK(outputFile, 
+                          XV, YV, ZV, connectivity = conn, offsets = offset, cell_types = ctype, 
+                          cellData = None, pointData = pointVals)
+#     x=[]
+#     y=[]
+#     z=[]
+#     w=[]
+#     rho=[]
+#     for i in range(len(X)):
+#         if ( (Z[i]>=-300.3) and (Z[i]<300.3) ):
+#             newPoint=True
+# #             for j in range(min(len(x),100)):
+# #                 if ( (X[i] == x[-j]) and (Y[i] == y[-j]) ): 
+# #                     newPoint=False
+# #                     print('This (x,y) has already been added.')
+#             if newPoint==True: 
+#                 
+#                 x.append(X[i])
+#                 y.append(Y[i])
+# #                 z.append(Z[i])
+#                 z.append(0)
+#                 w.append(W[i])
+# #                 rho.append(RHO[i])
+#                 rho.append(np.exp(-(np.sqrt(X[i]**2 + Y[i]**2 + Z[i]**2))))
+#     print('Number of plotting points: ', len(x))
+#     
+#     print('About to export mesh.')
+#     pointsToVTK(outputFile, np.array(x), np.array(y), np.array(z), data = 
+#                     {"rho" : np.array(rho)} )
+# #     tree.exportGridpoints(outputFile)
+# #     tree.orthonormalizeOrbitals()
+# #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
 
     print('Meshes Exported.')
     
@@ -769,12 +800,30 @@ if __name__ == "__main__":
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forPaper/benzene_1e-5_rotated2D',
 #                         savedMesh='')  
     
-    tree = exportMeshForParaview(domain=30,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=1500, divideParameter2=0, divideParameter3=1e-7, divideParameter4=4,
-                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/forPaper/benzene_1e-7_rotated2D',
-                        savedMesh='')    
+    
+#     ## THIS WAS USED TO GENERATE FIGURES IN PAPER
+#     tree = exportMeshForParaview(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1500, divideParameter2=0, divideParameter3=1e-7, divideParameter4=4,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forPaper/benzene_1e-7_rotated2D',
+#                         savedMesh='')   
+
+#     tree = exportMeshForParaview(domain=20,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=1500, divideParameter2=0, divideParameter3=1e-4, divideParameter4=4,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium',
+#                         savedMesh='') 
+    
+    tree = exportMeshForParaview(domain=20,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+                        divideParameter1=1500, divideParameter2=0, divideParameter3=1e-2, divideParameter4=4,
+                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
+                        outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium',
+                        savedMesh='') 
+    
+     
 #                         savedMesh='benzene_1e-6_rotated.npy')        
 #                         savedMesh='ParentChildrenIntegral_500_0_0.0001_0.npy')        
              
@@ -817,7 +866,13 @@ if __name__ == "__main__":
 #                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-7, divideParameter4=0,
 #                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
     
-
+#for dp3 in [1e-4, 1e-5, 1e-6, 1e-7, 1e-8]:
+# for dp3 in [1e-2, 1e-3, 3e-8]:
+#     exportMeshForTreecodeTesting(   domain=30,order=5,
+#                                     minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                                     divideParameter1=0, divideParameter2=0, divideParameter3=dp3, divideParameter4=0,
+#                                     inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+    
 #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
 #                         divideParameter1=1.0, divideParameter2=1.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
 #                         divideParameter1=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
