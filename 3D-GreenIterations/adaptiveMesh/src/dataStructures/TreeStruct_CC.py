@@ -2469,8 +2469,10 @@ class Tree(object):
         YV = []
         ZV = []
         quadIdx = []
+        ghostCells=[]
 #         WAVEFUNCTIONS = []
         cellCount=0
+        leafCount=0
         for _,cell in self.masterList:
             if cell.leaf == True:
                 
@@ -2483,21 +2485,52 @@ class Tree(object):
                     RHO.append(gridpt.rho)
 #                     WAVEFUNCTIONS.append(gridpt.phi)
                     cell.gridpoints[i,j,k]=None
+                    
+            # Add all cells.
+            if cell.leaf == True: 
+#                 ghost=0
+#             else:
+#                 ghost=1
+#             ghostCells = ghostCells + [ghost]
                 XV = XV + [cell.xmin,cell.xmax,cell.xmin,cell.xmax,cell.xmin,cell.xmax,cell.xmin,cell.xmax] # 01010101
                 YV = YV + [cell.ymin,cell.ymin,cell.ymax,cell.ymax,cell.ymin,cell.ymin,cell.ymax,cell.ymax] # 00110011
                 ZV = ZV + [cell.zmin,cell.zmin,cell.zmin,cell.zmin,cell.zmax,cell.zmax,cell.zmax,cell.zmax] # 00001111
-                offset = cell.px*cell.py*cell.pz * cellCount
+                
+                offset = cell.px*cell.py*cell.pz * leafCount
                 p = cell.px
-                quadIdx = quadIdx+ [p**0-1, p**1-1, p**0-1 + p*(p-1), p**1-1 + p*(p-1),
-                                 p**0-1+p*p*(p-1), p**1-1+p*p*(p-1), p**0-1 + p*(p-1)+p*p*(p-1), p**1-1 + p*(p-1)+p*p*(p-1) ] 
+    #                 quadIdx = quadIdx + [offset+p**0-1, offset+p**1-1, offset + p**0-1 + p*(p-1),offset+ p**1-1 + p*(p-1),
+    #                                  offset+p**0-1+p*p*(p-1),offset+ p**1-1+p*p*(p-1),offset+ p**0-1 + p*(p-1)+p*p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ] 
+    #                 quadIdx = quadIdx + [offset+p**0-1, offset+p**1-1, 
+    #                                      offset + p**0-1 + p*(p-1),offset+ p**1-1 + p*(p-1),
+    #                                      offset+p**0-1+p*p*(p-1),offset+ p**1-1+p*p*(p-1),
+    #                                      offset+ p**0-1 + p*(p-1)+p*p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ] 
+                
+                quadIdx = quadIdx + [offset+p**0-1, offset+p**0-1+p*p*(p-1), 
+                                     offset + p**0-1 + p*(p-1),offset+ p**0-1 + p*(p-1)+p*p*(p-1),
+                                     offset+p**1-1,offset+ p**1-1+p*p*(p-1),
+                                     offset+ p**1-1 + p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ]  ## For 8 vertices
+    
+                
+#                 if p%2==1:
+#                     midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2
+#                 quadIdx = quadIdx + [int(offset+midpointQuadPt)] # for midpoint
+    
+    
+                
+                if leafCount==1: print(quadIdx)
+                
+    #                 quadIdx = quadIdx + [000, 001, 010, 011, 100, 101, 110, 111 ] 
+                
+                
                 cellCount += 1
+                if cell.leaf == True: leafCount+=1
         
         for _,cell in self.masterList:
             if cell.leaf == False:
                 for i,j,k in cell.PxByPyByPz:
                     cell.gridpoints[i,j,k]=None
                             
-        return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx)#, np.array(WAVEFUNCTIONS)
+        return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
     
     def extractConvolutionIntegrand(self,containing=None): 
         '''

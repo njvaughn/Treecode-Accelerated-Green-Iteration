@@ -131,17 +131,20 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
 
     
     print('max depth ', maxDepth)
-    tree.minimalBuildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+#     tree.minimalBuildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
     
-    X,Y,Z,W,RHO, XV, YV, ZV, quadIdx = tree.extractXYZ()
+    X,Y,Z,W,RHO, XV, YV, ZV, quadIdx, ghostCells = tree.extractXYZ()
 
     print(XV)
     print(YV)
     print(ZV)
     print(len(XV))
     print(XV.size)
+    print(RHO)
+    print(quadIdx)
     conn=np.zeros(XV.size)
     for i in range(len(conn)):
         conn[i] = i
@@ -151,19 +154,37 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
     ctype = np.zeros(len(offset))
     for i in range(len(ctype)):
         ctype[i] = VtkVoxel.tid
-    pointVals = {"density":np.zeros(XV.size)}
+    pointVals = {"density_p":np.zeros(XV.size)}
     x1=y1=z1=-1
     x2=y2=z2=1
     for i in range(len(XV)):
+#         pointVals["density_p"][i] = max( RHO[quadIdx[i]], 1e-16) 
         r1 = np.sqrt(  (XV[i]-x1)*(XV[i]-x1) + (YV[i]-y1)*(YV[i]-y1) + (ZV[i]-z1)*(ZV[i]-z1) )
-        r2 = np.sqrt(  (XV[i]-x2)*(XV[i]-x2) + (YV[i]-y2)*(YV[i]-y2) + (ZV[i]-z2)*(ZV[i]-z2) )
-#         print(r)
-        pointVals["density"][i] = np.exp( - r1) + np.exp( - 2*r2)
+#         r2 = np.sqrt(  (XV[i]-x2)*(XV[i]-x2) + (YV[i]-y2)*(YV[i]-y2) + (ZV[i]-z2)*(ZV[i]-z2) )
+# #         print(r)
+#         pointVals["density"][i] = np.exp( - r1) + np.exp( - 2*r2)
+        pointVals["density_p"][i] = np.exp( - r1 )
+    
+    cellVals = {"density_c":np.zeros(offset.size)}
+    for i in range(len(offset)):
+        
+#         startIdx = 8*i
+#         xmid = (XV[startIdx] + XV[startIdx+1])/2
+#         ymid = (YV[startIdx] + YV[startIdx+2])/2
+#         zmid = (ZV[startIdx] + ZV[startIdx+4])/2
+#         
+#         r1 = np.sqrt( (xmid-x1)**2 + (ymid-y1)**2 + (zmid-z1)**2)
+#         r2 = np.sqrt( (xmid-x2)**2 + (ymid-y2)**2 + (zmid-z2)**2)
+#         
+        cellVals["density_c"][i] = max( RHO[quadIdx[i]], 1e-16) 
+#         cellVals["density_c"][i] = RHO[quadIdx[i]] 
+        
+        
     
 #     savefile="/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium"
     unstructuredGridToVTK(outputFile, 
                           XV, YV, ZV, connectivity = conn, offsets = offset, cell_types = ctype, 
-                          cellData = None, pointData = pointVals)
+                          cellData = cellVals, pointData = pointVals)
 #     x=[]
 #     y=[]
 #     z=[]
@@ -809,16 +830,16 @@ if __name__ == "__main__":
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forPaper/benzene_1e-7_rotated2D',
 #                         savedMesh='')   
 
-#     tree = exportMeshForParaview(domain=20,order=5,
+#     tree = exportMeshForParaview(domain=30,order=5,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-#                         divideParameter1=1500, divideParameter2=0, divideParameter3=1e-4, divideParameter4=4,
-#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
-#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium',
+#                         divideParameter1=1500, divideParameter2=0, divideParameter3=3e-7, divideParameter4=4,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/benzene',
 #                         savedMesh='') 
     
-    tree = exportMeshForParaview(domain=20,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-                        divideParameter1=1500, divideParameter2=0, divideParameter3=1e-2, divideParameter4=4,
+    tree = exportMeshForParaview(domain=30,order=3,
+                        minDepth=5, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-2, divideParameter4=4,
                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium',
                         savedMesh='') 
