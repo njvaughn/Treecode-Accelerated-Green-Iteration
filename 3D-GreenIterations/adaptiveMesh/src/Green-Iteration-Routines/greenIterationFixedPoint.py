@@ -2,6 +2,9 @@ import inspect
 import numpy as np
 import time
 import csv
+import resource
+import GPUtil
+
 
 try:
     from convolution import *
@@ -33,6 +36,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         
         ## UNPACK GIARGS
+#         print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+#         GPUtil.showUtilization()
         orbitals = gi_args['orbitals']
         oldOrbitals = gi_args['oldOrbitals']
         Energies = gi_args['Energies']
@@ -50,7 +55,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         nPoints = gi_args['nPoints']
         X = gi_args['X']
         Y = gi_args['Y']
-        Z = gi_args['Z']
+        Z = gi_args['Z']  
         W = gi_args['W']
         gradientFree = gi_args['gradientFree']
         SCFcount = gi_args['SCFcount']
@@ -153,8 +158,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
             print('Invalid option for singularitySubtraction, should be 0 or 1.')
             return
         
-        print('Max phiNew: ', np.max(phiNew))
-        print('Min phiNew: ', np.min(phiNew))
+#         print('Max phiNew: ', np.max(phiNew))
+#         print('Min phiNew: ', np.min(phiNew))
         
         """ Method where you dont compute kinetics, from Harrison """
         
@@ -222,9 +227,9 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         
         loc = np.argmax(np.abs(residualVector[:-1]))
-        print('Largest residual: ', residualVector[loc])
-        print('Value at that point: ', psiOut[loc])
-        print('Location of max residual: ', X[loc], Y[loc], Z[loc])
+#         print('Largest residual: ', residualVector[loc])
+#         print('Value at that point: ', psiOut[loc])
+#         print('Location of max residual: ', X[loc], Y[loc], Z[loc])
     #     residualVector = -(psiIn - orbitals[:,m])
     
         newEigenvalue = Energies['orbitalEnergies'][m]
