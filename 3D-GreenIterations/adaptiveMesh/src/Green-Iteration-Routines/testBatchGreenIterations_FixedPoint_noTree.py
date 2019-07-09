@@ -285,10 +285,10 @@ def setUpTree(onlyFillOne=False):
     else:
         nElectrons = 0
         for i in range(len(atomData)):
-            nElectrons += atomData[i,3]
+            nElectrons += atomData[i,3] 
     
-#     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
-    nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.   
+    nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
+#     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.   
                                             # If the final orbital is unoccupied, this amount is enough. 
                                             # If there is a degeneracy leading to teh final orbital being 
                                             # partially filled, then it will be necessary to increase nOrbitals by 1.
@@ -367,7 +367,7 @@ def setUpTree(onlyFillOne=False):
  
     
 #     X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
-    X,Y,Z,W,RHO = tree.extractXYZ()
+    X,Y,Z,W,RHO, XV, YV, ZV, quadIdx, ghostCells = tree.extractXYZ()
     atoms = tree.atoms
     nPoints = len(X)
 #     orbitals = np.random.rand(nPoints,nOrbitals)
@@ -689,7 +689,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
 #             densityResidual = -1
           
   
-  
+   
   
       
       

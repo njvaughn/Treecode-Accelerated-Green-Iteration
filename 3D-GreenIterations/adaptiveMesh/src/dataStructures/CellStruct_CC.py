@@ -57,7 +57,7 @@ class Cell(object):
         self.w = weights3D(xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, W)
         self.w_density = weights3D(xmin, xmax, self.pxd, ymin, ymax, self.pyd, zmin, zmax, self.pzd, W_density)
         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
-        self.PxByPyByPz_density = [element for element in itertools.product(range(self.pxd),range(self.pyd),range(self.pzd))]
+        self.PxByPyByPz_density = [element for element in itertools.product(range(self.pzd),range(self.pyd),range(self.pxd))]
         self.setCellMidpointAndVolume()
         self.setNearestAtom()
         

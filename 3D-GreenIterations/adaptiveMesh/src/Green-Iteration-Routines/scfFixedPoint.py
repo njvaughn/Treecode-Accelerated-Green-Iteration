@@ -9,9 +9,10 @@ from scipy.optimize.nonlin import BroydenFirst, KrylovJacobian
 from scipy.optimize.nonlin import InverseJacobian
 from scipy.optimize import broyden1, anderson, brentq
 # from scipy.optimize import newton_krylov as scipyNewtonKrylov
-
+import GPUtil
 
 from fermiDiracDistribution import computeOccupations
+import densityMixingSchemes as densityMixing
 import sys
 import resource
 # sys.path.append(srcdir+'../ctypesTests/src')
@@ -55,8 +56,8 @@ def fermiObjectiveFunctionClosure(Energies,nElectrons):
 def clenshawCurtisNormClosure(W):
     def clenshawCurtisNorm(psi):
         appendedWeights = np.append(W, 1.0)
-#         norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
-        norm = np.sqrt( np.sum( psi[-1]*psi[-1]*appendedWeights[-1] ) )
+        norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
+#         norm = np.sqrt( np.sum( psi[-1]*psi[-1]*appendedWeights[-1] ) )
         return norm
     return clenshawCurtisNorm
 
@@ -233,71 +234,153 @@ def scfFixedPointClosure(scf_args):
                            'greenIterationOutFile':greenIterationOutFile, 'blocksPerGrid':blocksPerGrid,'threadsPerBlock':threadsPerBlock,
                            'referenceEigenvalues':referenceEigenvalues   } 
             
-            
+            n,M = np.shape(orbitals)
             resNorm=1 
-#             while resNorm>2e-30:
-            while resNorm>intraScfTolerance:
-
+            while resNorm>2e-0:
+#             while resNorm>intraScfTolerance:
+#                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+#                 GPUtil.showUtilization()
                 
             
                 # Orthonormalize orbital m before beginning Green's iteration
-                n,M = np.shape(orbitals)
+#                 n,M = np.shape(orbitals)
                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
                 orbitals[:,m] = np.copy(orthWavefunction)
+#                 print('orbitals before: ',orbitals[1:5,m])
+#                 print('greenIterationsCount before: ', greenIterationsCount)
                 psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
     
         
         
                 greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
                 r = greensIteration_FixedPoint(psiIn, gi_args)
+#                 print('greenIterationsCount after: ', greenIterationsCount)
+#                 print('gi_args greenIterationsCount after: ', gi_args["greenIterationsCount"])
+
+#                 print('orbitals after: ',orbitals[1:5,m])
+#                 print('gi_args orbitals after: ',gi_args["orbitals"][1:5,m])
                 clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                 resNorm = clenshawCurtisNorm(r)
                 print('CC norm of residual vector: ', resNorm)
 
-             
+            
             psiOut = np.append(orbitals[:,m],Energies['orbitalEnergies'][m])
             print('Power iteration tolerance met.  Beginning rootfinding now...') 
+#             psiIn = np.copy(psiOut)
             tol=intraScfTolerance
-    
-            Done = True
+            
+            
+            ## Begin Anderson Mixing on Wavefunction
+            Done = False
+            firstInputWavefunction=True
+            firstOutputWavefunction=True
+            inputWavefunctions = np.zeros((psiOut.size,1))
+            outputWavefunctions =  np.zeros((psiOut.size,1))
+            mixingStart = np.copy( gi_args['greenIterationsCount'] )
             while Done==False:
-                try:
-                    # Call anderson mixing on the Green's iteration fixed point function
-    
-                    # Orthonormalize orbital m before beginning Green's iteration
-                    n,M = np.shape(orbitals)
-                    orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
-                    orbitals[:,m] = np.copy(orthWavefunction)
-                     
-                    psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
-    
-                       
-                    ### Anderson Options
-                    clenshawCurtisNorm = clenshawCurtisNormClosure(W)
-                    method='anderson'
-                    jacobianOptions={'alpha':1.0, 'M':20, 'w0':0.01} 
-                    solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
-    
-                    
-                    print('Calling scipyRoot with %s method' %method)
-                    sol = scipyRoot(greensIteration_FixedPoint,psiIn, args=gi_args, method=method, options=solverOptions)
-                    print(sol.success)
-                    print(sol.message)
-                    psiOut = sol.x
-                    Done = True
-                except Exception:
-                    if np.abs(eigenvalueDiff) < tol/10:
-                        print("Rootfinding didn't converge but eigenvalue is converged.  Exiting because this is probably due to degeneracy in the space.")
-    #                         targets = tree.extractPhi(m)
-                        psiOut = np.append(orbitals[:,m], Energies['orbitalEnergies'][m])
-                        Done=True
+                greenIterationsCount=gi_args["greenIterationsCount"]
+                
+                orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
+                orbitals[:,m] = np.copy(orthWavefunction)
+                psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
+                
+                
+                ## Update input wavefunctions
+                if firstInputWavefunction==True:
+                    inputWavefunctions[:,0] = np.copy(psiIn) # fill first column of inputWavefunctions
+                    firstInputWavefunction=False
+                else:
+                    if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
+                        inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(psiIn), (psiIn.size,1)) ), axis=1)
+                        print('Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
+
                     else:
-                        print('Not converged.  What to do?')
-                        return
-            orbitals[:,m] = np.copy(psiOut[:-1])
-            Energies['orbitalEnergies'][m] = np.copy(psiOut[-1])
+                        print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
+                        inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(psiIn)
+
+                ## Perform one step of iterations
+                
+                greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
+                r = greensIteration_FixedPoint(psiIn,gi_args)
+                psiOut = np.append( gi_args["orbitals"][:,m], Energies['orbitalEnergies'][m])
+                clenshawCurtisNorm = clenshawCurtisNormClosure(W)
+                errorNorm = clenshawCurtisNorm(r)
+                print('Error Norm: ', errorNorm)
+                if errorNorm < intraScfTolerance:
+                    Done=True
+                
+                ## Update output wavefunctions
+                
+                if firstOutputWavefunction==True:
+#                     temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
+                    outputWavefunctions[:,0] = np.copy(psiOut) # fill first column of outputWavefunctions
+                    firstOutputWavefunction=False
+                else:
+                    if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
+#                         temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
+                        outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(psiOut), (psiOut.size,1)) ), axis=1)
+                        print('Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
+                    else:
+                        print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
+#                         temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
+                        outputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(psiOut)
+                
+                
+                ## Compute next input wavefunctions
+                print('Anderson mixing on the orbital.')
+                GImixingParameter=0.5
+                andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
+                Energies['orbitalEnergies'][m] = andersonOrbital[-1]
+                orbitals[:,m] = andersonOrbital[:-1]
+                
+                
+
+
              
-            print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
+#             print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
+            print('Used %i iterations for wavefunction %i' %(gi_args["greenIterationsCount"],m))
+            
+            
+            ## Method that uses Scipy Anderson
+#             Done = False
+#             while Done==False:
+#                 try:
+#                     # Call anderson mixing on the Green's iteration fixed point function
+#     
+#                     # Orthonormalize orbital m before beginning Green's iteration
+#                     n,M = np.shape(orbitals)
+#                     orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
+#                     orbitals[:,m] = np.copy(orthWavefunction)
+#                      
+#                     psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
+#     
+#                        
+#                     ### Anderson Options
+#                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
+#                     method='anderson'
+#                     jacobianOptions={'alpha':1.0, 'M':10, 'w0':0.01} 
+#                     solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
+#     
+#                     
+#                     print('Calling scipyRoot with %s method' %method)
+#                     sol = scipyRoot(greensIteration_FixedPoint,psiIn, args=gi_args, method=method, options=solverOptions)
+#                     print(sol.success)
+#                     print(sol.message)
+#                     psiOut = sol.x
+#                     Done = True
+#                 except Exception:
+#                     if np.abs(eigenvalueDiff) < tol/10:
+#                         print("Rootfinding didn't converge but eigenvalue is converged.  Exiting because this is probably due to degeneracy in the space.")
+#     #                         targets = tree.extractPhi(m)
+#                         psiOut = np.append(orbitals[:,m], Energies['orbitalEnergies'][m])
+#                         Done=True
+#                     else:
+#                         print('Not converged.  What to do?')
+#                         return
+#             orbitals[:,m] = np.copy(psiOut[:-1])
+#             Energies['orbitalEnergies'][m] = np.copy(psiOut[-1])
+#              
+#             print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
             
     
         
