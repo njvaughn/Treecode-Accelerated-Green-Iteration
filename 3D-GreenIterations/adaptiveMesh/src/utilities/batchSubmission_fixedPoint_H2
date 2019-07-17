@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
 
 DOMAIN=20
 MINDEPTH=3
@@ -10,6 +10,7 @@ SINGSUBT=1
 INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
  
 
+SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
 VTKFILEDIR='None'
 
 
@@ -27,8 +28,8 @@ BASE=1.0
 
 GAUSSIANALPHA=1.0
  
-MESHTYPE='ParentChildrenIntegral'
-#MESHTYPE='LW5' 
+#MESHTYPE='ParentChildrenIntegral'
+MESHTYPE='LW5' 
 GAUGESHIFT=-0.5
 
 
@@ -39,7 +40,7 @@ INTRASCFTOLERANCE=3e-5
 INTERSCFTOLERANCE=1e-6 
    
 MIXING='Anderson'    
-CELLORDER=5 
+CELLORDER=4 
  
 ADDITIONALDEPTHATATOMS=0 
 RESTART='False'	 
@@ -51,11 +52,11 @@ SAVEDMESH='None'
 
 for SMOOTHINGEPS in 0.0
 do
-for MAXDEPTH in 20 
+for MAXDEPTH in 20  
 do								  					 
-for MESHPARAM4 in 0       
+for MESHPARAM4 in 500       
 do
-	for MESHPARAM3 in 3e-6 1e-6 3e-7 1e-7  
+	for MESHPARAM3 in 3e-6 
 	 
 	do     
 		for MESHPARAM2 in 1e6     
@@ -63,10 +64,12 @@ do
 			for MESHPARAM1 in 500
 			      
 			do 
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/hydrogenMolecule/meshparam_${MESHPARAM3}.csv"
-			python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/hydrogenMolecule/meshparam_${MESHPARAM3}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/andersonGI/meshparam_${MESHPARAM1}.csv"
+						
+			python -u testBatchGreenIterations_FixedPoint_noTree.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
-																		$OUTPUTFILE $INPUTFILE $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
+																		$OUTPUTFILE $INPUTFILE $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
 																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE $RESTART $SAVEDMESH
 			done
 		done
