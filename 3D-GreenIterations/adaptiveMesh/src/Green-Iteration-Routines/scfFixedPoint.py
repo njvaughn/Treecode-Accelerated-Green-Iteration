@@ -236,11 +236,11 @@ def scfFixedPointClosure(scf_args):
             
             n,M = np.shape(orbitals)
             resNorm=1 
-            while resNorm>2e-0:
+            while resNorm>2e-2:
 #             while resNorm>intraScfTolerance:
 #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
 #                 GPUtil.showUtilization()
-                
+                print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
             
                 # Orthonormalize orbital m before beginning Green's iteration
 #                 n,M = np.shape(orbitals)
@@ -272,6 +272,7 @@ def scfFixedPointClosure(scf_args):
             
             ## Begin Anderson Mixing on Wavefunction
             Done = False
+#             Done = True
             firstInputWavefunction=True
             firstOutputWavefunction=True
             inputWavefunctions = np.zeros((psiOut.size,1))
@@ -279,6 +280,7 @@ def scfFixedPointClosure(scf_args):
             mixingStart = np.copy( gi_args['greenIterationsCount'] )
             while Done==False:
                 greenIterationsCount=gi_args["greenIterationsCount"]
+                print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                 
                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
                 orbitals[:,m] = np.copy(orthWavefunction)

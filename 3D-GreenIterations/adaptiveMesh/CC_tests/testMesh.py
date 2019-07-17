@@ -136,7 +136,7 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
     
-    X,Y,Z,W,RHO, XV, YV, ZV, quadIdx, ghostCells = tree.extractXYZ()
+    X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
 
     print(XV)
     print(YV)
@@ -144,7 +144,8 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
     print(len(XV))
     print(XV.size)
     print(RHO)
-    print(quadIdx)
+    print(vertexIdx)
+    print(centerIdx)
     conn=np.zeros(XV.size)
     for i in range(len(conn)):
         conn[i] = i
@@ -154,18 +155,18 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
     ctype = np.zeros(len(offset))
     for i in range(len(ctype)):
         ctype[i] = VtkVoxel.tid
-    pointVals = {"density_p":np.zeros(XV.size)}
+    pointVals = {"density":np.zeros(XV.size)}
     x1=y1=z1=-1
     x2=y2=z2=1
     for i in range(len(XV)):
-#         pointVals["density_p"][i] = max( RHO[quadIdx[i]], 1e-16) 
-        r1 = np.sqrt(  (XV[i]-x1)*(XV[i]-x1) + (YV[i]-y1)*(YV[i]-y1) + (ZV[i]-z1)*(ZV[i]-z1) )
+        pointVals["density"][i] = max( RHO[vertexIdx[i]], 1e-16) 
+#         r1 = np.sqrt(  (XV[i]-x1)*(XV[i]-x1) + (YV[i]-y1)*(YV[i]-y1) + (ZV[i]-z1)*(ZV[i]-z1) )
 #         r2 = np.sqrt(  (XV[i]-x2)*(XV[i]-x2) + (YV[i]-y2)*(YV[i]-y2) + (ZV[i]-z2)*(ZV[i]-z2) )
 # #         print(r)
 #         pointVals["density"][i] = np.exp( - r1) + np.exp( - 2*r2)
-        pointVals["density_p"][i] = np.exp( - r1 )
+#         pointVals["density_p"][i] = np.exp( - r1 )
     
-    cellVals = {"density_c":np.zeros(offset.size)}
+    cellVals = {"density":np.zeros(offset.size)}
     for i in range(len(offset)):
         
 #         startIdx = 8*i
@@ -176,8 +177,7 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
 #         r1 = np.sqrt( (xmid-x1)**2 + (ymid-y1)**2 + (zmid-z1)**2)
 #         r2 = np.sqrt( (xmid-x2)**2 + (ymid-y2)**2 + (zmid-z2)**2)
 #         
-        cellVals["density_c"][i] = max( RHO[quadIdx[i]], 1e-16) 
-#         cellVals["density_c"][i] = RHO[quadIdx[i]] 
+        cellVals["density"][i] = max( RHO[centerIdx[i]], 1e-16) 
         
         
     
@@ -837,9 +837,9 @@ if __name__ == "__main__":
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/benzene',
 #                         savedMesh='') 
     
-    tree = exportMeshForParaview(domain=30,order=3,
-                        minDepth=5, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-                        divideParameter1=0, divideParameter2=0, divideParameter3=1e-2, divideParameter4=4,
+    tree = exportMeshForParaview(domain=20,order=5,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+                        divideParameter1=500, divideParameter2=0, divideParameter3=1e-2, divideParameter4=4,
                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium',
                         savedMesh='') 
@@ -887,17 +887,23 @@ if __name__ == "__main__":
 #                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-7, divideParameter4=0,
 #                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
     
-#for dp3 in [1e-4, 1e-5, 1e-6, 1e-7, 1e-8]:
-# for dp3 in [1e-2, 1e-3, 3e-8]:
-#     exportMeshForTreecodeTesting(   domain=30,order=5,
-#                                     minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-#                                     divideParameter1=0, divideParameter2=0, divideParameter3=dp3, divideParameter4=0,
-#                                     inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
-    
-#                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
-#                         divideParameter1=1.0, divideParameter2=1.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
-#                         divideParameter1=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
-#                         divideParameter=1e-3,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
-#                         divideParameter=1.25e-3,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
-     
+# for dp3 in [1e-4, 1e-5, 1e-6, 1e-7, 1e-8]:
+# # for dp3 in [1e-2, 1e-3, 3e-8]:
+#     tree = exportMeshForParaview(domain=30,order=5,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=0, divideParameter2=0, divideParameter3=dp3, divideParameter4=4,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/benzene_'+str(dp3),
+#                         savedMesh='') 
+# #     exportMeshForTreecodeTesting(   domain=30,order=5,
+# #                                     minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+# #                                     divideParameter1=0, divideParameter2=0, divideParameter3=dp3, divideParameter4=0,
+# #                                     inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+#     
+# #                         divideParameter=1e-5,inputFile='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv')
+# #                         divideParameter1=1.0, divideParameter2=1.0,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+# #                         divideParameter1=500,inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv')
+# #                         divideParameter=1e-3,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
+# #                         divideParameter=1.25e-3,inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+#      
     

@@ -2469,6 +2469,7 @@ class Tree(object):
         YV = []
         ZV = []
         quadIdx = []
+        centerIdx = []
         ghostCells=[]
 #         WAVEFUNCTIONS = []
         cellCount=0
@@ -2511,9 +2512,9 @@ class Tree(object):
                                      offset+ p**1-1 + p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ]  ## For 8 vertices
     
                 
-#                 if p%2==1:
-#                     midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2
-#                 quadIdx = quadIdx + [int(offset+midpointQuadPt)] # for midpoint
+                if p%2==1:
+                    midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2
+                centerIdx = centerIdx + [int(offset+midpointQuadPt)] # for midpoint
     
     
                 
@@ -2530,7 +2531,7 @@ class Tree(object):
                 for i,j,k in cell.PxByPyByPz:
                     cell.gridpoints[i,j,k]=None
                             
-        return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
+        return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
     
     def extractConvolutionIntegrand(self,containing=None): 
         '''

@@ -287,7 +287,9 @@ def setUpTree(onlyFillOne=False):
         for i in range(len(atomData)):
             nElectrons += atomData[i,3] 
     
-    nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
+    
+    nOrbitals = int( np.ceil(nElectrons/2)  ) + 2
+#     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
 #     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.   
                                             # If the final orbital is unoccupied, this amount is enough. 
                                             # If there is a degeneracy leading to teh final orbital being 
@@ -313,9 +315,12 @@ def setUpTree(onlyFillOne=False):
         print('For oxygen atom, nOrbitals = ', nOrbitals)
         
     elif inputFile==srcdir+'utilities/molecularConfigurations/benzeneAuxiliary.csv':
-        nOrbitals=22
+        nOrbitals=24
         occupations = 2*np.ones(nOrbitals)
-        occupations[-1]=0
+        occupations[22]=0
+        occupations[23]=0
+        occupations[21]=0
+        
 #         occupations = [2, 2, 2/3 ,2/3 ,2/3, 
 #                        2, 2, 2/3 ,2/3 ,2/3,
 #                        2, 2, 2/3 ,2/3 ,2/3,
@@ -367,7 +372,7 @@ def setUpTree(onlyFillOne=False):
  
     
 #     X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
-    X,Y,Z,W,RHO, XV, YV, ZV, quadIdx, ghostCells = tree.extractXYZ()
+    X,Y,Z,W,RHO, XV, YV, ZV, quadIdx, centerIdx, ghostCells = tree.extractXYZ()
     atoms = tree.atoms
     nPoints = len(X)
 #     orbitals = np.random.rand(nPoints,nOrbitals)
@@ -610,13 +615,13 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
                'auxiliaryFile':auxiliaryFile}
     
 
-    
+    """
     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
     method='anderson'
     jacobianOptions={'alpha':1.0, 'M':mixingHistoryCutoff, 'w0':0.01} 
     solverOptions={'fatol':interScfTolerance, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
 
-    """
+    
     print('Calling scipyRoot with %s method' %method)
     scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
 #     print(np.shaoe(RHO))
@@ -663,7 +668,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
             RHO = np.copy(andersonDensity)
           
         elif mixingScheme == 'None':
-            RHO += densityResidualVector
+            print('Using no mixing.')
+#             RHO += densityResidualVector
+            RHO = np.copy( scf_args['outputDensities'][:,SCFcount-1] )
                
           
           
