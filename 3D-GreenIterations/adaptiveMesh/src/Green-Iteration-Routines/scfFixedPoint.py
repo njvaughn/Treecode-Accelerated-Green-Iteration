@@ -301,8 +301,9 @@ def scfFixedPointClosure(scf_args):
                         inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(psiIn)
 
                 ## Perform one step of iterations
-                
+                oldEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                 greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
+                newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                 r = greensIteration_FixedPoint(psiIn,gi_args)
                 psiOut = np.append( gi_args["orbitals"][:,m], Energies['orbitalEnergies'][m])
                 clenshawCurtisNorm = clenshawCurtisNormClosure(W)
@@ -310,6 +311,12 @@ def scfFixedPointClosure(scf_args):
                 print('Error Norm: ', errorNorm)
                 if errorNorm < intraScfTolerance:
                     Done=True
+                eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
+                print('Eigenvalue Diff: ', eigenvalueDiff)
+                if eigenvalueDiff < intraScfTolerance/10:
+                    Done=True
+                
+                
                 
                 ## Update output wavefunctions
                 
