@@ -35,7 +35,9 @@ elif computeCapability==(3,7):
 elif computeCapability==(6,0):
     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib60/libtreedriverWrapper.so')
 elif computeCapability==(7,0):
-    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib70/libtreedriverWrapper.so')
+    print('Using libtreelib-gpu.so')
+    _treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
+#     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib70/libtreedriverWrapper.so')
 #     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib/libtreedriverWrapper.so')
 else:
     print('Detected GPU with Compute_Capability ', computeCapability, '.  Do not have a compiled OpenACC treecode for this CC.')
