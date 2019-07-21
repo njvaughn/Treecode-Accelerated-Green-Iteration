@@ -302,9 +302,11 @@ def scfFixedPointClosure(scf_args):
 
                 ## Perform one step of iterations
                 oldEigenvalue = np.copy(Energies['orbitalEnergies'][m])
+                print('Before GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
                 greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
-                newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                 r = greensIteration_FixedPoint(psiIn,gi_args)
+                print('After GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
+                newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                 psiOut = np.append( gi_args["orbitals"][:,m], Energies['orbitalEnergies'][m])
                 clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                 errorNorm = clenshawCurtisNorm(r)
@@ -314,6 +316,7 @@ def scfFixedPointClosure(scf_args):
                 eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
                 print('Eigenvalue Diff: ', eigenvalueDiff)
                 if eigenvalueDiff < intraScfTolerance/10:
+                    print('Ending iteration because eigenvalue is converged.')
                     Done=True
                 
                 
@@ -437,6 +440,9 @@ def scfFixedPointClosure(scf_args):
                 print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
     #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                 outputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = newDensity
+            
+        print('outputDensities[0,:] = ', outputDensities[0,:])
+#         print('outputDensities[:,0:3] = ', outputDensities[:,0:3])
         
     #         print('Sample of output densities:')
     #         print(outputDensities[0,:])    
