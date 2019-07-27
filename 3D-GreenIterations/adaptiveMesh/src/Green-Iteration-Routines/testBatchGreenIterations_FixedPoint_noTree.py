@@ -740,13 +740,14 @@ if __name__ == "__main__":
     for i in range(len(ctype)):
         ctype[i] = VtkVoxel.tid
     pointVals = {"initialDensity":np.zeros(XV.size),
-                 "finalDensity":np.zeros(XV.size)}
+                 "finalDensity":np.zeros(XV.size),
+                 "densityDifference":np.zeros(XV.size)}
 
 
     for i in range(len(XV)):
         pointVals["initialDensity"][i] = max( initialRho[vertexIdx[i]], 1e-16) 
         pointVals["finalDensity"][i] = max( finalRho[vertexIdx[i]], 1e-16) 
-
+        pointVals["densityDifference"][i] = pointVals["finalDensity"][i] - pointVals["initialDensity"][i]
     
     cellVals = {"density":np.zeros(offset.size)}
     for i in range(len(offset)):
