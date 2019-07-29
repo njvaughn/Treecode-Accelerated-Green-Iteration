@@ -8,8 +8,8 @@ MINDEPTH=3
 SINGSUBT=1
 
 SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
-#INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
-INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+#INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
 #INPUTFILE='utilities/molecularConfigurations/benzeneAuxiliary.csv'
@@ -21,25 +21,25 @@ GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GPUPRESENT='True'
  
-TREECODE='True'      
+TREECODE='False'      
 MAXPARNODE=4000
-BATCHSIZE=4000  
+BATCHSIZE=4000   
  
  
-GAUSSIANALPHA=1.0
+GAUSSIANALPHA=1.0 
 GAUGESHIFT=-0.5
 
 MESHTYPE='ParentChildrenIntegral'
 #MESHTYPE='LW5'
 RESTART='False'	
 #SAVEDMESH='Be_PCI_1e-3.npy' 
-SAVEDMESH='Benzene_1e-7.npy'
-#SAVEDMESH='None'
+#SAVEDMESH='Benzene_1e-7.npy'
+SAVEDMESH='None'
 
 ADDITIONALDEPTHATATOMS=0
 
 MIXINGPARAMETER=0.5 
-MIXINGHISTORY=20 
+MIXINGHISTORY=10 
   
 INTRASCFTOLERANCE=1e-8
 INTERSCFTOLERANCE=1e-7
@@ -62,17 +62,18 @@ for MAXDEPTH in 20
 do								  	 				     
 for GRADIENTFREE in 'True'    
 do  
-	for TREECODEORDER in 7
+	for TREECODEORDER in 7  
 	do         
 		for THETA in 0.7  
 		do  
-			#for MIXING in 'Anderson' 'Simple' 'None'		    
-			for MIXING in 'Anderson'		    
+			for MIXING in 'Anderson' 'Simple' 'None'		    
+			#for MIXING in 'Anderson'		    
 			do
 
-			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/density-mixing/Be_meshFixed_mixing_$MIXING.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/density-mixing/H2_mixing_$MIXING.csv"
 
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_testing_async_kernels.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/mixingType_Be_$MIXING.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_testing_async_kernels.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_PCI_meshParam_${MESHPARAM3}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/no_gp_phi_PCI_meshParam_${MESHPARAM3}.csv"
 			
