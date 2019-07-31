@@ -1,7 +1,7 @@
 import numpy as np
 from numba import jit, njit, cuda
 from math import sqrt
-import time
+import time 
 
 @jit(parallel=True)
 def modifiedGramSchrmidt(V,weights):
