@@ -259,8 +259,8 @@ def scfFixedPointClosure(scf_args):
             
                 # Orthonormalize orbital m before beginning Green's iteration
 #                 n,M = np.shape(orbitals)
-                orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
-                orbitals[:,m] = np.copy(orthWavefunction)
+#                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
+#                 orbitals[:,m] = np.copy(orthWavefunction)
 #                 print('orbitals before: ',orbitals[1:5,m])
 #                 print('greenIterationsCount before: ', greenIterationsCount)
                 psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )

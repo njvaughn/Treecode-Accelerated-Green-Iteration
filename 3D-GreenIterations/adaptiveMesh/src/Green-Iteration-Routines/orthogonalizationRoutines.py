@@ -148,6 +148,7 @@ if __name__=="__main__":
     blockspergrid = (NumPoints + (threadsperblock - 1)) // threadsperblock
     
     V = np.random.rand(NumPoints,NumWavefunctions)
+    Vold = np.copy(V)
 #     np.ascontiguousarray(V)
     weights = np.random.rand(NumPoints)
 #     np.ascontiguousarray(weights)
@@ -185,6 +186,15 @@ if __name__=="__main__":
         print(dummy1[:5])
         print(dummy2[:5])
         print(dummy3[:5])
+        
+    if not np.allclose(V,Vold):
+        print("V not close to Vold")
+        if np.allclose(V[:,targetOrbital], dummy3):
+            print("But V[:,targetOrbital] contains the orth wave.")
+        for i in range(NumWavefunctions):
+            if i != targetOrbital:
+                if not np.allclose(V[:,i], Vold[:,i]):
+                    print("Column %i  also differ", i)
     # Interesting.  My python version is slightly faster than my C version.  Python is using all numpy functions, so that's why.
     # But my non-numpy version, compiled with numba, is faster! 
     

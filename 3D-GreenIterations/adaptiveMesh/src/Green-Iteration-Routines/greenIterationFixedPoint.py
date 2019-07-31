@@ -171,7 +171,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         # update the energy first
         
-    
+        orthWavefunction2 = np.zeros(nPoints)
         if ( (gradientFree==True) and (SCFcount>-1)):                 
             
             psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*W))
@@ -190,8 +190,14 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 return
     
             n,M = np.shape(orbitals) 
+#             Wcopy = np.copy(W)
+#             mcopy = np.copy(m)
+#             nPointsCopy = np.copy(nPoints)
             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
+#             modifiedGramSchmidt_singleOrbital_GPU[blocksPerGrid, threadsPerBlock](np.copy(orbitals),Wcopy,mcopy,nPointsCopy, orthWavefunction2)
+            
             orbitals[:,m] = np.copy(orthWavefunction)
+#             orbitals[:,m] = np.copy(orthWavefunction2)
     #         tree.importPhiOnLeaves(orbitals[:,m], m)
             
     
