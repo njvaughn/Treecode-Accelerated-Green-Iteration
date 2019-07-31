@@ -1,9 +1,9 @@
 ../src/utilities/molecularConfigurations/lithiumAtom.csv
 ../src/utilities/molecularConfigurations/lithiumAtomReferenceEigenvalues.csv
 /home/njvaughn/results_Li/results.csv
--7.3340536782581447
+-3.8616389456972078
  1.4309060170370618e+01
 -2.2903921833555341e+00
 -0.15971669832262905
 0.00 				# Hartree from NWChem
--3.8616389456972078
+-7.3340536782581447

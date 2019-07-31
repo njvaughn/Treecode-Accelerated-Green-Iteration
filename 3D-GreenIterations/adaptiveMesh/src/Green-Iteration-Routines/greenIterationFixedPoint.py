@@ -112,7 +112,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 
                 if GPUpresent==False:
                     print('No GPU?')
-                    return
+                    temp=np.transpose( np.array([X,Y,Z,f,W]) )
+                    gpuHelmholtzConvolutionSubractSingularity(temp,temp,phiNew,k) 
+                    convolutionTime = time.time()-startTime
+                    print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+#                     return
                 elif GPUpresent==True:
                     if treecode==False:
                         startTime = time.time()
@@ -137,10 +141,12 @@ def greensIteration_FixedPoint_Closure(gi_args):
                         potentialType=3
                         kappa = k
                         startTime = time.time()
+                        numDevices=4
+                        numThreads=4
                         phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                        np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                        np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                                       potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
+                                                                       potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                     
     
                         convTime=time.time()-startTime

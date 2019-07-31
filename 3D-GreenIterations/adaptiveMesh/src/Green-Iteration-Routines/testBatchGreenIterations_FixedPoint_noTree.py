@@ -12,7 +12,7 @@ import sys
 import time
 import inspect
 import resource
-
+from pympler import tracker, classtracker
 
 
 if os.uname()[1] == 'Nathans-MacBook-Pro.local':
@@ -111,6 +111,8 @@ except OSError:
     
 
 from TreeStruct_CC import Tree
+from CellStruct_CC import Cell
+from GridpointStruct import GridPoint
 import densityMixingSchemes as densityMixing
 
 # depthAtAtoms += int(np.log2(base))
@@ -251,11 +253,12 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z):
                         
         if orbitalIndex < nOrbitals:
             print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
-            print('Filling extra orbitals with decaying exponential.')
-#             print('Filling extra orbitals with random initial data.')
+#             print('Filling extra orbitals with decaying exponential.')
+            print('Filling extra orbitals with random initial data.')
             for ii in range(orbitalIndex, nOrbitals):
                 R = np.sqrt(X*X+Y*Y+Z*Z)
-                orbitals[:,ii] = np.exp(-R)*np.sin(R)
+#                 orbitals[:,ii] = np.exp(-R)*np.sin(R)
+                orbitals[:,ii] = np.random.rand(len(R))
 #                 self.initializeOrbitalsRandomly(targetOrbital=ii)
 #                 self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
 #                 self.orthonormalizeOrbitals(targetOrbital=ii)
@@ -320,7 +323,7 @@ def setUpTree(onlyFillOne=False):
     elif inputFile==srcdir+'utilities/molecularConfigurations/benzeneAuxiliary.csv':
         nOrbitals=24
         occupations = 2*np.ones(nOrbitals)
-        occupations[22]=0
+        occupations[22]=0 
         occupations[23]=0
         occupations[21]=0
         
@@ -377,6 +380,17 @@ def setUpTree(onlyFillOne=False):
 #     X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
     
+#     r = np.sqrt(X*X + Y*Y + Z*Z)
+# #     RHO_RAND = np.random.rand(len(RHO))
+#     RHO = 10*np.exp(-2*r)
+#     print("USING NON-ATOMIC INITIAL RHO.")
+#     print("USING NON-ATOMIC INITIAL RHO.")
+#     print("USING NON-ATOMIC INITIAL RHO.")
+#     print("\n\n\n\nI REPEAT....\n\n\n\n")
+#     print("USING NON-ATOMIC INITIAL RHO.")
+#     print("USING NON-ATOMIC INITIAL RHO.")
+#     print("USING NON-ATOMIC INITIAL RHO.")
+#     
     atoms = tree.atoms
     nPoints = len(X)
 #     orbitals = np.random.rand(nPoints,nOrbitals)
@@ -387,6 +401,8 @@ def setUpTree(onlyFillOne=False):
     orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
     print('nPoints: ', nPoints)
     print('nOrbitals: ', nOrbitals)
+    
+    tree=None
     
     return X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
      
@@ -530,7 +546,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
         print('Unable to make restart directory ', restartFilesDir)
     
     
-            
+    tr = tracker.SummaryTracker()   
     if restartFile!=False:
         orbitals = np.load(wavefunctionFile+'.npy')
         oldOrbitals = np.copy(orbitals)
@@ -581,7 +597,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
         inputDensities[:,0] = np.copy(RHO)
         oldOrbitals = np.copy(orbitals)
 
-
+    tr.print_diff()
+    
     if plotSliceOfDensity==True:
         densitySliceSavefile = densityPlotsDir+'/densities'
         print()
@@ -725,11 +742,36 @@ if __name__ == "__main__":
     print('='*70) 
     print('='*70,'\n')  
     
- 
+#     tr = tracker.SummaryTracker()
+#     tree_tracker = classtracker.ClassTracker()
+#     tree_tracker.track_class(Tree)
+#     tree_tracker.create_snapshot()
+#     
+#     cell_tracker = classtracker.ClassTracker()
+#     cell_tracker.track_class(Cell)
+#     cell_tracker.create_snapshot()
+#     
+#     gp_tracker = classtracker.ClassTracker()
+#     gp_tracker.track_class(GridPoint)
+#     gp_tracker.create_snapshot()
+    
+    
     X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = setUpTree() 
+#     tr.print_diff()
+#     tree_tracker.create_snapshot()
+#     tree_tracker.stats.print_summary()
+#     
+#     cell_tracker.create_snapshot()
+#     cell_tracker.stats.print_summary()
+#     
+#     gp_tracker.create_snapshot()
+#     gp_tracker.stats.print_summary()
+    
+    
     initialRho = np.copy(RHO)
     finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues)
-
+#     tr.print_diff()
+    
     conn=np.zeros(XV.size)
     for i in range(len(conn)):
         conn[i] = i

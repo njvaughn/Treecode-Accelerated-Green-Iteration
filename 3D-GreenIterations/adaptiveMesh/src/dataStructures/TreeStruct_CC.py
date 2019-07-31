@@ -13,6 +13,7 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 
 import numpy as np
 import dask as da
+from pympler import tracker, classtracker
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
@@ -2485,7 +2486,15 @@ class Tree(object):
                     W.append( cell.w[i,j,k] )
                     RHO.append(gridpt.rho)
 #                     WAVEFUNCTIONS.append(gridpt.phi)
+                    gridpt.x=None
+                    gridpt.y=None
+                    gridpt.z=None
+                    gridpt.rho=None
+                    gridpt=None
                     cell.gridpoints[i,j,k]=None
+                    cell.w[i,j,k]=None
+#                     del cell.gridpoints[i,j,k]
+#                     cell.gridpoints[i,j,k]=None
                     
             # Add all cells.
             if cell.leaf == True: 
@@ -2514,6 +2523,8 @@ class Tree(object):
                 
                 if p%2==1:
                     midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2
+                else:
+                    midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2 # this is not right, there is no midpoint for p%2==0.  
                 centerIdx = centerIdx + [int(offset+midpointQuadPt)] # for midpoint
     
     
@@ -2530,7 +2541,8 @@ class Tree(object):
             if cell.leaf == False:
                 for i,j,k in cell.PxByPyByPz:
                     cell.gridpoints[i,j,k]=None
-                            
+            del cell
+                
         return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
     
     def extractConvolutionIntegrand(self,containing=None): 

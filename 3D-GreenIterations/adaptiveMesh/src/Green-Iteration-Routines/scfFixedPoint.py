@@ -169,15 +169,22 @@ def scfFixedPointClosure(scf_args):
             elif treecode==True:
                 start = time.time()
                 potentialType=2 
+                numThreads=4
+                numDevices=4
                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                 print('Convolution time: ', time.time()-start)
                 
         elif GPUpresent==False:
-            print('Error: not prepared for Hartree solve without GPU')
-            return
+            if treecode==False:
+                V_hartreeNew = np.zeros(nPoints)
+                densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
+                gpuHartreeGaussianSingularitySubract(densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
+            else:    
+                print('Error: not prepared for Hartree solve without GPU')
+                return
         else:
             print('Is GPUpresent supposed to be true or false?')
             return
@@ -213,6 +220,9 @@ def scfFixedPointClosure(scf_args):
 #                 Energies['orbitalEnergies'][m] = -10
                 Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
+            for m in range(nOrbitals):
+                if Energies['orbitalEnergies'][m] > 0:
+                    Energies['orbitalEnergies'][m] = -0.5
         
         
            
@@ -236,7 +246,12 @@ def scfFixedPointClosure(scf_args):
             
             n,M = np.shape(orbitals)
             resNorm=1 
-            while resNorm>2e-2:
+            
+            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
+            orbitals[:,m] = np.copy(orthWavefunction)
+            
+                
+            while resNorm>2e-3:
 #             while resNorm>intraScfTolerance:
 #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
 #                 GPUtil.showUtilization()
@@ -302,10 +317,10 @@ def scfFixedPointClosure(scf_args):
 
                 ## Perform one step of iterations
                 oldEigenvalue = np.copy(Energies['orbitalEnergies'][m])
-                print('Before GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
+#                 print('Before GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
                 greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
                 r = greensIteration_FixedPoint(psiIn,gi_args)
-                print('After GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
+#                 print('After GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
                 newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                 psiOut = np.append( gi_args["orbitals"][:,m], Energies['orbitalEnergies'][m])
                 clenshawCurtisNorm = clenshawCurtisNormClosure(W)
@@ -315,7 +330,7 @@ def scfFixedPointClosure(scf_args):
                     Done=True
                 eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
                 print('Eigenvalue Diff: ', eigenvalueDiff)
-                if eigenvalueDiff < intraScfTolerance/10:
+                if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
                     print('Ending iteration because eigenvalue is converged.')
                     Done=True
                 
@@ -466,6 +481,7 @@ def scfFixedPointClosure(scf_args):
         
         
         energyResidual = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
+#         energyError = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
         Energies['Eold'] = np.copy(Energies['Etotal'])
         
         

@@ -4,8 +4,9 @@ import time
 
 from numba import cuda
 
-computeCapability = cuda.cudadrv.driver.Device(0).compute_capability
-print('Compute Capability ', computeCapability)
+# computeCapability = cuda.cudadrv.driver.Device(0).compute_capability
+# print('Compute Capability ', computeCapability)
+
 #  Suppose there is a compiled C file treecode.c function with the header:
 #
 #
@@ -28,20 +29,23 @@ print('Compute Capability ', computeCapability)
 
 # _treecodeRoutines = ctypes.CDLL('/home/njvaughn/hybrid-gpu-treecode/lib/libtreedriverWrapper.so')
 
-if computeCapability==(3,5):
-    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib35/libtreedriverWrapper.so')
-elif computeCapability==(3,7):
-    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib37/libtreedriverWrapper.so')
-elif computeCapability==(6,0):
-    _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib60/libtreedriverWrapper.so')
-elif computeCapability==(7,0):
-    print('Using libtreelib-gpu.so')
-    _treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
-#     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib70/libtreedriverWrapper.so')
-#     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib/libtreedriverWrapper.so')
-else:
-    print('Detected GPU with Compute_Capability ', computeCapability, '.  Do not have a compiled OpenACC treecode for this CC.')
+# if computeCapability==(3,5):
+#     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib35/libtreedriverWrapper.so')
+# elif computeCapability==(3,7):
+#     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib37/libtreedriverWrapper.so')
+# elif computeCapability==(6,0):
+#     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib60/libtreedriverWrapper.so')
+# elif computeCapability==(7,0):
+#     print('Using libtreelib-gpu.so')
+#     _treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
+# #     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib70/libtreedriverWrapper.so')
+# #     _treecodeRoutines = ctypes.CDLL('/home/njvaughn/openACC-treecode/lib/libtreedriverWrapper.so')
+# else:
+#     print('Detected GPU with Compute_Capability ', computeCapability, '.  Do not have a compiled OpenACC treecode for this CC.')
 
+_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
+
+print('_treecodeRoutines set.')
 _treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
         ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
         ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
@@ -60,7 +64,7 @@ _treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
 def callTreedriver(numTargets, numSources, 
                    targetX, targetY, targetZ, targetValue, 
                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                   potentialType, kappa, order, theta, maxParNode, batchSize):
+                   potentialType, kappa, order, theta, maxParNode, batchSize, numDevices, numThreads):
 
    
     global _treecodeRoutines
@@ -82,8 +86,8 @@ def callTreedriver(numTargets, numSources,
     resultArray = np.zeros(numTargets)
     resultArray_p = resultArray.ctypes.data_as(c_double_p)
 
-    numDevices=2
-    numThreads=numDevices
+#     numDevices=0
+#     numThreads=12
     _treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
                                                  targetX_p, targetY_p, targetZ_p, targetValue_p,
                                                  sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
