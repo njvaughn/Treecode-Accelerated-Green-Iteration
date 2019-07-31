@@ -200,7 +200,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #             orbitals[:,m] = np.copy(orthWavefunction2)
     #         tree.importPhiOnLeaves(orbitals[:,m], m)
             
-    
+     
     
             if greenIterationsCount==1:
                 eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
