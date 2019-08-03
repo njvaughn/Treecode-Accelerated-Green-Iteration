@@ -4,6 +4,7 @@ import time
 import csv
 import resource
 import GPUtil
+import os
 
 
 try:
@@ -25,8 +26,10 @@ except OSError:
     print('Unable to import treecodeWrapper due to OSError')
     
 
-from orthogonalizationRoutines import *
-
+# try:
+#     from orthogonalizationRoutines import *
+# except ImportError:
+from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital as mgs
 
 
 def greensIteration_FixedPoint_Closure(gi_args):
@@ -111,9 +114,16 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 
                 
                 if GPUpresent==False:
-                    print('No GPU?')
-                    temp=np.transpose( np.array([X,Y,Z,f,W]) )
-                    gpuHelmholtzConvolutionSubractSingularity(temp,temp,phiNew,k) 
+                    startTime=time.time()
+                    potentialType=3
+                    kappa = k
+                    startTime = time.time()
+                    numDevices=0
+                    numThreads=4
+                    phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
+                                                                   np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
+                                                                   np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
+                                                                   potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                     convolutionTime = time.time()-startTime
                     print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
 #                     return
@@ -193,7 +203,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #             Wcopy = np.copy(W)
 #             mcopy = np.copy(m)
 #             nPointsCopy = np.copy(nPoints)
-            orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
+            orthWavefunction = mgs(orbitals,W,m, n, M)
 #             modifiedGramSchmidt_singleOrbital_GPU[blocksPerGrid, threadsPerBlock](np.copy(orbitals),Wcopy,mcopy,nPointsCopy, orthWavefunction2)
             
             orbitals[:,m] = np.copy(orthWavefunction)

@@ -68,32 +68,32 @@ def modifiedGramSchmidt_singleOrbital_C2(V,weights,targetOrbital,numPoints):
     return U
 
 
-@cuda.jit('void(float64[:,:], float64[:], int64, int64, float64[:])')
-def modifiedGramSchmidt_singleOrbital_GPU(V,weights,targetOrbital,numPoints, output):
-    U = V[:,targetOrbital]
-    globalID = cuda.grid(1)
-    if globalID < numPoints:
-        dot = 0.0
-        norm = 0.0
-        for j in range(targetOrbital):
-    #         print('Orthogonalizing %i against %i' %(targetOrbital,j))
-            dot += V[globalID,targetOrbital]*V[globalID,j]*weights[globalID]
-#             cuda.syncthreads()
-            U[globalID] -= dot*V[globalID,j]
-#             cuda.syncthreads()
-            norm += U[globalID]*U[globalID]*weights[globalID]
-#             cuda.syncthreads()
-            U[globalID] /= norm
-#             cuda.syncthreads()
-        norm = 0.0
-#         cuda.syncthreads()
-        norm += U[globalID]*U[globalID]*weights[globalID]
-#         cuda.syncthreads()
-        U[globalID] /= norm
-#         cuda.syncthreads()
-        output[globalID]=U[globalID]
-#         cuda.syncthreads()
-    
+# @cuda.jit('void(float64[:,:], float64[:], int64, int64, float64[:])')
+# def modifiedGramSchmidt_singleOrbital_GPU(V,weights,targetOrbital,numPoints, output):
+#     U = V[:,targetOrbital]
+#     globalID = cuda.grid(1)
+#     if globalID < numPoints:
+#         dot = 0.0
+#         norm = 0.0
+#         for j in range(targetOrbital):
+#     #         print('Orthogonalizing %i against %i' %(targetOrbital,j))
+#             dot += V[globalID,targetOrbital]*V[globalID,j]*weights[globalID]
+# #             cuda.syncthreads()
+#             U[globalID] -= dot*V[globalID,j]
+# #             cuda.syncthreads()
+#             norm += U[globalID]*U[globalID]*weights[globalID]
+# #             cuda.syncthreads()
+#             U[globalID] /= norm
+# #             cuda.syncthreads()
+#         norm = 0.0
+# #         cuda.syncthreads()
+#         norm += U[globalID]*U[globalID]*weights[globalID]
+# #         cuda.syncthreads()
+#         U[globalID] /= norm
+# #         cuda.syncthreads()
+#         output[globalID]=U[globalID]
+# #         cuda.syncthreads()
+#     
         
 
 def modifiedGramSchrmidt_noNormalization(V,weights):

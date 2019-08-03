@@ -43,10 +43,30 @@ from numba import cuda
 # else:
 #     print('Detected GPU with Compute_Capability ', computeCapability, '.  Do not have a compiled OpenACC treecode for this CC.')
 
-_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
+try:
+    _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
+except ImportError:
+    print('Unable to import _gpu_treecodeRoutines due to ImportError')
+except OSError:
+    print('Unable to import _gpu_treecodeRoutines due to OSError')
+    _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
+
+try:
+    _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
+except ImportError:
+    print('Unable to import _cpu_treecodeRoutines due to ImportError')
+except OSError:
+    print('Unable to import _cpu_treecodeRoutines due to OSError')
+    _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
 
 print('_treecodeRoutines set.')
-_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
+_gpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
+        ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
+        ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
+        ctypes.POINTER(ctypes.c_double), ctypes.c_int, ctypes.c_double, 
+        ctypes.c_int, ctypes.c_double,  ctypes.c_int, ctypes.c_int, ctypes.c_int )
+
+_cpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
         ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
         ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
         ctypes.POINTER(ctypes.c_double), ctypes.c_int, ctypes.c_double, 
@@ -88,12 +108,21 @@ def callTreedriver(numTargets, numSources,
 
 #     numDevices=0
 #     numThreads=12
-    _treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
-                                                 targetX_p, targetY_p, targetZ_p, targetValue_p,
-                                                 sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
-                                                 resultArray_p, ctypes.c_int(potentialType), ctypes.c_double(kappa),
-                                                 ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode),
-                                                 ctypes.c_int(batchSize), ctypes.c_int(numDevices), ctypes.c_int(numThreads) )
+    if numDevices>0:
+        _gpu_treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
+                                                     targetX_p, targetY_p, targetZ_p, targetValue_p,
+                                                     sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
+                                                     resultArray_p, ctypes.c_int(potentialType), ctypes.c_double(kappa),
+                                                     ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode),
+                                                     ctypes.c_int(batchSize), ctypes.c_int(numDevices), ctypes.c_int(numThreads) )
+    else: # No gpu present
+        print('No GPU, calling CPU treecode.')
+        _cpu_treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
+                                                     targetX_p, targetY_p, targetZ_p, targetValue_p,
+                                                     sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
+                                                     resultArray_p, ctypes.c_int(potentialType), ctypes.c_double(kappa),
+                                                     ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode),
+                                                     ctypes.c_int(batchSize), ctypes.c_int(numDevices), ctypes.c_int(numThreads) )
     
 # void treedriverWrapper(int numTargets, int numSources,
 #     double *targetX, double *targetY, double *targetZ, double *targetValue,

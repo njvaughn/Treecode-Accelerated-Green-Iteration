@@ -183,8 +183,13 @@ def scfFixedPointClosure(scf_args):
                 densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
                 gpuHartreeGaussianSingularitySubract(densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
             else:    
-                print('Error: not prepared for Hartree solve without GPU')
-                return
+                potentialType=2 
+                numThreads=4
+                numDevices=0
+                V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
+                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
         else:
             print('Is GPUpresent supposed to be true or false?')
             return
