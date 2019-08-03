@@ -32,9 +32,9 @@ except OSError:
 from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital as mgs
 
 
-def greensIteration_FixedPoint_Closure(gi_args):
+def eigenvalueOne_FixedPoint_Closure(gi_args):
 #     gi_args_out = {}
-    def greensIteration_FixedPoint(psiIn, gi_args):
+    def eigenvalueOne_FixedPoint(psiIn, gi_args):
         # what other things do we need?  Energies, Times, orbitals, Veff, runtime constants (symmetricIteration, GPUpresent, subtractSingularity, treecode, outputfiles, ...)  
         
         
@@ -94,15 +94,14 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
     
      
-        if symmetricIteration==False:
-            f = -2*orbitals[:,m]*Veff
-        else: 
-            print("symmetricIteration variable not True or False.  What should it be?")
-            return
+        f = -2*orbitals[:,m]*Veff
+
         
         
         oldEigenvalue =  Energies['orbitalEnergies'][m] 
-        k = np.sqrt(-2*Energies['orbitalEnergies'][m])
+#         k = np.sqrt(-2*Energies['orbitalEnergies'][m])
+        k = np.sqrt(-2*gi_args['targetEpsilon'])
+        
         print('k = ', k)
     
         phiNew = np.zeros(nPoints)
@@ -174,85 +173,45 @@ def greensIteration_FixedPoint_Closure(gi_args):
             print('Invalid option for singularitySubtraction, should be 0 or 1.')
             return
         
-#         print('Max phiNew: ', np.max(phiNew))
-#         print('Min phiNew: ', np.min(phiNew))
+
         
-        """ Method where you dont compute kinetics, from Harrison """
         
         # update the energy first
         
-        orthWavefunction2 = np.zeros(nPoints)
-        if ( (gradientFree==True) and (SCFcount>-1)):                 
             
-            psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*W))
-            
-            if symmetricIteration==False:
-    
-                deltaE = -np.sum( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew)*W ) 
-                normSqOfPsiNew = np.sum( phiNew**2 * W)
-                deltaE /= (normSqOfPsiNew)
-                print('Norm of psiNew = ', normSqOfPsiNew)
-                print('Delta E = ', deltaE)
-                Energies['orbitalEnergies'][m] += deltaE
-                orbitals[:,m] = np.copy(phiNew)
-            elif symmetricIteration==True:
-                print('Symmetric not set up for tree-free')
-                return
-    
-            n,M = np.shape(orbitals) 
-#             Wcopy = np.copy(W)
-#             mcopy = np.copy(m)
-#             nPointsCopy = np.copy(nPoints)
-            orthWavefunction = mgs(orbitals,W,m, n, M)
-#             modifiedGramSchmidt_singleOrbital_GPU[blocksPerGrid, threadsPerBlock](np.copy(orbitals),Wcopy,mcopy,nPointsCopy, orthWavefunction2)
-            
-            orbitals[:,m] = np.copy(orthWavefunction)
-#             orbitals[:,m] = np.copy(orthWavefunction2)
-    #         tree.importPhiOnLeaves(orbitals[:,m], m)
-            
-     
-    
-            if greenIterationsCount==1:
-                eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
-            else:
-                eigenvalueHistory = gi_args['eigenvalueHistory']
-                eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
-            print('eigenvalueHistory: \n',eigenvalueHistory)
-            
-            
-            print('Orbital energy after Harrison update: ', Energies['orbitalEnergies'][m])
+        psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*W))
+        Energies['orbitalEnergies'][m] = psiNewNorm
+        print('Norm of psiNew = ', psiNewNorm)
+        orbitals[:,m] = np.copy(phiNew)
+
+
+        
+
+        n,M = np.shape(orbitals) 
+        orthWavefunction = mgs(orbitals,W,m, n, M)
+        
+        orbitals[:,m] = np.copy(orthWavefunction)
+        
+ 
+
+        if greenIterationsCount==1:
+            eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
+        else:
+            eigenvalueHistory = gi_args['eigenvalueHistory']
+            eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
+        print('eigenvalueHistory: \n',eigenvalueHistory)
+        
+        
+        print('Orbital energy after Harrison update: ', Energies['orbitalEnergies'][m])
              
     
-    #     elif ( (gradientFree==False) or (SCFcount==-1) and False ):
-        elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
-            print('gradient and laplacian methods not set up for tree-free')
-            return
-            
-        else:
-            print('Not updating eigenvalue.  Is that intended?')
-            return
-    
-        
-        if Energies['orbitalEnergies'][m]>0.0:
-#             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - np.random.randint(10)
-            rand = np.random.rand(1)
-            Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - rand
-            print('Energy eigenvalue was positive, setting to gauge shift - ', rand)
-            
-        
-    #     tree.printWavefunctionNearEachAtom(m)
-            
-    #     residualVector = orbitals[:,m] - oldOrbitals[:,m]
+
         psiOut = np.append(np.copy(orbitals[:,m]), np.copy(Energies['orbitalEnergies'][m]))
         residualVector = psiOut - psiIn
         
         
         
         loc = np.argmax(np.abs(residualVector[:-1]))
-#         print('Largest residual: ', residualVector[loc])
-#         print('Value at that point: ', psiOut[loc])
-#         print('Location of max residual: ', X[loc], Y[loc], Z[loc])
-    #     residualVector = -(psiIn - orbitals[:,m])
     
         newEigenvalue = Energies['orbitalEnergies'][m]
         
@@ -272,7 +231,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         
     
-        print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift'], eigenvalueDiff))
+#         print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift'], eigenvalueDiff))
+        print('Orbital %i eigenvalue residual:  %1.3e' %(m,eigenvalueDiff))
         print('Orbital %i wavefunction residual: %1.3e' %(m, orbitalResidual))
         print()
         print()
@@ -325,4 +285,4 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         return residualVector
     
-    return greensIteration_FixedPoint, gi_args 
+    return eigenvalueOne_FixedPoint, gi_args 
