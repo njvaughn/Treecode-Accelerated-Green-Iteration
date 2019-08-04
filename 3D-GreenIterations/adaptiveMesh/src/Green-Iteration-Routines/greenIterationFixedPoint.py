@@ -124,6 +124,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
                                                                    potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+                    phiNew /= (4*np.pi)
                     convolutionTime = time.time()-startTime
                     print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
 #                     return
@@ -159,10 +160,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
                                                                        potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                     
     
+                        phiNew /= (4*np.pi)
                         convTime=time.time()-startTime
                         print('Convolution time: ', convTime)
                         Times['timePerConvolution'] = convTime
-                        phiNew /= (4*np.pi)
+                        
                     
                     else: 
                         print('treecode true or false?')

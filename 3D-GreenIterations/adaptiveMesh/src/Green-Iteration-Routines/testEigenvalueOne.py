@@ -618,7 +618,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     """
 #     while ( (densityResidual > interScfTolerance) or (energyResidual > interScfTolerance) ):  # terminate SCF when both energy and density are converged.
        
-    for targetEpsilon in np.linspace(lowEps,highEps,nEps):   
+    for targetEpsilon in np.linspace(lowEps+gaugeShift,highEps+gaugeShift,nEps):   
         print("Target Epsilon: ", targetEpsilon)
         ## CALL SCF FIXED POINT FUNCTION
 #         if SCFcount > 0:
@@ -626,66 +626,10 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
 #             return
 
         eigOneDriverFixedPoint, scf_args = eigOneDriverFixedPointClosure(scf_args)
-        densityResidualVector = eigOneDriverFixedPoint(RHO,targetEpsilon,scf_args)
-        densityResidual=scf_args['densityResidual']
-        energyResidual=scf_args['energyResidual'] 
+        eigOneDriverFixedPoint(RHO,targetEpsilon,scf_args)
         SCFcount=scf_args['SCFcount']
           
-# #         densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
-# #         print('Density Residual from arrays ', densityResidual)
-#         print('Shape of density histories: ', np.shape(scf_args['inputDensities']), np.shape(scf_args['outputDensities']))
-#         print('outputDensities[0,:] = ', scf_args['outputDensities'][0,:])
-#         # Now compute new mixing with anderson scheme, then import onto tree. 
-#     
-#       
-#         SCFindex = (SCFcount-1)%scf_args['mixingHistoryCutoff']
-#         if mixingScheme == 'Simple':
-#             print('Using simple mixing, from the input/output arrays')
-#             simpleMixingDensity = mixingParameter*scf_args['outputDensities'][:,SCFindex] + (1-mixingParameter)*scf_args['inputDensities'][:,SCFindex]
-#             integratedDensity = np.sum( simpleMixingDensity*W )
-#             print('Integrated simple mixing density: ', integratedDensity)  
-#     #             tree.importDensityOnLeaves(simpleMixingDensity)
-#             RHO = np.copy(simpleMixingDensity)
-#           
-#         elif mixingScheme == 'Anderson':
-#             print('Using anderson mixing.')
-#             andersonDensity = densityMixing.computeNewDensity(scf_args['inputDensities'], scf_args['outputDensities'], mixingParameter,W)
-#             integratedDensity = np.sum( andersonDensity*W )
-#             print('Integrated anderson density: ', integratedDensity)
-#     #             tree.importDensityOnLeaves(andersonDensity)
-#             RHO = np.copy(andersonDensity)
-#           
-#         elif mixingScheme == 'None':
-#             print('Using no mixing.')
-# #             RHO += densityResidualVector
-#             RHO = np.copy( scf_args['outputDensities'][:,SCFindex] )
-#                
-#           
-#           
-#         else:
-#             print('Mixing must be set to either Simple, Anderson, or None')
-#             return
-      
-                  
-       
-          
-        if Energies['Etotal'] > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
-            print('Warning, Energy is positive')
-#             Energies['Etotal'] = -0.5
-              
-          
-#         if SCFcount >= 150:
-#             print('Setting density residual to -1 to exit after the 150th SCF')
-#             densityResidual = -1
-              
-#         if SCFcount >= 1:
-#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-#             energyResidual = -1
-#             densityResidual = -1
-          
-  
-   
-  
+
       
       
 #     print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, SCFcount))

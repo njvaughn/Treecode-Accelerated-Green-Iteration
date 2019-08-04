@@ -81,7 +81,22 @@ def sortByEigenvalue(orbitals,orbitalEnergies):
             
    
     return newOrbitals, orbitalEnergies
+
+def sortLargestFirst(orbitals,orbitalEnergies):
+    newOrder = np.argsort(orbitalEnergies)[::-1] ## [::-1] to get largest first....
+    oldEnergies = np.copy(orbitalEnergies)
+    for m in range(len(orbitalEnergies)):
+        orbitalEnergies[m] = oldEnergies[newOrder[m]]
+    print('Sorted eigenvalues: ', orbitalEnergies)
+    print('New order: ', newOrder)
     
+    newOrbitals = np.zeros_like(orbitals)
+    for m in range(len(orbitalEnergies)):
+        newOrbitals[:,m] = orbitals[:,newOrder[m]]
+#         if newOrder[m]!=m:
+            
+   
+    return newOrbitals, orbitalEnergies  
     
 def eigOneDriverFixedPointClosure(scf_args): 
     
@@ -163,7 +178,7 @@ def eigOneDriverFixedPointClosure(scf_args):
         """
     #         starthartreeConvolutionTime = timer()
         
-        if SCFcount==1: # need to compute Hartree potential at start
+        if SCFcount>-1: # need to compute Hartree potential at start
             if GPUpresent==True:
                 if treecode==False:
                     V_hartreeNew = np.zeros(nPoints)
@@ -342,7 +357,7 @@ def eigOneDriverFixedPointClosure(scf_args):
                     Done=True
                 eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
                 print('Eigenvalue Diff: ', eigenvalueDiff)
-                if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
+                if ( (eigenvalueDiff < intraScfTolerance) and (gi_args['greenIterationsCount'] > 20) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
                     print('Ending iteration because eigenvalue is converged.')
                     Done=True
                 
@@ -378,148 +393,11 @@ def eigOneDriverFixedPointClosure(scf_args):
              
 #             print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
             print('Used %i iterations for wavefunction %i' %(gi_args["greenIterationsCount"],m))
-            
-            
-            ## Method that uses Scipy Anderson
-#             Done = False
-#             while Done==False:
-#                 try:
-#                     # Call anderson mixing on the Green's iteration fixed point function
-#     
-#                     # Orthonormalize orbital m before beginning Green's iteration
-#                     n,M = np.shape(orbitals)
-#                     orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
-#                     orbitals[:,m] = np.copy(orthWavefunction)
-#                      
-#                     psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
-#     
-#                        
-#                     ### Anderson Options
-#                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
-#                     method='anderson'
-#                     jacobianOptions={'alpha':1.0, 'M':10, 'w0':0.01} 
-#                     solverOptions={'fatol':tol, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
-#     
-#                     
-#                     print('Calling scipyRoot with %s method' %method)
-#                     sol = scipyRoot(greensIteration_FixedPoint,psiIn, args=gi_args, method=method, options=solverOptions)
-#                     print(sol.success)
-#                     print(sol.message)
-#                     psiOut = sol.x
-#                     Done = True
-#                 except Exception:
-#                     if np.abs(eigenvalueDiff) < tol/10:
-#                         print("Rootfinding didn't converge but eigenvalue is converged.  Exiting because this is probably due to degeneracy in the space.")
-#     #                         targets = tree.extractPhi(m)
-#                         psiOut = np.append(orbitals[:,m], Energies['orbitalEnergies'][m])
-#                         Done=True
-#                     else:
-#                         print('Not converged.  What to do?')
-#                         return
-#             orbitals[:,m] = np.copy(psiOut[:-1])
-#             Energies['orbitalEnergies'][m] = np.copy(psiOut[-1])
-#              
-#             print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
-            
-    
+
         
         ## Sort by eigenvalue
-        orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-        
-        fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
-        eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
-        print('Fermi energy: ', eF)
-        exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
-        occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
-    
-    #         occupations = computeOccupations(Energies['orbitalEnergies'], nElectrons, Temperature)
-        print('Occupations: ', occupations)
-        Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
-    
-    
-        print()  
-        print()
-     
-    
-        
-    
-        
-    
-        oldDensity = np.copy(RHO)
-        
-        RHO = np.zeros(nPoints)
-        for m in range(nMu):
-            RHO += orbitals[:,m]**2 * occupations[m]
-        newDensity = np.copy(RHO)
-        
-    
-        if SCFcount==1: # not okay anymore because output density gets reset when tolerances get reset.
-            outputDensities[:,0] = np.copy(newDensity)
-#             scf_args['outputDensities']=outputDensities
-        else:
-            
-    #             outputDensities = np.concatenate( ( outputDensities, np.reshape(np.copy(newDensity), (nPoints,1)) ), axis=1)
-            
-            if (SCFcount-1)<mixingHistoryCutoff:
-                outputDensities = np.concatenate( (outputDensities, np.reshape(np.copy(newDensity), (nPoints,1))), axis=1)
-                print('Concatenated outputDensity.  Now has shape: ', np.shape(outputDensities))
-            else:
-                print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
-    #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
-                outputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = newDensity
-            
-        print('outputDensities[0,:] = ', outputDensities[0,:])
-#         print('outputDensities[:,0:3] = ', outputDensities[:,0:3])
-        
-    #         print('Sample of output densities:')
-    #         print(outputDensities[0,:])    
-        integratedDensity = np.sum( newDensity*W )
-        densityResidual = np.sqrt( np.sum( (newDensity-oldDensity)**2*W ) )
-        print('Integrated density: ', integratedDensity)
-        print('Density Residual ', densityResidual)
-        
-        
-            
-    
-    
-        
-        
-        Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
-        Energies['Etotal'] = Energies['Eband'] - Energies['Ehartree'] + Energies['Ex'] + Energies['Ec'] - Energies['Vx'] - Energies['Vc'] + Energies['Enuclear']
-        
-    
-        for m in range(nMu):
-            print('Orbital %i error: %1.3e' %(m, Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift']))
-        
-        
-        energyResidual = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
-#         energyError = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
-        Energies['Eold'] = np.copy(Energies['Etotal'])
-        
-        
-        
-        """
-        Print results from current iteration
-        """
-    
-        print('Orbital Energies: ', Energies['orbitalEnergies']) 
-    
-        print('Updated V_x:                           %.10f Hartree' %Energies['Vx'])
-        print('Updated V_c:                           %.10f Hartree' %Energies['Vc'])
-        
-        print('Updated Band Energy:                   %.10f H, %.10e H' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
-    #         print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(Energies['kinetic'], Energies['kinetic']-Ekinetic) )
-        print('Updated E_Hartree:                      %.10f H, %.10e H' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
-        print('Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
-        print('Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
-    #         print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
-        print('Total Energy:                          %.10f H, %.10e H' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
-        print('Energy Residual:                        %.3e' %energyResidual)
-        print('Density Residual:                       %.3e\n\n'%densityResidual)
-    
-        scf_args['energyResidual']=energyResidual
-        scf_args['densityResidual']=densityResidual
-            
+        orbitals, Energies['orbitalEnergies'] = sortLargestFirst(orbitals,Energies['orbitalEnergies'])
+
     #         if vtkExport != False:
     #             filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
     #             Energies['Etotal']xportGridpoints(filename)
@@ -547,29 +425,6 @@ def eigOneDriverFixedPointClosure(scf_args):
         
         ## Write the restart files
         
-        # save arrays 
-        try:
-            np.save(wavefunctionFile, orbitals)
-            
-    #             sources = tree.extractLeavesDensity()
-            np.save(densityFile, RHO)
-            np.save(outputDensityFile, outputDensities)
-            np.save(inputDensityFile, inputDensities)
-            
-            np.save(vHartreeFile, V_hartreeNew)
-            
-            
-            
-            # make and save dictionary
-            auxiliaryRestartData = {}
-            auxiliaryRestartData['SCFcount'] = SCFcount
-            auxiliaryRestartData['totalIterationCount'] = Times['totalIterationCount']
-            auxiliaryRestartData['eigenvalues'] = Energies['orbitalEnergies']
-            auxiliaryRestartData['Eold'] = Energies['Eold']
-    
-            np.save(auxiliaryFile, auxiliaryRestartData)
-        except FileNotFoundError:
-            pass
                 
         
 #         if plotSliceOfDensity==True:

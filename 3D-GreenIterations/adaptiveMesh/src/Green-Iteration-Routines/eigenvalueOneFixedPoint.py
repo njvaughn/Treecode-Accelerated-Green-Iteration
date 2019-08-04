@@ -123,6 +123,7 @@ def eigenvalueOne_FixedPoint_Closure(gi_args):
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
                                                                    potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+                    phiNew /= (4*np.pi)
                     convolutionTime = time.time()-startTime
                     print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
 #                     return
@@ -242,7 +243,7 @@ def eigenvalueOne_FixedPoint_Closure(gi_args):
         header = ['targetOrbital', 'Iteration', 'orbitalResiduals', 'energyEigenvalues', 'eigenvalueResidual']
     
         myData = [m, greenIterationsCount, residuals,
-                  Energies['orbitalEnergies']-Energies['gaugeShift'], eigenvalueDiff]
+                  Energies['orbitalEnergies'], eigenvalueDiff]
     
         if not os.path.isfile(greenIterationOutFile):
             myFile = open(greenIterationOutFile, 'a')
