@@ -9,9 +9,9 @@ SINGSUBT=1
 
 SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
 #INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
-#INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/lithiumAuxiliary.csv'
-INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+#INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
 #INPUTFILE='utilities/molecularConfigurations/benzeneAuxiliary.csv'
 
@@ -32,7 +32,7 @@ GAUGESHIFT=-0.5
 
 MESHTYPE='ParentChildrenIntegral'
 #MESHTYPE='LW5'
-RESTART='False'	
+RESTART='True'	
 #SAVEDMESH='Be_PCI_1e-3.npy' 
 #SAVEDMESH='Benzene_1e-7.npy'
 #SAVEDMESH='H2-best-mesh.npy'
@@ -73,7 +73,7 @@ do
 			for MIXING in 'Anderson'		    
 			do
 
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/best-times/gpu_orth_H2_mesh_${CELLORDER}_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/restart-testing/Be_${CELLORDER}_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
 
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/mixingType_Be_$MIXING.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_testing_async_kernels.csv"

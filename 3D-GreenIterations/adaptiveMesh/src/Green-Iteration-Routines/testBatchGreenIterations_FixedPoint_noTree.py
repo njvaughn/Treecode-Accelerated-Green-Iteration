@@ -546,12 +546,12 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
         print('Unable to make restart directory ', restartFilesDir)
     
     
-    tr = tracker.SummaryTracker()   
+#     tr = tracker.SummaryTracker()   
     if restartFile!=False:
         orbitals = np.load(wavefunctionFile+'.npy')
         oldOrbitals = np.copy(orbitals)
-        for m in range(nOrbitals): 
-            tree.importPhiOnLeaves(orbitals[:,m], m)
+#         for m in range(nOrbitals): 
+#             tree.importPhiOnLeaves(orbitals[:,m], m)
         RHO = np.load(densityFile+'.npy')
         
         inputDensities = np.load(inputDensityFile+'.npy')
@@ -566,7 +566,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
         SCFcount = auxiliaryRestartData['SCFcount']
         Times['totalIterationCount'] = auxiliaryRestartData['totalIterationCount']
         Energies['orbitalEnergies'] = auxiliaryRestartData['eigenvalues'] 
-        Eold = auxiliaryRestartData['Eold']
+        Energies['Eold'] = auxiliaryRestartData['Eold']
         
         
         
@@ -597,7 +597,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
         inputDensities[:,0] = np.copy(RHO)
         oldOrbitals = np.copy(orbitals)
 
-    tr.print_diff()
+#     tr.print_diff()
     
     if plotSliceOfDensity==True:
         densitySliceSavefile = densityPlotsDir+'/densities'
