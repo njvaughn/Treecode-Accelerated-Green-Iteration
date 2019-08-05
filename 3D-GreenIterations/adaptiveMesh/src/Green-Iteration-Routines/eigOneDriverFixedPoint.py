@@ -273,8 +273,7 @@ def eigOneDriverFixedPointClosure(scf_args):
             orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
             orbitals[:,m] = np.copy(orthWavefunction)
             
-                
-            while resNorm>2e-2:
+            while ( (resNorm>intraScfTolerance) or (gi_args["greenIterationsCount"]<5) ):
 #             while resNorm>intraScfTolerance:
 #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
 #                 GPUtil.showUtilization()
@@ -302,6 +301,10 @@ def eigOneDriverFixedPointClosure(scf_args):
                 clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                 resNorm = clenshawCurtisNorm(psiOut-psiIn)
                 print('CC norm of residual vector: ', resNorm)
+                eigenvalueDiff = np.abs(psiOut[-1] - psiIn[-1])
+                
+                if eigenvalueDiff < intraScfTolerance/10:
+                    resNorm=0.0  
 
             
             psiOut = np.append(orbitals[:,m],Energies['orbitalEnergies'][m])
@@ -311,81 +314,81 @@ def eigOneDriverFixedPointClosure(scf_args):
             
             
             ## Begin Anderson Mixing on Wavefunction
-            Done = False
-#             Done = True
-            firstInputWavefunction=True
-            firstOutputWavefunction=True
-            inputWavefunctions = np.zeros((psiOut.size,1))
-            outputWavefunctions =  np.zeros((psiOut.size,1))
-            mixingStart = np.copy( gi_args['greenIterationsCount'] )
-            while Done==False:
-                greenIterationsCount=gi_args["greenIterationsCount"]
-                print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
-                
-                orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
-                orbitals[:,m] = np.copy(orthWavefunction)
-                psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
-                
-                
-                ## Update input wavefunctions
-                if firstInputWavefunction==True:
-                    inputWavefunctions[:,0] = np.copy(psiIn) # fill first column of inputWavefunctions
-                    firstInputWavefunction=False
-                else:
-                    if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
-                        inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(psiIn), (psiIn.size,1)) ), axis=1)
-                        print('Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
-
-                    else:
-                        print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
-                        inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(psiIn)
-
-                ## Perform one step of iterations
-                oldEigenvalue = np.copy(Energies['orbitalEnergies'][m])
-#                 print('Before GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
-#                 greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
-#                 r = greensIteration_FixedPoint(psiIn,gi_args)
-                eigOne_FixedPoint, gi_args = eigenvalueOne_FixedPoint_Closure(gi_args)
-                r = eigOne_FixedPoint(psiIn, gi_args)
-#                 print('After GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
-                newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
-                psiOut = np.append( gi_args["orbitals"][:,m], Energies['orbitalEnergies'][m])
-                clenshawCurtisNorm = clenshawCurtisNormClosure(W)
-                errorNorm = clenshawCurtisNorm(psiOut-psiIn)
-                print('Error Norm: ', errorNorm)
-                if errorNorm < intraScfTolerance:
-                    Done=True
-                eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
-                print('Eigenvalue Diff: ', eigenvalueDiff)
-                if ( (eigenvalueDiff < intraScfTolerance) and (gi_args['greenIterationsCount'] > 20) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
-                    print('Ending iteration because eigenvalue is converged.')
-                    Done=True
-                
-                
-                
-                ## Update output wavefunctions
-                
-                if firstOutputWavefunction==True:
-#                     temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
-                    outputWavefunctions[:,0] = np.copy(psiOut) # fill first column of outputWavefunctions
-                    firstOutputWavefunction=False
-                else:
-                    if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
-#                         temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
-                        outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(psiOut), (psiOut.size,1)) ), axis=1)
-                        print('Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
-                    else:
-                        print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
-#                         temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
-                        outputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(psiOut)
-                
-                
-                ## Compute next input wavefunctions
-                print('Anderson mixing on the orbital.')
-                GImixingParameter=0.5
-                andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
-                Energies['orbitalEnergies'][m] = andersonOrbital[-1]
-                orbitals[:,m] = andersonOrbital[:-1]
+#             Done = False
+# #             Done = True
+#             firstInputWavefunction=True
+#             firstOutputWavefunction=True
+#             inputWavefunctions = np.zeros((psiOut.size,1))
+#             outputWavefunctions =  np.zeros((psiOut.size,1))
+#             mixingStart = np.copy( gi_args['greenIterationsCount'] )
+#             while Done==False:
+#                 greenIterationsCount=gi_args["greenIterationsCount"]
+#                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+#                 
+#                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
+#                 orbitals[:,m] = np.copy(orthWavefunction)
+#                 psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
+#                 
+#                 
+#                 ## Update input wavefunctions
+#                 if firstInputWavefunction==True:
+#                     inputWavefunctions[:,0] = np.copy(psiIn) # fill first column of inputWavefunctions
+#                     firstInputWavefunction=False
+#                 else:
+#                     if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
+#                         inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(psiIn), (psiIn.size,1)) ), axis=1)
+#                         print('Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
+# 
+#                     else:
+#                         print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
+#                         inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(psiIn)
+# 
+#                 ## Perform one step of iterations
+#                 oldEigenvalue = np.copy(Energies['orbitalEnergies'][m])
+# #                 print('Before GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
+# #                 greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
+# #                 r = greensIteration_FixedPoint(psiIn,gi_args)
+#                 eigOne_FixedPoint, gi_args = eigenvalueOne_FixedPoint_Closure(gi_args)
+#                 r = eigOne_FixedPoint(psiIn, gi_args)
+# #                 print('After GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
+#                 newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
+#                 psiOut = np.append( gi_args["orbitals"][:,m], Energies['orbitalEnergies'][m])
+#                 clenshawCurtisNorm = clenshawCurtisNormClosure(W)
+#                 errorNorm = clenshawCurtisNorm(psiOut-psiIn)
+#                 print('Error Norm: ', errorNorm)
+#                 if errorNorm < intraScfTolerance:
+#                     Done=True
+#                 eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
+#                 print('Eigenvalue Diff: ', eigenvalueDiff)
+# #                 if ( (eigenvalueDiff < intraScfTolerance) and (gi_args['greenIterationsCount'] > 20) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
+# #                     print('Ending iteration because eigenvalue is converged.')
+# #                     Done=True
+#                 
+#                 
+#                 
+#                 ## Update output wavefunctions
+#                 
+#                 if firstOutputWavefunction==True:
+# #                     temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
+#                     outputWavefunctions[:,0] = np.copy(psiOut) # fill first column of outputWavefunctions
+#                     firstOutputWavefunction=False
+#                 else:
+#                     if (greenIterationsCount-1-mixingStart)<mixingHistoryCutoff:
+# #                         temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
+#                         outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(psiOut), (psiOut.size,1)) ), axis=1)
+#                         print('Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
+#                     else:
+#                         print('Beyond mixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%mixingHistoryCutoff)
+# #                         temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
+#                         outputWavefunctions[:,(greenIterationsCount-1-mixingStart)%mixingHistoryCutoff] = np.copy(psiOut)
+#                 
+#                 
+#                 ## Compute next input wavefunctions
+#                 print('Anderson mixing on the orbital.')
+#                 GImixingParameter=0.5
+#                 andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
+#                 Energies['orbitalEnergies'][m] = andersonOrbital[-1]
+#                 orbitals[:,m] = andersonOrbital[:-1]
                 
                 
 
@@ -407,7 +410,7 @@ def eigOneDriverFixedPointClosure(scf_args):
         if printEachIteration==True:
             header = ['Iteration', 'targetEpsilon', 'orbitalEnergies']
         
-            myData = [SCFcount, targetEpsilon, Energies['orbitalEnergies']]
+            myData = [SCFcount, targetEpsilon-gaugeShift, Energies['orbitalEnergies']]
             
         
             if not os.path.isfile(SCFiterationOutFile):

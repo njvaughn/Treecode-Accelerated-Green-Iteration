@@ -181,6 +181,10 @@ def clenshawCurtisNormClosure(W):
         return norm
     return clenshawCurtisNorm
 
+# def initializeOrbitalsFromAtomicDataExternally(orbitals,nMu,X,Y,Z):
+#     
+#     return orbitals
+
 def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nMu,X,Y,Z): 
         aufbauList = ['10',                                     # n+ell = 1
                       '20',                                     # n+ell = 2
@@ -358,7 +362,9 @@ def setUpTree(onlyFillOne=False):
 #     for m in range(nMu):
 #         orbitals[:,m] = np.exp(-(X*X+Y*Y+Z*Z))
 
-    orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nMu,X,Y,Z)
+#     orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nMu,X,Y,Z)
+    orbitals = np.random.rand(nPoints,nMu)
+
     print('nPoints: ', nPoints)
     print('nMu: ', nMu)
     

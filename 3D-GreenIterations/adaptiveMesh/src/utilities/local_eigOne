@@ -41,8 +41,8 @@ ADDITIONALDEPTHATATOMS=0
 MIXINGPARAMETER=0.5 
 MIXINGHISTORY=10 
   
-INTRASCFTOLERANCE=1e-7
-INTERSCFTOLERANCE=1e-6
+INTRASCFTOLERANCE=1e-5
+INTERSCFTOLERANCE=1e-7
      
 #MIXING='Anderson'    
 SMOOTHINGEPS=0.0
@@ -62,26 +62,30 @@ for MAXDEPTH in 20
 do								  	 				     
 for GRADIENTFREE in 'True'    
 do  
-	for TREECODEORDER in 7  
+	for TREECODEORDER in 6
 	do         
-		for THETA in 0.7  
+		for THETA in 0.8
 		do  
 			#for MIXING in 'Anderson' 'Simple' 'None'		    
-			for MIXING in 'Anderson'		    
+			for MIXING in 'Anderson'		     
 			do
 
-			OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/paperData/density-mixing/local_H2_mixing_$MIXING.csv"
+			OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/eigOneTests/H2_sweep.csv"
 
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/mixingType_Be_$MIXING.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_testing_async_kernels.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_PCI_meshParam_${MESHPARAM3}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/no_gp_phi_PCI_meshParam_${MESHPARAM3}.csv"
 			
-			#python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
-			python -u testBatchGreenIterations_FixedPoint_noTree.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
+			EPSLOW=-0.1
+			EPSHIGH=+0.2
+			NEPS=20
+			NMU=4
+			python -u testEigenvalueOne.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
 																		$OUTPUTFILE $INPUTFILE $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
-																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE $RESTART $SAVEDMESH
+																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE $RESTART $SAVEDMESH \
+																		$EPSLOW $EPSHIGH $NEPS $NMU
 			done   
 		done 
 	done      

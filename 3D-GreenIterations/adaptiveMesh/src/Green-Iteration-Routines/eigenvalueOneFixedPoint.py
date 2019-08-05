@@ -100,7 +100,11 @@ def eigenvalueOne_FixedPoint_Closure(gi_args):
         
         oldEigenvalue =  Energies['orbitalEnergies'][m] 
 #         k = np.sqrt(-2*Energies['orbitalEnergies'][m])
-        k = np.sqrt(-2*gi_args['targetEpsilon'])
+
+        if gi_args['targetEpsilon']<(gi_args['referenceEigenvalues'][m]+Energies['gaugeShift']):
+            k = np.sqrt(-2*gi_args['targetEpsilon'])
+        else:
+            k = np.sqrt(-2*(gi_args['referenceEigenvalues'][m]+Energies['gaugeShift']))
         
         print('k = ', k)
     
@@ -179,7 +183,6 @@ def eigenvalueOne_FixedPoint_Closure(gi_args):
         
         # update the energy first
         
-            
         psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*W))
         Energies['orbitalEnergies'][m] = psiNewNorm
         print('Norm of psiNew = ', psiNewNorm)
@@ -259,7 +262,7 @@ def eigenvalueOne_FixedPoint_Closure(gi_args):
         
           
         greenIterationsCount += 1
-        
+#         greenIterationsCount += 1   
         
         
         # Pack up gi_args (only things that get modified by the call to this function)

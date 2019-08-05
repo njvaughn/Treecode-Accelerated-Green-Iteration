@@ -1,0 +1,111 @@
+#!/bin/bash
+
+
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
+
+DOMAIN=20
+MINDEPTH=3
+SINGSUBT=1
+
+SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
+#INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+#INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
+INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
+#INPUTFILE='utilities/molecularConfigurations/benzeneAuxiliary.csv'
+
+VTKFILEDIR='None'
+
+
+GRADIENTFREE='True'
+SYMMETRICITERATION='False'
+GPUPRESENT='True'
+ 
+TREECODE='True'      
+MAXPARNODE=4000
+BATCHSIZE=4000   
+ 
+ 
+GAUSSIANALPHA=1.0 
+GAUGESHIFT=-0.5
+
+MESHTYPE='ParentChildrenIntegral'
+#MESHTYPE='LW5'
+RESTART='False'	
+#SAVEDMESH='Be_PCI_1e-3.npy' 
+#SAVEDMESH='CO_mesh.npy'
+SAVEDMESH='None'
+
+ADDITIONALDEPTHATATOMS=0
+
+MIXINGPARAMETER=0.5 
+MIXINGHISTORY=10 
+  
+INTRASCFTOLERANCE=1e-6
+INTERSCFTOLERANCE=1e-7
+     
+#MIXING='Anderson'    
+SMOOTHINGEPS=0.0
+
+MESHPARAM1=250
+MESHPARAM2=0
+MESHPARAM3=3e-7
+MESHPARAM4=0   
+
+for SINGSUBT in 1 
+do
+for CELLORDER in 5
+do	      
+for BASE in 1 
+do   
+for MAXDEPTH in 20
+do								  	 				     
+for GRADIENTFREE in 'True'    
+do  
+	for TREECODEORDER in 7
+	do         
+		for THETA in 0.7
+		do  
+			#for MIXING in 'Anderson' 'Simple' 'None'		    
+			for MIXING in 'Anderson'		     
+			do
+
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/eigOneTests/CO_high.csv"
+
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/mixingType_Be_$MIXING.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_testing_async_kernels.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_PCI_meshParam_${MESHPARAM3}.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/no_gp_phi_PCI_meshParam_${MESHPARAM3}.csv"
+			
+			EPSLOW=-1.6
+			EPSHIGH=-0.2
+			NEPS=40
+			NMU=7
+			python -u testEigenvalueOne.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
+																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+																		$OUTPUTFILE $INPUTFILE $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
+																		$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE $RESTART $SAVEDMESH \
+																		$EPSLOW $EPSHIGH $NEPS $NMU
+			done   
+		done 
+	done       
+	
+done      
+done
+done 
+done    
+done
+
+
+OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/eigOneTests/CO_low.csv"
+EPSLOW=-20.0
+EPSHIGH=-8.0
+NEPS=40
+NMU=3
+python -u testEigenvalueOne.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
+															$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \
+															$OUTPUTFILE $INPUTFILE $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
+															$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $BASE $RESTART $SAVEDMESH \
+															$EPSLOW $EPSHIGH $NEPS $NMU
+																		
+																		

@@ -335,7 +335,7 @@ def scfFixedPointClosure(scf_args):
                     Done=True
                 eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
                 print('Eigenvalue Diff: ', eigenvalueDiff)
-                if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
+                if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) and ( SCFcount <2 ) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
                     print('Ending iteration because eigenvalue is converged.')
                     Done=True
                 
