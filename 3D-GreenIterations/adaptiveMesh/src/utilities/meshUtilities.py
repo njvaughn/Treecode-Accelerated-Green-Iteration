@@ -371,16 +371,16 @@ def sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(f,q):
                 
             
 
-def unscaledWeights(N):
+def unscaledWeightsFirstKind(N):
     # generate Lambda
-    Lambda = np.ones((N,N))
-    for i in range(N):
-        for j in range(N):
+    Lambda = np.ones((N+1,N+1))
+    for i in range(N+1):
+        for j in range(N+1):
             j_shift = j+1/2
-            Lambda[i,j] = 2/N * cos(i*j_shift*pi/N)
+            Lambda[i,j] = 2/(N+1) * cos(i*j_shift*pi/(N+1))
 
-    W = np.zeros(N)
-    for i in range(N):
+    W = np.zeros(N+1)
+    for i in range(N+1):
         if i == 0:
             W[i] = 1
         elif i%2==0:
@@ -391,31 +391,83 @@ def unscaledWeights(N):
     w = np.dot(np.transpose(Lambda),W)
     return w
 
-def weights(xlow, xhigh, N, w=None):
+def weightsFirstKind(xlow, xhigh, N, w=None):
 #     if w != None:
     try: 
         return (xhigh - xlow)/2 * w
     except TypeError:
 #         print('meshUtilities: Generating weights from scratch')
-        return (xhigh - xlow)/2 *unscaledWeights(N)
+        return (xhigh - xlow)/2 *unscaledWeightsFirstKind(N)
     
-def weights3D(xlow,xhigh,Nx,ylow,yhigh,Ny,zlow,zhigh,Nz,w=None):
-    xw = weights(xlow, xhigh, Nx, w)
-    yw = weights(ylow, yhigh, Ny, w)
-    zw = weights(zlow, zhigh, Nz, w)
+def weights3DFirstKind(xlow,xhigh,Nx,ylow,yhigh,Ny,zlow,zhigh,Nz,w=None):
+    xw = weightsFirstKind(xlow, xhigh, Nx, w)
+    yw = weightsFirstKind(ylow, yhigh, Ny, w)
+    zw = weightsFirstKind(zlow, zhigh, Nz, w)
     
-    return np.outer( np.outer(xw,yw), zw ).reshape([Nx,Ny,Nz])
+    return np.outer( np.outer(xw,yw), zw ).reshape([Nx+1,Ny+1,Nz+1])
         
-def ChebyshevPoints(xlow, xhigh, N):
+def ChebyshevPointsFirstKind(xlow, xhigh, N):
     '''
     Generates "open" Chebyshev points. N midpoints in theta.
     '''
-    endpoints = np.linspace(np.pi,0,N+1)
+    endpoints = np.linspace(np.pi,0,N+2)
     theta = (endpoints[1:] + endpoints[:-1])/2
 #     print(theta)
     u = np.cos(theta)
     x = xlow + (xhigh-xlow)/2*(u+1)
     return x
+
+def unscaledWeightsSecondKind(N):
+    # generate Lambda
+    Lambda = np.ones((N+1,N+1))
+    for i in range(N+1):
+        for j in range(N+1):
+#             j_shift = j+1/2
+            if ( (j==0) or (j==N) ):
+                Lambda[i,j] = 1/N * cos(i*(j)*pi/N)
+            else:
+                Lambda[i,j] = 2/N * cos(i*(j)*pi/N)
+
+    W = np.zeros(N+1)
+    for i in range(N+1):
+        if i == 0:
+            W[i] = 1
+        elif i%2==0:
+            W[i] = 2/(1-i**2)
+        else:
+            W[i] = 0
+#         if (N+1)%2==0:
+#             W[-1] = 1/(1-N**2)
+            
+    w = np.dot(np.transpose(Lambda),W)
+    return w
+
+def weightsSecondKind(xlow, xhigh, N, w=None):
+#     if w != None:
+    try: 
+        return (xhigh - xlow)/2 * w
+    except TypeError:
+#         print('meshUtilities: Generating weights from scratch')
+        return (xhigh - xlow)/2 *unscaledWeightsSecondKind(N)
+    
+def weights3DSecondKind(xlow,xhigh,Nx,ylow,yhigh,Ny,zlow,zhigh,Nz,w=None):
+    xw = weightsSecondKind(xlow, xhigh, Nx, w)
+    yw = weightsSecondKind(ylow, yhigh, Ny, w)
+    zw = weightsSecondKind(zlow, zhigh, Nz, w)
+    
+    return np.outer( np.outer(xw,yw), zw ).reshape([Nx+1,Ny+1,Nz+1])
+        
+def ChebyshevPointsSecondKind(xlow, xhigh, N):
+    '''
+    Generates "open" Chebyshev points. N midpoints in theta.
+    '''
+#     endpoints = np.linspace(np.pi,0,N+1)
+    theta = np.linspace(np.pi,0,N+1)
+#     print(theta)
+    u = np.cos(theta)
+    x = xlow + (xhigh-xlow)/2*(u+1)
+    return x
+
 
 def mapToMinusOneToOne(xlow, xhigh, x):
     '''
@@ -674,107 +726,176 @@ def mkVtkIdList(it):
 if __name__=="__main__":
     import matplotlib.pyplot as plt
     
-    nx = ny = nz = 8
-    x = ChebyshevPoints(-1, 0, nx)
-    y = ChebyshevPoints(-1, 0, ny)
-    z = ChebyshevPoints(-1, 0, nz)
-#     print(x)
-#     x = mapToMinusOneToOne(-2,1,x)
-#     print(x)
-#     print(y)
-#     print(z)
-    f = np.zeros((nx,ny,nz))
-     
-    for i in range(nx):
-        for j in range(ny):
-            for k in range(nz):
-                f[i,j,k] = x[i]**4 * exp(y[j]**2-y[j]) * z[k]**1
-#                 f[i,j,k] = exp(-sqrt( abs(x[i]**2 +y[j]**2+ z[k]**2)) )
-#                 f[i,j,k] = x[i]**2 * y[j]**1 * z[k]**1 + 6
-#                 f[i,j,k] = (4*x[i]**3-3*x[i]) * y[j]**1 * z[k]**1
-#                 f[i,j,k] = x[i]**2 * y[j]**1 * z[k]**1
-                 
-#     coefficients = computeCoefficicents(x,y,z,f)
-    coefficients = computeCoefficicents(f)
-     
- 
-    # reconstruct f from coefficients
- 
-    g = np.zeros_like(f)
-    x = ChebyshevPoints(-1, 1, nx)
-    y = ChebyshevPoints(-1, 1, ny)
-    z = ChebyshevPoints(-1, 1, nz)
-    for i in range(nx):
-        for j in range(ny):
-            for k in range(nz):
-                 
-                for ell in range(nx):
-                    for m in range(ny):
-                        for n in range(nz):
-                            g[i,j,k] += coefficients[ell,m,n] * cos(ell*arccos(x[i])) * cos(m*arccos(y[j])) * cos(n*arccos(z[k]))
-#                             g[i,j,k] += coefficients[ell,m,n] * cos(ell*x[i]) * cos(m*y[j]) * cos(n*z[k])
-#                             g[i,j,k] += coefficients[ell,m,n] * cos(x[i])**ell * cos(y[j])**m * cos(z[k])**n
-     
-     
-#     print('\nf = ', f,'\n')
-#     print('g = ', g,'\n')
-# #     
-#     print('f-g = ',f-g)
-     
-    print('\nMax error: ', np.max(f-g))
-     
-     
-    plt.figure()
-    for n in range(nx+ny+nz):
-        val = sumChebyshevCoefficicentsGreaterThanOrderQ(f,n)
-        print(val)
-        plt.semilogy(n,val,'ko')
-    plt.title('Absolute Sum of Coefficients Greater Than Specified Order')
-    plt.xlabel('i+j+k > ')
-    plt.ylabel('Sum')
-#     plt.show()
-     
-    plt.figure()
-#     if coefficients[0,0,0]==0.0:
-#         coefficients[0,0,0] = 1e-17*np.random.rand()
-#     plt.title('Chebyshev Coefficients for $f = x^4 * e^{y^2-y} * z$')
-    plt.title('Chebyshev Coefficients for $f = e^{-r}$')
-    plt.semilogy(0,abs(coefficients[0,0,0]),'bo',label='x order')
-    plt.semilogy(0,abs(coefficients[0,0,0]),'g^',label='y order')
-    plt.semilogy(0,abs(coefficients[0,0,0]),'rx',label='z order')
-    for i in range(nx):
-        for j in range(ny):
-            for k in range(nz):
-#                 if coefficients[i,j,k]==0.0:
-#                     coefficients[i,j,k] = 1e-17*np.random.rand()
-                plt.semilogy(i,np.abs(coefficients[i,j,k]),'bo')
-                plt.semilogy(j,np.abs(coefficients[i,j,k]),'g^')
-                plt.semilogy(k,np.abs(coefficients[i,j,k]),'rx')
-   
-    plt.legend()
-       
-       
-    plt.figure()
-#     if coefficients[0,0,0]==0.0:
-#         coefficients[0,0,0] = 1e-17*np.random.rand()
-    plt.title('Largest Chebyshev Coefficients for $f = x^4 * e^{y^2-y} * z$')
-#     plt.title('Largest Chebyshev Coefficients for $f = e^{-r}$')
-    plt.semilogy(0,np.max(abs(coefficients[0,:,:])),'bo',label='max x')
-    plt.semilogy(0,np.max(abs(coefficients[:,0,:])),'g^',label='max y')
-    plt.semilogy(0,np.max(abs(coefficients[:,:,0])),'rx',label='max z')
-    for i in range(nx):
+
+
+    nx = ny = nz = 6
+    xf = ChebyshevPointsFirstKind(-1, 1, nx)
+    xs = ChebyshevPointsSecondKind(-1, 1, nx)
+    
+    wf = unscaledWeightsFirstKind(nx)
+    ws = unscaledWeightsSecondKind(nx)
+#     y = ChebyshevPoints(-1, 0, ny)
+#     z = ChebyshevPoints(-1, 0, nz)
+    print(xf)
+    print(xs)
+    print()
+    print(wf)
+    print(ws)
+    
+    
+    def square(x):
+        return x**2
+    def square_int(a,b):
+        return 1/3* (b**3 - a**3)
+    
+    def eight(x):
+        return x**8
+    def eight_int(a,b):
+        return 1/9*(b**9-a**9)
+    
+    def exp(x):
+        return np.exp(x)
+    def exp_int(a,b):
+        return np.exp(b)-np.exp(a)
+        
+    func_f = square(xf)
+    sum_f = np.sum(func_f*wf)
+    
+    func_s = square(xs)
+    sum_s = np.sum(func_s*ws)
+    
+    print("Square function")
+    print('Sum f error: ', sum_f-square_int(-1,1))
+    print('Sum s error: ', sum_s-square_int(-1,1))
+#     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*square_int(-1,1))
+    
+    func_f = eight(xf)
+    sum_f = np.sum(func_f*wf)
+    
+    func_s = eight(xs)
+    sum_s = np.sum(func_s*ws)
+    
+    print("Eight power function")
+    print('Sum f error: ', sum_f-eight_int(-1,1))
+    print('Sum s error: ', sum_s-eight_int(-1,1))
+#     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*eight_int(-1,1))
+
+    func_f = exp(xf)
+    sum_f = np.sum(func_f*wf)
+    
+    func_s = exp(xs)
+    sum_s = np.sum(func_s*ws)
+    
+    print("Eight power function")
+    print('Sum f error: ', sum_f-exp_int(-1,1))
+    print('Sum s error: ', sum_s-exp_int(-1,1))
+#     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*exp_int(-1,1))
+
+#     print(square_int(-1,1))
+    
+
+
+#     nx = ny = nz = 8
+#     x = ChebyshevPoints(-1, 0, nx)
+#     y = ChebyshevPoints(-1, 0, ny)
+#     z = ChebyshevPoints(-1, 0, nz)
+# #     print(x)
+# #     x = mapToMinusOneToOne(-2,1,x)
+# #     print(x)
+# #     print(y)
+# #     print(z)
+#     f = np.zeros((nx,ny,nz))
+#      
+#     for i in range(nx):
+#         for j in range(ny):
+#             for k in range(nz):
+#                 f[i,j,k] = x[i]**4 * exp(y[j]**2-y[j]) * z[k]**1
+# #                 f[i,j,k] = exp(-sqrt( abs(x[i]**2 +y[j]**2+ z[k]**2)) )
+# #                 f[i,j,k] = x[i]**2 * y[j]**1 * z[k]**1 + 6
+# #                 f[i,j,k] = (4*x[i]**3-3*x[i]) * y[j]**1 * z[k]**1
+# #                 f[i,j,k] = x[i]**2 * y[j]**1 * z[k]**1
+#                  
+# #     coefficients = computeCoefficicents(x,y,z,f)
+#     coefficients = computeCoefficicents(f)
+#      
+#  
+#     # reconstruct f from coefficients
+#  
+#     g = np.zeros_like(f)
+#     x = ChebyshevPoints(-1, 1, nx)
+#     y = ChebyshevPoints(-1, 1, ny)
+#     z = ChebyshevPoints(-1, 1, nz)
+#     for i in range(nx):
+#         for j in range(ny):
+#             for k in range(nz):
+#                  
+#                 for ell in range(nx):
+#                     for m in range(ny):
+#                         for n in range(nz):
+#                             g[i,j,k] += coefficients[ell,m,n] * cos(ell*arccos(x[i])) * cos(m*arccos(y[j])) * cos(n*arccos(z[k]))
+# #                             g[i,j,k] += coefficients[ell,m,n] * cos(ell*x[i]) * cos(m*y[j]) * cos(n*z[k])
+# #                             g[i,j,k] += coefficients[ell,m,n] * cos(x[i])**ell * cos(y[j])**m * cos(z[k])**n
+#      
+#      
+# #     print('\nf = ', f,'\n')
+# #     print('g = ', g,'\n')
+# # #     
+# #     print('f-g = ',f-g)
+#      
+#     print('\nMax error: ', np.max(f-g))
+#      
+#      
+#     plt.figure()
+#     for n in range(nx+ny+nz):
+#         val = sumChebyshevCoefficicentsGreaterThanOrderQ(f,n)
+#         print(val)
+#         plt.semilogy(n,val,'ko')
+#     plt.title('Absolute Sum of Coefficients Greater Than Specified Order')
+#     plt.xlabel('i+j+k > ')
+#     plt.ylabel('Sum')
+# #     plt.show()
+#      
+#     plt.figure()
+# #     if coefficients[0,0,0]==0.0:
+# #         coefficients[0,0,0] = 1e-17*np.random.rand()
+# #     plt.title('Chebyshev Coefficients for $f = x^4 * e^{y^2-y} * z$')
+#     plt.title('Chebyshev Coefficients for $f = e^{-r}$')
+#     plt.semilogy(0,abs(coefficients[0,0,0]),'bo',label='x order')
+#     plt.semilogy(0,abs(coefficients[0,0,0]),'g^',label='y order')
+#     plt.semilogy(0,abs(coefficients[0,0,0]),'rx',label='z order')
+#     for i in range(nx):
 #         for j in range(ny):
 #             for k in range(nz):
 # #                 if coefficients[i,j,k]==0.0:
 # #                     coefficients[i,j,k] = 1e-17*np.random.rand()
-        plt.semilogy(i,np.max(np.abs(coefficients[i,:,:])),'bo')
-        plt.semilogy(i,np.max(np.abs(coefficients[:,i,:])),'g^')
-        plt.semilogy(i,np.max(np.abs(coefficients[:,:,i])),'rx')
-   
-    plt.legend()
-      
-      
-    plt.show()
+#                 plt.semilogy(i,np.abs(coefficients[i,j,k]),'bo')
+#                 plt.semilogy(j,np.abs(coefficients[i,j,k]),'g^')
+#                 plt.semilogy(k,np.abs(coefficients[i,j,k]),'rx')
+#    
+#     plt.legend()
+#        
+#        
+#     plt.figure()
+# #     if coefficients[0,0,0]==0.0:
+# #         coefficients[0,0,0] = 1e-17*np.random.rand()
+#     plt.title('Largest Chebyshev Coefficients for $f = x^4 * e^{y^2-y} * z$')
+# #     plt.title('Largest Chebyshev Coefficients for $f = e^{-r}$')
+#     plt.semilogy(0,np.max(abs(coefficients[0,:,:])),'bo',label='max x')
+#     plt.semilogy(0,np.max(abs(coefficients[:,0,:])),'g^',label='max y')
+#     plt.semilogy(0,np.max(abs(coefficients[:,:,0])),'rx',label='max z')
+#     for i in range(nx):
+# #         for j in range(ny):
+# #             for k in range(nz):
+# # #                 if coefficients[i,j,k]==0.0:
+# # #                     coefficients[i,j,k] = 1e-17*np.random.rand()
+#         plt.semilogy(i,np.max(np.abs(coefficients[i,:,:])),'bo')
+#         plt.semilogy(i,np.max(np.abs(coefficients[:,i,:])),'g^')
+#         plt.semilogy(i,np.max(np.abs(coefficients[:,:,i])),'rx')
+#    
+#     plt.legend()
+#       
+#       
+#     plt.show()
     
     
     

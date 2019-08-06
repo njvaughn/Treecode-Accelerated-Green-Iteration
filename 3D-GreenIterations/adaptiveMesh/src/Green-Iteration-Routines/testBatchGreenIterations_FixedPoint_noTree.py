@@ -378,7 +378,8 @@ def setUpTree(onlyFillOne=False):
  
     
 #     X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
-    X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
+#     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
+    X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_secondKind()
     
 #     r = np.sqrt(X*X + Y*Y + Z*Z)
 # #     RHO_RAND = np.random.rand(len(RHO))

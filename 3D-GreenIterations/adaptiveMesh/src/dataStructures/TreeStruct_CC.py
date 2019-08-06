@@ -124,10 +124,10 @@ class Tree(object):
                 self.atoms[i] = atom
         
         # generate gridpoint objects.  
-        xvec = ChebyshevPoints(self.xmin,self.xmax,self.px)
-        yvec = ChebyshevPoints(self.ymin,self.ymax,self.py)
-        zvec = ChebyshevPoints(self.zmin,self.zmax,self.pz)
-        gridpoints = np.empty((px,py,pz),dtype=object)
+        xvec = ChebyshevPointsFirstKind(self.xmin,self.xmax,self.px)
+        yvec = ChebyshevPointsFirstKind(self.ymin,self.ymax,self.py)
+        zvec = ChebyshevPointsFirstKind(self.zmin,self.zmax,self.pz)
+        gridpoints = np.empty((px+1,py+1,pz+1),dtype=object)
 
 
         for i in range(self.px):
@@ -267,7 +267,7 @@ class Tree(object):
                 xdiv = (Cell.xmax + Cell.xmin)/2   
                 ydiv = (Cell.ymax + Cell.ymin)/2   
                 zdiv = (Cell.zmax + Cell.zmin)/2   
-                Cell.divide(xdiv, ydiv, zdiv)
+                Cell.divide_secondKind(xdiv, ydiv, zdiv)
                 
                 (ii,jj,kk) = np.shape(Cell.children)
                 for i in range(ii):
@@ -341,7 +341,7 @@ class Tree(object):
 
                         # Divide at midpoint, recurse on children
                         print('Dividing cell %s at midpoint because atom is in interior but close to edge.' %(Cell.uniqueID))   
-                        Cell.divide(xdiv, ydiv, zdiv)
+                        Cell.divide_secondKind(xdiv, ydiv, zdiv)
                         if hasattr(Cell, "children"):
                             (ii,jj,kk) = np.shape(Cell.children)
                             for i in range(ii):
@@ -375,7 +375,7 @@ class Tree(object):
             
                         if ( (xdiv!=None) or (ydiv!=None) or (zdiv!=None) ): 
                             print('Dividing cell %s because atom is in interior.' %(Cell.uniqueID))   
-                            Cell.divide(xdiv, ydiv, zdiv)
+                            Cell.divide_FirstKind(xdiv, ydiv, zdiv)
                         else: 
                             print('Not dividing cell %s because atom is apparently at corner.' %(Cell.uniqueID))
                 
@@ -983,7 +983,7 @@ class Tree(object):
                     xdiv = (Cell.xmax + Cell.xmin)/2   
                     ydiv = (Cell.ymax + Cell.ymin)/2   
                     zdiv = (Cell.zmax + Cell.zmin)/2   
-                    Cell.divide(xdiv, ydiv, zdiv, printNumberOfCells)
+                    Cell.divide_secondKind(xdiv, ydiv, zdiv, printNumberOfCells)
 
 #                     for i,j,k in TwoByTwoByTwo:  # what if there aren't 8 children?
                     (ii,jj,kk) = np.shape(Cell.children)
@@ -1049,7 +1049,9 @@ class Tree(object):
         for _,cell in self.masterList:
             if cell.leaf==True:
                 self.numberOfCells += 1
+#                 print(self.numberOfCells)
                 for i,j,k in cell.PxByPyByPz:
+#                     print('i,j,k',i,j,k)
                     if not hasattr(cell.gridpoints[i,j,k], "counted"):
                         self.numberOfGridpoints += 1
                         cell.gridpoints[i,j,k].counted = True
@@ -1066,8 +1068,11 @@ class Tree(object):
         self.countCellsAtEachDepth()
         
         
-                        
+#         num=0            
         for _,cell in self.masterList:
+#             num+=1
+#             print('cell num ',num)
+#             print(cell.uniqueID)
             for i,j,k in cell.PxByPyByPz:
                 if hasattr(cell.gridpoints[i,j,k], "counted"):
                     cell.gridpoints[i,j,k].counted = None
@@ -1462,7 +1467,7 @@ class Tree(object):
             Now I need to update v_xc, then get the new value of v_eff. 
             '''
             
-            rho = np.empty((cell.px,cell.py,cell.pz))
+            rho = np.empty((cell.px+1,cell.py+1,cell.pz+1))
             
             for i,j,k in cell.PxByPyByPz:
                 rho[i,j,k] = cell.gridpoints[i,j,k].rho
@@ -1538,7 +1543,7 @@ class Tree(object):
      
     def normalizeDensity(self):            
         def integrateDensity(cell):
-            rho = np.empty((cell.px,cell.py,cell.pz))
+            rho = np.empty((cell.px+1,cell.py+1,cell.pz+1))
                         
             for i,j,k in cell.PxByPyByPz:
                 gp = cell.gridpoints[i,j,k]
@@ -1580,7 +1585,7 @@ class Tree(object):
 
     def integrateDensityBothMeshes(self):            
         def integrateDensity(cell):
-            rho = np.empty((cell.px,cell.py,cell.pz))
+            rho = np.empty((cell.px+1,cell.py+1,cell.pz+1))
                         
             for i,j,k in cell.PxByPyByPz:
                 gp = cell.gridpoints[i,j,k]
@@ -1622,8 +1627,8 @@ class Tree(object):
     def computeTotalPotential(self): 
         
         def integrateCellDensityAgainst__(cell,integrand):
-            rho = np.empty((cell.px,cell.py,cell.pz))
-            pot = np.empty((cell.px,cell.py,cell.pz))
+            rho = np.empty((cell.px+1,cell.py+1,cell.pz+1))
+            pot = np.empty((cell.px+1,cell.py+1,cell.pz+1))
             
             for i,j,k in cell.PxByPyByPz:
                 gp = cell.gridpoints[i,j,k]
@@ -1920,10 +1925,10 @@ class Tree(object):
         normSqOfPsiNew = 0.0
         for _,cell in self.masterList:
             if cell.leaf==True:
-                phi = np.zeros((cell.px,cell.py,cell.pz))
-                phiNew = np.zeros((cell.px,cell.py,cell.pz))
-#                 phiOld = np.zeros((cell.px,cell.py,cell.pz))
-                potential = np.zeros((cell.px,cell.py,cell.pz))
+                phi = np.zeros((cell.px+1,cell.py+1,cell.pz+1))
+                phiNew = np.zeros((cell.px+1,cell.py+1,cell.pz+1))
+#                 phiOld = np.zeros((cell.px+1,cell.py+1,cell.pz+1))
+                potential = np.zeros((cell.px+1,cell.py+1,cell.pz+1))
                 for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     phi[i,j,k] = gp.phi[targetEnergy]
@@ -2055,7 +2060,7 @@ class Tree(object):
         phiAnalytic = np.zeros((self.px,self.py,self.pz))
         for _,cell in self.masterList:
             if cell.leaf == True:
-                for i,j,k in self.PxByPyByPz:
+                for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
                     phiComputed[i,j,k] = gridpt.phi
                     phiAnalytic[i,j,k] = normalizationFactor*trueWavefunction(energyLevel,gridpt.x,gridpt.y,gridpt.z)
@@ -2093,8 +2098,8 @@ class Tree(object):
             if cell.leaf==True:
 #                 if not hasattr(cell, 'laplacian'):
 #                     cell.computeLaplacian()
-                phi = np.zeros((cell.px,cell.py,cell.pz))
-                VeffPhi = np.zeros((cell.px,cell.py,cell.pz))
+                phi = np.zeros((cell.px+1,cell.py+1,cell.pz+1))
+                VeffPhi = np.zeros((cell.px+1,cell.py+1,cell.pz+1))
                 
                 for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
@@ -2545,6 +2550,123 @@ class Tree(object):
                 
         return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
     
+    def extractXYZ_secondKind(self):
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        
+        
+        XV = []
+        YV = []
+        ZV = []
+        quadIdx = []
+        centerIdx = []
+        ghostCells=[]
+#         WAVEFUNCTIONS = []
+        cellCount=0
+        leafCount=0
+        
+        masterDict={}
+        duplicates=0
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    
+#                     key = 'x'+str(gridpt.x)[:8]+'y'+str(gridpt.y)[:8]+'z'+str(gridpt.z)[:8]
+                    key = 'x%+1.10ey%+1.10ez%+1.10e' %(gridpt.x,gridpt.y,gridpt.z)
+                    if key in masterDict:
+                        duplicates+=1
+#                         print('Found duplicate at: ', gridpt.x, gridpt.y, gridpt.z)
+                        masterDict[key][0] += gridpt.rho
+                        masterDict[key][1] += cell.w[i,j,k]
+                    else:
+                        masterDict[key] = np.array([gridpt.rho, cell.w[i,j,k]])
+#                         masterDict[key][0] = gridpt.rho
+#                         masterDict[key][1]   = cell.w[i,j,k]
+        
+        
+#                     WAVEFUNCTIONS.append(gridpt.phi)
+                    gridpt.x=None
+                    gridpt.y=None
+                    gridpt.z=None
+                    gridpt.rho=None
+                    gridpt=None
+                    cell.gridpoints[i,j,k]=None
+                    cell.w[i,j,k]=None
+#                     del cell.gridpoints[i,j,k]
+#                     cell.gridpoints[i,j,k]=None
+                    
+            # Add all cells.
+            if cell.leaf == True: 
+#                 ghost=0
+#             else:
+#                 ghost=1
+#             ghostCells = ghostCells + [ghost]
+                XV = XV + [cell.xmin,cell.xmax,cell.xmin,cell.xmax,cell.xmin,cell.xmax,cell.xmin,cell.xmax] # 01010101
+                YV = YV + [cell.ymin,cell.ymin,cell.ymax,cell.ymax,cell.ymin,cell.ymin,cell.ymax,cell.ymax] # 00110011
+                ZV = ZV + [cell.zmin,cell.zmin,cell.zmin,cell.zmin,cell.zmax,cell.zmax,cell.zmax,cell.zmax] # 00001111
+                
+                offset = cell.px*cell.py*cell.pz * leafCount
+                p = cell.px
+    #                 quadIdx = quadIdx + [offset+p**0-1, offset+p**1-1, offset + p**0-1 + p*(p-1),offset+ p**1-1 + p*(p-1),
+    #                                  offset+p**0-1+p*p*(p-1),offset+ p**1-1+p*p*(p-1),offset+ p**0-1 + p*(p-1)+p*p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ] 
+    #                 quadIdx = quadIdx + [offset+p**0-1, offset+p**1-1, 
+    #                                      offset + p**0-1 + p*(p-1),offset+ p**1-1 + p*(p-1),
+    #                                      offset+p**0-1+p*p*(p-1),offset+ p**1-1+p*p*(p-1),
+    #                                      offset+ p**0-1 + p*(p-1)+p*p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ] 
+                
+                quadIdx = quadIdx + [offset+p**0-1, offset+p**0-1+p*p*(p-1), 
+                                     offset + p**0-1 + p*(p-1),offset+ p**0-1 + p*(p-1)+p*p*(p-1),
+                                     offset+p**1-1,offset+ p**1-1+p*p*(p-1),
+                                     offset+ p**1-1 + p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ]  ## For 8 vertices
+    
+                
+                if p%2==1:
+                    midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2
+                else:
+                    midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2 # this is not right, there is no midpoint for p%2==0.  
+                centerIdx = centerIdx + [int(offset+midpointQuadPt)] # for midpoint
+    
+    
+                
+                if leafCount==1: print(quadIdx)
+                
+    #                 quadIdx = quadIdx + [000, 001, 010, 011, 100, 101, 110, 111 ] 
+                
+                
+                cellCount += 1
+                if cell.leaf == True: leafCount+=1
+        X = [] 
+        Y = []
+        Z = []
+        W = []
+        RHO = []       
+        for key in masterDict:
+#             print(key)
+            x=float(key[1:18])
+            y=float(key[19:36])
+            z=float(key[37:54])
+            X.append( x  )
+            Y.append( y  )
+            Z.append( z  )
+            RHO.append(masterDict[key][0])
+            W.append( masterDict[key][1] )
+        
+        print('Sum, cubert of weights: ', np.sum(W), np.cbrt(np.sum(W)))
+        print('Average x,y,z: ', np.mean(X), np.mean(Y), np.mean(Z))
+        for _,cell in self.masterList:
+            if cell.leaf == False:
+                for i,j,k in cell.PxByPyByPz:
+                    cell.gridpoints[i,j,k]=None
+            del cell
+        print('Number of duplicate points: ', duplicates)  
+        print('number of points: ', len(Z))
+        return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
+    
+
     def extractConvolutionIntegrand(self,containing=None): 
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
@@ -3191,7 +3313,7 @@ class Tree(object):
 #                 
 #                 # Generate interpolators for each orbital
 #                 interpolators = np.empty(self.nOrbitals,dtype=object)
-#                 phi = np.zeros((cell.px,cell.py,cell.pz,self.nOrbitals))
+#                 phi = np.zeros((cell.px+1,cell.py+1,cell.pz+1,self.nOrbitals))
 #                 for i,j,k in cell.PxByPyByPz:
 #                     for m in range(self.nOrbitals):
 #                         phi[i,j,k,m] = cell.gridpoints[i,j,k].phi[m]
