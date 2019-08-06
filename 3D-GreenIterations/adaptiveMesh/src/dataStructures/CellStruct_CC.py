@@ -1913,26 +1913,29 @@ class Cell(object):
 #             print(self.atomAtCorner)
 #             print(self.atomAtCorner[0])
             if self.atomAtCorner[0]=='1':
-                x = [ChebyshevPointsSecondKind(cell.xmin,float(xdiv),cell.px), ChebyshevPointsFirstKind(float(xdiv),cell.xmax,cell.px)]
+                x_first = ChebyshevPointsFirstKind(float(xdiv),cell.xmax,cell.px)
             elif self.atomAtCorner[0]=='0':
-                x = [ChebyshevPointsFirstKind(cell.xmin,float(xdiv),cell.px), ChebyshevPointsSecondKind(float(xdiv),cell.xmax,cell.px)]
+                x_first = ChebyshevPointsFirstKind(cell.xmin,float(xdiv),cell.px)
             else:
                 print('What corner is atom at in x direction? ', self.atomAtCorner[0])
-            
+             
             if self.atomAtCorner[1]=='1':
-                y = [ChebyshevPointsSecondKind(cell.ymin,float(ydiv),cell.py), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.py)]
+                y_first = ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.py)
             elif self.atomAtCorner[1]=='0':
-                y = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.py), ChebyshevPointsSecondKind(float(ydiv),cell.ymax,cell.py)]
+                y_first = ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.py)
             else:
                 print('What corner is atom at in y direction? ', self.atomAtCorner[1])
-            
+             
             if self.atomAtCorner[2]=='1':
-                z = [ChebyshevPointsSecondKind(cell.zmin,float(zdiv),cell.pz), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pz)]
+                z_first = ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pz)
             elif self.atomAtCorner[2]=='0':
-                z = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pz), ChebyshevPointsSecondKind(float(zdiv),cell.zmax,cell.pz)]
+                z_first = ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pz)
             else: 
                 print('What corner is atom at in z direction? ', self.atomAtCorner[2])
-            
+
+            x = [ChebyshevPointsSecondKind(cell.xmin,float(xdiv),cell.px), ChebyshevPointsSecondKind(float(xdiv),cell.xmax,cell.px)]
+            y = [ChebyshevPointsSecondKind(cell.ymin,float(ydiv),cell.py), ChebyshevPointsSecondKind(float(ydiv),cell.ymax,cell.py)]
+            z = [ChebyshevPointsSecondKind(cell.zmin,float(zdiv),cell.pz), ChebyshevPointsSecondKind(float(zdiv),cell.zmax,cell.pz)]
             xbounds = np.array([cell.xmin, float(xdiv), cell.xmax])
             ybounds = np.array([cell.ymin, float(ydiv), cell.ymax])
             zbounds = np.array([cell.zmin, float(zdiv), cell.zmax])
@@ -1968,6 +1971,10 @@ class Cell(object):
                 xOct = x[ii]
                 yOct = y[jj]
                 zOct = z[kk]
+                if str(ii)+str(jj)+str(kk)==self.atomAtCorner:
+                     xOct=x_first
+                     yOct=y_first
+                     zOct=z_first
                 gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                 for i, j, k in cell.PxByPyByPz:
                     newGridpointCount += 1

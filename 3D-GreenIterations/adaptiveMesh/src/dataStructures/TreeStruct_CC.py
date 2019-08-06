@@ -371,7 +371,8 @@ class Tree(object):
     #                         ydiv = None
     #                     if ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ):
     #                         zdiv = None
-            
+                        
+                        
             
                         if ( (xdiv!=None) or (ydiv!=None) or (zdiv!=None) ): 
                             print('Dividing cell %s because atom is in interior or on edge.' %(Cell.uniqueID))   
@@ -385,7 +386,15 @@ class Tree(object):
 #                             if xdiv!=None: # then cell was divided at Atom.x
 #                                 for child
                         else: 
-                            print('Not dividing cell %s because atom is apparently at corner.' %(Cell.uniqueID))
+                            print('Atom is already at corner of cell %s' %(Cell.uniqueID))
+                            Cell.locateAtomAtCorner(Atom)
+                            print('Flagging that atom is at corner...', Cell.atomAtCorner)
+                            print('Now refine at midpoint with second kind (one child will get first kind)')
+                            xdiv = Cell.xmid
+                            ydiv = Cell.ymid
+                            zdiv = Cell.zmid
+                            Cell.divide_secondKind(xdiv, ydiv, zdiv)
+                            
                 
                         leafCount = 0
                         for _,cell in self.masterList:
