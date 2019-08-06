@@ -376,7 +376,7 @@ def setUpTree(onlyFillOne=False):
                     savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
 
  
-    
+#     return 
 #     X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
 #     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_secondKind()

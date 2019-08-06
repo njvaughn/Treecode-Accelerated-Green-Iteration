@@ -436,8 +436,8 @@ def unscaledWeightsSecondKind(N):
             W[i] = 2/(1-i**2)
         else:
             W[i] = 0
-#         if (N+1)%2==0:
-#             W[-1] = 1/(1-N**2)
+        if (N)%2==0:  # this seems necessary for even nx,ny,nz
+            W[-1] = 1/(1-N**2)
             
     w = np.dot(np.transpose(Lambda),W)
     return w
@@ -728,7 +728,7 @@ if __name__=="__main__":
     
 
 
-    nx = ny = nz = 6
+    nx = ny = nz = 5
     xf = ChebyshevPointsFirstKind(-1, 1, nx)
     xs = ChebyshevPointsSecondKind(-1, 1, nx)
     

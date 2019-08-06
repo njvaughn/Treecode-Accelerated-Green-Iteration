@@ -124,9 +124,9 @@ class Tree(object):
                 self.atoms[i] = atom
         
         # generate gridpoint objects.  
-        xvec = ChebyshevPointsFirstKind(self.xmin,self.xmax,self.px)
-        yvec = ChebyshevPointsFirstKind(self.ymin,self.ymax,self.py)
-        zvec = ChebyshevPointsFirstKind(self.zmin,self.zmax,self.pz)
+        xvec = ChebyshevPointsSecondKind(self.xmin,self.xmax,self.px)
+        yvec = ChebyshevPointsSecondKind(self.ymin,self.ymax,self.py)
+        zvec = ChebyshevPointsSecondKind(self.zmin,self.zmax,self.pz)
         gridpoints = np.empty((px+1,py+1,pz+1),dtype=object)
 
 
@@ -137,7 +137,7 @@ class Tree(object):
                     gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k], self.gaugeShift, self.atoms,initPotential=False)
         
         # generate root cell from the gridpoint objects  
-        self.root = Cell( self.xmin, self.xmax, self.px, 
+        self.root = Cell( 'second', self.xmin, self.xmax, self.px, 
                           self.ymin, self.ymax, self.py, 
                           self.zmin, self.zmax, self.pz, 
                           gridpoints, densityPoints=None, tree=self )
@@ -375,7 +375,7 @@ class Tree(object):
             
                         if ( (xdiv!=None) or (ydiv!=None) or (zdiv!=None) ): 
                             print('Dividing cell %s because atom is in interior.' %(Cell.uniqueID))   
-                            Cell.divide_FirstKind(xdiv, ydiv, zdiv)
+                            Cell.divide_firstKind(xdiv, ydiv, zdiv)
                         else: 
                             print('Not dividing cell %s because atom is apparently at corner.' %(Cell.uniqueID))
                 
@@ -1062,6 +1062,8 @@ class Tree(object):
                             closestToOrigin = np.copy(r)  
                             closestCoords = [gp.x, gp.y, gp.z]
                             closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
+                            closestDepth = cell.level
+                            closestKind = cell.kind
         
         self.rmin = closestToOrigin
         
@@ -1129,6 +1131,8 @@ class Tree(object):
             print('Closest gridpoint to origin: ', closestCoords)
             print('For a distance of: ', closestToOrigin)
             print('Part of a cell centered at: ', closestMidpoint) 
+            print('at depth ', closestDepth)
+            print('of kind ', closestKind)
 
     
     
@@ -2573,14 +2577,14 @@ class Tree(object):
             if cell.leaf == True:
                 
                 for i,j,k in cell.PxByPyByPz:
-                    gridpt = cell.gridpoints[i,j,k]
+                    gridpt = cell.gridpoints[i,j,k]  
                     
 #                     key = 'x'+str(gridpt.x)[:8]+'y'+str(gridpt.y)[:8]+'z'+str(gridpt.z)[:8]
                     key = 'x%+1.10ey%+1.10ez%+1.10e' %(gridpt.x,gridpt.y,gridpt.z)
                     if key in masterDict:
                         duplicates+=1
 #                         print('Found duplicate at: ', gridpt.x, gridpt.y, gridpt.z)
-                        masterDict[key][0] += gridpt.rho
+#                         masterDict[key][0] += gridpt.rho  ## DONT COMBINE DENSITY AT THE SHARED POINT, ONLY THE QUADRATURE WEIGHT
                         masterDict[key][1] += cell.w[i,j,k]
                     else:
                         masterDict[key] = np.array([gridpt.rho, cell.w[i,j,k]])
@@ -2657,6 +2661,7 @@ class Tree(object):
         
         print('Sum, cubert of weights: ', np.sum(W), np.cbrt(np.sum(W)))
         print('Average x,y,z: ', np.mean(X), np.mean(Y), np.mean(Z))
+        print('Integral of rho: ', np.sum(np.array(RHO)*np.array(W)) )
         for _,cell in self.masterList:
             if cell.leaf == False:
                 for i,j,k in cell.PxByPyByPz:
