@@ -371,7 +371,8 @@ def setUpTree(onlyFillOne=False):
    
     
     print('max depth ', maxDepth)
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+    tree.buildTree_FirstAndSecondKind( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+#     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
 

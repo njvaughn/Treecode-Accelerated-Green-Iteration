@@ -32,7 +32,7 @@ class Cell(object):
     """
     INITIALIZATION FUNCTIONS
     """
-    def __init__(self, kind, xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, gridpoints=None, densityPoints=None, tree=None):
+    def __init__(self, kind, xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, gridpoints=None, densityPoints=None, tree=None, atomAtCorner=False):
         '''
         Cell Constructor.  Cell composed of gridpoint objects
         '''
@@ -53,6 +53,7 @@ class Cell(object):
         self.gridpoints = gridpoints
         self.densityPoints = densityPoints
         self.leaf = True
+        self.atomAtCorner = atomAtCorner
         if kind=='first':
             print("CELL IS FIRST KIND")
             W = unscaledWeightsFirstKind(px)  # assumed px=py=pz
@@ -77,6 +78,39 @@ class Cell(object):
             self.orbitalPE = np.zeros(self.tree.nOrbitals)
             self.orbitalKE = np.zeros(self.tree.nOrbitals)
 
+    def switchKindsSecondToFirst(self):
+        assert self.kind=='second'
+        self.kind='first'
+        print("CELL SWITCHED TO FIRST KIND")
+        W = unscaledWeightsFirstKind(px)  # assumed px=py=pz
+        self.w = weights3DFirstKind(xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, W)
+        
+    def switchKindsFirstSecond(self):
+        assert self.kind=='first'
+        self.kind='second'
+        print("CELL SWITCHED TO SECOND KIND")
+        W = unscaledWeightsSecondKind(px)  # assumed px=py=pz
+        self.w = weights3DSecondKind(xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, W)
+        
+    def locateAtomAtCorner(self,Atom):
+#         assert self.atomAtCorner==True
+        if Atom.x==self.xmax:
+            x='1'
+        else:
+            x='0'
+        if Atom.y==self.ymax:
+            y='1'
+        else:
+            y='0'
+        if Atom.z==self.zmax:
+            z='1'
+        else:
+            z='0'
+            
+        self.atomAtCorner=x+y+z
+        print('Cell %s has atom at corner %s' %(self.uniqueID, self.atomAtCorner))
+        
+      
     def setGridpoints(self,gridpoints):
         self.gridpoints = gridpoints
         
@@ -1868,7 +1902,103 @@ class Cell(object):
 #         self.interpolator = RegularGridInterpolator((xvec, yvec, zvec), phiCoarse,method='nearest') 
     
     def divide_secondKind(self, xdiv, ydiv, zdiv, printNumberOfCells=False, interpolate=False, temporaryCell=False):
-                  
+           
+           
+        def divideInto8_secondKind_atomAtCorner(cell, xdiv, ydiv, zdiv, printNumberOfCells=False, interpolate=False):
+            '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
+            
+            children = np.empty((2,2,2), dtype=object)
+            self.leaf = False
+            
+#             print(self.atomAtCorner)
+#             print(self.atomAtCorner[0])
+            if self.atomAtCorner[0]=='1':
+                x = [ChebyshevPointsSecondKind(cell.xmin,float(xdiv),cell.px), ChebyshevPointsFirstKind(float(xdiv),cell.xmax,cell.px)]
+            elif self.atomAtCorner[0]=='0':
+                x = [ChebyshevPointsFirstKind(cell.xmin,float(xdiv),cell.px), ChebyshevPointsSecondKind(float(xdiv),cell.xmax,cell.px)]
+            else:
+                print('What corner is atom at in x direction? ', self.atomAtCorner[0])
+            
+            if self.atomAtCorner[1]=='1':
+                y = [ChebyshevPointsSecondKind(cell.ymin,float(ydiv),cell.py), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.py)]
+            elif self.atomAtCorner[1]=='0':
+                y = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.py), ChebyshevPointsSecondKind(float(ydiv),cell.ymax,cell.py)]
+            else:
+                print('What corner is atom at in y direction? ', self.atomAtCorner[1])
+            
+            if self.atomAtCorner[2]=='1':
+                z = [ChebyshevPointsSecondKind(cell.zmin,float(zdiv),cell.pz), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pz)]
+            elif self.atomAtCorner[2]=='0':
+                z = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pz), ChebyshevPointsSecondKind(float(zdiv),cell.zmax,cell.pz)]
+            else: 
+                print('What corner is atom at in z direction? ', self.atomAtCorner[2])
+            
+            xbounds = np.array([cell.xmin, float(xdiv), cell.xmax])
+            ybounds = np.array([cell.ymin, float(ydiv), cell.ymax])
+            zbounds = np.array([cell.zmin, float(zdiv), cell.zmax])
+    
+            '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
+            
+            for i, j, k in TwoByTwoByTwo:
+                if hasattr(cell, "tree"):
+                    childKind = 'second'
+                    if str(i)+str(j)+str(k)==self.atomAtCorner:
+                        childKind='first'
+                        print('Atom at corner %s of parent %s, making %i %i %i child of first kind' %(self.atomAtCorner, self.uniqueID,i,j,k ))
+                    children[i,j,k] = Cell(childKind, xbounds[i], xbounds[i+1], cell.px, 
+                                           ybounds[j], ybounds[j+1], cell.py,
+                                           zbounds[k], zbounds[k+1], cell.pz, tree = cell.tree)
+                    if childKind=='first':
+                        children[i,j,k].atomAtCorner = self.atomAtCorner
+                
+                children[i,j,k].parent = cell # children should point to their parent
+                if hasattr(cell, "childrenRefineCause"):
+                    children[i,j,k].refineCause = cell.childrenRefineCause
+                if hasattr(cell, "uniqueID"):
+                    children[i,j,k].setUniqueID(i,j,k)
+                    children[i,j,k].setNeighborList()
+                if temporaryCell==False:   
+                    if hasattr(cell, "tree"):
+                        if hasattr(cell.tree, 'masterList'):
+                            cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
+    
+            '''create new gridpoints wherever necessary.  Also create density points. '''
+            newGridpointCount=0
+            for ii,jj,kk in TwoByTwoByTwo:
+                xOct = x[ii]
+                yOct = y[jj]
+                zOct = z[kk]
+                gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
+                for i, j, k in cell.PxByPyByPz:
+                    newGridpointCount += 1
+#                     gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.nOrbitals, self.tree.gaugeShift, self.tree.atoms)
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms)
+#                     if interpolate == True:
+#                         for m in range(self.nOrbitals):
+#                             gridpoints[i,j,k].setPhi(interpolators[m](xOct[i],yOct[j],zOct[k]),m)
+                children[ii,jj,kk].setGridpoints(gridpoints)
+                if hasattr(cell,'level'):
+                    children[ii,jj,kk].level = cell.level+1
+                else:
+                    print('Warning: cell ',cell.uniqueID, ' does not have attribute level.')
+                    
+                    
+#             for ii,jj,kk in TwoByTwoByTwo:
+#                 xOct = x_density[ii]
+#                 yOct = y_density[jj]
+#                 zOct = z_density[kk]   
+#                 densityPoints = np.empty((cell.pxd,cell.pyd,cell.pzd),dtype=object)
+#                 for i, j, k in cell.PxByPyByPz_density:
+#                     densityPoints[i,j,k] = DensityPoint(xOct[i],yOct[j],zOct[k])
+#                 children[ii,jj,kk].setDensityPoints(densityPoints)
+                
+            
+            if printNumberOfCells == True: print('generated %i new gridpoints for parent cell %s' %(newGridpointCount, cell.uniqueID))
+    
+            '''set the parent cell's 'children' attribute to the array of children'''
+            cell.children = children
+            
+                   
         def divideInto8_secondKind(cell, xdiv, ydiv, zdiv, printNumberOfCells=False, interpolate=False):
             '''setup pxXpyXpz array of gridpoint objects.  These will be used to construct the 8 children cells'''
             
@@ -2254,7 +2384,12 @@ class Cell(object):
         if ydiv == None: noneCount += 1
         if zdiv == None: noneCount += 1
         
-        if noneCount == 0:
+        
+#         print(self.atomAtCorner)
+        if self.atomAtCorner!=False:
+            print('Using divideInto8_secondKind_atomAtCorner')
+            divideInto8_secondKind_atomAtCorner(self, xdiv, ydiv, zdiv, printNumberOfCells)
+        elif noneCount == 0:
             divideInto8_secondKind(self, xdiv, ydiv, zdiv, printNumberOfCells, interpolate)
         elif noneCount == 1:
 #             print('Using divideInto4... are you sure?')
