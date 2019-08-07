@@ -55,7 +55,7 @@ class Cell(object):
         self.leaf = True
         self.atomAtCorner = atomAtCorner
         if kind=='first':
-            print("CELL IS FIRST KIND")
+#             print("CELL IS FIRST KIND")
             W = unscaledWeightsFirstKind(px)  # assumed px=py=pz
             self.w = weights3DFirstKind(xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, W)
 #             self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
@@ -1775,7 +1775,13 @@ class Cell(object):
         xdiv = (self.xmax + self.xmin)/2   
         ydiv = (self.ymax + self.ymin)/2   
         zdiv = (self.zmax + self.zmin)/2   
-        self.divide_secondKind(xdiv, ydiv, zdiv, temporaryCell=True)
+        if self.kind=='second':
+            self.divide_secondKind(xdiv, ydiv, zdiv, temporaryCell=True)
+        elif self.kind=='first':
+            self.divide_firstKind(xdiv, ydiv, zdiv, temporaryCell=True)
+        else: 
+            print("What kind???")
+            return
         (ii,jj,kk) = np.shape(self.children)
 
         for i in range(ii):
@@ -2837,11 +2843,11 @@ class Cell(object):
             
             # locate shortest dimension.  Divide, then check aspect ratio of children.  
             if (dx <= min(dy,dz)): # x is shortest dimension.
-                self.divide_secondKind(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
+                self.divide_firstKind(xdiv = None, ydiv=(self.ymax+self.ymin)/2, zdiv=(self.zmax+self.zmin)/2)
             elif (dy <= min(dx,dz)): # y is shortest dimension
-                self.divide_secondKind(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
+                self.divide_firstKind(xdiv=(self.xmax+self.xmin)/2, ydiv = None, zdiv=(self.zmax+self.zmin)/2)
             elif (dz <= max(dx,dy)): # z is shortest dimension
-                self.divide_secondKind(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
+                self.divide_firstKind(xdiv=(self.xmax+self.xmin)/2, ydiv=(self.ymax+self.ymin)/2, zdiv = None)
 #                 
 #               Should I divide children?  Maybe it's okay if a child still has a bad aspect ratio because
 #               at least no one side  

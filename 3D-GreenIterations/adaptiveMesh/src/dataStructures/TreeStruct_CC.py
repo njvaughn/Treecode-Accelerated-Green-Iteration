@@ -123,10 +123,14 @@ class Tree(object):
                 atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4],smoothingEpsilon=smoothingEps)
                 self.atoms[i] = atom
         
+#         # generate gridpoint objects.  
+#         xvec = ChebyshevPointsSecondKind(self.xmin,self.xmax,self.px)
+#         yvec = ChebyshevPointsSecondKind(self.ymin,self.ymax,self.py)
+#         zvec = ChebyshevPointsSecondKind(self.zmin,self.zmax,self.pz)
         # generate gridpoint objects.  
-        xvec = ChebyshevPointsSecondKind(self.xmin,self.xmax,self.px)
-        yvec = ChebyshevPointsSecondKind(self.ymin,self.ymax,self.py)
-        zvec = ChebyshevPointsSecondKind(self.zmin,self.zmax,self.pz)
+        xvec = ChebyshevPointsFirstKind(self.xmin,self.xmax,self.px)
+        yvec = ChebyshevPointsFirstKind(self.ymin,self.ymax,self.py)
+        zvec = ChebyshevPointsFirstKind(self.zmin,self.zmax,self.pz)
         gridpoints = np.empty((px+1,py+1,pz+1),dtype=object)
 
 
@@ -255,6 +259,177 @@ class Tree(object):
         return
         
         
+    def finalDivideBasedOnNuclei(self, coordinateFile):
+        def refineToMinDepth(self,Cell):
+            # Divide the root to the minimum depth, BEFORE dividing at the nuclear positions
+            
+            if (Cell.level) < self.minDepth:
+                print('Dividing cell %s because it is at depth %i.' %(Cell.uniqueID, Cell.level))
+                xdiv = (Cell.xmax + Cell.xmin)/2   
+                ydiv = (Cell.ymax + Cell.ymin)/2   
+                zdiv = (Cell.zmax + Cell.zmin)/2   
+                Cell.divide_firstKind(xdiv, ydiv, zdiv)
+                
+                (ii,jj,kk) = np.shape(Cell.children)
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+                            refineToMinDepth(self, Cell.children[i,j,k])
+   
+        def recursiveDivideByAtom(self,Atom,Cell):
+            # Atom is in this cell.  Check if this cell has children.  If so, find the child that contains
+            # the atom.  If not, divideInto8 the cell.
+            if hasattr(Cell, "children"):
+                
+                (ii,jj,kk) = np.shape(Cell.children)
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+#                 for i,j,k in TwoByTwoByTwo: # this should catch cases where atom is on the boundary of a previous cut
+                            if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
+                                if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
+                                    if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
+#                                         print('Atom located inside or on the boundary of child ', Cell.children[i,j,k].uniqueID, '. Calling recursive divide.')
+                                        recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
+
+  
+            else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
+#                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
+                if ( (Atom.x <= Cell.xmax) and (Atom.x >= Cell.xmin) and 
+                     (Atom.y <= Cell.ymax) and (Atom.y >= Cell.ymin) and
+                     (Atom.z <= Cell.zmax) and (Atom.z >= Cell.zmin) ):
+                    
+                    
+                    ## Check if aspect ratio is going to be bad
+                    xRatio = np.max([Cell.xmax-Atom.x, Atom.x-Cell.xmin] ) / np.min([Cell.xmax-Atom.x, Atom.x-Cell.xmin] )
+                    yRatio = np.max([Cell.ymax-Atom.y, Atom.y-Cell.ymin] ) / np.min([Cell.ymax-Atom.y,Atom.y-Cell.ymin] )
+                    zRatio = np.max([Cell.zmax-Atom.z, Atom.z-Cell.zmin] ) / np.min([Cell.zmax-Atom.z, Atom.z-Cell.zmin] )
+                    
+                    if xRatio == np.inf: xRatio = 0.0 
+                    if yRatio == np.inf: yRatio = 0.0 
+                    if zRatio == np.inf: zRatio = 0.0 
+                    
+                    if np.max( [xRatio, yRatio, zRatio]) > 3.0:
+                        print('ratio would have been %f if diving at nucleus.' %np.max( [xRatio, yRatio, zRatio]))
+#                         if xRatio>3.0:
+#                             xdiv = 1/3*( 2*Cell.xmid + Atom.x)
+#                         else:
+#                             xdiv = Cell.xmid
+#                              
+#                         if yRatio>3.0:
+#                             ydiv = 1/3*( 2*Cell.ymid + Atom.y)
+#                         else:
+#                             ydiv = Cell.ymid
+#                              
+#                         if zRatio>3.0:
+#                             zdiv = 1/3*( 2*Cell.zmid + Atom.z)
+#                         else:
+#                             zdiv = Cell.zmid
+                            
+                            
+                        xdiv = Cell.xmid
+                        ydiv = Cell.ymid
+                        zdiv = Cell.zmid
+                            
+#                         # What if nucleus is actually on the boundary... don't divide along that axis
+#                         if ( (Atom.x==Cell.xmax) or (Atom.x==Cell.xmin) ):
+#                             xdiv=None
+#                         if ( (Atom.y==Cell.ymax) or (Atom.y==Cell.ymin) ):
+#                             ydiv=None
+#                         if ( (Atom.z==Cell.zmax) or (Atom.z==Cell.zmin) ):
+#                             zdiv=None
+
+                        # Divide at midpoint, recurse on children
+                        print('Dividing cell %s at midpoint because atom is in interior but close to edge.' %(Cell.uniqueID))   
+                        Cell.divide_firstKind(xdiv, ydiv, zdiv)
+                        if hasattr(Cell, "children"):
+                            (ii,jj,kk) = np.shape(Cell.children)
+                            for i in range(ii):
+                                for j in range(jj):
+                                    for k in range(kk):
+                                        if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
+                                            if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
+                                                if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
+                                                    recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
+                        
+                    
+                    ## If aspect ratio is okay, then divide at nucleus
+                    else:
+                        xdiv = Atom.x
+                        ydiv = Atom.y
+                        zdiv = Atom.z
+                        
+                        if ( (Atom.x==Cell.xmax) or (Atom.x==Cell.xmin) ):
+                            xdiv=None
+                        if ( (Atom.y==Cell.ymax) or (Atom.y==Cell.ymin) ):
+                            ydiv=None
+                        if ( (Atom.z==Cell.zmax) or (Atom.z==Cell.zmin) ):
+                            zdiv=None
+    #                     if ( (Atom.x == Cell.xmax) or (Atom.x == Cell.xmin) ):
+    #                         xdiv = None
+    #                     if ( (Atom.y == Cell.ymax) or (Atom.y == Cell.ymin) ):
+    #                         ydiv = None
+    #                     if ( (Atom.z == Cell.zmax) or (Atom.z == Cell.zmin) ):
+    #                         zdiv = None
+                        
+                        
+            
+                        if ( (xdiv!=None) or (ydiv!=None) or (zdiv!=None) ): 
+                            print('Dividing cell %s because atom is in interior or edge.' %(Cell.uniqueID))   
+                            Cell.divide_firstKind(xdiv, ydiv, zdiv)
+                            (ii,jj,kk) = np.shape(Cell.children)
+                            for i in range(ii):
+                                for j in range(jj):
+                                    for k in range(kk):
+                                        Cell.children[i,j,k].locateAtomAtCorner(Atom)
+                                       
+#                             if xdiv!=None: # then cell was divided at Atom.x
+#                                 for child
+                        else: 
+                            print('Atom is already at corner of cell %s' %(Cell.uniqueID))
+#                             Cell.locateAtomAtCorner(Atom)
+#                             print('Flagging that atom is at corner...', Cell.atomAtCorner)
+#                             print('Now refine at midpoint with second kind (one child will get first kind)')
+#                             if xdiv==None:
+#                                 xdiv = Cell.xmid
+#                             if ydiv==None:
+#                                 ydiv = Cell.ymid
+#                             if zdiv==None:
+#                                 zdiv = Cell.zmid
+#                             Cell.divide_firstKind(xdiv, ydiv, zdiv)
+                            
+                
+                        leafCount = 0
+                        for _,cell in self.masterList:
+                            if cell.leaf==True:
+                                leafCount += 1
+                        print('There are now %i leaf cells.' %leafCount)
+                    
+        def recursiveAspectRatioCheck(self,Cell):
+       
+            if hasattr(Cell, "children"):
+                
+                (ii,jj,kk) = np.shape(Cell.children)
+                for i in range(ii):
+                    for j in range(jj):
+                        for k in range(kk):
+                            recursiveAspectRatioCheck(self,Cell.children[i,j,k])
+                
+            else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
+#                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
+                Cell.divideIfAspectRatioExceeds(aspectRatioTolerance)
+                    
+        self.maxDepthAtAtoms = self.additionalDepthAtAtoms + self.maxDepthAchieved
+#         print('Refining an additional %i levels, from %i to %i' %(self.additionalDepthAtAtoms,self.maxDepthAchieved, self.maxDepthAtAtoms ))
+#         refineToMinDepth(self,self.root)
+        self.nAtoms = 0
+        for atom in self.atoms:
+            self.nAtoms += 1
+            print('Searching for cell containing atom ', self.nAtoms)
+            recursiveDivideByAtom(self,atom,self.root)
+            
+        aspectRatioTolerance = 4.0
+        recursiveAspectRatioCheck(self,self.root)
 
             
     def initialDivideBasedOnNuclei(self, coordinateFile,maxLevels=99):
@@ -375,7 +550,7 @@ class Tree(object):
                         
             
                         if ( (xdiv!=None) or (ydiv!=None) or (zdiv!=None) ): 
-                            print('Dividing cell %s because atom is in interior or on edge.' %(Cell.uniqueID))   
+                            print('Dividing cell %s because atom is in interior or edge.' %(Cell.uniqueID))   
                             Cell.divide_firstKind(xdiv, ydiv, zdiv)
                             (ii,jj,kk) = np.shape(Cell.children)
                             for i in range(ii):
@@ -390,9 +565,12 @@ class Tree(object):
                             Cell.locateAtomAtCorner(Atom)
                             print('Flagging that atom is at corner...', Cell.atomAtCorner)
                             print('Now refine at midpoint with second kind (one child will get first kind)')
-                            xdiv = Cell.xmid
-                            ydiv = Cell.ymid
-                            zdiv = Cell.zmid
+                            if xdiv==None:
+                                xdiv = Cell.xmid
+                            if ydiv==None:
+                                ydiv = Cell.ymid
+                            if zdiv==None:
+                                zdiv = Cell.zmid
                             Cell.divide_secondKind(xdiv, ydiv, zdiv)
                             
                 
@@ -526,12 +704,6 @@ class Tree(object):
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
 #                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
                 Cell.divideIfAspectRatioExceeds(aspectRatioTolerance)
-                    
-    
-
-
-
-            
       
     def initializeOrbitalsRandomly(self,targetOrbital=None):
         timer = Timer()
@@ -563,9 +735,9 @@ class Tree(object):
         timer = Timer()
         timer.start()
         if targetOrbital==None:
-            print('Initializing all orbitals randomly...')
+            print('Initializing all orbitals randomly...')  
             for _,cell in self.masterList:
-                if cell.leaf==True:
+                if cell.leaf==True: 
                     for i,j,k in cell.PxByPyByPz:
                         for m in range(self.nOrbitals):
                             gp = cell.gridpoints[i,j,k] 
@@ -1276,7 +1448,7 @@ class Tree(object):
                     xdiv = (Cell.xmax + Cell.xmin)/2   
                     ydiv = (Cell.ymax + Cell.ymin)/2   
                     zdiv = (Cell.zmax + Cell.zmin)/2   
-                    Cell.divide_secondKind(xdiv, ydiv, zdiv, printNumberOfCells)
+                    Cell.divide_firstKind(xdiv, ydiv, zdiv, printNumberOfCells)
 
 #                     for i,j,k in TwoByTwoByTwo:  # what if there aren't 8 children?
                     (ii,jj,kk) = np.shape(Cell.children)
@@ -1323,7 +1495,7 @@ class Tree(object):
 
         self.countCellsAtEachDepth()
             
-        self.initialDivideBasedOnNuclei(self.coordinateFile)
+        self.finalDivideBasedOnNuclei(self.coordinateFile)
 #         self.zeroWeightsBasedOnNuclei(self.coordinateFile)
 #         self.maxDepthAtAtoms=100
         self.computeNuclearNuclearEnergy()
