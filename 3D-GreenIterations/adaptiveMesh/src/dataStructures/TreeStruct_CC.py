@@ -138,7 +138,7 @@ class Tree(object):
             for j in range(self.py):
                 for k in range(self.pz):
 #         for i, j, k in self.PxByPyByPz:
-                    gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k], self.gaugeShift, self.atoms,initPotential=False)
+                    gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k], self.gaugeShift, self.atoms, self.nOrbitals, initPotential=False)
         
         # generate root cell from the gridpoint objects  
         self.root = Cell( 'second', self.xmin, self.xmax, self.px, 
@@ -852,7 +852,11 @@ class Tree(object):
 #         self.atoms[1].nAtomicOrbitals = 2
 #         self.nOrbitals = 7
         
-
+#         print('Initializing gridpoint.phi')
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 for i,j,k in cell.PxByPyByPz:
+#                     cell.gridpoints[i,j,k].phi = np.zeros(self.nOrbitals)
     
         for atom in self.atoms:
             if onlyFillOne == True:
@@ -1286,8 +1290,10 @@ class Tree(object):
          
         
         print('Number of gridpoints: ', self.numberOfGridpoints)
-
-#         self.computeDerivativeMatrices()
+        
+#         if gradientFree
+        print("Computing derivative matrices (for Laplacian and Gradient Eigenvalue Updates).")
+        self.computeDerivativeMatrices()
 #         self.initializeDensityFromAtomicData()
 
         self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
@@ -1547,7 +1553,8 @@ class Tree(object):
         
         print('Number of gridpoints: ', self.numberOfGridpoints)
 
-#         self.computeDerivativeMatrices()
+        print("Computing derivative matrices (for Laplacian and Gradient Eigenvalue Updates).")
+        self.computeDerivativeMatrices()
 #         self.initializeDensityFromAtomicData()
 
         self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
@@ -1555,18 +1562,18 @@ class Tree(object):
         ### INITIALIZE ORBTIALS AND DENSITY ####
                 # Only need to do this if wavefunctions aren't set during adaptive refinement
         # 
-#         if restart==False:
-#             if initializationType=='atomic':
-#                 if onlyFillOne == True:
-#                     self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
-#                 else:
-#                     self.initializeOrbitalsFromAtomicDataExternally()
-#             elif initializationType=='random':
-#                 self.initializeOrbitalsRandomly()
-#             elif initializationType=='exponential':
-#                 self.initializeOrbitalsToDecayingExponential()
-#         else:
-#             print('Not initializing wavefunctions because using a restart file.')
+        if restart==False:
+            if initializationType=='atomic':
+                if onlyFillOne == True:
+                    self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
+                else:
+                    self.initializeOrbitalsFromAtomicDataExternally()
+            elif initializationType=='random':
+                self.initializeOrbitalsRandomly()
+            elif initializationType=='exponential':
+                self.initializeOrbitalsToDecayingExponential()
+        else:
+            print('Not initializing wavefunctions because using a restart file.')
         
         
 #         self.findNearestGridpointToEachAtom()

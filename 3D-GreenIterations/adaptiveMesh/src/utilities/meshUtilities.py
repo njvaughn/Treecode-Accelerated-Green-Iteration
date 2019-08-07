@@ -112,9 +112,9 @@ def phaniMeshDensity(A, N,eta,k,r):
 def computeCoefficicents(f):
     (px,py,pz) = np.shape(f)
     print(px,py,pz)
-    x = ChebyshevPoints(-1, 1, px)
-    y = ChebyshevPoints(-1, 1, py)
-    z = ChebyshevPoints(-1, 1, pz)
+    x = ChebyshevPointsFirstKind(-1, 1, px)
+    y = ChebyshevPointsFirstKind(-1, 1, py)
+    z = ChebyshevPointsFirstKind(-1, 1, pz)
     
     coefficients = np.zeros_like(f)
     
@@ -161,9 +161,9 @@ def sumChebyshevCoefficicentsGreaterThanOrderQ(f,q):
 #     print('\n q = ', q, '\n')
     (px,py,pz) = np.shape(f)
 #     print(px,py,pz)
-    x = ChebyshevPoints(-1, 1, px)
-    y = ChebyshevPoints(-1, 1, py)
-    z = ChebyshevPoints(-1, 1, pz)
+    x = ChebyshevPointsFirstKind(-1, 1, px)
+    y = ChebyshevPointsFirstKind(-1, 1, py)
+    z = ChebyshevPointsFirstKind(-1, 1, pz)
     
     coefficients = np.zeros_like(f)
     
@@ -219,9 +219,9 @@ def sumChebyshevCoefficicentsEachGreaterThanOrderQ(f,q):
 #     print('\n q = ', q, '\n')
     (px,py,pz) = np.shape(f)
 #     print(px,py,pz)
-    x = ChebyshevPoints(-1, 1, px)
-    y = ChebyshevPoints(-1, 1, py)
-    z = ChebyshevPoints(-1, 1, pz)
+    x = ChebyshevPointsFirstKind(-1, 1, px)
+    y = ChebyshevPointsFirstKind(-1, 1, py)
+    z = ChebyshevPointsFirstKind(-1, 1, pz)
     
     coefficients = np.zeros_like(f)
     
@@ -278,9 +278,9 @@ def sumChebyshevCoefficicentsAnyGreaterThanOrderQ(f,q):
 #     print('\n q = ', q, '\n')
     (px,py,pz) = np.shape(f)
 #     print(px,py,pz)
-    x = ChebyshevPoints(-1, 1, px)
-    y = ChebyshevPoints(-1, 1, py)
-    z = ChebyshevPoints(-1, 1, pz)
+    x = ChebyshevPointsFirstKind(-1, 1, px)
+    y = ChebyshevPointsFirstKind(-1, 1, py)
+    z = ChebyshevPointsFirstKind(-1, 1, pz)
     
     coefficients = np.zeros_like(f)
     
@@ -329,9 +329,9 @@ def sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(f,q):
 #     print('\n q = ', q, '\n')
     (px,py,pz) = np.shape(f)
 #     print(px,py,pz)
-    x = ChebyshevPoints(-1, 1, px)
-    y = ChebyshevPoints(-1, 1, py)
-    z = ChebyshevPoints(-1, 1, pz)
+    x = ChebyshevPointsFirstKind(-1, 1, px)
+    y = ChebyshevPointsFirstKind(-1, 1, py)
+    z = ChebyshevPointsFirstKind(-1, 1, pz)
     
     coefficients = np.zeros_like(f)
     
@@ -489,24 +489,26 @@ def Tprime(n,x):
     output = np.empty_like(x)
     for i in range(output.size):
         if x[i] == 1:
+            print('x[i] == 1')
             output[i] = n**2
         elif x[i] == -1:
+            print('x[i] == -1')
             output[i] = (-1)**(n+1) * n**2
         else:
             output[i] = n*sin( n*arccos(x[i]) ) / sqrt(1-x[i]**2)
     return output
 
 def computeDerivativeMatrix(xlow, xhigh, N):
-    Lambda = np.ones((N,N))
-    for i in range(N):
-        for j in range(N):
+    Lambda = np.ones((N+1,N+1))
+    for i in range(N+1):
+        for j in range(N+1):
             j_shift = j+1/2
-            Lambda[i,j] = 2/N * cos(i*j_shift*pi/N)
+            Lambda[i,j] = 2/(N+1) * cos(i*j_shift*pi/(N+1))
                 
-    x = ChebyshevPoints(1,-1,N)
-    Tp = np.zeros((N,N))
+    x = ChebyshevPointsFirstKind(1,-1,N)
+    Tp = np.zeros((N+1,N+1))
 #     for i in range(N+1):
-    for j in range(N):
+    for j in range(N+1):
         Tp[:,j] = Tprime(j,x)
     D = 2/(xhigh - xlow) * np.dot(Tp,Lambda)
     return D
@@ -535,7 +537,7 @@ def ChebDerivative(f,Dopen):
 #                 j_shift = j+1/2
 #                 Lambda[i,j] = 2/N * cos(i*j_shift*pi/N)
 #                     
-#         x = ChebyshevPoints(1,-1,N)
+#         x = ChebyshevPointsFirstKind(1,-1,N)
 #         Tp = np.zeros((N,N))
 #     #     for i in range(N+1):
 #         for j in range(N):
@@ -549,8 +551,8 @@ def ChebGradient3D(DopenX,DopenY,DopenZ,N,F):
     DFDX = np.zeros_like(F)
     DFDY = np.zeros_like(F)
     DFDZ = np.zeros_like(F)
-    for i in range(N):  # assumes Nx=Ny=Nz
-        for j in range(N):
+    for i in range(N+1):  # assumes Nx=Ny=Nz
+        for j in range(N+1):
             DFDX[:,i,j] = -np.dot(DopenX,F[:,i,j]) #ChebDerivative(F[:,i,j],DopenX)
             DFDY[i,:,j] = -np.dot(DopenY,F[i,:,j]) #ChebDerivative(F[i,:,j],DopenY)
             DFDZ[i,j,:] = -np.dot(DopenZ,F[i,j,:]) #ChebDerivative(F[i,j,:],DopenZ)
@@ -734,8 +736,8 @@ if __name__=="__main__":
     
     wf = unscaledWeightsFirstKind(nx)
     ws = unscaledWeightsSecondKind(nx)
-#     y = ChebyshevPoints(-1, 0, ny)
-#     z = ChebyshevPoints(-1, 0, nz)
+#     y = ChebyshevPointsFirstKind(-1, 0, ny)
+#     z = ChebyshevPointsFirstKind(-1, 0, nz)
     print(xf)
     print(xs)
     print()
@@ -796,9 +798,9 @@ if __name__=="__main__":
 
 
 #     nx = ny = nz = 8
-#     x = ChebyshevPoints(-1, 0, nx)
-#     y = ChebyshevPoints(-1, 0, ny)
-#     z = ChebyshevPoints(-1, 0, nz)
+#     x = ChebyshevPointsFirstKind(-1, 0, nx)
+#     y = ChebyshevPointsFirstKind(-1, 0, ny)
+#     z = ChebyshevPointsFirstKind(-1, 0, nz)
 # #     print(x)
 # #     x = mapToMinusOneToOne(-2,1,x)
 # #     print(x)
@@ -822,9 +824,9 @@ if __name__=="__main__":
 #     # reconstruct f from coefficients
 #  
 #     g = np.zeros_like(f)
-#     x = ChebyshevPoints(-1, 1, nx)
-#     y = ChebyshevPoints(-1, 1, ny)
-#     z = ChebyshevPoints(-1, 1, nz)
+#     x = ChebyshevPointsFirstKind(-1, 1, nx)
+#     y = ChebyshevPointsFirstKind(-1, 1, ny)
+#     z = ChebyshevPointsFirstKind(-1, 1, nz)
 #     for i in range(nx):
 #         for j in range(ny):
 #             for k in range(nz):
@@ -912,9 +914,9 @@ if __name__=="__main__":
 #      
 #     for ii in range(8):
 #         print('ii = ', ii)
-#         x = ChebyshevPoints(0, 1/(2**ii), nx)
-#         y = ChebyshevPoints(0, 1/(2**ii), ny)
-#         z = ChebyshevPoints(0, 1/(2**ii), nz)
+#         x = ChebyshevPointsFirstKind(0, 1/(2**ii), nx)
+#         y = ChebyshevPointsFirstKind(0, 1/(2**ii), ny)
+#         z = ChebyshevPointsFirstKind(0, 1/(2**ii), nz)
 #         f = np.zeros((nx,ny,nz))
 #          
 #         for i in range(nx):
@@ -1014,7 +1016,7 @@ if __name__=="__main__":
 # #     plt.legend()
 # #     plt.show()
 # 
-# #     x = ChebyshevPoints(-1, 1, 4)
+# #     x = ChebyshevPointsFirstKind(-1, 1, 4)
 # #     print(x)
 #     Nx = Ny = Nz = 5
 #     xlow = -5

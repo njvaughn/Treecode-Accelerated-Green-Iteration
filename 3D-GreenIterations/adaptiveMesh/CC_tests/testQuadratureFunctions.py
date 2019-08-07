@@ -26,60 +26,61 @@ class TestQuadratureFunctions(unittest.TestCase):
         self.py = self.order
         self.pz = self.order
         
-        xvec = ChebyshevPoints(self.xmin,self.xmax,self.px)
-        yvec = ChebyshevPoints(self.ymin,self.ymax,self.py)
-        zvec = ChebyshevPoints(self.zmin,self.zmax,self.pz)
+        xvec = ChebyshevPointsFirstKind(self.xmin,self.xmax,self.px)
+        yvec = ChebyshevPointsFirstKind(self.ymin,self.ymax,self.py)
+        zvec = ChebyshevPointsFirstKind(self.zmin,self.zmax,self.pz)
         gridpoints = np.empty((self.px,self.py,self.pz),dtype=object)
 
         PxByPybyPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
-        for i, j, k in PxByPybyPz:
-            gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
+#         for i, j, k in PxByPybyPz:
+#             gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k])
         
 
 
 
     def testWeightVector(self):
-        W = unscaledWeights(5)
-        w1 = weights(-1,2,5)
-        w2 = weights(-1,2,5,w=W)
+        W = unscaledWeightsFirstKind(5)
+        w1 = weightsFirstKind(-1,2,5)
+        w2 = weightsFirstKind(-1,2,5,w=W)
         self.assertTrue( np.alltrue(w1 == w2) , "Weights not equal")
         self.assertAlmostEqual(np.sum(w1),(2+1),14, "Weights do not sum to interval length")
     
     def testWeightMatrix(self):
-        W = unscaledWeights(5)
-        w3 = weights3D(-1, 1, 5, -1, 1, 5, -1, 1, 5, W)
-        self.assertEqual(np.shape(w3), (5,5,5), "3D weight matrix not right shape.")
+        W = unscaledWeightsFirstKind(5)
+        w3 = weights3DFirstKind(-1, 1, 5, -1, 1, 5, -1, 1, 5, W)
+        self.assertEqual(np.shape(w3), (6,6,6), "3D weight matrix not right shape.")
         
     def testOpenChebyshevPoints(self):
-        x = ChebyshevPoints(-1, 1, 5)
-        endpoints = np.linspace(np.pi,0,5+1)
+        x = ChebyshevPointsFirstKind(-1, 1, 5)
+        endpoints = np.linspace(np.pi,0,5+2)
         theta = (endpoints[1:] + endpoints[:-1])/2
         self.assertTrue( np.allclose( theta, np.arccos(x), rtol=1.e-12, atol=1.e-12,),
                          "arccos(x) not almost equal to theta" )
         self.assertGreater(x[0], -1, "Left endpoint not open")
         self.assertLess(x[-1], 1, "Right endpoint not open")
-        self.assertEqual(len(x), 5, "x not correct length")
+        self.assertEqual(len(x), 6, "x not correct length")
         
     def testIntegration(self):
         p = 5
-        xvec = ChebyshevPoints(0,1,p)
-        yvec = ChebyshevPoints(0,1,p)
-        zvec = ChebyshevPoints(0,1,p)
-        W = unscaledWeights(p)
+        xvec = ChebyshevPointsFirstKind(0,1,p)
+        yvec = ChebyshevPointsFirstKind(0,1,p)
+        zvec = ChebyshevPointsFirstKind(0,1,p)
+        W = unscaledWeightsFirstKind(p)
         
         xm,ym,zm = np.meshgrid(xvec,yvec,zvec)
         fm = xm**2 + ym**3 + zm**4
-        w = weights3D(0, 1, p, 0, 1, p, 0, 1, p, W)
+        w = weights3DFirstKind(0, 1, p, 0, 1, p, 0, 1, p, W)
         I_cc = np.sum(fm*w)
         I_anal = 1/3+1/4+1/5
         self.assertAlmostEqual(I_cc, I_anal, 14, "Clenshaw-Curtis didn't integrate 3D polynomial accurately.")
         
     def testChebGradient3D(self):
-        p = 4
-        xvec = ChebyshevPoints(0,0.1,p)
-        yvec = ChebyshevPoints(0,0.1,p)
-        zvec = ChebyshevPoints(0,0.1,p)
-        W = unscaledWeights(p)
+        print('Testing Cheb Gradients...')
+        p = 3
+        xvec = ChebyshevPointsFirstKind(0,0.1,p)
+        yvec = ChebyshevPointsFirstKind(0,0.1,p)
+        zvec = ChebyshevPointsFirstKind(0,0.1,p)
+        W = unscaledWeightsFirstKind(p)
         
         xm,ym,zm = np.meshgrid(xvec,yvec,zvec, indexing='ij')
 #         f = xm**2 + ym**3 + zm**5
@@ -93,7 +94,7 @@ class TestQuadratureFunctions(unittest.TestCase):
 #                 for k in range(p):
 #                     f[i,j,k] = xvec[i]**2 + yvec[j]**3 + zvec[k]**4
 #         print(f)          
-        w = weights3D(0,0.1, p, 0,0.1, p, 0,0.1, p, W)
+        w = weights3DFirstKind(0,0.1, p, 0,0.1, p, 0,0.1, p, W)
         
 #         xgrad = 2*xm**1 * ym**3 * zm**4
 #         ygrad = 3*xm**2 * ym**2 * zm**4
@@ -106,8 +107,12 @@ class TestQuadratureFunctions(unittest.TestCase):
         ygrad = -2*f
         zgrad = -5*f
 
+        DopenX = computeDerivativeMatrix(0,0.1,p)
+        DopenY = computeDerivativeMatrix(0,0.1,p)
+        DopenZ = computeDerivativeMatrix(0,0.1,p)
+#         ccGrad = ChebGradient3D(0,0.1,0,0.1,0,0.1, p, f)
+        ccGrad = ChebGradient3D(DopenX,DopenY,DopenZ, p, f)
         
-        ccGrad = ChebGradient3D(0,0.1,0,0.1,0,0.1, p, f)
 #         print('ccGrad[0]')
 #         print(ccGrad[0])
 #         print()
@@ -120,7 +125,13 @@ class TestQuadratureFunctions(unittest.TestCase):
 #         print('xgrad')
 #         print(xgrad)
         
+#         print('CC Gradient_y')
+#         print(ccGrad[1])
+#         print()
+#         print("Actualy gradient_y")
 #         print(ygrad)
+
+        print('Errors...')
         print(np.max(abs(xgrad-ccGrad[0])))
         print(np.max(abs(ygrad-ccGrad[1])))
         print(np.max(abs(zgrad-ccGrad[2])))
@@ -132,10 +143,10 @@ class TestQuadratureFunctions(unittest.TestCase):
     
     def testIntegratingGradient(self):
         p = 4
-        xvec = ChebyshevPoints(0,0.1,p)
-        yvec = ChebyshevPoints(0,0.1,p)
-        zvec = ChebyshevPoints(0,0.1,p)
-        W = unscaledWeights(p)
+        xvec = ChebyshevPointsFirstKind(0,0.1,p)
+        yvec = ChebyshevPointsFirstKind(0,0.1,p)
+        zvec = ChebyshevPointsFirstKind(0,0.1,p)
+        W = unscaledWeightsFirstKind(p)
         
         
 

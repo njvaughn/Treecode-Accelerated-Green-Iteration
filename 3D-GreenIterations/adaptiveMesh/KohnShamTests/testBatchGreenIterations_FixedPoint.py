@@ -38,6 +38,8 @@ from TreeStruct_CC import Tree
 # from hydrogenPotential import trueWavefunction
 
 # ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
+global Norbitals
+
 n=1
 domainSize          = int(sys.argv[n]); n+=1
 minDepth            = int(sys.argv[n]); n+=1
@@ -169,7 +171,7 @@ def setUpTree(onlyFillOne=False):
         nElectrons = 0
         for i in range(len(atomData)):
             nElectrons += atomData[i,3]
-    
+    global nOrbitals
     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
 #     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.  
                                             # If the final orbital is unoccupied, this amount is enough. 
@@ -726,7 +728,7 @@ def greensIteration_FixedPoint(psiIn):
     orbitals[:,m] = np.copy( tempOrbital[:,3] )
     
     
-    tree.printWavefunctionNearEachAtom(m)
+#     tree.printWavefunctionNearEachAtom(m)
         
 #     residualVector = orbitals[:,m] - oldOrbitals[:,m]
     psiOut = np.append(np.copy(orbitals[:,m]), np.copy(tree.orbitalEnergies[m]))
