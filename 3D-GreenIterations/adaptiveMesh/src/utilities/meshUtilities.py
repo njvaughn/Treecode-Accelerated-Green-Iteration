@@ -563,8 +563,8 @@ def ChebLaplacian3D(DopenX,DopenY,DopenZ,N,F):
     D2FDX2 = np.zeros_like(F)
     D2FDY2 = np.zeros_like(F)
     D2FDZ2 = np.zeros_like(F)
-    for i in range(N):  # assumes Nx=Ny=Nz
-        for j in range(N):
+    for i in range(N+1):  # assumes Nx=Ny=Nz
+        for j in range(N+1):
             temp = -np.dot(DopenX,F[:,i,j])
             D2FDX2[:,i,j] = -np.dot(DopenX,temp) #ChebDerivative(F[:,i,j],DopenX)
             temp = -np.dot(DopenY,F[i,:,j])

@@ -131,7 +131,7 @@ class TestQuadratureFunctions(unittest.TestCase):
 #         print("Actualy gradient_y")
 #         print(ygrad)
 
-        print('Errors...')
+        print('Errors...') 
         print(np.max(abs(xgrad-ccGrad[0])))
         print(np.max(abs(ygrad-ccGrad[1])))
         print(np.max(abs(zgrad-ccGrad[2])))
