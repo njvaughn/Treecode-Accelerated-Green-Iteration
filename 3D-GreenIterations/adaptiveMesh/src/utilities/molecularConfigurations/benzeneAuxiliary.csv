@@ -1,12 +1,12 @@
 ../src/utilities/molecularConfigurations/benzene_rotated.csv
 ../src/utilities/molecularConfigurations/benzeneReferenceEigenvalues.csv
 /home/njvaughn/results_CO/results.csv
- -1.3426386757791246e+02				 # Band energy 
+-1.3089648099622937e+02				 # Band energy 
  0.0				 # Kinetic energy 
- -2.9942603449328043e+01				 # Exchange energy 
- -2.6706730815123834e+00				 # Correlation Energy 
- 312.915135214420    # Hartree Energy
--2.3017676506737371e+02    # Total Energy 
+-2.9818175733984805e+01				 # Exchange energy 
+-2.6630470963399251e+00				 # Correlation Energy 
+-4.2612594639172858e+02 # Electrostatic
+-2.3018855884130636e+02
 
 
 

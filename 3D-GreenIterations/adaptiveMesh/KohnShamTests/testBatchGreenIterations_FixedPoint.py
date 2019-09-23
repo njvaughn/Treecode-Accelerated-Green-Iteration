@@ -605,10 +605,12 @@ def greensIteration_FixedPoint(psiIn):
                     potentialType=3
                     kappa = k
                     startTime = time.time()
+                    numDevices=4
+                    numThreads=4
                     phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                    targetX, targetY, targetZ, targetValue, 
                                                                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                                   potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
+                                                                   potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                     convTime=time.time()-startTime
                     print('Convolution time: ', convTime)
                     tree.timePerConvolution = convTime
@@ -1006,10 +1008,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     
                 potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
 #                 alpha = gaussianAlpha
+                numDevices=4
+                numThreads=4
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                    
                 if potentialType==2:
                     V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
@@ -1048,10 +1052,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                 print('Copy time before calling treecode: ', copytime)
                 start = time.time()
                 potentialType=2 
+                numDevices=4
+                numThreads=4
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                 print('Convolution time: ', time.time()-start)
                 
             else:
@@ -1233,7 +1239,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
             greenIterationsCount=1
 
             resNorm=1
-            while resNorm>1e-3:
+            while resNorm>1e-2:
 #             for njv in range(10):
                 targets = tree.extractPhi(m)
                 sources = tree.extractPhi(m)
@@ -1505,10 +1511,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                 start = time.time()
                 potentialType=2 
 #                 alpha = gaussianAlpha
+                numThreads=4
+                numDevices=4
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                 print('Convolution time: ', time.time()-start)
                 
         elif GPUpresent==False:
@@ -1542,10 +1550,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 #                 maxParNode = 500
 #                 batchSize = 500
 #                 alphasq = gaussianAlpha**2
+#                 numDevices=4
+#                 numThreads=4
 #                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
 #                                                                targetX, targetY, targetZ, targetValue, 
 #                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-#                                                                potentialType, alphasq, order, theta, maxParNode, batchSize)
+#                                                                potentialType, alphasq, order, theta, maxParNode, batchSize, numDevices, numThreads)
 #                 if potentialType==2:
 #                     V_hartreeNew += density_targets[:,3]* (4*np.pi) / alphasq/2
         

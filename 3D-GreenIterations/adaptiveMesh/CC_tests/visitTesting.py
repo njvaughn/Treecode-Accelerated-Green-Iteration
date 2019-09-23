@@ -61,9 +61,26 @@ x[15], y[15], z[15] = 2.0, 1.0, 2.0
 
 
 # Define connectivity or vertices that belongs to each element
+vertices={}
+XV=[]
+YV=[]
+ZV=[]
+vertex_count=0
 conn = np.zeros(16)
 for i in range(16):
-    conn[i] = i
+    key = 'x%+1.10ey%+1.10ez%+1.10e' %(x[i],y[i],z[i])
+    if key in vertices:
+#         duplicates+=1
+        print('Found duplicate at: ', x[i], y[i], z[i])
+        conn[i] = vertices[key]
+    else:
+        vertices[key] = vertex_count
+        conn[i] = vertex_count
+        vertex_count+=1
+        XV.append(x[i])
+        YV.append(y[i])
+        ZV.append(z[i])
+    
 
 # conn[0] = [1,2,3]
 # conn[1] = [0,5,6]
@@ -94,11 +111,18 @@ ctype[1] = VtkVoxel.tid
 cell_data = {'density':np.array([1,2]), 'volume':np.array([4,16])}
 
 point_data = {'p_density':np.linspace(1,16)}
+
+for i in range(16):
+    point_data['p_density'][i] = 1 / (0.1 + np.sqrt( x[i]*x[i] + y[i]*y[i] + z[i]*z[i]))
 # point_data = {'p_density':np.append(np.ones(8),2*np.ones(8))}
  
 savefile="/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/unstructured"
+# unstructuredGridToVTK(savefile, 
+#                       x, y, z, connectivity = conn, offsets = offset, cell_types = ctype, 
+#                       cellData = cell_data, pointData = point_data)
+
 unstructuredGridToVTK(savefile, 
-                      x, y, z, connectivity = conn, offsets = offset, cell_types = ctype, 
+                      np.array(XV), np.array(YV), np.array(ZV), connectivity = conn, offsets = offset, cell_types = ctype, 
                       cellData = cell_data, pointData = point_data)
 
 print('Done.  Saved to ', savefile)

@@ -9,10 +9,11 @@ SINGSUBT=1
 
 SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
 #INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
-INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
-#INPUTFILE='utilities/molecularConfigurations/lithiumAuxiliary.csv'
+#INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='utilities/molecularConfigurations/lithiumAuxiliary.csv'   
 #INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
-#INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
+INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
+#INPUTFILE='utilities/molecularConfigurations/O2Auxiliary.csv' 
 #INPUTFILE='utilities/molecularConfigurations/benzeneAuxiliary.csv'
 
 VTKFILEDIR='None'
@@ -23,8 +24,8 @@ SYMMETRICITERATION='False'
 GPUPRESENT='True'
  
 TREECODE='True'      
-MAXPARNODE=4000
-BATCHSIZE=4000   
+MAXPARNODE=2000
+BATCHSIZE=2000   
  
  
 GAUSSIANALPHA=1.0 
@@ -32,50 +33,55 @@ GAUGESHIFT=-0.5
 
 MESHTYPE='ParentChildrenIntegral'
 #MESHTYPE='LW5'
-RESTART='True'	
+RESTART='False'	
 #SAVEDMESH='Be_PCI_1e-3.npy' 
 #SAVEDMESH='Benzene_1e-7.npy'
 #SAVEDMESH='H2-best-mesh.npy'
 #SAVEDMESH='CO-best-mesh.npy'
+#SAVEDMESH='O2-3e-6.npy'
 SAVEDMESH='None'
 
 ADDITIONALDEPTHATATOMS=0
 
-MIXINGPARAMETER=0.3 
+MIXINGPARAMETER=0.2 
 MIXINGHISTORY=10 
   
-INTRASCFTOLERANCE=1e-6
+INTRASCFTOLERANCE=1e-3
 INTERSCFTOLERANCE=1e-5
      
 #MIXING='Anderson'     
 SMOOTHINGEPS=0.0    
 
-MESHPARAM1=1500
+MESHPARAM1=500
 MESHPARAM2=0
-MESHPARAM3=3e-7
-MESHPARAM4=0   
+MESHPARAM3=1e-7
+MESHPARAM4=0
+BASE=1   
 
-for SINGSUBT in 1 
+for SINGSUBT in 1
 do
-for CELLORDER in 5  
+for CELLORDER in 4  
 do	      
-for BASE in 1 
+for MESHPARAM3 in 3e-6
 do   
-for MAXDEPTH in 20    
+for MAXDEPTH in 20     
 do								  	 				     
 for GRADIENTFREE in 'True'    
 do  
-	for TREECODEORDER in 7  
+	for TREECODEORDER in 8   
 	do         
-		for THETA in 0.7
-		do  
-			#for MIXING in 'Anderson' 'Simple' 'None'		    
+		for THETA in 0.6
+		do   
+			#for MIXING in 'Simple' 'Anderson' 'None'  	     
 			for MIXING in 'Anderson'		    
-			do
+			do 
 
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/restart-testing/Be_${CELLORDER}_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/CarbonMonoxideData/mixing/CO_$MIXING.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/CarbonMonoxideData/singsubt/CO_$SINGSUBT.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/CarbonMonoxideData/forVisit/CO_${MESHPARAM3}.csv"
 
-			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/mixingType_Be_$MIXING.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/O2_gradual_meshParam_${MESHPARAM3}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/CO_gradual_meshParam_${MESHPARAM3}_mixing_${MIXINGPARAMETER}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_testing_async_kernels.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_PCI_meshParam_${MESHPARAM3}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/no_gp_phi_PCI_meshParam_${MESHPARAM3}.csv"

@@ -74,8 +74,11 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, additionalDept
 #     targetsTXT = '../examples/T%ipy.txt' %tree.numberOfGridpoints
     
 #     sourcesTXT = '/Users/nathanvaughn/Documents/GitHub/hybrid-gpu-treecode/examplesOxygenAtom/S%ipy.txt' %tree.numberOfGridpoints
-    sourcesTXT = '/Users/nathanvaughn/Desktop/S%i.txt' %tree.numberOfGridpoints
-    targetsTXT = '/Users/nathanvaughn/Desktop/T%i.txt' %tree.numberOfGridpoints
+#     sourcesTXT = '/Users/nathanvaughn/Desktop/CO_meshes/S%i.txt' %tree.numberOfGridpoints
+#     targetsTXT = '/Users/nathanvaughn/Desktop/CO_meshes/T%i.txt' %tree.numberOfGridpoints
+    
+    sourcesTXT = '/scratch/krasny_fluxg/njvaughn/CO_meshes/S%i.txt' %tree.numberOfGridpoints
+    targetsTXT = '/scratch/krasny_fluxg/njvaughn/CO_meshes/T%i.txt' %tree.numberOfGridpoints
     
     Sources = tree.extractLeavesDensity() 
     Targets = tree.extractLeavesDensity()
@@ -136,7 +139,7 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
     
-    X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
+    X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_connected()
 
     print(XV)
     print(YV)
@@ -167,17 +170,17 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
 #         pointVals["density_p"][i] = np.exp( - r1 )
     
     cellVals = {"density":np.zeros(offset.size)}
-    for i in range(len(offset)):
-        
-#         startIdx = 8*i
-#         xmid = (XV[startIdx] + XV[startIdx+1])/2
-#         ymid = (YV[startIdx] + YV[startIdx+2])/2
-#         zmid = (ZV[startIdx] + ZV[startIdx+4])/2
+#     for i in range(len(offset)):
 #         
-#         r1 = np.sqrt( (xmid-x1)**2 + (ymid-y1)**2 + (zmid-z1)**2)
-#         r2 = np.sqrt( (xmid-x2)**2 + (ymid-y2)**2 + (zmid-z2)**2)
-#         
-        cellVals["density"][i] = max( RHO[centerIdx[i]], 1e-16) 
+# #         startIdx = 8*i
+# #         xmid = (XV[startIdx] + XV[startIdx+1])/2
+# #         ymid = (YV[startIdx] + YV[startIdx+2])/2
+# #         zmid = (ZV[startIdx] + ZV[startIdx+4])/2
+# #         
+# #         r1 = np.sqrt( (xmid-x1)**2 + (ymid-y1)**2 + (zmid-z1)**2)
+# #         r2 = np.sqrt( (xmid-x2)**2 + (ymid-y2)**2 + (zmid-z2)**2)
+# #         
+#         cellVals["density"][i] = max( RHO[centerIdx[i]], 1e-16) 
         
         
     
@@ -837,12 +840,12 @@ if __name__ == "__main__":
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/benzene',
 #                         savedMesh='') 
     
-    tree = exportMeshForParaview(domain=20,order=5,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
-                        divideParameter1=500, divideParameter2=0, divideParameter3=1e-2, divideParameter4=4,
-                        smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
-                        outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium',
-                        savedMesh='') 
+#     tree = exportMeshForParaview(domain=20,order=4,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='LW5', 
+#                         divideParameter1=500, divideParameter2=0, divideParameter3=1e-2, divideParameter4=4,
+#                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv', 
+#                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium_order4',
+#                         savedMesh='') 
     
      
 #                         savedMesh='benzene_1e-6_rotated.npy')        
@@ -871,22 +874,32 @@ if __name__ == "__main__":
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/benzene/LW5')
 #     
 
-
-#     exportMeshForTreecodeTesting(domain=30,order=5,
+## THIS (MAYBE) USED TO GENERATE MESH FOR p-REFINEMENT
+#     exportMeshForTreecodeTesting(domain=20,order=4,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-3, divideParameter4=0,
+#                         inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+      
+#     exportMeshForTreecodeTesting(domain=20,order=4,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
 #                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-5, divideParameter4=0,
-#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
-#     
-#     exportMeshForTreecodeTesting(domain=30,order=5,
+#                         inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+#       
+#       
+#     exportMeshForTreecodeTesting(domain=20,order=4,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
 #                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-6, divideParameter4=0,
-#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
-#     
-#     exportMeshForTreecodeTesting(domain=30,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-#                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-7, divideParameter4=0,
-#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
-    
+#                         inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+# #       
+
+## THIS USED TO GENERATE MESH FOR p-REFINEMENT
+    exportMeshForTreecodeTesting(domain=20,order=4,
+                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+                        divideParameter1=0, divideParameter2=0, divideParameter3=3e-7, divideParameter4=0,
+                        inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+#      
+
+
 # for dp3 in [1e-4, 1e-5, 1e-6, 1e-7, 1e-8]:
 # # for dp3 in [1e-2, 1e-3, 3e-8]:
 #     tree = exportMeshForParaview(domain=30,order=5,

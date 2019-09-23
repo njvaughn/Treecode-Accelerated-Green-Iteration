@@ -5,6 +5,8 @@ Created on Jul 25, 2018
 '''
 import unittest
 import numpy as np
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 import os

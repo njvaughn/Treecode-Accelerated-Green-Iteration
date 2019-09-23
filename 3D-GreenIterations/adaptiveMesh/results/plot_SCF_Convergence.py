@@ -80,9 +80,10 @@ import numpy as np
 # file='ds_gaugeShift0p25_mindepth3_tcOrder5_theta0.8_LW5_500_1random_mixingHistory10_SCF_1493000.csv'
 
 # ## Carbon Monoxide PCI Testing
-resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/'
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/ParentChildrenIntegral_CO/'
+
 # # file='CO_ds_mixingHistory10_mixingParam0.5_order5_1_1e6_1e6_3e-6_SCF_367625.csv' 
-file='CO_ds_mixingHistory10_mixingParam0.5_order5_1_1e6_1e6_1e-7_SCF_928500.csv'
+# file='CO_ds_mixingHistory10_mixingParam0.5_order5_1_1e6_1e6_1e-7_SCF_928500.csv'
 # file='CO_10orbitals_mixingHistory10_mixingParam0.5_order5_PCI_3e-7_SCF_661625.csv'
 
 # # parent-child integral
@@ -104,6 +105,14 @@ file='CO_ds_mixingHistory10_mixingParam0.5_order5_1_1e6_1e6_1e-7_SCF_928500.csv'
 # # file='scipyAnderson_looser_gaugeShift-0.5_tcOrder8_theta0.7_PCI_1e-06_GREEN_1416000.csv'
 # file='testing_Be_mixingM5_ds_LW5_500_SCF_375500.csv'
 
+
+
+
+# resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/noTreeTesting/'
+# file='CO_gradual_meshParam_3e-6_mixing_0.2_SCF_370250.csv'
+
+resultsDir='/Users/nathanvaughn/Documents/synchronizedDataFiles/paperData/best-times/'
+file='Benzene_init25_mesh_4_3e-6_TC_8_0.6_SCF_2056000.csv'
 
 df = pd.read_csv(resultsDir+file, header=0)   
 # df = df.drop(df.index[14]) 
@@ -175,13 +184,15 @@ def plotSCFconvergence(df, system = 'H2'):
 #         dftfeElectrostaticEnergy = -2.1138290579726365e+02 # Electrostatic Energy
 
         ### SOME OF THESE VALUES COMING FROM BIKASH'S NWChem RUN
-        dftfeBandEnergy = -130.8981224  
+#         dftfeBandEnergy = -130.8981224
+        dftfeBandEnergy = -130.89648099622937  
         dftfeKineticEnergy = 0 # Kinetic energy 
         dftfeExchangeEnergy = 0 # Exchange energy 
         dftfeCorrelationEnergy = 0 # Correlation Energy 
         dftfeElectrostaticEnergy = 0 # Electrostatic Energy
         dftfeHartreeEnergy = 312.915135214420
-        dftfeTotalEnergy = -230.188349460044 # Total Energy 
+        dftfeTotalEnergy = -230.188349460044 # Total Energy
+#         dftfeTotalEnergy = -230.18855884130636 
         
         nAtoms=12
 
@@ -252,10 +263,10 @@ def plotSCFconvergence(df, system = 'H2'):
 
 if __name__=="__main__":
     
-    plotSCFconvergence(df, system="carbonMonoxide")     
+#     plotSCFconvergence(df, system="carbonMonoxide")     
 #     plotSCFconvergence(df, system="Beryllium")    
 #     plotSCFconvergence(df, system="Oxygen")    
-#     plotSCFconvergence(df, system="Benzene")    
+    plotSCFconvergence(df, system="Benzene")    
 
 
 

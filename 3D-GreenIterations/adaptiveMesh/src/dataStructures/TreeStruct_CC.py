@@ -306,7 +306,7 @@ class Tree(object):
                     zRatio = np.max([Cell.zmax-Atom.z, Atom.z-Cell.zmin] ) / np.min([Cell.zmax-Atom.z, Atom.z-Cell.zmin] )
                     
                     if xRatio == np.inf: xRatio = 0.0 
-                    if yRatio == np.inf: yRatio = 0.0 
+                    if yRatio == np.inf: yRatio = 0.0  
                     if zRatio == np.inf: zRatio = 0.0 
                     
                     if np.max( [xRatio, yRatio, zRatio]) > 3.0:
@@ -385,7 +385,7 @@ class Tree(object):
                                        
 #                             if xdiv!=None: # then cell was divided at Atom.x
 #                                 for child
-                        else: 
+                        else:  
                             print('Atom is already at corner of cell %s' %(Cell.uniqueID))
 #                             Cell.locateAtomAtCorner(Atom)
 #                             print('Flagging that atom is at corner...', Cell.atomAtCorner)
@@ -428,7 +428,7 @@ class Tree(object):
             print('Searching for cell containing atom ', self.nAtoms)
             recursiveDivideByAtom(self,atom,self.root)
             
-        aspectRatioTolerance = 4.0
+        aspectRatioTolerance = 3.0
         recursiveAspectRatioCheck(self,self.root)
 
             
@@ -473,9 +473,9 @@ class Tree(object):
                 if ( (Atom.x <= Cell.xmax) and (Atom.x >= Cell.xmin) and 
                      (Atom.y <= Cell.ymax) and (Atom.y >= Cell.ymin) and
                      (Atom.z <= Cell.zmax) and (Atom.z >= Cell.zmin) ):
+                     
                     
-                    
-                    ## Check if aspect ratio is going to be bad
+                    ## Check if aspect ratio is going to be bad   
                     xRatio = np.max([Cell.xmax-Atom.x, Atom.x-Cell.xmin] ) / np.min([Cell.xmax-Atom.x, Atom.x-Cell.xmin] )
                     yRatio = np.max([Cell.ymax-Atom.y, Atom.y-Cell.ymin] ) / np.min([Cell.ymax-Atom.y,Atom.y-Cell.ymin] )
                     zRatio = np.max([Cell.zmax-Atom.z, Atom.z-Cell.zmin] ) / np.min([Cell.zmax-Atom.z, Atom.z-Cell.zmin] )
@@ -484,7 +484,7 @@ class Tree(object):
                     if yRatio == np.inf: yRatio = 0.0 
                     if zRatio == np.inf: zRatio = 0.0 
                     
-                    if np.max( [xRatio, yRatio, zRatio]) > 3.0:
+                    if np.max( [xRatio, yRatio, zRatio]) > 400.0:
                         print('ratio would have been %f if diving at nucleus.' %np.max( [xRatio, yRatio, zRatio]))
 #                         if xRatio>3.0:
 #                             xdiv = 1/3*( 2*Cell.xmid + Atom.x)
@@ -610,7 +610,7 @@ class Tree(object):
             recursiveDivideByAtom(self,atom,self.root)
             
             
-        aspectRatioTolerance = 4.0
+        aspectRatioTolerance = 3.0
         recursiveAspectRatioCheck(self,self.root)
 #        
 #         leafCount = 0
@@ -743,7 +743,7 @@ class Tree(object):
                             gp = cell.gridpoints[i,j,k] 
                             
                             r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
-                            gp.phi[m] = np.exp(-r)
+                            gp.phi[m] = np.exp(-r) * np.sin(m*r)
     #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
                             
         else:
@@ -755,7 +755,7 @@ class Tree(object):
                         gp = cell.gridpoints[i,j,k]
 #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
                         r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
-                        gp.phi[targetOrbital] = np.exp(-0.1*r)
+                        gp.phi[targetOrbital] = np.exp(-0.1*r)* np.sin(targetOrbital*r)
                         
         timer.stop()
         print('Initializing orbitals to decaying exponential inside Tree Structure took %.3f seconds.' %timer.elapsedTime)                       
@@ -2961,9 +2961,101 @@ class Tree(object):
                 
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
-                    X.append( gridpt.x)
-                    Y.append( gridpt.y  )
-                    Z.append( gridpt.z  )
+                    X.append( gridpt.x )
+                    Y.append( gridpt.y )
+                    Z.append( gridpt.z )
+                    W.append( cell.w[i,j,k] )
+                    RHO.append(gridpt.rho)
+#                     WAVEFUNCTIONS.append(gridpt.phi)
+#                     gridpt.x=None
+#                     gridpt.y=None
+#                     gridpt.z=None
+#                     gridpt.rho=None
+#                     gridpt=None
+#                     cell.gridpoints[i,j,k]=None
+#                     cell.w[i,j,k]=None
+#                     del cell.gridpoints[i,j,k]
+#                     cell.gridpoints[i,j,k]=None
+                    
+            # Add all cells.
+#             if cell.leaf == True: 
+#                 ghost=0
+#             else:
+#                 ghost=1
+#             ghostCells = ghostCells + [ghost]
+                XV = XV + [cell.xmin,cell.xmax,cell.xmin,cell.xmax,cell.xmin,cell.xmax,cell.xmin,cell.xmax] # 01010101
+                YV = YV + [cell.ymin,cell.ymin,cell.ymax,cell.ymax,cell.ymin,cell.ymin,cell.ymax,cell.ymax] # 00110011
+                ZV = ZV + [cell.zmin,cell.zmin,cell.zmin,cell.zmin,cell.zmax,cell.zmax,cell.zmax,cell.zmax] # 00001111
+                
+                offset = (cell.px+1)*(cell.py+1)*(cell.pz+1) * leafCount
+                p = cell.px+1
+    #                 quadIdx = quadIdx + [offset+p**0-1, offset+p**1-1, offset + p**0-1 + p*(p-1),offset+ p**1-1 + p*(p-1),
+    #                                  offset+p**0-1+p*p*(p-1),offset+ p**1-1+p*p*(p-1),offset+ p**0-1 + p*(p-1)+p*p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ] 
+#                 quadIdx = quadIdx + [offset+p**0-1, offset+p**1-1, 
+#                                      offset + p**0-1 + p*(p-1),offset+ p**1-1 + p*(p-1),
+#                                      offset+p**0-1+p*p*(p-1),offset+ p**1-1+p*p*(p-1),
+#                                      offset+ p**0-1 + p*(p-1)+p*p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ] 
+                
+                quadIdx = quadIdx + [offset+p**0-1, offset+p**0-1+p*p*(p-1), 
+                                     offset + p**0-1 + p*(p-1),offset+ p**0-1 + p*(p-1)+p*p*(p-1),
+                                     offset+p**1-1,offset+ p**1-1+p*p*(p-1),
+                                     offset+ p**1-1 + p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ]  ## For 8 vertices
+    
+                
+                if p%2==1:
+                    midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2
+                else:
+                    midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2 # this is not right, there is no midpoint for p%2==0.  
+#                 centerIdx = centerIdx + [int(offset+midpointQuadPt)] # for midpoint
+                centerIdx =0
+    
+    
+                
+                if leafCount==1: print(quadIdx)
+                
+    #                 quadIdx = quadIdx + [000, 001, 010, 011, 100, 101, 110, 111 ] 
+                
+                
+                cellCount += 1
+                if cell.leaf == True: leafCount+=1
+        
+#         for _,cell in self.masterList:
+#             if cell.leaf == False:
+#                 for i,j,k in cell.PxByPyByPz:
+#                     cell.gridpoints[i,j,k]=None
+#             del cell
+                
+        return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
+    
+    
+    def extractXYZ_connected(self):
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        X = [] 
+        Y = []
+        Z = []
+        W = []
+        RHO = []
+        
+        XV = []
+        YV = []
+        ZV = []
+        quadIdx = []
+        centerIdx = []
+        ghostCells=[]
+#         WAVEFUNCTIONS = []
+        cellCount=0
+        leafCount=0
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                
+                for i,j,k in cell.PxByPyByPz:
+                    gridpt = cell.gridpoints[i,j,k]
+                    X.append( gridpt.x )
+                    Y.append( gridpt.y )
+                    Z.append( gridpt.z )
                     W.append( cell.w[i,j,k] )
                     RHO.append(gridpt.rho)
 #                     WAVEFUNCTIONS.append(gridpt.phi)
@@ -2978,7 +3070,7 @@ class Tree(object):
 #                     cell.gridpoints[i,j,k]=None
                     
             # Add all cells.
-            if cell.leaf == True: 
+#             if cell.leaf == True: 
 #                 ghost=0
 #             else:
 #                 ghost=1
@@ -2987,14 +3079,14 @@ class Tree(object):
                 YV = YV + [cell.ymin,cell.ymin,cell.ymax,cell.ymax,cell.ymin,cell.ymin,cell.ymax,cell.ymax] # 00110011
                 ZV = ZV + [cell.zmin,cell.zmin,cell.zmin,cell.zmin,cell.zmax,cell.zmax,cell.zmax,cell.zmax] # 00001111
                 
-                offset = cell.px*cell.py*cell.pz * leafCount
-                p = cell.px
+                offset = (cell.px+1)*(cell.py+1)*(cell.pz+1) * leafCount
+                p = cell.px+1
     #                 quadIdx = quadIdx + [offset+p**0-1, offset+p**1-1, offset + p**0-1 + p*(p-1),offset+ p**1-1 + p*(p-1),
     #                                  offset+p**0-1+p*p*(p-1),offset+ p**1-1+p*p*(p-1),offset+ p**0-1 + p*(p-1)+p*p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ] 
-    #                 quadIdx = quadIdx + [offset+p**0-1, offset+p**1-1, 
-    #                                      offset + p**0-1 + p*(p-1),offset+ p**1-1 + p*(p-1),
-    #                                      offset+p**0-1+p*p*(p-1),offset+ p**1-1+p*p*(p-1),
-    #                                      offset+ p**0-1 + p*(p-1)+p*p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ] 
+#                 quadIdx = quadIdx + [offset+p**0-1, offset+p**1-1, 
+#                                      offset + p**0-1 + p*(p-1),offset+ p**1-1 + p*(p-1),
+#                                      offset+p**0-1+p*p*(p-1),offset+ p**1-1+p*p*(p-1),
+#                                      offset+ p**0-1 + p*(p-1)+p*p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ] 
                 
                 quadIdx = quadIdx + [offset+p**0-1, offset+p**0-1+p*p*(p-1), 
                                      offset + p**0-1 + p*(p-1),offset+ p**0-1 + p*(p-1)+p*p*(p-1),
@@ -3006,7 +3098,8 @@ class Tree(object):
                     midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2
                 else:
                     midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2 # this is not right, there is no midpoint for p%2==0.  
-                centerIdx = centerIdx + [int(offset+midpointQuadPt)] # for midpoint
+#                 centerIdx = centerIdx + [int(offset+midpointQuadPt)] # for midpoint
+                centerIdx =0
     
     
                 
@@ -3025,6 +3118,7 @@ class Tree(object):
             del cell
                 
         return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
+    
     
     def extractXYZ_secondKind(self):
         '''

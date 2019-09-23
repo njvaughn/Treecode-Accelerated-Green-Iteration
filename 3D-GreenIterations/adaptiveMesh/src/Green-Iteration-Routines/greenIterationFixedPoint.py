@@ -106,75 +106,79 @@ def greensIteration_FixedPoint_Closure(gi_args):
         print('k = ', k)
     
         phiNew = np.zeros(nPoints)
-        if subtractSingularity==0: 
-            print('Using singularity skipping')
-            gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](targets,sources,phiNew,k) 
-        elif subtractSingularity==1:
-            if Energies['orbitalEnergies'][m] < 10.25**100: 
-                
-                
-                if GPUpresent==False:
-                    startTime=time.time()
-                    potentialType=3
+        
+        if Energies['orbitalEnergies'][m] < 10.25**100: 
+            
+            
+            if GPUpresent==False:
+                startTime=time.time()
+                potentialType=3
+                kappa = k
+                startTime = time.time()
+                numDevices=0
+                numThreads=4
+                phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
+                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
+                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
+                                                               potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+                phiNew /= (4*np.pi)
+                convolutionTime = time.time()-startTime
+                print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+#                     return
+            elif GPUpresent==True:
+                if treecode==False:
+                    startTime = time.time()
+                    if symmetricIteration==False:
+
+                        temp=np.transpose( np.array([X,Y,Z,f,W]) )
+                        if subtractSingularity==0:
+                            print("Using singularity skipping in Greens iteration direct sum.")
+                            gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](temp,temp,phiNew,k) 
+                        else:
+                            gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](temp,temp,phiNew,k) 
+                        convolutionTime = time.time()-startTime
+#                         print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+                    elif symmetricIteration==True:
+                        gpuHelmholtzConvolutionSubractSingularitySymmetric[blocksPerGrid, threadsPerBlock](targets,sources,sqrtV,phiNew,k) 
+                        phiNew *= -1
+                        convolutionTime = time.time()-startTime
+                        print('Using symmetric singularity subtraction.  Convolution time: ', convolutionTime)
+                    convTime=time.time()-startTime
+                    print('Convolution time: ', convTime)
+                    Times['timePerConvolution'] = convTime  
+                    
+                    
+                    
+                elif treecode==True:
+                    
+                    if subtractSingularity==0:
+                        print("Using singularity skipping in Green's iteration.")
+                        potentialType=3
+                    else: potentialType=3
+#                         potentialType=3
                     kappa = k
                     startTime = time.time()
-                    numDevices=0
-                    numThreads=4
+                    numDevices=2
+                    numThreads=2 
                     phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
                                                                    potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
-                    phiNew /= (4*np.pi)
-                    convolutionTime = time.time()-startTime
-                    print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
-#                     return
-                elif GPUpresent==True:
-                    if treecode==False:
-                        startTime = time.time()
-                        if symmetricIteration==False:
-    
-                            temp=np.transpose( np.array([X,Y,Z,f,W]) )
-                            gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](temp,temp,phiNew,k) 
-                            convolutionTime = time.time()-startTime
-                            print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
-                        elif symmetricIteration==True:
-                            gpuHelmholtzConvolutionSubractSingularitySymmetric[blocksPerGrid, threadsPerBlock](targets,sources,sqrtV,phiNew,k) 
-                            phiNew *= -1
-                            convolutionTime = time.time()-startTime
-                            print('Using symmetric singularity subtraction.  Convolution time: ', convolutionTime)
-                        convTime=time.time()-startTime
-                        print('Convolution time: ', convTime)
-                        Times['timePerConvolution'] = convTime
-                        
-                    elif treecode==True:
-                        
-    
-                        potentialType=3
-                        kappa = k
-                        startTime = time.time()
-                        numDevices=4
-                        numThreads=4
-                        phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
-                                                                       np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
-                                                                       np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                                       potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+                
+
+                    if subtractSingularity==1: phiNew /= (4*np.pi)
+                    convTime=time.time()-startTime
+                    print('Convolution time: ', convTime)
+                    Times['timePerConvolution'] = convTime
                     
-    
-                        phiNew /= (4*np.pi)
-                        convTime=time.time()-startTime
-                        print('Convolution time: ', convTime)
-                        Times['timePerConvolution'] = convTime
-                        
-                    
-                    else: 
-                        print('treecode true or false?')
-                        return
-            else:
-                print('Using singularity skipping because energy too close to 0')
-                gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](np.array([X,Y,Z,f,W]),np.array([X,Y,Z,f,W]),phiNew,k)
+                
+                else: 
+                    print('treecode true or false?')
+                    return
         else:
-            print('Invalid option for singularitySubtraction, should be 0 or 1.')
-            return
+            print('Using singularity skipping because energy too close to 0')
+            gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](np.array([X,Y,Z,f,W]),np.array([X,Y,Z,f,W]),phiNew,k)
+        
         
 #         print('Max phiNew: ', np.max(phiNew))
 #         print('Min phiNew: ', np.min(phiNew))
@@ -192,8 +196,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
     
                 deltaE = -np.sum( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew)*W ) 
                 normSqOfPsiNew = np.sum( phiNew**2 * W)
-                deltaE /= (normSqOfPsiNew)
-                print('Norm of psiNew = ', normSqOfPsiNew)
+                deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
+#                 deltaE /= (psiNewNorm)
+                print('NormSq of psiNew = ', normSqOfPsiNew )
+                print('Norm of psiNew = ', psiNewNorm )
                 print('Delta E = ', deltaE)
                 Energies['orbitalEnergies'][m] += deltaE
                 orbitals[:,m] = np.copy(phiNew)
@@ -236,10 +242,15 @@ def greensIteration_FixedPoint_Closure(gi_args):
     
         
         if Energies['orbitalEnergies'][m]>0.0:
+#         if Energies['orbitalEnergies'][m]>Energies['gaugeShift']:
 #             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - np.random.randint(10)
             rand = np.random.rand(1)
-            Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - rand
-            print('Energy eigenvalue was positive, setting to gauge shift - ', rand)
+            Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 3*rand
+            print('Energy eigenvalue was positive, setting to gauge shift - ', 3*rand)
+            
+            if greenIterationsCount%10==0:
+                # Positive energy after 10 iterations..., scramble wavefunction and restart.
+                orbitals[:,m] = np.ones(len(np.copy(orbitals[:,m])))
             
         
     #     tree.printWavefunctionNearEachAtom(m)
@@ -250,10 +261,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         
         
+        print('Max value of wavefunction: ', np.max(np.abs(orbitals[:,m])))
         loc = np.argmax(np.abs(residualVector[:-1]))
-#         print('Largest residual: ', residualVector[loc])
-#         print('Value at that point: ', psiOut[loc])
-#         print('Location of max residual: ', X[loc], Y[loc], Z[loc])
+        print('Largest residual: ', residualVector[loc])
+        print('Value at that point: ', psiOut[loc])
+        print('Location of max residual: ', X[loc], Y[loc], Z[loc])
     #     residualVector = -(psiIn - orbitals[:,m])
     
         newEigenvalue = Energies['orbitalEnergies'][m]
@@ -322,6 +334,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         gi_args['residuals'] = residuals
         gi_args['eigenvalueDiff']=eigenvalueDiff
         gi_args['eigenvalueHistory']=eigenvalueHistory
+        gi_args['eigenvalueDiff'] = np.abs(deltaE)
         
         
         

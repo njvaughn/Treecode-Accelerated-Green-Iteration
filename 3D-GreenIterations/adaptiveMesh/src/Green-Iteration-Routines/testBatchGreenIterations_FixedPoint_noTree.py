@@ -321,24 +321,11 @@ def setUpTree(onlyFillOne=False):
         print('For oxygen atom, nOrbitals = ', nOrbitals)
         
     elif inputFile==srcdir+'utilities/molecularConfigurations/benzeneAuxiliary.csv':
-        nOrbitals=24
+        nOrbitals=27
         occupations = 2*np.ones(nOrbitals)
-        occupations[22]=0 
-        occupations[23]=0
-        occupations[21]=0
+        for i in range(21,nOrbitals):
+            occupations[i]=0 
         
-#         occupations = [2, 2, 2/3 ,2/3 ,2/3, 
-#                        2, 2, 2/3 ,2/3 ,2/3,
-#                        2, 2, 2/3 ,2/3 ,2/3,
-#                        2, 2, 2/3 ,2/3 ,2/3,
-#                        2, 2, 2/3 ,2/3 ,2/3,
-#                        2, 2, 2/3 ,2/3 ,2/3, 
-#                        1,
-#                        1,
-#                        1,
-#                        1,
-#                        1,
-#                        1]
         
     elif inputFile==srcdir+'utilities/molecularConfigurations/O2Auxiliary.csv':
         nOrbitals=10
@@ -379,8 +366,8 @@ def setUpTree(onlyFillOne=False):
  
 #     return 
 #     X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
-#     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
-    X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_secondKind()
+    X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
+#     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_secondKind()
     
 #     r = np.sqrt(X*X + Y*Y + Z*Z)
 # #     RHO_RAND = np.random.rand(len(RHO))
@@ -404,19 +391,30 @@ def setUpTree(onlyFillOne=False):
     print('nPoints: ', nPoints)
     print('nOrbitals: ', nOrbitals)
     
+    ## Compute initial eigenvalues using gradients.
+    orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
+    print('Initializing orbitals in tree (in order to compute initial eigenvalues)')
+    tree.initializeOrbitalsFromAtomicDataExternally()
+    print('nPoints: ', nPoints)
+    print('nOrbitals: ', nOrbitals)
+    tree.updateOrbitalEnergies(sortByEnergy=True)
+     
+    eigenvalues=tree.orbitalEnergies
+#     eigenvalues = np.ones(nOrbitals) 
+    
     tree=None
     
-    return X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+    return X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals, eigenvalues, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
      
     
 
-def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
+def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
     
     startTime = time.time()
     
 
     
-    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,scfTolerance, energyTolerance, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,scfTolerance, energyTolerance, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha, gaugeShift,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
@@ -471,7 +469,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,nOrbit
 
 from scfFixedPoint import scfFixedPointClosure
 
-def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,intraScfTolerance, interScfTolerance, gradientFree, symmetricIteration, GPUpresent, 
+def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,intraScfTolerance, interScfTolerance, gradientFree, symmetricIteration, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize,
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                 subtractSingularity, gaussianAlpha, gaugeShift, inputFile='',outputFile='',restartFile=False,
@@ -494,7 +492,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
 #     print('Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))
     
     Energies={}
-    Energies['orbitalEnergies'] = np.zeros(nOrbitals)
+#     Energies['orbitalEnergies'] = -1*np.ones(nOrbitals)
+    Energies['orbitalEnergies'] = eigenvalues
     Energies['gaugeShift'] = gaugeShift
     Energies['kinetic'] = 0.0
     Energies['Enuclear'] = 0.0
@@ -664,9 +663,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
 #         if SCFcount > 0:
 #             print('Exiting before first SCF (for testing initialized mesh accuracy)')
 #             return
-
+        abortAfterInitialHartree=False
         scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
-        densityResidualVector = scfFixedPoint(RHO,scf_args)
+        densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
         densityResidual=scf_args['densityResidual']
         energyResidual=scf_args['energyResidual'] 
         SCFcount=scf_args['SCFcount']
@@ -758,7 +757,7 @@ if __name__ == "__main__":
 #     gp_tracker.create_snapshot()
     
     
-    X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = setUpTree() 
+    X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = setUpTree() 
 #     tr.print_diff()
 #     tree_tracker.create_snapshot()
 #     tree_tracker.stats.print_summary()
@@ -771,8 +770,10 @@ if __name__ == "__main__":
     
     
     initialRho = np.copy(RHO)
-    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues)
+    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues)
 #     tr.print_diff()
+    
+    
     
     conn=np.zeros(XV.size)
     for i in range(len(conn)):
@@ -782,28 +783,31 @@ if __name__ == "__main__":
         offset[i] = 8*(i+1)
     ctype = np.zeros(len(offset))
     for i in range(len(ctype)):
-        ctype[i] = VtkVoxel.tid
+        ctype[i] = VtkVoxel.tid   
     pointVals = {"initialDensity":np.zeros(XV.size),
                  "finalDensity":np.zeros(XV.size),
-                 "densityDifference":np.zeros(XV.size)}
-
+                 "densityDifference":np.zeros(XV.size),
+                 "absDensityDifference":np.zeros(XV.size)}
 
     for i in range(len(XV)):
-        pointVals["initialDensity"][i] = max( initialRho[vertexIdx[i]], 1e-16) 
-        pointVals["finalDensity"][i] = max( finalRho[vertexIdx[i]], 1e-16) 
+#         pointVals["density"][i] = max( RHO[vertexIdx[i]], 1e-16) 
+        pointVals["initialDensity"][i] = max( initialRho[vertexIdx[i]], np.random.rand(1)*1e-16) 
+        pointVals["finalDensity"][i] = max( finalRho[vertexIdx[i]], np.random.rand(1)*1e-16) 
         pointVals["densityDifference"][i] = pointVals["finalDensity"][i] - pointVals["initialDensity"][i]
+        pointVals["absDensityDifference"][i] = np.abs( pointVals["finalDensity"][i] - pointVals["initialDensity"][i] )
     
-    cellVals = {"density":np.zeros(offset.size)}
-    for i in range(len(offset)):
-
-        cellVals["density"][i] = max( RHO[centerIdx[i]], 1e-16) 
-        
+    cellVals = {"cell_centered_density":np.zeros(offset.size)}
+#     for i in range(len(offset)):
+# 
+#         cellVals["density"][i] = max( RHO[centerIdx[i]], 1e-16) 
+#         
         
     
 #     savefile="/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium"
-    savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO"
+    savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO_new"
     unstructuredGridToVTK(savefile, 
                           XV, YV, ZV, connectivity = conn, offsets = offset, cell_types = ctype, 
                           cellData = cellVals, pointData = pointVals)
+    
 
     print('Meshes Exported.')

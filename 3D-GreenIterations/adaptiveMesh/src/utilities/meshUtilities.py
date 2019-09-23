@@ -730,12 +730,14 @@ if __name__=="__main__":
     
 
 
-    nx = ny = nz = 5
-    xf = ChebyshevPointsFirstKind(-1, 1, nx)
-    xs = ChebyshevPointsSecondKind(-1, 1, nx)
+    nx = ny = nz = 4
+    a=-1
+    b=2
+    xf = ChebyshevPointsFirstKind(a, b, nx)
+    xs = ChebyshevPointsSecondKind(a,b, nx)
     
-    wf = unscaledWeightsFirstKind(nx)
-    ws = unscaledWeightsSecondKind(nx)
+    wf = weightsFirstKind(a,b,nx)
+    ws = weightsSecondKind(a,b,nx)
 #     y = ChebyshevPointsFirstKind(-1, 0, ny)
 #     z = ChebyshevPointsFirstKind(-1, 0, nz)
     print(xf)
@@ -755,6 +757,11 @@ if __name__=="__main__":
     def eight_int(a,b):
         return 1/9*(b**9-a**9)
     
+    def seven(x):
+        return x**7
+    def seven_int(a,b):
+        return 1/8*(b**8-a**8)
+    
     def exp(x):
         return np.exp(x)
     def exp_int(a,b):
@@ -767,10 +774,23 @@ if __name__=="__main__":
     sum_s = np.sum(func_s*ws)
     
     print("Square function")
-    print('Sum f error: ', sum_f-square_int(-1,1))
-    print('Sum s error: ', sum_s-square_int(-1,1))
+    print('Sum f error: ', sum_f-square_int(a,b))
+    print('Sum s error: ', sum_s-square_int(a,b))
 #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*square_int(-1,1))
     
+    func_f = seven(xf)
+    sum_f = np.sum(func_f*wf)
+    
+    func_s = seven(xs)
+    sum_s = np.sum(func_s*ws)
+    
+    print("seven power function")
+    print('Sum f error: ', sum_f-seven_int(a,b))
+    print('Sum s error: ', sum_s-seven_int(a,b))
+#     print(sum_f)
+#     print(seven_int(a,b))
+#     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*eight_int(-1,1))
+
     func_f = eight(xf)
     sum_f = np.sum(func_f*wf)
     
@@ -778,19 +798,20 @@ if __name__=="__main__":
     sum_s = np.sum(func_s*ws)
     
     print("Eight power function")
-    print('Sum f error: ', sum_f-eight_int(-1,1))
-    print('Sum s error: ', sum_s-eight_int(-1,1))
-#     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*eight_int(-1,1))
-
+    print('Sum f error: ', sum_f-eight_int(a,b))
+    print('Sum s error: ', sum_s-eight_int(a,b))
+#     print(sum_f)
+#     print(eight_int(a,b))
+    
     func_f = exp(xf)
     sum_f = np.sum(func_f*wf)
     
     func_s = exp(xs)
     sum_s = np.sum(func_s*ws)
     
-    print("Eight power function")
-    print('Sum f error: ', sum_f-exp_int(-1,1))
-    print('Sum s error: ', sum_s-exp_int(-1,1))
+    print("exp function")
+    print('Sum f error: ', sum_f-exp_int(a,b))
+    print('Sum s error: ', sum_s-exp_int(a,b))
 #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*exp_int(-1,1))
 
 #     print(square_int(-1,1))
