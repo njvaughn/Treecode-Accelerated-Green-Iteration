@@ -927,8 +927,8 @@ class Tree(object):
             print('Filling extra orbitals with decaying exponential.')
 #             print('Filling extra orbitals with random initial data.')
             for ii in range(orbitalIndex, self.nOrbitals):
-#                 self.initializeOrbitalsRandomly(targetOrbital=ii)
-                self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
+                self.initializeOrbitalsRandomly(targetOrbital=ii)
+#                 self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
 #                 self.orthonormalizeOrbitals(targetOrbital=ii)
         if orbitalIndex > self.nOrbitals:
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")

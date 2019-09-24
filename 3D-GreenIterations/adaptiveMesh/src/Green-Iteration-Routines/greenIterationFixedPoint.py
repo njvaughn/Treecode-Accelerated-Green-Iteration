@@ -68,6 +68,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         threadsPerBlock=gi_args['threadsPerBlock']
         blocksPerGrid=gi_args['blocksPerGrid']
         referenceEigenvalues = gi_args['referenceEigenvalues']
+        updateEigenvalue = gi_args['updateEigenvalue']
 
         
         print('Who called F(x)? ', inspect.stack()[2][3])
@@ -184,61 +185,78 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #         print('Min phiNew: ', np.min(phiNew))
         
         """ Method where you dont compute kinetics, from Harrison """
-        
-        # update the energy first
-        
-        orthWavefunction2 = np.zeros(nPoints)
-        if ( (gradientFree==True) and (SCFcount>-1)):                 
+        if updateEigenvalue==True:
+            # update the energy first
             
-            psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*W))
-            
-            if symmetricIteration==False:
-    
-                deltaE = -np.sum( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew)*W ) 
-                normSqOfPsiNew = np.sum( phiNew**2 * W)
-                deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
-#                 deltaE /= (psiNewNorm)
-                print('NormSq of psiNew = ', normSqOfPsiNew )
-                print('Norm of psiNew = ', psiNewNorm )
-                print('Delta E = ', deltaE)
-                Energies['orbitalEnergies'][m] += deltaE
-                orbitals[:,m] = np.copy(phiNew)
-            elif symmetricIteration==True:
-                print('Symmetric not set up for tree-free')
+            orthWavefunction2 = np.zeros(nPoints)
+            if ( (gradientFree==True) and (SCFcount>-1)):                 
+                
+                psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*W))
+                
+                if symmetricIteration==False:
+        
+                    deltaE = -np.sum( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew)*W ) 
+                    normSqOfPsiNew = np.sum( phiNew**2 * W)
+                    deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
+    #                 deltaE /= (psiNewNorm)
+                    print('NormSq of psiNew = ', normSqOfPsiNew )
+                    print('Norm of psiNew = ', psiNewNorm )
+                    print('Delta E = ', deltaE)
+                    Energies['orbitalEnergies'][m] += deltaE
+                    orbitals[:,m] = np.copy(phiNew)
+                elif symmetricIteration==True:
+                    print('Symmetric not set up for tree-free')
+                    return
+        
+                n,M = np.shape(orbitals) 
+    #             Wcopy = np.copy(W)
+    #             mcopy = np.copy(m)
+    #             nPointsCopy = np.copy(nPoints)
+                orthWavefunction = mgs(orbitals,W,m, n, M)
+    #             modifiedGramSchmidt_singleOrbital_GPU[blocksPerGrid, threadsPerBlock](np.copy(orbitals),Wcopy,mcopy,nPointsCopy, orthWavefunction2)
+                
+                orbitals[:,m] = np.copy(orthWavefunction)
+    #             orbitals[:,m] = np.copy(orthWavefunction2)
+        #         tree.importPhiOnLeaves(orbitals[:,m], m)
+                
+         
+        
+                if greenIterationsCount==1:
+                    eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
+                else:
+                    eigenvalueHistory = gi_args['eigenvalueHistory']
+                    eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
+                print('eigenvalueHistory: \n',eigenvalueHistory)
+                
+                
+                print('Orbital energy after Harrison update: ', Energies['orbitalEnergies'][m])
+                 
+        
+        #     elif ( (gradientFree==False) or (SCFcount==-1) and False ):
+            elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
+                print('gradient and laplacian methods not set up for tree-free')
                 return
-    
+                
+            else:
+                print('Not updating eigenvalue.  Is that intended?')
+                return
+            
+        else:  # Explicitly choosing to not update Eigenvalue.  Still orthogonalize
+            print("Not updating eigenvalue because updateEigenvalue!=True")
+            orbitals[:,m] = np.copy(phiNew)
             n,M = np.shape(orbitals) 
-#             Wcopy = np.copy(W)
-#             mcopy = np.copy(m)
-#             nPointsCopy = np.copy(nPoints)
             orthWavefunction = mgs(orbitals,W,m, n, M)
-#             modifiedGramSchmidt_singleOrbital_GPU[blocksPerGrid, threadsPerBlock](np.copy(orbitals),Wcopy,mcopy,nPointsCopy, orthWavefunction2)
-            
-            orbitals[:,m] = np.copy(orthWavefunction)
-#             orbitals[:,m] = np.copy(orthWavefunction2)
-    #         tree.importPhiOnLeaves(orbitals[:,m], m)
-            
-     
-    
+            orbitals[:,m] = np.copy(orthWavefunction) 
             if greenIterationsCount==1:
                 eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
             else:
                 eigenvalueHistory = gi_args['eigenvalueHistory']
                 eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
-            print('eigenvalueHistory: \n',eigenvalueHistory)
+            print('eigenvalueHistory (should be constant): \n',eigenvalueHistory)
+            gi_args['eigenvalueDiff']=0
+            deltaE=0
+            gi_args['eigenvalueHistory']=eigenvalueHistory
             
-            
-            print('Orbital energy after Harrison update: ', Energies['orbitalEnergies'][m])
-             
-    
-    #     elif ( (gradientFree==False) or (SCFcount==-1) and False ):
-        elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
-            print('gradient and laplacian methods not set up for tree-free')
-            return
-            
-        else:
-            print('Not updating eigenvalue.  Is that intended?')
-            return
     
         
         if Energies['orbitalEnergies'][m]>0.0:

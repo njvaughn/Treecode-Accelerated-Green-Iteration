@@ -53,8 +53,10 @@ gaugeShift          = float(sys.argv[n]); n+=1
 divideCriterion     = str(sys.argv[n]); n+=1
 divideParameter1    = float(sys.argv[n]); n+=1 
 divideParameter2    = float(sys.argv[n]); n+=1
-energyTolerance     = float(sys.argv[n]); n+=1
 scfTolerance        = float(sys.argv[n]); n+=1
+initialGItolerance  = float(sys.argv[n]); n+=1
+finalGItolerance    = float(sys.argv[n]); n+=1
+gradualSteps        = int(sys.argv[n]); n+=1
 outputFile          = str(sys.argv[n]); n+=1
 inputFile           = str(sys.argv[n]); n+=1
 srcdir              = str(sys.argv[n]); n+=1
@@ -359,7 +361,7 @@ def setUpTree(onlyFillOne=False):
     
     print('max depth ', maxDepth)
 #     tree.buildTree_FirstAndSecondKind( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+    tree.buildTree( maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
 
@@ -391,16 +393,18 @@ def setUpTree(onlyFillOne=False):
     print('nPoints: ', nPoints)
     print('nOrbitals: ', nOrbitals)
     
+    if restart==False:
     ## Compute initial eigenvalues using gradients.
-    orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
-    print('Initializing orbitals in tree (in order to compute initial eigenvalues)')
-    tree.initializeOrbitalsFromAtomicDataExternally()
-    print('nPoints: ', nPoints)
-    print('nOrbitals: ', nOrbitals)
-    tree.updateOrbitalEnergies(sortByEnergy=True)
-     
-    eigenvalues=tree.orbitalEnergies
-#     eigenvalues = np.ones(nOrbitals) 
+        orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
+        print('Initializing orbitals in tree (in order to compute initial eigenvalues)')
+        tree.initializeOrbitalsFromAtomicDataExternally()
+        print('nPoints: ', nPoints)
+        print('nOrbitals: ', nOrbitals)
+        tree.updateOrbitalEnergies(sortByEnergy=True)
+         
+        eigenvalues=tree.orbitalEnergies
+    else:
+        eigenvalues = np.ones(nOrbitals)   # these will be overwritten by the restart routine
     
     tree=None
     
@@ -414,7 +418,9 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nP
     
 
     
-    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,scfTolerance, energyTolerance, gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+                                scfTolerance, initialGItolerance, finalGItolerance, gradualSteps,
+                                gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha, gaugeShift,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
@@ -429,14 +435,14 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nP
 
     header = ['domainSize','minDepth','maxDepth','additionalDepthAtAtoms','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
               'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
-              'gaussianAlpha','gaugeShift','VextSmoothingEpsilon','energyTolerance',
+              'gaussianAlpha','gaugeShift','VextSmoothingEpsilon','finalGItolerance',
               'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
               'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
               'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
     
     myData = [domainSize,0,0,0,0,order,nPoints/order**3,nPoints,gradientFree,
               divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
-              gaussianAlpha,gaugeShift,smoothingEps,energyTolerance,
+              gaussianAlpha,gaugeShift,smoothingEps,finalGItolerance,
               subtractSingularity,
               Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal'],
               treecode,treecodeOrder,theta,maxParNode,batchSize, Times['totalKohnShamTime'],Times['timePerConvolution'],Times['totalIterationCount'] ]
@@ -469,7 +475,9 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nP
 
 from scfFixedPoint import scfFixedPointClosure
 
-def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,intraScfTolerance, interScfTolerance, gradientFree, symmetricIteration, GPUpresent, 
+def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+                                             SCFtolerance, initialGItolerance, finalGItolerance, gradualSteps, 
+                                             gradientFree, symmetricIteration, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize,
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                 subtractSingularity, gaussianAlpha, gaugeShift, inputFile='',outputFile='',restartFile=False,
@@ -635,9 +643,10 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
                'Vext':Vext,'gaugeShift':gaugeShift,'orbitals':orbitals,'oldOrbitals':oldOrbitals,'subtractSingularity':subtractSingularity,
                'X':X,'Y':Y,'Z':Z,'W':W,'gradientFree':gradientFree,'residuals':residuals,'greenIterationOutFile':greenIterationOutFile,
                'threadsPerBlock':threadsPerBlock,'blocksPerGrid':blocksPerGrid,'referenceEigenvalues':referenceEigenvalues,'symmetricIteration':symmetricIteration,
-               'intraScfTolerance':intraScfTolerance,'nElectrons':nElectrons,'referenceEnergies':referenceEnergies,'SCFiterationOutFile':SCFiterationOutFile,
+               'SCFtolerance':SCFtolerance,'initialGItolerance':initialGItolerance, 'finalGItolerance':finalGItolerance, 'gradualSteps':gradualSteps, 'nElectrons':nElectrons,'referenceEnergies':referenceEnergies,'SCFiterationOutFile':SCFiterationOutFile,
                'wavefunctionFile':wavefunctionFile,'densityFile':densityFile,'outputDensityFile':outputDensityFile,'inputDensityFile':inputDensityFile,'vHartreeFile':vHartreeFile,
                'auxiliaryFile':auxiliaryFile}
+    scf_args['GItolerancesIdx']=0
     
 
     """
@@ -657,7 +666,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
      
      
     """
-    while ( (densityResidual > interScfTolerance) or (energyResidual > interScfTolerance) ):  # terminate SCF when both energy and density are converged.
+    while ( (densityResidual > SCFtolerance) or (energyResidual > SCFtolerance) ):  # terminate SCF when both energy and density are converged.
           
         ## CALL SCF FIXED POINT FUNCTION
 #         if SCFcount > 0:
@@ -727,7 +736,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
   
       
       
-    print('\nConvergence to a tolerance of %f took %i iterations' %(interScfTolerance, SCFcount))
+    print('\nConvergence to a tolerance of %f took %i iterations' %(SCFtolerance, SCFcount))
 #     """
     return Energies, RHO, Times
     

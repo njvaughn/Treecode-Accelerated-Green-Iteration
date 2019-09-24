@@ -61,6 +61,14 @@ def clenshawCurtisNormClosure(W):
         return norm
     return clenshawCurtisNorm
 
+def clenshawCurtisNormClosureWithoutEigenvalue(W):
+    def clenshawCurtisNormWithoutEigenvalue(psi):
+        appendedWeights = np.append(W, 0.0)
+        norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
+#         norm = np.sqrt( np.sum( psi[-1]*psi[-1]*appendedWeights[-1] ) )
+        return norm
+    return clenshawCurtisNormWithoutEigenvalue
+
 def printResidual(x,f):
     r = clenshawCurtisNorm(f)
     print('L2 Norm of Residual: ', r)
@@ -121,7 +129,9 @@ def scfFixedPointClosure(scf_args):
         blocksPerGrid=scf_args['blocksPerGrid']
         referenceEigenvalues = scf_args['referenceEigenvalues']
         symmetricIteration=scf_args['symmetricIteration']
-        intraScfTolerance=scf_args['intraScfTolerance']
+        initialGItolerance=scf_args['initialGItolerance']
+        finalGItolerance=scf_args['finalGItolerance']
+        gradualSteps=scf_args['gradualSteps']
         referenceEnergies=scf_args['referenceEnergies']
         SCFiterationOutFile=scf_args['SCFiterationOutFile']
         wavefunctionFile=scf_args['wavefunctionFile']
@@ -131,8 +141,13 @@ def scfFixedPointClosure(scf_args):
         vHartreeFile=scf_args['vHartreeFile']
         auxiliaryFile=scf_args['auxiliaryFile']
         
+        GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
+#         scf_args['GItolerancesIdx']=0
         
-        GImixingHistoryCutoff = 20
+        scf_args['currentGItolerance']=GItolerances[scf_args['GItolerancesIdx']]
+        
+        
+        GImixingHistoryCutoff = 10
          
         SCFcount += 1
         print()
@@ -279,6 +294,7 @@ def scfFixedPointClosure(scf_args):
                                'SCFcount':SCFcount,'greenIterationsCount':greenIterationsCount,'residuals':residuals,
                                'greenIterationOutFile':greenIterationOutFile, 'blocksPerGrid':blocksPerGrid,'threadsPerBlock':threadsPerBlock,
                                'referenceEigenvalues':referenceEigenvalues   } 
+                gi_args['updateEigenvalue']=True
                 
                 n,M = np.shape(orbitals)
                 resNorm=1 
@@ -286,6 +302,33 @@ def scfFixedPointClosure(scf_args):
 #                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
 #                 orbitals[:,m] = np.copy(orthWavefunction)
                 
+                
+                
+#                 ## Use previous eigenvalue to generate initial guess
+#                 if SCFcount==1:
+#                     gi_args['updateEigenvalue']=False
+#                     resNormWithoutEig=1 
+#                     orbitals[:,m] = np.random.rand(nPoints)
+#                     if m==0:
+#                         previousEigenvalue=-10
+#                     else:
+#                         previousEigenvalue=Energies['orbitalEnergies'][m-1]
+#                        
+#                     while resNormWithoutEig>1e-2:
+#                         Energies['orbitalEnergies'][m] = previousEigenvalue
+#                         psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
+#                         greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
+#                         r = greensIteration_FixedPoint(psiIn, gi_args)
+#                         Energies['orbitalEnergies'][m] = previousEigenvalue
+#                         clenshawCurtisNorm = clenshawCurtisNormClosureWithoutEigenvalue(W)
+#                         resNormWithoutEig = clenshawCurtisNorm(r)
+#                         
+#                         print('CC norm of residual vector: ', resNormWithoutEig)
+#                     print("Finished generating initial guess.\n\n")
+#                     gi_args['updateEigenvalue']=True
+
+                
+            
                     
                 while ((resNorm>1e-3) or (Energies['orbitalEnergies'][m]>0) ):
 #                 while resNorm>intraScfTolerance:
@@ -326,7 +369,7 @@ def scfFixedPointClosure(scf_args):
                 psiOut = np.append(orbitals[:,m],Energies['orbitalEnergies'][m])
                 print('Power iteration tolerance met.  Beginning rootfinding now...') 
     #             psiIn = np.copy(psiOut)
-                tol=intraScfTolerance
+#                 tol=intraScfTolerance
                 
                 
                 ## Begin Anderson Mixing on Wavefunction
@@ -376,11 +419,11 @@ def scfFixedPointClosure(scf_args):
                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                     errorNorm = clenshawCurtisNorm(r)
                     print('Error Norm: ', errorNorm)
-                    if errorNorm < intraScfTolerance:
+                    if errorNorm < scf_args['currentGItolerance']:
                         Done=True
                     eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
                     print('Eigenvalue Diff: ', eigenvalueDiff)
-                    if ( (eigenvalueDiff<intraScfTolerance/20) and (gi_args["greenIterationsCount"]>10) ): 
+                    if ( (eigenvalueDiff<scf_args['currentGItolerance']/20) and (gi_args["greenIterationsCount"]>5) ): 
                         Done=True
 #                     if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) and ( ( SCFcount <2 ) or previousOccupations[m]<1e-4 ) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
 #                         print('Ending iteration because eigenvalue is converged.')
@@ -569,11 +612,11 @@ def scfFixedPointClosure(scf_args):
         scf_args['energyResidual']=energyResidual
         scf_args['densityResidual']=densityResidual
         
-        if intraScfTolerance > 1e-5: # desired final tolerance
+        if scf_args['currentGItolerance'] > scf_args['finalGItolerance']: # desired final tolerance
 #         if SCFcount<4:
-            intraScfTolerance /= 10
-            print('Reducing intraScfTolerance to ', intraScfTolerance)
-        scf_args['intraScfTolerance']=intraScfTolerance
+            scf_args['GItolerancesIdx']+=1
+            scf_args['currentGItolerance'] = GItolerances[scf_args['GItolerancesIdx']]
+            print('Reducing GI tolerance to ', scf_args['currentGItolerance'])
             
     #         if vtkExport != False:
     #             filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
