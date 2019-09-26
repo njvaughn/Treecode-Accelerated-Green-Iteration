@@ -161,9 +161,9 @@ def scfFixedPointClosure(scf_args):
     
             if (SCFcount-1)<mixingHistoryCutoff:
                 inputDensities = np.concatenate( (inputDensities, np.reshape(RHO, (nPoints,1))), axis=1)
-                print('Concatenated inputDensity.  Now has shape: ', np.shape(inputDensities))
+#                 print('Concatenated inputDensity.  Now has shape: ', np.shape(inputDensities))
             else:
-                print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
+#                 print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
     #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                 inputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = np.copy(RHO)
         
@@ -195,8 +195,8 @@ def scfFixedPointClosure(scf_args):
                     gaussianAlpha=0.0
                 else: potentialType=2
 #                 potentialType=2
-                numThreads=2
-                numDevices=2
+                numThreads=scf_args['numThreads']
+                numDevices=scf_args['numDevices']
                 start = time.time()
                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
@@ -217,8 +217,8 @@ def scfFixedPointClosure(scf_args):
                     print("Using singularity skipping in Hartree solve.")
                     potentialType=0
                 else: potentialType=2 
-                numThreads=4
-                numDevices=0
+                numThreads=scf_args['numThreads']
+                numDevices=scf_args['numDevices']
                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
@@ -293,8 +293,8 @@ def scfFixedPointClosure(scf_args):
                                'nPoints':nPoints, 'm':m, 'X':X,'Y':Y,'Z':Z,'W':W,'gradientFree':gradientFree,
                                'SCFcount':SCFcount,'greenIterationsCount':greenIterationsCount,'residuals':residuals,
                                'greenIterationOutFile':greenIterationOutFile, 'blocksPerGrid':blocksPerGrid,'threadsPerBlock':threadsPerBlock,
-                               'referenceEigenvalues':referenceEigenvalues   } 
-                gi_args['updateEigenvalue']=True
+                               'referenceEigenvalues':referenceEigenvalues,
+                               'numDevices':scf_args['numDevices'],  'numThreads':scf_args['numThreads'], 'updateEigenvalue':True } 
                 
                 n,M = np.shape(orbitals)
                 resNorm=1 
@@ -330,7 +330,7 @@ def scfFixedPointClosure(scf_args):
                 
             
                     
-                while ((resNorm>1e-3) or (Energies['orbitalEnergies'][m]>0) ):
+                while ((resNorm> np.max(1e-3,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0) ):
 #                 while resNorm>intraScfTolerance:
     #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     #                 GPUtil.showUtilization()
@@ -402,10 +402,10 @@ def scfFixedPointClosure(scf_args):
                     else:
                         if (greenIterationsCount-1-mixingStart)<GImixingHistoryCutoff:
                             inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(psiIn), (psiIn.size,1)) ), axis=1)
-                            print('Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
+#                             print('Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
       
                         else:
-                            print('Beyond GImixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff)
+#                             print('Beyond GImixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff)
                             inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff] = np.copy(psiIn)
       
                     ## Perform one step of iterations
@@ -423,7 +423,7 @@ def scfFixedPointClosure(scf_args):
                         Done=True
                     eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
                     print('Eigenvalue Diff: ', eigenvalueDiff)
-                    if ( (eigenvalueDiff<scf_args['currentGItolerance']/20) and (gi_args["greenIterationsCount"]>5) ): 
+                    if ( (eigenvalueDiff<scf_args['currentGItolerance']/20) and (gi_args["greenIterationsCount"]>8) ): 
                         Done=True
 #                     if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) and ( ( SCFcount <2 ) or previousOccupations[m]<1e-4 ) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
 #                         print('Ending iteration because eigenvalue is converged.')
@@ -441,9 +441,9 @@ def scfFixedPointClosure(scf_args):
                         if (greenIterationsCount-1-mixingStart)<GImixingHistoryCutoff:
     #                         temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
                             outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(psiOut), (psiOut.size,1)) ), axis=1)
-                            print('Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
+#                             print('Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
                         else:
-                            print('Beyond GImixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff)
+#                             print('Beyond GImixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff)
     #                         temp = np.append( orbitals[:,m], Energies['orbitalEnergies'][m])
                             outputWavefunctions[:,(greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff] = np.copy(psiOut)
                       
@@ -451,7 +451,7 @@ def scfFixedPointClosure(scf_args):
                       
                       
                     ## Compute next input wavefunctions
-                    print('Anderson mixing on the orbital.')
+#                     print('Anderson mixing on the orbital.')
                     GImixingParameter=0.5
                     andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
                     Energies['orbitalEnergies'][m] = andersonOrbital[-1]
@@ -554,9 +554,9 @@ def scfFixedPointClosure(scf_args):
             
             if (SCFcount-1)<mixingHistoryCutoff:
                 outputDensities = np.concatenate( (outputDensities, np.reshape(np.copy(newDensity), (nPoints,1))), axis=1)
-                print('Concatenated outputDensity.  Now has shape: ', np.shape(outputDensities))
+#                 print('Concatenated outputDensity.  Now has shape: ', np.shape(outputDensities))
             else:
-                print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
+#                 print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
     #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                 outputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = newDensity
             
@@ -612,11 +612,7 @@ def scfFixedPointClosure(scf_args):
         scf_args['energyResidual']=energyResidual
         scf_args['densityResidual']=densityResidual
         
-        if scf_args['currentGItolerance'] > scf_args['finalGItolerance']: # desired final tolerance
-#         if SCFcount<4:
-            scf_args['GItolerancesIdx']+=1
-            scf_args['currentGItolerance'] = GItolerances[scf_args['GItolerancesIdx']]
-            print('Reducing GI tolerance to ', scf_args['currentGItolerance'])
+        
             
     #         if vtkExport != False:
     #             filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
@@ -626,10 +622,16 @@ def scfFixedPointClosure(scf_args):
     
         if printEachIteration==True:
             header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
-                      'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy']
-        
+                      'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy', 'GItolerance']
+         
             myData = [SCFcount, densityResidual, Energies['orbitalEnergies'], Energies['Eband'], Energies['kinetic'], 
-                      Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal']]
+                      Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal'], scf_args['currentGItolerance']]
+
+#             header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
+#                       'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy']
+#         
+#             myData = [SCFcount, densityResidual, Energies['orbitalEnergies'], Energies['Eband'], Energies['kinetic'], 
+#                       Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal']]
             
         
             if not os.path.isfile(SCFiterationOutFile):
@@ -643,6 +645,12 @@ def scfFixedPointClosure(scf_args):
             with myFile:
                 writer = csv.writer(myFile)
                 writer.writerow(myData)
+                
+#         if scf_args['currentGItolerance'] > scf_args['finalGItolerance']: # desired final tolerance
+        if scf_args['GItolerancesIdx'] < scf_args['gradualSteps']-1: # GItolerancesIdx goes from 0 to gradualSteps-1
+            scf_args['GItolerancesIdx']+=1
+            scf_args['currentGItolerance'] = GItolerances[scf_args['GItolerancesIdx']]
+            print('Reducing GI tolerance to ', scf_args['currentGItolerance'])
         
         
         ## Write the restart files

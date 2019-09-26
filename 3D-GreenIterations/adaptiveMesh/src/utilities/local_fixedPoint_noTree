@@ -49,7 +49,7 @@ SMOOTHINGEPS=0.0
 
 MESHPARAM1=250
 MESHPARAM2=0
-MESHPARAM3=1e-3
+MESHPARAM3=3e-3
 MESHPARAM4=0   
 
 for SINGSUBT in 1 
@@ -62,15 +62,15 @@ for MAXDEPTH in 20
 do								  	 				     
 for GRADIENTFREE in 'True'    
 do  
-	for TREECODEORDER in 7  
+	for TREECODEORDER in 8  
 	do         
-		for THETA in 0.7  
+		for THETA in 0.6
 		do  
 			#for MIXING in 'Anderson' 'Simple' 'None'		    
 			for MIXING in 'Anderson'		    
 			do
 
-			OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/paperData/density-mixing/local_H2_mixing_$MIXING.csv"
+			OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/paperData/density-mixing/local_H2.csv"
 
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/mixingType_Be_$MIXING.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_testing_async_kernels.csv"

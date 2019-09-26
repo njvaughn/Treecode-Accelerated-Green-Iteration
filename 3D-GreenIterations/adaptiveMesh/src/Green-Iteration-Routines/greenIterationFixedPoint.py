@@ -71,7 +71,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         updateEigenvalue = gi_args['updateEigenvalue']
 
         
-        print('Who called F(x)? ', inspect.stack()[2][3])
+#         print('Who called F(x)? ', inspect.stack()[2][3])
         inputWave = np.copy(psiIn[:-1])
     
         # global data structures
@@ -104,7 +104,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         oldEigenvalue =  Energies['orbitalEnergies'][m] 
         k = np.sqrt(-2*Energies['orbitalEnergies'][m])
-        print('k = ', k)
+#         print('k = ', k)
     
         phiNew = np.zeros(nPoints)
         
@@ -116,8 +116,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 potentialType=3
                 kappa = k
                 startTime = time.time()
-                numDevices=0
-                numThreads=4
+                numDevices=gi_args['numDevices']
+                numThreads=gi_args['numThreads']
                 phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
@@ -159,8 +159,9 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                         potentialType=3
                     kappa = k
                     startTime = time.time()
-                    numDevices=2
-                    numThreads=2 
+                    numDevices=gi_args['numDevices']
+                    numThreads=gi_args['numThreads']
+#                     print('numDevices and numThreads as read in from gi_args are: ', numDevices, numThreads)
                     phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
@@ -199,9 +200,9 @@ def greensIteration_FixedPoint_Closure(gi_args):
                     normSqOfPsiNew = np.sum( phiNew**2 * W)
                     deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
     #                 deltaE /= (psiNewNorm)
-                    print('NormSq of psiNew = ', normSqOfPsiNew )
-                    print('Norm of psiNew = ', psiNewNorm )
-                    print('Delta E = ', deltaE)
+#                     print('NormSq of psiNew = ', normSqOfPsiNew )
+#                     print('Norm of psiNew = ', psiNewNorm )
+#                     print('Delta E = ', deltaE)
                     Energies['orbitalEnergies'][m] += deltaE
                     orbitals[:,m] = np.copy(phiNew)
                 elif symmetricIteration==True:
@@ -229,7 +230,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 print('eigenvalueHistory: \n',eigenvalueHistory)
                 
                 
-                print('Orbital energy after Harrison update: ', Energies['orbitalEnergies'][m])
+#                 print('Orbital energy after Harrison update: ', Energies['orbitalEnergies'][m])
                  
         
         #     elif ( (gradientFree==False) or (SCFcount==-1) and False ):
@@ -279,11 +280,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         
         
-        print('Max value of wavefunction: ', np.max(np.abs(orbitals[:,m])))
+#         print('Max value of wavefunction: ', np.max(np.abs(orbitals[:,m])))
         loc = np.argmax(np.abs(residualVector[:-1]))
-        print('Largest residual: ', residualVector[loc])
-        print('Value at that point: ', psiOut[loc])
-        print('Location of max residual: ', X[loc], Y[loc], Z[loc])
+#         print('Largest residual: ', residualVector[loc])
+#         print('Value at that point: ', psiOut[loc])
+#         print('Location of max residual: ', X[loc], Y[loc], Z[loc])
     #     residualVector = -(psiIn - orbitals[:,m])
     
         newEigenvalue = Energies['orbitalEnergies'][m]

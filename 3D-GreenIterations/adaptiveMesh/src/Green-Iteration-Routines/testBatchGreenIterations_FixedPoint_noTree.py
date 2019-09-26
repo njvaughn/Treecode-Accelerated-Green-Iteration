@@ -77,6 +77,9 @@ divideParameter4    = float(sys.argv[n]); n+=1
 base                = float(sys.argv[n]); n+=1
 restart             = str(sys.argv[n]); n+=1
 savedMesh           = str(sys.argv[n]); n+=1
+numDevices          = int(sys.argv[n]); n+=1
+numThreads          = int(sys.argv[n]); n+=1
+
 
 
 
@@ -361,7 +364,7 @@ def setUpTree(onlyFillOne=False):
     
     print('max depth ', maxDepth)
 #     tree.buildTree_FirstAndSecondKind( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
-    tree.buildTree( maxLevels=maxDepth, initializationType='random',divideCriterion=divideCriterion, 
+    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
 
@@ -645,8 +648,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
                'threadsPerBlock':threadsPerBlock,'blocksPerGrid':blocksPerGrid,'referenceEigenvalues':referenceEigenvalues,'symmetricIteration':symmetricIteration,
                'SCFtolerance':SCFtolerance,'initialGItolerance':initialGItolerance, 'finalGItolerance':finalGItolerance, 'gradualSteps':gradualSteps, 'nElectrons':nElectrons,'referenceEnergies':referenceEnergies,'SCFiterationOutFile':SCFiterationOutFile,
                'wavefunctionFile':wavefunctionFile,'densityFile':densityFile,'outputDensityFile':outputDensityFile,'inputDensityFile':inputDensityFile,'vHartreeFile':vHartreeFile,
-               'auxiliaryFile':auxiliaryFile}
-    scf_args['GItolerancesIdx']=0
+               'auxiliaryFile':auxiliaryFile,
+               'numDevices':numDevices, 'numThreads':numThreads, 'GItolerancesIdx':0}
     
 
     """
