@@ -738,83 +738,115 @@ if __name__=="__main__":
     
     wf = weightsFirstKind(a,b,nx)
     ws = weightsSecondKind(a,b,nx)
+    
+    df = computeDerivativeMatrix(a,b,nx)
 #     y = ChebyshevPointsFirstKind(-1, 0, ny)
 #     z = ChebyshevPointsFirstKind(-1, 0, nz)
-    print(xf)
-    print(xs)
-    print()
-    print(wf)
-    print(ws)
+#     print(xf)
+#     print(xs)
+#     print()
+#     print(wf)
+#     print(ws)
     
     
     def square(x):
         return x**2
     def square_int(a,b):
         return 1/3* (b**3 - a**3)
+    def square_prime(x):
+        return 2*x
     
     def eight(x):
         return x**8
     def eight_int(a,b):
         return 1/9*(b**9-a**9)
+    def eight_prime(x):
+        return 8*x**7
     
     def seven(x):
         return x**7
     def seven_int(a,b):
         return 1/8*(b**8-a**8)
+    def seven_prime(x):
+        return 7*x**6
     
     def exp(x):
         return np.exp(x)
     def exp_int(a,b):
         return np.exp(b)-np.exp(a)
+    def exp_prime(x):
+        return exp(x)
+    
+    def ErrorNorm(x):
+        return np.sqrt(np.sum(x**2))
         
     func_f = square(xf)
     sum_f = np.sum(func_f*wf)
+    grad_f = np.dot(-df,func_f)
     
     func_s = square(xs)
     sum_s = np.sum(func_s*ws)
     
     print("Square function")
-    print('Sum f error: ', sum_f-square_int(a,b))
-    print('Sum s error: ', sum_s-square_int(a,b))
-#     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*square_int(-1,1))
-    
+#     print('int error: ', sum_f-square_int(a,b))
+#     print(square_prime(xf))
+#     print(grad_f)
+    print('prime error: ', ErrorNorm( grad_f - square_prime(xf)) )
+# #     print('Sum s error: ', sum_s-square_int(a,b))
+# #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*square_int(-1,1))
+#     
     func_f = seven(xf)
     sum_f = np.sum(func_f*wf)
-    
-    func_s = seven(xs)
-    sum_s = np.sum(func_s*ws)
-    
-    print("seven power function")
-    print('Sum f error: ', sum_f-seven_int(a,b))
-    print('Sum s error: ', sum_s-seven_int(a,b))
-#     print(sum_f)
-#     print(seven_int(a,b))
-#     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*eight_int(-1,1))
+    grad_f = np.dot(-df,func_f)
+#     print(square_prime(xf))
+#     print(grad_f)
+    print('prime error: ', ErrorNorm( grad_f - seven_prime(xf)) )
 
-    func_f = eight(xf)
-    sum_f = np.sum(func_f*wf)
-    
-    func_s = eight(xs)
-    sum_s = np.sum(func_s*ws)
-    
-    print("Eight power function")
-    print('Sum f error: ', sum_f-eight_int(a,b))
-    print('Sum s error: ', sum_s-eight_int(a,b))
-#     print(sum_f)
-#     print(eight_int(a,b))
-    
+#     func_s = seven(xs)
+#     sum_s = np.sum(func_s*ws)
+#     
+#     print("seven power function")
+#     print('Sum f error: ', sum_f-seven_int(a,b))
+# #     print('Sum s error: ', sum_s-seven_int(a,b))
+# #     print(sum_f)
+# #     print(seven_int(a,b))
+# #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*eight_int(-1,1))
+# 
+#     func_f = eight(xf)
+#     sum_f = np.sum(func_f*wf)
+#     
+#     func_s = eight(xs)
+#     sum_s = np.sum(func_s*ws)
+#     
+#     print("Eight power function")
+#     print('Sum f error: ', sum_f-eight_int(a,b))
+# #     print('Sum s error: ', sum_s-eight_int(a,b))
+# #     print(sum_f)
+# #     print(eight_int(a,b))
+#     
+
+    print()
     func_f = exp(xf)
     sum_f = np.sum(func_f*wf)
-    
+    grad_f = np.dot(-df,func_f)
+    print(exp_prime(xf))
+    print(grad_f)
+    print('prime error: ', ErrorNorm( grad_f - exp_prime(xf)) )
+    print()
+#     
     func_s = exp(xs)
-    sum_s = np.sum(func_s*ws)
-    
-    print("exp function")
-    print('Sum f error: ', sum_f-exp_int(a,b))
-    print('Sum s error: ', sum_s-exp_int(a,b))
-#     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*exp_int(-1,1))
-
-#     print(square_int(-1,1))
+    grad_s = np.dot(-df,func_s)
+    print(exp_prime(xs))
+    print(grad_s)
+    print('prime error: ', ErrorNorm( grad_s - exp_prime(xs)) )
+#     sum_s = np.sum(func_s*ws)
+#     
+#     print("exp function")
+#     print('Sum f error: ', sum_f-exp_int(a,b))
+# #     print('Sum s error: ', sum_s-exp_int(a,b))
+# #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*exp_int(-1,1))
+# 
+# #     print(square_int(-1,1))
     
 
 
