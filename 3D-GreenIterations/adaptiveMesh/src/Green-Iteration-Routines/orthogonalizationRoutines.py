@@ -28,7 +28,9 @@ def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, n, k):
     
     U /= np.sqrt( np.dot(U,U*weights) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)
         
-    return U
+    return U  
+
+
 
 def modifiedGramSchmidt_singleOrbital_python(V,weights,targetOrbital):
     U = V[:,targetOrbital]

@@ -26,20 +26,30 @@ OUTFILE=/home/njvaughn/synchronizedDataFiles/testing/coulomb.csv
 
 KAPPA=1.0  #Gaussian SS parameter
 
-for N in 928500 2224375
-#for N in 141000 184750 249500 459500 928500 2224375
+#for N in 928500 2224375
+#for N in 141000 184750 249500 459500 928500 2224375   # CO meshes
+#for N in 308000 498000 695000 1464500 2771000	# Benzene meshes
+for N in 459500	# Benzene meshes
 do
 
 	echo $N
 
+	## Local Directories
 	#SOURCES=/Users/nathanvaughn/Desktop/CO_meshes/S$N.bin    
-	#TARGETS=/Users/nathanvaughn/Desktop/CO_meshes/T$N.bin
-	#DIRECTSUM=/Users/nathanvaughn/Desktop/CO_meshes/ex_st_coulomb_$N.bin
-	#OUTFILE=/Users/nathanvaughn/Desktop/CO_meshes/coulomb_tc.csv
+	TARGETS=/Users/nathanvaughn/Desktop/CO_meshes/T$N.bin
+	DIRECTSUM=/Users/nathanvaughn/Desktop/CO_meshes/ex_st_coulomb_$N.bin
+	OUTFILE=/Users/nathanvaughn/Desktop/CO_meshes/coulomb_tc.csv
+	
+	## Flux directories
+	#SOURCES=/scratch/krasny_fluxg/njvaughn/Benzene_meshes/S$N.bin    
+	#TARGETS=/scratch/krasny_fluxg/njvaughn/Benzene_meshes/T$N.bin
+	#OUTFILE=/home/njvaughn/synchronizedDataFiles/testing/coulomb.csv 
+	#DIRECTSUM=/scratch/krasny_fluxg/njvaughn/Benzene_meshes/ex_st_coulomb_$N.bin 
+	
 	SOURCES=/scratch/krasny_fluxg/njvaughn/CO_meshes/S$N.bin    
 	TARGETS=/scratch/krasny_fluxg/njvaughn/CO_meshes/T$N.bin
 	OUTFILE=/home/njvaughn/synchronizedDataFiles/testing/coulomb.csv 
-	DIRECTSUM=/scratch/krasny_fluxg/njvaughn/CO_meshes/ex_st_coulomb_$N.bin
+	DIRECTSUM=/scratch/krasny_fluxg/njvaughn/CO_meshes/ex_st_coulomb_$N.bin  
 
 	direct-gpu   $SOURCES $TARGETS $DIRECTSUM $OUTFILE $N $N $KAPPA $POTENTIALTYPE $NUMDEVICES $NUMTHREADS
 	

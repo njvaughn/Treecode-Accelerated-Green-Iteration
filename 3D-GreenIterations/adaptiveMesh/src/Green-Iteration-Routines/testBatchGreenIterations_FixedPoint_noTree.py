@@ -791,7 +791,7 @@ if __name__ == "__main__":
     for i in range(len(conn)):
         conn[i] = i
     offset=np.zeros(int(XV.size/8))
-    for i in range(len(offset)):
+    for i in range(len(offset)):  
         offset[i] = 8*(i+1)
     ctype = np.zeros(len(offset))
     for i in range(len(ctype)):
@@ -816,7 +816,9 @@ if __name__ == "__main__":
         
     
 #     savefile="/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium"
-    savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO_new"
+#     savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO_new"
+#     savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO_z0"
+    savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/temp"
     unstructuredGridToVTK(savefile, 
                           XV, YV, ZV, connectivity = conn, offsets = offset, cell_types = ctype, 
                           cellData = cellVals, pointData = pointVals)

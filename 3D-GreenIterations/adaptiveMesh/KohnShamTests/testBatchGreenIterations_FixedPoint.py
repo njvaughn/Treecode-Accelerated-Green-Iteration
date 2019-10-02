@@ -683,18 +683,27 @@ def greensIteration_FixedPoint(psiIn):
         # update the orbital
         if symmetricIteration==False:
             orbitals[:,m] = np.copy(phiNew)
-        if symmetricIteration==True:
+        elif symmetricIteration==True:
             orbitals[:,m] = np.copy(phiNew/sqrtV)
-            
+        else:
+            print('What should symmetricIteration equal?')
+            return
+          
+        # Compute energy before orthogonalization, just to see  
+#         tree.importPhiOnLeaves(orbitals[:,m], m)
+#         tree.updateOrbitalEnergies(laplacian=gradientFree,sortByEnergy=False, targetEnergy=m)
+        
         n,M = np.shape(orbitals)
         orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
         orbitals[:,m] = np.copy(orthWavefunction)
+        print('renormalizing by peak value...')
         tree.importPhiOnLeaves(orbitals[:,m], m)
         
 #                             tree.importPhiOnLeaves(orbitals[:,m], m)
 #                             tree.orthonormalizeOrbitals(targetOrbital=m)
         
-        tree.updateOrbitalEnergies(laplacian=gradientFree,sortByEnergy=False, targetEnergy=m)
+        ## Update orbital energies after orthogonalization
+        tree.updateOrbitalEnergies(laplacian=gradientFree,sortByEnergy=False, targetEnergy=m) 
 
         
     else:
@@ -742,7 +751,12 @@ def greensIteration_FixedPoint(psiIn):
     print('Largest residual: ', residualVector[loc])
     print('Value at that point: ', psiOut[loc])
     print('Location of max residual: ', tempOrbital[loc,0], tempOrbital[loc,1], tempOrbital[loc,2])
-#     residualVector = -(psiIn - orbitals[:,m])
+    
+    print()
+    print('Max value of input wavefunction:   ', np.max(np.abs(psiIn[:-1])))
+    print('Max value of output wavefunction:  ', np.max(np.abs(psiOut[:-1])))
+    print()
+#     residualVector = -(psiIn - orbitals[:,m]) 
 
     newEigenvalue = tree.orbitalEnergies[m]
     
@@ -818,7 +832,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 
 
     if hasattr(tree, 'referenceEigenvalues'):
-        referenceEigenvalues = tree.referenceEigenvalues
+        referenceEigenvalues = tree.referenceEigenvalues  
     else:
         print('Tree did not have attribute referenceEigenvalues')
         referenceEigenvalues = np.zeros(tree.nOrbitals)

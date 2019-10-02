@@ -57,7 +57,8 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, additionalDept
         for i in range(len(atomData)):
             nElectrons += atomData[i,3]
     
-    nOrbitals = int( np.ceil(nElectrons/2)+1)
+#     nOrbitals = int( np.ceil(nElectrons/2)+1)
+    nOrbitals=27
     print('nElectrons = ', nElectrons)
     print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
@@ -77,8 +78,8 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, additionalDept
 #     sourcesTXT = '/Users/nathanvaughn/Desktop/CO_meshes/S%i.txt' %tree.numberOfGridpoints
 #     targetsTXT = '/Users/nathanvaughn/Desktop/CO_meshes/T%i.txt' %tree.numberOfGridpoints
     
-    sourcesTXT = '/scratch/krasny_fluxg/njvaughn/CO_meshes/S%i.txt' %tree.numberOfGridpoints
-    targetsTXT = '/scratch/krasny_fluxg/njvaughn/CO_meshes/T%i.txt' %tree.numberOfGridpoints
+    sourcesTXT = '/scratch/krasny_fluxg/njvaughn/Benzene_meshes/S%i.txt' %tree.numberOfGridpoints
+    targetsTXT = '/scratch/krasny_fluxg/njvaughn/Benzene_meshes/T%i.txt' %tree.numberOfGridpoints
     
     Sources = tree.extractLeavesDensity() 
     Targets = tree.extractLeavesDensity()
@@ -90,9 +91,9 @@ def exportMeshForTreecodeTesting(domain,order,minDepth, maxDepth, additionalDept
     np.savetxt(sourcesTXT, Sources)
     np.savetxt(targetsTXT, Targets[:,0:4])
 
-    print('Meshes Exported.')   
+    print('Meshes Exported.')      
     
-
+ 
 
 
 def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
@@ -755,11 +756,10 @@ if __name__ == "__main__":
 #                     smoothingEpsilon=0.0,base=1.0, inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
     
     
-#     meshDistributions(domain=20,order=5,
-#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-#                         divideParameter1=1e6, divideParameter2=1e6, divideParameter3=1e-6, divideParameter4=0,
-#                         smoothingEpsilon=0.0,base=1.0, causeFigure=False, inputFile='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv',
-#                         savedMesh='benzene_1e-6_rotated.npy')
+    meshDistributions(domain=20,order=4,
+                        minDepth=3, maxDepth=15, additionalDepthAtAtoms=0, divideCriterion='Krasny_Vext', 
+                        divideParameter1=8e-1, divideParameter2=8e-1, divideParameter3=8e-3, divideParameter4=8e-3,
+                        smoothingEpsilon=0.0,base=1.0, causeFigure=False, inputFile='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv')
     
     
 #     timingTestsForOrbitalInitializations(domain=20,order=5,
@@ -875,28 +875,38 @@ if __name__ == "__main__":
 #     
 
 ## THIS (MAYBE) USED TO GENERATE MESH FOR p-REFINEMENT
-#     exportMeshForTreecodeTesting(domain=20,order=4,
+#     exportMeshForTreecodeTesting(domain=30,order=4,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
 #                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-3, divideParameter4=0,
-#                         inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
-      
-#     exportMeshForTreecodeTesting(domain=20,order=4,
+#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+#       
+#     exportMeshForTreecodeTesting(domain=30,order=4,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-4, divideParameter4=0,
+#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+#     
+#     exportMeshForTreecodeTesting(domain=30,order=4,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
 #                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-5, divideParameter4=0,
-#                         inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
-#       
-#       
-#     exportMeshForTreecodeTesting(domain=20,order=4,
+#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+#        
+#        
+#     exportMeshForTreecodeTesting(domain=30,order=4,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
 #                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-6, divideParameter4=0,
-#                         inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
 # #       
-
-## THIS USED TO GENERATE MESH FOR p-REFINEMENT
-    exportMeshForTreecodeTesting(domain=20,order=4,
-                        minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
-                        divideParameter1=0, divideParameter2=0, divideParameter3=3e-7, divideParameter4=0,
-                        inputFile='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv')
+# 
+# ## THIS USED TO GENERATE MESH FOR p-REFINEMENT
+#     exportMeshForTreecodeTesting(domain=20,order=4,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=0, divideParameter2=0, divideParameter3=1e-7, divideParameter4=0,
+#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')
+    
+#     exportMeshForTreecodeTesting(domain=20,order=4,
+#                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
+#                         divideParameter1=0, divideParameter2=0, divideParameter3=3e-8, divideParameter4=0,
+#                         inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv')   
 #      
 
 

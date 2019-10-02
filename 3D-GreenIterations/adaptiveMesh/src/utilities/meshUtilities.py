@@ -3,9 +3,9 @@ Mesh utilities for the adaptive mesh refinement.
 
 @author: nathanvaughn
 '''
-from numpy import pi, cos, arccos, sin, sqrt, exp
+from numpy import pi, cos, arccos, sin, sqrt, exp, abs
 import numpy as np
-from scipy.special import factorial, comb
+from scipy.special import factorial, comb, erf
 import vtk
 
 def meshDensity(r,divideParameter,divideCriterion):
@@ -724,121 +724,329 @@ def mkVtkIdList(it):
     return vil
  
 
+
+def testIntegrationByParts(a,b,c,n):
+    
+    print('n = ', n)
+    # function should have decayed at boundaries a and c
+    def f(x):
+        return exp(-x**2)
+    def fp(x):
+        return (-2*x)*exp(-x**2)
+    def fpp(x):
+        return (4*x**2-2)*exp(-x**2)
+    
+    def F(x):  # antiderivative of f*f''
+        return -1/2 * sqrt(pi/2) * erf( sqrt(2) * x) - x*exp(-2*x**2)
+    
+    def true_int_F(a,b):
+#         return 2*a*exp(-a**2) - 2*b*exp(-b**2)
+        return F(b)-F(a)
+    
+    def g(x):
+        return exp(-abs(x))
+    def gp(x):
+        return -np.sign(x)*exp(-abs(x))
+    def gpp(x):
+        return exp(-abs(x))
+    
+    def G(x):  # antiderivative of f*f''
+        return g(0) - exp(-abs(x))
+    
+    def true_int_G(a,b):
+        return 1 - 1/2*exp(-abs(2*a)) - 1/2*exp(-abs(2*b))
+#         return G(b)-G(a)
+    
+    # left domain from a to b
+    xL = ChebyshevPointsFirstKind(a, b, n)
+    wL = weightsFirstKind(a,b,n)
+    fL = f(xL)
+    gL = g(xL)
+    gradL = computeDerivativeMatrix(a,b,n)
+    lapL = np.dot(gradL,gradL)
+    
+    # right domain from b to c
+    xR = ChebyshevPointsFirstKind(b, c, n)
+    wR = weightsFirstKind(b,c,n)
+    fR = f(xR)
+    gR = g(xR)
+    gradR = computeDerivativeMatrix(b,c,n)
+    lapR = np.dot(gradR,gradR)
+    
+    
+    # Analytic value
+    I_true = true_int_F(a,c)
+    print(I_true)
+    
+    # Laplacian Method
+    I_lap = np.sum( wL * np.dot(lapL,fL)*fL ) + np.sum( wR * np.dot(lapR,fR)*fR )
+    print(I_lap)
+    
+    # Gradient Method
+    I_grad = np.sum( -wL * np.dot(gradL,fL)**2 ) + np.sum( -wR * np.dot(gradR,fR)**2 )
+    print(I_grad)
+    
+    lapErrorF = I_lap-I_true
+    gradErrorF=I_grad-I_true
+    
+    
+    # Analytic value
+    I_true = true_int_G(a,c)
+    print(I_true)
+    
+    # Laplacian Method
+    I_lap = np.sum( wL * np.dot(lapL,gL)*gL ) + np.sum( wR * np.dot(lapR,gR)*gR )
+    print(I_lap)
+    
+    # Gradient Method
+    I_grad = np.sum( -wL * np.dot(gradL,gL)**2 ) + np.sum( -wR * np.dot(gradR,gR)**2 )
+    print(I_grad)
+    
+    lapErrorG = I_lap-I_true
+    gradErrorG=I_grad-I_true
+    
+    # Numerical correction
+    grad_gL = np.dot(-gradL,gL)
+    grad_gR = np.dot(-gradR,gR)
+    
+    # Interpolators for g and gp
+    gL_interpolator = interpolator1Dchebyshev(xL,gL)
+    gpL_interpolator = interpolator1Dchebyshev(xL,grad_gL)
+    
+    gR_interpolator = interpolator1Dchebyshev(xR,gR)
+    gpR_interpolator = interpolator1Dchebyshev(xR,grad_gR)
+    
+    
+    
+    print('grad_gL: ',grad_gL)
+    print('grad_gR: ',grad_gR)
+    
+#     BC_numerically_correctedI_grad = I_grad - ( gL[0]*np.dot(-gradL,gL)[0] - gL[-1]*np.dot(-gradL,gL)[-1]) - (gR[0]*np.dot(-gradR,gR)[0] - gR[-1]*np.dot(-gradR,gR)[-1] )  
+    BC_numerically_correctedI_grad = I_grad + ( gL[-1]*grad_gL[-1] - gL[0]*grad_gL[0]) + ( gR[-1]*grad_gR[-1] - gR[0]*grad_gR[0] )  
+#     BC_numerically_correctedI_grad = I_grad + ( gL_interpolator(b)*gpL_interpolator(b) - gL_interpolator(a)*gpL_interpolator(a) ) + ( gR_interpolator(c)*gpR_interpolator(c) - gR_interpolator(b)*gpR_interpolator(b) )  
+    # Analytic coorection
+    BC_analytically_correctedI_grad = I_grad + ( g(b)*gp(-1e-10) - g(a)*gp(a)) + (g(c)*gp(c) - g(b)*gp(1e-10) )  
+    
+#     BCcorrectedI_grad = I_grad + 2 # for the cusp at 0
+#     BCcorrectedI_grad =BCcorrectedI_grad - g(a)*gp(a) - g(b) * gp(b)
+    BC_analytically_correctedGradErrorG = BC_analytically_correctedI_grad - I_true
+    BC_numerically_correctedGradErrorG = BC_numerically_correctedI_grad - I_true
+    
+    
+#     print('Error in Laplacian: ', I_lap-I_true)
+#     print('Error in Gradient: ', I_grad-I_true)
+#     print()
+    
+    return lapErrorF, gradErrorF, lapErrorG, gradErrorG, BC_analytically_correctedGradErrorG, BC_numerically_correctedGradErrorG
+    
+def sweepIntegrationByParts():
+    N = range(2,20)
+    laplacianErrorsF = []
+    gradientErrorsF = []
+    laplacianErrorsG = []
+    gradientErrorsG = []
+    BC_analytically_correctedG = []
+    BC_numerically_correctedG = [] 
+    for i in range(len(N)):
+        n=N[i]
+        lapErrorF, gradErrorF, lapErrorG, gradErrorG, BC_analytical_gradErrorG, BC_numerical_gradErrorG = testIntegrationByParts(-10,0,10,n)
+        laplacianErrorsF.append(np.abs(lapErrorF))
+        gradientErrorsF.append(np.abs(gradErrorF))
+        laplacianErrorsG.append(np.abs(lapErrorG))
+        gradientErrorsG.append(np.abs(gradErrorG))
+        BC_analytically_correctedG.append(abs( BC_analytical_gradErrorG))
+        BC_numerically_correctedG.append(abs( BC_numerical_gradErrorG))
+        
+        
+    plt.figure()
+    plt.title(r"$\int f(x)*f''(x) dx$ with and without integration by parts, smooth f")
+    plt.loglog(N,laplacianErrorsF,'ro', label='Without IBP')
+    plt.loglog(N,gradientErrorsF,'bo', label='With IBP')
+    plt.legend()
+    
+    plt.figure()
+    plt.title(r"$\int f(x)\frac{d^2}{dx^2}f(x) dx$; $f=e^{-|x|}$; domain split at the $x=0$ cusp")
+    plt.loglog(N,laplacianErrorsG,'ro', label='Without IBP')
+    plt.loglog(N,gradientErrorsG,'bo', label='IBP without boundary term')
+    plt.loglog(N,BC_analytically_correctedG,'go', label='IBP with analytically corrected cusp')
+    plt.loglog(N,BC_numerically_correctedG,'co', label='IBP with numerically corrected cusp')
+    plt.legend()
+    plt.xlabel("Chebyshev Degree")
+    plt.ylabel("Error in Integral")
+    plt.show()
+    
+
+def testGradientAndLaplacian():
  
+
+    N = range(2,20)
+    gradientErrors=[]
+    laplacianErrors=[]
+    
+    gradientErrors7=[]
+    laplacianErrors7=[]
+    for i in range(len(N)):
+        
+#         nx = ny = nz = 12
+        nx = ny = nz = N[i]
+        a=-1
+        b=2
+        xf = ChebyshevPointsFirstKind(a, b, nx)
+        xs = ChebyshevPointsSecondKind(a,b, nx)
+        
+        wf = weightsFirstKind(a,b,nx)
+        ws = weightsSecondKind(a,b,nx)
+        
+        df = computeDerivativeMatrix(a,b,nx)
+    #     y = ChebyshevPointsFirstKind(-1, 0, ny)
+    #     z = ChebyshevPointsFirstKind(-1, 0, nz)
+    #     print(xf)
+    #     print(xs)
+    #     print()
+    #     print(wf)
+    #     print(ws)
+        
+        
+        def square(x):
+            return x**2
+        def square_int(a,b):
+            return 1/3* (b**3 - a**3)
+        def square_prime(x):
+            return 2*x
+        def square_pp(x):
+            return 2*np.ones_like(x)
+        
+        def eight(x):
+            return x**8
+        def eight_int(a,b):
+            return 1/9*(b**9-a**9)
+        def eight_prime(x):
+            return 8*x**7
+        
+        
+        def seven(x):
+            return x**7
+        def seven_int(a,b):
+            return 1/8*(b**8-a**8)
+        def seven_prime(x):
+            return 7*x**6
+        def seven_pp(x):
+            return 42*x**5
+        
+        def exp(x):
+            return np.exp(x)
+        def exp_int(a,b):
+            return np.exp(b)-np.exp(a)
+        def exp_prime(x):
+            return exp(x)
+        def exp_pp(x):
+            return np.exp(x)
+        
+        def ErrorNorm(x):
+            return np.sqrt(np.sum(x**2))
+            
+#         func_f = square(xf)
+#         sum_f = np.sum(func_f*wf)
+#         grad_f = np.dot(-df,func_f)
+#         lap_f = np.dot(-df,grad_f)
+#         
+#         func_s = square(xs)
+#         sum_s = np.sum(func_s*ws)
+#         
+#         print("Square function")
+#     #     print('int error: ', sum_f-square_int(a,b))
+#     #     print(square_prime(xf))
+#     #     print(grad_f)
+#         print('gradient error: ', ErrorNorm( grad_f - square_prime(xf)) )
+#         print('laplacian error: ', ErrorNorm( lap_f - square_pp(xf)) )
+#     # #     print('Sum s error: ', sum_s-square_int(a,b))
+#     # #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*square_int(-1,1))
+#     #     
+
+        func_f = seven(xf)
+        sum_f = np.sum(func_f*wf)
+        grad_f = np.dot(-df,func_f)
+        Lap = np.dot(df,df)
+        lap_f = np.dot(Lap,func_f)
+        gradientErrors7.append(ErrorNorm( grad_f - seven_prime(xf)))
+        laplacianErrors7.append(ErrorNorm(  lap_f - seven_pp(xf)))
+        print(seven_pp(xf))
+        print(lap_f)
+        print('prime error: ', ErrorNorm( grad_f - seven_prime(xf)) )
+        print('lap error: ', ErrorNorm( lap_f - seven_pp(xf)) )
+        print('relative lap error: ', ErrorNorm( lap_f - seven_pp(xf)) /ErrorNorm(np.abs(seven_pp(xf) )) )
+        print('norm of lap: ', ErrorNorm(seven_pp(xf)) )
+    
+    #     func_s = seven(xs)
+    #     sum_s = np.sum(func_s*ws)
+    #     
+    #     print("seven power function")
+    #     print('Sum f error: ', sum_f-seven_int(a,b))
+    # #     print('Sum s error: ', sum_s-seven_int(a,b))
+    # #     print(sum_f)
+    # #     print(seven_int(a,b))
+    # #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*eight_int(-1,1))
+    # 
+    #     func_f = eight(xf)
+    #     sum_f = np.sum(func_f*wf)
+    #     
+    #     func_s = eight(xs)
+    #     sum_s = np.sum(func_s*ws)
+    #     
+    #     print("Eight power function")
+    #     print('Sum f error: ', sum_f-eight_int(a,b))
+    # #     print('Sum s error: ', sum_s-eight_int(a,b))
+    # #     print(sum_f)
+    # #     print(eight_int(a,b))
+    #     
+    
+        print()
+        func_f = exp(xf)
+        sum_f = np.sum(func_f*wf)
+        grad_f = np.dot(-df,func_f)
+        lap_f = np.dot(-df,grad_f)
+#         print(exp_prime(xf))
+#         print(grad_f)
+#         print('gradient error: ', ErrorNorm( grad_f - exp_prime(xf)) )
+#         print('laplacian error: ', ErrorNorm( lap_f - exp_pp(xf)) )    
+#         print()
+        
+        gradientErrors.append(ErrorNorm( grad_f - exp_prime(xf)))
+        laplacianErrors.append(ErrorNorm(  lap_f - exp_pp(xf)))
+    
+    plt.figure()
+    plt.title(r'$L^2$ Errors in Derivatives of $e^x$ on [%i,%i]' %(a,b))
+    plt.loglog(N,gradientErrors,'bo', label='Gradient')
+    plt.loglog(N,laplacianErrors,'ro', label='Laplacian')
+    plt.legend()
+    
+    plt.figure()
+    plt.title(r'$L^2$ Errors in Derivatives of $x^7$ on [%i,%i]' %(a,b))
+    plt.loglog(N,gradientErrors7,'bo', label='Gradient')
+    plt.loglog(N,laplacianErrors7,'ro', label='Laplacian')
+    plt.legend()
+    
+    
+    plt.show()
+    
 if __name__=="__main__":
     import matplotlib.pyplot as plt
     
+#     testIntegrationByParts(-5,0,5,5)
+#     testIntegrationByParts(-5,0,5,10)
+#     testIntegrationByParts(-5,0,5,15)
+#     testIntegrationByParts(-5,0,5,25)
+#     testIntegrationByParts(-5,0,5,50)
+    
+    sweepIntegrationByParts()
+#     testGradientAndLaplacian()
 
-
-    nx = ny = nz = 4
-    a=-1
-    b=2
-    xf = ChebyshevPointsFirstKind(a, b, nx)
-    xs = ChebyshevPointsSecondKind(a,b, nx)
-    
-    wf = weightsFirstKind(a,b,nx)
-    ws = weightsSecondKind(a,b,nx)
-    
-    df = computeDerivativeMatrix(a,b,nx)
-#     y = ChebyshevPointsFirstKind(-1, 0, ny)
-#     z = ChebyshevPointsFirstKind(-1, 0, nz)
-#     print(xf)
-#     print(xs)
-#     print()
-#     print(wf)
-#     print(ws)
-    
-    
-    def square(x):
-        return x**2
-    def square_int(a,b):
-        return 1/3* (b**3 - a**3)
-    def square_prime(x):
-        return 2*x
-    
-    def eight(x):
-        return x**8
-    def eight_int(a,b):
-        return 1/9*(b**9-a**9)
-    def eight_prime(x):
-        return 8*x**7
-    
-    def seven(x):
-        return x**7
-    def seven_int(a,b):
-        return 1/8*(b**8-a**8)
-    def seven_prime(x):
-        return 7*x**6
-    
-    def exp(x):
-        return np.exp(x)
-    def exp_int(a,b):
-        return np.exp(b)-np.exp(a)
-    def exp_prime(x):
-        return exp(x)
-    
-    def ErrorNorm(x):
-        return np.sqrt(np.sum(x**2))
-        
-    func_f = square(xf)
-    sum_f = np.sum(func_f*wf)
-    grad_f = np.dot(-df,func_f)
-    
-    func_s = square(xs)
-    sum_s = np.sum(func_s*ws)
-    
-    print("Square function")
-#     print('int error: ', sum_f-square_int(a,b))
-#     print(square_prime(xf))
-#     print(grad_f)
-    print('prime error: ', ErrorNorm( grad_f - square_prime(xf)) )
-# #     print('Sum s error: ', sum_s-square_int(a,b))
-# #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*square_int(-1,1))
 #     
-    func_f = seven(xf)
-    sum_f = np.sum(func_f*wf)
-    grad_f = np.dot(-df,func_f)
-#     print(square_prime(xf))
-#     print(grad_f)
-    print('prime error: ', ErrorNorm( grad_f - seven_prime(xf)) )
-
-#     func_s = seven(xs)
-#     sum_s = np.sum(func_s*ws)
-#     
-#     print("seven power function")
-#     print('Sum f error: ', sum_f-seven_int(a,b))
-# #     print('Sum s error: ', sum_s-seven_int(a,b))
-# #     print(sum_f)
-# #     print(seven_int(a,b))
-# #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*eight_int(-1,1))
-# 
-#     func_f = eight(xf)
-#     sum_f = np.sum(func_f*wf)
-#     
-#     func_s = eight(xs)
-#     sum_s = np.sum(func_s*ws)
-#     
-#     print("Eight power function")
-#     print('Sum f error: ', sum_f-eight_int(a,b))
-# #     print('Sum s error: ', sum_s-eight_int(a,b))
-# #     print(sum_f)
-# #     print(eight_int(a,b))
-#     
-
-    print()
-    func_f = exp(xf)
-    sum_f = np.sum(func_f*wf)
-    grad_f = np.dot(-df,func_f)
-    print(exp_prime(xf))
-    print(grad_f)
-    print('prime error: ', ErrorNorm( grad_f - exp_prime(xf)) )
-    print()
-#     
-    func_s = exp(xs)
-    grad_s = np.dot(-df,func_s)
-    print(exp_prime(xs))
-    print(grad_s)
-    print('prime error: ', ErrorNorm( grad_s - exp_prime(xs)) )
+#     func_s = exp(xs)
+#     grad_s = np.dot(-df,func_s)
+#     print(exp_prime(xs))
+#     print(grad_s)
+#     print('prime error: ', ErrorNorm( grad_s - exp_prime(xs)) )
 #     sum_s = np.sum(func_s*ws)
 #     
 #     print("exp function")
