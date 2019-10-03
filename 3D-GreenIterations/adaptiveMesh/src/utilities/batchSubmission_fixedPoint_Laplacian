@@ -64,7 +64,7 @@ do
 for MAXDEPTH in 15      
 do								  				 	       
 #for GRADIENTFREE in 'Laplacian' 'False' 'True'   
-for GRADIENTFREE in 'False'   
+for GRADIENTFREE in 'Laplacian' 'True'  
 do    
 	for TREECODEORDER in 8  
 	do         
@@ -73,7 +73,8 @@ do
 			#for MESHPARAM3 in 2e-7    
 			#for MESHPARAM1 in 500 1000 1500 2000    
 			#for MESHPARAM3 in  3e-4 1e-4 3e-5 1e-5 7e-6 3e-6 1e-6 7e-7 3e-7 1e-7 7e-8    
-			for MESHPARAM3 in  1e-4 1e-5 1e-6 1e-7 3e-6 3e-7 3e-8 3e-9    
+			for MESHPARAM3 in  1e-4 1e-6 1e-7 3e-8 3e-9 1e-5 1e-6  
+			#for MESHPARAM3 in  1e-7 
 			#for MESHPARAM1 in  500 1000 2000 3000     
 			do
 
@@ -81,7 +82,7 @@ do
 			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/CarbonMonoxideData/gradientFree/CO_order_${CELLORDER}_meshParam_${MESHPARAM3}_gradientFree_${GRADIENTFREE}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/CarbonMonoxideData/gradientFree_preOrth/CO_order_${CELLORDER}_meshParam_${MESHPARAM3}_gradientFree_${GRADIENTFREE}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/BerylliumData/gradientFree_preOrth/Be_order_${CELLORDER}_meshParam_${MESHPARAM3}_gradientFree_${GRADIENTFREE}.csv"
-			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/BerylliumData/gradientFree_order5/Be_meshParam3_${MESHPARAM3}_gradientFree_${GRADIENTFREE}_cellOrder_${CELLORDER}.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/BerylliumData/gradientFree_order5/Be_maxDepth_${MAXDEPTH}_meshParam3_${MESHPARAM3}_gradientFree_${GRADIENTFREE}_cellOrder_${CELLORDER}.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/BerylliumData/gradientFree_domain40/Be_meshParam3_${MESHPARAM3}_gradientFree_${GRADIENTFREE}_cellOrder_${CELLORDER}.csv"
 			
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/best-times/Benzene_tree_1em4__mesh_${CELLORDER}_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"

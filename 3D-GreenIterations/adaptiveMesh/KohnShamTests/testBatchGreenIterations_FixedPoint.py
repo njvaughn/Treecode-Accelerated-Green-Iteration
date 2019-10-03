@@ -696,7 +696,6 @@ def greensIteration_FixedPoint(psiIn):
         n,M = np.shape(orbitals)
         orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
         orbitals[:,m] = np.copy(orthWavefunction)
-        print('renormalizing by peak value...')
         tree.importPhiOnLeaves(orbitals[:,m], m)
         
 #                             tree.importPhiOnLeaves(orbitals[:,m], m)
