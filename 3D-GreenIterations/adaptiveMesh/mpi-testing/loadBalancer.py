@@ -45,7 +45,7 @@ def plot_points_single_proc(x, y, z, rank, title):
 #     plt.savefig(savedir+filename)
 
 
-def loadBalance(x,y,z,data,verbosity=0):
+def loadBalance(x,y,z,data,LBMETHOD='RCB',verbosity=0):
     '''
     Each processor calls loadBalance.  Using zoltan, the particles are balanced and redistributed as necessary.  Returns the balanced arrays
     '''
@@ -75,15 +75,14 @@ def loadBalance(x,y,z,data,verbosity=0):
     ya = DoubleArray(initialNumPoints); ya.set_data(y)
     za = DoubleArray(initialNumPoints); za.set_data(z)
     gida = UIntArray(initialNumPoints); gida.set_data(gid)
+
     # create the geometric partitioner
-    LBMETHOD='HSFC'
     if ( (verbosity>0) and (rank==0) ): print("Setting up geometric partitioner.")
     pz = zoltan.ZoltanGeometricPartitioner(
         dim=3, comm=comm, x=xa, y=ya, z=za, gid=gida)
     if ( (verbosity>0) and (rank==0) ): print("Completed geometric partitioner setup.")
-    # call the load balancing function
+
     if ( (verbosity>0) and (rank==0) ): print("Calling the load balancer.")
-    
     pz.set_lb_method(LBMETHOD)
     pz.Zoltan_Set_Param('DEBUG_LEVEL', '0')
     pz.Zoltan_LB_Balance()
@@ -144,13 +143,11 @@ def loadBalance(x,y,z,data,verbosity=0):
     balanced_data = np.append( original_data, np.copy(recv_data))
     
     print("Rank %i started with %i points.  After load balancing it has %i points." %(rank,initialNumPoints,len(balanced_x)))
-#     return
     return balanced_x,balanced_y,balanced_z, balanced_data
 
 
 if __name__=="__main__":
-    n = 500*(rank+1)**2
-#     print(n)
+    n = 200*(rank+1)**2
     x = np.random.random( n )
     y = np.random.random( n )
     z = np.random.random( n )
@@ -162,8 +159,9 @@ if __name__=="__main__":
     initSumZ = comm.allreduce(np.sum(z))
     initSumData = comm.allreduce(np.sum(data))
     
-    plot_points_single_proc(x,y,z,rank,'Initial points for rank %i'%rank)
-    x,y,z,data = loadBalance(x,y,z,data,verbosity=0)
+#     plot_points_single_proc(x,y,z,rank,'Initial points for rank %i'%rank)
+    x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='RCB')
+#     x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='HSFC')
     plot_points_single_proc(x,y,z,rank,'Final points for rank %i'%rank)
     
     finalSumX = comm.allreduce(np.sum(x))
