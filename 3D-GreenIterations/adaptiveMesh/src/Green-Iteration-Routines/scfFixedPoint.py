@@ -218,7 +218,7 @@ def scfFixedPointClosure(scf_args):
                     potentialType=0
                 else: potentialType=2 
                 numThreads=scf_args['numThreads']
-                numDevices=scf_args['numDevices']
+                numDevices=scf_args['numDevices'] 
                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),

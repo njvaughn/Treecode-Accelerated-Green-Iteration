@@ -59,12 +59,12 @@ for DOMAIN in 20
 do 
 for CELLORDER in 6
 do	    
-for BASE in 1 
-do  
+for BASE in 1  
+do   
 for MAXDEPTH in 15      
 do								  				 	       
 #for GRADIENTFREE in 'Laplacian' 'False' 'True'   
-for GRADIENTFREE in 'Laplacian' 'True'  
+for GRADIENTFREE in 'True'     
 do    
 	for TREECODEORDER in 8  
 	do         
