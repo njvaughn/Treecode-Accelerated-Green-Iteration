@@ -36,9 +36,9 @@ def plot_points_single_proc(x, y, z, rank, title):
     s1.axes.set_ylabel( 'Y' )
     s1.axes.set_zlabel( 'Z' )
     
-    s1.axes.set_xlim([0,1])
-    s1.axes.set_ylim([0,1])
-    s1.axes.set_zlim([0,1])
+    s1.axes.set_xlim([-1,1])
+    s1.axes.set_ylim([-1,1])
+    s1.axes.set_zlim([-2,2])
 
     plt.title(title)
     plt.show() 
@@ -147,20 +147,44 @@ def loadBalance(x,y,z,data,LBMETHOD='RCB',verbosity=0):
 
 
 if __name__=="__main__":
-    n = 200*(rank+1)**2
-    x = np.random.random( n )
-    y = np.random.random( n )
-    z = np.random.random( n )
+    from numpy.random import random
+    from numpy import pi, sin, cos, arccos
+    
+    
+    n = 50*(rank+1)**2
     data = np.random.random( n )
     
+    ## Unit cube, uniformly distributed
+    x = 2*(np.random.random( n )-1/2)
+    y = 2*(np.random.random( n )-1/2)
+    z = 2*(np.random.random( n )-1/2)
+    
+    ## Unit circle, uniformly distributed in radius
+    phi = 2*pi*random(n)
+    costheta = 2*random(n)-1
+    u = random(n)
+    r = u**3
+    
+    theta = arccos( costheta )
+    x = r * sin( theta) * cos( phi )
+    y = r * sin( theta) * sin( phi )
+    z = r * cos( theta )
+        
+    x = np.append(x, x)
+    y = np.append(y, y)
+    z = np.append(z-np.ones(n), z+np.ones(n))
+    data = np.append(data,data)
     
     initSumX = comm.allreduce(np.sum(x))
     initSumY = comm.allreduce(np.sum(y))
     initSumZ = comm.allreduce(np.sum(z))
     initSumData = comm.allreduce(np.sum(data))
     
+
+
+
 #     plot_points_single_proc(x,y,z,rank,'Initial points for rank %i'%rank)
-    x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='RCB')
+    x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='RIB')
 #     x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='HSFC')
     plot_points_single_proc(x,y,z,rank,'Final points for rank %i'%rank)
     
