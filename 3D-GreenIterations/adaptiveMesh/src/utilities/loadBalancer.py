@@ -180,6 +180,7 @@ if __name__=="__main__":
     
     
     n = 50*(rank+1)**2
+    if rank%2==0: n=0
     data = np.random.random( n )
     
     ## Unit cube, uniformly distributed
@@ -210,11 +211,14 @@ if __name__=="__main__":
     
 
 
-
+    x2 = np.copy(x)
+    y2 = np.copy(y)
+    z2 = np.copy(z)
 #     plot_points_single_proc(x,y,z,rank,'Initial points for rank %i'%rank)
-#     x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='RIB')
-#     x,y,z = loadBalance(x,y,z,LBMETHOD='RCB')
-    x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='HSFC')
+    x,y,z = loadBalance(x,y,z,LBMETHOD='RCB')
+#     x,y,z = loadBalance(x,y,z,LBMETHOD='HSFC')
+#     x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='RCB')
+#     x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='HSFC')
     plot_points_single_proc(x,y,z,rank,'Final points for rank %i'%rank)
     
     finalSumX = comm.allreduce(np.sum(x))
@@ -226,6 +230,14 @@ if __name__=="__main__":
     assert abs( (initSumY-finalSumY)/initSumY )<1e-12, "Sum over y positions not preserved."
     assert abs( (initSumZ-finalSumZ)/initSumZ )<1e-12, "Sum over z positions not preserved."
     assert abs( (initSumData-finalSumData)/initSumData )<1e-12, "Sum over data values not preserved."
+    
+    
+#     x2,y2,z2 = loadBalance(x2,y2,z2,LBMETHOD='RCB')
+#     
+#     assert np.max( np.abs( x-x2 ) )<1e-12, "Two calls to load balancer didn't give same decomposition."
+#     assert np.max( np.abs( y-y2 ) )<1e-12, "Two calls to load balancer didn't give same decomposition."
+#     assert np.max( np.abs( z-z2 ) )<1e-12, "Two calls to load balancer didn't give same decomposition."
+    
     
     
 

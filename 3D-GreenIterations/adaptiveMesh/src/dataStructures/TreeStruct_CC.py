@@ -12,7 +12,6 @@ all midpoints as arrays which can be fed in to the GPU kernels, or other tree-ex
 '''
 
 import numpy as np
-import dask as da
 from pympler import tracker, classtracker
 import matplotlib as mpl
 mpl.use('Agg')

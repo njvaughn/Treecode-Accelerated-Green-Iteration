@@ -8,7 +8,7 @@ import numpy as np
 from scipy.special import factorial, comb
 
 import matplotlib.pyplot as plt
-from mpmath.calculus.optimization import steffensen
+# from mpmath.calculus.optimization import steffensen
 
 
 def innerProduct(f,g,weights):
