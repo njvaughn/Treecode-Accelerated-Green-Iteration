@@ -8,6 +8,11 @@ import numpy as np
 from scipy.special import factorial, comb
 
 import matplotlib.pyplot as plt
+from mpiUtilities import global_dot, rprint
+import mpi4py.MPI as MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size() 
 # from mpmath.calculus.optimization import steffensen
 
 
@@ -37,15 +42,17 @@ def solveLinearSystem(F,weights):
     rhs = np.zeros(n-1)
     for m in range(n-1): # m rows
         f = F[:,n-1] - F[:,n-2-m]
-        rhs[m] = innerProduct(f, F[:,n-1], weights)
+#         rhs[m] = innerProduct(f, F[:,n-1], weights)
+        rhs[m] = global_dot(f, F[:,n-1]*weights, comm)
         for k in range(n-1): # k columns
             g = F[:,n-1] - F[:,n-2-k]
-            linearSystem[m,k] = innerProduct( f, g, weights)
+#             linearSystem[m,k] = innerProduct( f, g, weights)
+            linearSystem[m,k] = global_dot( f, g*weights, comm)
     
 #     print('\nLinear system: ', linearSystem)
 #     print('\nrhs: ', rhs)
     cvec = np.linalg.solve(linearSystem, rhs)
-    print('\nAnderson weights: ', cvec[::-1] , 1-np.sum(cvec))
+    rprint('\nAnderson weights: ', cvec[::-1] , 1-np.sum(cvec))
     return cvec
     
 

@@ -45,7 +45,7 @@ def plot_points_single_proc(x, y, z, rank, title):
 #     plt.savefig(savedir+filename)
 
 
-def loadBalance(x,y,z,data=None,LBMETHOD='RCB',verbosity=0):
+def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
     '''
     Each processor calls loadBalance.  Using zoltan, the particles are balanced and redistributed as necessary.  Returns the balanced arrays.
     Does not require each processor to have started with the same number of particles.
@@ -97,6 +97,7 @@ def loadBalance(x,y,z,data=None,LBMETHOD='RCB',verbosity=0):
     if ( (verbosity>0) and (rank==0) ): print("Calling the load balancer.")
     pz.set_lb_method(LBMETHOD)
     pz.Zoltan_Set_Param('DEBUG_LEVEL', '0')
+    pz.Zoltan_Set_Param('IMBALANCE_TOL','1.1')
     pz.Zoltan_LB_Balance()
     if ( (verbosity>0) and (rank==0) ): print("Load balancer complete.")
     
@@ -179,8 +180,14 @@ if __name__=="__main__":
     from numpy import pi, sin, cos, arccos
     
     
-    n = 50*(rank+1)**2
-    if rank%2==0: n=0
+#     n = 50*(rank+1)**2
+#     if rank%2==0: n=0
+
+    n=1800*8
+#     if rank==0:
+#         n=57600
+#     else:
+#         n=0
     data = np.random.random( n )
     
     ## Unit cube, uniformly distributed
@@ -215,12 +222,17 @@ if __name__=="__main__":
     y2 = np.copy(y)
     z2 = np.copy(z)
 #     plot_points_single_proc(x,y,z,rank,'Initial points for rank %i'%rank)
+    print("calling loadBalance")
+    start = MPI.Wtime()
     x,y,z = loadBalance(x,y,z,LBMETHOD='RCB')
 #     x,y,z = loadBalance(x,y,z,LBMETHOD='HSFC')
 #     x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='RCB')
 #     x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='HSFC')
-    plot_points_single_proc(x,y,z,rank,'Final points for rank %i'%rank)
+#     plot_points_single_proc(x,y,z,rank,'Final points for rank %i'%rank)
+    end = MPI.Wtime()
     
+    print("Time to load balance particles: %f (s)" %(end-start))
+
     finalSumX = comm.allreduce(np.sum(x))
     finalSumY = comm.allreduce(np.sum(y))
     finalSumZ = comm.allreduce(np.sum(z))

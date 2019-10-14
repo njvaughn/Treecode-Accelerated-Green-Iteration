@@ -6,6 +6,16 @@ import resource
 import GPUtil
 import os
 
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+from mpiUtilities import global_dot, rprint
+
+
+ 
+
 
 try:
     from convolution import *
@@ -19,7 +29,7 @@ except OSError:
     print('Unable to import directSumWrappers due to OSError')
     
 try:
-    import treecodeWrappers
+    import treecodeWrappers_distributed as treecodeWrappers
 except ImportError:
     print('Unable to import treecodeWrapper due to ImportError')
 except OSError:
@@ -60,6 +70,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         Y = gi_args['Y']
         Z = gi_args['Z']  
         W = gi_args['W']
+#         print("X, Y, Z, W: ", X[:3], Y[:3], Z[:3], W[:3])
         gradientFree = gi_args['gradientFree']
         SCFcount = gi_args['SCFcount']
         greenIterationsCount = gi_args['greenIterationsCount']
@@ -114,17 +125,25 @@ def greensIteration_FixedPoint_Closure(gi_args):
             if GPUpresent==False:
                 startTime=time.time()
                 potentialType=3
+#                 potentialType=1
+#                 print('potentialType=1')
                 kappa = k
                 startTime = time.time()
                 numDevices=gi_args['numDevices']
                 numThreads=gi_args['numThreads']
+                comm.barrier()
                 phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                               potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
-                phiNew /= (4*np.pi)
+                                                               potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+#                 print("Length of phiNew: ", len(phiNew))
+#                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
+                if subtractSingularity==1: phiNew /= (4*np.pi)
+#                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
+#                 print("Avg of phiNew: ", np.mean(phiNew))
                 convolutionTime = time.time()-startTime
-                print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+                rprint('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+                comm.barrier()
 #                     return
             elif GPUpresent==True:
                 if treecode==False:
@@ -161,11 +180,12 @@ def greensIteration_FixedPoint_Closure(gi_args):
                     startTime = time.time()
                     numDevices=gi_args['numDevices']
                     numThreads=gi_args['numThreads']
+                    
 #                     print('numDevices and numThreads as read in from gi_args are: ', numDevices, numThreads)
                     phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                                   potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+                                                                   potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
                 
 
                     if subtractSingularity==1: phiNew /= (4*np.pi)
@@ -192,18 +212,24 @@ def greensIteration_FixedPoint_Closure(gi_args):
             orthWavefunction2 = np.zeros(nPoints)
             if ( (gradientFree==True) and (SCFcount>-1)):                 
                 
-                psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*W))
+#                 psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*W))
+                psiNewNorm = np.sqrt( global_dot( phiNew, phiNew*W, comm))
+                rprint("psiNewNorm = %f" %psiNewNorm)
                 
                 if symmetricIteration==False:
         
-                    deltaE = -np.sum( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew)*W ) 
-                    normSqOfPsiNew = np.sum( phiNew**2 * W)
+#                     deltaE = -np.sum( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew)*W ) 
+                    deltaE = -global_dot( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew), W, comm ) 
+#                     normSqOfPsiNew = np.sum( phiNew**2 * W)
+                    normSqOfPsiNew = global_dot( phiNew**2, W, comm)
                     deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
     #                 deltaE /= (psiNewNorm)
 #                     print('NormSq of psiNew = ', normSqOfPsiNew )
 #                     print('Norm of psiNew = ', psiNewNorm )
 #                     print('Delta E = ', deltaE)
+                    rprint("deltaE = %f" %deltaE)
                     Energies['orbitalEnergies'][m] += deltaE
+                    rprint("Energies['orbitalEnergies'][m] = %f" %Energies['orbitalEnergies'][m])
                     orbitals[:,m] = np.copy(phiNew)
                 elif symmetricIteration==True:
                     print('Symmetric not set up for tree-free')
@@ -213,7 +239,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
     #             Wcopy = np.copy(W)
     #             mcopy = np.copy(m)
     #             nPointsCopy = np.copy(nPoints)
-                orthWavefunction = mgs(orbitals,W,m, n, M)
+                orthWavefunction = mgs(orbitals,W,m, n, M, comm)
     #             modifiedGramSchmidt_singleOrbital_GPU[blocksPerGrid, threadsPerBlock](np.copy(orbitals),Wcopy,mcopy,nPointsCopy, orthWavefunction2)
                 
                 orbitals[:,m] = np.copy(orthWavefunction)
@@ -227,7 +253,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 else:
                     eigenvalueHistory = gi_args['eigenvalueHistory']
                     eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
-                print('eigenvalueHistory: \n',eigenvalueHistory)
+                rprint('eigenvalueHistory: \n',eigenvalueHistory)
                 
                 
 #                 print('Orbital energy after Harrison update: ', Energies['orbitalEnergies'][m])
@@ -246,14 +272,14 @@ def greensIteration_FixedPoint_Closure(gi_args):
             print("Not updating eigenvalue because updateEigenvalue!=True")
             orbitals[:,m] = np.copy(phiNew)
             n,M = np.shape(orbitals) 
-            orthWavefunction = mgs(orbitals,W,m, n, M)
+            orthWavefunction = mgs(orbitals,W,m, n, M, comm)
             orbitals[:,m] = np.copy(orthWavefunction) 
             if greenIterationsCount==1:
                 eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
             else:
                 eigenvalueHistory = gi_args['eigenvalueHistory']
                 eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
-            print('eigenvalueHistory (should be constant): \n',eigenvalueHistory)
+            if rank==0: print('eigenvalueHistory (should be constant): \n',eigenvalueHistory)
             gi_args['eigenvalueDiff']=0
             deltaE=0
             gi_args['eigenvalueHistory']=eigenvalueHistory
@@ -294,21 +320,21 @@ def greensIteration_FixedPoint_Closure(gi_args):
     
         
         if symmetricIteration==False:
-            normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*W ) )
+#             normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*W ) )
+            normDiff = np.sqrt( global_dot( (orbitals[:,m]-oldOrbitals[:,m])**2,W, comm ) )
         elif symmetricIteration==True:
-            normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*W ) )
+#             normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*W ) )
+            normDiff = np.sqrt( global_dot( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2,W,comm ) )
         eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)    
         
-    
-        residuals[m] = normDiff
+        if rank==0:
+            residuals[m] = normDiff
         orbitalResidual = np.copy(normDiff)
         
         
     
-        print('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift'], eigenvalueDiff))
-        print('Orbital %i wavefunction residual: %1.3e' %(m, orbitalResidual))
-        print()
-        print()
+        rprint('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift'], eigenvalueDiff))
+        rprint('Orbital %i wavefunction residual: %1.3e\n\n' %(m, orbitalResidual))
     
     
     
@@ -317,17 +343,18 @@ def greensIteration_FixedPoint_Closure(gi_args):
         myData = [m, greenIterationsCount, residuals,
                   Energies['orbitalEnergies']-Energies['gaugeShift'], eigenvalueDiff]
     
-        if not os.path.isfile(greenIterationOutFile):
+        if rank==0:
+            if not os.path.isfile(greenIterationOutFile):
+                myFile = open(greenIterationOutFile, 'a')
+                with myFile:
+                    writer = csv.writer(myFile)
+                    writer.writerow(header) 
+                
+            
             myFile = open(greenIterationOutFile, 'a')
             with myFile:
                 writer = csv.writer(myFile)
-                writer.writerow(header) 
-            
-        
-        myFile = open(greenIterationOutFile, 'a')
-        with myFile:
-            writer = csv.writer(myFile)
-            writer.writerow(myData)
+                writer.writerow(myData)
         
           
         greenIterationsCount += 1

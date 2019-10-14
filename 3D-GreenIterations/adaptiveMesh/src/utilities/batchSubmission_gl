@@ -1,15 +1,15 @@
 #!/bin/bash
 
 
-#cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
-cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
+cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
+#cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
 
 DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-#SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
-SRCDIR='/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
+SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
+#SRCDIR='/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
 #INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
 INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -28,8 +28,8 @@ BATCHSIZE=2000
 GAUSSIANALPHA=1.0 
 GAUGESHIFT=-0.5
 
-MESHTYPE='ParentChildrenIntegral'
-#MESHTYPE='LW5'
+#MESHTYPE='ParentChildrenIntegral'
+MESHTYPE='LW5'
 RESTART='False'	
 SAVEDMESH='None'
 
@@ -45,7 +45,7 @@ SCF_TOLERANCE=1e-4
      
 SMOOTHINGEPS=0.0    
 
-MESHPARAM1=100
+MESHPARAM1=500
 MESHPARAM2=0
 MESHPARAM4=0
 MESHPARAM3=1e-3
@@ -56,26 +56,25 @@ NUMTHREADS=1
 
 for SINGSUBT in 1
 do
-for CELLORDER in 3
+for CELLORDER in 2 
 do	      
-for MESHPARAM4 in 0
+for MESHPARAM1 in 50
 do   
-for MAXDEPTH in 20     
+for MAXDEPTH in 4     
 do								  	 				     
 for GRADIENTFREE in 'True'    
 do  
-	for TREECODEORDER in 6
+	for TREECODEORDER in 8   
 	do         
-		for THETA in 0.8
+		for THETA in 0.1
 		do   
 			for MIXING in 'Anderson'		    
 			do 
 
-			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/best-times-updated/Be_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
-			OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/mpi-testing/H2_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/GreatLakes/TAGI/H2_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
+			#OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/mpi-testing/Be_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
 			
-			#/usr/local/bin/mpirun -n $1 python -u -m pdb testBatchGreenIterations_mpi.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
-			/usr/local/bin/mpirun -n $1 python -u testBatchGreenIterations_mpi.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
+			mpirun -n $1 python -u testBatchGreenIterations_mpi.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
 																		$INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
 																		$OUTPUTFILE $INPUTFILE $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

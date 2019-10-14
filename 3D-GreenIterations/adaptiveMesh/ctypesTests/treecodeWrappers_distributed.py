@@ -26,9 +26,12 @@ from mpi4py import MPI
 #     except OSError:
 #         print('Unable to import _cpu_treecodeRoutines due to OSError')
 
-_cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
-# _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.so')
-
+# _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
+try: 
+    _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.so')
+except OSError:
+        _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
+    
     
         
 # try:

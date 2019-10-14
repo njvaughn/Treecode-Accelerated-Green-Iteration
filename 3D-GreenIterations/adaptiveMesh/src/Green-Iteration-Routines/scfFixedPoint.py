@@ -11,6 +11,13 @@ from scipy.optimize import broyden1, anderson, brentq
 # from scipy.optimize import newton_krylov as scipyNewtonKrylov
 import GPUtil
 
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size() 
+from mpiUtilities import global_dot, rprint
+
+
 from fermiDiracDistribution import computeOccupations
 import densityMixingSchemes as densityMixing
 import sys
@@ -20,7 +27,7 @@ import resource
 # sys.path.append(srcdir+'../ctypesTests')
 # sys.path.append(srcdir+'../ctypesTests/lib') 
 
-import treecodeWrappers
+import treecodeWrappers_distributed as treecodeWrappers
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 from orthogonalizationRoutines import *
 try:
@@ -56,7 +63,8 @@ def fermiObjectiveFunctionClosure(Energies,nElectrons):
 def clenshawCurtisNormClosure(W):
     def clenshawCurtisNorm(psi):
         appendedWeights = np.append(W, 10.0)
-        norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
+#         norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
+        norm = np.sqrt( global_dot( psi, psi*appendedWeights, comm ) )
 #         norm = np.sqrt( np.sum( psi[-1]*psi[-1]*appendedWeights[-1] ) )
         return norm
     return clenshawCurtisNorm
@@ -64,7 +72,8 @@ def clenshawCurtisNormClosure(W):
 def clenshawCurtisNormClosureWithoutEigenvalue(W):
     def clenshawCurtisNormWithoutEigenvalue(psi):
         appendedWeights = np.append(W, 0.0)
-        norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
+        norm = np.sqrt( global_dot( psi, psi*appendedWeights, comm ) )
+#         norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
 #         norm = np.sqrt( np.sum( psi[-1]*psi[-1]*appendedWeights[-1] ) )
         return norm
     return clenshawCurtisNormWithoutEigenvalue
@@ -145,15 +154,13 @@ def scfFixedPointClosure(scf_args):
 #         scf_args['GItolerancesIdx']=0
         
         scf_args['currentGItolerance']=GItolerances[scf_args['GItolerancesIdx']]
-        
+        rprint("Current GI toelrance: ", scf_args['currentGItolerance'])
         
         GImixingHistoryCutoff = 10
          
         SCFcount += 1
-        print()
-        print()
-        print('\nSCF Count ', SCFcount)
-        print('Orbital Energies: ', Energies['orbitalEnergies'])
+        rprint('\nSCF Count ', SCFcount)
+        rprint('Orbital Energies: ', Energies['orbitalEnergies'])
         
         
         if SCFcount>1:
@@ -219,12 +226,17 @@ def scfFixedPointClosure(scf_args):
                 else: potentialType=2 
                 numThreads=scf_args['numThreads']
                 numDevices=scf_args['numDevices'] 
+                start = MPI.Wtime()
+                
+                print("Rank %i calling treecode through wrapper..." %(rank))
                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
-                Times['timePerConvolution'] = time.time()-start
-                print('Convolution time: ', time.time()-start)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+#                 print("V_hartreeNew*=-1")
+#                 V_hartreeNew*=-1
+                Times['timePerConvolution'] = MPI.Wtime()-start
+                print('Convolution time: ', MPI.Wtime()-start)
         else:
             print('Is GPUpresent supposed to be true or false?')
             return
@@ -237,34 +249,42 @@ def scfFixedPointClosure(scf_args):
         
         ## Energy update after computing Vhartree
         
-            
-        Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
+        comm.barrier()    
+#         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
+        Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         if abortAfterInitialHartree==True:
             print("Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
             return np.zeros(nPoints)
     
         exchangeOutput = exchangeFunctional.compute(RHO)
         correlationOutput = correlationFunctional.compute(RHO)
-        Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
-        Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
+#         Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
+#         Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
+        
+        Energies['Ex'] = global_dot( W, RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)), comm )
+        Energies['Ec'] = global_dot( W, RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)), comm )
         
         Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
         Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
         
-        Energies['Vx'] = np.sum(W * RHO * Vx)
-        Energies['Vc'] = np.sum(W * RHO * Vc)
+#         Energies['Vx'] = np.sum(W * RHO * Vx)
+#         Energies['Vc'] = np.sum(W * RHO * Vc)
+
+        Energies['Vx'] = global_dot(W, RHO * Vx,comm)
+        Energies['Vc'] = global_dot(W, RHO * Vc,comm)
         
         Veff = V_hartreeNew + Vx + Vc + Vext + gaugeShift
         
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
             for m in range(nOrbitals):
-#                 Energies['orbitalEnergies'][m] = -1
-                Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
-#             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
-#             for m in range(nOrbitals):
-#                 if Energies['orbitalEnergies'][m] > 0:
-#                     Energies['orbitalEnergies'][m] = -0.5
+                Energies['orbitalEnergies'][m]=-0.8774974859
+#                 Energies['orbitalEnergies'][m] = global_dot( W, orbitals[:,m]**2 * Veff, comm) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
+# #                 Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
+# #             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
+# #             for m in range(nOrbitals):
+# #                 if Energies['orbitalEnergies'][m] > 0:
+# #                     Energies['orbitalEnergies'][m] = -0.5
         
         
         ## Sort by eigenvalue
@@ -274,15 +294,15 @@ def scfFixedPointClosure(scf_args):
         ## Solve the eigenvalue problem
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
         eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
-        print('Fermi energy: ', eF)
+        rprint('Fermi energy: %f'%eF)
         exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
         previousOccupations = 2*1/(1+np.exp( exponentialArg ) )
         if SCFcount<2: 
             previousOccupations = np.ones(nOrbitals)
         for m in range(nOrbitals): 
             if previousOccupations[m] > 1e-20:
-                print('Working on orbital %i' %m)
-                print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                rprint('Working on orbital %i' %m)
+                rprint('MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                 
         #                         
                             
@@ -297,7 +317,7 @@ def scfFixedPointClosure(scf_args):
                                'numDevices':scf_args['numDevices'],  'numThreads':scf_args['numThreads'], 'updateEigenvalue':True } 
                 
                 n,M = np.shape(orbitals)
-                resNorm=1 
+                resNorm=1.0 
                 
 #                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
 #                 orbitals[:,m] = np.copy(orthWavefunction)
@@ -328,13 +348,12 @@ def scfFixedPointClosure(scf_args):
 #                     gi_args['updateEigenvalue']=True
 
                 
-            
-                    
-                while ((resNorm> np.max(1e-3,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0) ):
+                comm.barrier()
+                while ( (resNorm> max(1e-3,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     #                 GPUtil.showUtilization()
-                    print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                    rprint('MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                 
                     # Orthonormalize orbital m before beginning Green's iteration
     #                 n,M = np.shape(orbitals)
@@ -351,6 +370,9 @@ def scfFixedPointClosure(scf_args):
                     r = greensIteration_FixedPoint(psiIn, gi_args)
                     newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                     eigenvalueDiff=np.abs(oldEigenvalue - newEigenvalue )
+                    comm.barrier()
+                    rprint('eigenvalueDiff = %f' %eigenvalueDiff)
+                    
     #                 print('greenIterationsCount after: ', greenIterationsCount)
     #                 print('gi_args greenIterationsCount after: ', gi_args["greenIterationsCount"])
     
@@ -359,15 +381,15 @@ def scfFixedPointClosure(scf_args):
                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                     resNorm = clenshawCurtisNorm(r)
                     
-                    print('CC norm of residual vector: ', resNorm)
+                    rprint('CC norm of residual vector: %f'%resNorm)
                     if eigenvalueDiff < resNorm/10:
                         resNorm = eigenvalueDiff
-                        print('Using eigenvalueDiff: ', resNorm)
+                        rprint('Using eigenvalueDiff: %f' %resNorm)
 
     
                 
                 psiOut = np.append(orbitals[:,m],Energies['orbitalEnergies'][m])
-                print('Power iteration tolerance met.  Beginning rootfinding now...') 
+                rprint('Power iteration tolerance met.  Beginning rootfinding now...') 
     #             psiIn = np.copy(psiOut)
 #                 tol=intraScfTolerance
                 
@@ -388,9 +410,9 @@ def scfFixedPointClosure(scf_args):
                       
                       
                     greenIterationsCount=gi_args["greenIterationsCount"]
-                    print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                    rprint('MEMORY USAGE: %i'%resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                       
-                    orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
+                    orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M, comm)
                     orbitals[:,m] = np.copy(orthWavefunction)
                     psiIn = np.append( np.copy(orbitals[:,m]), Energies['orbitalEnergies'][m] )
                       
@@ -418,11 +440,11 @@ def scfFixedPointClosure(scf_args):
                     psiOut = np.append( gi_args["orbitals"][:,m], Energies['orbitalEnergies'][m])
                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                     errorNorm = clenshawCurtisNorm(r)
-                    print('Error Norm: ', errorNorm)
+                    rprint('Error Norm: %f' %errorNorm)
                     if errorNorm < scf_args['currentGItolerance']:
                         Done=True
                     eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
-                    print('Eigenvalue Diff: ', eigenvalueDiff)
+                    rprint('Eigenvalue Diff: %f' %eigenvalueDiff)
                     if ( (eigenvalueDiff<scf_args['currentGItolerance']/20) and (gi_args["greenIterationsCount"]>8) ): 
                         Done=True
 #                     if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) and ( ( SCFcount <2 ) or previousOccupations[m]<1e-4 ) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
@@ -462,9 +484,9 @@ def scfFixedPointClosure(scf_args):
       
                    
     #             print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
-                print('Used %i iterations for wavefunction %i' %(gi_args["greenIterationsCount"],m))
+                rprint('Used %i iterations for wavefunction %i' %(gi_args["greenIterationsCount"],m))
             else:
-                print("Not updating orbital %i because it is unoccupied." %m)
+                rprint("Not updating orbital %i because it is unoccupied." %m)
             
             
 # #                # Method that uses Scipy Anderson
@@ -565,8 +587,10 @@ def scfFixedPointClosure(scf_args):
         
     #         print('Sample of output densities:')
     #         print(outputDensities[0,:])    
-        integratedDensity = np.sum( newDensity*W )
-        densityResidual = np.sqrt( np.sum( (newDensity-oldDensity)**2*W ) )
+#         integratedDensity = np.sum( newDensity*W )
+        integratedDensity = global_dot( newDensity, W, comm )
+#         densityResidual = np.sqrt( np.sum( (newDensity-oldDensity)**2*W ) )
+        densityResidual = np.sqrt( global_dot( (newDensity-oldDensity)**2,W,comm ) )
         print('Integrated density: ', integratedDensity)
         print('Density Residual ', densityResidual)
         
@@ -633,18 +657,18 @@ def scfFixedPointClosure(scf_args):
 #             myData = [SCFcount, densityResidual, Energies['orbitalEnergies'], Energies['Eband'], Energies['kinetic'], 
 #                       Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal']]
             
-        
-            if not os.path.isfile(SCFiterationOutFile):
+            if rank==0:
+                if not os.path.isfile(SCFiterationOutFile):
+                    myFile = open(SCFiterationOutFile, 'a')
+                    with myFile:
+                        writer = csv.writer(myFile)
+                        writer.writerow(header) 
+                    
+                
                 myFile = open(SCFiterationOutFile, 'a')
                 with myFile:
                     writer = csv.writer(myFile)
-                    writer.writerow(header) 
-                
-            
-            myFile = open(SCFiterationOutFile, 'a')
-            with myFile:
-                writer = csv.writer(myFile)
-                writer.writerow(myData)
+                    writer.writerow(myData)
                 
 #         if scf_args['currentGItolerance'] > scf_args['finalGItolerance']: # desired final tolerance
         if scf_args['GItolerancesIdx'] < scf_args['gradualSteps']-1: # GItolerancesIdx goes from 0 to gradualSteps-1

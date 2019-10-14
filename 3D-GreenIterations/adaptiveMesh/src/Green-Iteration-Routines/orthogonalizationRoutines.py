@@ -3,6 +3,8 @@ from numba import jit, njit, cuda
 from math import sqrt
 import time 
 
+from mpiUtilities import global_dot
+
 @jit(parallel=True)
 def modifiedGramSchrmidt(V,weights):
     n,k = np.shape(V)
@@ -17,16 +19,20 @@ def modifiedGramSchrmidt(V,weights):
         
     return U
 
-@jit()
-def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, n, k):
+# @jit()
+def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, n, k, comm):
     U = V[:,targetOrbital]
     for j in range(targetOrbital):
 #         print('Orthogonalizing %i against %i' %(targetOrbital,j))
 #         U -= (np.dot(V[:,targetOrbital],V[:,j]*weights) / np.dot(V[:,j],V[:,j]*weights))*V[:,j]
-        U -= np.dot(V[:,targetOrbital],V[:,j]*weights) *V[:,j]
-        U /= np.sqrt( np.dot(U,U*weights) )
+#         U -= np.dot(V[:,targetOrbital],V[:,j]*weights) *V[:,j]
+#         U /= np.sqrt( np.dot(U,U*weights) )
+        
+        U -= global_dot(V[:,targetOrbital],V[:,j]*weights, comm) *V[:,j]
+        U /= np.sqrt( global_dot(U,U*weights, comm) )
     
-    U /= np.sqrt( np.dot(U,U*weights) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)
+#     U /= np.sqrt( np.dot(U,U*weights) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)
+    U /= np.sqrt( global_dot(U,U*weights, comm) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)
         
     return U  
 

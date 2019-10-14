@@ -15,19 +15,19 @@ import resource
 from pympler import tracker, classtracker
 
 import mpi4py.MPI as MPI
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-size = comm.Get_size()
+
  
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities')
+sys.path.insert(1, '/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities')
 from loadBalancer import loadBalance
+from mpiUtilities import global_dot, scatterArrays, rprint
 
 
 
 if os.uname()[1] == 'Nathans-MacBook-Pro.local':
     rootDirectory = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/'
 else:
-    print('os.uname()[1] = ', os.uname()[1])
+    rprint('os.uname()[1] = ', os.uname()[1])
 
 import unittest
 import numpy as np
@@ -99,7 +99,7 @@ divideParameter4 *= base
 
 # Set up paths based on srcdir
 inputFile = srcdir+inputFile
-print('inputFile = ', inputFile)
+rprint('inputFile = ', inputFile)
 sys.path.append(srcdir+'dataStructures')
 sys.path.append(srcdir+'Green-Iteration-Routines')
 sys.path.append(srcdir+'utilities')
@@ -111,17 +111,17 @@ sys.path.append(srcdir+'../ctypesTests/lib')
 try:
     import directSumWrappers
 except ImportError:
-    print('Unable to import directSumWrappers due to ImportError')
+    rprint('Unable to import directSumWrappers due to ImportError')
 except OSError:
-    print('Unable to import directSumWrappers due to OSError')
+    rprint('Unable to import directSumWrappers due to OSError')
     
 try:
-    import treecodeWrappers
+    import treecodeWrappers_distributed as treecodeWrappers
 except ImportError:
-    print('Unable to import treecodeWrapper due to ImportError')
+    rprint('Unable to import treecodeWrapper due to ImportError')
 except OSError:
     print('Unable to import treecodeWrapper due to OSError')
-    import treecodeWrappers
+    import treecodeWrappers_distributed as treecodeWrappers
     
 
 from TreeStruct_CC import Tree
@@ -133,9 +133,9 @@ import densityMixingSchemes as densityMixing
 # print('Depth at atoms: ', depthAtAtoms)
 
 
-print('gradientFree = ', noGradients)
-print('Mixing scheme = ', mixingScheme)
-print('vtk directory = ', vtkDir)
+rprint('gradientFree = ', noGradients)
+rprint('Mixing scheme = ', mixingScheme)
+rprint('vtk directory = ', vtkDir)
 
 if savedMesh == 'None':
     savedMesh=''
@@ -147,34 +147,34 @@ elif noGradients=='False':
 elif noGradients=='Laplacian':
     gradientFree='Laplacian'
 else:
-    print('Warning, not correct input for gradientFree')
+    rprint('Warning, not correct input for gradientFree')
     
 if symmetricIteration=='True':
     symmetricIteration=True
 elif symmetricIteration=='False':
     symmetricIteration=False
 else:
-    print('Warning, not correct input for gradientFree')
+    rprint('Warning, not correct input for gradientFree')
 
 if restart=='True':
     restart=True
 elif restart=='False':
     restart=False
 else:
-    print('Warning, not correct input for restart')
+    rprint('Warning, not correct input for restart')
     
 if GPUpresent=='True':
     GPUpresent=True
 elif GPUpresent=='False':
     GPUpresent=False
 else:
-    print('Warning, not correct input for GPUpresent')
+    rprint('Warning, not correct input for GPUpresent')
 if treecode=='True':
     treecode=True
 elif treecode=='False':
     treecode=False
 else:
-    print('Warning, not correct input for treecode')
+    rprint('Warning, not correct input for treecode')
 
 # coordinateFile      = str(sys.argv[12])
 # auxiliaryFile      = str(sys.argv[13])
@@ -184,9 +184,15 @@ else:
 # vtkFileBase         = str(sys.argv[17])
 vtkFileBase='/home/njvaughn/results_CO/orbitals'
 
+def global_dot(u,v,comm):
+    local_dot = np.dot(u,v)
+    global_dot = comm.allreduce(local_dot)
+    return global_dot
+
+
 def clenshawCurtisNormClosure(W):
     def clenshawCurtisNorm(psi):
-        norm = np.sqrt( np.sum( psi*psi*W ) )
+        norm = np.sqrt( global_dot( psi, psi*W, comm ) )
         return norm
     return clenshawCurtisNorm
 
@@ -206,9 +212,9 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z):
                 
             
             
-            print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+            rprint('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
                       %(atom.atomicNumber, atom.x,atom.y,atom.z))
-            print('Orbital index = %i'%orbitalIndex)            
+            rprint('Orbital index = %i'%orbitalIndex)            
             singleAtomOrbitalCount=0
             for nell in aufbauList:
                 
@@ -225,10 +231,10 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z):
                         phi = np.zeros(len(dx))
                         r = np.sqrt( dx**2 + dy**2 + dz**2 )
                         inclination = np.arccos(dz/r)
-                        print('Type(dx): ', type(dx))
-                        print('Type(dy): ', type(dy))
-                        print('Shape(dx): ', np.shape(dx))
-                        print('Shape(dy): ', np.shape(dy))
+#                         print('Type(dx): ', type(dx))
+#                         print('Type(dy): ', type(dy))
+#                         print('Shape(dx): ', np.shape(dx))
+#                         print('Shape(dy): ', np.shape(dy))
                         azimuthal = np.arctan2(dy,dx)
                         
                         if m<0:
@@ -255,7 +261,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z):
 #                         self.importPhiOnLeaves(phi, orbitalIndex)
 #                         self.normalizeOrbital(orbitalIndex)
                         
-                        print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
+                        rprint('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
                         orbitalIndex += 1
                         singleAtomOrbitalCount += 1
                     
@@ -266,9 +272,9 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z):
 #                     print('Not using ', psiID)
                         
         if orbitalIndex < nOrbitals:
-            print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
+            rprint("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
 #             print('Filling extra orbitals with decaying exponential.')
-            print('Filling extra orbitals with random initial data.')
+            rprint('Filling extra orbitals with random initial data.')
             for ii in range(orbitalIndex, nOrbitals):
                 R = np.sqrt(X*X+Y*Y+Z*Z)
 #                 orbitals[:,ii] = np.exp(-R)*np.sin(R)
@@ -277,7 +283,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z):
 #                 self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
 #                 self.orthonormalizeOrbitals(targetOrbital=ii)
         if orbitalIndex > nOrbitals:
-            print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
+            rprint("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
 
 #         
@@ -285,6 +291,26 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z):
 #             self.normalizeOrbital(m)
 
         return orbitals
+    
+def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms):
+        
+    rho = np.zeros(len(x))
+    
+    totalElectrons = 0
+    for atom in atoms:
+        totalElectrons += atom.atomicNumber
+        r = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2 )
+        try:
+            rho += atom.interpolators['density'](r)
+        except ValueError:
+            rho += 0.0   # if outside the interpolation range, assume 0.
+            
+#         rprint("max density: ", max(abs(rho)))
+
+
+    rho *= totalElectrons / global_dot(rho,w,comm)
+    
+    return rho
 
 def setUpTree(onlyFillOne=False):
     '''
@@ -297,9 +323,9 @@ def setUpTree(onlyFillOne=False):
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
     [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
     
-    print('Reading atomic coordinates from: ', coordinateFile)
+    rprint('Reading atomic coordinates from: ', coordinateFile)
     atomData = np.genfromtxt(srcdir+coordinateFile,delimiter=',',dtype=float)
-    print(atomData)
+    rprint(atomData)
     if np.shape(atomData)==(5,):
         nElectrons = atomData[3]
     else:
@@ -332,7 +358,7 @@ def setUpTree(onlyFillOne=False):
         occupations[2] = 4/3
         occupations[3] = 4/3
         occupations[4] = 4/3
-        print('For oxygen atom, nOrbitals = ', nOrbitals)
+        rprint('For oxygen atom, nOrbitals = ', nOrbitals)
         
     elif inputFile==srcdir+'utilities/molecularConfigurations/benzeneAuxiliary.csv':
         nOrbitals=27
@@ -357,21 +383,21 @@ def setUpTree(onlyFillOne=False):
         occupations = [2]
     
 #     print('inputFile == '+inputFile)
-    print('in testBatchGreen..., nOrbitals = ', nOrbitals) 
+    rprint('in testBatchGreen..., nOrbitals = ', nOrbitals) 
 #     return
-    print([coordinateFile, outputFile, nElectrons, nOrbitals, 
+    rprint([coordinateFile, outputFile, nElectrons, nOrbitals, 
      Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     
     referenceEigenvalues = np.array( np.genfromtxt(srcdir+referenceEigenvaluesFile,delimiter=',',dtype=float) )
-    print(referenceEigenvalues)
-    print(np.shape(referenceEigenvalues))
+    rprint(referenceEigenvalues)
+    rprint(np.shape(referenceEigenvalues))
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=srcdir+coordinateFile,smoothingEps=smoothingEps, inputFile=srcdir+inputFile)#, iterationOutFile=outputFile)
     tree.referenceEigenvalues = np.copy(referenceEigenvalues)
     tree.occupations = occupations
    
     
-    print('max depth ', maxDepth)
+    rprint('max depth ', maxDepth)
 #     tree.buildTree_FirstAndSecondKind( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
@@ -402,8 +428,8 @@ def setUpTree(onlyFillOne=False):
 #         orbitals[:,m] = np.exp(-(X*X+Y*Y+Z*Z))
 
     orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
-    print('nPoints: ', nPoints)
-    print('nOrbitals: ', nOrbitals)
+    rprint('nPoints: ', nPoints)
+    rprint('nOrbitals: ', nOrbitals)
     
     if restart==False:
     ## Compute initial eigenvalues using gradients.
@@ -419,7 +445,7 @@ def setUpTree(onlyFillOne=False):
         eigenvalues = np.ones(nOrbitals)   # these will be overwritten by the restart routine
     
     tree=None
-    
+    rprint("Returning from setupTree.")
     return X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals, eigenvalues, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
      
     
@@ -441,41 +467,41 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nP
 #     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, nPoints, subtractSingularity, 
 #                                 smoothingEps, gaussianAlpha,auxiliaryFile=auxiliaryFile, 
 #                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
-
-    Times['totalKohnShamTime'] = time.time()-startTime
-    print('Total Time: ', Times['totalKohnShamTime'])
-
-    header = ['domainSize','minDepth','maxDepth','additionalDepthAtAtoms','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
-              'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
-              'gaussianAlpha','gaugeShift','VextSmoothingEpsilon','finalGItolerance',
-              'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
-              'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
-              'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
+    if rank==0:
+        Times['totalKohnShamTime'] = time.time()-startTime
+        print('Total Time: ', Times['totalKohnShamTime'])
     
-    myData = [domainSize,0,0,0,0,order,nPoints/order**3,nPoints,gradientFree,
-              divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
-              gaussianAlpha,gaugeShift,smoothingEps,finalGItolerance,
-              subtractSingularity,
-              Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal'],
-              treecode,treecodeOrder,theta,maxParNode,batchSize, Times['totalKohnShamTime'],Times['timePerConvolution'],Times['totalIterationCount'] ]
-#               Energies['Etotal'], tree.
-#               Energies['Etotal'], Energies['orbitalEnergies'][0], abs(Energies['Etotal']+1.1373748), abs(Energies['orbitalEnergies'][0]+0.378665)]
+        header = ['domainSize','minDepth','maxDepth','additionalDepthAtAtoms','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
+                  'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
+                  'gaussianAlpha','gaugeShift','VextSmoothingEpsilon','finalGItolerance',
+                  'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
+                  'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
+                  'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
+        
+        myData = [domainSize,0,0,0,0,order,nPoints/order**3,nPoints,gradientFree,
+                  divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
+                  gaussianAlpha,gaugeShift,smoothingEps,finalGItolerance,
+                  subtractSingularity,
+                  Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal'],
+                  treecode,treecodeOrder,theta,maxParNode,batchSize, Times['totalKohnShamTime'],Times['timePerConvolution'],Times['totalIterationCount'] ]
+    #               Energies['Etotal'], tree.
+    #               Energies['Etotal'], Energies['orbitalEnergies'][0], abs(Energies['Etotal']+1.1373748), abs(Energies['orbitalEnergies'][0]+0.378665)]
+        
     
-
-    runComparisonFile = os.path.split(outputFile)[0] + '/runComparison.csv'
-    
-    if not os.path.isfile(runComparisonFile):
+        runComparisonFile = os.path.split(outputFile)[0] + '/runComparison.csv'
+        
+        if not os.path.isfile(runComparisonFile):
+            myFile = open(runComparisonFile, 'a')
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(header) 
+            
+            
+        
         myFile = open(runComparisonFile, 'a')
         with myFile:
             writer = csv.writer(myFile)
-            writer.writerow(header) 
-        
-        
-    
-    myFile = open(runComparisonFile, 'a')
-    with myFile:
-        writer = csv.writer(myFile)
-        writer.writerow(myData)    
+            writer.writerow(myData)    
     
     
     return Rho
@@ -531,8 +557,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     
     
 #     return
-    print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-    print()
+    rprint('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
     
     
@@ -561,49 +586,52 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
         except OSError:
             print('Unable to make directory ', densityPlotsDir)
         
-    try:
-        os.mkdir(restartFilesDir)
-    except OSError:
-        print('Unable to make restart directory ', restartFilesDir)
+    if rank==0:
+        try:
+            os.mkdir(restartFilesDir)
+        except OSError:
+            rprint('Unable to make restart directory ', restartFilesDir)
     
     
 #     tr = tracker.SummaryTracker()   
     if restartFile!=False:
-        orbitals = np.load(wavefunctionFile+'.npy')
-        oldOrbitals = np.copy(orbitals)
-#         for m in range(nOrbitals): 
-#             tree.importPhiOnLeaves(orbitals[:,m], m)
-        RHO = np.load(densityFile+'.npy')
-        
-        inputDensities = np.load(inputDensityFile+'.npy')
-        outputDensities = np.load(outputDensityFile+'.npy')
-        
-        V_hartreeNew = np.load(vHartreeFile+'.npy')
-        
-        
-        # make and save dictionary
-        auxiliaryRestartData = np.load(auxiliaryFile+'.npy').item()
-        print('type of aux: ', type(auxiliaryRestartData))
-        SCFcount = auxiliaryRestartData['SCFcount']
-        Times['totalIterationCount'] = auxiliaryRestartData['totalIterationCount']
-        Energies['orbitalEnergies'] = auxiliaryRestartData['eigenvalues'] 
-        Energies['Eold'] = auxiliaryRestartData['Eold']
-        
-        
-        
-        Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
-        exchangeOutput = exchangeFunctional.compute(RHO)
-        correlationOutput = correlationFunctional.compute(RHO)
-        Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
-        Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
-        
-        Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
-        Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
-        
-        Energies['Vx'] = np.sum(W * RHO * Vx)
-        Energies['Vc'] = np.sum(W * RHO * Vc)
-         
-        Veff = V_hartreeNew + Vx + Vc + Vext + gaugeShift
+        print("Not ready to handle restarts in mpi version.")
+        return
+#         orbitals = np.load(wavefunctionFile+'.npy')
+#         oldOrbitals = np.copy(orbitals)
+# #         for m in range(nOrbitals): 
+# #             tree.importPhiOnLeaves(orbitals[:,m], m)
+#         RHO = np.load(densityFile+'.npy')
+#         
+#         inputDensities = np.load(inputDensityFile+'.npy')
+#         outputDensities = np.load(outputDensityFile+'.npy')
+#         
+#         V_hartreeNew = np.load(vHartreeFile+'.npy')
+#         
+#         
+#         # make and save dictionary
+#         auxiliaryRestartData = np.load(auxiliaryFile+'.npy').item()
+#         rprint('type of aux: ', type(auxiliaryRestartData))
+#         SCFcount = auxiliaryRestartData['SCFcount']
+#         Times['totalIterationCount'] = auxiliaryRestartData['totalIterationCount']
+#         Energies['orbitalEnergies'] = auxiliaryRestartData['eigenvalues'] 
+#         Energies['Eold'] = auxiliaryRestartData['Eold']
+#         
+#         
+#         
+#         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
+#         exchangeOutput = exchangeFunctional.compute(RHO)
+#         correlationOutput = correlationFunctional.compute(RHO)
+#         Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
+#         Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
+#         
+#         Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
+#         Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
+#         
+#         Energies['Vx'] = np.sum(W * RHO * Vx)
+#         Energies['Vc'] = np.sum(W * RHO * Vc)
+#          
+#         Veff = V_hartreeNew + Vx + Vc + Vext + gaugeShift
         
         
     
@@ -622,7 +650,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     
     if plotSliceOfDensity==True:
         densitySliceSavefile = densityPlotsDir+'/densities'
-        print()
         r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
         
         densities = np.concatenate( (np.reshape(r, (numpts,1)), np.reshape(rho, (numpts,1))), axis=1)
@@ -633,15 +660,15 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     threadsPerBlock = 512
     blocksPerGrid = (nPoints + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
     
-    print('\nEntering greenIterations_KohnSham_SCF()')
-    print('\nNumber of targets:   ', nPoints)
-    print('Threads per block:   ', threadsPerBlock)
-    print('Blocks per grid:     ', blocksPerGrid)
+    rprint('\nEntering greenIterations_KohnSham_SCF()')
+    print('\nNumber of targets on proc %i:   %i' %(rank,nPoints) )
+#     print('Threads per block:   ', threadsPerBlock)
+#     print('Blocks per grid:     ', blocksPerGrid)
     
     densityResidual = 10                                   # initialize the densityResidual to something that fails the convergence tolerance
 
     [Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal] = np.genfromtxt(inputFile)[3:9]
-    print([Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal])
+    rprint([Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal])
 
  
 
@@ -693,8 +720,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
           
 #         densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
 #         print('Density Residual from arrays ', densityResidual)
-        print('Shape of density histories: ', np.shape(scf_args['inputDensities']), np.shape(scf_args['outputDensities']))
-        print('outputDensities[0,:] = ', scf_args['outputDensities'][0,:])
+        rprint('Shape of density histories: ', np.shape(scf_args['inputDensities']), np.shape(scf_args['outputDensities']))
+        rprint('outputDensities[0,:] = ', scf_args['outputDensities'][0,:])
         # Now compute new mixing with anderson scheme, then import onto tree. 
     
       
@@ -702,7 +729,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
         if mixingScheme == 'Simple':
             print('Using simple mixing, from the input/output arrays')
             simpleMixingDensity = mixingParameter*scf_args['outputDensities'][:,SCFindex] + (1-mixingParameter)*scf_args['inputDensities'][:,SCFindex]
-            integratedDensity = np.sum( simpleMixingDensity*W )
+#             integratedDensity = np.sum( simpleMixingDensity*W )
+            integratedDensity = global_dot( simpleMixingDensity, W, comm )
             print('Integrated simple mixing density: ', integratedDensity)  
     #             tree.importDensityOnLeaves(simpleMixingDensity)
             RHO = np.copy(simpleMixingDensity)
@@ -710,7 +738,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
         elif mixingScheme == 'Anderson':
             print('Using anderson mixing.')
             andersonDensity = densityMixing.computeNewDensity(scf_args['inputDensities'], scf_args['outputDensities'], mixingParameter,W)
-            integratedDensity = np.sum( andersonDensity*W )
+#             integratedDensity = np.sum( andersonDensity*W )
+            integratedDensity = global_dot( andersonDensity, W, comm )
             print('Integrated anderson density: ', integratedDensity)
     #             tree.importDensityOnLeaves(andersonDensity)
             RHO = np.copy(andersonDensity)
@@ -762,8 +791,12 @@ if __name__ == "__main__":
 
     print('='*70) 
     print('='*70) 
-    print('='*70,'\n')  
+    print('='*70,'\n') 
     
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size() 
+        
 #     tr = tracker.SummaryTracker()
 #     tree_tracker = classtracker.ClassTracker()
 #     tree_tracker.track_class(Tree)
@@ -777,60 +810,100 @@ if __name__ == "__main__":
 #     gp_tracker.track_class(GridPoint)
 #     gp_tracker.create_snapshot()
     
+    if rank==0: 
+        X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = setUpTree() 
+    else:
+        X = np.empty(0)
+        Y = np.empty(0)
+        Z = np.empty(0)
+        W = np.empty(0)
+        atoms=None
+        eigenvalues=None
+        nElectrons=None
+        referenceEigenvalues=None
+        nOrbitals=None
+    comm.barrier()
+    xSum = np.sqrt( global_dot(X,X,comm) ) 
+    ySum = np.sqrt( global_dot(Y,Y,comm) ) 
+    zSum = np.sqrt( global_dot(Z,Z,comm) ) 
+    wSum = np.sqrt( global_dot(W,W,comm) ) 
     
-    X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = setUpTree() 
-#     tr.print_diff()
-#     tree_tracker.create_snapshot()
-#     tree_tracker.stats.print_summary()
-#     
-#     cell_tracker.create_snapshot()
-#     cell_tracker.stats.print_summary()
-#     
-#     gp_tracker.create_snapshot()
-#     gp_tracker.stats.print_summary()
+#     print("NOT CALLING LOAD BALANCER.")
+    print('Before load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
+    X,Y,Z,W = scatterArrays(X,Y,Z,W,comm)
+    print('After scattering, nPoints on proc %i: %i' %(rank,len(X)) )
+    X,Y,Z,W = loadBalance(X,Y,Z,W)
+    print('After load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
+    print("proc %i: average x, y, z: %f,%f,%f"%(rank, np.mean(X), np.mean(Y), np.mean(Z)))
+    atoms = comm.bcast(atoms, root=0)
+    nOrbitals = comm.bcast(nOrbitals, root=0)
+    nElectrons = comm.bcast(nElectrons, root=0)
+    eigenvalues = comm.bcast(eigenvalues, root=0)
+    referenceEigenvalues = comm.bcast(referenceEigenvalues, root=0)
+    xSum2 = np.sqrt( global_dot(X,X,comm) ) 
+    ySum2 = np.sqrt( global_dot(Y,Y,comm) ) 
+    zSum2 = np.sqrt( global_dot(Z,Z,comm) ) 
+    wSum2 = np.sqrt( global_dot(W,W,comm) )
+    assert abs(xSum-xSum2)/xSum<1e-12, "xSum not matching after DD. xSum=%f, xSum2=%f"%(xSum,xSum2)
+    assert abs(ySum-ySum2)/ySum<1e-12, "ySum not matching after DD. ySum=%f, ySum2=%f"%(ySum,ySum2)
+    assert abs(zSum-zSum2)/zSum<1e-12, "zSum not matching after DD. zSum=%f, zSum2=%f"%(zSum,zSum2)
+    assert abs(wSum-wSum2)/wSum<1e-12, "wSum not matching after DD. wSum=%f, wSum2=%f"%(wSum,wSum2)
     
-    
-    initialRho = np.copy(RHO)
-    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues)
-#     tr.print_diff()
-    
-    
-    
-    conn=np.zeros(XV.size)
-    for i in range(len(conn)):
-        conn[i] = i
-    offset=np.zeros(int(XV.size/8))
-    for i in range(len(offset)):  
-        offset[i] = 8*(i+1)
-    ctype = np.zeros(len(offset))
-    for i in range(len(ctype)):
-        ctype[i] = VtkVoxel.tid   
-    pointVals = {"initialDensity":np.zeros(XV.size),
-                 "finalDensity":np.zeros(XV.size),
-                 "densityDifference":np.zeros(XV.size),
-                 "absDensityDifference":np.zeros(XV.size)}
-
-    for i in range(len(XV)):
-#         pointVals["density"][i] = max( RHO[vertexIdx[i]], 1e-16) 
-        pointVals["initialDensity"][i] = max( initialRho[vertexIdx[i]], np.random.rand(1)*1e-16) 
-        pointVals["finalDensity"][i] = max( finalRho[vertexIdx[i]], np.random.rand(1)*1e-16) 
-        pointVals["densityDifference"][i] = pointVals["finalDensity"][i] - pointVals["initialDensity"][i]
-        pointVals["absDensityDifference"][i] = np.abs( pointVals["finalDensity"][i] - pointVals["initialDensity"][i] )
-    
-    cellVals = {"cell_centered_density":np.zeros(offset.size)}
-#     for i in range(len(offset)):
-# 
-#         cellVals["density"][i] = max( RHO[centerIdx[i]], 1e-16) 
-#         
+    comm.barrier()
+    RHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms)
+    nPointsLocal = len(X)
+    assert abs(
         
-    
-#     savefile="/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium"
-#     savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO_new"
-#     savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO_z0"
-    savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/temp"
-    unstructuredGridToVTK(savefile, 
-                          XV, YV, ZV, connectivity = conn, offsets = offset, cell_types = ctype, 
-                          cellData = cellVals, pointData = pointVals)
-    
+        
+        2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
+    orbitals = np.zeros((nPointsLocal,nOrbitals))
+    orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
+    print("Max of first wavefunction: ", np.max(np.abs(orbitals[:,0])))
+#     print('nOrbitals: ', nOrbitals)
+    comm.barrier()
 
-    print('Meshes Exported.')
+
+    initialRho = np.copy(RHO)
+    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
+# #     tr.print_diff()
+#     
+#     
+#     
+#     conn=np.zeros(XV.size)
+#     for i in range(len(conn)):
+#         conn[i] = i
+#     offset=np.zeros(int(XV.size/8))
+#     for i in range(len(offset)):  
+#         offset[i] = 8*(i+1)
+#     ctype = np.zeros(len(offset))
+#     for i in range(len(ctype)):
+#         ctype[i] = VtkVoxel.tid   
+#     pointVals = {"initialDensity":np.zeros(XV.size),
+#                  "finalDensity":np.zeros(XV.size),
+#                  "densityDifference":np.zeros(XV.size),
+#                  "absDensityDifference":np.zeros(XV.size)}
+# 
+#     for i in range(len(XV)):
+# #         pointVals["density"][i] = max( RHO[vertexIdx[i]], 1e-16) 
+#         pointVals["initialDensity"][i] = max( initialRho[vertexIdx[i]], np.random.rand(1)*1e-16) 
+#         pointVals["finalDensity"][i] = max( finalRho[vertexIdx[i]], np.random.rand(1)*1e-16) 
+#         pointVals["densityDifference"][i] = pointVals["finalDensity"][i] - pointVals["initialDensity"][i]
+#         pointVals["absDensityDifference"][i] = np.abs( pointVals["finalDensity"][i] - pointVals["initialDensity"][i] )
+#     
+#     cellVals = {"cell_centered_density":np.zeros(offset.size)}
+# #     for i in range(len(offset)):
+# # 
+# #         cellVals["density"][i] = max( RHO[centerIdx[i]], 1e-16) 
+# #         
+#         
+#     
+# #     savefile="/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium"
+# #     savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO_new"
+# #     savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO_z0"
+#     savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/temp"
+#     unstructuredGridToVTK(savefile, 
+#                           XV, YV, ZV, connectivity = conn, offsets = offset, cell_types = ctype, 
+#                           cellData = cellVals, pointData = pointVals)
+#     
+# 
+#     print('Meshes Exported.')

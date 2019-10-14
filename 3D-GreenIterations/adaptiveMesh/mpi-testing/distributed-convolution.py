@@ -1,6 +1,9 @@
 # import mpi4py
 # mpi4py.rc.initialize = False
 # mpi4py.rc.finalize = False
+import sys
+sys.path.insert(1, '../ctypesTests/')
+
 import numpy as np
 import time
 from numpy import float32, float64, int32
@@ -97,13 +100,13 @@ def mpiRun(numPoints):
 #     print("rank %i: x,y,z,rho,w = %f,%f,%f,%f,%f" %(rank,X[0],Y[0],Z[0],RHO[0],W[0]))
  
     
-    treecodeOrder=5
+    treecodeOrder=8
     theta=0.8
     maxParNode=20
     batchSize=20
     GPUpresent=False
-    potentialType=0
-    gaussianAlpha=0.0
+    potentialType=2
+    gaussianAlpha=0.5
     
     nPoints = len(X)
     print ("In 3D topology, Processor ",rank, " has coordinates ",coord3d, " and contains ", nPoints, " points.")
@@ -137,10 +140,13 @@ def mpiRun(numPoints):
     L2err /= np.sqrt( global_dot(referenceOutput,referenceOutput,comm) )
     if rank==0: print("Relative L2 error: ", L2err ) 
     
+    outputSum = global_dot(output,output,comm)
+    if rank==0: print("Sum of output squared: ", outputSum)
+    
 #     return
   
 
 if __name__=="__main__":    
     
-    mpiRun(48)
+    mpiRun(12)
     

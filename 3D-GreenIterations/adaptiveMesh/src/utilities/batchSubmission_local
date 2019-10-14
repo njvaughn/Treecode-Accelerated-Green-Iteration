@@ -21,8 +21,8 @@ SYMMETRICITERATION='False'
 GPUPRESENT='False'
  
 TREECODE='True'      
-MAXPARNODE=2000
-BATCHSIZE=2000   
+MAXPARNODE=4000
+BATCHSIZE=4000   
  
  
 GAUSSIANALPHA=1.0 
@@ -64,9 +64,9 @@ for MAXDEPTH in 20
 do								  	 				     
 for GRADIENTFREE in 'True'    
 do  
-	for TREECODEORDER in 6
+	for TREECODEORDER in 10   
 	do         
-		for THETA in 0.8
+		for THETA in 0.0
 		do   
 			for MIXING in 'Anderson'		    
 			do 
@@ -74,8 +74,7 @@ do
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/best-times-updated/Be_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
 			OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/mpi-testing/H2_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
 			
-			#/usr/local/bin/mpirun -n $1 python -u -m pdb testBatchGreenIterations_mpi.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
-			/usr/local/bin/mpirun -n $1 python -u testBatchGreenIterations_mpi.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
+			python -u testBatchGreenIterations_fixedPoint_noTree.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
 																		$INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
 																		$OUTPUTFILE $INPUTFILE $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
