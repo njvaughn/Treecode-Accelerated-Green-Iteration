@@ -6,6 +6,9 @@ size = comm.Get_size()
 import numpy as np
 
 
+
+
+
 def global_dot(u,v,comm):
     local_dot = np.dot(u,v)
     global_dot = comm.allreduce(local_dot)
@@ -79,15 +82,17 @@ def rprint(message, message2=None, message3=None):
     else:
         if rank==0: print(message)
 
+
 if __name__=="__main__":
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
     
+    
     n=15
-    
-    
-    
+     
+     
+     
     if rank==0:
         x = np.random.random(n)
         y = np.random.random(n)
@@ -98,6 +103,6 @@ if __name__=="__main__":
         y = np.empty(0)
         z = np.empty(0)
         w = np.empty(0)
-    
+     
     scatterArrays(x,y,z,w,comm)
     

@@ -76,7 +76,7 @@ class Tree(object):
     def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,additionalDepthAtAtoms,minDepth,gaugeShift=0.0,
                  coordinateFile='',smoothingEps=0.0,inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
-                 printTreeProperties = True):
+                 printTreeProperties = False):
         '''
         Tree constructor:  
         First construct the gridpoints for cell consisting of entire domain.  
@@ -114,7 +114,7 @@ class Tree(object):
         
         self.orbitalEnergies = -np.ones(nOrbitals)
         
-        print('Reading atomic coordinates from: ', coordinateFile)
+        if printTreeProperties == True: print('Reading atomic coordinates from: ', coordinateFile)
         atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
 #         print(np.shape(atomData))
 #         print(len(atomData))
@@ -139,9 +139,9 @@ class Tree(object):
         gridpoints = np.empty((px+1,py+1,pz+1),dtype=object)
 
 
-        for i in range(self.px):
-            for j in range(self.py):
-                for k in range(self.pz):
+        for i in range(self.px+1):
+            for j in range(self.py+1):
+                for k in range(self.pz+1):
 #         for i, j, k in self.PxByPyByPz:
                     gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k], self.gaugeShift, self.atoms, self.nOrbitals, initPotential=False)
         
@@ -156,8 +156,8 @@ class Tree(object):
         
 # #         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
 #         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
-        print('Gauge shift ', self.gaugeShift)
         if  printTreeProperties == True:
+            print('Gauge shift ', self.gaugeShift)
             print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
             print('~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~')
             print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -1242,12 +1242,12 @@ class Tree(object):
         print(self.saveList[0:10])
         #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
 
-        self.countCellsAtEachDepth()
-            
-#         self.initialDivideBasedOnNuclei(self.coordinateFile)
-#         self.zeroWeightsBasedOnNuclei(self.coordinateFile)
-#         self.maxDepthAtAtoms=100
-        self.computeNuclearNuclearEnergy()
+#         self.countCellsAtEachDepth()
+#             
+# #         self.initialDivideBasedOnNuclei(self.coordinateFile)
+# #         self.zeroWeightsBasedOnNuclei(self.coordinateFile)
+# #         self.maxDepthAtAtoms=100
+#         self.computeNuclearNuclearEnergy()
 
 #         refineRadius = 0.01
 #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
@@ -1256,30 +1256,30 @@ class Tree(object):
 #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
 #         self.uniformlyRefineWithinRadius(refineRadius)
         
-        """ Count the number of unique leaf cells and gridpoints and set initial external potential """
-        self.numberOfGridpoints = 0
-        self.numberOfCells = 0
-        closestToOrigin = 10
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                self.numberOfCells += 1
-#                 print(self.numberOfCells)
-                for i,j,k in cell.PxByPyByPz:
-#                     print('i,j,k',i,j,k)
-                    if not hasattr(cell.gridpoints[i,j,k], "counted"):
-                        self.numberOfGridpoints += 1
-                        cell.gridpoints[i,j,k].counted = True
-#                         cell.gridpoints[i,j,k].setExternalPotential(self.atoms, self.gaugeShift)
-                        gp = cell.gridpoints[i,j,k]
-                        r = np.sqrt( gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
-                        if r < closestToOrigin:
-                            closestToOrigin = np.copy(r)  
-                            closestCoords = [gp.x, gp.y, gp.z]
-                            closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
-                            closestDepth = cell.level
-                            closestKind = cell.kind
-        
-        self.rmin = closestToOrigin
+#         """ Count the number of unique leaf cells and gridpoints and set initial external potential """
+#         self.numberOfGridpoints = 0
+#         self.numberOfCells = 0
+#         closestToOrigin = 10
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 self.numberOfCells += 1
+# #                 print(self.numberOfCells)
+#                 for i,j,k in cell.PxByPyByPz:
+# #                     print('i,j,k',i,j,k)
+#                     if not hasattr(cell.gridpoints[i,j,k], "counted"):
+#                         self.numberOfGridpoints += 1
+#                         cell.gridpoints[i,j,k].counted = True
+# #                         cell.gridpoints[i,j,k].setExternalPotential(self.atoms, self.gaugeShift)
+#                         gp = cell.gridpoints[i,j,k]
+#                         r = np.sqrt( gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
+#                         if r < closestToOrigin:
+#                             closestToOrigin = np.copy(r)  
+#                             closestCoords = [gp.x, gp.y, gp.z]
+#                             closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
+#                             closestDepth = cell.level
+#                             closestKind = cell.kind
+#         
+#         self.rmin = closestToOrigin
         
 #         self.countCellsAtEachDepth()
         
@@ -1294,14 +1294,14 @@ class Tree(object):
 #                     cell.gridpoints[i,j,k].counted = None
          
         
-        print('Number of gridpoints: ', self.numberOfGridpoints)
+        if printTreeProperties == True: print('Number of gridpoints: ', self.numberOfGridpoints)
         
-#         if gradientFree
-        print("Computing derivative matrices (for Laplacian and Gradient Eigenvalue Updates).")
-        self.computeDerivativeMatrices()
-#         self.initializeDensityFromAtomicData()
-
-        self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
+# #         if gradientFree
+#         print("Computing derivative matrices (for Laplacian and Gradient Eigenvalue Updates).")
+#         self.computeDerivativeMatrices()
+# #         self.initializeDensityFromAtomicData()
+# 
+#         self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
         
         ### INITIALIZE ORBTIALS AND DENSITY ####
                 # Only need to do this if wavefunctions aren't set during adaptive refinement
@@ -1484,66 +1484,67 @@ class Tree(object):
         timer.start()
         levelCounter=0
         maxDepthCounter=0
+        if printTreeProperties == True: print("Calling recursive divide on this cell's root.... divideCriterion, divideParameter=",divideCriterion, divideParameter)
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize, self.maxDepthCounter = recursiveDivide(self, self.root, maxLevels, divideCriterion, divideParameter, levelCounter, maxDepthCounter, saveList, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=maxLevels )#.compute()
         
-        print('Number of cells at max depth: ', self.maxDepthCounter)
+        if printTreeProperties == True: print('Number of cells at max depth: ', self.maxDepthCounter)
         
-        print('Saving mesh to tree.saveList')
-        self.saveList = [''] 
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                self.saveList.insert(bisect.bisect_left(self.saveList, cell.uniqueID), cell.uniqueID )
-        print(os.getcwd())
-        saveListFile_local = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
-        saveListFile_flux = '/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
-        try:
-            np.save(saveListFile_local, self.saveList)
-        except Exception:
-            np.save(saveListFile_flux, self.saveList)
-            
-        print(self.saveList[0:10])
-        #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
+#         print('Saving mesh to tree.saveList')
+#         self.saveList = [''] 
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 self.saveList.insert(bisect.bisect_left(self.saveList, cell.uniqueID), cell.uniqueID )
+#         print(os.getcwd())
+#         saveListFile_local = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
+#         saveListFile_flux = '/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
+#         try:
+#             np.save(saveListFile_local, self.saveList)
+#         except Exception:
+#             np.save(saveListFile_flux, self.saveList)
+#             
+#         print(self.saveList[0:10])
+#         #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
 
-        self.countCellsAtEachDepth()
-            
-        self.finalDivideBasedOnNuclei(self.coordinateFile)
-#         self.zeroWeightsBasedOnNuclei(self.coordinateFile)
-#         self.maxDepthAtAtoms=100
-        self.computeNuclearNuclearEnergy()
-
-#         refineRadius = 0.01
-#         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
-#         self.uniformlyRefineWithinRadius(refineRadius)
-#         refineRadius /= 2
-#         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
-#         self.uniformlyRefineWithinRadius(refineRadius)
-        
-        """ Count the number of unique leaf cells and gridpoints and set initial external potential """
-        self.numberOfGridpoints = 0
-        self.numberOfCells = 0
-        closestToOrigin = 10
-        for _,cell in self.masterList:
-            if cell.leaf==True:
-                self.numberOfCells += 1
-#                 print(self.numberOfCells)
-                for i,j,k in cell.PxByPyByPz:
-#                     print('i,j,k',i,j,k)
-                    if not hasattr(cell.gridpoints[i,j,k], "counted"):
-                        self.numberOfGridpoints += 1
-                        cell.gridpoints[i,j,k].counted = True
-#                         cell.gridpoints[i,j,k].setExternalPotential(self.atoms, self.gaugeShift)
-                        gp = cell.gridpoints[i,j,k]
-                        r = np.sqrt( gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
-                        if r < closestToOrigin:
-                            closestToOrigin = np.copy(r)  
-                            closestCoords = [gp.x, gp.y, gp.z]
-                            closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
-                            closestDepth = cell.level
-                            closestKind = cell.kind
-        
-        self.rmin = closestToOrigin
-        
-        self.countCellsAtEachDepth()
+#         self.countCellsAtEachDepth()
+#             
+#         self.finalDivideBasedOnNuclei(self.coordinateFile)
+# #         self.zeroWeightsBasedOnNuclei(self.coordinateFile)
+# #         self.maxDepthAtAtoms=100
+#         self.computeNuclearNuclearEnergy()
+# 
+# #         refineRadius = 0.01
+# #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
+# #         self.uniformlyRefineWithinRadius(refineRadius)
+# #         refineRadius /= 2
+# #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
+# #         self.uniformlyRefineWithinRadius(refineRadius)
+#         
+#         """ Count the number of unique leaf cells and gridpoints and set initial external potential """
+#         self.numberOfGridpoints = 0
+#         self.numberOfCells = 0
+#         closestToOrigin = 10
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 self.numberOfCells += 1
+# #                 print(self.numberOfCells)
+#                 for i,j,k in cell.PxByPyByPz:
+# #                     print('i,j,k',i,j,k)
+#                     if not hasattr(cell.gridpoints[i,j,k], "counted"):
+#                         self.numberOfGridpoints += 1
+#                         cell.gridpoints[i,j,k].counted = True
+# #                         cell.gridpoints[i,j,k].setExternalPotential(self.atoms, self.gaugeShift)
+#                         gp = cell.gridpoints[i,j,k]
+#                         r = np.sqrt( gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
+#                         if r < closestToOrigin:
+#                             closestToOrigin = np.copy(r)  
+#                             closestCoords = [gp.x, gp.y, gp.z]
+#                             closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
+#                             closestDepth = cell.level
+#                             closestKind = cell.kind
+#         
+#         self.rmin = closestToOrigin
+#         
+#         self.countCellsAtEachDepth()
         
         
 #         num=0            
@@ -1556,35 +1557,35 @@ class Tree(object):
 #                     cell.gridpoints[i,j,k].counted = None
          
         
-        print('Number of gridpoints: ', self.numberOfGridpoints)
+        if printTreeProperties == True: print('Number of gridpoints: ', self.numberOfGridpoints)
 
-        print("Computing derivative matrices (for Laplacian and Gradient Eigenvalue Updates).")
-        self.computeDerivativeMatrices()
-#         self.initializeDensityFromAtomicData()
-
-        self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
-        
-        ### INITIALIZE ORBTIALS AND DENSITY ####
-                # Only need to do this if wavefunctions aren't set during adaptive refinement
-        # 
-        if restart==False:
-            if initializationType=='atomic':
-                if onlyFillOne == True:
-                    self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
-                else:
-                    self.initializeOrbitalsFromAtomicDataExternally()
-            elif initializationType=='random':
-                self.initializeOrbitalsRandomly()
-            elif initializationType=='exponential':
-                self.initializeOrbitalsToDecayingExponential()
-        else:
-            print('Not initializing wavefunctions because using a restart file.')
+#         print("Computing derivative matrices (for Laplacian and Gradient Eigenvalue Updates).")
+#         self.computeDerivativeMatrices()
+# #         self.initializeDensityFromAtomicData()
+# 
+#         self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
+#         
+#         ### INITIALIZE ORBTIALS AND DENSITY ####
+#                 # Only need to do this if wavefunctions aren't set during adaptive refinement
+#         # 
+#         if restart==False:
+#             if initializationType=='atomic':
+#                 if onlyFillOne == True:
+#                     self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
+#                 else:
+#                     self.initializeOrbitalsFromAtomicDataExternally()
+#             elif initializationType=='random':
+#                 self.initializeOrbitalsRandomly()
+#             elif initializationType=='exponential':
+#                 self.initializeOrbitalsToDecayingExponential()
+#         else:
+#             print('Not initializing wavefunctions because using a restart file.')
         
         
 #         self.findNearestGridpointToEachAtom()
 #         for m in range(self.nOrbitals):
 #             self.printWavefunctionNearEachAtom(m)
-        timer.stop()
+#         timer.stop()
                     
         if printTreeProperties == True: 
             print("Tree build completed. \n"
@@ -1605,11 +1606,11 @@ class Tree(object):
                    
                   %(self.xmin, self.xmax, divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved, 
                     self.maxDepthAtAtoms, self.px, timer.elapsedTime))
-            print('Closest gridpoint to origin: ', closestCoords)
-            print('For a distance of: ', closestToOrigin)
-            print('Part of a cell centered at: ', closestMidpoint) 
-            print('at depth ', closestDepth)
-            print('of kind ', closestKind)
+#             print('Closest gridpoint to origin: ', closestCoords)
+#             print('For a distance of: ', closestToOrigin)
+#             print('Part of a cell centered at: ', closestMidpoint) 
+#             print('at depth ', closestDepth)
+#             print('of kind ', closestKind)
 
     
     

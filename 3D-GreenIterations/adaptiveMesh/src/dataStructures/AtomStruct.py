@@ -47,7 +47,7 @@ class Atom(object):
 
 
     
-    def setNumberOfOrbitalsToInitialize(self):
+    def setNumberOfOrbitalsToInitialize(self,verbose=0):
         if self.atomicNumber <=2:       
             self.nAtomicOrbitals = 1    # 1S 
         elif self.atomicNumber <=4:     
@@ -65,10 +65,10 @@ class Atom(object):
         else:
             print('Not ready for > 30 atomic number.  Revisit atom.setNumberOfOrbitalsToInitialize()')
         
-        print('Atom with Z=%i will get %i atomic orbitals initialized.' %(self.atomicNumber, self.nAtomicOrbitals))
+        if verbose>0: print('Atom with Z=%i will get %i atomic orbitals initialized.' %(self.atomicNumber, self.nAtomicOrbitals))
         
         
-    def orbitalInterpolators(self):
+    def orbitalInterpolators(self,verbose=0):
         
         self.interpolators = {}
         # search for single atom data, either on local machine or on flux
@@ -86,8 +86,8 @@ class Atom(object):
             print('Checked in: /home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
             
             
-        print('Using single atom data from:')
-        print(path)
+        if verbose>0: print('Using single atom data from:')
+        if verbose>0: print(path)
         for singleAtomData in os.listdir(path): 
             if singleAtomData[:3]=='psi':
                 data = np.genfromtxt(path+singleAtomData)

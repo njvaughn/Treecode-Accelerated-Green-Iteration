@@ -10,8 +10,8 @@ SINGSUBT=1
 
 #SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
 SRCDIR='/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
-#INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
-INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 VTKFILEDIR='None'
 
@@ -48,7 +48,7 @@ SMOOTHINGEPS=0.0
 MESHPARAM1=100
 MESHPARAM2=0
 MESHPARAM4=0
-MESHPARAM3=1e-3
+MESHPARAM3=1e-4
 BASE=1  
 
 NUMDEVICES=0
@@ -56,7 +56,7 @@ NUMTHREADS=1
 
 for SINGSUBT in 1
 do
-for CELLORDER in 3
+for CELLORDER in 4
 do	      
 for MESHPARAM4 in 0
 do   

@@ -180,10 +180,10 @@ if __name__=="__main__":
     from numpy import pi, sin, cos, arccos
     
     
-#     n = 50*(rank+1)**2
+    n = 50*(rank+1)**2
 #     if rank%2==0: n=0
 
-    n=1800*8
+#     n=1800*8
 #     if rank==0:
 #         n=57600
 #     else:
@@ -221,14 +221,14 @@ if __name__=="__main__":
     x2 = np.copy(x)
     y2 = np.copy(y)
     z2 = np.copy(z)
-#     plot_points_single_proc(x,y,z,rank,'Initial points for rank %i'%rank)
+    plot_points_single_proc(x,y,z,rank,'Initial points for rank %i'%rank)
     print("calling loadBalance")
     start = MPI.Wtime()
     x,y,z = loadBalance(x,y,z,LBMETHOD='RCB')
 #     x,y,z = loadBalance(x,y,z,LBMETHOD='HSFC')
 #     x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='RCB')
 #     x,y,z,data = loadBalance(x,y,z,data,LBMETHOD='HSFC')
-#     plot_points_single_proc(x,y,z,rank,'Final points for rank %i'%rank)
+    plot_points_single_proc(x,y,z,rank,'Final points for rank %i'%rank)
     end = MPI.Wtime()
     
     print("Time to load balance particles: %f (s)" %(end-start))

@@ -21,6 +21,7 @@ sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterat
 sys.path.insert(1, '/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities')
 from loadBalancer import loadBalance
 from mpiUtilities import global_dot, scatterArrays, rprint
+from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
 
 
 
@@ -312,6 +313,9 @@ def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms):
     
     return rho
 
+
+
+
 def setUpTree(onlyFillOne=False):
     '''
     setUp() gets called before every test below.
@@ -434,7 +438,7 @@ def setUpTree(onlyFillOne=False):
     if restart==False:
     ## Compute initial eigenvalues using gradients.
         orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
-        print('Initializing orbitals in tree (in order to compute initial eigenvalues)')
+#         print('Initializing orbitals in tree (in order to compute initial eigenvalues)')
         tree.initializeOrbitalsFromAtomicDataExternally()
         print('nPoints: ', nPoints)
         print('nOrbitals: ', nOrbitals)
@@ -445,7 +449,7 @@ def setUpTree(onlyFillOne=False):
         eigenvalues = np.ones(nOrbitals)   # these will be overwritten by the restart routine
     
     tree=None
-    rprint("Returning from setupTree.")
+#     rprint("Returning from setupTree.")
     return X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals, eigenvalues, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
      
     
@@ -810,18 +814,23 @@ if __name__ == "__main__":
 #     gp_tracker.track_class(GridPoint)
 #     gp_tracker.create_snapshot()
     
-    if rank==0: 
-        X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = setUpTree() 
-    else:
-        X = np.empty(0)
-        Y = np.empty(0)
-        Z = np.empty(0)
-        W = np.empty(0)
-        atoms=None
-        eigenvalues=None
-        nElectrons=None
-        referenceEigenvalues=None
-        nOrbitals=None
+#     if rank==0: 
+#         X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = setUpTree() 
+#     else:
+#         X = np.empty(0)
+#         Y = np.empty(0)
+#         Z = np.empty(0)
+#         W = np.empty(0)
+#         atoms=None
+#         eigenvalues=None
+#         nElectrons=None
+#         referenceEigenvalues=None
+#         nOrbitals=None
+        
+    maxSideLength=5
+    X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,inputFile,outputFile,srcdir,order,gaugeShift,divideParameter=1e-3)
+    
+    
     comm.barrier()
     xSum = np.sqrt( global_dot(X,X,comm) ) 
     ySum = np.sqrt( global_dot(Y,Y,comm) ) 
@@ -830,16 +839,25 @@ if __name__ == "__main__":
     
 #     print("NOT CALLING LOAD BALANCER.")
     print('Before load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
-    X,Y,Z,W = scatterArrays(X,Y,Z,W,comm)
-    print('After scattering, nPoints on proc %i: %i' %(rank,len(X)) )
+#     X,Y,Z,W = scatterArrays(X,Y,Z,W,comm)
+#     print('After scattering, nPoints on proc %i: %i' %(rank,len(X)) )
+    comm.barrier()
+    start=MPI.Wtime()
+    X,Y,Z,W = loadBalance(X,Y,Z,W,LBMETHOD='RANDOM')
+    comm.barrier()
+    print('After random balancing, nPoints on proc %i: %i' %(rank,len(X)) )
     X,Y,Z,W = loadBalance(X,Y,Z,W)
+    comm.barrier()
+    end=MPI.Wtime()
+    print("LOAD BALANCING TIME WHEN USING RANDOM FIRST: ", end-start)
     print('After load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
     print("proc %i: average x, y, z: %f,%f,%f"%(rank, np.mean(X), np.mean(Y), np.mean(Z)))
-    atoms = comm.bcast(atoms, root=0)
-    nOrbitals = comm.bcast(nOrbitals, root=0)
-    nElectrons = comm.bcast(nElectrons, root=0)
-    eigenvalues = comm.bcast(eigenvalues, root=0)
-    referenceEigenvalues = comm.bcast(referenceEigenvalues, root=0)
+#     atoms = comm.bcast(atoms, root=0)
+#     nOrbitals = comm.bcast(nOrbitals, root=0)
+#     nElectrons = comm.bcast(nElectrons, root=0)
+#     eigenvalues = comm.bcast(eigenvalues, root=0)
+#     referenceEigenvalues = comm.bcast(referenceEigenvalues, root=0)
+    eigenvalues = -np.ones(nOrbitals)
     xSum2 = np.sqrt( global_dot(X,X,comm) ) 
     ySum2 = np.sqrt( global_dot(Y,Y,comm) ) 
     zSum2 = np.sqrt( global_dot(Z,Z,comm) ) 
@@ -852,10 +870,7 @@ if __name__ == "__main__":
     comm.barrier()
     RHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms)
     nPointsLocal = len(X)
-    assert abs(
-        
-        
-        2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
+#     assert abs(2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
     orbitals = np.zeros((nPointsLocal,nOrbitals))
     orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
     print("Max of first wavefunction: ", np.max(np.abs(orbitals[:,0])))
@@ -863,8 +878,14 @@ if __name__ == "__main__":
     comm.barrier()
 
 
-    initialRho = np.copy(RHO)
-    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
+
+
+
+
+
+
+
+
 # #     tr.print_diff()
 #     
 #     

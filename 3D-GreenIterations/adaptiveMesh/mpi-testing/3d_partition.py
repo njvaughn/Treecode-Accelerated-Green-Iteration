@@ -29,6 +29,7 @@ colors = ['r', 'g', 'b', 'y', 'm', 'k', 'c', 'burlywood',
           'r', 'g', 'b', 'y', 'm', 'k', 'c', 'burlywood']
 
 savedir = '/Users/nathanvaughn/Desktop/zoltan/'
+# savedir = '/home/njvaughn/synchronizedDataFiles/zoltan/'
 
 def plot_points(x, y, z, slice_data, title, filename):
     if '--plot' not in sys.argv:
@@ -36,13 +37,13 @@ def plot_points(x, y, z, slice_data, title, filename):
 
     from mpl_toolkits.mplot3d import Axes3D
     import matplotlib.pyplot as plt
-    fig = plt.figure()
+    fig = plt.figure(figsize=(12,12))
     s1 = fig.add_subplot(111, projection='3d')
 #     s1.axes = Axes3D(fig)
     for i in range(size):
         s1.axes.plot3D(
             x[slice_data[i]], y[slice_data[i]], z[slice_data[i]],
-            c=colors[i], marker='o', markersize=1, linestyle='None', alpha=0.5
+            c=colors[i], marker='o', markersize=2, linestyle='None', alpha=0.5
         )
 
     s1.axes.set_xlabel( 'X' )
@@ -81,7 +82,7 @@ def plot_points_single_proc(x, y, z, rank, title, filename):
     plt.savefig(savedir+filename)
 
 
-numPoints = 1<<6
+numPoints = 1<<12
 LBMETHOD='RCB'
 # LBMETHOD='HSFC'
 # LBMETHOD='BLOCK'
@@ -102,12 +103,12 @@ comm.Gather( sendbuf=y, recvbuf=Y, root=0 )
 comm.Gather( sendbuf=z, recvbuf=Z, root=0 )
 
 ## Uncomment if you want to plot initial data.  It is just random points
-# if rank == 0:
-#     slice_data = [slice(i*numPoints, (i+1)*numPoints) for i in range(size)]
-#     plot_points(
-#         X, Y, Z, slice_data, title="Initial Distribution",
-#         filename="initial%i_"%size+LBMETHOD+'.pdf'
-#     )
+if rank == 0:
+    slice_data = [slice(i*numPoints, (i+1)*numPoints) for i in range(size)]
+    plot_points(
+        X, Y, Z, slice_data, title="Initial Distribution",
+        filename="initial%i_"%size+LBMETHOD+'.pdf'
+    )
 
 # partition the points using PyZoltan
 ## DoubleArrays are from cyarray.  They act more like c++ vectors.  Can be resized, can get the pointer to the array, etc.
@@ -147,17 +148,18 @@ exportDestinations=np.zeros(len(pz.exportProcs),dtype=np.uint32)
 for i in range(len(pz.exportProcs)):
     exportDestinations[i] = pz.exportProcs[i]
 
-## Just for understanding purposes...
-for i in range(size):
-    if rank==i:
-        print("\nRank %i"%rank + 
-              "\nOriginally owned: ", original_my_global_ids,
-              "\nHeld on to:       ", afterExport_my_global_ids)
-#         for j in range(len(pz.exportGlobalids)):
-#             print("Exporting %i to proc %i" %(pz.exportGlobalids[j],pz.exportProcs[j]) )
-            
-        print("Ended up with:    ", afterImport_my_global_ids, "\n")
-    comm.barrier()
+# ## Just for understanding purposes...
+# for i in range(size):
+#     if rank==i:
+#         print("\nRank %i"%rank + 
+#               "\nOriginally owned: ", original_my_global_ids,
+#               "\nHeld on to:       ", afterExport_my_global_ids)
+# #         for j in range(len(pz.exportGlobalids)):
+# #             print("Exporting %i to proc %i" %(pz.exportGlobalids[j],pz.exportProcs[j]) )
+#             
+#         print("Ended up with:    ", afterImport_my_global_ids, "\n")
+#     comm.barrier()
+comm.barrier()
 
 new_gids = np.array( my_global_ids, dtype=np.uint32 )
 
@@ -215,7 +217,7 @@ original_z = np.zeros(len(afterExport_my_global_ids))
 for i in range(len(afterExport_my_global_ids)):
     original_x[i] = x[ afterExport_my_global_ids[i] - rank*numPoints ]
     original_y[i] = y[ afterExport_my_global_ids[i] - rank*numPoints ]
-    original_z[i] = z[ afterExport_my_global_ids[i] - rank*numPoints ]
+    original_z[i] = z[ afterExport_my_global_ids[i] - rank*numPoints ] 
 balanced_x = np.append( original_x, np.copy(recv_x))
 balanced_y = np.append( original_y, np.copy(recv_y))
 balanced_z = np.append( original_z, np.copy(recv_z))
@@ -224,9 +226,9 @@ balanced_z = np.append( original_z, np.copy(recv_z))
 assert len(balanced_x)==len(balanced_y)
 
 
-comm.barrier()
-print("Processor %i now owns %i particles." %(rank,len(balanced_x)))
-plot_points_single_proc(
-    balanced_x, balanced_y, balanced_z, rank,
-    title='Final Distribution on Rank %i'%rank, filename='final%i_'%size+LBMETHOD+'_rank_%i.pdf'%rank
-)
+# comm.barrier()
+# print("Processor %i now owns %i particles." %(rank,len(balanced_x)))
+# plot_points_single_proc(
+#     balanced_x, balanced_y, balanced_z, rank,
+#     title='Final Distribution on Rank %i'%rank, filename='final%i_'%size+LBMETHOD+'_rank_%i.pdf'%rank
+# )
