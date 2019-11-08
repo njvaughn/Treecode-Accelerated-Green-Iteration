@@ -12,7 +12,7 @@ import sys
 import time
 import inspect
 import resource
-from pympler import tracker, classtracker
+# from pympler import tracker, classtracker
 
 import mpi4py.MPI as MPI
 
@@ -828,7 +828,8 @@ if __name__ == "__main__":
 #         nOrbitals=None
         
     maxSideLength=5
-    X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,inputFile,outputFile,srcdir,order,gaugeShift,divideParameter=1e-3)
+    X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,
+                                                                                                     inputFile,outputFile,srcdir,order,gaugeShift,divideParameter=1e-3)
     
     
     comm.barrier()
@@ -878,6 +879,8 @@ if __name__ == "__main__":
     comm.barrier()
 
 
+    initialRho = np.copy(RHO)
+    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
 
 
 
@@ -886,6 +889,8 @@ if __name__ == "__main__":
 
 
 
+#     initialRho = np.copy(RHO)
+#     finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues)
 # #     tr.print_diff()
 #     
 #     

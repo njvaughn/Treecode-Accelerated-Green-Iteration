@@ -199,8 +199,11 @@ def scfFixedPointClosure(scf_args):
                 if subtractSingularity==0:
                     print("Using singularity skipping in Hartree solve.")
                     potentialType=0
+                    kernelName = "coulomb"
                     gaussianAlpha=0.0
-                else: potentialType=2
+                else: 
+                    potentialType=2
+                    kernelName = "coulomb_SS"
 #                 potentialType=2
                 numThreads=scf_args['numThreads']
                 numDevices=scf_args['numDevices']
@@ -208,7 +211,7 @@ def scfFixedPointClosure(scf_args):
                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+                                                               kernelName, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                 Times['timePerConvolution'] = time.time()-start
                 print('Convolution time: ', time.time()-start)
                 
@@ -223,7 +226,10 @@ def scfFixedPointClosure(scf_args):
                 if subtractSingularity==0:
                     print("Using singularity skipping in Hartree solve.")
                     potentialType=0
-                else: potentialType=2 
+                    kernelName = "coulomb"
+                else: 
+                    potentialType=2 
+                    kernelName = "coulomb_SS"
                 numThreads=scf_args['numThreads']
                 numDevices=scf_args['numDevices'] 
                 start = MPI.Wtime()
@@ -232,7 +238,7 @@ def scfFixedPointClosure(scf_args):
                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+                                                               kernelName, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
 #                 print("V_hartreeNew*=-1")
 #                 V_hartreeNew*=-1
                 Times['timePerConvolution'] = MPI.Wtime()-start

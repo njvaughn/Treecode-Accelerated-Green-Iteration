@@ -100,12 +100,12 @@ def mpiRun(numPoints):
 #     print("rank %i: x,y,z,rho,w = %f,%f,%f,%f,%f" %(rank,X[0],Y[0],Z[0],RHO[0],W[0]))
  
     
-    treecodeOrder=8
-    theta=0.8
+    treecodeOrder=6
+    theta=0.7
     maxParNode=20
     batchSize=20
     GPUpresent=False
-    potentialType=2
+    potentialType=0
     gaussianAlpha=0.5
     
     nPoints = len(X)
@@ -148,5 +148,5 @@ def mpiRun(numPoints):
 
 if __name__=="__main__":    
     
-    mpiRun(12)
+    mpiRun(24)
     

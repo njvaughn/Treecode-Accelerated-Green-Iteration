@@ -38,7 +38,7 @@ def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=0):
             for k in range(nz):
                 cells.append( [x[i], x[i+1], y[j], y[j+1], z[k], z[k+1]] )
     
-#     print("Number of cells: ", len(cells))
+#     rprint("Number of coarse cells: ", len(cells))
 #     for i in range(len(cells)):
 #         print(cells[i])
     return cells
@@ -78,7 +78,7 @@ def refineCell(coordinates,inputFile,outputFile,srcdir,order,gaugeShift,addition
     
     if verbose>0: rprint('Reading atomic coordinates from: ', coordinateFile)
     atomData = np.genfromtxt(srcdir+coordinateFile,delimiter=',',dtype=float)
-    rprint(atomData)
+#     rprint(atomData)
     if np.shape(atomData)==(5,):
         nElectrons = atomData[3]
     else:

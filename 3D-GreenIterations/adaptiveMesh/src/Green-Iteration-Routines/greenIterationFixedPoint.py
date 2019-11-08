@@ -125,6 +125,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             if GPUpresent==False:
                 startTime=time.time()
                 potentialType=3
+                kernelName = "yukawa_SS"
 #                 potentialType=1
 #                 print('potentialType=1')
                 kappa = k
@@ -135,7 +136,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                               potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+                                                               kernelName, kappa, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
 #                 print("Length of phiNew: ", len(phiNew))
 #                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
                 if subtractSingularity==1: phiNew /= (4*np.pi)
@@ -174,8 +175,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
                     if subtractSingularity==0:
                         print("Using singularity skipping in Green's iteration.")
                         potentialType=3
-                    else: potentialType=3
-#                         potentialType=3
+                        kernelName="yukawa_SS"
+                    else: 
+                        potentialType=3
+                        kernelName="yukawa_SS"
                     kappa = k
                     startTime = time.time()
                     numDevices=gi_args['numDevices']
@@ -185,7 +188,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                     phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                                   potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+                                                                   kernelName, kappa, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
                 
 
                     if subtractSingularity==1: phiNew /= (4*np.pi)

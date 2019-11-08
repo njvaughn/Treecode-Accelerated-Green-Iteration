@@ -10,8 +10,8 @@ SINGSUBT=1
 
 #SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
 SRCDIR='/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
-INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
-#INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+#INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
 VTKFILEDIR='None'
 
@@ -21,14 +21,14 @@ SYMMETRICITERATION='False'
 GPUPRESENT='False'
  
 TREECODE='True'      
-MAXPARNODE=2000
-BATCHSIZE=2000   
+MAXPARNODE=500
+BATCHSIZE=500   
  
  
 GAUSSIANALPHA=1.0 
 GAUGESHIFT=-0.5
 
-MESHTYPE='ParentChildrenIntegral'
+MESHTYPE='ParentChildrenIntegral' 
 #MESHTYPE='LW5'
 RESTART='False'	
 SAVEDMESH='None'
@@ -45,16 +45,16 @@ SCF_TOLERANCE=1e-4
      
 SMOOTHINGEPS=0.0    
 
-MESHPARAM1=100
+MESHPARAM1=10
 MESHPARAM2=0
 MESHPARAM4=0
-MESHPARAM3=1e-4
+MESHPARAM3=1e-2
 BASE=1  
 
 NUMDEVICES=0
 NUMTHREADS=1 
 
-for SINGSUBT in 1
+for SINGSUBT in 1 
 do
 for CELLORDER in 4
 do	      
@@ -75,7 +75,8 @@ do
 			OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/mpi-testing/H2_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
 			
 			#/usr/local/bin/mpirun -n $1 python -u -m pdb testBatchGreenIterations_mpi.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
-			/usr/local/bin/mpirun -n $1 python -u testBatchGreenIterations_mpi.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
+            #/usr/local/bin/mpirun -n $1 python -u testBatchGreenIterations_mpi.py   $DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
+            mpirun -n $1 python -u testBatchGreenIterations_mpi.py   $DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
 																		$INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
 																		$OUTPUTFILE $INPUTFILE $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
