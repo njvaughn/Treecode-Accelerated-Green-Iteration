@@ -89,6 +89,9 @@ restart             = str(sys.argv[n]); n+=1
 savedMesh           = str(sys.argv[n]); n+=1
 numDevices          = int(sys.argv[n]); n+=1
 numThreads          = int(sys.argv[n]); n+=1
+singularityHandling = str(sys.argv[n]); n+=1
+approximationName   = str(sys.argv[n]); n+=1
+
 
 
 
@@ -463,6 +466,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nP
     Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                 scfTolerance, initialGItolerance, finalGItolerance, gradualSteps,
                                 gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+                                singularityHandling,approximationName,
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha, gaugeShift,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
@@ -520,7 +524,7 @@ from scfFixedPoint import scfFixedPointClosure
 def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                              SCFtolerance, initialGItolerance, finalGItolerance, gradualSteps, 
                                              gradientFree, symmetricIteration, GPUpresent, 
-                                 treecode, treecodeOrder, theta, maxParNode, batchSize,
+                                 treecode, treecodeOrder, theta, maxParNode, batchSize, singularityHandling, approximationName,
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                 subtractSingularity, gaussianAlpha, gaugeShift, inputFile='',outputFile='',restartFile=False,
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None): 
@@ -664,6 +668,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     threadsPerBlock = 512
     blocksPerGrid = (nPoints + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
     
+    ## Barrier...
+    comm.barrier()
     rprint('\nEntering greenIterations_KohnSham_SCF()')
     print('\nNumber of targets on proc %i:   %i' %(rank,nPoints) )
 #     print('Threads per block:   ', threadsPerBlock)
@@ -689,7 +695,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
                'SCFtolerance':SCFtolerance,'initialGItolerance':initialGItolerance, 'finalGItolerance':finalGItolerance, 'gradualSteps':gradualSteps, 'nElectrons':nElectrons,'referenceEnergies':referenceEnergies,'SCFiterationOutFile':SCFiterationOutFile,
                'wavefunctionFile':wavefunctionFile,'densityFile':densityFile,'outputDensityFile':outputDensityFile,'inputDensityFile':inputDensityFile,'vHartreeFile':vHartreeFile,
                'auxiliaryFile':auxiliaryFile,
-               'numDevices':numDevices, 'numThreads':numThreads, 'GItolerancesIdx':0}
+               'numDevices':numDevices, 'numThreads':numThreads, 'GItolerancesIdx':0,
+               'singularityHandling':singularityHandling, 'approximationName':approximationName}
     
 
     """
@@ -709,6 +716,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
      
      
     """
+    comm.barrier()
+    rprint("Starting while loop for density...")
+    comm.barrier()
     while ( (densityResidual > SCFtolerance) or (energyResidual > SCFtolerance) ):  # terminate SCF when both energy and density are converged.
           
         ## CALL SCF FIXED POINT FUNCTION
@@ -829,7 +839,7 @@ if __name__ == "__main__":
         
     maxSideLength=5
     X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,
-                                                                                                     inputFile,outputFile,srcdir,order,gaugeShift,divideParameter=1e-3)
+                                                                                                     inputFile,outputFile,srcdir,order,gaugeShift,divideParameter=1e-4)
     
     
     comm.barrier()

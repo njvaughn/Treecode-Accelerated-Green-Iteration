@@ -126,7 +126,8 @@ def scfFixedPointClosure(scf_args):
         orbitals=scf_args['orbitals']
         oldOrbitals=scf_args['oldOrbitals']
         Times=scf_args['Times']
-        subtractSingularity=scf_args['subtractSingularity']
+        singularityHandling=scf_args['singularityHandling']
+        approximationName=scf_args['approximationName']
         X = scf_args['X']
         Y = scf_args['Y']
         Z = scf_args['Z']
@@ -196,22 +197,24 @@ def scfFixedPointClosure(scf_args):
                 Times['timePerConvolution'] = time.time()-start
                 print('Convolution time: ', time.time()-start)
             elif treecode==True:
-                if subtractSingularity==0:
-                    print("Using singularity skipping in Hartree solve.")
-                    potentialType=0
-                    kernelName = "coulomb"
-                    gaussianAlpha=0.0
-                else: 
-                    potentialType=2
-                    kernelName = "coulomb_SS"
-#                 potentialType=2
+#                 if subtractSingularity==0:
+#                     print("Using singularity skipping in Hartree solve.")
+#                     potentialType=0
+#                     kernelName = "coulomb"
+#                     gaussianAlpha=0.0
+#                 else: 
+#                     potentialType=2
+#                     kernelName = "coulomb_SS"
+# #                 potentialType=2
                 numThreads=scf_args['numThreads']
                 numDevices=scf_args['numDevices']
                 start = time.time()
                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-                                                               kernelName, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+                                                               kernelName, gaussianAlpha, singularityHandling, approximationName,
+                                                               treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+                
                 Times['timePerConvolution'] = time.time()-start
                 print('Convolution time: ', time.time()-start)
                 
@@ -223,22 +226,35 @@ def scfFixedPointClosure(scf_args):
                 Times['timePerConvolution'] = time.time()-start
                 print('Convolution time: ', time.time()-start)
             else:    
-                if subtractSingularity==0:
+                if singularityHandling=='skipping':
                     print("Using singularity skipping in Hartree solve.")
-                    potentialType=0
-                    kernelName = "coulomb"
+#                     potentialType=0
+#                     kernelName = "coulomb"
+                elif singularityHandling=='subtraction':                    
+                    print("Using singularity subtraction in Hartree solve.")
+#                     print(type(kernelName), kernelName)
+#                     print(type(singularityHandling), singularityHandling)
+#                     print(type(approximationName), approximationName)
+#                     potentialType=2 
+#                     kernelName = "coulomb"
                 else: 
-                    potentialType=2 
-                    kernelName = "coulomb_SS"
+                    print("What should singularityHandling be?")
+                    return
                 numThreads=scf_args['numThreads']
                 numDevices=scf_args['numDevices'] 
                 start = MPI.Wtime()
                 
                 print("Rank %i calling treecode through wrapper..." %(rank))
+                kernelName = "coulomb"
                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-                                                               kernelName, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+                                                               kernelName, gaussianAlpha, singularityHandling, approximationName,
+                                                               treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+                
+                V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
+                
+                
 #                 print("V_hartreeNew*=-1")
 #                 V_hartreeNew*=-1
                 Times['timePerConvolution'] = MPI.Wtime()-start
@@ -257,6 +273,8 @@ def scfFixedPointClosure(scf_args):
         
         comm.barrier()    
 #         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
+        VhartreeNorm = np.sqrt( global_dot(W,V_hartreeNew*V_hartreeNew, comm) )
+        rprint("VHartreeNew norm = ", VhartreeNorm)
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         if abortAfterInitialHartree==True:
             print("Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
@@ -280,11 +298,14 @@ def scfFixedPointClosure(scf_args):
         Energies['Vc'] = global_dot(W, RHO * Vc,comm)
         
         Veff = V_hartreeNew + Vx + Vc + Vext + gaugeShift
+        VeffNorm = np.sqrt( global_dot(W,Veff*Veff, comm) )
+        rprint("Veff norm = ", VeffNorm)
+
         
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
             for m in range(nOrbitals):
-                Energies['orbitalEnergies'][m]=-0.8774974859
+                Energies['orbitalEnergies'][m]=-1
 #                 Energies['orbitalEnergies'][m] = global_dot( W, orbitals[:,m]**2 * Veff, comm) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
 # #                 Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
 # #             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
@@ -313,8 +334,10 @@ def scfFixedPointClosure(scf_args):
         #                         
                             
                 greenIterationsCount=1
+#                 print("Forcing singularityHandling to be skipping for Green's iteration.")
                 gi_args = {'orbitals':orbitals,'oldOrbitals':oldOrbitals, 'Energies':Energies, 'Times':Times, 'Veff':Veff, 
-                               'symmetricIteration':symmetricIteration,'GPUpresent':GPUpresent,'subtractSingularity':subtractSingularity,
+                               'symmetricIteration':symmetricIteration,'GPUpresent':GPUpresent,
+                               'singularityHandling':singularityHandling, 'approximationName':approximationName,
                                'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta, 'maxParNode':maxParNode,'batchSize':batchSize,
                                'nPoints':nPoints, 'm':m, 'X':X,'Y':Y,'Z':Z,'W':W,'gradientFree':gradientFree,
                                'SCFcount':SCFcount,'greenIterationsCount':greenIterationsCount,'residuals':residuals,
@@ -355,7 +378,7 @@ def scfFixedPointClosure(scf_args):
 
                 
                 comm.barrier()
-                while ( (resNorm> max(1e-3,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
+                while ( (resNorm> max(1e-5,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     #                 GPUtil.showUtilization()

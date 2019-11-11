@@ -59,7 +59,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         m = gi_args['m']
         symmetricIteration = gi_args['symmetricIteration']
         GPUpresent = gi_args['GPUpresent']
-        subtractSingularity = gi_args['subtractSingularity']
+        singularityHandling = gi_args['singularityHandling']
+        approximationName = gi_args['approximationName']
         treecode = gi_args['treecode']
         treecodeOrder = gi_args['treecodeOrder']
         theta = gi_args['theta']
@@ -124,8 +125,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
             if GPUpresent==False:
                 startTime=time.time()
-                potentialType=3
-                kernelName = "yukawa_SS"
+#                 potentialType=3
+                kernelName = "yukawa"
 #                 potentialType=1
 #                 print('potentialType=1')
                 kappa = k
@@ -136,10 +137,12 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                               kernelName, kappa, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+                                                               kernelName, kappa, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
 #                 print("Length of phiNew: ", len(phiNew))
 #                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
-                if subtractSingularity==1: phiNew /= (4*np.pi)
+                phiNew += 4*np.pi*f/k**2
+                if singularityHandling=="skipping": phiNew /= (4*np.pi)
+                if singularityHandling=="subtraction": phiNew /= (4*np.pi)
 #                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
 #                 print("Avg of phiNew: ", np.mean(phiNew))
                 convolutionTime = time.time()-startTime

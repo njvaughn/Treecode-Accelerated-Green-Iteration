@@ -10,6 +10,9 @@ from scipy.special import factorial, comb
 import matplotlib.pyplot as plt
 from mpiUtilities import global_dot, rprint
 import mpi4py.MPI as MPI
+
+from mpiUtilities import global_dot, rprint
+
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size() 
@@ -67,7 +70,7 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, 
     '''
     
     (M,n) = np.shape(inputDensities)
-    print('Input densities has shape ', np.shape(inputDensities))
+    rprint('Input densities has shape ', np.shape(inputDensities))
     
     F = computeFarray(inputDensities, outputDensities)
     cvec = solveLinearSystem(F,weights)
