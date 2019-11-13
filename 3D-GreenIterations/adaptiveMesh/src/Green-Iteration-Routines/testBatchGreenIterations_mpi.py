@@ -82,9 +82,6 @@ approximationName   = str(sys.argv[n]); n+=1
 
 
 
-
-
-
 # Set up paths based on srcdir
 inputFile = srcdir+inputFile
 rprint('inputFile = ', inputFile)

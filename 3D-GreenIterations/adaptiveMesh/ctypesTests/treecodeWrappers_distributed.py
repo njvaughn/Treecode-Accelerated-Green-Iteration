@@ -35,7 +35,10 @@ except OSError:
 try: 
     _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
 except OSError:
+    try:
         _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.dylib')
+    except OSError:
+        print("Could not load GPU treecode library.")  
     
     
         

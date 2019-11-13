@@ -174,8 +174,7 @@ class Tree(object):
             exponentialArg = (self.orbitalEnergies-fermiEnergy)/self.sigma
             temp = 1/(1+np.exp( exponentialArg ) )
             return self.nElectrons - 2 * np.sum(temp)
-        
-        
+           
     def computeOccupations(self):
         
         self.T = 200
@@ -191,7 +190,6 @@ class Tree(object):
         exponentialArg = (self.orbitalEnergies-eF)/self.sigma
         self.occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
         print('Occupations: ', self.occupations)
-    
     
     def computeOrbitalMoments(self, targetOrbital=None):
         if targetOrbital!=None:
@@ -262,8 +260,7 @@ class Tree(object):
                 print('z2 = ', z2, '\n')
             
         return
-        
-        
+          
     def finalDivideBasedOnNuclei(self, coordinateFile):
         def refineToMinDepth(self,Cell):
             # Divide the root to the minimum depth, BEFORE dividing at the nuclear positions
@@ -435,8 +432,7 @@ class Tree(object):
             
         aspectRatioTolerance = 3.0
         recursiveAspectRatioCheck(self,self.root)
-
-            
+     
     def initialDivideBasedOnNuclei(self, coordinateFile):
         
         def refineToMinDepth(self,Cell):
@@ -639,8 +635,6 @@ class Tree(object):
 # #         print('Dividing adjacent to nuclei')  
 # #         for atom in self.atoms:
 # #             refineToMaxDepth(self,atom,self.root)
-    
-    
      
     def zeroWeightsBasedOnNuclei(self, coordinateFile):
         
@@ -765,7 +759,6 @@ class Tree(object):
         timer.stop()
         print('Initializing orbitals to decaying exponential inside Tree Structure took %.3f seconds.' %timer.elapsedTime)                       
         
-    
     def initializeDensityFromAtomicDataExternally(self):
         timer = Timer()
         timer.start()
@@ -805,8 +798,6 @@ class Tree(object):
         timer.stop()
         print('Initializing density EXTERNALLY took %.3f seconds.' %timer.elapsedTime)  
         
-       
-    
     def initializeDensityFromAtomicData(self):
         timer = Timer()
         timer.start()
@@ -943,11 +934,7 @@ class Tree(object):
         
         for m in range(self.nOrbitals):
             self.normalizeOrbital(m)
-            
-            
-            
-                           
-    
+              
     def initializeOrbitalsFromAtomicData_deprecated(self,onlyFillOne=False):
         
         
@@ -1050,16 +1037,9 @@ class Tree(object):
         
         for m in range(self.nOrbitals):
             self.normalizeOrbital(m)
-    
-
-        
-
-    
+  
     def buildTree(self, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',savedMesh='', restart=False, printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
-        # max depth returns the maximum depth of the tree.
-        # N is roughly the number of grid points.  It is used to generate the density function.
-#         print('saveList = ', saveList)
-        
+
         if savedMesh!='':
             try:
                 saveList = list( np.load('/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
@@ -1141,12 +1121,7 @@ class Tree(object):
                         
                         Cell.refineByCheckingParentChildrenIntegrals(divideParameter1, divideParameter2, divideParameter3)
                         
-                        
-#                         Cell.checkIfAboveMeshDensity(500,'LW5')
-#                         if Cell.divideFlag != True:
-#                             Cell.refineByCheckingParentChildrenIntegrals(divideParameter1, divideParameter2, divideParameter3)  
-#                         else:
-#                             print('Cell %s refined by LW scheme.' %Cell.uniqueID)
+                    
                     
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
@@ -1179,72 +1154,6 @@ class Tree(object):
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, divideCriterion, divideParameter, levelCounter, saveList, printNumberOfCells, maxDepthAchieved=0)
         
         
-#         print('Saving mesh to tree.saveList')
-#         self.saveList = [''] 
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 self.saveList.insert(bisect.bisect_left(self.saveList, cell.uniqueID), cell.uniqueID )
-#         print(os.getcwd())
-#         saveListFile_local = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
-#         saveListFile_flux = '/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
-#         try:
-#             np.save(saveListFile_local, self.saveList)
-#         except Exception:
-#             np.save(saveListFile_flux, self.saveList)
-#             
-#         print(self.saveList[0:10])
-#         #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
-
-#         self.countCellsAtEachDepth()
-#             
-#         self.finalDivideBasedOnNuclei(self.coordinateFile)
-# #         self.zeroWeightsBasedOnNuclei(self.coordinateFile)
-# #         self.maxDepthAtAtoms=100
-#         self.computeNuclearNuclearEnergy()
-# 
-# #         refineRadius = 0.01
-# #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
-# #         self.uniformlyRefineWithinRadius(refineRadius)
-# #         refineRadius /= 2
-# #         print('Refining uniformly within radius ', refineRadius, ' which is set within the buildTree method.')
-# #         self.uniformlyRefineWithinRadius(refineRadius)
-#         
-#         """ Count the number of unique leaf cells and gridpoints and set initial external potential """
-#         self.numberOfGridpoints = 0
-#         self.numberOfCells = 0
-#         closestToOrigin = 10
-#         for _,cell in self.masterList:
-#             if cell.leaf==True:
-#                 self.numberOfCells += 1
-# #                 print(self.numberOfCells)
-#                 for i,j,k in cell.PxByPyByPz:
-# #                     print('i,j,k',i,j,k)
-#                     if not hasattr(cell.gridpoints[i,j,k], "counted"):
-#                         self.numberOfGridpoints += 1
-#                         cell.gridpoints[i,j,k].counted = True
-# #                         cell.gridpoints[i,j,k].setExternalPotential(self.atoms, self.gaugeShift)
-#                         gp = cell.gridpoints[i,j,k]
-#                         r = np.sqrt( gp.x*gp.x + gp.y*gp.y + gp.z*gp.z )
-#                         if r < closestToOrigin:
-#                             closestToOrigin = np.copy(r)  
-#                             closestCoords = [gp.x, gp.y, gp.z]
-#                             closestMidpoint = [cell.xmid, cell.ymid, cell.zmid]
-#                             closestDepth = cell.level
-#                             closestKind = cell.kind
-#         
-#         self.rmin = closestToOrigin
-#         
-#         self.countCellsAtEachDepth()
-        
-        
-#         num=0            
-#         for _,cell in self.masterList:
-#             num+=1
-#             print('cell num ',num)
-#             print(cell.uniqueID)
-#             for i,j,k in cell.PxByPyByPz:
-#                 if hasattr(cell.gridpoints[i,j,k], "counted"):
-#                     cell.gridpoints[i,j,k].counted = None
          
         
         if printTreeProperties == True: print('Number of gridpoints: ', self.numberOfGridpoints)
@@ -1443,7 +1352,6 @@ class Tree(object):
             if cell.leaf==True:
                 CellUpdateDensity(cell,mixingScheme)
      
-    
     def normalizeDensityToValue(self,value):
         A = 0.0
         for _,cell in self.masterList:
@@ -1465,8 +1373,7 @@ class Tree(object):
                     gp = cell.gridpoints[i,j,k]
                     A += gp.rho * cell.w[i,j,k]
         print('Integrated density after normalization: ', A)
-                
-     
+                   
     def normalizeDensity(self):            
         def integrateDensity(cell):
             rho = np.empty((cell.px+1,cell.py+1,cell.pz+1))
@@ -1502,12 +1409,6 @@ class Tree(object):
                     cell.gridpoints[i,j,k].rho/=(A/self.nElectrons)
                 for i,j,k in cell.PxByPyByPz_density:
                     cell.densityPoints[i,j,k].rho/=(B/self.nElectrons)
-                    
-#         B = 0.0
-#         for id,cell in self.masterList:
-#             if cell.leaf == True:
-#                 B += integrateDensity(cell)
-#         print('Integrated density after normalization ', B)
 
     def integrateDensityBothMeshes(self):            
         def integrateDensity(cell):
@@ -1601,18 +1502,14 @@ class Tree(object):
 #         self.totalPotential = -1/2*V_hartree + E_xc - V_xc 
 #         self.totalPotential = -1/2*V_hartree + E_x + E_c - V_x - V_c + self.nuclearNuclear
         self.totalPotential = self.totalElectrostatic +  E_x + E_c # - V_x - V_c 
-                
-        
-       
+                       
     def computeBandEnergy(self):
         # sum over the kinetic energies of all orbitals
         print('Computing band energy.  Current orbital energies are: ', self.orbitalEnergies)
         self.totalBandEnergy = 0.0
         for i in range(self.nOrbitals):
             self.totalBandEnergy += self.occupations[i]*(self.orbitalEnergies[i] - self.gaugeShift) 
-        
-    
-    
+           
     def updateTotalEnergy(self,gradientFree):
         self.computeBandEnergy()
         self.computeTotalPotential()
@@ -1629,9 +1526,7 @@ class Tree(object):
             print('gradientFree = ', gradientFree)
             print('type: ', type(gradientFree))
             return
-        
-
-    
+            
     def computeOrbitalPotentials(self,targetEnergy=None, saveAsReference=False): 
         
         self.orbitalPotential = np.zeros(self.nOrbitals)  
@@ -1665,8 +1560,7 @@ class Tree(object):
                 self.orbitalKinetic += cell.orbitalKE
         
         self.totalKinetic = np.sum(self.occupations*self.orbitalKinetic)
-            
-        
+                 
     def scrambleOrbital(self,m):
         # randomize orbital because its energy went > Vgauge
         for _,cell in self.masterList:
@@ -1772,8 +1666,7 @@ class Tree(object):
         
         
         return
-    
-    
+      
     def updateOrbitalEnergies(self,laplacian=False,newOccupations=False,correctPositiveEnergies=False,sortByEnergy=False,targetEnergy=None, saveAsReference=False, sortOrder=None):
 #         print()
         start = time.time()
@@ -1904,7 +1797,6 @@ class Tree(object):
         self.orbitalEnergies[m1] = np.copy(self.orbitalEnergies[m2])
         self.orbitalEnergies[m2] = np.copy(temp)
 
-
     def sortOrbitalsAndEnergies(self, order=None):
         if order==None:
             newOrder = np.argsort(self.orbitalEnergies)
@@ -1922,46 +1814,11 @@ class Tree(object):
                     
                     gp.sortOrbitals(newOrder)
                     
-                    ###
-#                     phiSorted = np.zeros_like(self.orbitalEnergies)
-#                     for m in range(self.nOrbitals):
-#                         phiSorted[m] = copy.deepcopy(gp.phi[m])
-# #                     print('Pre-sort')
-# #                     print(phiSorted)
-#                     phiSorted = phiSorted[newOrder]
-# #                     print('Post-sort')
-# #                     print(phiSorted)
-#                     
-#                     for m in range(self.nOrbitals):
-#                         gp.setPhi(copy.deepcopy(phiSorted[m]),m)
-                    ### 
-                        
-#                     gp.phi = copy.deepcopy(phiSorted)
-#                     for m in range(self.nOrbitals):
-#                         gp.phi[m] = phiSorted[m]
-#                     gp.phi = phiNew
-        
-#         newOccupations = np.zeros_like(self.occupations)
-#         newKinetics = np.zeros_like(self.orbitalKinetic)
-#         newPotentials = np.zeros_like(self.orbitalPotential)
-#         newEnergies = np.zeros_like(self.orbitalEnergies)
-#         for m in range(self.nOrbitals):
-#             newOccupations[m] = self.occupations[newOrder[m]]
-#             newKinetics[m] = self.orbitalKinetic[newOrder[m]]
-#             newPotentials[m] = self.orbitalPotential[newOrder[m]]
-#             newEnergies[m] = self.orbitalEnergies[newOrder[m]]
-#         self.occupations = np.copy(newOccupations)
-#         self.orbitalKinetic = np.copy(newKinetics)
-#         self.orbitalPotential = np.copy(newPotentials)
-#         self.orbitalEnergies = np.copy(newEnergies)
-        
-    
     def computeDerivativeMatrices(self):
         for _,cell in self.masterList:
             if cell.leaf==True:
                 cell.computeDerivativeMatrices()
-        
-                    
+                          
     def computeNuclearNuclearEnergy(self):
         self.nuclearNuclear = 0.0
         for atom1 in self.atoms:

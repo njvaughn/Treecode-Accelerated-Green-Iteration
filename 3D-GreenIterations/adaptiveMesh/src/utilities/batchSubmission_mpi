@@ -1,16 +1,15 @@
 #!/bin/bash
 
 
-cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
-#cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
+#cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
+cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
 
 DOMAIN=20
-MINDEPTH=3
 MAXSIDELENGTH=5.5
 SINGSUBT=1
 
-SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
-#SRCDIR='/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
+#SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
+SRCDIR='/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
 INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -19,7 +18,7 @@ VTKFILEDIR='None'
 
 GRADIENTFREE='True'
 SYMMETRICITERATION='False'
-GPUPRESENT='True'
+GPUPRESENT='False'
  
 TREECODE='True'      
 MAXPARNODE=2000
@@ -74,7 +73,7 @@ do
 																	$GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
 																	$INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
 																	$OUTPUTFILE $INPUTFILE $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
-																	$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $ $RESTART $SAVEDMESH \
+																	$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
 																	$SINGULARITYHANDLING $APPROXIMATIONNAME
 		done   
 	done 

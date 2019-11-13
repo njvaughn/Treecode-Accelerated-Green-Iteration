@@ -58,7 +58,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,inputFile,outputFile,s
     w=np.empty(0)
     for i in range(len(cells)):
         if i%size==rank:
-            
+#             print("CALLING refineCell ==================================================")
             X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
                                                                                          divideParameter1=divideParameter, divideParameter2=divideParameter, divideParameter3=divideParameter, divideParameter4=divideParameter)
             x=np.append(x,X)
@@ -142,8 +142,7 @@ def refineCell(coordinates,inputFile,outputFile,srcdir,order,gaugeShift,addition
     if verbose>0: rprint(np.shape(referenceEigenvalues))
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile)#, iterationOutFile=outputFile)
-    tree.referenceEigenvalues = np.copy(referenceEigenvalues)
-    tree.occupations = occupations
+
    
     
 #     print(tree.atoms)
