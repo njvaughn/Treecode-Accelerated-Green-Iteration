@@ -14,7 +14,7 @@ class Atom(object):
     The gridpoint object.  Will contain the coordinates, wavefunction value, and any other metadata such as
     whether or not the wavefunction has been updated, which cells the gridpoint belongs to, etc.
     '''
-    def __init__(self, x,y,z,atomicNumber,nAtomicOrbitals,smoothingEpsilon=0.0):
+    def __init__(self, x,y,z,atomicNumber,nAtomicOrbitals):
         '''
         Atom Constructor
         '''
@@ -25,27 +25,12 @@ class Atom(object):
         self.orbitalInterpolators()
         self.nAtomicOrbitals = nAtomicOrbitals
 #         self.setNumberOfOrbitalsToInitialize()
-        self.smoothingEpsilon = smoothingEpsilon
-        if self.smoothingEpsilon != 0.0:
-            print('Warning: smoothing epsilon for atom is set to ', self.smoothingEpsilon,'. Is that intentional?')
-       
+     
        
     def V(self,x,y,z):
-        r = np.sqrt( self.smoothingEpsilon**2 + (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
+        r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         return -self.atomicNumber/r
         
-#         r = np.sqrt( (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
-#         if r ==0.0:
-#             print('Warning, evaluating potential at singularity!')
-#             return 0.0
-#         
-#         if self.smoothingEpsilon==0.0:
-#             return -self.atomicNumber/r
-#         else:
-#             c = ( 0.00435*self.smoothingEpsilon / self.atomicNumber**5) **(1/3)
-#             return -self.atomicNumber*u(r/c)/c
-
-
     
     def setNumberOfOrbitalsToInitialize(self,verbose=0):
         if self.atomicNumber <=2:       

@@ -169,10 +169,7 @@ def scfFixedPointClosure(scf_args):
     
             if (SCFcount-1)<mixingHistoryCutoff:
                 inputDensities = np.concatenate( (inputDensities, np.reshape(RHO, (nPoints,1))), axis=1)
-#                 print('Concatenated inputDensity.  Now has shape: ', np.shape(inputDensities))
             else:
-#                 print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
-    #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                 inputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = np.copy(RHO)
         
      
@@ -182,7 +179,6 @@ def scfFixedPointClosure(scf_args):
         """ 
         Compute new electron-electron potential and update pointwise potential values 
         """
-    #         starthartreeConvolutionTime = timer()
         
         
         if GPUpresent==True:
@@ -197,21 +193,9 @@ def scfFixedPointClosure(scf_args):
                 Times['timePerConvolution'] = time.time()-start
                 print('Convolution time: ', time.time()-start)
             elif treecode==True:
-#                 if subtractSingularity==0:
-#                     print("Using singularity skipping in Hartree solve.")
-#                     potentialType=0
-#                     kernelName = "coulomb"
-#                     gaussianAlpha=0.0
-#                 else: 
-#                     potentialType=2
-#                     kernelName = "coulomb_SS"
-# #                 potentialType=2
+
                 start = time.time()
-#                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
-#                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-#                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-#                                                                kernelName, gaussianAlpha, singularityHandling, approximationName,
-#                                                                treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+
                 
                 print("Rank %i calling treecode through wrapper..." %(rank))
                 kernelName = "coulomb"
@@ -236,15 +220,8 @@ def scfFixedPointClosure(scf_args):
             else:    
                 if singularityHandling=='skipping':
                     print("Using singularity skipping in Hartree solve.")
-#                     potentialType=0
-#                     kernelName = "coulomb"
                 elif singularityHandling=='subtraction':                    
                     print("Using singularity subtraction in Hartree solve.")
-#                     print(type(kernelName), kernelName)
-#                     print(type(singularityHandling), singularityHandling)
-#                     print(type(approximationName), approximationName)
-#                     potentialType=2 
-#                     kernelName = "coulomb"
                 else: 
                     print("What should singularityHandling be?")
                     return
@@ -261,8 +238,6 @@ def scfFixedPointClosure(scf_args):
                 V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
                 
                 
-#                 print("V_hartreeNew*=-1")
-#                 V_hartreeNew*=-1
                 Times['timePerConvolution'] = MPI.Wtime()-start
                 print('Convolution time: ', MPI.Wtime()-start)
         else:
@@ -279,8 +254,8 @@ def scfFixedPointClosure(scf_args):
         
         comm.barrier()    
 #         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
-        VhartreeNorm = np.sqrt( global_dot(W,V_hartreeNew*V_hartreeNew, comm) )
-        rprint("VHartreeNew norm = ", VhartreeNorm)
+#         VhartreeNorm = np.sqrt( global_dot(W,V_hartreeNew*V_hartreeNew, comm) )
+#         rprint("VHartreeNew norm = ", VhartreeNorm)
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         if abortAfterInitialHartree==True:
             print("Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
@@ -304,8 +279,8 @@ def scfFixedPointClosure(scf_args):
         Energies['Vc'] = global_dot(W, RHO * Vc,comm)
         
         Veff = V_hartreeNew + Vx + Vc + Vext + gaugeShift
-        VeffNorm = np.sqrt( global_dot(W,Veff*Veff, comm) )
-        rprint("Veff norm = ", VeffNorm)
+#         VeffNorm = np.sqrt( global_dot(W,Veff*Veff, comm) )
+#         rprint("Veff norm = ", VeffNorm)
 
         
         if SCFcount==1: # generate initial guesses for eigenvalues

@@ -654,18 +654,6 @@ if __name__ == "__main__":
     rank = comm.Get_rank()
     size = comm.Get_size() 
         
-#     tr = tracker.SummaryTracker()
-#     tree_tracker = classtracker.ClassTracker()
-#     tree_tracker.track_class(Tree)
-#     tree_tracker.create_snapshot()
-#     
-#     cell_tracker = classtracker.ClassTracker()
-#     cell_tracker.track_class(Cell)
-#     cell_tracker.create_snapshot()
-#     
-#     gp_tracker = classtracker.ClassTracker()
-#     gp_tracker.track_class(GridPoint)
-#     gp_tracker.create_snapshot()
     
 #     if rank==0: 
 #         X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = setUpTree() 
@@ -736,53 +724,4 @@ if __name__ == "__main__":
     finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
 
 
-
-
-
-
-
-
-#     initialRho = np.copy(RHO)
-#     finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues)
-# #     tr.print_diff()
-#     
-#     
-#     
-#     conn=np.zeros(XV.size)
-#     for i in range(len(conn)):
-#         conn[i] = i
-#     offset=np.zeros(int(XV.size/8))
-#     for i in range(len(offset)):  
-#         offset[i] = 8*(i+1)
-#     ctype = np.zeros(len(offset))
-#     for i in range(len(ctype)):
-#         ctype[i] = VtkVoxel.tid   
-#     pointVals = {"initialDensity":np.zeros(XV.size),
-#                  "finalDensity":np.zeros(XV.size),
-#                  "densityDifference":np.zeros(XV.size),
-#                  "absDensityDifference":np.zeros(XV.size)}
-# 
-#     for i in range(len(XV)):
-# #         pointVals["density"][i] = max( RHO[vertexIdx[i]], 1e-16) 
-#         pointVals["initialDensity"][i] = max( initialRho[vertexIdx[i]], np.random.rand(1)*1e-16) 
-#         pointVals["finalDensity"][i] = max( finalRho[vertexIdx[i]], np.random.rand(1)*1e-16) 
-#         pointVals["densityDifference"][i] = pointVals["finalDensity"][i] - pointVals["initialDensity"][i]
-#         pointVals["absDensityDifference"][i] = np.abs( pointVals["finalDensity"][i] - pointVals["initialDensity"][i] )
-#     
-#     cellVals = {"cell_centered_density":np.zeros(offset.size)}
-# #     for i in range(len(offset)):
-# # 
-# #         cellVals["density"][i] = max( RHO[centerIdx[i]], 1e-16) 
-# #         
-#         
-#     
-# #     savefile="/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium"
-# #     savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO_new"
-# #     savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/CO_z0"
-#     savefile="/home/njvaughn/synchronizedDataFiles/densityPlots/temp"
-#     unstructuredGridToVTK(savefile, 
-#                           XV, YV, ZV, connectivity = conn, offsets = offset, cell_types = ctype, 
-#                           cellData = cellVals, pointData = pointVals)
-#     
-# 
-#     print('Meshes Exported.')
+

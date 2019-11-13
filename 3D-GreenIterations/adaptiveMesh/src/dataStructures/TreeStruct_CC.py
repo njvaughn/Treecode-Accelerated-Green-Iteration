@@ -74,7 +74,7 @@ class Tree(object):
     
     
     def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,additionalDepthAtAtoms,minDepth,gaugeShift=0.0,
-                 coordinateFile='',smoothingEps=0.0,inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
+                 coordinateFile='',inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
                  printTreeProperties = False):
         '''
@@ -120,12 +120,12 @@ class Tree(object):
 #         print(len(atomData))
         if np.shape(atomData)==(5,):
             self.atoms = np.empty((1,),dtype=object)
-            atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3],atomData[4],smoothingEpsilon=smoothingEps)
+            atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3],atomData[4])
             self.atoms[0] = atom
         else:
             self.atoms = np.empty((len(atomData),),dtype=object)
             for i in range(len(atomData)):
-                atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4],smoothingEpsilon=smoothingEps)
+                atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4])
                 self.atoms[i] = atom
         
 #         # generate gridpoint objects.  
