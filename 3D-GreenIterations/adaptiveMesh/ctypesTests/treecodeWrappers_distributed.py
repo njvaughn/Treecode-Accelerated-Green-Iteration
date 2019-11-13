@@ -10,7 +10,7 @@ from mpi4py import MPI
 #     print('Unable to import _gpu_treecodeRoutines due to ImportError')
 # except OSError:
 #     print('Unable to import _gpu_treecodeRoutines due to OSError')
-# 
+ 
 # try:
 # #     _cpu_treecodeRoutines = ctypes.CDLL('/home/njvaughn/.local/lib/libtreelib-cpu.so')
 #     _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
@@ -31,6 +31,11 @@ try:
     _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.so')
 except OSError:
         _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
+        
+try: 
+    _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
+except OSError:
+        _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.dylib')
     
     
         
@@ -42,7 +47,14 @@ except OSError:
 #             ctypes.c_int, ctypes.c_double,  ctypes.c_int )
 # except NameError:
 #     pass
-
+try:
+    _gpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
+            ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
+            ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
+            ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_double,  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
+            ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int ) 
+except NameError:
+    pass
 try:
     _cpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),

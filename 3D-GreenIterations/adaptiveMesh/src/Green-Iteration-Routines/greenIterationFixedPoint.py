@@ -175,26 +175,36 @@ def greensIteration_FixedPoint_Closure(gi_args):
                     
                 elif treecode==True:
                     
-                    if subtractSingularity==0:
+                    if singularityHandling=='skipping':
                         print("Using singularity skipping in Green's iteration.")
                         potentialType=3
-                        kernelName="yukawa_SS"
+                        kernelName="yukawa"
                     else: 
                         potentialType=3
-                        kernelName="yukawa_SS"
+                        kernelName="yukawa"
                     kappa = k
                     startTime = time.time()
                     numDevices=gi_args['numDevices']
                     numThreads=gi_args['numThreads']
                     
-#                     print('numDevices and numThreads as read in from gi_args are: ', numDevices, numThreads)
+#                     phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
+#                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
+#                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
+#                                                                    kernelName, kappa, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+#                 
+# 
+#                     if subtractSingularity==1: phiNew /= (4*np.pi)
+                    
                     phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
-                                                                   np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
-                                                                   np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                                   kernelName, kappa, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
-                
+                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
+                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
+                                                               kernelName, kappa, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
 
-                    if subtractSingularity==1: phiNew /= (4*np.pi)
+                    phiNew += 4*np.pi*f/k**2
+                    if singularityHandling=="skipping": phiNew /= (4*np.pi)
+                    if singularityHandling=="subtraction": phiNew /= (4*np.pi)
+                
+                
                     convTime=time.time()-startTime
                     print('Convolution time: ', convTime)
                     Times['timePerConvolution'] = convTime

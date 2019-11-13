@@ -22,10 +22,11 @@ def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=0):
     :param maxSideLength:
     '''
     
-    nx = -( (-2*XL) // maxSideLength )  # give the number of base cells in the x direction
-    ny = -( (-2*YL) // maxSideLength )  # give the number of base cells in the y direction
-    nz = -( (-2*ZL) // maxSideLength )  # give the number of base cells in the z direction
+    nx = int( -( (-2*XL) // maxSideLength ) )  # give the number of base cells in the x direction
+    ny = int( -( (-2*YL) // maxSideLength ) )  # give the number of base cells in the y direction
+    nz = int( -( (-2*ZL) // maxSideLength ) )  # give the number of base cells in the z direction
     
+
     if verbose>0: print('nx, ny, nz: ', nx,ny,nz)
     x = np.linspace(-XL,XL,nx+1)
     y = np.linspace(-YL,YL,ny+1)

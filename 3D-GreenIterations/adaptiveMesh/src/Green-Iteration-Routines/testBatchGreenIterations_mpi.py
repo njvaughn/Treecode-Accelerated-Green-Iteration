@@ -52,9 +52,10 @@ from pyevtk.vtk import VtkTriangle, VtkQuad, VtkPolygon, VtkVoxel, VtkHexahedron
   
 n=1
 domainSize          = int(sys.argv[n]); n+=1
-minDepth            = int(sys.argv[n]); n+=1
-maxDepth            = int(sys.argv[n]); n+=1
-additionalDepthAtAtoms        = int(sys.argv[n]); n+=1
+maxSideLength       = float(sys.argv[n]); n+=1
+# minDepth            = int(sys.argv[n]); n+=1
+# maxDepth            = int(sys.argv[n]); n+=1
+# additionalDepthAtAtoms        = int(sys.argv[n]); n+=1
 order               = int(sys.argv[n]); n+=1
 subtractSingularity = int(sys.argv[n]); n+=1
 smoothingEps        = float(sys.argv[n]); n+=1
@@ -398,7 +399,7 @@ def setUpTree(onlyFillOne=False):
     referenceEigenvalues = np.array( np.genfromtxt(srcdir+referenceEigenvaluesFile,delimiter=',',dtype=float) )
     rprint(referenceEigenvalues)
     rprint(np.shape(referenceEigenvalues))
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,additionalDepthAtAtoms=0,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=srcdir+coordinateFile,smoothingEps=smoothingEps, inputFile=srcdir+inputFile)#, iterationOutFile=outputFile)
     tree.referenceEigenvalues = np.copy(referenceEigenvalues)
     tree.occupations = occupations
@@ -479,14 +480,14 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nP
         Times['totalKohnShamTime'] = time.time()-startTime
         print('Total Time: ', Times['totalKohnShamTime'])
     
-        header = ['domainSize','minDepth','maxDepth','additionalDepthAtAtoms','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
+        header = ['domainSize','minDepth','maxDepth','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
                   'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
                   'gaussianAlpha','gaugeShift','VextSmoothingEpsilon','finalGItolerance',
                   'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
                   'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
                   'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
         
-        myData = [domainSize,0,0,0,0,order,nPoints/order**3,nPoints,gradientFree,
+        myData = [domainSize,0,0,0,order,nPoints/order**3,nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
                   gaussianAlpha,gaugeShift,smoothingEps,finalGItolerance,
                   subtractSingularity,
@@ -837,9 +838,9 @@ if __name__ == "__main__":
 #         referenceEigenvalues=None
 #         nOrbitals=None
         
-    maxSideLength=5
+#     maxSideLength=5.5
     X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,
-                                                                                                     inputFile,outputFile,srcdir,order,gaugeShift,divideParameter=1e-4)
+                                                                                                     inputFile,outputFile,srcdir,order,gaugeShift,divideParameter=divideParameter3)
     
     
     comm.barrier()

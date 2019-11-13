@@ -190,7 +190,7 @@ def scfFixedPointClosure(scf_args):
                 V_hartreeNew = np.zeros(nPoints)
                 densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
                 start = time.time()
-                if subtractSingularity==1: gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
+                if singularityHandling=='skipping': gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
                 else: 
                     print("Using singularity skipping in Hartree direct sum.")
                     gpuHartreeConvolution[blocksPerGrid, threadsPerBlock](densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
@@ -209,11 +209,21 @@ def scfFixedPointClosure(scf_args):
                 numThreads=scf_args['numThreads']
                 numDevices=scf_args['numDevices']
                 start = time.time()
+#                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
+#                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+#                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
+#                                                                kernelName, gaussianAlpha, singularityHandling, approximationName,
+#                                                                treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+                
+                print("Rank %i calling treecode through wrapper..." %(rank))
+                kernelName = "coulomb"
                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
                                                                kernelName, gaussianAlpha, singularityHandling, approximationName,
-                                                               treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
+                                                               treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+                
+                V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
                 
                 Times['timePerConvolution'] = time.time()-start
                 print('Convolution time: ', time.time()-start)
