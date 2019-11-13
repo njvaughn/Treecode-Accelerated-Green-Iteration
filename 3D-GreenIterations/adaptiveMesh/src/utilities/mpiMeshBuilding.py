@@ -135,24 +135,20 @@ def refineCell(coordinates,inputFile,outputFile,srcdir,order,gaugeShift,addition
 #     return
     if verbose>0: rprint([coordinateFile, outputFile, nElectrons, nOrbitals, 
                           Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
-    smoothingEps=0.0
-    maxDepth=20
     savedMesh=''
     restart=False
     referenceEigenvalues = np.array( np.genfromtxt(srcdir+referenceEigenvaluesFile,delimiter=',',dtype=float) )
     if verbose>0: rprint(referenceEigenvalues)
     if verbose>0: rprint(np.shape(referenceEigenvalues))
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
-                coordinateFile=srcdir+coordinateFile,smoothingEps=smoothingEps, inputFile=srcdir+inputFile)#, iterationOutFile=outputFile)
+                coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile)#, iterationOutFile=outputFile)
     tree.referenceEigenvalues = np.copy(referenceEigenvalues)
     tree.occupations = occupations
    
     
-    if verbose>0: rprint('max depth ', maxDepth)
 #     print(tree.atoms)
 #     print(tree.root.gridpoints)
-#     tree.buildTree_FirstAndSecondKind( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+    tree.buildTree( initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=False,onlyFillOne=False)
 
