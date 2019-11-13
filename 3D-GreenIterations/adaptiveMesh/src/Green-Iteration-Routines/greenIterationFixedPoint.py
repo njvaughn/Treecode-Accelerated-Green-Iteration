@@ -131,8 +131,6 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                 print('potentialType=1')
                 kappa = k
                 startTime = time.time()
-                numDevices=gi_args['numDevices']
-                numThreads=gi_args['numThreads']
                 comm.barrier()
                 phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
@@ -184,8 +182,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                         kernelName="yukawa"
                     kappa = k
                     startTime = time.time()
-                    numDevices=gi_args['numDevices']
-                    numThreads=gi_args['numThreads']
+
                     
 #                     phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
 #                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 

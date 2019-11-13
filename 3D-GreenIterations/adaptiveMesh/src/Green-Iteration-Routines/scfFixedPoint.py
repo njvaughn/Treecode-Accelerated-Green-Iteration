@@ -206,8 +206,6 @@ def scfFixedPointClosure(scf_args):
 #                     potentialType=2
 #                     kernelName = "coulomb_SS"
 # #                 potentialType=2
-                numThreads=scf_args['numThreads']
-                numDevices=scf_args['numDevices']
                 start = time.time()
 #                 V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
 #                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
@@ -250,8 +248,6 @@ def scfFixedPointClosure(scf_args):
                 else: 
                     print("What should singularityHandling be?")
                     return
-                numThreads=scf_args['numThreads']
-                numDevices=scf_args['numDevices'] 
                 start = MPI.Wtime()
                 
                 print("Rank %i calling treecode through wrapper..." %(rank))
@@ -353,7 +349,7 @@ def scfFixedPointClosure(scf_args):
                                'SCFcount':SCFcount,'greenIterationsCount':greenIterationsCount,'residuals':residuals,
                                'greenIterationOutFile':greenIterationOutFile, 'blocksPerGrid':blocksPerGrid,'threadsPerBlock':threadsPerBlock,
                                'referenceEigenvalues':referenceEigenvalues,
-                               'numDevices':scf_args['numDevices'],  'numThreads':scf_args['numThreads'], 'updateEigenvalue':True } 
+                               'updateEigenvalue':True } 
                 
                 n,M = np.shape(orbitals)
                 resNorm=1.0 
@@ -388,7 +384,7 @@ def scfFixedPointClosure(scf_args):
 
                 
                 comm.barrier()
-                while ( (resNorm> max(1e-5,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
+                while ( (resNorm> max(1e-3,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     #                 GPUtil.showUtilization()

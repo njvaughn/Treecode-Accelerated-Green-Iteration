@@ -44,21 +44,11 @@ from pyevtk.vtk import VtkTriangle, VtkQuad, VtkPolygon, VtkVoxel, VtkHexahedron
 
 
 
-# global domainSize,minDepth,maxDepth,additionalDepthAtAtoms,order,subtractSingularity,smoothingEps
-# global gaussianAlpha,gaugeShift,divideCriterion,divideParameter1,divideParameter2,energyTolerance
-# global scfTolerance,outputFile,inputFile,srcdir,vtkDir,noGradients,symmetricIteration,mixingScheme
-# global mixingParameter,mixingHistoryCutoff,GPUpresent,treecode,treecodeOrder,theta,maxParNode
-# global batchSize,divideParameter3,divideParameter4,base,restart,savedMesh
-  
 n=1
 domainSize          = int(sys.argv[n]); n+=1
 maxSideLength       = float(sys.argv[n]); n+=1
-# minDepth            = int(sys.argv[n]); n+=1
-# maxDepth            = int(sys.argv[n]); n+=1
-# additionalDepthAtAtoms        = int(sys.argv[n]); n+=1
 order               = int(sys.argv[n]); n+=1
 subtractSingularity = int(sys.argv[n]); n+=1
-smoothingEps        = float(sys.argv[n]); n+=1
 gaussianAlpha       = float(sys.argv[n]); n+=1
 gaugeShift          = float(sys.argv[n]); n+=1
 divideCriterion     = str(sys.argv[n]); n+=1
@@ -85,11 +75,8 @@ maxParNode          = int(sys.argv[n]); n+=1
 batchSize           = int(sys.argv[n]); n+=1
 divideParameter3    = float(sys.argv[n]); n+=1
 divideParameter4    = float(sys.argv[n]); n+=1
-base                = float(sys.argv[n]); n+=1
 restart             = str(sys.argv[n]); n+=1
 savedMesh           = str(sys.argv[n]); n+=1
-numDevices          = int(sys.argv[n]); n+=1
-numThreads          = int(sys.argv[n]); n+=1
 singularityHandling = str(sys.argv[n]); n+=1
 approximationName   = str(sys.argv[n]); n+=1
 
@@ -97,10 +84,6 @@ approximationName   = str(sys.argv[n]); n+=1
 
 
 
-divideParameter1 *= base
-divideParameter2 *= base
-divideParameter3 *= base
-divideParameter4 *= base
 
 # Set up paths based on srcdir
 inputFile = srcdir+inputFile
@@ -134,8 +117,6 @@ from CellStruct_CC import Cell
 from GridpointStruct import GridPoint
 import densityMixingSchemes as densityMixing
 
-# depthAtAtoms += int(np.log2(base))
-# print('Depth at atoms: ', depthAtAtoms)
 
 
 rprint('gradientFree = ', noGradients)
@@ -320,143 +301,6 @@ def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms):
 
 
 
-def setUpTree(onlyFillOne=False):
-    '''
-    setUp() gets called before every test below.
-    '''
-    xmin = ymin = zmin = -domainSize
-    xmax = ymax = zmax = domainSize
-    
-
-    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
-    
-    rprint('Reading atomic coordinates from: ', coordinateFile)
-    atomData = np.genfromtxt(srcdir+coordinateFile,delimiter=',',dtype=float)
-    rprint(atomData)
-    if np.shape(atomData)==(5,):
-        nElectrons = atomData[3]
-    else:
-        nElectrons = 0
-        for i in range(len(atomData)):
-            nElectrons += atomData[i,3] 
-    
-    
-#     nOrbitals = int( np.ceil(nElectrons/2)  ) + 2
-    nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
-#     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.   
-                                            # If the final orbital is unoccupied, this amount is enough. 
-                                            # If there is a degeneracy leading to teh final orbital being 
-                                            # partially filled, then it will be necessary to increase nOrbitals by 1.
-                        
-    # For O2, init 10 orbitals.
-#     nOrbitals=10                    
-
-    occupations = 2*np.ones(nOrbitals)
-#     nOrbitals=7
-#     print('Setting nOrbitals to six for purposes of testing the adaptivity on the oxygen atom.')
-#     print('Setting nOrbitals to seven for purposes of running Carbon monoxide.')
-    
-    
-#     nOrbitals = 6
-
-    if inputFile==srcdir+'utilities/molecularConfigurations/oxygenAtomAuxiliary.csv':
-        nOrbitals=5
-        occupations = 2*np.ones(nOrbitals)
-        occupations[2] = 4/3
-        occupations[3] = 4/3
-        occupations[4] = 4/3
-        rprint('For oxygen atom, nOrbitals = ', nOrbitals)
-        
-    elif inputFile==srcdir+'utilities/molecularConfigurations/benzeneAuxiliary.csv':
-        nOrbitals=27
-        occupations = 2*np.ones(nOrbitals)
-        for i in range(21,nOrbitals):
-            occupations[i]=0 
-        
-        
-    elif inputFile==srcdir+'utilities/molecularConfigurations/O2Auxiliary.csv':
-        nOrbitals=10
-        occupations = [2,2,2,2,4/3,4/3,4/3,4/3,4/3,4/3]
-        
-    elif inputFile==srcdir+'utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
-#         nOrbitals=10
-#         occupations = [2, 2, 4/3 ,4/3 ,4/3, 
-#                        2, 2, 2/3 ,2/3 ,2/3 ]
-        nOrbitals=7
-        occupations = 2*np.ones(nOrbitals)
-    
-    elif inputFile==srcdir+'utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv':
-        nOrbitals=1
-        occupations = [2]
-    
-#     print('inputFile == '+inputFile)
-    rprint('in testBatchGreen..., nOrbitals = ', nOrbitals) 
-#     return
-    rprint([coordinateFile, outputFile, nElectrons, nOrbitals, 
-     Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
-    
-    referenceEigenvalues = np.array( np.genfromtxt(srcdir+referenceEigenvaluesFile,delimiter=',',dtype=float) )
-    rprint(referenceEigenvalues)
-    rprint(np.shape(referenceEigenvalues))
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,additionalDepthAtAtoms=0,minDepth=minDepth,gaugeShift=gaugeShift,
-                coordinateFile=srcdir+coordinateFile,smoothingEps=smoothingEps, inputFile=srcdir+inputFile)#, iterationOutFile=outputFile)
-    tree.referenceEigenvalues = np.copy(referenceEigenvalues)
-    tree.occupations = occupations
-   
-    
-    rprint('max depth ', maxDepth)
-#     tree.buildTree_FirstAndSecondKind( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
-                    divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-                    savedMesh=savedMesh, restart=restart, printTreeProperties=True,onlyFillOne=onlyFillOne)
-
- 
-#     return 
-#     X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
-    X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
-#     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_secondKind()
-    
-#     r = np.sqrt(X*X + Y*Y + Z*Z)
-# #     RHO_RAND = np.random.rand(len(RHO))
-#     RHO = 10*np.exp(-2*r)
-#     print("USING NON-ATOMIC INITIAL RHO.")
-#     print("USING NON-ATOMIC INITIAL RHO.")
-#     print("USING NON-ATOMIC INITIAL RHO.")
-#     print("\n\n\n\nI REPEAT....\n\n\n\n")
-#     print("USING NON-ATOMIC INITIAL RHO.")
-#     print("USING NON-ATOMIC INITIAL RHO.")
-#     print("USING NON-ATOMIC INITIAL RHO.")
-#     
-    atoms = tree.atoms
-    nPoints = len(X)
-#     orbitals = np.random.rand(nPoints,nOrbitals)
-    orbitals = np.zeros((nPoints,nOrbitals))
-#     for m in range(nOrbitals):
-#         orbitals[:,m] = np.exp(-(X*X+Y*Y+Z*Z))
-
-    orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
-    rprint('nPoints: ', nPoints)
-    rprint('nOrbitals: ', nOrbitals)
-    
-    if restart==False:
-    ## Compute initial eigenvalues using gradients.
-        orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
-#         print('Initializing orbitals in tree (in order to compute initial eigenvalues)')
-        tree.initializeOrbitalsFromAtomicDataExternally()
-        print('nPoints: ', nPoints)
-        print('nOrbitals: ', nOrbitals)
-        tree.updateOrbitalEnergies(sortByEnergy=True)
-         
-        eigenvalues=tree.orbitalEnergies
-    else:
-        eigenvalues = np.ones(nOrbitals)   # these will be overwritten by the restart routine
-    
-    tree=None
-#     rprint("Returning from setupTree.")
-    return X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals, eigenvalues, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
-     
-    
 
 def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
     
@@ -473,23 +317,21 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nP
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
                                  onTheFlyRefinement=onTheFlyRefinement, vtkExport=False, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
 
-#     greenIterations_KohnSham_SINGSUB(tree, scfTolerance, energyTolerance, nPoints, subtractSingularity, 
-#                                 smoothingEps, gaussianAlpha,auxiliaryFile=auxiliaryFile, 
-#                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=vtkExport)
+
     if rank==0:
         Times['totalKohnShamTime'] = time.time()-startTime
         print('Total Time: ', Times['totalKohnShamTime'])
     
-        header = ['domainSize','minDepth','maxDepth','depthAtAtoms','order','numberOfCells','numberOfPoints','gradientFree',
+        header = ['domainSize','maxSideLength','order','numberOfCells','numberOfPoints','gradientFree',
                   'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
-                  'gaussianAlpha','gaugeShift','VextSmoothingEpsilon','finalGItolerance',
+                  'gaussianAlpha','gaugeShift','finalGItolerance',
                   'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
                   'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
                   'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
         
-        myData = [domainSize,0,0,0,order,nPoints/order**3,nPoints,gradientFree,
+        myData = [domainSize,maxSideLength,order,nPoints/order**3,nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
-                  gaussianAlpha,gaugeShift,smoothingEps,finalGItolerance,
+                  gaussianAlpha,gaugeShift,finalGItolerance,
                   subtractSingularity,
                   Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal'],
                   treecode,treecodeOrder,theta,maxParNode,batchSize, Times['totalKohnShamTime'],Times['timePerConvolution'],Times['totalIterationCount'] ]
@@ -696,7 +538,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
                'SCFtolerance':SCFtolerance,'initialGItolerance':initialGItolerance, 'finalGItolerance':finalGItolerance, 'gradualSteps':gradualSteps, 'nElectrons':nElectrons,'referenceEnergies':referenceEnergies,'SCFiterationOutFile':SCFiterationOutFile,
                'wavefunctionFile':wavefunctionFile,'densityFile':densityFile,'outputDensityFile':outputDensityFile,'inputDensityFile':inputDensityFile,'vHartreeFile':vHartreeFile,
                'auxiliaryFile':auxiliaryFile,
-               'numDevices':numDevices, 'numThreads':numThreads, 'GItolerancesIdx':0,
+               'GItolerancesIdx':0,
                'singularityHandling':singularityHandling, 'approximationName':approximationName}
     
 
