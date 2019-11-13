@@ -5,7 +5,7 @@ Each thread interacts with all M source midpoints.
 Note: the current implementation does not use shared memory, which would provide additional
 speedup.  -- 03/19/2018 NV 
 """
-from numba import cuda
+from numba import cuda, njit
 from math import sqrt,exp,factorial,pi, erfc
 import math
 import numpy as np
@@ -486,6 +486,19 @@ def gpuHartreeGaussianSingularitySubract(targets,sources,V_Hartree_new,alphasq):
             if r > 1e-14:
                 V_Hartree_new[globalID] += weight_s * (rho_s -   rho_t * exp(- r*r / alphasq )   ) / r  # increment the new wavefunction value  
                 
+                
+@njit()
+def cpuHartreeGaussianSingularitySubract(targets,sources,V_Hartree_new,alphasq):
+    for j in range(len(targets)):
+        x_t, y_t, z_t, rho_t = targets[j][0:4] # set the x, y, and z values of the target
+        V_Hartree_new[j] = rho_t* (4*pi)* alphasq/2
+        for i in range(len(sources)):  # loop through all source midpoints
+            x_s, y_s, z_s, rho_s, weight_s = sources[i]  # set the coordinates, psi value, external potential, and volume for this source cell
+            r = sqrt( (x_t-x_s)**2 + (y_t-y_s)**2 + (z_t-z_s)**2 ) # compute the distance between target and source
+            if r > 1e-14:
+                V_Hartree_new[j] += weight_s * (rho_s -   rho_t * exp(- r*r / alphasq )   ) / r  # increment the new wavefunction value  
+    return V_Hartree_new
+             
 @cuda.jit('void(float64[:,:], float64[:,:], float64[:])')
 def gpuHartreeConvolution(targets,sources,V_Hartree_new):
 

@@ -3,70 +3,89 @@
 
 cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
-DOMAIN=20
+DOMAIN=40
 MINDEPTH=3
 SINGSUBT=1
 
 
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
+#INPUTFILE='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/O2Auxiliary.csv'
+
 
 VTKFILEDIR='None'
 
 
 GRADIENTFREE='True'
-SYMMETRICITERATION='False'
+SYMMETRICITERATION='False'   
 GPUPRESENT='True'
  
-TREECODE='False'      
+TREECODE='True'      
 THETA=0.8  
-MAXPARNODE=8000
-BATCHSIZE=8000
+MAXPARNODE=4000  
+BATCHSIZE=4000 
 
 
 GAUSSIANALPHA=1.0
 GAUGESHIFT=-0.5
 
-#MESHTYPE='ParentChildrenIntegral'
-MESHTYPE='LW5'
+MESHTYPE='ParentChildrenIntegral'
+#MESHTYPE='Krasny_Vext'
 RESTART='False'	
 #SAVEDMESH='CO_PCI_3e-7.npy' 
 SAVEDMESH='None' 
 
 ADDITIONALDEPTHATATOMS=0
 
-MIXINGPARAMETER=0.2 
-MIXINGHISTORY=20 
+MIXINGPARAMETER=0.5 
+MIXINGHISTORY=10 
   
-INTRASCFTOLERANCE=1e-7
-INTERSCFTOLERANCE=5e-6
+INTRASCFTOLERANCE=3e-6
+INTERSCFTOLERANCE=1e-5
     
 MIXING='Anderson'    
 SMOOTHINGEPS=0.0
 
-MESHPARAM1=500
-MESHPARAM2=0 
-MESHPARAM4=0
+MESHPARAM1=8e-1
+MESHPARAM2=8e-1 
+MESHPARAM3=8e-3
+MESHPARAM4=8e-3
 
-for SINGSUBT in 1  
-do
-for CELLORDER in 5
+SINGSUBT=1
+
+for DOMAIN in 20       
+do 
+for CELLORDER in 6
 do	    
-for BASE in 1 
-do  
-for MAXDEPTH in 20     
-do								  				 	    
-for GRADIENTFREE in 'Laplacian'  
-do  
-	for TREECODEORDER in 0
-	do        
-		for THETA in 0.0   
+for BASE in 1  
+do   
+for MAXDEPTH in 15      
+do								  				 	       
+#for GRADIENTFREE in 'Laplacian' 'False' 'True'   
+for GRADIENTFREE in 'True'     
+do    
+	for TREECODEORDER in 8  
+	do         
+		for THETA in 0.7    
 		do  
-			#for MESHPARAM3 in 7e-7 1e-7 7e-8 3e-8    
-			for MESHPARAM3 in 7e-7    
+			#for MESHPARAM3 in 2e-7    
+			#for MESHPARAM1 in 500 1000 1500 2000    
+			#for MESHPARAM3 in  3e-4 1e-4 3e-5 1e-5 7e-6 3e-6 1e-6 7e-7 3e-7 1e-7 7e-8    
+			for MESHPARAM3 in  1e-4 1e-6 1e-7 3e-8 3e-9 1e-5 1e-6  
+			#for MESHPARAM3 in  1e-7 
+			#for MESHPARAM1 in  500 1000 2000 3000     
 			do
 
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/OxygenData/gradientFree_lap/meshParam_${MESHPARAM1}_gradientFree_${GRADIENTFREE}_mixingParameter_${MIXINGPARAMETER}.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/OxygenData/gradientFree_lap/meshParam_${MESHPARAM1}_gradientFree_${GRADIENTFREE}_mixingParameter_${MIXINGPARAMETER}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/CarbonMonoxideData/gradientFree/CO_order_${CELLORDER}_meshParam_${MESHPARAM3}_gradientFree_${GRADIENTFREE}.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/CarbonMonoxideData/gradientFree_preOrth/CO_order_${CELLORDER}_meshParam_${MESHPARAM3}_gradientFree_${GRADIENTFREE}.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/BerylliumData/gradientFree_preOrth/Be_order_${CELLORDER}_meshParam_${MESHPARAM3}_gradientFree_${GRADIENTFREE}.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/BerylliumData/gradientFree_order5/Be_maxDepth_${MAXDEPTH}_meshParam3_${MESHPARAM3}_gradientFree_${GRADIENTFREE}_cellOrder_${CELLORDER}.csv"
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/BerylliumData/gradientFree_domain40/Be_meshParam3_${MESHPARAM3}_gradientFree_${GRADIENTFREE}_cellOrder_${CELLORDER}.csv"
+			
+			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/best-times/Benzene_tree_1em4__mesh_${CELLORDER}_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
 			
 			python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

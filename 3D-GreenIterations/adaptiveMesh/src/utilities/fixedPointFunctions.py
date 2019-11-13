@@ -17,14 +17,16 @@ def PsiNorm(psi):
 
 global counter
 counter=0   
-def PowerIteration(psiIn):
+def PowerIteration(psiIn,dummy,dummy2):
+    print('Dummy = ', dummy)
+    print('Dummy2 = ', dummy2)
     global counter
     counter += 1
     print(counter)
     psiOut = np.dot(A,psiIn)
     psiOut /= np.linalg.norm(psiOut)
     psiOut /= np.max(np.abs(psiOut))
-    return psiOut - psiIn
+    return psiOut - psiIn, dummy
 
 def PowerIteration2(psiIn):
 #     print(psi1)
@@ -189,7 +191,7 @@ def testAndersonOptions(N):
     print(options)
     method='anderson'
 #     options={'verbose':True}
-    psiOutAndersonRoot = scipyRoot(PowerIteration, psiIn, method=method, options=options)
+    psiOutAndersonRoot = scipyRoot(PowerIteration, psiIn, args=('hello','hi'), method=method, options=options)
 #         print(psiOutAndersonRoot.__dir__())
 #         print(psiOutAndersonRoot.success)
 #         print(psiOutAndersonRoot.message)
@@ -372,7 +374,7 @@ def test(N):
 if __name__=="__main__":
 #     testRootfinders(3)
 #     testRootfinderOptions(3)
-    testKrylovOptions(3)
-#     testAndersonOptions(30)
+#     testKrylovOptions(3)
+    testAndersonOptions(30)
 #     testBroydenOptions(3)
 #     test(10)

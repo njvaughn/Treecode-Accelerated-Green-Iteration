@@ -8,7 +8,8 @@ MINDEPTH=3
 SINGSUBT=1
 
 
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
 
 VTKFILEDIR='None'
 
@@ -17,7 +18,7 @@ GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GPUPRESENT='True'
  
-TREECODE='False'      
+TREECODE='True'      
 THETA=0.8  
 MAXPARNODE=8000
 BATCHSIZE=8000
@@ -47,7 +48,7 @@ MESHPARAM4=0
 
 for SINGSUBT in 1 
 do
-for CELLORDER in 5
+for CELLORDER in 4 
 do	      
 for BASE in 1 
 do   
@@ -55,12 +56,12 @@ for MAXDEPTH in 20
 do								  	 				    
 for GRADIENTFREE in 'True'    
 do  
-	for TREECODEORDER in 0
+	for TREECODEORDER in 8
 	do        
-		for THETA in 0.0  
+		for THETA in 0.65  
 		do  
-			for MESHPARAM3 in 3e-6 1e-6 3e-7    
-			#for MESHPARAM3 in 3e-5 1e-5 2e-6 8e-8 1e-7    
+			for MESHPARAM3 in 3e-6 5e-6 1e-6 3e-7 3e-8
+			#for MESHPARAM3 in 5e-6 4e-8 2e-7 6e-7 4e-7   
 			do
 
 			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/hRefinement/Be_meshParam_${MESHPARAM3}_cellOrder_${CELLORDER}.csv"

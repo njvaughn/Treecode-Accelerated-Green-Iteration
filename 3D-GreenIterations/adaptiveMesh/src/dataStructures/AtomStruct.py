@@ -14,7 +14,7 @@ class Atom(object):
     The gridpoint object.  Will contain the coordinates, wavefunction value, and any other metadata such as
     whether or not the wavefunction has been updated, which cells the gridpoint belongs to, etc.
     '''
-    def __init__(self, x,y,z,atomicNumber,nAtomicOrbitals,smoothingEpsilon=0.0):
+    def __init__(self, x,y,z,atomicNumber,nAtomicOrbitals):
         '''
         Atom Constructor
         '''
@@ -25,29 +25,14 @@ class Atom(object):
         self.orbitalInterpolators()
         self.nAtomicOrbitals = nAtomicOrbitals
 #         self.setNumberOfOrbitalsToInitialize()
-        self.smoothingEpsilon = smoothingEpsilon
-        if self.smoothingEpsilon != 0.0:
-            print('Warning: smoothing epsilon for atom is set to ', self.smoothingEpsilon,'. Is that intentional?')
-       
+     
        
     def V(self,x,y,z):
-        r = np.sqrt( self.smoothingEpsilon**2 + (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
+        r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         return -self.atomicNumber/r
         
-#         r = np.sqrt( (x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
-#         if r ==0.0:
-#             print('Warning, evaluating potential at singularity!')
-#             return 0.0
-#         
-#         if self.smoothingEpsilon==0.0:
-#             return -self.atomicNumber/r
-#         else:
-#             c = ( 0.00435*self.smoothingEpsilon / self.atomicNumber**5) **(1/3)
-#             return -self.atomicNumber*u(r/c)/c
-
-
     
-    def setNumberOfOrbitalsToInitialize(self):
+    def setNumberOfOrbitalsToInitialize(self,verbose=0):
         if self.atomicNumber <=2:       
             self.nAtomicOrbitals = 1    # 1S 
         elif self.atomicNumber <=4:     
@@ -65,10 +50,10 @@ class Atom(object):
         else:
             print('Not ready for > 30 atomic number.  Revisit atom.setNumberOfOrbitalsToInitialize()')
         
-        print('Atom with Z=%i will get %i atomic orbitals initialized.' %(self.atomicNumber, self.nAtomicOrbitals))
+        if verbose>0: print('Atom with Z=%i will get %i atomic orbitals initialized.' %(self.atomicNumber, self.nAtomicOrbitals))
         
         
-    def orbitalInterpolators(self):
+    def orbitalInterpolators(self,verbose=0):
         
         self.interpolators = {}
         # search for single atom data, either on local machine or on flux
@@ -86,8 +71,8 @@ class Atom(object):
             print('Checked in: /home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
             
             
-        print('Using single atom data from:')
-        print(path)
+        if verbose>0: print('Using single atom data from:')
+        if verbose>0: print(path)
         for singleAtomData in os.listdir(path): 
             if singleAtomData[:3]=='psi':
                 data = np.genfromtxt(path+singleAtomData)

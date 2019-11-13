@@ -34,8 +34,8 @@ BATCHSIZE=8000
 GAUSSIANALPHA=1.0
 GAUGESHIFT=-0.5
 
-MESHTYPE='ParentChildrenIntegral'
-#MESHTYPE='LW5'
+#MESHTYPE='ParentChildrenIntegral'
+MESHTYPE='LW5'
 RESTART='False'	
 #SAVEDMESH='CO_PCI_3e-7.npy' 
 SAVEDMESH='None' 
@@ -45,8 +45,8 @@ ADDITIONALDEPTHATATOMS=0
 MIXINGPARAMETER=0.5 
 MIXINGHISTORY=10 
   
-INTRASCFTOLERANCE=1e-8
-INTERSCFTOLERANCE=1e-6
+INTRASCFTOLERANCE=5e-7
+INTERSCFTOLERANCE=5e-6
     
 MIXING='Anderson'    
 SMOOTHINGEPS=0.0
@@ -67,10 +67,10 @@ do
 	do      
 		for THETA in 0.0  
 		do  
-			for MESHPARAM1 in 500		    
+			for MIXING in 'Anderson' 'Simple' 'None'		    
 			do
 
-			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/3e-7data/Li_mashParam_${MESHPARAM3}.csv"
+			OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/density-mixing/Be_mixing_$MIXING.csv"
 			 
 			python -u testBatchGreenIterations_FixedPoint.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

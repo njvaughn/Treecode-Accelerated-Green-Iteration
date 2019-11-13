@@ -8,7 +8,15 @@ import numpy as np
 from scipy.special import factorial, comb
 
 import matplotlib.pyplot as plt
-from mpmath.calculus.optimization import steffensen
+from mpiUtilities import global_dot, rprint
+import mpi4py.MPI as MPI
+
+from mpiUtilities import global_dot, rprint
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size() 
+# from mpmath.calculus.optimization import steffensen
 
 
 def innerProduct(f,g,weights):
@@ -37,15 +45,17 @@ def solveLinearSystem(F,weights):
     rhs = np.zeros(n-1)
     for m in range(n-1): # m rows
         f = F[:,n-1] - F[:,n-2-m]
-        rhs[m] = innerProduct(f, F[:,n-1], weights)
+#         rhs[m] = innerProduct(f, F[:,n-1], weights)
+        rhs[m] = global_dot(f, F[:,n-1]*weights, comm)
         for k in range(n-1): # k columns
             g = F[:,n-1] - F[:,n-2-k]
-            linearSystem[m,k] = innerProduct( f, g, weights)
+#             linearSystem[m,k] = innerProduct( f, g, weights)
+            linearSystem[m,k] = global_dot( f, g*weights, comm)
     
 #     print('\nLinear system: ', linearSystem)
 #     print('\nrhs: ', rhs)
     cvec = np.linalg.solve(linearSystem, rhs)
-    print('\nAnderson weights: ', cvec[::-1] , 1-np.sum(cvec))
+    rprint('\nAnderson weights: ', cvec[::-1] , 1-np.sum(cvec))
     return cvec
     
 
@@ -60,7 +70,7 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, 
     '''
     
     (M,n) = np.shape(inputDensities)
-    print('Input densities has shape ', np.shape(inputDensities))
+    rprint('Input densities has shape ', np.shape(inputDensities))
     
     F = computeFarray(inputDensities, outputDensities)
     cvec = solveLinearSystem(F,weights)
@@ -94,7 +104,23 @@ def applyWeightsToEigenvalue(eigenvalueHistory,cvec):
 
 
 def nathanAcceleration(a,b,c):
-    return a + 5*(c-a)    
+    return a + 5*(c-a)
+
+
+def AitkenAcceleration_vector(a, b, c):
+    
+   
+    
+#     numerator = (b - a)**2
+    numerator = b**2*(a - 2*b + c)
+#     print('num norm: ', np.linalg.norm(numerator))
+    denominator = np.linalg.norm(a - 2*b + c)**2
+#     print('denom: ', denominator)
+    correction = numerator / denominator
+    
+    return (a - correction) 
+    
+        
 def AitkenAcceleration(a, b, c):
     
    
@@ -117,34 +143,34 @@ def AitkenAcceleration(a, b, c):
 
 
 
-    try:
-        for i in range(len(correction)):
-            if abs(denominator[i]/(a[i]-b[i])) < 0.05:
-                correction[i] = -1*(c[i]-a[i])
-            
-        print('After correcting for when E_AB is almost equal to E_BC:')
-        print('Max correction: ', np.max(correction))
-        print('Min correction: ', np.min(correction))
-        print('Max relative correction: ', np.max(correction/a))
-        print('Min relative correction: ', np.min(correction/a))
-        print()
-    except TypeError:
-        pass 
-
-    
-    try:
-        for i in range(len(correction)):
-            if abs(correction[i]/a[i]) > 0.3:
-                correction[i] = -1*(c[i]-a[i])
-        print('After limitting relative correction to 0.3:')
-#         correction = numerator / denominator 
-        print('Max correction: ', np.max(correction))
-        print('Min correction: ', np.min(correction))
-        print('Max relative correction: ', np.max(correction/a))
-        print('Min relative correction: ', np.min(correction/a))
-        print()
-    except TypeError:
-        pass 
+#     try:
+#         for i in range(len(correction)):
+#             if abs(denominator[i]/(a[i]-b[i])) < 0.05:
+#                 correction[i] = -1*(c[i]-a[i])
+#             
+#         print('After correcting for when E_AB is almost equal to E_BC:')
+#         print('Max correction: ', np.max(correction))
+#         print('Min correction: ', np.min(correction))
+#         print('Max relative correction: ', np.max(correction/a))
+#         print('Min relative correction: ', np.min(correction/a))
+#         print()
+#     except TypeError:
+#         pass 
+# 
+#     
+#     try:
+#         for i in range(len(correction)):
+#             if abs(correction[i]/a[i]) > 0.3:
+#                 correction[i] = -1*(c[i]-a[i])
+#         print('After limitting relative correction to 0.3:')
+# #         correction = numerator / denominator 
+#         print('Max correction: ', np.max(correction))
+#         print('Min correction: ', np.min(correction))
+#         print('Max relative correction: ', np.max(correction/a))
+#         print('Min relative correction: ', np.min(correction/a))
+#         print()
+#     except TypeError:
+#         pass 
     
     
 #     try:
@@ -352,6 +378,16 @@ def testSteffenson(N):
         A[1,1]=0.9
         A[1,0]=2
         A[0,1]=0
+    if N==5:
+        A = np.zeros((5,5))
+        A[0,0]=1
+        A[1,1]=1
+        A[1,0]=2
+        A[0,1]=0
+        A[2,2]=0.5
+        A[3,3]=0.3
+        A[4,4]=0.2
+        
     else:
         A = np.random.rand(N,N)
 #         A = (A + A.T)/2
@@ -367,7 +403,7 @@ def testSteffenson(N):
     eigOld=1
     t = np.random.rand(N)
     count=1
-    limit=1000
+    limit=50000
 
     while ( (vectorResidual>1e-12) and (count<limit) ):
         y = np.dot(A,t)
@@ -408,7 +444,7 @@ def testSteffenson(N):
         x = np.copy(y)
         count+=1
     print('Power iteration eig = ', eig)
-    plt.semilogy(residualVec,label="Power Iteration")
+    plt.semilogy(residualVec,'o',label="Power Iteration")
     powerIterationCount = count
     
 #     print() 
@@ -423,17 +459,17 @@ def testSteffenson(N):
 #     print() 
 #     print()
 
-    print() 
-    print('Residual vec: ')
-    print(np.array(residualVec))
-    ratioVec = np.zeros(len(residualVec)-1)
-    for i in range(len(residualVec)-1):
-        ratioVec[i] = residualVec[i]/residualVec[i+1]
-    print()
-    print('Ratio Vec: ')
-    print(ratioVec)
-    print() 
-    print()
+#     print() 
+#     print('Residual vec: ')
+#     print(np.array(residualVec))
+#     ratioVec = np.zeros(len(residualVec)-1)
+#     for i in range(len(residualVec)-1):
+#         ratioVec[i] = residualVec[i]/residualVec[i+1]
+#     print()
+#     print('Ratio Vec: ')
+#     print(ratioVec)
+#     print() 
+#     print()
     
     
     residualVec = []
@@ -443,22 +479,33 @@ def testSteffenson(N):
     residual=1
     eigOld = 100
     vectorResidual=1
-    while ( (vectorResidual>1e-12) and (count<limit) ):
+    aitken=False
+    while ( (vectorResidual>1e-12) and (count<100) ):
         xold = np.copy(x)
         
         y = np.dot(A,x)
         y /= np.linalg.norm(y)
-#         print('y eig: %1.10f' %(np.dot(y, np.dot(A,y))))py
+#         print('y eig: %1.10f' %(np.dot(y, np.dot(A,y))))
         z = np.dot(A,y)
         z /= np.linalg.norm(z)
 #         print('z eig: %1.10f' %(np.dot(z, np.dot(A,z))))
         
-        x = AitkenAcceleration(xold,y,z)
+#         x = AitkenAcceleration(xold,y,z)
+#         if vectorResidual<1e+4: aitken=True
+#         if aitken==True:
+#             x = AitkenAcceleration_vector(xold,y,z)
+# #         x = AitkenAcceleration(xold,y,z)
+#         else:
+#             x = np.copy(z)
+        x = AitkenAcceleration_vector(xold,y,z)
+
+            
+            
         x /= np.linalg.norm(x)
         
-        # Throw in an extra iteration
-        x = np.dot(A,x)
-        x /= np.linalg.norm(x)
+#         # Throw in an extra iteration
+#         x = np.dot(A,x)
+#         x /= np.linalg.norm(x)
 
 #         print('Norm of aitken x: ', np.linalg.norm(x))
         eig = np.dot(x, np.dot(A,x))
@@ -471,8 +518,10 @@ def testSteffenson(N):
 #         print('Steffensen Iteration %2i, Eigenvalue: %1.10f, Eigenvector residual: %1.3e, Eigenvalue residual: %1.3e' %(count,eig,vectorResidual,residual))
 #         print('Steffensen Iteration %2i, Eigenvalue Error: %1.12f, Eigenvector Error: %1.12f' %(count,abs(eig-e),errorNorm))
         count+=1
+        
+        
     print('Steffensen eig = ', eig)
-    plt.semilogy(residualVec,'o',label="Steffensen Accelerated")
+#     plt.semilogy(residualVec,'o',label="Steffensen Accelerated")
     plt.title('Power Iteration Convergence for Matrix with lamba1=%1.5f, lambda2=%1.5f' %(eigs[0],eigs[1]))
     plt.xlabel('Iteration Count')
     plt.ylabel('Eigenvector Residual Norm')
@@ -489,19 +538,19 @@ def testSteffenson(N):
 #     print(ratioVec)
 #     print()
     
-    print() 
-    print('Residual vec: ')
-    print(np.array(residualVec))
-    ratioVec = np.zeros(len(residualVec)-1)
-    for i in range(len(residualVec)-1):
-        ratioVec[i] = residualVec[i]/residualVec[i+1]
-    print()
-    print('Ratio Vec: ')
-    print(ratioVec)
-    print() 
-    print() 
+#     print() 
+#     print('Residual vec: ')
+#     print(np.array(residualVec))
+#     ratioVec = np.zeros(len(residualVec)-1)
+#     for i in range(len(residualVec)-1):
+#         ratioVec[i] = residualVec[i]/residualVec[i+1]
+#     print()
+#     print('Ratio Vec: ')
+#     print(ratioVec)
+#     print() 
+#     print() 
     
-    print('True eigenvalues: ', eigs)
+#     print('True eigenvalues: ', eigs)
     print()
     print('Power iterations:                                        ', powerIterationCount)
     print('Steffensen iterations (times 2, since 2 matvecs per):    ', steffensenCount*2)
@@ -515,7 +564,7 @@ def testAnderson():
 if __name__=="__main__":
     
 #     test2()
-    testSteffenson(10)
+    testSteffenson(5)
 #     testSteffensenScalar()
     
 

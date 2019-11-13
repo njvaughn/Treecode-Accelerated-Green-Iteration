@@ -3,9 +3,9 @@ Mesh utilities for the adaptive mesh refinement.
 
 @author: nathanvaughn
 '''
-from numpy import pi, cos, arccos, sin, sqrt, exp
+from numpy import pi, cos, arccos, sin, sqrt, exp, abs
 import numpy as np
-from scipy.special import factorial, comb
+from scipy.special import factorial, comb, erf
 import vtk
 
 def meshDensity(r,divideParameter,divideCriterion):
@@ -112,9 +112,9 @@ def phaniMeshDensity(A, N,eta,k,r):
 def computeCoefficicents(f):
     (px,py,pz) = np.shape(f)
     print(px,py,pz)
-    x = ChebyshevPoints(-1, 1, px)
-    y = ChebyshevPoints(-1, 1, py)
-    z = ChebyshevPoints(-1, 1, pz)
+    x = ChebyshevPointsFirstKind(-1, 1, px)
+    y = ChebyshevPointsFirstKind(-1, 1, py)
+    z = ChebyshevPointsFirstKind(-1, 1, pz)
     
     coefficients = np.zeros_like(f)
     
@@ -161,9 +161,9 @@ def sumChebyshevCoefficicentsGreaterThanOrderQ(f,q):
 #     print('\n q = ', q, '\n')
     (px,py,pz) = np.shape(f)
 #     print(px,py,pz)
-    x = ChebyshevPoints(-1, 1, px)
-    y = ChebyshevPoints(-1, 1, py)
-    z = ChebyshevPoints(-1, 1, pz)
+    x = ChebyshevPointsFirstKind(-1, 1, px)
+    y = ChebyshevPointsFirstKind(-1, 1, py)
+    z = ChebyshevPointsFirstKind(-1, 1, pz)
     
     coefficients = np.zeros_like(f)
     
@@ -219,9 +219,9 @@ def sumChebyshevCoefficicentsEachGreaterThanOrderQ(f,q):
 #     print('\n q = ', q, '\n')
     (px,py,pz) = np.shape(f)
 #     print(px,py,pz)
-    x = ChebyshevPoints(-1, 1, px)
-    y = ChebyshevPoints(-1, 1, py)
-    z = ChebyshevPoints(-1, 1, pz)
+    x = ChebyshevPointsFirstKind(-1, 1, px)
+    y = ChebyshevPointsFirstKind(-1, 1, py)
+    z = ChebyshevPointsFirstKind(-1, 1, pz)
     
     coefficients = np.zeros_like(f)
     
@@ -278,9 +278,9 @@ def sumChebyshevCoefficicentsAnyGreaterThanOrderQ(f,q):
 #     print('\n q = ', q, '\n')
     (px,py,pz) = np.shape(f)
 #     print(px,py,pz)
-    x = ChebyshevPoints(-1, 1, px)
-    y = ChebyshevPoints(-1, 1, py)
-    z = ChebyshevPoints(-1, 1, pz)
+    x = ChebyshevPointsFirstKind(-1, 1, px)
+    y = ChebyshevPointsFirstKind(-1, 1, py)
+    z = ChebyshevPointsFirstKind(-1, 1, pz)
     
     coefficients = np.zeros_like(f)
     
@@ -329,9 +329,9 @@ def sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(f,q):
 #     print('\n q = ', q, '\n')
     (px,py,pz) = np.shape(f)
 #     print(px,py,pz)
-    x = ChebyshevPoints(-1, 1, px)
-    y = ChebyshevPoints(-1, 1, py)
-    z = ChebyshevPoints(-1, 1, pz)
+    x = ChebyshevPointsFirstKind(-1, 1, px)
+    y = ChebyshevPointsFirstKind(-1, 1, py)
+    z = ChebyshevPointsFirstKind(-1, 1, pz)
     
     coefficients = np.zeros_like(f)
     
@@ -371,16 +371,16 @@ def sumChebyshevCoefficicentsGreaterThanOrderQZeroZero(f,q):
                 
             
 
-def unscaledWeights(N):
+def unscaledWeightsFirstKind(N):
     # generate Lambda
-    Lambda = np.ones((N,N))
-    for i in range(N):
-        for j in range(N):
+    Lambda = np.ones((N+1,N+1))
+    for i in range(N+1):
+        for j in range(N+1):
             j_shift = j+1/2
-            Lambda[i,j] = 2/N * cos(i*j_shift*pi/N)
+            Lambda[i,j] = 2/(N+1) * cos(i*j_shift*pi/(N+1))
 
-    W = np.zeros(N)
-    for i in range(N):
+    W = np.zeros(N+1)
+    for i in range(N+1):
         if i == 0:
             W[i] = 1
         elif i%2==0:
@@ -391,31 +391,83 @@ def unscaledWeights(N):
     w = np.dot(np.transpose(Lambda),W)
     return w
 
-def weights(xlow, xhigh, N, w=None):
+def weightsFirstKind(xlow, xhigh, N, w=None):
 #     if w != None:
     try: 
         return (xhigh - xlow)/2 * w
     except TypeError:
 #         print('meshUtilities: Generating weights from scratch')
-        return (xhigh - xlow)/2 *unscaledWeights(N)
+        return (xhigh - xlow)/2 *unscaledWeightsFirstKind(N)
     
-def weights3D(xlow,xhigh,Nx,ylow,yhigh,Ny,zlow,zhigh,Nz,w=None):
-    xw = weights(xlow, xhigh, Nx, w)
-    yw = weights(ylow, yhigh, Ny, w)
-    zw = weights(zlow, zhigh, Nz, w)
+def weights3DFirstKind(xlow,xhigh,Nx,ylow,yhigh,Ny,zlow,zhigh,Nz,w=None):
+    xw = weightsFirstKind(xlow, xhigh, Nx, w)
+    yw = weightsFirstKind(ylow, yhigh, Ny, w)
+    zw = weightsFirstKind(zlow, zhigh, Nz, w)
     
-    return np.outer( np.outer(xw,yw), zw ).reshape([Nx,Ny,Nz])
+    return np.outer( np.outer(xw,yw), zw ).reshape([Nx+1,Ny+1,Nz+1])
         
-def ChebyshevPoints(xlow, xhigh, N):
+def ChebyshevPointsFirstKind(xlow, xhigh, N):
     '''
     Generates "open" Chebyshev points. N midpoints in theta.
     '''
-    endpoints = np.linspace(np.pi,0,N+1)
+    endpoints = np.linspace(np.pi,0,N+2)
     theta = (endpoints[1:] + endpoints[:-1])/2
 #     print(theta)
     u = np.cos(theta)
     x = xlow + (xhigh-xlow)/2*(u+1)
     return x
+
+def unscaledWeightsSecondKind(N):
+    # generate Lambda
+    Lambda = np.ones((N+1,N+1))
+    for i in range(N+1):
+        for j in range(N+1):
+#             j_shift = j+1/2
+            if ( (j==0) or (j==N) ):
+                Lambda[i,j] = 1/N * cos(i*(j)*pi/N)
+            else:
+                Lambda[i,j] = 2/N * cos(i*(j)*pi/N)
+
+    W = np.zeros(N+1)
+    for i in range(N+1):
+        if i == 0:
+            W[i] = 1
+        elif i%2==0:
+            W[i] = 2/(1-i**2)
+        else:
+            W[i] = 0
+        if (N)%2==0:  # this seems necessary for even nx,ny,nz
+            W[-1] = 1/(1-N**2)
+            
+    w = np.dot(np.transpose(Lambda),W)
+    return w
+
+def weightsSecondKind(xlow, xhigh, N, w=None):
+#     if w != None:
+    try: 
+        return (xhigh - xlow)/2 * w
+    except TypeError:
+#         print('meshUtilities: Generating weights from scratch')
+        return (xhigh - xlow)/2 *unscaledWeightsSecondKind(N)
+    
+def weights3DSecondKind(xlow,xhigh,Nx,ylow,yhigh,Ny,zlow,zhigh,Nz,w=None):
+    xw = weightsSecondKind(xlow, xhigh, Nx, w)
+    yw = weightsSecondKind(ylow, yhigh, Ny, w)
+    zw = weightsSecondKind(zlow, zhigh, Nz, w)
+    
+    return np.outer( np.outer(xw,yw), zw ).reshape([Nx+1,Ny+1,Nz+1])
+        
+def ChebyshevPointsSecondKind(xlow, xhigh, N):
+    '''
+    Generates "open" Chebyshev points. N midpoints in theta.
+    '''
+#     endpoints = np.linspace(np.pi,0,N+1)
+    theta = np.linspace(np.pi,0,N+1)
+#     print(theta)
+    u = np.cos(theta)
+    x = xlow + (xhigh-xlow)/2*(u+1)
+    return x
+
 
 def mapToMinusOneToOne(xlow, xhigh, x):
     '''
@@ -437,24 +489,26 @@ def Tprime(n,x):
     output = np.empty_like(x)
     for i in range(output.size):
         if x[i] == 1:
+            print('x[i] == 1')
             output[i] = n**2
         elif x[i] == -1:
+            print('x[i] == -1')
             output[i] = (-1)**(n+1) * n**2
         else:
             output[i] = n*sin( n*arccos(x[i]) ) / sqrt(1-x[i]**2)
     return output
 
 def computeDerivativeMatrix(xlow, xhigh, N):
-    Lambda = np.ones((N,N))
-    for i in range(N):
-        for j in range(N):
+    Lambda = np.ones((N+1,N+1))
+    for i in range(N+1):
+        for j in range(N+1):
             j_shift = j+1/2
-            Lambda[i,j] = 2/N * cos(i*j_shift*pi/N)
+            Lambda[i,j] = 2/(N+1) * cos(i*j_shift*pi/(N+1))
                 
-    x = ChebyshevPoints(1,-1,N)
-    Tp = np.zeros((N,N))
+    x = ChebyshevPointsFirstKind(1,-1,N)
+    Tp = np.zeros((N+1,N+1))
 #     for i in range(N+1):
-    for j in range(N):
+    for j in range(N+1):
         Tp[:,j] = Tprime(j,x)
     D = 2/(xhigh - xlow) * np.dot(Tp,Lambda)
     return D
@@ -483,7 +537,7 @@ def ChebDerivative(f,Dopen):
 #                 j_shift = j+1/2
 #                 Lambda[i,j] = 2/N * cos(i*j_shift*pi/N)
 #                     
-#         x = ChebyshevPoints(1,-1,N)
+#         x = ChebyshevPointsFirstKind(1,-1,N)
 #         Tp = np.zeros((N,N))
 #     #     for i in range(N+1):
 #         for j in range(N):
@@ -497,8 +551,8 @@ def ChebGradient3D(DopenX,DopenY,DopenZ,N,F):
     DFDX = np.zeros_like(F)
     DFDY = np.zeros_like(F)
     DFDZ = np.zeros_like(F)
-    for i in range(N):  # assumes Nx=Ny=Nz
-        for j in range(N):
+    for i in range(N+1):  # assumes Nx=Ny=Nz
+        for j in range(N+1):
             DFDX[:,i,j] = -np.dot(DopenX,F[:,i,j]) #ChebDerivative(F[:,i,j],DopenX)
             DFDY[i,:,j] = -np.dot(DopenY,F[i,:,j]) #ChebDerivative(F[i,:,j],DopenY)
             DFDZ[i,j,:] = -np.dot(DopenZ,F[i,j,:]) #ChebDerivative(F[i,j,:],DopenZ)
@@ -509,8 +563,8 @@ def ChebLaplacian3D(DopenX,DopenY,DopenZ,N,F):
     D2FDX2 = np.zeros_like(F)
     D2FDY2 = np.zeros_like(F)
     D2FDZ2 = np.zeros_like(F)
-    for i in range(N):  # assumes Nx=Ny=Nz
-        for j in range(N):
+    for i in range(N+1):  # assumes Nx=Ny=Nz
+        for j in range(N+1):
             temp = -np.dot(DopenX,F[:,i,j])
             D2FDX2[:,i,j] = -np.dot(DopenX,temp) #ChebDerivative(F[:,i,j],DopenX)
             temp = -np.dot(DopenY,F[i,:,j])
@@ -670,111 +724,441 @@ def mkVtkIdList(it):
     return vil
  
 
+
+def testIntegrationByParts(a,b,c,n):
+    
+    print('n = ', n)
+    # function should have decayed at boundaries a and c
+    def f(x):
+        return exp(-x**2)
+    def fp(x):
+        return (-2*x)*exp(-x**2)
+    def fpp(x):
+        return (4*x**2-2)*exp(-x**2)
+    
+    def F(x):  # antiderivative of f*f''
+        return -1/2 * sqrt(pi/2) * erf( sqrt(2) * x) - x*exp(-2*x**2)
+    
+    def true_int_F(a,b):
+#         return 2*a*exp(-a**2) - 2*b*exp(-b**2)
+        return F(b)-F(a)
+    
+    def g(x):
+        return exp(-abs(x))
+    def gp(x):
+        return -np.sign(x)*exp(-abs(x))
+    def gpp(x):
+        return exp(-abs(x))
+    
+    def G(x):  # antiderivative of f*f''
+        return g(0) - exp(-abs(x))
+    
+    def true_int_G(a,b):
+        return 1 - 1/2*exp(-abs(2*a)) - 1/2*exp(-abs(2*b))
+#         return G(b)-G(a)
+    
+    # left domain from a to b
+    xL = ChebyshevPointsFirstKind(a, b, n)
+    wL = weightsFirstKind(a,b,n)
+    fL = f(xL)
+    gL = g(xL)
+    gradL = computeDerivativeMatrix(a,b,n)
+    lapL = np.dot(gradL,gradL)
+    
+    # right domain from b to c
+    xR = ChebyshevPointsFirstKind(b, c, n)
+    wR = weightsFirstKind(b,c,n)
+    fR = f(xR)
+    gR = g(xR)
+    gradR = computeDerivativeMatrix(b,c,n)
+    lapR = np.dot(gradR,gradR)
+    
+    
+    # Analytic value
+    I_true = true_int_F(a,c)
+    print(I_true)
+    
+    # Laplacian Method
+    I_lap = np.sum( wL * np.dot(lapL,fL)*fL ) + np.sum( wR * np.dot(lapR,fR)*fR )
+    print(I_lap)
+    
+    # Gradient Method
+    I_grad = np.sum( -wL * np.dot(gradL,fL)**2 ) + np.sum( -wR * np.dot(gradR,fR)**2 )
+    print(I_grad)
+    
+    lapErrorF = I_lap-I_true
+    gradErrorF=I_grad-I_true
+    
+    
+    # Analytic value
+    I_true = true_int_G(a,c)
+    print(I_true)
+    
+    # Laplacian Method
+    I_lap = np.sum( wL * np.dot(lapL,gL)*gL ) + np.sum( wR * np.dot(lapR,gR)*gR )
+    print(I_lap)
+    
+    # Gradient Method
+    I_grad = np.sum( -wL * np.dot(gradL,gL)**2 ) + np.sum( -wR * np.dot(gradR,gR)**2 )
+    print(I_grad)
+    
+    lapErrorG = I_lap-I_true
+    gradErrorG=I_grad-I_true
+    
+    # Numerical correction
+    grad_gL = np.dot(-gradL,gL)
+    grad_gR = np.dot(-gradR,gR)
+    
+    # Interpolators for g and gp
+    gL_interpolator = interpolator1Dchebyshev(xL,gL)
+    gpL_interpolator = interpolator1Dchebyshev(xL,grad_gL)
+    
+    gR_interpolator = interpolator1Dchebyshev(xR,gR)
+    gpR_interpolator = interpolator1Dchebyshev(xR,grad_gR)
+    
+    
+    
+    print('grad_gL: ',grad_gL)
+    print('grad_gR: ',grad_gR)
+    
+#     BC_numerically_correctedI_grad = I_grad - ( gL[0]*np.dot(-gradL,gL)[0] - gL[-1]*np.dot(-gradL,gL)[-1]) - (gR[0]*np.dot(-gradR,gR)[0] - gR[-1]*np.dot(-gradR,gR)[-1] )  
+    BC_numerically_correctedI_grad = I_grad + ( gL[-1]*grad_gL[-1] - gL[0]*grad_gL[0]) + ( gR[-1]*grad_gR[-1] - gR[0]*grad_gR[0] )  
+#     BC_numerically_correctedI_grad = I_grad + ( gL_interpolator(b)*gpL_interpolator(b) - gL_interpolator(a)*gpL_interpolator(a) ) + ( gR_interpolator(c)*gpR_interpolator(c) - gR_interpolator(b)*gpR_interpolator(b) )  
+    # Analytic coorection
+    BC_analytically_correctedI_grad = I_grad + ( g(b)*gp(-1e-10) - g(a)*gp(a)) + (g(c)*gp(c) - g(b)*gp(1e-10) )  
+    
+#     BCcorrectedI_grad = I_grad + 2 # for the cusp at 0
+#     BCcorrectedI_grad =BCcorrectedI_grad - g(a)*gp(a) - g(b) * gp(b)
+    BC_analytically_correctedGradErrorG = BC_analytically_correctedI_grad - I_true
+    BC_numerically_correctedGradErrorG = BC_numerically_correctedI_grad - I_true
+    
+    
+#     print('Error in Laplacian: ', I_lap-I_true)
+#     print('Error in Gradient: ', I_grad-I_true)
+#     print()
+    
+    return lapErrorF, gradErrorF, lapErrorG, gradErrorG, BC_analytically_correctedGradErrorG, BC_numerically_correctedGradErrorG
+    
+def sweepIntegrationByParts():
+    N = range(2,20)
+    laplacianErrorsF = []
+    gradientErrorsF = []
+    laplacianErrorsG = []
+    gradientErrorsG = []
+    BC_analytically_correctedG = []
+    BC_numerically_correctedG = [] 
+    for i in range(len(N)):
+        n=N[i]
+        lapErrorF, gradErrorF, lapErrorG, gradErrorG, BC_analytical_gradErrorG, BC_numerical_gradErrorG = testIntegrationByParts(-10,0,10,n)
+        laplacianErrorsF.append(np.abs(lapErrorF))
+        gradientErrorsF.append(np.abs(gradErrorF))
+        laplacianErrorsG.append(np.abs(lapErrorG))
+        gradientErrorsG.append(np.abs(gradErrorG))
+        BC_analytically_correctedG.append(abs( BC_analytical_gradErrorG))
+        BC_numerically_correctedG.append(abs( BC_numerical_gradErrorG))
+        
+        
+    plt.figure()
+    plt.title(r"$\int f(x)*f''(x) dx$ with and without integration by parts, smooth f")
+    plt.loglog(N,laplacianErrorsF,'ro', label='Without IBP')
+    plt.loglog(N,gradientErrorsF,'bo', label='With IBP')
+    plt.legend()
+    
+    plt.figure()
+    plt.title(r"$\int f(x)\frac{d^2}{dx^2}f(x) dx$; $f=e^{-|x|}$; domain split at the $x=0$ cusp")
+    plt.loglog(N,laplacianErrorsG,'ro', label='Without IBP')
+    plt.loglog(N,gradientErrorsG,'bo', label='IBP without boundary term')
+    plt.loglog(N,BC_analytically_correctedG,'go', label='IBP with analytically corrected cusp')
+    plt.loglog(N,BC_numerically_correctedG,'co', label='IBP with numerically corrected cusp')
+    plt.legend()
+    plt.xlabel("Chebyshev Degree")
+    plt.ylabel("Error in Integral")
+    plt.show()
+    
+
+def testGradientAndLaplacian():
  
+
+    N = range(2,20)
+    gradientErrors=[]
+    laplacianErrors=[]
+    
+    gradientErrors7=[]
+    laplacianErrors7=[]
+    for i in range(len(N)):
+        
+#         nx = ny = nz = 12
+        nx = ny = nz = N[i]
+        a=-1
+        b=2
+        xf = ChebyshevPointsFirstKind(a, b, nx)
+        xs = ChebyshevPointsSecondKind(a,b, nx)
+        
+        wf = weightsFirstKind(a,b,nx)
+        ws = weightsSecondKind(a,b,nx)
+        
+        df = computeDerivativeMatrix(a,b,nx)
+    #     y = ChebyshevPointsFirstKind(-1, 0, ny)
+    #     z = ChebyshevPointsFirstKind(-1, 0, nz)
+    #     print(xf)
+    #     print(xs)
+    #     print()
+    #     print(wf)
+    #     print(ws)
+        
+        
+        def square(x):
+            return x**2
+        def square_int(a,b):
+            return 1/3* (b**3 - a**3)
+        def square_prime(x):
+            return 2*x
+        def square_pp(x):
+            return 2*np.ones_like(x)
+        
+        def eight(x):
+            return x**8
+        def eight_int(a,b):
+            return 1/9*(b**9-a**9)
+        def eight_prime(x):
+            return 8*x**7
+        
+        
+        def seven(x):
+            return x**7
+        def seven_int(a,b):
+            return 1/8*(b**8-a**8)
+        def seven_prime(x):
+            return 7*x**6
+        def seven_pp(x):
+            return 42*x**5
+        
+        def exp(x):
+            return np.exp(x)
+        def exp_int(a,b):
+            return np.exp(b)-np.exp(a)
+        def exp_prime(x):
+            return exp(x)
+        def exp_pp(x):
+            return np.exp(x)
+        
+        def ErrorNorm(x):
+            return np.sqrt(np.sum(x**2))
+            
+#         func_f = square(xf)
+#         sum_f = np.sum(func_f*wf)
+#         grad_f = np.dot(-df,func_f)
+#         lap_f = np.dot(-df,grad_f)
+#         
+#         func_s = square(xs)
+#         sum_s = np.sum(func_s*ws)
+#         
+#         print("Square function")
+#     #     print('int error: ', sum_f-square_int(a,b))
+#     #     print(square_prime(xf))
+#     #     print(grad_f)
+#         print('gradient error: ', ErrorNorm( grad_f - square_prime(xf)) )
+#         print('laplacian error: ', ErrorNorm( lap_f - square_pp(xf)) )
+#     # #     print('Sum s error: ', sum_s-square_int(a,b))
+#     # #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*square_int(-1,1))
+#     #     
+
+        func_f = seven(xf)
+        sum_f = np.sum(func_f*wf)
+        grad_f = np.dot(-df,func_f)
+        Lap = np.dot(df,df)
+        lap_f = np.dot(Lap,func_f)
+        gradientErrors7.append(ErrorNorm( grad_f - seven_prime(xf)))
+        laplacianErrors7.append(ErrorNorm(  lap_f - seven_pp(xf)))
+        print(seven_pp(xf))
+        print(lap_f)
+        print('prime error: ', ErrorNorm( grad_f - seven_prime(xf)) )
+        print('lap error: ', ErrorNorm( lap_f - seven_pp(xf)) )
+        print('relative lap error: ', ErrorNorm( lap_f - seven_pp(xf)) /ErrorNorm(np.abs(seven_pp(xf) )) )
+        print('norm of lap: ', ErrorNorm(seven_pp(xf)) )
+    
+    #     func_s = seven(xs)
+    #     sum_s = np.sum(func_s*ws)
+    #     
+    #     print("seven power function")
+    #     print('Sum f error: ', sum_f-seven_int(a,b))
+    # #     print('Sum s error: ', sum_s-seven_int(a,b))
+    # #     print(sum_f)
+    # #     print(seven_int(a,b))
+    # #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*eight_int(-1,1))
+    # 
+    #     func_f = eight(xf)
+    #     sum_f = np.sum(func_f*wf)
+    #     
+    #     func_s = eight(xs)
+    #     sum_s = np.sum(func_s*ws)
+    #     
+    #     print("Eight power function")
+    #     print('Sum f error: ', sum_f-eight_int(a,b))
+    # #     print('Sum s error: ', sum_s-eight_int(a,b))
+    # #     print(sum_f)
+    # #     print(eight_int(a,b))
+    #     
+    
+        print()
+        func_f = exp(xf)
+        sum_f = np.sum(func_f*wf)
+        grad_f = np.dot(-df,func_f)
+        lap_f = np.dot(-df,grad_f)
+#         print(exp_prime(xf))
+#         print(grad_f)
+#         print('gradient error: ', ErrorNorm( grad_f - exp_prime(xf)) )
+#         print('laplacian error: ', ErrorNorm( lap_f - exp_pp(xf)) )    
+#         print()
+        
+        gradientErrors.append(ErrorNorm( grad_f - exp_prime(xf)))
+        laplacianErrors.append(ErrorNorm(  lap_f - exp_pp(xf)))
+    
+    plt.figure()
+    plt.title(r'$L^2$ Errors in Derivatives of $e^x$ on [%i,%i]' %(a,b))
+    plt.loglog(N,gradientErrors,'bo', label='Gradient')
+    plt.loglog(N,laplacianErrors,'ro', label='Laplacian')
+    plt.legend()
+    
+    plt.figure()
+    plt.title(r'$L^2$ Errors in Derivatives of $x^7$ on [%i,%i]' %(a,b))
+    plt.loglog(N,gradientErrors7,'bo', label='Gradient')
+    plt.loglog(N,laplacianErrors7,'ro', label='Laplacian')
+    plt.legend()
+    
+    
+    plt.show()
+    
 if __name__=="__main__":
     import matplotlib.pyplot as plt
     
-    nx = ny = nz = 8
-    x = ChebyshevPoints(-1, 0, nx)
-    y = ChebyshevPoints(-1, 0, ny)
-    z = ChebyshevPoints(-1, 0, nz)
-#     print(x)
-#     x = mapToMinusOneToOne(-2,1,x)
-#     print(x)
-#     print(y)
-#     print(z)
-    f = np.zeros((nx,ny,nz))
-     
-    for i in range(nx):
-        for j in range(ny):
-            for k in range(nz):
-                f[i,j,k] = x[i]**4 * exp(y[j]**2-y[j]) * z[k]**1
-#                 f[i,j,k] = exp(-sqrt( abs(x[i]**2 +y[j]**2+ z[k]**2)) )
-#                 f[i,j,k] = x[i]**2 * y[j]**1 * z[k]**1 + 6
-#                 f[i,j,k] = (4*x[i]**3-3*x[i]) * y[j]**1 * z[k]**1
-#                 f[i,j,k] = x[i]**2 * y[j]**1 * z[k]**1
-                 
-#     coefficients = computeCoefficicents(x,y,z,f)
-    coefficients = computeCoefficicents(f)
-     
- 
-    # reconstruct f from coefficients
- 
-    g = np.zeros_like(f)
-    x = ChebyshevPoints(-1, 1, nx)
-    y = ChebyshevPoints(-1, 1, ny)
-    z = ChebyshevPoints(-1, 1, nz)
-    for i in range(nx):
-        for j in range(ny):
-            for k in range(nz):
-                 
-                for ell in range(nx):
-                    for m in range(ny):
-                        for n in range(nz):
-                            g[i,j,k] += coefficients[ell,m,n] * cos(ell*arccos(x[i])) * cos(m*arccos(y[j])) * cos(n*arccos(z[k]))
-#                             g[i,j,k] += coefficients[ell,m,n] * cos(ell*x[i]) * cos(m*y[j]) * cos(n*z[k])
-#                             g[i,j,k] += coefficients[ell,m,n] * cos(x[i])**ell * cos(y[j])**m * cos(z[k])**n
-     
-     
-#     print('\nf = ', f,'\n')
-#     print('g = ', g,'\n')
-# #     
-#     print('f-g = ',f-g)
-     
-    print('\nMax error: ', np.max(f-g))
-     
-     
-    plt.figure()
-    for n in range(nx+ny+nz):
-        val = sumChebyshevCoefficicentsGreaterThanOrderQ(f,n)
-        print(val)
-        plt.semilogy(n,val,'ko')
-    plt.title('Absolute Sum of Coefficients Greater Than Specified Order')
-    plt.xlabel('i+j+k > ')
-    plt.ylabel('Sum')
-#     plt.show()
-     
-    plt.figure()
-#     if coefficients[0,0,0]==0.0:
-#         coefficients[0,0,0] = 1e-17*np.random.rand()
-#     plt.title('Chebyshev Coefficients for $f = x^4 * e^{y^2-y} * z$')
-    plt.title('Chebyshev Coefficients for $f = e^{-r}$')
-    plt.semilogy(0,abs(coefficients[0,0,0]),'bo',label='x order')
-    plt.semilogy(0,abs(coefficients[0,0,0]),'g^',label='y order')
-    plt.semilogy(0,abs(coefficients[0,0,0]),'rx',label='z order')
-    for i in range(nx):
-        for j in range(ny):
-            for k in range(nz):
-#                 if coefficients[i,j,k]==0.0:
-#                     coefficients[i,j,k] = 1e-17*np.random.rand()
-                plt.semilogy(i,np.abs(coefficients[i,j,k]),'bo')
-                plt.semilogy(j,np.abs(coefficients[i,j,k]),'g^')
-                plt.semilogy(k,np.abs(coefficients[i,j,k]),'rx')
-   
-    plt.legend()
-       
-       
-    plt.figure()
-#     if coefficients[0,0,0]==0.0:
-#         coefficients[0,0,0] = 1e-17*np.random.rand()
-    plt.title('Largest Chebyshev Coefficients for $f = x^4 * e^{y^2-y} * z$')
-#     plt.title('Largest Chebyshev Coefficients for $f = e^{-r}$')
-    plt.semilogy(0,np.max(abs(coefficients[0,:,:])),'bo',label='max x')
-    plt.semilogy(0,np.max(abs(coefficients[:,0,:])),'g^',label='max y')
-    plt.semilogy(0,np.max(abs(coefficients[:,:,0])),'rx',label='max z')
-    for i in range(nx):
+#     testIntegrationByParts(-5,0,5,5)
+#     testIntegrationByParts(-5,0,5,10)
+#     testIntegrationByParts(-5,0,5,15)
+#     testIntegrationByParts(-5,0,5,25)
+#     testIntegrationByParts(-5,0,5,50)
+    
+    sweepIntegrationByParts()
+#     testGradientAndLaplacian()
+
+#     
+#     func_s = exp(xs)
+#     grad_s = np.dot(-df,func_s)
+#     print(exp_prime(xs))
+#     print(grad_s)
+#     print('prime error: ', ErrorNorm( grad_s - exp_prime(xs)) )
+#     sum_s = np.sum(func_s*ws)
+#     
+#     print("exp function")
+#     print('Sum f error: ', sum_f-exp_int(a,b))
+# #     print('Sum s error: ', sum_s-exp_int(a,b))
+# #     print('Sum simp error: ', 1/3*sum_s+2/3*sum_f-1*exp_int(-1,1))
+# 
+# #     print(square_int(-1,1))
+    
+
+
+#     nx = ny = nz = 8
+#     x = ChebyshevPointsFirstKind(-1, 0, nx)
+#     y = ChebyshevPointsFirstKind(-1, 0, ny)
+#     z = ChebyshevPointsFirstKind(-1, 0, nz)
+# #     print(x)
+# #     x = mapToMinusOneToOne(-2,1,x)
+# #     print(x)
+# #     print(y)
+# #     print(z)
+#     f = np.zeros((nx,ny,nz))
+#      
+#     for i in range(nx):
+#         for j in range(ny):
+#             for k in range(nz):
+#                 f[i,j,k] = x[i]**4 * exp(y[j]**2-y[j]) * z[k]**1
+# #                 f[i,j,k] = exp(-sqrt( abs(x[i]**2 +y[j]**2+ z[k]**2)) )
+# #                 f[i,j,k] = x[i]**2 * y[j]**1 * z[k]**1 + 6
+# #                 f[i,j,k] = (4*x[i]**3-3*x[i]) * y[j]**1 * z[k]**1
+# #                 f[i,j,k] = x[i]**2 * y[j]**1 * z[k]**1
+#                  
+# #     coefficients = computeCoefficicents(x,y,z,f)
+#     coefficients = computeCoefficicents(f)
+#      
+#  
+#     # reconstruct f from coefficients
+#  
+#     g = np.zeros_like(f)
+#     x = ChebyshevPointsFirstKind(-1, 1, nx)
+#     y = ChebyshevPointsFirstKind(-1, 1, ny)
+#     z = ChebyshevPointsFirstKind(-1, 1, nz)
+#     for i in range(nx):
+#         for j in range(ny):
+#             for k in range(nz):
+#                  
+#                 for ell in range(nx):
+#                     for m in range(ny):
+#                         for n in range(nz):
+#                             g[i,j,k] += coefficients[ell,m,n] * cos(ell*arccos(x[i])) * cos(m*arccos(y[j])) * cos(n*arccos(z[k]))
+# #                             g[i,j,k] += coefficients[ell,m,n] * cos(ell*x[i]) * cos(m*y[j]) * cos(n*z[k])
+# #                             g[i,j,k] += coefficients[ell,m,n] * cos(x[i])**ell * cos(y[j])**m * cos(z[k])**n
+#      
+#      
+# #     print('\nf = ', f,'\n')
+# #     print('g = ', g,'\n')
+# # #     
+# #     print('f-g = ',f-g)
+#      
+#     print('\nMax error: ', np.max(f-g))
+#      
+#      
+#     plt.figure()
+#     for n in range(nx+ny+nz):
+#         val = sumChebyshevCoefficicentsGreaterThanOrderQ(f,n)
+#         print(val)
+#         plt.semilogy(n,val,'ko')
+#     plt.title('Absolute Sum of Coefficients Greater Than Specified Order')
+#     plt.xlabel('i+j+k > ')
+#     plt.ylabel('Sum')
+# #     plt.show()
+#      
+#     plt.figure()
+# #     if coefficients[0,0,0]==0.0:
+# #         coefficients[0,0,0] = 1e-17*np.random.rand()
+# #     plt.title('Chebyshev Coefficients for $f = x^4 * e^{y^2-y} * z$')
+#     plt.title('Chebyshev Coefficients for $f = e^{-r}$')
+#     plt.semilogy(0,abs(coefficients[0,0,0]),'bo',label='x order')
+#     plt.semilogy(0,abs(coefficients[0,0,0]),'g^',label='y order')
+#     plt.semilogy(0,abs(coefficients[0,0,0]),'rx',label='z order')
+#     for i in range(nx):
 #         for j in range(ny):
 #             for k in range(nz):
 # #                 if coefficients[i,j,k]==0.0:
 # #                     coefficients[i,j,k] = 1e-17*np.random.rand()
-        plt.semilogy(i,np.max(np.abs(coefficients[i,:,:])),'bo')
-        plt.semilogy(i,np.max(np.abs(coefficients[:,i,:])),'g^')
-        plt.semilogy(i,np.max(np.abs(coefficients[:,:,i])),'rx')
-   
-    plt.legend()
-      
-      
-    plt.show()
+#                 plt.semilogy(i,np.abs(coefficients[i,j,k]),'bo')
+#                 plt.semilogy(j,np.abs(coefficients[i,j,k]),'g^')
+#                 plt.semilogy(k,np.abs(coefficients[i,j,k]),'rx')
+#    
+#     plt.legend()
+#        
+#        
+#     plt.figure()
+# #     if coefficients[0,0,0]==0.0:
+# #         coefficients[0,0,0] = 1e-17*np.random.rand()
+#     plt.title('Largest Chebyshev Coefficients for $f = x^4 * e^{y^2-y} * z$')
+# #     plt.title('Largest Chebyshev Coefficients for $f = e^{-r}$')
+#     plt.semilogy(0,np.max(abs(coefficients[0,:,:])),'bo',label='max x')
+#     plt.semilogy(0,np.max(abs(coefficients[:,0,:])),'g^',label='max y')
+#     plt.semilogy(0,np.max(abs(coefficients[:,:,0])),'rx',label='max z')
+#     for i in range(nx):
+# #         for j in range(ny):
+# #             for k in range(nz):
+# # #                 if coefficients[i,j,k]==0.0:
+# # #                     coefficients[i,j,k] = 1e-17*np.random.rand()
+#         plt.semilogy(i,np.max(np.abs(coefficients[i,:,:])),'bo')
+#         plt.semilogy(i,np.max(np.abs(coefficients[:,i,:])),'g^')
+#         plt.semilogy(i,np.max(np.abs(coefficients[:,:,i])),'rx')
+#    
+#     plt.legend()
+#       
+#       
+#     plt.show()
     
     
     
@@ -791,9 +1175,9 @@ if __name__=="__main__":
 #      
 #     for ii in range(8):
 #         print('ii = ', ii)
-#         x = ChebyshevPoints(0, 1/(2**ii), nx)
-#         y = ChebyshevPoints(0, 1/(2**ii), ny)
-#         z = ChebyshevPoints(0, 1/(2**ii), nz)
+#         x = ChebyshevPointsFirstKind(0, 1/(2**ii), nx)
+#         y = ChebyshevPointsFirstKind(0, 1/(2**ii), ny)
+#         z = ChebyshevPointsFirstKind(0, 1/(2**ii), nz)
 #         f = np.zeros((nx,ny,nz))
 #          
 #         for i in range(nx):
@@ -893,7 +1277,7 @@ if __name__=="__main__":
 # #     plt.legend()
 # #     plt.show()
 # 
-# #     x = ChebyshevPoints(-1, 1, 4)
+# #     x = ChebyshevPointsFirstKind(-1, 1, 4)
 # #     print(x)
 #     Nx = Ny = Nz = 5
 #     xlow = -5

@@ -38,6 +38,8 @@ from TreeStruct_CC import Tree
 # from hydrogenPotential import trueWavefunction
 
 # ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
+global Norbitals
+
 n=1
 domainSize          = int(sys.argv[n]); n+=1
 minDepth            = int(sys.argv[n]); n+=1
@@ -169,7 +171,7 @@ def setUpTree(onlyFillOne=False):
         nElectrons = 0
         for i in range(len(atomData)):
             nElectrons += atomData[i,3]
-    
+    global nOrbitals
     nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
 #     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.  
                                             # If the final orbital is unoccupied, this amount is enough. 
@@ -594,6 +596,8 @@ def greensIteration_FixedPoint(psiIn):
                     targetZ = np.copy(targets[:,2])
                     targetValue = np.copy(targets[:,3])
                     targetWeight = np.copy(targets[:,4])
+                    
+                    print(np.shape(targetX))
                 
                     copytime=time.time()-copyStart
 #                                         print('Time spent copying arrays for treecode call: ', copytime)
@@ -601,10 +605,12 @@ def greensIteration_FixedPoint(psiIn):
                     potentialType=3
                     kappa = k
                     startTime = time.time()
+                    numDevices=4
+                    numThreads=4
                     phiNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                    targetX, targetY, targetZ, targetValue, 
                                                                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                                   potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize)
+                                                                   potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                     convTime=time.time()-startTime
                     print('Convolution time: ', convTime)
                     tree.timePerConvolution = convTime
@@ -677,9 +683,16 @@ def greensIteration_FixedPoint(psiIn):
         # update the orbital
         if symmetricIteration==False:
             orbitals[:,m] = np.copy(phiNew)
-        if symmetricIteration==True:
+        elif symmetricIteration==True:
             orbitals[:,m] = np.copy(phiNew/sqrtV)
-            
+        else:
+            print('What should symmetricIteration equal?')
+            return
+          
+        # Compute energy before orthogonalization, just to see  
+#         tree.importPhiOnLeaves(orbitals[:,m], m)
+#         tree.updateOrbitalEnergies(laplacian=gradientFree,sortByEnergy=False, targetEnergy=m)
+        
         n,M = np.shape(orbitals)
         orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,weights,m, n, M)
         orbitals[:,m] = np.copy(orthWavefunction)
@@ -688,7 +701,8 @@ def greensIteration_FixedPoint(psiIn):
 #                             tree.importPhiOnLeaves(orbitals[:,m], m)
 #                             tree.orthonormalizeOrbitals(targetOrbital=m)
         
-        tree.updateOrbitalEnergies(laplacian=gradientFree,sortByEnergy=False, targetEnergy=m)
+        ## Update orbital energies after orthogonalization
+        tree.updateOrbitalEnergies(laplacian=gradientFree,sortByEnergy=False, targetEnergy=m) 
 
         
     else:
@@ -724,7 +738,7 @@ def greensIteration_FixedPoint(psiIn):
     orbitals[:,m] = np.copy( tempOrbital[:,3] )
     
     
-    tree.printWavefunctionNearEachAtom(m)
+#     tree.printWavefunctionNearEachAtom(m)
         
 #     residualVector = orbitals[:,m] - oldOrbitals[:,m]
     psiOut = np.append(np.copy(orbitals[:,m]), np.copy(tree.orbitalEnergies[m]))
@@ -736,7 +750,12 @@ def greensIteration_FixedPoint(psiIn):
     print('Largest residual: ', residualVector[loc])
     print('Value at that point: ', psiOut[loc])
     print('Location of max residual: ', tempOrbital[loc,0], tempOrbital[loc,1], tempOrbital[loc,2])
-#     residualVector = -(psiIn - orbitals[:,m])
+    
+    print()
+    print('Max value of input wavefunction:   ', np.max(np.abs(psiIn[:-1])))
+    print('Max value of output wavefunction:  ', np.max(np.abs(psiOut[:-1])))
+    print()
+#     residualVector = -(psiIn - orbitals[:,m]) 
 
     newEigenvalue = tree.orbitalEnergies[m]
     
@@ -812,7 +831,7 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 
 
     if hasattr(tree, 'referenceEigenvalues'):
-        referenceEigenvalues = tree.referenceEigenvalues
+        referenceEigenvalues = tree.referenceEigenvalues  
     else:
         print('Tree did not have attribute referenceEigenvalues')
         referenceEigenvalues = np.zeros(tree.nOrbitals)
@@ -1002,10 +1021,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
     
                 potentialType=2 # shoud be 2 for Hartree w/ singularity subtraction.  Set to 0, 1, or 3 just to test other kernels quickly
 #                 alpha = gaussianAlpha
+                numDevices=4
+                numThreads=4
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                    
                 if potentialType==2:
                     V_hartreeNew += targets[:,3]* (4*np.pi) / alphasq/2
@@ -1044,10 +1065,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                 print('Copy time before calling treecode: ', copytime)
                 start = time.time()
                 potentialType=2 
+                numDevices=4
+                numThreads=4
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                 print('Convolution time: ', time.time()-start)
                 
             else:
@@ -1501,10 +1524,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
                 start = time.time()
                 potentialType=2 
 #                 alpha = gaussianAlpha
+                numThreads=4
+                numDevices=4
                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
                                                                targetX, targetY, targetZ, targetValue, 
                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize)
+                                                               potentialType, gaussianAlpha, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                 print('Convolution time: ', time.time()-start)
                 
         elif GPUpresent==False:
@@ -1538,10 +1563,12 @@ def greenIterations_KohnSham_SCF_rootfinding(intraScfTolerance, interScfToleranc
 #                 maxParNode = 500
 #                 batchSize = 500
 #                 alphasq = gaussianAlpha**2
+#                 numDevices=4
+#                 numThreads=4
 #                 V_hartreeNew = treecodeWrappers.callTreedriver(numTargets, numSources, 
 #                                                                targetX, targetY, targetZ, targetValue, 
 #                                                                sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-#                                                                potentialType, alphasq, order, theta, maxParNode, batchSize)
+#                                                                potentialType, alphasq, order, theta, maxParNode, batchSize, numDevices, numThreads)
 #                 if potentialType==2:
 #                     V_hartreeNew += density_targets[:,3]* (4*np.pi) / alphasq/2
         
