@@ -2,12 +2,12 @@
 @author: nathanvaughn
 '''
 import numpy as np
-from scipy.interpolate import interp1d, InterpolatedUnivariateSpline
+from scipy.interpolate import InterpolatedUnivariateSpline
 from scipy.special import erf
 import os
 
-def u(r):
-    return erf(r)/r + 1/(3*np.sqrt(np.pi)) * ( np.exp(-r**2) + 16*np.exp(-4*r**2))
+
+
 
 class Atom(object):
     '''
@@ -25,6 +25,7 @@ class Atom(object):
         self.orbitalInterpolators()
         self.nAtomicOrbitals = nAtomicOrbitals
 #         self.setNumberOfOrbitalsToInitialize()
+        print("Set up atom with z=", atomicNumber)
      
        
     def V(self,x,y,z):
@@ -53,18 +54,17 @@ class Atom(object):
         if verbose>0: print('Atom with Z=%i will get %i atomic orbitals initialized.' %(self.atomicNumber, self.nAtomicOrbitals))
         
         
-    def orbitalInterpolators(self,verbose=0):
+    def orbitalInterpolators(self,verbose=1):
         
+        print("Setting up interpolators.")
         self.interpolators = {}
         # search for single atom data, either on local machine or on flux
         if os.path.isdir('/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
             # working on local machine
             path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
         elif os.path.isdir('/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
-            # working on flux
+            # working on Flux or Great Lakes
             path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
-#             print('Warning warning warning: using initial orbitals for Beryllium despite doing lithium calc.')
-#             path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber+1))+'/singleAtomData/'
         else:
             print('Could not find single atom data...')
             print('Checked in: /Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
@@ -76,13 +76,13 @@ class Atom(object):
         for singleAtomData in os.listdir(path): 
             if singleAtomData[:3]=='psi':
                 data = np.genfromtxt(path+singleAtomData)
-#                 self.interpolators[singleAtomData[:5]] = interp1d(data[:,0],data[:,1],fill_value='extrapolate')
-#                 self.interpolators[singleAtomData[:5]] = interp1d(data[:,0],data[:,1],kind='cubic',fill_value='extrapolate')
+                print(singleAtomData[:5])
+                print(data[0,0], data[-1,0])
+                print(data[0,1], data[-1,1],"\n")
                 self.interpolators[singleAtomData[:5]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext=0)
             elif singleAtomData[:7]=='density':
                 data = np.genfromtxt(path+singleAtomData)
-#                 self.interpolators[singleAtomData[:7]] = interp1d(data[:,0],data[:,1],kind='cubic',fill_value='extrapolate')
                 self.interpolators[singleAtomData[:7]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext=0)
-#                 self.interpolators[singleAtomData[:7]] = interp1d(data[:,0],data[:,1],kind='cubic',fill_value=0)
+#                 self.interpolators[singleAtomData[:7]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext='const')
         
 

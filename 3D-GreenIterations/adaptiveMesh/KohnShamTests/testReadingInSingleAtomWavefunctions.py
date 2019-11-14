@@ -5,6 +5,8 @@ Created on Jul 25, 2018
 '''
 import unittest
 import numpy as np
+import tkinter
+
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
@@ -104,7 +106,7 @@ class Test(unittest.TestCase):
         plt.xlabel('radius')
         plt.show()
         
-    @unittest.skip('Skipping the printing of the interpolators')
+#     @unittest.skip('Skipping the printing of the interpolators')
     def testSettingUpAtomInterpolators(self):
         
         LiAtom = Atom(0,0,0,3)
