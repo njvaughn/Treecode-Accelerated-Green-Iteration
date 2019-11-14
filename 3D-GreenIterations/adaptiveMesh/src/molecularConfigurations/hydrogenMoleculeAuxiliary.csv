@@ -1,5 +1,5 @@
-../src/utilities/molecularConfigurations/hydrogenMolecule.csv
-../src/utilities/molecularConfigurations/hydrogenMoleculeReferenceEigenvalues.csv
+../src/molecularConfigurations/hydrogenMolecule.csv
+../src/molecularConfigurations/hydrogenMoleculeReferenceEigenvalues.csv
 /Users/nathanvaughn/Documents/GreenIterationOutputData/results.csv
 -7.5499497178953057e-01 # Band energy 
 0.0	 					# Kinetic energy

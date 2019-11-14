@@ -25,7 +25,7 @@ class Atom(object):
         self.orbitalInterpolators()
         self.nAtomicOrbitals = nAtomicOrbitals
 #         self.setNumberOfOrbitalsToInitialize()
-        print("Set up atom with z=", atomicNumber)
+#         print("Set up atom with z=", atomicNumber)
      
        
     def V(self,x,y,z):
@@ -54,9 +54,9 @@ class Atom(object):
         if verbose>0: print('Atom with Z=%i will get %i atomic orbitals initialized.' %(self.atomicNumber, self.nAtomicOrbitals))
         
         
-    def orbitalInterpolators(self,verbose=1):
+    def orbitalInterpolators(self,verbose=0):
         
-        print("Setting up interpolators.")
+#         print("Setting up interpolators.")
         self.interpolators = {}
         # search for single atom data, either on local machine or on flux
         if os.path.isdir('/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
@@ -76,9 +76,9 @@ class Atom(object):
         for singleAtomData in os.listdir(path): 
             if singleAtomData[:3]=='psi':
                 data = np.genfromtxt(path+singleAtomData)
-                print(singleAtomData[:5])
-                print(data[0,0], data[-1,0])
-                print(data[0,1], data[-1,1],"\n")
+#                 print(singleAtomData[:5])
+#                 print(data[0,0], data[-1,0])
+#                 print(data[0,1], data[-1,1],"\n")
                 self.interpolators[singleAtomData[:5]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext=0)
             elif singleAtomData[:7]=='density':
                 data = np.genfromtxt(path+singleAtomData)

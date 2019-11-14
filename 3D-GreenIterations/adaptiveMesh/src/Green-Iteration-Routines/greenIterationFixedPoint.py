@@ -16,11 +16,11 @@ from mpiUtilities import global_dot, rprint
 
  
 
-
-try:
-    from convolution import *
-except ImportError:
-    print('Unable to import JIT GPU Convolutions')
+# 
+# try:
+#     from convolution import *
+# except ImportError:
+#     print('Unable to import JIT GPU Convolutions')
 try:
     import directSumWrappers
 except ImportError:

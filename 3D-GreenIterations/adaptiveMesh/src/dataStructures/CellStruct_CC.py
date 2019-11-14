@@ -9,7 +9,6 @@ from scipy.special import sph_harm
 import itertools
 import bisect
 
-from hydrogenAtom import potential
 from meshUtilities import meshDensity, weights3DFirstKind, unscaledWeightsFirstKind, weights3DSecondKind,unscaledWeightsSecondKind, \
   ChebGradient3D, ChebyshevPointsFirstKind,ChebyshevPointsSecondKind,computeDerivativeMatrix,\
     computeLaplacianMatrix, ChebLaplacian3D, sumChebyshevCoefficicentsGreaterThanOrderQ, sumChebyshevCoefficicentsEachGreaterThanOrderQ, sumChebyshevCoefficicentsAnyGreaterThanOrderQ,\

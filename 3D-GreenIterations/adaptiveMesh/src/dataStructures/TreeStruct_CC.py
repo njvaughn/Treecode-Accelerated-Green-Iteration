@@ -51,7 +51,6 @@ except ImportError:
 from GridpointStruct import GridPoint
 from CellStruct_CC import Cell
 from AtomStruct import Atom
-from hydrogenAtom import potential, trueWavefunction, trueEnergy
 from meshUtilities import *
 from timer import Timer
 
