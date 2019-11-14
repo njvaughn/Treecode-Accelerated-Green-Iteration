@@ -52,7 +52,6 @@ from GridpointStruct import GridPoint
 from CellStruct_CC import Cell
 from AtomStruct import Atom
 from meshUtilities import *
-from timer import Timer
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 ThreeByThree = [element for element in itertools.product(range(3),range(3))]
@@ -704,8 +703,6 @@ class Tree(object):
                 Cell.divideIfAspectRatioExceeds(aspectRatioTolerance)
       
     def initializeOrbitalsRandomly(self,targetOrbital=None):
-        timer = Timer()
-        timer.start()
         if targetOrbital==None:
             print('Initializing all orbitals randomly...')
             for _,cell in self.masterList:
@@ -725,13 +722,9 @@ class Tree(object):
                         gp = cell.gridpoints[i,j,k]
 #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
                         gp.phi[targetOrbital] = np.random.rand(1)
-                        
-        timer.stop()
-        print('Initializing orbitals randomly inside Tree Structure took %.3f seconds.' %timer.elapsedTime)
-                        
+          
     def initializeOrbitalsToDecayingExponential(self,targetOrbital=None):
-        timer = Timer()
-        timer.start()
+
         if targetOrbital==None:
             print('Initializing all orbitals randomly...')  
             for _,cell in self.masterList:
@@ -755,12 +748,9 @@ class Tree(object):
                         r = np.sqrt(gp.x*gp.x + gp.y*gp.y + gp.z*gp.z)
                         gp.phi[targetOrbital] = np.exp(-0.1*r)* np.sin(targetOrbital*r)
                         
-        timer.stop()
-        print('Initializing orbitals to decaying exponential inside Tree Structure took %.3f seconds.' %timer.elapsedTime)                       
-        
+
     def initializeDensityFromAtomicDataExternally(self):
-        timer = Timer()
-        timer.start()
+
         
         sources = self.extractLeavesDensity()
         x = sources[:,0]
@@ -794,12 +784,8 @@ class Tree(object):
 
         self.normalizeDensityToValue(totalElectrons)
          
-        timer.stop()
-        print('Initializing density EXTERNALLY took %.3f seconds.' %timer.elapsedTime)  
-        
+
     def initializeDensityFromAtomicData(self):
-        timer = Timer()
-        timer.start()
         
         for _,cell in self.masterList:
             if cell.leaf==True:
@@ -813,9 +799,7 @@ class Tree(object):
                         except ValueError:
                             gp.rho += 0.0   # if outside the interpolation range, assume 0.
                             
-        timer.stop()
-        print('Initializing density inside Tree Structure took %.3f seconds.' %timer.elapsedTime)
-                
+             
 #                 if hasattr(cell, 'densityPoints'):
 #                     for i,j,k in cell.PxByPyByPz_density:
 #                         dp = cell.densityPoints[i,j,k]
@@ -839,8 +823,7 @@ class Tree(object):
                       '42', '51', '60'
                       '43', '52', '61', '70']
 
-        timer = Timer()
-        timer.start()
+
         orbitalIndex=0
         
 #         print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
@@ -928,9 +911,7 @@ class Tree(object):
         if orbitalIndex > self.nOrbitals:
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
-        timer.stop()
-        print('Initializing orbitals EXTERNAL to Tree Structure took %.3f seconds.' %timer.elapsedTime)
-        
+
         for m in range(self.nOrbitals):
             self.normalizeOrbital(m)
               
@@ -945,8 +926,7 @@ class Tree(object):
                       '42', '51', '60'
                       '43', '52', '61', '70']
 
-        timer = Timer()
-        timer.start()
+ 
         orbitalIndex=0
         
         
@@ -1031,9 +1011,7 @@ class Tree(object):
         if orbitalIndex > self.nOrbitals:
             print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
-        timer.stop()
-        print('Initializing orbitals inside Tree Structure took %f.3 seconds.' %timer.elapsedTime)
-        
+
         for m in range(self.nOrbitals):
             self.normalizeOrbital(m)
   
@@ -1051,7 +1029,6 @@ class Tree(object):
         else:
             saveList=None
         divideParameter = divideParameter1 # for methods that use only one divide parameter.
-        timer = Timer()
         
 #         @da.delayed
         def recursiveDivide(self, Cell, divideCriterion, divideParameter, levelCounter, saveList, printNumberOfCells, maxDepthAchieved=0, minDepthAchieved=100):
@@ -1147,7 +1124,6 @@ class Tree(object):
             maxDepthAchieved = max(maxDepthAchieved, Cell.level)                                                                                                                                                       
             return maxDepthAchieved, minDepthAchieved, levelCounter
         
-        timer.start()
         levelCounter=0
         if printTreeProperties == True: print("Calling recursive divide on this cell's root.... divideCriterion, divideParameter=",divideCriterion, divideParameter)
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, divideCriterion, divideParameter, levelCounter, saveList, printNumberOfCells, maxDepthAchieved=0)
@@ -1183,7 +1159,6 @@ class Tree(object):
 #         self.findNearestGridpointToEachAtom()
 #         for m in range(self.nOrbitals):
 #             self.printWavefunctionNearEachAtom(m)
-#         timer.stop()
                     
         if printTreeProperties == True: 
             print("Tree build completed. \n"
@@ -1203,7 +1178,7 @@ class Tree(object):
                   "Construction time:                           %.3g seconds."
                    
                   %(self.xmin, self.xmax, divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved, 
-                    self.maxDepthAtAtoms, self.px, timer.elapsedTime))
+                    self.maxDepthAtAtoms, self.px, 0.0))
 #             print('Closest gridpoint to origin: ', closestCoords)
 #             print('For a distance of: ', closestToOrigin)
 #             print('Part of a cell centered at: ', closestMidpoint) 
