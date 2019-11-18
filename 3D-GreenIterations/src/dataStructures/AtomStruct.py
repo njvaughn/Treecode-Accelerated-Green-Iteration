@@ -45,11 +45,18 @@ class Atom(object):
         r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         return -self.atomicNumber/r
     
-    def V_pseudopotentail(self,x,y,z,PSPs):
+    def V_local_pseudopotential(self,x,y,z,psi):
         r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
-        PSP = PSPs[str(self.atomicNumber)] # Pick out the pseudopotential object corresponding to this atom's 
-        return
+        return self.PSP.evaluateLocalPotentialInterpolator(r)*psi
+    
+    def V_nonlocal_pseudopotential_times_psi(self,x,y,z,psi):
+        ## sum over the projectors, increment the nonloncal potential.  
         
+        return 0.0
+      
+    def V_pseudopotential_times_psi(self,x,y,z,psi):
+        ## Call the local and nonlocal pseudopotential calculations.
+        return self.V_local_pseudopotential(x,y,z,psi) + self.V_nonlocal_pseudopotential(x,y,z,psi)
     
     def setNumberOfOrbitalsToInitialize(self,verbose=0):
         if self.atomicNumber <=2:       

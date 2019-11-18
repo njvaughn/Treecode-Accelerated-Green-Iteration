@@ -81,18 +81,13 @@ def greensIteration_FixedPoint_Closure(gi_args):
         blocksPerGrid=gi_args['blocksPerGrid']
         referenceEigenvalues = gi_args['referenceEigenvalues']
         updateEigenvalue = gi_args['updateEigenvalue']
+        coreRepresentation = gi_args['coreRepresentation']
 
         
 #         print('Who called F(x)? ', inspect.stack()[2][3])
         inputWave = np.copy(psiIn[:-1])
     
-        # global data structures
-#         global orbitals, oldOrbitals, residuals, eigenvalueHistory, Veff, Energies, referenceEigenvalues
-    #     global X, Y, Z, W
-        
-        # Global constants and counters
-#         global threadsPerBlock, blocksPerGrid, SCFcount, greenIterationsCount
-#         global greenIterationOutFile 
+
         
         Times['totalIterationCount'] += 1
         
@@ -100,17 +95,19 @@ def greensIteration_FixedPoint_Closure(gi_args):
          
         oldOrbitals[:,m] = np.copy(psiIn[:-1])    
         orbitals[:,m] = np.copy(psiIn[:-1])
-#         n,M = np.shape(orbitals)
-#         orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
-#         orbitals[:,m] = np.copy(orthWavefunction)
         Energies['orbitalEnergies'][m] = np.copy(psiIn[-1])
         
     
      
-        if symmetricIteration==False:
+        if coreRepresentation=='AllElectron':
             f = -2*orbitals[:,m]*Veff
-        else: 
-            print("symmetricIteration variable not True or False.  What should it be?")
+#             f = -2*( orbitals[:,m]*V_other + sum over atoms ( local potential * psi ) 
+        elif coreRepresentation=='Pseudopotential': 
+            print("Construct f with nonlocal routines.")
+#             f = -2*( orbitals[:,m]*V_other + sum over atoms ( nonlocal potential * psi ) 
+            return
+        else:
+            print("coreRepresentation not set to allowed value. Exiting from greenIterationFixedPoint.")
             return
         
         
@@ -123,12 +120,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         if Energies['orbitalEnergies'][m] < 10.25**100: 
             
             
-#             if GPUpresent==False:
             startTime=time.time()
-#                 potentialType=3
             kernelName = "yukawa"
-#                 potentialType=1
-#                 print('potentialType=1')
             kappa = k
             startTime = time.time()
             comm.barrier()
@@ -136,13 +129,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
                                                            kernelName, kappa, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
-#                 print("Length of phiNew: ", len(phiNew))
-#                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
-#                 phiNew += 4*np.pi*f/k**2
+
             if singularityHandling=="skipping": phiNew /= (4*np.pi)
             if singularityHandling=="subtraction": phiNew /= (4*np.pi)
-#                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
-#                 print("Avg of phiNew: ", np.mean(phiNew))
+
             convolutionTime = time.time()-startTime
             rprint('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
             comm.barrier()
@@ -151,9 +141,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             print('Using singularity skipping because energy too close to 0')
             gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](np.array([X,Y,Z,f,W]),np.array([X,Y,Z,f,W]),phiNew,k)
         
-        
-#         print('Max phiNew: ', np.max(phiNew))
-#         print('Min phiNew: ', np.min(phiNew))
+
         
         """ Method where you dont compute kinetics, from Harrison """
         if updateEigenvalue==True:
@@ -162,21 +150,15 @@ def greensIteration_FixedPoint_Closure(gi_args):
             orthWavefunction2 = np.zeros(nPoints)
             if ( (gradientFree==True) and (SCFcount>-1)):                 
                 
-#                 psiNewNorm = np.sqrt( np.sum( phiNew*phiNew*W))
                 psiNewNorm = np.sqrt( global_dot( phiNew, phiNew*W, comm))
                 rprint("psiNewNorm = %f" %psiNewNorm)
                 
                 if symmetricIteration==False:
         
-#                     deltaE = -np.sum( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew)*W ) 
                     deltaE = -global_dot( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew), W, comm ) 
-#                     normSqOfPsiNew = np.sum( phiNew**2 * W)
                     normSqOfPsiNew = global_dot( phiNew**2, W, comm)
                     deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
-    #                 deltaE /= (psiNewNorm)
-#                     print('NormSq of psiNew = ', normSqOfPsiNew )
-#                     print('Norm of psiNew = ', psiNewNorm )
-#                     print('Delta E = ', deltaE)
+
                     rprint("deltaE = %f" %deltaE)
                     Energies['orbitalEnergies'][m] += deltaE
                     rprint("Energies['orbitalEnergies'][m] = %f" %Energies['orbitalEnergies'][m])
@@ -186,17 +168,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
                     return
         
                 n,M = np.shape(orbitals) 
-    #             Wcopy = np.copy(W)
-    #             mcopy = np.copy(m)
-    #             nPointsCopy = np.copy(nPoints)
+
                 orthWavefunction = mgs(orbitals,W,m, n, M, comm)
-    #             modifiedGramSchmidt_singleOrbital_GPU[blocksPerGrid, threadsPerBlock](np.copy(orbitals),Wcopy,mcopy,nPointsCopy, orthWavefunction2)
                 
                 orbitals[:,m] = np.copy(orthWavefunction)
-    #             orbitals[:,m] = np.copy(orthWavefunction2)
-        #         tree.importPhiOnLeaves(orbitals[:,m], m)
-                
-         
+
         
                 if greenIterationsCount==1:
                     eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
@@ -206,10 +182,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 rprint('eigenvalueHistory: \n',eigenvalueHistory)
                 
                 
-#                 print('Orbital energy after Harrison update: ', Energies['orbitalEnergies'][m])
                  
         
-        #     elif ( (gradientFree==False) or (SCFcount==-1) and False ):
             elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
                 print('gradient and laplacian methods not set up for tree-free')
                 return
