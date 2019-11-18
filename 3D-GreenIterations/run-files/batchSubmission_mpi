@@ -1,15 +1,15 @@
 #!/bin/bash
 
 
-#cd /home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/src/Green-Iteration-Routines
-cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/src/Green-Iteration-Routines
+#cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
+cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Green-Iteration-Routines/
 
 DOMAIN=20
 MAXSIDELENGTH=5.5
 SINGSUBT=1
 
-#SRCDIR='/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/src/'
-SRCDIR='/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/src/'
+#SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
+SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
 INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 

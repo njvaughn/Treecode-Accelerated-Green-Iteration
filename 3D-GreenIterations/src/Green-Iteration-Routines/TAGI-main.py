@@ -17,8 +17,8 @@ import resource
 import mpi4py.MPI as MPI
 
  
-sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/src/utilities')
-sys.path.insert(1, '/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/src/utilities')
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
+sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
 from loadBalancer import loadBalance
 from mpiUtilities import global_dot, scatterArrays, rprint
 from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
@@ -26,7 +26,7 @@ from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
 
 
 if os.uname()[1] == 'Nathans-MacBook-Pro.local':
-    rootDirectory = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/'
+    rootDirectory = '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/'
 else:
     rprint('os.uname()[1] = ', os.uname()[1])
 

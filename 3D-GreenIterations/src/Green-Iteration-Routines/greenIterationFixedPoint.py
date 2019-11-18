@@ -138,7 +138,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                                                                kernelName, kappa, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
 #                 print("Length of phiNew: ", len(phiNew))
 #                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
-                phiNew += 4*np.pi*f/k**2
+#                 phiNew += 4*np.pi*f/k**2
                 if singularityHandling=="skipping": phiNew /= (4*np.pi)
                 if singularityHandling=="subtraction": phiNew /= (4*np.pi)
 #                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
@@ -197,7 +197,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
                                                                kernelName, kappa, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
 
-                    phiNew += 4*np.pi*f/k**2
+#                     phiNew += 4*np.pi*f/k**2
                     if singularityHandling=="skipping": phiNew /= (4*np.pi)
                     if singularityHandling=="subtraction": phiNew /= (4*np.pi)
                 
