@@ -205,7 +205,7 @@ def scfFixedPointClosure(scf_args):
                                                                kernelName, gaussianAlpha, singularityHandling, approximationName,
                                                                treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
                 
-                V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
+#                 V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
                 
                 Times['timePerConvolution'] = time.time()-start
                 print('Convolution time: ', time.time()-start)
@@ -235,7 +235,7 @@ def scfFixedPointClosure(scf_args):
                                                                kernelName, gaussianAlpha, singularityHandling, approximationName,
                                                                treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
                 
-                V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
+#                 V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
                 
                 
                 Times['timePerConvolution'] = MPI.Wtime()-start
