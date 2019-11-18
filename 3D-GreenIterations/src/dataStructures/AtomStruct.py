@@ -5,7 +5,7 @@ import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline
 from scipy.special import erf
 import os
-
+from PseudopotentialStruct import ONCV_PSP
 
 
 
@@ -24,13 +24,31 @@ class Atom(object):
         self.atomicNumber = int(atomicNumber)
         self.orbitalInterpolators()
         self.nAtomicOrbitals = nAtomicOrbitals
-#         self.setNumberOfOrbitalsToInitialize()
-#         print("Set up atom with z=", atomicNumber)
+        
+    def setPseudopotentialObject(self, PSPs,verbose=0):
+        ## If the pseudopotential dictionary already contains this atomic number, have it point there.
+        ## Otherwise, need to create a new one.
+        print("Setting PSP for atomic number ", self.atomicNumber)
+        try: 
+            self.PSP = PSPs[str(self.atomicNumber)]
+            if verbose>0: print("PSP already present for atomic number ", self.atomicNumber)
+        except KeyError:
+            if verbose>0: print("PSP not already present for atomic number ", self.atomicNumber)
+            PSPs[str(self.atomicNumber)] = ONCV_PSP(self.atomicNumber)
+            if verbose>0: print("Updated PSPs: ",PSPs)
+            self.PSP = PSPs[str(self.atomicNumber)]
+        
+        
      
        
-    def V(self,x,y,z):
+    def V_all_electron(self,x,y,z):
         r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         return -self.atomicNumber/r
+    
+    def V_pseudopotentail(self,x,y,z,PSPs):
+        r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
+        PSP = PSPs[str(self.atomicNumber)] # Pick out the pseudopotential object corresponding to this atom's 
+        return
         
     
     def setNumberOfOrbitalsToInitialize(self,verbose=0):
@@ -76,13 +94,7 @@ class Atom(object):
         for singleAtomData in os.listdir(path): 
             if singleAtomData[:3]=='psi':
                 data = np.genfromtxt(path+singleAtomData)
-#                 print(singleAtomData[:5])
-#                 print(data[0,0], data[-1,0])
-#                 print(data[0,1], data[-1,1],"\n")
                 self.interpolators[singleAtomData[:5]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext=0)
             elif singleAtomData[:7]=='density':
                 data = np.genfromtxt(path+singleAtomData)
-                self.interpolators[singleAtomData[:7]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext=0)
-#                 self.interpolators[singleAtomData[:7]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext='const')
-        
-
+                self.interpolators[singleAtomData[:7]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext=0)        
