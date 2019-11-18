@@ -123,93 +123,30 @@ def greensIteration_FixedPoint_Closure(gi_args):
         if Energies['orbitalEnergies'][m] < 10.25**100: 
             
             
-            if GPUpresent==False:
-                startTime=time.time()
+#             if GPUpresent==False:
+            startTime=time.time()
 #                 potentialType=3
-                kernelName = "yukawa"
+            kernelName = "yukawa"
 #                 potentialType=1
 #                 print('potentialType=1')
-                kappa = k
-                startTime = time.time()
-                comm.barrier()
-                phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
-                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
-                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                               kernelName, kappa, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+            kappa = k
+            startTime = time.time()
+            comm.barrier()
+            phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
+                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
+                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
+                                                           kernelName, kappa, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
 #                 print("Length of phiNew: ", len(phiNew))
 #                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
 #                 phiNew += 4*np.pi*f/k**2
-                if singularityHandling=="skipping": phiNew /= (4*np.pi)
-                if singularityHandling=="subtraction": phiNew /= (4*np.pi)
+            if singularityHandling=="skipping": phiNew /= (4*np.pi)
+            if singularityHandling=="subtraction": phiNew /= (4*np.pi)
 #                 print("Max of phiNew: ", np.max(np.abs(phiNew)))
 #                 print("Avg of phiNew: ", np.mean(phiNew))
-                convolutionTime = time.time()-startTime
-                rprint('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
-                comm.barrier()
-#                     return
-            elif GPUpresent==True:
-                if treecode==False:
-                    startTime = time.time()
-                    if symmetricIteration==False:
+            convolutionTime = time.time()-startTime
+            rprint('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+            comm.barrier()
 
-                        temp=np.transpose( np.array([X,Y,Z,f,W]) )
-                        if subtractSingularity==0:
-                            print("Using singularity skipping in Greens iteration direct sum.")
-                            gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](temp,temp,phiNew,k) 
-                        else:
-                            gpuHelmholtzConvolutionSubractSingularity[blocksPerGrid, threadsPerBlock](temp,temp,phiNew,k) 
-                        convolutionTime = time.time()-startTime
-#                         print('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
-                    elif symmetricIteration==True:
-                        gpuHelmholtzConvolutionSubractSingularitySymmetric[blocksPerGrid, threadsPerBlock](targets,sources,sqrtV,phiNew,k) 
-                        phiNew *= -1
-                        convolutionTime = time.time()-startTime
-                        print('Using symmetric singularity subtraction.  Convolution time: ', convolutionTime)
-                    convTime=time.time()-startTime
-                    print('Convolution time: ', convTime)
-                    Times['timePerConvolution'] = convTime  
-                    
-                    
-                    
-                elif treecode==True:
-                    
-                    if singularityHandling=='skipping':
-                        print("Using singularity skipping in Green's iteration.")
-                        potentialType=3
-                        kernelName="yukawa"
-                    else: 
-                        potentialType=3
-                        kernelName="yukawa"
-                    kappa = k
-                    startTime = time.time()
-
-                    
-#                     phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
-#                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
-#                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-#                                                                    kernelName, kappa, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
-#                 
-# 
-#                     if subtractSingularity==1: phiNew /= (4*np.pi)
-                    
-                    phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
-                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
-                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                               kernelName, kappa, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
-
-#                     phiNew += 4*np.pi*f/k**2
-                    if singularityHandling=="skipping": phiNew /= (4*np.pi)
-                    if singularityHandling=="subtraction": phiNew /= (4*np.pi)
-                
-                
-                    convTime=time.time()-startTime
-                    print('Convolution time: ', convTime)
-                    Times['timePerConvolution'] = convTime
-                    
-                
-                else: 
-                    print('treecode true or false?')
-                    return
         else:
             print('Using singularity skipping because energy too close to 0')
             gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](np.array([X,Y,Z,f,W]),np.array([X,Y,Z,f,W]),phiNew,k)

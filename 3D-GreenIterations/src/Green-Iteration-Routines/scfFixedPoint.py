@@ -181,68 +181,37 @@ def scfFixedPointClosure(scf_args):
         """
         
         
-        if GPUpresent==True:
-            if treecode==False:
-                V_hartreeNew = np.zeros(nPoints)
-                densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
-                start = time.time()
-                if singularityHandling=='skipping': gpuHartreeGaussianSingularitySubract[blocksPerGrid, threadsPerBlock](densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
-                else: 
-                    print("Using singularity skipping in Hartree direct sum.")
-                    gpuHartreeConvolution[blocksPerGrid, threadsPerBlock](densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
-                Times['timePerConvolution'] = time.time()-start
-                print('Convolution time: ', time.time()-start)
-            elif treecode==True:
-
-                start = time.time()
-
-                
-                print("Rank %i calling treecode through wrapper..." %(rank))
-                kernelName = "coulomb"
-                V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
-                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-                                                               kernelName, gaussianAlpha, singularityHandling, approximationName,
-                                                               treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
-                
+        
+        if treecode==False:
+            V_hartreeNew = np.zeros(nPoints)
+            densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
+            V_hartreeNew = cpuHartreeGaussianSingularitySubract(densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
+            Times['timePerConvolution'] = time.time()-start
+            print('Convolution time: ', time.time()-start)
+        else:    
+            if singularityHandling=='skipping':
+                print("Using singularity skipping in Hartree solve.")
+            elif singularityHandling=='subtraction':                    
+                print("Using singularity subtraction in Hartree solve.")
+            else: 
+                print("What should singularityHandling be?")
+                return
+            start = MPI.Wtime()
+            
+            print("Rank %i calling treecode through wrapper..." %(rank))
+            kernelName = "coulomb"
+            V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
+                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
+                                                           kernelName, gaussianAlpha, singularityHandling, approximationName,
+                                                           treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+            
 #                 V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
-                
-                Times['timePerConvolution'] = time.time()-start
-                print('Convolution time: ', time.time()-start)
-                
-        elif GPUpresent==False: 
-            if treecode==False:
-                V_hartreeNew = np.zeros(nPoints)
-                densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
-                V_hartreeNew = cpuHartreeGaussianSingularitySubract(densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
-                Times['timePerConvolution'] = time.time()-start
-                print('Convolution time: ', time.time()-start)
-            else:    
-                if singularityHandling=='skipping':
-                    print("Using singularity skipping in Hartree solve.")
-                elif singularityHandling=='subtraction':                    
-                    print("Using singularity subtraction in Hartree solve.")
-                else: 
-                    print("What should singularityHandling be?")
-                    return
-                start = MPI.Wtime()
-                
-                print("Rank %i calling treecode through wrapper..." %(rank))
-                kernelName = "coulomb"
-                V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
-                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-                                                               np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-                                                               kernelName, gaussianAlpha, singularityHandling, approximationName,
-                                                               treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
-                
-#                 V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
-                
-                
-                Times['timePerConvolution'] = MPI.Wtime()-start
-                print('Convolution time: ', MPI.Wtime()-start)
-        else:
-            print('Is GPUpresent supposed to be true or false?')
-            return
+            
+            
+            Times['timePerConvolution'] = MPI.Wtime()-start
+            print('Convolution time: ', MPI.Wtime()-start)
+        
       
         
         
