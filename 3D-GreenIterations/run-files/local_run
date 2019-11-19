@@ -10,7 +10,8 @@ SINGSUBT=1
 SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
 INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
-COREREPRESENTATION="AllElectron"
+#COREREPRESENTATION="AllElectron"
+COREREPRESENTATION="Pseudopotential"
 
 VTKFILEDIR='None'
 

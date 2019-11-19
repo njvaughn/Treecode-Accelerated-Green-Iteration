@@ -80,6 +80,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         referenceEigenvalues = gi_args['referenceEigenvalues']
         updateEigenvalue = gi_args['updateEigenvalue']
         coreRepresentation = gi_args['coreRepresentation']
+        atoms=gi_args['atoms']
 
         
 #         print('Who called F(x)? ', inspect.stack()[2][3])
@@ -101,9 +102,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
             f = -2*orbitals[:,m]*Veff_local
 #             f = -2*( orbitals[:,m]*V_other + sum over atoms ( local potential * psi ) 
         elif coreRepresentation=='Pseudopotential': 
-            print("Construct f with nonlocal routines.")
-#             f = -2*( orbitals[:,m]*V_other + sum over atoms ( nonlocal potential * psi ) 
-            return
+            rprint("Constructing f with nonlocal routines.")
+            V_nl_psi = np.zeros(nPoints)
+            for atom in atoms:
+                V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m],W,comm)
+            f = -2* ( orbitals[:,m]*Veff_local + V_nl_psi )
         else:
             print("coreRepresentation not set to allowed value. Exiting from greenIterationFixedPoint.")
             return
@@ -156,11 +159,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
                     deltaE = -global_dot( orbitals[:,m]*(Veff_local)*(orbitals[:,m]-phiNew), W, comm ) 
                     if coreRepresentation=="Pseudopotential":
-                        print("Need to address gradient-free eigenvalue update in Pseudopotential case.")
-#                     ## need to do something here
-# #                         Vpsi_nonlocal
-#                         Vpsi_nonlocal = 
-#                         deltaE -= global_dot( orbitals[:,m]*Vpsi_nonlocal, W, comm )
+                        rprint("Need to address gradient-free eigenvalue update in Pseudopotential case.")
+                        V_nl_psiDiff = np.zeros(nPoints)
+                        for atom in atoms:
+                            V_nl_psiDiff += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m]-phiNew,W,comm)
+                        deltaE -= global_dot( orbitals[:,m]* V_nl_psiDiff, W, comm ) 
                     normSqOfPsiNew = global_dot( phiNew**2, W, comm)
                     deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
 

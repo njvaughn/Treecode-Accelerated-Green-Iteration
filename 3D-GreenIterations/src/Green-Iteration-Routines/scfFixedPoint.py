@@ -149,6 +149,7 @@ def scfFixedPointClosure(scf_args):
         inputDensityFile=scf_args['inputDensityFile']
         vHartreeFile=scf_args['vHartreeFile']
         auxiliaryFile=scf_args['auxiliaryFile']
+        atoms=scf_args['atoms']
         
         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
 #         scf_args['GItolerancesIdx']=0
@@ -293,7 +294,8 @@ def scfFixedPointClosure(scf_args):
                                'greenIterationOutFile':greenIterationOutFile,
                                'referenceEigenvalues':referenceEigenvalues,
                                'updateEigenvalue':True,
-                               'coreRepresentation':coreRepresentation } 
+                               'coreRepresentation':coreRepresentation,
+                               'atoms':atoms } 
                 
                 n,M = np.shape(orbitals)
                 resNorm=1.0 

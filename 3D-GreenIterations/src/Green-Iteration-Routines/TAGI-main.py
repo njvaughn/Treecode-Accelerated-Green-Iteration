@@ -292,7 +292,7 @@ def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms,coreRepresentation):
             except ValueError:
                 rho += 0.0   # if outside the interpolation range, assume 0.
         elif coreRepresentation=="Pseudopotential":
-            totalElectrons += atom.PSP['header']['z_valence']
+            totalElectrons += atom.PSP.psp['header']['z_valence']
             rho += atom.PSP.evaluateDensityInterpolator(r)
             
         rprint("max density: ", max(abs(rho)))
@@ -391,7 +391,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
         if coreRepresentation=="AllElectron":
             Vext_local += atom.V_all_electron(X,Y,Z)
         elif coreRepresentation=="Pseudopotential":
-            Vext_local += atom.PSP.V_local_pseudopotential(X,Y,Z)
+            Vext_local += atom.V_local_pseudopotential(X,Y,Z)
+            atom.generateChi(X,Y,Z)
         else:
             print("Error: what should coreRepresentation be?")
             exit(-1)
@@ -543,7 +544,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
                'wavefunctionFile':wavefunctionFile,'densityFile':densityFile,'outputDensityFile':outputDensityFile,'inputDensityFile':inputDensityFile,'vHartreeFile':vHartreeFile,
                'auxiliaryFile':auxiliaryFile,
                'GItolerancesIdx':0,
-               'singularityHandling':singularityHandling, 'approximationName':approximationName, 'coreRepresentation':coreRepresentation}
+               'singularityHandling':singularityHandling, 'approximationName':approximationName, 
+               'atoms':atoms,'coreRepresentation':coreRepresentation}
     
 
     """
@@ -673,7 +675,7 @@ if __name__ == "__main__":
 #         nOrbitals=None
         
 #     maxSideLength=5.5
-    X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
+    X,Y,Z,W,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
                                                                                                      inputFile,outputFile,srcdir,order,gaugeShift,divideParameter=divideParameter3)
     
     

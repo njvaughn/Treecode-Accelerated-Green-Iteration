@@ -3,9 +3,13 @@
 '''
 import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline
-from scipy.special import erf
+from scipy.special import erf, sph_harm
+
 import os
 from PseudopotentialStruct import ONCV_PSP
+
+from mpiUtilities import global_dot, rprint
+
 
 
 
@@ -38,9 +42,6 @@ class Atom(object):
             if verbose>0: print("Updated PSPs: ",PSPs)
             self.PSP = PSPs[str(self.atomicNumber)]
         
-        
-     
-       
     def V_all_electron(self,x,y,z):
         r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         return -self.atomicNumber/r
@@ -49,14 +50,56 @@ class Atom(object):
         r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         return self.PSP.evaluateLocalPotentialInterpolator(r)
     
-    def V_nonlocal_pseudopotential_times_psi(self,x,y,z,psi):
-        ## sum over the projectors, increment the nonloncal potential.  
-        return 0.0
-      
-    def V_pseudopotential_times_psi(self,x,y,z,psi):
-        ## Call the local and nonlocal pseudopotential calculations.
-        return self.V_local_pseudopotential(x,y,z)*psi + self.V_nonlocal_pseudopotential(x,y,z,psi)
+    def V_nonlocal_pseudopotential_times_psi(self,x,y,z,psi,W,comm):
+        
+        output = np.zeros(len(psi))     
+        ## sum over the projectors, increment the nonloncal potential. 
+        for i in range(self.numberOfChis):
+            C = global_dot( psi, self.Chi[str(i)]*W, comm)
+            output += C * self.Chi[str(i)] * self.Dion[str(i)]
+        return output
     
+    def generateChi(self,X,Y,Z):
+        self.Chi = {}
+        self.Dion = {}
+        D_ion_array = np.array(self.PSP.psp['D_ion'][::self.PSP.psp['header']['number_of_proj']+1]) # grab diagonals of matrix
+        num_ell = int(self.PSP.psp['header']['number_of_proj']/2)  # 2 projectors per ell for ONCV
+        ID=0
+        for ell in range(num_ell):
+            for p in [0,1]:  # two projectors per ell for ONCV
+                D_ion = D_ion_array[ID]
+                for m in range(-ell,ell+1):
+
+                    dx = X-self.x
+                    dy = Y-self.y
+                    dz = Z-self.z
+                    chi = np.zeros(len(dx))
+                    r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                    inclination = np.arccos(dz/r)
+                    azimuthal = np.arctan2(dy,dx)
+
+                    if m<0:
+                        Ysp = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                    if m>0:
+                        Ysp = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+
+                    if ( m==0 ):
+                        Ysp = sph_harm(m,ell,azimuthal,inclination)
+
+                    if np.max( abs(np.imag(Ysp)) ) > 1e-14:
+                        print('imag(Y) ', np.imag(Ysp))
+                        return
+
+                    chi = self.PSP.evaluateProjectorInterpolator(2*ell+p, r)*np.real(Ysp)
+                    self.Chi[str(ID)] = chi
+                    self.Dion[str(ID)] = D_ion
+                    ID+=1
+        self.numberOfChis = ID  # this is larger than number of projectors, which don't depend on m
+                    
+    def V_pseudopotential_times_psi(self,x,y,z,psi,W,comm):
+        ## Call the local and nonlocal pseudopotential calculations.
+        return self.V_local_pseudopotential(x,y,z)*psi + self.V_nonlocal_pseudopotential_times_psi(x,y,z,psi,W,comm)
+        
     def setNumberOfOrbitalsToInitialize(self,verbose=0):
         if self.atomicNumber <=2:       
             self.nAtomicOrbitals = 1    # 1S 

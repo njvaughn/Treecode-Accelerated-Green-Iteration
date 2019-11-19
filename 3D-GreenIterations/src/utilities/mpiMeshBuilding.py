@@ -55,11 +55,16 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     if verbose>-1: rprint('Reading atomic coordinates from: ', coordinateFile)
     atomData = np.genfromtxt(srcdir+coordinateFile,delimiter=',',dtype=float)
     nElectrons=0
+    PSPs = {}  # dictionary of PSPs for each atomic species, should this be a Pseudopotential calculation
     if np.shape(atomData)==(5,):
         atoms = np.empty((1,),dtype=object)
         atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3],atomData[4])
         atoms[0] = atom
-        nElectrons = atomData[3]
+        if coreRepresentation=="AllElectron":
+            nElectrons+=atomData[3]
+        elif coreRepresentation=="Pseudopotential":
+            atom.setPseudopotentialObject(PSPs)
+            nElectrons += atom.PSP.psp['header']['z_valence']
     else:
         atoms = np.empty((len(atomData),),dtype=object)
         for i in range(len(atomData)):
@@ -68,7 +73,8 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
             if coreRepresentation=="AllElectron":
                 nElectrons+=atomData[i,3]
             elif coreRepresentation=="Pseudopotential":
-                nElectrons += atom.PSP['header']['z_valence']
+                atom.setPseudopotentialObject(PSPs)
+                nElectrons += atom.PSP.psp['header']['z_valence']
             else:
                 print("What is coreRepresentation?")
                 exit(-1)
@@ -99,7 +105,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
             y=np.append(y,Y)
             z=np.append(z,Z)
             w=np.append(w,W)
-    return x,y,z,w,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+    return x,y,z,w,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
 
 def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0):
     '''
