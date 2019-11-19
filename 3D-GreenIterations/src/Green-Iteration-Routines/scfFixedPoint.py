@@ -107,6 +107,7 @@ def scfFixedPointClosure(scf_args):
         inputDensities = scf_args['inputDensities']
         outputDensities=scf_args['outputDensities']
         SCFcount = scf_args['SCFcount']
+        coreRepresentation = scf_args['coreRepresentation']
         nPoints = scf_args['nPoints']
         nOrbitals=scf_args['nOrbitals']
         nElectrons=scf_args['nElectrons']
@@ -121,7 +122,7 @@ def scfFixedPointClosure(scf_args):
         Energies=scf_args['Energies']
         exchangeFunctional=scf_args['exchangeFunctional']
         correlationFunctional=scf_args['correlationFunctional']
-        Vext=scf_args['Vext']
+        Vext_local=scf_args['Vext_local']
         gaugeShift=scf_args['gaugeShift']
         orbitals=scf_args['orbitals']
         oldOrbitals=scf_args['oldOrbitals']
@@ -135,8 +136,6 @@ def scfFixedPointClosure(scf_args):
         gradientFree = scf_args['gradientFree']
         residuals = scf_args['residuals']
         greenIterationOutFile = scf_args['greenIterationOutFile']
-        threadsPerBlock=scf_args['threadsPerBlock']
-        blocksPerGrid=scf_args['blocksPerGrid']
         referenceEigenvalues = scf_args['referenceEigenvalues']
         symmetricIteration=scf_args['symmetricIteration']
         initialGItolerance=scf_args['initialGItolerance']
@@ -247,7 +246,7 @@ def scfFixedPointClosure(scf_args):
         Energies['Vx'] = global_dot(W, RHO * Vx,comm)
         Energies['Vc'] = global_dot(W, RHO * Vc,comm)
         
-        Veff = V_hartreeNew + Vx + Vc + Vext + gaugeShift
+        Veff = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
 #         VeffNorm = np.sqrt( global_dot(W,Veff*Veff, comm) )
 #         rprint("Veff norm = ", VeffNorm)
 
@@ -291,9 +290,10 @@ def scfFixedPointClosure(scf_args):
                                'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta, 'maxParNode':maxParNode,'batchSize':batchSize,
                                'nPoints':nPoints, 'm':m, 'X':X,'Y':Y,'Z':Z,'W':W,'gradientFree':gradientFree,
                                'SCFcount':SCFcount,'greenIterationsCount':greenIterationsCount,'residuals':residuals,
-                               'greenIterationOutFile':greenIterationOutFile, 'blocksPerGrid':blocksPerGrid,'threadsPerBlock':threadsPerBlock,
+                               'greenIterationOutFile':greenIterationOutFile,
                                'referenceEigenvalues':referenceEigenvalues,
-                               'updateEigenvalue':True } 
+                               'updateEigenvalue':True,
+                               'coreRepresentation':coreRepresentation } 
                 
                 n,M = np.shape(orbitals)
                 resNorm=1.0 

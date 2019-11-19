@@ -77,8 +77,6 @@ def greensIteration_FixedPoint_Closure(gi_args):
         greenIterationsCount = gi_args['greenIterationsCount']
         residuals = gi_args['residuals']
         greenIterationOutFile = gi_args['greenIterationOutFile']
-        threadsPerBlock=gi_args['threadsPerBlock']
-        blocksPerGrid=gi_args['blocksPerGrid']
         referenceEigenvalues = gi_args['referenceEigenvalues']
         updateEigenvalue = gi_args['updateEigenvalue']
         coreRepresentation = gi_args['coreRepresentation']
@@ -138,8 +136,9 @@ def greensIteration_FixedPoint_Closure(gi_args):
             comm.barrier()
 
         else:
-            print('Using singularity skipping because energy too close to 0')
-            gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](np.array([X,Y,Z,f,W]),np.array([X,Y,Z,f,W]),phiNew,k)
+            print('Exiting because energy too close to 0')
+            exit(-1)
+#             gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](np.array([X,Y,Z,f,W]),np.array([X,Y,Z,f,W]),phiNew,k)
         
 
         

@@ -44,7 +44,7 @@ def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=0):
 #         print(cells[i])
     return cells
 
-def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion='ParentChildrenIntegral',divideParameter=1):
+def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion='ParentChildrenIntegral',divideParameter=1):
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
@@ -59,7 +59,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,inputFile,outputFile,s
     for i in range(len(cells)):
         if i%size==rank:
 #             print("CALLING refineCell ==================================================")
-            X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
+            X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
                                                                                          divideParameter1=divideParameter, divideParameter2=divideParameter, divideParameter3=divideParameter, divideParameter4=divideParameter)
             x=np.append(x,X)
             y=np.append(y,Y)
@@ -67,7 +67,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,inputFile,outputFile,s
             w=np.append(w,W)
     return x,y,z,w,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
 
-def refineCell(coordinates,inputFile,outputFile,srcdir,order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0):
+def refineCell(coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0):
     '''
     setUp() gets called before every test below.
     '''
@@ -140,7 +140,7 @@ def refineCell(coordinates,inputFile,outputFile,srcdir,order,gaugeShift,addition
     referenceEigenvalues = np.array( np.genfromtxt(srcdir+referenceEigenvaluesFile,delimiter=',',dtype=float) )
     if verbose>0: rprint(referenceEigenvalues)
     if verbose>0: rprint(np.shape(referenceEigenvalues))
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile)#, iterationOutFile=outputFile)
 
    

@@ -13,7 +13,7 @@ from meshUtilities import meshDensity, weights3DFirstKind, unscaledWeightsFirstK
   ChebGradient3D, ChebyshevPointsFirstKind,ChebyshevPointsSecondKind,computeDerivativeMatrix,\
     computeLaplacianMatrix, ChebLaplacian3D, sumChebyshevCoefficicentsGreaterThanOrderQ, sumChebyshevCoefficicentsEachGreaterThanOrderQ, sumChebyshevCoefficicentsAnyGreaterThanOrderQ,\
     sumChebyshevCoefficicentsGreaterThanOrderQZeroZero
-from GridpointStruct import GridPoint, DensityPoint
+from GridpointStruct import GridPoint
 # from mpmath import psi
 
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -552,7 +552,7 @@ class Cell(object):
         ymids = np.array([(3*self.ymin+self.ymax)/4, (self.ymin+3*self.ymax)/4])
         zmids = np.array([(3*self.zmin+self.zmax)/4, (self.zmin+3*self.zmax)/4])
         for i,j,k in TwoByTwoByTwo:
-            tempChild = GridPoint(xmids[i],ymids[j],zmids[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+            tempChild = GridPoint(xmids[i],ymids[j],zmids[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
             tempChild.setTestFunctionValue()
             childrenIntegral += tempChild.testFunctionValue*(self.volume/8)
           
@@ -1983,8 +1983,8 @@ class Cell(object):
                 gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                 for i, j, k in cell.PxByPyByPz:
                     newGridpointCount += 1
-#                     gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.nOrbitals, self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
-                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+#                     gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.nOrbitals, self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
                     if interpolate == True:
                         for m in range(self.nOrbitals):
                             gridpoints[i,j,k].setPhi(interpolators[m](xOct[i],yOct[j],zOct[k]),m)
@@ -2084,8 +2084,8 @@ class Cell(object):
                 gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                 for i, j, k in cell.PxByPyByPz:
                     newGridpointCount += 1
-#                     gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.nOrbitals, self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals, self.tree.nOrbitals)
-                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals, self.tree.nOrbitals)
+#                     gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.nOrbitals, self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals, self.tree.nOrbitals)
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals, self.tree.nOrbitals)
 #                     if interpolate == True:
 #                         for m in range(self.nOrbitals):
 #                             gridpoints[i,j,k].setPhi(interpolators[m](xOct[i],yOct[j],zOct[k]),m)
@@ -2149,7 +2149,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift, self.tree.nOrbitals)
                     children[ii,jj,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -2192,7 +2192,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
                     children[ii,0,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -2234,7 +2234,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
                     children[0,jj,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
                         children[0,jj,kk].level = cell.level+1
@@ -2285,7 +2285,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[ii,0,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -2330,7 +2330,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,jj,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -2375,7 +2375,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,0,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -2491,8 +2491,8 @@ class Cell(object):
                 gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                 for i, j, k in cell.PxByPyByPz:
                     newGridpointCount += 1
-#                     gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.nOrbitals, self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
-                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+#                     gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.nOrbitals, self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
+                    gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                     if interpolate == True:
 #                         for m in range(self.nOrbitals):
 #                             gridpoints[i,j,k].setPhi(interpolators[m](xOct[i],yOct[j],zOct[k]),m)
@@ -2556,7 +2556,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[ii,jj,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -2599,7 +2599,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
                     children[ii,0,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -2641,7 +2641,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
                     children[0,jj,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
                         children[0,jj,kk].level = cell.level+1
@@ -2692,7 +2692,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[ii,0,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -2737,7 +2737,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,jj,0].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -2782,7 +2782,7 @@ class Cell(object):
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
-                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                        gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,0,kk].setGridpoints(gridpoints)
                     if hasattr(cell,'level'):
@@ -2901,7 +2901,7 @@ class Cell(object):
             zOct = z[kk]
             gridpoints = np.empty((self.px+1,self.py+1,self.pz+1),dtype=object)
             for i, j, k in self.PxByPyByPz:
-                gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.nOrbitals)
+                gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
             children[ii,jj,kk].setGridpoints(gridpoints)
 
         return children

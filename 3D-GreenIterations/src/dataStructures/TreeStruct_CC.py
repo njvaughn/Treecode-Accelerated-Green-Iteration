@@ -71,7 +71,7 @@ class Tree(object):
     """
     
     
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,nElectrons,nOrbitals,additionalDepthAtAtoms,minDepth,gaugeShift=0.0,
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms,minDepth,gaugeShift=0.0,
                  coordinateFile='',inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
                  printTreeProperties = False):
@@ -91,6 +91,7 @@ class Tree(object):
         self.zmax = zmax
         self.pz = pz
 #         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
+        self.coreRepresentation = coreRepresentation
         self.nElectrons = nElectrons
         self.nOrbitals = nOrbitals
         self.gaugeShift = gaugeShift
@@ -141,7 +142,7 @@ class Tree(object):
             for j in range(self.py+1):
                 for k in range(self.pz+1):
 #         for i, j, k in self.PxByPyByPz:
-                    gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k], self.gaugeShift, self.atoms, self.nOrbitals, initPotential=False)
+                    gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k], self.gaugeShift, self.atoms, self.coreRepresentation, self.nOrbitals, initPotential=False)
         
         # generate root cell from the gridpoint objects  
         self.root = Cell( 'second', self.xmin, self.xmax, self.px, 

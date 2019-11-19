@@ -60,6 +60,7 @@ finalGItolerance    = float(sys.argv[n]); n+=1
 gradualSteps        = int(sys.argv[n]); n+=1
 outputFile          = str(sys.argv[n]); n+=1
 inputFile           = str(sys.argv[n]); n+=1
+coreRepresentation  = str(sys.argv[n]); n+=1
 srcdir              = str(sys.argv[n]); n+=1
 vtkDir              = str(sys.argv[n]); n+=1
 noGradients         = str(sys.argv[n]) ; n+=1
@@ -179,7 +180,7 @@ def clenshawCurtisNormClosure(W):
         return norm
     return clenshawCurtisNorm
 
-def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z): 
+def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z): 
         aufbauList = ['10',                                     # n+ell = 1
                       '20',                                     # n+ell = 2
                       '21', '30',                               # n+ell = 3
@@ -275,20 +276,27 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z):
 
         return orbitals
     
-def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms):
+def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms,coreRepresentation):
         
     rho = np.zeros(len(x))
     
     totalElectrons = 0
     for atom in atoms:
-        totalElectrons += atom.atomicNumber
+        
         r = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2 )
-        try:
-            rho += atom.interpolators['density'](r)
-        except ValueError:
-            rho += 0.0   # if outside the interpolation range, assume 0.
+        
+        if coreRepresentation=="AllElectron":
+            totalElectrons += atom.atomicNumber
+            try:
+                rho += atom.interpolators['density'](r)
+            except ValueError:
+                rho += 0.0   # if outside the interpolation range, assume 0.
+        elif coreRepresentation=="Pseudopotential":
+            totalElectrons += atom.PSP['header']['z_valence']
+            rho += atom.PSP.evaluateDensityInterpolator(r)
             
-#         rprint("max density: ", max(abs(rho)))
+        rprint("max density: ", max(abs(rho)))
+        rprint("cumulative number of electrons: ", totalElectrons)
 
 
     rho *= totalElectrons / global_dot(rho,w,comm)
@@ -299,13 +307,13 @@ def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms):
 
 
 
-def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
+def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
     
     startTime = time.time()
     
 
     
-    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                 scfTolerance, initialGItolerance, finalGItolerance, gradualSteps,
                                 gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
                                 singularityHandling,approximationName,
@@ -361,7 +369,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nP
 
 from scfFixedPoint import scfFixedPointClosure
 
-def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                              SCFtolerance, initialGItolerance, finalGItolerance, gradualSteps, 
                                              gradientFree, symmetricIteration, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize, singularityHandling, approximationName,
@@ -380,7 +388,13 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     
     Vext = np.zeros(nPoints)
     for atom in atoms:
-        Vext += atom.V(X,Y,Z)
+        if coreRepresentation=="AllElectron":
+            Vext += atom.V_all_electron(X,Y,Z)
+        elif coreRepresentation=="Pseudopotential":
+            Vext += atom.PSP.V_local_pseudopotential(X,Y,Z)
+        else:
+            print("Error: what should coreRepresentation be?")
+            exit(-1)
         
 #     print('Does X exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(X))
 #     print('Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))
@@ -504,10 +518,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
         np.save(densitySliceSavefile,densities)
 
     
-    
-    threadsPerBlock = 512
-    blocksPerGrid = (nPoints + (threadsPerBlock - 1)) // threadsPerBlock  # compute the number of blocks based on N and threadsPerBlock
-    
     ## Barrier...
     comm.barrier()
     rprint('\nEntering greenIterations_KohnSham_SCF()')
@@ -531,12 +541,12 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
                'Energies':Energies,'Times':Times,'exchangeFunctional':exchangeFunctional,'correlationFunctional':correlationFunctional,
                'Vext':Vext,'gaugeShift':gaugeShift,'orbitals':orbitals,'oldOrbitals':oldOrbitals,'subtractSingularity':subtractSingularity,
                'X':X,'Y':Y,'Z':Z,'W':W,'gradientFree':gradientFree,'residuals':residuals,'greenIterationOutFile':greenIterationOutFile,
-               'threadsPerBlock':threadsPerBlock,'blocksPerGrid':blocksPerGrid,'referenceEigenvalues':referenceEigenvalues,'symmetricIteration':symmetricIteration,
+               'referenceEigenvalues':referenceEigenvalues,'symmetricIteration':symmetricIteration,
                'SCFtolerance':SCFtolerance,'initialGItolerance':initialGItolerance, 'finalGItolerance':finalGItolerance, 'gradualSteps':gradualSteps, 'nElectrons':nElectrons,'referenceEnergies':referenceEnergies,'SCFiterationOutFile':SCFiterationOutFile,
                'wavefunctionFile':wavefunctionFile,'densityFile':densityFile,'outputDensityFile':outputDensityFile,'inputDensityFile':inputDensityFile,'vHartreeFile':vHartreeFile,
                'auxiliaryFile':auxiliaryFile,
                'GItolerancesIdx':0,
-               'singularityHandling':singularityHandling, 'approximationName':approximationName}
+               'singularityHandling':singularityHandling, 'approximationName':approximationName, 'coreRepresentation':coreRepresentation}
     
 
     """
@@ -666,7 +676,7 @@ if __name__ == "__main__":
 #         nOrbitals=None
         
 #     maxSideLength=5.5
-    X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,
+    X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
                                                                                                      inputFile,outputFile,srcdir,order,gaugeShift,divideParameter=divideParameter3)
     
     
@@ -707,18 +717,18 @@ if __name__ == "__main__":
     assert abs(wSum-wSum2)/wSum<1e-12, "wSum not matching after DD. wSum=%f, wSum2=%f"%(wSum,wSum2)
     
     comm.barrier()
-    RHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms)
+    RHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
     nPointsLocal = len(X)
 #     assert abs(2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
     orbitals = np.zeros((nPointsLocal,nOrbitals))
-    orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,orbitals,nOrbitals,X,Y,Z)
+    orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
     print("Max of first wavefunction: ", np.max(np.abs(orbitals[:,0])))
 #     print('nOrbitals: ', nOrbitals)
     comm.barrier()
 
 
     initialRho = np.copy(RHO)
-    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
+    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
 
 
 

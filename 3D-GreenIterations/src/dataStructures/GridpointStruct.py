@@ -9,7 +9,7 @@ class GridPoint(object):
     '''
     The gridpoint object for the quadrature points.  Will contain the coordinates, potential values, etc.
     '''
-    def __init__(self, x,y,z, gaugeShift, atoms, nOrbitals, initPotential=False):
+    def __init__(self, x,y,z, gaugeShift, atoms, coreRepresentation, nOrbitals, initPotential=False):
         '''
         Gridpoint Constructor.  For minimal example, a gridpoint simply has x and y values.
         '''
@@ -29,15 +29,16 @@ class GridPoint(object):
         self.v_ext = 0.0
          
 #         if initPotential==True:
-        self.setExternalPotential(atoms)
+        self.setExternalPotential(atoms,coreRepresentation)
         self.updateVeff()
 
-    def setExternalPotential(self, atoms):
+    def setExternalPotential(self, atoms, coreRepresentation):
         self.v_ext = 0.0
         for atom in atoms:
-            self.v_ext += atom.V(self.x,self.y,self.z)
-#         self.v_ext += gaugeShift  # add the gauge shift to external potential.
-#         self.updateVeff()
+            if coreRepresentation=="AllElectron":
+                self.v_ext += atom.V_all_electron(self.x,self.y,self.z)
+            elif coreRepresentation=="Pseudopotentail":
+                self.v_ext += atom.V_local_pseudopotential(self.x,self.y,self.z)
         
     def sortOrbitals(self, newOrder):
         tempPhi = np.zeros_like(self.phi)
@@ -59,26 +60,6 @@ class GridPoint(object):
         self.phi[orbitalNumber] = phi
         
         
-class DensityPoint(object):
-    '''
-    The gridpoint object for the secondary quadrature points that will be used in the Hartree convolution.  Will contain the coordinates, potential values, etc.
-    '''
-    def __init__(self, x,y,z):
-        '''
-        Gridpoint Constructor.  For minimal example, a gridpoint simply has x and y values.
-        '''
-        self.x = x
-        self.y = y
-        self.z = z
-        self.rho = 0.0
-        
-    def setRho(self, rho):
-        self.rho = rho
-
-
-
-    
-
         
         
         
