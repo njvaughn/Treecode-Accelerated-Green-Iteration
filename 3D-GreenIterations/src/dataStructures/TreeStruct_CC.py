@@ -71,7 +71,7 @@ class Tree(object):
     """
     
     
-    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms,minDepth,gaugeShift=0.0,
+    def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,atoms,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms,minDepth,gaugeShift=0.0,
                  coordinateFile='',inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
                  printTreeProperties = False):
@@ -113,19 +113,7 @@ class Tree(object):
         
         self.orbitalEnergies = -np.ones(nOrbitals)
         
-        if printTreeProperties == True: print('Reading atomic coordinates from: ', coordinateFile)
-        atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
-#         print(np.shape(atomData))
-#         print(len(atomData))
-        if np.shape(atomData)==(5,):
-            self.atoms = np.empty((1,),dtype=object)
-            atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3],atomData[4])
-            self.atoms[0] = atom
-        else:
-            self.atoms = np.empty((len(atomData),),dtype=object)
-            for i in range(len(atomData)):
-                atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4])
-                self.atoms[i] = atom
+        self.atoms=atoms
         
 #         # generate gridpoint objects.  
 #         xvec = ChebyshevPointsSecondKind(self.xmin,self.xmax,self.px)

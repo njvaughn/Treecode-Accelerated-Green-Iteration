@@ -421,8 +421,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
 #     return
     rprint('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
-    
-    
     # Store Tree variables locally
     gaugeShift = Energies['gaugeShift']
     
@@ -522,8 +520,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     comm.barrier()
     rprint('\nEntering greenIterations_KohnSham_SCF()')
     print('\nNumber of targets on proc %i:   %i' %(rank,nPoints) )
-#     print('Threads per block:   ', threadsPerBlock)
-#     print('Blocks per grid:     ', blocksPerGrid)
+
     
     densityResidual = 10                                   # initialize the densityResidual to something that fails the convergence tolerance
 

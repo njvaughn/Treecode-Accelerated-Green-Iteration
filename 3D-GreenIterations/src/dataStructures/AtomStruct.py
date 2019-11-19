@@ -51,7 +51,6 @@ class Atom(object):
     
     def V_nonlocal_pseudopotential_times_psi(self,x,y,z,psi):
         ## sum over the projectors, increment the nonloncal potential.  
-        
         return 0.0
       
     def V_pseudopotential_times_psi(self,x,y,z,psi):

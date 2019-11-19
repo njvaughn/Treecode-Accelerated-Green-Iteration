@@ -8,6 +8,7 @@ import numpy as np
 from mpiUtilities import rprint, global_dot
 sys.path.append('../dataStructures')
 from TreeStruct_CC import Tree
+from AtomStruct import Atom
 
 
 
@@ -44,10 +45,43 @@ def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=0):
 #         print(cells[i])
     return cells
 
-def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion='ParentChildrenIntegral',divideParameter=1):
+def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion='ParentChildrenIntegral',divideParameter=1,verbose=0):
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
+    
+    ## Setup atoms and PSP structs if needed.
+    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+    if verbose>-1: rprint('Reading atomic coordinates from: ', coordinateFile)
+    atomData = np.genfromtxt(srcdir+coordinateFile,delimiter=',',dtype=float)
+    nElectrons=0
+    if np.shape(atomData)==(5,):
+        atoms = np.empty((1,),dtype=object)
+        atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3],atomData[4])
+        atoms[0] = atom
+        nElectrons = atomData[3]
+    else:
+        atoms = np.empty((len(atomData),),dtype=object)
+        for i in range(len(atomData)):
+            atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4])
+            atoms[i] = atom
+            if coreRepresentation=="AllElectron":
+                nElectrons+=atomData[i,3]
+            elif coreRepresentation=="Pseudopotential":
+                nElectrons += atom.PSP['header']['z_valence']
+            else:
+                print("What is coreRepresentation?")
+                exit(-1)
+    
+    
+
+    
+    
+    nOrbitals = int( np.ceil(nElectrons/2)*1.2  )   # start with the minimum number of orbitals 
+    occupations = 2*np.ones(nOrbitals)
+
+    if verbose>0: rprint([coordinateFile, outputFile, nElectrons, nOrbitals, 
+                          Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     
     
     cells=inializeBaseMesh(XL,YL,ZL,maxSideLength)
@@ -59,7 +93,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     for i in range(len(cells)):
         if i%size==rank:
 #             print("CALLING refineCell ==================================================")
-            X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
+            X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
                                                                                          divideParameter1=divideParameter, divideParameter2=divideParameter, divideParameter3=divideParameter, divideParameter4=divideParameter)
             x=np.append(x,X)
             y=np.append(y,Y)
@@ -67,7 +101,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
             w=np.append(w,W)
     return x,y,z,w,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
 
-def refineCell(coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0):
+def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0):
     '''
     setUp() gets called before every test below.
     '''
@@ -77,70 +111,13 @@ def refineCell(coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
     [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
     
-    if verbose>0: rprint('Reading atomic coordinates from: ', coordinateFile)
-    atomData = np.genfromtxt(srcdir+coordinateFile,delimiter=',',dtype=float)
-#     rprint(atomData)
-    if np.shape(atomData)==(5,):
-        nElectrons = atomData[3]
-    else:
-        nElectrons = 0
-        for i in range(len(atomData)):
-            nElectrons += atomData[i,3] 
     
-    
-#     nOrbitals = int( np.ceil(nElectrons/2)  ) + 2
-    nOrbitals = int( np.ceil(nElectrons/2)  )   # start with the minimum number of orbitals 
-#     nOrbitals = int( np.ceil(nElectrons/2) + 1 )   # start with the minimum number of orbitals plus 1.   
-                                            # If the final orbital is unoccupied, this amount is enough. 
-                                            # If there is a degeneracy leading to teh final orbital being 
-                                            # partially filled, then it will be necessary to increase nOrbitals by 1.
-                        
-    # For O2, init 10 orbitals.
-#     nOrbitals=10                    
-
-    occupations = 2*np.ones(nOrbitals)
-
-
-    if inputFile==srcdir+'utilities/molecularConfigurations/oxygenAtomAuxiliary.csv':
-        nOrbitals=5
-        occupations = 2*np.ones(nOrbitals)
-        occupations[2] = 4/3
-        occupations[3] = 4/3
-        occupations[4] = 4/3
-        rprint('For oxygen atom, nOrbitals = ', nOrbitals)
-        
-    elif inputFile==srcdir+'utilities/molecularConfigurations/benzeneAuxiliary.csv':
-        nOrbitals=27
-        occupations = 2*np.ones(nOrbitals)
-        for i in range(21,nOrbitals):
-            occupations[i]=0 
-        
-        
-    elif inputFile==srcdir+'utilities/molecularConfigurations/O2Auxiliary.csv':
-        nOrbitals=10
-        occupations = [2,2,2,2,4/3,4/3,4/3,4/3,4/3,4/3]
-        
-    elif inputFile==srcdir+'utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv':
-#         nOrbitals=10
-#         occupations = [2, 2, 4/3 ,4/3 ,4/3, 
-#                        2, 2, 2/3 ,2/3 ,2/3 ]
-        nOrbitals=7
-        occupations = 2*np.ones(nOrbitals)
-    
-    elif inputFile==srcdir+'utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv':
-        nOrbitals=1
-        occupations = [2]
-    
-#     print('inputFile == '+inputFile)
-#     return
-    if verbose>0: rprint([coordinateFile, outputFile, nElectrons, nOrbitals, 
-                          Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     savedMesh=''
     restart=False
     referenceEigenvalues = np.array( np.genfromtxt(srcdir+referenceEigenvaluesFile,delimiter=',',dtype=float) )
     if verbose>0: rprint(referenceEigenvalues)
     if verbose>0: rprint(np.shape(referenceEigenvalues))
-    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+    tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,atoms,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile)#, iterationOutFile=outputFile)
 
    
