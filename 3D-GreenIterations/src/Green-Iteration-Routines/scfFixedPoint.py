@@ -248,6 +248,8 @@ def scfFixedPointClosure(scf_args):
         Energies['Vc'] = global_dot(W, RHO * Vc,comm)
         
         Veff_local = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
+        
+        
 #         Veff_local_Norm = np.sqrt( global_dot(W,Veff_local*Veff_local, comm) )
 #         rprint("Veff_local norm = ", Veff_local_Norm)
 
@@ -584,6 +586,15 @@ def scfFixedPointClosure(scf_args):
         Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
         Energies['Etotal'] = Energies['Eband'] - Energies['Ehartree'] + Energies['Ex'] + Energies['Ec'] - Energies['Vx'] - Energies['Vc'] + Energies['Enuclear']
         
+        
+        if coreRepresentation=="Pseudopotential":
+            Eext_nl=0.0
+            for m in range(nOrbitals):
+                Vext_nl = np.zeros(nPoints)
+                for atom in atoms:
+                    Vext_nl += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m],W,comm)
+                Eext_nl += global_dot(orbitals[:,m], Vext_nl,comm)
+            Energies['Etotal'] += Eext_nl
     
         for m in range(nOrbitals):
             print('Orbital %i error: %1.3e' %(m, Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift']))
