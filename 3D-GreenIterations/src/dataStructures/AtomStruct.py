@@ -33,7 +33,7 @@ class Atom(object):
     def setPseudopotentialObject(self, PSPs,verbose=0):
         ## If the pseudopotential dictionary already contains this atomic number, have it point there.
         ## Otherwise, need to create a new one.
-        print("Setting PSP for atomic number ", self.atomicNumber)
+        print("Setting PSP for atomic number ", self.atomicNumber, self)
         try: 
             self.PSP = PSPs[str(self.atomicNumber)]
             if verbose>0: print("PSP already present for atomic number ", self.atomicNumber)

@@ -87,8 +87,8 @@ def sortByEigenvalue(orbitals,orbitalEnergies):
     oldEnergies = np.copy(orbitalEnergies)
     for m in range(len(orbitalEnergies)):
         orbitalEnergies[m] = oldEnergies[newOrder[m]]
-    print('Sorted eigenvalues: ', orbitalEnergies)
-    print('New order: ', newOrder)
+    rprint('Sorted eigenvalues: ', orbitalEnergies)
+    rprint('New order: ', newOrder)
     
     newOrbitals = np.zeros_like(orbitals)
     for m in range(len(orbitalEnergies)):
@@ -187,18 +187,18 @@ def scfFixedPointClosure(scf_args):
             densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
             V_hartreeNew = cpuHartreeGaussianSingularitySubract(densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
             Times['timePerConvolution'] = time.time()-start
-            print('Convolution time: ', time.time()-start)
+            rprint('Convolution time: ', time.time()-start)
         else:    
             if singularityHandling=='skipping':
-                print("Using singularity skipping in Hartree solve.")
+                rprint("Using singularity skipping in Hartree solve.")
             elif singularityHandling=='subtraction':                    
-                print("Using singularity subtraction in Hartree solve.")
+                rprint("Using singularity subtraction in Hartree solve.")
             else: 
-                print("What should singularityHandling be?")
+                rprint("What should singularityHandling be?")
                 return
             start = MPI.Wtime()
             
-            print("Rank %i calling treecode through wrapper..." %(rank))
+#             print("Rank %i calling treecode through wrapper..." %(rank))
             kernelName = "coulomb"
             V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
@@ -210,7 +210,7 @@ def scfFixedPointClosure(scf_args):
             
             
             Times['timePerConvolution'] = MPI.Wtime()-start
-            print('Convolution time: ', MPI.Wtime()-start)
+            rprint('Convolution time: ', MPI.Wtime()-start)
         
       
         
@@ -227,7 +227,7 @@ def scfFixedPointClosure(scf_args):
 #         rprint("VHartreeNew norm = ", VhartreeNorm)
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         if abortAfterInitialHartree==True:
-            print("Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
+            rprint("Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
             return np.zeros(nPoints)
     
         exchangeOutput = exchangeFunctional.compute(RHO)

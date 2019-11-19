@@ -10,8 +10,10 @@ SINGSUBT=1
 
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 #SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
-#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
-INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+COREREPRESENTATION="AllElectron"
+#COREREPRESENTATION="Pseudopotential"
 
 VTKFILEDIR='None'
 
@@ -48,7 +50,7 @@ SCF_TOLERANCE=1e-4
 MESHPARAM1=100
 MESHPARAM2=0
 MESHPARAM4=0
-MESHPARAM3=1e-3
+MESHPARAM3=1e-5
 
 NUMDEVICES=0
 NUMTHREADS=1 
@@ -57,23 +59,23 @@ APPROXIMATIONNAME=lagrange
 
 for SINGULARITYHANDLING in subtraction #skipping
 do
-for CELLORDER in 3
+for CELLORDER in 4
 do								  	 				     
-for TREECODEORDER in 5
+for TREECODEORDER in 7
 do         
 	for THETA in 0.7
 	do   
 		for MIXING in 'Anderson'		    
 		do 
 
-		OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/paperData/best-times-updated/Be_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
+		OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/ONCV-testing/Be_mesh_${MESHPARAM3}_${COREREPRESENTATION}.csv"
 		
-        mpirun -n $1 python -u TAGI-main.py   $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
-																	$GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
-																	$INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
-																	$OUTPUTFILE $INPUTFILE $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
-																	$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-																	$SINGULARITYHANDLING $APPROXIMATIONNAME
+        mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
+                                                $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
+                                                $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
+                                                $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
+                                                $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
+                                                $SINGULARITYHANDLING $APPROXIMATIONNAME
 		done   
 	done 
 done      

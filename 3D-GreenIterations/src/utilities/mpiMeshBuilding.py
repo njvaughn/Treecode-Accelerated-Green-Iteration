@@ -55,11 +55,13 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     if verbose>-1: rprint('Reading atomic coordinates from: ', coordinateFile)
     atomData = np.genfromtxt(srcdir+coordinateFile,delimiter=',',dtype=float)
     nElectrons=0
+    nOrbitals=0
     PSPs = {}  # dictionary of PSPs for each atomic species, should this be a Pseudopotential calculation
     if np.shape(atomData)==(5,):
         atoms = np.empty((1,),dtype=object)
         atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3],atomData[4],coreRepresentation)
         atoms[0] = atom
+        nOrbitals += int(atomData[4])
         if coreRepresentation=="AllElectron":
             nElectrons+=atomData[3]
         elif coreRepresentation=="Pseudopotential":
@@ -70,6 +72,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
         for i in range(len(atomData)):
             atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4],coreRepresentation)
             atoms[i] = atom
+            nOrbitals += int(atomData[i,4])
             if coreRepresentation=="AllElectron":
                 nElectrons+=atomData[i,3]
             elif coreRepresentation=="Pseudopotential":
@@ -83,7 +86,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
 
     
     
-    nOrbitals = int( np.ceil(nElectrons/2)*1.2  )   # start with the minimum number of orbitals 
+#     nOrbitals = int( np.ceil(nElectrons/2)*1.2  )   # start with the minimum number of orbitals 
     occupations = 2*np.ones(nOrbitals)
 
     if verbose>0: rprint([coordinateFile, outputFile, nElectrons, nOrbitals, 

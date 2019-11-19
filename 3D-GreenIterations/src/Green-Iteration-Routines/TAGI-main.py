@@ -652,9 +652,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
 if __name__ == "__main__": 
     #import sys;sys.argv = ['', 'Test.testName']
 
-    print('='*70) 
-    print('='*70) 
-    print('='*70,'\n') 
+    rprint('='*70) 
+    rprint('='*70) 
+    rprint('='*70,'\n') 
     
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()

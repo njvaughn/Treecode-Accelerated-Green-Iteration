@@ -100,7 +100,6 @@ def greensIteration_FixedPoint_Closure(gi_args):
      
         if coreRepresentation=='AllElectron':
             f = -2*orbitals[:,m]*Veff_local
-#             f = -2*( orbitals[:,m]*V_other + sum over atoms ( local potential * psi ) 
         elif coreRepresentation=='Pseudopotential': 
             rprint("Constructing f with nonlocal routines.")
             V_nl_psi = np.zeros(nPoints)
@@ -155,25 +154,23 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 psiNewNorm = np.sqrt( global_dot( phiNew, phiNew*W, comm))
                 rprint("psiNewNorm = %f" %psiNewNorm)
                 
-                if symmetricIteration==False:
         
-                    deltaE = -global_dot( orbitals[:,m]*(Veff_local)*(orbitals[:,m]-phiNew), W, comm ) 
-                    if coreRepresentation=="Pseudopotential":
-                        rprint("Need to address gradient-free eigenvalue update in Pseudopotential case.")
-                        V_nl_psiDiff = np.zeros(nPoints)
-                        for atom in atoms:
-                            V_nl_psiDiff += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m]-phiNew,W,comm)
-                        deltaE -= global_dot( orbitals[:,m]* V_nl_psiDiff, W, comm ) 
-                    normSqOfPsiNew = global_dot( phiNew**2, W, comm)
-                    deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
+                deltaE = -global_dot( orbitals[:,m]*(Veff_local)*(orbitals[:,m]-phiNew), W, comm )
+                 
+                if coreRepresentation=="Pseudopotential":
+                    rprint("Need to address gradient-free eigenvalue update in Pseudopotential case.")
+                    V_nl_psiDiff = np.zeros(nPoints)
+                    for atom in atoms:
+                        V_nl_psiDiff += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m]-phiNew,W,comm)
+                    deltaE -= global_dot( orbitals[:,m]* V_nl_psiDiff, W, comm ) 
+                normSqOfPsiNew = global_dot( phiNew**2, W, comm)
+                deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
 
-                    rprint("deltaE = %f" %deltaE)
-                    Energies['orbitalEnergies'][m] += deltaE
-                    rprint("Energies['orbitalEnergies'][m] = %f" %Energies['orbitalEnergies'][m])
-                    orbitals[:,m] = np.copy(phiNew)
-                elif symmetricIteration==True:
-                    rprint('Symmetric not set up for tree-free')
-                    return
+                rprint("deltaE = %f" %deltaE)
+                Energies['orbitalEnergies'][m] += deltaE
+                rprint("Energies['orbitalEnergies'][m] = %f" %Energies['orbitalEnergies'][m])
+                orbitals[:,m] = np.copy(phiNew)
+                
         
                 n,M = np.shape(orbitals) 
 
