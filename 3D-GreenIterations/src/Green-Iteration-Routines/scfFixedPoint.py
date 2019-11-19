@@ -246,17 +246,17 @@ def scfFixedPointClosure(scf_args):
         Energies['Vx'] = global_dot(W, RHO * Vx,comm)
         Energies['Vc'] = global_dot(W, RHO * Vc,comm)
         
-        Veff = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
-#         VeffNorm = np.sqrt( global_dot(W,Veff*Veff, comm) )
-#         rprint("Veff norm = ", VeffNorm)
+        Veff_local = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
+#         Veff_local_Norm = np.sqrt( global_dot(W,Veff_local*Veff_local, comm) )
+#         rprint("Veff_local norm = ", Veff_local_Norm)
 
         
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
             for m in range(nOrbitals):
                 Energies['orbitalEnergies'][m]=-1
-#                 Energies['orbitalEnergies'][m] = global_dot( W, orbitals[:,m]**2 * Veff, comm) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
-# #                 Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
+#                 Energies['orbitalEnergies'][m] = global_dot( W, orbitals[:,m]**2 * Veff_local, comm) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
+# #                 Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff_local) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
 # #             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
 # #             for m in range(nOrbitals):
 # #                 if Energies['orbitalEnergies'][m] > 0:
@@ -284,7 +284,7 @@ def scfFixedPointClosure(scf_args):
                             
                 greenIterationsCount=1
 #                 print("Forcing singularityHandling to be skipping for Green's iteration.")
-                gi_args = {'orbitals':orbitals,'oldOrbitals':oldOrbitals, 'Energies':Energies, 'Times':Times, 'Veff':Veff, 
+                gi_args = {'orbitals':orbitals,'oldOrbitals':oldOrbitals, 'Energies':Energies, 'Times':Times, 'Veff_local':Veff_local, 
                                'symmetricIteration':symmetricIteration,'GPUpresent':GPUpresent,
                                'singularityHandling':singularityHandling, 'approximationName':approximationName,
                                'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta, 'maxParNode':maxParNode,'batchSize':batchSize,
@@ -701,7 +701,7 @@ def scfFixedPointClosure(scf_args):
         scf_args['Times']=Times
         scf_args['orbitals']=orbitals
         scf_args['oldOrbitals']=oldOrbitals
-        scf_args['Veff']=Veff
+        scf_args['Veff_local']=Veff_local
     
     
         return newDensity-oldDensity

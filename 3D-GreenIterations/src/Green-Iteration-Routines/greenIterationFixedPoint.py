@@ -55,7 +55,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         oldOrbitals = gi_args['oldOrbitals']
         Energies = gi_args['Energies']
         Times = gi_args['Times']
-        Veff = gi_args['Veff']
+        Veff_local = gi_args['Veff_local']
         m = gi_args['m']
         symmetricIteration = gi_args['symmetricIteration']
         GPUpresent = gi_args['GPUpresent']
@@ -98,7 +98,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
     
      
         if coreRepresentation=='AllElectron':
-            f = -2*orbitals[:,m]*Veff
+            f = -2*orbitals[:,m]*Veff_local
 #             f = -2*( orbitals[:,m]*V_other + sum over atoms ( local potential * psi ) 
         elif coreRepresentation=='Pseudopotential': 
             print("Construct f with nonlocal routines.")
@@ -154,7 +154,13 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 
                 if symmetricIteration==False:
         
-                    deltaE = -global_dot( orbitals[:,m]*Veff*(orbitals[:,m]-phiNew), W, comm ) 
+                    deltaE = -global_dot( orbitals[:,m]*(Veff_local)*(orbitals[:,m]-phiNew), W, comm ) 
+                    if coreRepresentation=="Pseudopotential":
+                        print("Need to address gradient-free eigenvalue update in Pseudopotential case.")
+#                     ## need to do something here
+# #                         Vpsi_nonlocal
+#                         Vpsi_nonlocal = 
+#                         deltaE -= global_dot( orbitals[:,m]*Vpsi_nonlocal, W, comm )
                     normSqOfPsiNew = global_dot( phiNew**2, W, comm)
                     deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
 

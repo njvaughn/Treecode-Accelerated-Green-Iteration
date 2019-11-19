@@ -386,12 +386,12 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     exchangeFunctional = pylibxc.LibXCFunctional(exchangeFunctional, polarization)
     correlationFunctional = pylibxc.LibXCFunctional(correlationFunctional, polarization)
     
-    Vext = np.zeros(nPoints)
+    Vext_local = np.zeros(nPoints)
     for atom in atoms:
         if coreRepresentation=="AllElectron":
-            Vext += atom.V_all_electron(X,Y,Z)
+            Vext_local += atom.V_all_electron(X,Y,Z)
         elif coreRepresentation=="Pseudopotential":
-            Vext += atom.PSP.V_local_pseudopotential(X,Y,Z)
+            Vext_local += atom.PSP.V_local_pseudopotential(X,Y,Z)
         else:
             print("Error: what should coreRepresentation be?")
             exit(-1)
@@ -493,7 +493,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
 #         Energies['Vx'] = np.sum(W * RHO * Vx)
 #         Energies['Vc'] = np.sum(W * RHO * Vc)
 #          
-#         Veff = V_hartreeNew + Vx + Vc + Vext + gaugeShift
+#         Veff = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
         
         
     
@@ -539,7 +539,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     scf_args={'inputDensities':inputDensities,'outputDensities':outputDensities,'SCFcount':SCFcount,'nPoints':nPoints,'nOrbitals':nOrbitals,'mixingHistoryCutoff':mixingHistoryCutoff,
                'GPUpresent':GPUpresent,'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta,'maxParNode':maxParNode,'batchSize':batchSize,'gaussianAlpha':gaussianAlpha,
                'Energies':Energies,'Times':Times,'exchangeFunctional':exchangeFunctional,'correlationFunctional':correlationFunctional,
-               'Vext':Vext,'gaugeShift':gaugeShift,'orbitals':orbitals,'oldOrbitals':oldOrbitals,'subtractSingularity':subtractSingularity,
+               'Vext_local':Vext_local,'gaugeShift':gaugeShift,'orbitals':orbitals,'oldOrbitals':oldOrbitals,'subtractSingularity':subtractSingularity,
                'X':X,'Y':Y,'Z':Z,'W':W,'gradientFree':gradientFree,'residuals':residuals,'greenIterationOutFile':greenIterationOutFile,
                'referenceEigenvalues':referenceEigenvalues,'symmetricIteration':symmetricIteration,
                'SCFtolerance':SCFtolerance,'initialGItolerance':initialGItolerance, 'finalGItolerance':finalGItolerance, 'gradualSteps':gradualSteps, 'nElectrons':nElectrons,'referenceEnergies':referenceEnergies,'SCFiterationOutFile':SCFiterationOutFile,
