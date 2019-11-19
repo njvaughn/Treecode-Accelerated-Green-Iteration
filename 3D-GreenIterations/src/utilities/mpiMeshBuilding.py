@@ -58,7 +58,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     PSPs = {}  # dictionary of PSPs for each atomic species, should this be a Pseudopotential calculation
     if np.shape(atomData)==(5,):
         atoms = np.empty((1,),dtype=object)
-        atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3],atomData[4])
+        atom = Atom(atomData[0],atomData[1],atomData[2],atomData[3],atomData[4],coreRepresentation)
         atoms[0] = atom
         if coreRepresentation=="AllElectron":
             nElectrons+=atomData[3]
@@ -68,7 +68,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     else:
         atoms = np.empty((len(atomData),),dtype=object)
         for i in range(len(atomData)):
-            atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4])
+            atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4],coreRepresentation)
             atoms[i] = atom
             if coreRepresentation=="AllElectron":
                 nElectrons+=atomData[i,3]

@@ -1740,8 +1740,12 @@ class Cell(object):
 #                 except ValueError:
 #                     rho += 0 
  
-                rho += atom.interpolators['density'](r)    # increment rho for each atom 
-                Vext += -atom.atomicNumber / r
+                if atom.coreRepresentation=="AllElectron":
+                    rho += atom.interpolators['density'](r)    # increment rho for each atom 
+                    Vext += -atom.atomicNumber / r
+                elif atom.coreRepresentation=="Pseudopotential":
+                    rho += np.reshape(atom.PSP.evaluateDensityInterpolator(r.flatten()),(self.px+1,self.py+1,self.pz+1))
+                    Vext += np.reshape(atom.PSP.evaluateLocalPotentialInterpolator(r.flatten()),(self.px+1,self.py+1,self.pz+1))
                             
         
         densityIntegral = 1 #np.sum(rho*weights)

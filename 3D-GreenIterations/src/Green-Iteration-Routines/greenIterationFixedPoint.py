@@ -172,7 +172,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                     rprint("Energies['orbitalEnergies'][m] = %f" %Energies['orbitalEnergies'][m])
                     orbitals[:,m] = np.copy(phiNew)
                 elif symmetricIteration==True:
-                    print('Symmetric not set up for tree-free')
+                    rprint('Symmetric not set up for tree-free')
                     return
         
                 n,M = np.shape(orbitals) 
@@ -193,11 +193,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
                  
         
             elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
-                print('gradient and laplacian methods not set up for tree-free')
+                rprint('gradient and laplacian methods not set up for tree-free')
                 return
                 
             else:
-                print('Not updating eigenvalue.  Is that intended?')
+                rprint('Not updating eigenvalue.  Is that intended?')
                 return
             
         else:  # Explicitly choosing to not update Eigenvalue.  Still orthogonalize

@@ -18,7 +18,7 @@ class Atom(object):
     The gridpoint object.  Will contain the coordinates, wavefunction value, and any other metadata such as
     whether or not the wavefunction has been updated, which cells the gridpoint belongs to, etc.
     '''
-    def __init__(self, x,y,z,atomicNumber,nAtomicOrbitals):
+    def __init__(self, x,y,z,atomicNumber,nAtomicOrbitals, coreRepresentation):
         '''
         Atom Constructor
         '''
@@ -28,6 +28,7 @@ class Atom(object):
         self.atomicNumber = int(atomicNumber)
         self.orbitalInterpolators()
         self.nAtomicOrbitals = nAtomicOrbitals
+        self.coreRepresentation = coreRepresentation
         
     def setPseudopotentialObject(self, PSPs,verbose=0):
         ## If the pseudopotential dictionary already contains this atomic number, have it point there.
@@ -56,7 +57,7 @@ class Atom(object):
         ## sum over the projectors, increment the nonloncal potential. 
         for i in range(self.numberOfChis):
             C = global_dot( psi, self.Chi[str(i)]*W, comm)
-            output += C * self.Chi[str(i)] * self.Dion[str(i)]
+            output += C * self.Chi[str(i)] / self.Dion[str(i)]  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
         return output
     
     def generateChi(self,X,Y,Z):
@@ -66,8 +67,9 @@ class Atom(object):
         num_ell = int(self.PSP.psp['header']['number_of_proj']/2)  # 2 projectors per ell for ONCV
         ID=0
         for ell in range(num_ell):
+            D_ion = D_ion_array[ID%2]
             for p in [0,1]:  # two projectors per ell for ONCV
-                D_ion = D_ion_array[ID]
+                
                 for m in range(-ell,ell+1):
 
                     dx = X-self.x

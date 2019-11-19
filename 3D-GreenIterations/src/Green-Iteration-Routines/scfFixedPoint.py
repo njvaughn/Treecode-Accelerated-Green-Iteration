@@ -525,17 +525,17 @@ def scfFixedPointClosure(scf_args):
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
         eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
-        print('Fermi energy: ', eF)
+        rprint('Fermi energy: ', eF)
         exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
         occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
     
     #         occupations = computeOccupations(Energies['orbitalEnergies'], nElectrons, Temperature)
-        print('Occupations: ', occupations)
+        rprint('Occupations: ', occupations)
         Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
     
     
-        print()  
-        print()
+        rprint()  
+        rprint()
      
     
         
@@ -565,7 +565,7 @@ def scfFixedPointClosure(scf_args):
     #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                 outputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = newDensity
             
-        print('outputDensities[0,:] = ', outputDensities[0,:])
+        rprint('outputDensities[0,:] = ', outputDensities[0,:])
 #         print('outputDensities[:,0:3] = ', outputDensities[:,0:3])
         
     #         print('Sample of output densities:')
@@ -574,30 +574,27 @@ def scfFixedPointClosure(scf_args):
         integratedDensity = global_dot( newDensity, W, comm )
 #         densityResidual = np.sqrt( np.sum( (newDensity-oldDensity)**2*W ) )
         densityResidual = np.sqrt( global_dot( (newDensity-oldDensity)**2,W,comm ) )
-        print('Integrated density: ', integratedDensity)
-        print('Density Residual ', densityResidual)
+        rprint('Integrated density: ', integratedDensity)
+        rprint('Density Residual ', densityResidual)
         
-        
-            
-    
-    
         
         
         Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
         Energies['Etotal'] = Energies['Eband'] - Energies['Ehartree'] + Energies['Ex'] + Energies['Ec'] - Energies['Vx'] - Energies['Vc'] + Energies['Enuclear']
         
         
-        if coreRepresentation=="Pseudopotential":
-            Eext_nl=0.0
-            for m in range(nOrbitals):
-                Vext_nl = np.zeros(nPoints)
-                for atom in atoms:
-                    Vext_nl += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m],W,comm)
-                Eext_nl += global_dot(orbitals[:,m], Vext_nl,comm)
-            Energies['Etotal'] += Eext_nl
+        ## This might not be needed, because Eext is already captured in the band energy, which includes both local and nonlocal
+#         if coreRepresentation=="Pseudopotential":
+#             Eext_nl=0.0
+#             for m in range(nOrbitals):
+#                 Vext_nl = np.zeros(nPoints)
+#                 for atom in atoms:
+#                     Vext_nl += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m],W,comm)
+#                 Eext_nl += global_dot(orbitals[:,m], Vext_nl,comm)
+#             Energies['Etotal'] += Eext_nl
     
         for m in range(nOrbitals):
-            print('Orbital %i error: %1.3e' %(m, Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift']))
+            rprint('Orbital %i error: %1.3e' %(m, Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift']))
         
         
         energyResidual = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
@@ -610,20 +607,20 @@ def scfFixedPointClosure(scf_args):
         Print results from current iteration
         """
     
-        print('Orbital Energies: ', Energies['orbitalEnergies']) 
+        rprint('Orbital Energies: ', Energies['orbitalEnergies']) 
     
-        print('Updated V_x:                           %.10f Hartree' %Energies['Vx'])
-        print('Updated V_c:                           %.10f Hartree' %Energies['Vc'])
+        rprint('Updated V_x:                           %.10f Hartree' %Energies['Vx'])
+        rprint('Updated V_c:                           %.10f Hartree' %Energies['Vc'])
         
-        print('Updated Band Energy:                   %.10f H, %.10e H' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
+        rprint('Updated Band Energy:                   %.10f H, %.10e H' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
     #         print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(Energies['kinetic'], Energies['kinetic']-Ekinetic) )
-        print('Updated E_Hartree:                      %.10f H, %.10e H' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
-        print('Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
-        print('Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
+        rprint('Updated E_Hartree:                      %.10f H, %.10e H' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
+        rprint('Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
+        rprint('Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
     #         print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
-        print('Total Energy:                          %.10f H, %.10e H' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
-        print('Energy Residual:                        %.3e' %energyResidual)
-        print('Density Residual:                       %.3e\n\n'%densityResidual)
+        rprint('Total Energy:                          %.10f H, %.10e H' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
+        rprint('Energy Residual:                        %.3e' %energyResidual)
+        rprint('Density Residual:                       %.3e\n\n'%densityResidual)
     
         scf_args['energyResidual']=energyResidual
         scf_args['densityResidual']=densityResidual

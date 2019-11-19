@@ -28,13 +28,37 @@ class ONCV_PSP(object):
         
     def setDensityInterpolator(self,verbose=0):
         r = np.array(self.psp['radial_grid'])
+        self.maxRadialGrid = r[-1]
         density = np.array(self.psp['total_charge_density'])
         ## Is it okay to set the boundary condition to zero?  
-        self.densityInterpolator = InterpolatedUnivariateSpline(r,density,k=3,ext='zeros')
+        self.densityInterpolator = InterpolatedUnivariateSpline(r,density,k=3,ext='raise')
+        
+        # Setup decaying exponential for extrapolation.
+        a = r[-5]
+        b = r[-1]
+        
+        da = self.densityInterpolator(a)
+        db = self.densityInterpolator(b)
+        
+        logslope = (np.log(db)-np.log(da)) / (b-a)
+        
+        self.densityFarFieldExponentialCoefficient = db
+        self.densityFarFieldExponentialDecayRate = logslope
+      
+    def densityExtrapolationFunction(self,r):
+        return self.densityFarFieldExponentialCoefficient * np.exp( self.densityFarFieldExponentialDecayRate * (r-self.maxRadialGrid))
         
     def evaluateDensityInterpolator(self,r):
         # if zeroes are okay for the extrapolation, then this is okay.  If not, then need to wrap in try/except.
-        return self.densityInterpolator(r)
+#         return self.densityInterpolator(r)
+        nr=len(r)
+        Rho = np.zeros(nr)
+        for i in range(nr):
+            try:
+                Rho[i] = self.densityInterpolator(r[i])
+            except ValueError:
+                Rho[i] = self.densityExtrapolationFunction(r[i])
+        return Rho
         
     def setLocalPotentialInterpolator(self,verbose=0):
         r = np.array(self.psp['radial_grid'])
