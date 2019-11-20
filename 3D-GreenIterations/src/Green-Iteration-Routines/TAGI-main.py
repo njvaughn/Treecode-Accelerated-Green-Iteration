@@ -722,7 +722,10 @@ if __name__ == "__main__":
     nPointsLocal = len(X)
 #     assert abs(2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
     orbitals = np.zeros((nPointsLocal,nOrbitals))
-    orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
+    if coreRepresentation=="AllElectron":
+        orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
+    elif coreRepresentation=="Pseudopotential":
+        orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
     print("Max of first wavefunction: ", np.max(np.abs(orbitals[:,0])))
 #     print('nOrbitals: ', nOrbitals)
     comm.barrier()

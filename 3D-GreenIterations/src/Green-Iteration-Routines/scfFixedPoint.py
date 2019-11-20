@@ -62,7 +62,7 @@ def fermiObjectiveFunctionClosure(Energies,nElectrons):
 
 def clenshawCurtisNormClosure(W):
     def clenshawCurtisNorm(psi):
-        appendedWeights = np.append(W, 10.0)
+        appendedWeights = np.append(W, 1.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
 #         norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
         norm = np.sqrt( global_dot( psi, psi*appendedWeights, comm ) )
 #         norm = np.sqrt( np.sum( psi[-1]*psi[-1]*appendedWeights[-1] ) )
@@ -326,7 +326,7 @@ def scfFixedPointClosure(scf_args):
 
                 
                 comm.barrier()
-                while ( (resNorm> max(1e-3,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
+                while ( (resNorm> max(1e-2,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     #                 GPUtil.showUtilization()
