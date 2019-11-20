@@ -156,13 +156,20 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 
         
                 deltaE = -global_dot( orbitals[:,m]*(Veff_local)*(orbitals[:,m]-phiNew), W, comm )
-                 
-                if coreRepresentation=="Pseudopotential":
-                    rprint("Need to address gradient-free eigenvalue update in Pseudopotential case.")
+                
+                if coreRepresentation=="AllElectron":
+                    pass
+                elif coreRepresentation=="Pseudopotential":
+#                     rprint("Need to address gradient-free eigenvalue update in Pseudopotential case.")
                     V_nl_psiDiff = np.zeros(nPoints)
                     for atom in atoms:
-                        V_nl_psiDiff += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m]-phiNew,W,comm)
-                    deltaE -= global_dot( orbitals[:,m]* V_nl_psiDiff, W, comm ) 
+                        V_nl_psi+= atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m],W,comm)
+#                         V_nl_psiDiff += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m]-phiNew,W,comm)
+                    deltaE -= global_dot( V_nl_psi*(orbitals[:,m]-phiNew), W, comm ) 
+#                     deltaE -= global_dot( orbitals[:,m]* V_nl_psiDiff, W, comm ) 
+                else: 
+                    print("Invalid coreRepresentation.")
+                    exit(-1)
                 normSqOfPsiNew = global_dot( phiNew**2, W, comm)
                 deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
 

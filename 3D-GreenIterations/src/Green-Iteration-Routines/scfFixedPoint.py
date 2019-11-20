@@ -250,16 +250,10 @@ def scfFixedPointClosure(scf_args):
         Veff_local = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
         
         
-#         Veff_local_Norm = np.sqrt( global_dot(W,Veff_local*Veff_local, comm) )
-#         rprint("Veff_local norm = ", Veff_local_Norm)
-
-        
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
             for m in range(nOrbitals):
                 Energies['orbitalEnergies'][m]=-1
-#                 Energies['orbitalEnergies'][m] = global_dot( W, orbitals[:,m]**2 * Veff_local, comm) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
-# #                 Energies['orbitalEnergies'][m] = np.sum( W* orbitals[:,m]**2 * Veff_local) * (2/3) # Attempt to guess initial orbital energy without computing kinetic
 # #             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
 # #             for m in range(nOrbitals):
 # #                 if Energies['orbitalEnergies'][m] > 0:
@@ -533,9 +527,6 @@ def scfFixedPointClosure(scf_args):
         rprint('Occupations: ', occupations)
         Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
     
-    
-        rprint()  
-        rprint()
      
     
         

@@ -717,6 +717,8 @@ if __name__ == "__main__":
     
     comm.barrier()
     RHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
+    densityIntegral = global_dot( RHO, W, comm)
+    rprint("Initial density integrates to ", densityIntegral)
     nPointsLocal = len(X)
 #     assert abs(2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
     orbitals = np.zeros((nPointsLocal,nOrbitals))

@@ -56,19 +56,32 @@ class Atom(object):
         output = np.zeros(len(psi))     
         ## sum over the projectors, increment the nonloncal potential. 
         for i in range(self.numberOfChis):
+            rprint("D_ion = ", self.Dion[str(i)])
             C = global_dot( psi, self.Chi[str(i)]*W, comm)
-            output += C * self.Chi[str(i)] / self.Dion[str(i)]  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
+            output += C * self.Chi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
         return output
     
     def generateChi(self,X,Y,Z):
         self.Chi = {}
         self.Dion = {}
-        D_ion_array = np.array(self.PSP.psp['D_ion'][::self.PSP.psp['header']['number_of_proj']+1]) # grab diagonals of matrix
+        D_ion_array = np.array(self.PSP.psp['D_ion'][::self.PSP.psp['header']['number_of_proj']+1]) # grab diagonals of matrix, Ry->Ha /2 already accounted for by upf_to_json
+        rprint("D_ion_array = ", D_ion_array)
         num_ell = int(self.PSP.psp['header']['number_of_proj']/2)  # 2 projectors per ell for ONCV
+        if self.PSP.psp['header']['number_of_proj']==2:
+            assert(num_ell==1,"ERROR IN num_ell")
+        if self.PSP.psp['header']['number_of_proj']==4:
+            assert(num_ell==2,"ERROR IN num_ell")
+        if self.PSP.psp['header']['number_of_proj']==8:
+            assert(num_ell==4,"ERROR IN num_ell")
         ID=0
+        D_ion_count=0
         for ell in range(num_ell):
-            D_ion = D_ion_array[ID%2]
+            
             for p in [0,1]:  # two projectors per ell for ONCV
+                
+                D_ion = D_ion_array[D_ion_count]
+                D_ion_count+=1
+                print("D_ion = ", D_ion)
                 
                 for m in range(-ell,ell+1):
 
@@ -92,7 +105,7 @@ class Atom(object):
                         print('imag(Y) ', np.imag(Ysp))
                         return
 
-                    chi = self.PSP.evaluateProjectorInterpolator(2*ell+p, r)*np.real(Ysp)
+                    chi = self.PSP.evaluateProjectorInterpolator(2*ell+p, r)*np.real(Ysp) # Is this order the same as the setup order?
                     self.Chi[str(ID)] = chi
                     self.Dion[str(ID)] = D_ion
                     ID+=1
