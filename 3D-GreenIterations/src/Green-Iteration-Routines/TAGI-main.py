@@ -12,24 +12,6 @@ import sys
 import time
 import inspect
 import resource
-# from pympler import tracker, classtracker
-
-import mpi4py.MPI as MPI
-
- 
-sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
-sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
-from loadBalancer import loadBalance
-from mpiUtilities import global_dot, scatterArrays, rprint
-from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
-
-
-
-if os.uname()[1] == 'Nathans-MacBook-Pro.local':
-    rootDirectory = '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/'
-else:
-    rprint('os.uname()[1] = ', os.uname()[1])
-
 import unittest
 import numpy as np
 import pylibxc
@@ -38,10 +20,47 @@ import csv
 from scipy.optimize import anderson
 from scipy.optimize import root as scipyRoot
 from scipy.special import sph_harm
-
 from pyevtk.hl import unstructuredGridToVTK
 from pyevtk.vtk import VtkTriangle, VtkQuad, VtkPolygon, VtkVoxel, VtkHexahedron
+import mpi4py.MPI as MPI
 
+
+
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
+sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
+from loadBalancer import loadBalance
+from mpiUtilities import global_dot, scatterArrays, rprint
+from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
+# try:
+#     import directSumWrappers
+# except ImportError:
+#     rprint('Unable to import directSumWrappers due to ImportError')
+# except OSError:
+#     rprint('Unable to import directSumWrappers due to OSError')
+try:
+    import treecodeWrappers_distributed as treecodeWrappers
+except ImportError:
+    rprint('Unable to import treecodeWrapper due to ImportError')
+except OSError:
+    print('Unable to import treecodeWrapper due to OSError')
+    import treecodeWrappers_distributed as treecodeWrappers
+from TreeStruct_CC import Tree
+from CellStruct_CC import Cell
+from GridpointStruct import GridPoint
+import densityMixingSchemes as densityMixing
+from scfFixedPoint import scfFixedPointClosure
+
+
+
+
+
+# if os.uname()[1] == 'Nathans-MacBook-Pro.local':
+#     rootDirectory = '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/'
+# else:
+#     rprint('os.uname()[1] = ', os.uname()[1])
+
+
+## Read in command line arguments
 
 
 n=1
@@ -94,26 +113,7 @@ sys.path.append(srcdir+'../ctypesTests/src')
 sys.path.append(srcdir+'../ctypesTests')
 sys.path.append(srcdir+'../ctypesTests/lib') 
 
-try:
-    import directSumWrappers
-except ImportError:
-    rprint('Unable to import directSumWrappers due to ImportError')
-except OSError:
-    rprint('Unable to import directSumWrappers due to OSError')
-    
-try:
-    import treecodeWrappers_distributed as treecodeWrappers
-except ImportError:
-    rprint('Unable to import treecodeWrapper due to ImportError')
-except OSError:
-    print('Unable to import treecodeWrapper due to OSError')
-    import treecodeWrappers_distributed as treecodeWrappers
-    
 
-from TreeStruct_CC import Tree
-from CellStruct_CC import Cell
-from GridpointStruct import GridPoint
-import densityMixingSchemes as densityMixing
 
 
 
@@ -160,13 +160,9 @@ elif treecode=='False':
 else:
     rprint('Warning, not correct input for treecode')
 
-# coordinateFile      = str(sys.argv[12])
-# auxiliaryFile      = str(sys.argv[13])
-# nElectrons          = int(sys.argv[14])
-# nOrbitals          = int(sys.argv[15])
-# outFile             = str(sys.argv[16])
-# vtkFileBase         = str(sys.argv[17])
+
 vtkFileBase='/home/njvaughn/results_CO/orbitals'
+# print("Converting command line arguments to correct types.")
 
 def global_dot(u,v,comm):
     local_dot = np.dot(u,v)
@@ -366,8 +362,6 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,co
     
 
 
-
-from scfFixedPoint import scfFixedPointClosure
 
 def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                              SCFtolerance, initialGItolerance, finalGItolerance, gradualSteps, 

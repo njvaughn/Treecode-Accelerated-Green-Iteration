@@ -1,11 +1,11 @@
 import numpy as np
-from numba import jit, njit, cuda
+# from numba import jit, njit, cuda
 from math import sqrt
 import time 
 
 from mpiUtilities import global_dot
 
-@jit(parallel=True)
+# @jit(parallel=True)
 def modifiedGramSchrmidt(V,weights):
     n,k = np.shape(V)
     U = np.zeros_like(V)
@@ -51,7 +51,7 @@ def modifiedGramSchmidt_singleOrbital_python(V,weights,targetOrbital):
     return U
 
 # @cuda.jit('void(float64[:,:], float64[:], int64, int64)')
-@njit()
+# @njit()
 def modifiedGramSchmidt_singleOrbital_C2(V,weights,targetOrbital,numPoints):
     U = V[:,targetOrbital]
     for j in range(targetOrbital):

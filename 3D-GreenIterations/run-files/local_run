@@ -17,8 +17,8 @@ SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 
 
 COREREPRESENTATION="Pseudopotential"
-#INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
-INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
 
 
 VTKFILEDIR='None'
@@ -56,7 +56,7 @@ SCF_TOLERANCE=1e-4
 MESHPARAM1=100
 MESHPARAM2=0
 MESHPARAM4=0
-MESHPARAM3=1e-4
+MESHPARAM3=1e-3
 
 NUMDEVICES=0
 NUMTHREADS=1 
@@ -65,7 +65,7 @@ APPROXIMATIONNAME=hermite
 
 for SINGULARITYHANDLING in subtraction #skipping
 do
-for CELLORDER in 4
+for CELLORDER in 3
 do								  	 				     
 for TREECODEORDER in 5
 do         

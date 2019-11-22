@@ -1,16 +1,14 @@
 import numpy as np
 import os
 import csv
-from numba import cuda, jit, njit
 import time
-# from scipy.optimize import anderson as scipyAnderson
+import resource
+
 from scipy.optimize import root as scipyRoot
 from scipy.optimize.nonlin import BroydenFirst, KrylovJacobian
 from scipy.optimize.nonlin import InverseJacobian
 from scipy.optimize import broyden1, anderson, brentq
-# from scipy.optimize import newton_krylov as scipyNewtonKrylov
 import GPUtil
-
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -20,33 +18,11 @@ from mpiUtilities import global_dot, rprint
 
 from fermiDiracDistribution import computeOccupations
 import densityMixingSchemes as densityMixing
-import sys
-import resource
-# sys.path.append(srcdir+'../ctypesTests/src')
-# 
-# sys.path.append(srcdir+'../ctypesTests')
-# sys.path.append(srcdir+'../ctypesTests/lib') 
-
 import treecodeWrappers_distributed as treecodeWrappers
-from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 from orthogonalizationRoutines import *
-# try:
-#     from convolution import *
-# except ImportError:
-#     print('Unable to import JIT GPU Convolutions')  
-# try:
-#     import directSumWrappers
-# except ImportError:
-#     print('Unable to import directSumWrappers due to ImportError')
-# except OSError:
-#     print('Unable to import directSumWrappers due to OSError')
-#     
-# try:
-#     import treecodeWrappers
-# except ImportError:
-#     print('Unable to import treecodeWrapper due to ImportError')
-# except OSError:
-#     print('Unable to import treecodeWrapper due to OSError')
+from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
+
+
 
 
 Temperature = 200

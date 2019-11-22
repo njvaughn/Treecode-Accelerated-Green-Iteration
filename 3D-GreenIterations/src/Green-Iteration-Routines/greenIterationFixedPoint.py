@@ -5,29 +5,12 @@ import csv
 import resource
 import GPUtil
 import os
-
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
 from mpiUtilities import global_dot, rprint
-
-
- 
-
-# 
-# try:
-#     from convolution import *
-# except ImportError:
-#     print('Unable to import JIT GPU Convolutions')
-# try:
-#     import directSumWrappers
-# except ImportError:
-#     print('Unable to import directSumWrappers due to ImportError')
-# except OSError:
-#     print('Unable to import directSumWrappers due to OSError')
-    
 try:
     import treecodeWrappers_distributed as treecodeWrappers
 except ImportError:
@@ -35,10 +18,6 @@ except ImportError:
 except OSError:
     print('Unable to import treecodeWrapper due to OSError')
     
-
-# try:
-#     from orthogonalizationRoutines import *
-# except ImportError:
 from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital as mgs
 
 
