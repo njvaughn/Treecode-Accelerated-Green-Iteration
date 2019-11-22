@@ -2,25 +2,30 @@
 
 
 cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
-#cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Green-Iteration-Routines/
-
 DOMAIN=20
 MAXSIDELENGTH=5.5
 SINGSUBT=1
 
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
-#SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
-INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
-#INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+
 #COREREPRESENTATION="AllElectron"
+#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+#INPUTFILE='molecularConfigurations/N2Auxiliary.csv'
+#INPUTFILE='molecularConfigurations/NAuxiliary.csv'
+
+
 COREREPRESENTATION="Pseudopotential"
+INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
+
 
 VTKFILEDIR='None'
 
 
 GRADIENTFREE='True'
 SYMMETRICITERATION='False'
-GPUPRESENT='True'
+GPUPRESENT='False'
  
 TREECODE='True'      
 MAXPARNODE=500
@@ -32,7 +37,7 @@ GAUGESHIFT=-0.5
 
 MESHTYPE='ParentChildrenIntegral' 
 #MESHTYPE='LW5'
-RESTART='False'	
+RESTART='False' 
 SAVEDMESH='None'
 
 ADDITIONALDEPTHATATOMS=0
@@ -44,7 +49,7 @@ MIXINGHISTORY=10
 INITIAL_GI_TOLERANCE=1e-3 
 FINAL_GI_TOLERANCE=3e-5
 GRADUALSTEPS=4
-SCF_TOLERANCE=1e-3
+SCF_TOLERANCE=1e-4
      
 
 MESHPARAM1=100
@@ -59,25 +64,25 @@ APPROXIMATIONNAME=lagrange
 
 for SINGULARITYHANDLING in subtraction #skipping
 do
-for CELLORDER in 3
-do								  	 				     
-for TREECODEORDER in 7
+for CELLORDER in 4
+do                                                       
+for TREECODEORDER in 5
 do         
-	for THETA in 0.7
-	do   
-		for MIXING in 'Anderson'		    
-		do 
+    for THETA in 0.7
+    do   
+        for MIXING in 'Anderson'            
+        do 
 
-		OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/ONCV-testing/Be_mesh_${MESHPARAM3}_${COREREPRESENTATION}.csv"
-		
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/N_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
+        
         mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
                                                 $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
                                                 $SINGULARITYHANDLING $APPROXIMATIONNAME
-		done   
-	done 
+        done   
+    done 
 done      
 done
 done

@@ -81,7 +81,7 @@ class Atom(object):
                 
                 D_ion = D_ion_array[D_ion_count]
                 D_ion_count+=1
-                print("D_ion = ", D_ion)
+#                 print("D_ion = ", D_ion)
                 
                 for m in range(-ell,ell+1):
 

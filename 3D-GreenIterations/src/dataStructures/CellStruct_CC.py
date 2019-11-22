@@ -1744,6 +1744,9 @@ class Cell(object):
                     rho += atom.interpolators['density'](r)    # increment rho for each atom 
                     Vext += -atom.atomicNumber / r
                 elif atom.coreRepresentation=="Pseudopotential":
+#                     print("USING ALLELECTRON DENSITY AND POTENTIAL FOR INITIALIZATION OF PSEUDOPOTENTIAL CALCULATION")
+#                     rho += atom.interpolators['density'](r)    # increment rho for each atom 
+#                     Vext += -atom.atomicNumber / r
                     rho += np.reshape(atom.PSP.evaluateDensityInterpolator(r.flatten()),(self.px+1,self.py+1,self.pz+1))
                     Vext += np.reshape(atom.PSP.evaluateLocalPotentialInterpolator(r.flatten()),(self.px+1,self.py+1,self.pz+1))
                             

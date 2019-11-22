@@ -8,12 +8,18 @@ MAXSIDELENGTH=5.5
 SINGSUBT=1
 
 SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
-INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
+
+#COREREPRESENTATION="AllElectron"
+#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/N2Auxiliary.csv'
 #INPUTFILE='molecularConfigurations/NAuxiliary.csv'
-#COREREPRESENTATION="AllElectron"
+
+
 COREREPRESENTATION="Pseudopotential"
+#INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
+
 
 VTKFILEDIR='None'
 
@@ -50,16 +56,16 @@ SCF_TOLERANCE=1e-4
 MESHPARAM1=100
 MESHPARAM2=0
 MESHPARAM4=0
-MESHPARAM3=1e-3
+MESHPARAM3=1e-4
 
 NUMDEVICES=0
 NUMTHREADS=1 
 
-APPROXIMATIONNAME=lagrange
+APPROXIMATIONNAME=hermite
 
 for SINGULARITYHANDLING in subtraction #skipping
 do
-for CELLORDER in 3
+for CELLORDER in 4
 do								  	 				     
 for TREECODEORDER in 5
 do         

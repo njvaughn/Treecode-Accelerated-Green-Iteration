@@ -594,7 +594,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
             simpleMixingDensity = mixingParameter*scf_args['outputDensities'][:,SCFindex] + (1-mixingParameter)*scf_args['inputDensities'][:,SCFindex]
 #             integratedDensity = np.sum( simpleMixingDensity*W )
             integratedDensity = global_dot( simpleMixingDensity, W, comm )
-            print('Integrated simple mixing density: ', integratedDensity)  
+            rprint('Integrated simple mixing density: ', integratedDensity)  
     #             tree.importDensityOnLeaves(simpleMixingDensity)
             RHO = np.copy(simpleMixingDensity)
           
@@ -603,12 +603,12 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
             andersonDensity = densityMixing.computeNewDensity(scf_args['inputDensities'], scf_args['outputDensities'], mixingParameter,W)
 #             integratedDensity = np.sum( andersonDensity*W )
             integratedDensity = global_dot( andersonDensity, W, comm )
-            print('Integrated anderson density: ', integratedDensity)
+            rprint('Integrated anderson density: ', integratedDensity)
     #             tree.importDensityOnLeaves(andersonDensity)
             RHO = np.copy(andersonDensity)
           
         elif mixingScheme == 'None':
-            print('Using no mixing.')
+            rprint('Using no mixing.')
 #             RHO += densityResidualVector
             RHO = np.copy( scf_args['outputDensities'][:,SCFindex] )
                
@@ -640,7 +640,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
   
       
       
-    print('\nConvergence to a tolerance of %f took %i iterations' %(SCFtolerance, SCFcount))
+    rprint('\nConvergence to a tolerance of %f took %i iterations' %(SCFtolerance, SCFcount))
 #     """
     return Energies, RHO, Times
     
