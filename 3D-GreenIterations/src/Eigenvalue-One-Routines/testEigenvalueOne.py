@@ -99,26 +99,37 @@ sys.path.append(srcdir+'../ctypesTests/src')
 sys.path.append(srcdir+'../ctypesTests')
 sys.path.append(srcdir+'../ctypesTests/lib') 
 
-try:
-    import directSumWrappers
-except ImportError:
-    print('Unable to import directSumWrappers due to ImportError')
-except OSError:
-    print('Unable to import directSumWrappers due to OSError')
+# try:
+#     import directSumWrappers
+# except ImportError:
+#     print('Unable to import directSumWrappers due to ImportError')
+# except OSError:
+#     print('Unable to import directSumWrappers due to OSError')
     
+# try:
+#     import treecodeWrappers
+# except ImportError:
+#     print('Unable to import treecodeWrapper due to ImportError')
+# except OSError:
+#     print('Unable to import treecodeWrapper due to OSError')
+#     import treecodeWrappers
+
 try:
-    import treecodeWrappers
+    import treecodeWrappers_distributed as treecodeWrappers
 except ImportError:
-    print('Unable to import treecodeWrapper due to ImportError')
+    rprint('Unable to import treecodeWrapper due to ImportError')
 except OSError:
     print('Unable to import treecodeWrapper due to OSError')
-    import treecodeWrappers
+    import treecodeWrappers_distributed as treecodeWrappers
     
-
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
+sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
 from TreeStruct_CC import Tree
 from CellStruct_CC import Cell
 from GridpointStruct import GridPoint
 import densityMixingSchemes as densityMixing
+
+
 
 # depthAtAtoms += int(np.log2(base))
 # print('Depth at atoms: ', depthAtAtoms)

@@ -2,6 +2,8 @@ import numpy as np
 import ctypes
 from mpi4py import MPI
 
+from mpiUtilities import rprint
+
 
 
 # try:
@@ -38,7 +40,8 @@ except OSError:
     try:
         _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.dylib')
     except OSError:
-        print("Could not load GPU treecode library.")  
+        print("Could not load GPU treecode library.") 
+        exit(-1) 
     
     
         
@@ -57,7 +60,8 @@ try:
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_double,  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
             ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int ) 
 except NameError:
-    pass
+    rprint("Could not set argtypes of _gpu_treecodeRoutines")
+    exit(-1)
 try:
     _cpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
@@ -65,9 +69,10 @@ try:
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_double,  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
             ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int ) 
 except NameError:
-    pass
+    rprint("Could not set argtypes of _cpu_treecodeRoutines")
+    exit(-1)
 
-print('_treecodeRoutines set.')
+rprint('_treecodeRoutines set.')
 
 
 

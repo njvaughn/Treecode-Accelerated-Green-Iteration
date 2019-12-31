@@ -68,11 +68,11 @@ class Atom(object):
 #         rprint("D_ion_array = ", D_ion_array)
         num_ell = int(self.PSP.psp['header']['number_of_proj']/2)  # 2 projectors per ell for ONCV
         if self.PSP.psp['header']['number_of_proj']==2:
-            assert(num_ell==1,"ERROR IN num_ell")
+            assert (num_ell==1), "ERROR IN num_ell"
         if self.PSP.psp['header']['number_of_proj']==4:
-            assert(num_ell==2,"ERROR IN num_ell")
+            assert (num_ell==2), "ERROR IN num_ell"
         if self.PSP.psp['header']['number_of_proj']==8:
-            assert(num_ell==4,"ERROR IN num_ell")
+            assert (num_ell==4) ,"ERROR IN num_ell"
         ID=0
         D_ion_count=0
         for ell in range(num_ell):

@@ -20,7 +20,7 @@ import resource
 # sys.path.append(srcdir+'../ctypesTests')
 # sys.path.append(srcdir+'../ctypesTests/lib') 
 
-import treecodeWrappers
+# import treecodeWrappers
 # from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 from eigenvalueOneFixedPoint import eigenvalueOne_FixedPoint_Closure
 from orthogonalizationRoutines import *

@@ -1749,6 +1749,7 @@ class Cell(object):
 #                     Vext += -atom.atomicNumber / r
                     rho += np.reshape(atom.PSP.evaluateDensityInterpolator(r.flatten()),(self.px+1,self.py+1,self.pz+1))
                     Vext += np.reshape(atom.PSP.evaluateLocalPotentialInterpolator(r.flatten()),(self.px+1,self.py+1,self.pz+1))
+                    Vext -= 10 # some pseudopotentials go positive at the origin.  Don't want those going in to the sqrt.  Constant shift is okay, it doesnt affect integration accuracy
                             
         
         densityIntegral = 1 #np.sum(rho*weights)

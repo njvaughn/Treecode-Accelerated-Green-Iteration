@@ -31,12 +31,6 @@ sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
 from loadBalancer import loadBalance
 from mpiUtilities import global_dot, scatterArrays, rprint
 from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
-# try:
-#     import directSumWrappers
-# except ImportError:
-#     rprint('Unable to import directSumWrappers due to ImportError')
-# except OSError:
-#     rprint('Unable to import directSumWrappers due to OSError')
 try:
     import treecodeWrappers_distributed as treecodeWrappers
 except ImportError:
@@ -514,7 +508,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     ## Barrier...
     comm.barrier()
     rprint('\nEntering greenIterations_KohnSham_SCF()')
-    print('\nNumber of targets on proc %i:   %i' %(rank,nPoints) )
+    print('Number of targets on proc %i:   %i' %(rank,nPoints) )
 
     
     densityResidual = 10                                   # initialize the densityResidual to something that fails the convergence tolerance

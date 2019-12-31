@@ -167,7 +167,7 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
         balanced_data = np.append( original_data, np.copy(recv_data))
     
     comm.barrier() 
-    print("Rank %i started with %i points.  After load balancing it has %i points." %(rank,initialNumPoints,len(balanced_x)))
+#     print("Rank %i started with %i points.  After load balancing it has %i points." %(rank,initialNumPoints,len(balanced_x)))  
     
     if dataExists==True: 
         return balanced_x,balanced_y,balanced_z, balanced_data

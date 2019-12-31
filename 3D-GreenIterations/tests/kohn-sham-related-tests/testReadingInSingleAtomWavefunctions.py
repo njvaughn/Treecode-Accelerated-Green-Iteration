@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 
 import os
 import sys
-sys.path.append('../src/dataStructures')
-sys.path.append('../src/utilities')
+sys.path.append('../../src/dataStructures')
+sys.path.append('../../src/utilities')
 
 from AtomStruct import Atom
 from TreeStruct_CC import Tree
@@ -53,7 +53,7 @@ class Test(unittest.TestCase):
 #         plt.semilogy(r,P,label='Piecewise Exponential')
 
         plt.plot(data[:,0],np.sqrt(data[:,1]),'o',label='sqrt(Density)')
-#         plt.plot(data[:,0],np.sqrt(data[:,1])*(1+1/data[:,0]),label='sqrt(Density)')
+        plt.plot(data[:,0],np.sqrt(data[:,1])*(1+1/data[:,0]),label='sqrt(Density)')
 #         plt.plot(data[:,0],(data[:,1])*(1+1/data[:,0]),label='(Density)(1+1/r)')
 #         plt.plot(data[:,0],(data[:,1])*(data[:,0]**2),label='(Density)*r**2')
 #         plt.plot(data[:,0], data[0,1]*np.exp(-2*atomicNumber*data[:,0]), 'r-')

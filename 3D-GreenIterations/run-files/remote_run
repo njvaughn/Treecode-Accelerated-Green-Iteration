@@ -3,11 +3,11 @@
 
 cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
 DOMAIN=20
-MAXSIDELENGTH=5.5
+MAXSIDELENGTH=3.5
 SINGSUBT=1
 
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
- 
+
 #COREREPRESENTATION="AllElectron"
 #INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
@@ -25,45 +25,44 @@ VTKFILEDIR='None'
 
 GRADIENTFREE='True'
 SYMMETRICITERATION='False'
-GPUPRESENT='True'
+GPUPRESENT='False'
  
 TREECODE='True'      
-MAXPARNODE=2000
-BATCHSIZE=2000   
+MAXPARNODE=500
+BATCHSIZE=500   
  
  
 GAUSSIANALPHA=1.0 
 GAUGESHIFT=-0.5
-
-MESHTYPE='ParentChildrenIntegral' 
+ 
+MESHTYPE='ParentChildrenIntegral'  
 #MESHTYPE='LW5'
 RESTART='False' 
 SAVEDMESH='None'
 
 ADDITIONALDEPTHATATOMS=0
-GRADIENTFREE='True'
+GRADIENTFREE='True' 
 
 MIXINGPARAMETER=0.5
-MIXINGHISTORY=10 
+MIXINGHISTORY=10  
   
 INITIAL_GI_TOLERANCE=1e-3 
 FINAL_GI_TOLERANCE=3e-5
 GRADUALSTEPS=4
-SCF_TOLERANCE=5e-5
+SCF_TOLERANCE=1e-4
      
 
 MESHPARAM1=100
 MESHPARAM2=0
 MESHPARAM4=0
-MESHPARAM3=1e-4
+MESHPARAM3=1e-2
 
 
 APPROXIMATIONNAME=lagrange
-SINGULARITYHANDLING=subtraction
-
-for MESHPARAM3 in 3e-2 3e-3 3e-4 3e-5
+ 
+for SINGULARITYHANDLING in subtraction 
 do
-for CELLORDER in 2 3 4 5
+for CELLORDER in 3 
 do                                                       
 for TREECODEORDER in 7
 do         
@@ -72,7 +71,7 @@ do
         for MIXING in 'Anderson'            
         do 
 
-        OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/ONCV-testing/Be-testing/Be_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/N_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
         
         mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \

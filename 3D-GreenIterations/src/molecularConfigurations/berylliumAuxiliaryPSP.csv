@@ -7,17 +7,3 @@
 -2.0573227465967248e-01
 0.0 				
 -1.3081070563491320e+01 
-
-
-# -1.4446201118081863e+01 old
-
-
-
-
-#    [Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal] = np.genfromtxt(inputFile)[3:9]
-
-#Band energy                                         :  -8.1590838636563738e+00
-#Exchange energy                                     :  -1.5993146189847285e+00
-#Correlation energy                                  :  -2.0573227465967248e-01
-#Total energy                                        :  -1.3081070563491320e+01
-#Total energy per atom                               :  -1.3081070563491320e+01

@@ -39,9 +39,7 @@ def fermiObjectiveFunctionClosure(Energies,nElectrons):
 def clenshawCurtisNormClosure(W):
     def clenshawCurtisNorm(psi):
         appendedWeights = np.append(W, 1.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
-#         norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
         norm = np.sqrt( global_dot( psi, psi*appendedWeights, comm ) )
-#         norm = np.sqrt( np.sum( psi[-1]*psi[-1]*appendedWeights[-1] ) )
         return norm
     return clenshawCurtisNorm
 
@@ -53,10 +51,6 @@ def clenshawCurtisNormClosureWithoutEigenvalue(W):
 #         norm = np.sqrt( np.sum( psi[-1]*psi[-1]*appendedWeights[-1] ) )
         return norm
     return clenshawCurtisNormWithoutEigenvalue
-
-def printResidual(x,f):
-    r = clenshawCurtisNorm(f)
-    print('L2 Norm of Residual: ', r)
     
 def sortByEigenvalue(orbitals,orbitalEnergies):
     newOrder = np.argsort(orbitalEnergies)
@@ -68,13 +62,10 @@ def sortByEigenvalue(orbitals,orbitalEnergies):
     
     newOrbitals = np.zeros_like(orbitals)
     for m in range(len(orbitalEnergies)):
-        newOrbitals[:,m] = orbitals[:,newOrder[m]]
-#         if newOrder[m]!=m:
-            
+        newOrbitals[:,m] = orbitals[:,newOrder[m]]            
    
     return newOrbitals, orbitalEnergies
-    
-    
+      
 def scfFixedPointClosure(scf_args): 
     
     def scfFixedPoint(RHO,scf_args, abortAfterInitialHartree=False):

@@ -1,13 +1,13 @@
 #!/bin/bash
 
 
-cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
+cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Eigenvalue-One-Routines
 
 DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-SRCDIR='/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
+SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
