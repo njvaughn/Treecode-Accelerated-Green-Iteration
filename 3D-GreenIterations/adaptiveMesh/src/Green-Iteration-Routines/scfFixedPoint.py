@@ -256,7 +256,7 @@ def scfFixedPointClosure(scf_args):
             orbitals[:,m] = np.copy(orthWavefunction)
             
                 
-            while resNorm>2e-3:
+            while resNorm>2e-30:
 #             while resNorm>intraScfTolerance:
 #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
 #                 GPUtil.showUtilization()

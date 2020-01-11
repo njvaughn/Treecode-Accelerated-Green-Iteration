@@ -887,10 +887,10 @@ class Tree(object):
         
         if savedMesh!='':
             try:
-                saveList = list( np.load('/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
+                saveList = list( np.load('/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
                 print("Mesh loaded from: ", savedMesh)
             except Exception:
-                saveList = list( np.load('/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
+                saveList = list( np.load('/home/njvaughn/TAGI/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
                 print("Mesh loaded from: ", savedMesh)
             
             print(saveList[0:10])
@@ -1018,8 +1018,8 @@ class Tree(object):
             if cell.leaf==True:
                 self.saveList.insert(bisect.bisect_left(self.saveList, cell.uniqueID), cell.uniqueID )
         print(os.getcwd())
-        saveListFile_local = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
-        saveListFile_flux = '/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
+        saveListFile_local = '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
+        saveListFile_flux = '/home/njvaughn/TAGI/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
         try:
             np.save(saveListFile_local, self.saveList)
         except Exception:
@@ -1135,10 +1135,10 @@ class Tree(object):
         
         if savedMesh!='':
             try:
-                saveList = list( np.load('/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
+                saveList = list( np.load('/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
                 print("Mesh loaded from: ", savedMesh)
             except Exception:
-                saveList = list( np.load('/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
+                saveList = list( np.load('/home/njvaughn/TAGI/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
                 print("Mesh loaded from: ", savedMesh)
             
             print(saveList[0:10])
@@ -1266,8 +1266,8 @@ class Tree(object):
             if cell.leaf==True:
                 self.saveList.insert(bisect.bisect_left(self.saveList, cell.uniqueID), cell.uniqueID )
         print(os.getcwd())
-        saveListFile_local = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
-        saveListFile_flux = '/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
+        saveListFile_local = '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
+        saveListFile_flux = '/home/njvaughn/TAGI/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/'+divideCriterion + '_' + str(divideParameter1) +'_' + str(divideParameter2) + '_' + str(divideParameter3) + '_' + str(divideParameter4)     
         try:
             np.save(saveListFile_local, self.saveList)
         except Exception:

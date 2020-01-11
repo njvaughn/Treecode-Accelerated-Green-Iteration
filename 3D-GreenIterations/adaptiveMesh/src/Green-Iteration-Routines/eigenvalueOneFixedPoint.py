@@ -7,10 +7,10 @@ import GPUtil
 import os
 
 
-try:
-    from convolution import *
-except ImportError:
-    print('Unable to import JIT GPU Convolutions')
+# try:
+#     from convolution import *
+# except ImportError:
+#     print('Unable to import JIT GPU Convolutions')
 try:
     import directSumWrappers
 except ImportError:
@@ -107,6 +107,11 @@ def eigenvalueOne_FixedPoint_Closure(gi_args):
             k = np.sqrt(-2*(gi_args['referenceEigenvalues'][m]+Energies['gaugeShift']))
         
         print('k = ', k)
+        
+        print("NaNs in  orbitals: ", np.isnan(orbitals[:,m]).any())
+        print("NaNs in  Veff: ", np.isnan(Veff).any())
+#         print("NaNs in  RHO: ", np.isnan(RHO).any())
+        print("NaNs in  oldOrbitals: ", np.isnan(oldOrbitals[:,m]).any())
     
         phiNew = np.zeros(nPoints)
         if subtractSingularity==0: 
@@ -122,7 +127,7 @@ def eigenvalueOne_FixedPoint_Closure(gi_args):
                     kappa = k
                     startTime = time.time()
                     numDevices=0
-                    numThreads=4
+                    numThreads=24
                     phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
@@ -155,14 +160,17 @@ def eigenvalueOne_FixedPoint_Closure(gi_args):
                         potentialType=3
                         kappa = k
                         startTime = time.time()
-                        numDevices=4
-                        numThreads=4
+                        numDevices=1
+                        numThreads=1
                         phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                                        np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                                        np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
                                                                        potentialType, kappa, treecodeOrder, theta, maxParNode, batchSize, numDevices, numThreads)
                     
     
+                        print("NaNs in  f: ", np.isnan(f).any())
+                        print("NaNs in  W: ", np.isnan(W).any())
+                        print("NaNs in  phiNew: ", np.isnan(phiNew).any())
                         convTime=time.time()-startTime
                         print('Convolution time: ', convTime)
                         Times['timePerConvolution'] = convTime

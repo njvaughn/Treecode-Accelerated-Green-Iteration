@@ -16,7 +16,7 @@ from pympler import tracker, classtracker
 
 
 if os.uname()[1] == 'Nathans-MacBook-Pro.local':
-    rootDirectory = '/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/'
+    rootDirectory = '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/adaptiveMesh/'
 else:
     print('os.uname()[1] = ', os.uname()[1])
 
@@ -454,9 +454,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     for atom in atoms:
         Vext += atom.V(X,Y,Z)
         
-#     print('Does X exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(X))
-#     print('Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))
-    
     Energies={}
     Energies['orbitalEnergies'] = np.zeros(nMu)
     Energies['gaugeShift'] = gaugeShift
@@ -499,79 +496,23 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     vHartreeFile =          restartFilesDir+'/vHartree'
     auxiliaryFile =         restartFilesDir+'/auxiliary'
     
-    plotSliceOfDensity=False
-    if plotSliceOfDensity==True:
-        try:
-            os.mkdir(densityPlotsDir)
-        except OSError:
-            print('Unable to make directory ', densityPlotsDir)
-        
+    
     try:
         os.mkdir(restartFilesDir)
     except OSError:
         print('Unable to make restart directory ', restartFilesDir)
     
     
-    tr = tracker.SummaryTracker()   
-    if restartFile!=False:
-        orbitals = np.load(wavefunctionFile+'.npy')
-        oldOrbitals = np.copy(orbitals)
-        for m in range(nMu): 
-            tree.importPhiOnLeaves(orbitals[:,m], m)
-        RHO = np.load(densityFile+'.npy')
-        
-        inputDensities = np.load(inputDensityFile+'.npy')
-        outputDensities = np.load(outputDensityFile+'.npy')
-        
-        V_hartreeNew = np.load(vHartreeFile+'.npy')
-        
-        
-        # make and save dictionary
-        auxiliaryRestartData = np.load(auxiliaryFile+'.npy').item()
-        print('type of aux: ', type(auxiliaryRestartData))
-        SCFcount = auxiliaryRestartData['SCFcount']
-        Times['totalIterationCount'] = auxiliaryRestartData['totalIterationCount']
-        Energies['orbitalEnergies'] = auxiliaryRestartData['eigenvalues'] 
-        Eold = auxiliaryRestartData['Eold']
-        
-        
-        
-        Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
-        exchangeOutput = exchangeFunctional.compute(RHO)
-        correlationOutput = correlationFunctional.compute(RHO)
-        Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
-        Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
-        
-        Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
-        Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
-        
-        Energies['Vx'] = np.sum(W * RHO * Vx)
-        Energies['Vc'] = np.sum(W * RHO * Vc)
-         
-        Veff = V_hartreeNew + Vx + Vc + Vext + gaugeShift
-        
-        
     
-    else: 
-        Eold = -10
-        SCFcount=0
-        Times['totalIterationCount'] = 0
+    Eold = -10
+    SCFcount=0
+    Times['totalIterationCount'] = 0
 
-        inputDensities = np.zeros((nPoints,1))
-        outputDensities = np.zeros((nPoints,1))
-        
-        inputDensities[:,0] = np.copy(RHO)
-        oldOrbitals = np.copy(orbitals)
-
-    tr.print_diff()
+    inputDensities = np.zeros((nPoints,1))
+    outputDensities = np.zeros((nPoints,1))
     
-    if plotSliceOfDensity==True:
-        densitySliceSavefile = densityPlotsDir+'/densities'
-        print()
-        r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
-        
-        densities = np.concatenate( (np.reshape(r, (numpts,1)), np.reshape(rho, (numpts,1))), axis=1)
-        np.save(densitySliceSavefile,densities)
+    inputDensities[:,0] = np.copy(RHO)
+    oldOrbitals = np.copy(orbitals)
 
     
     
@@ -594,7 +535,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
     residuals = 10*np.ones_like(Energies['orbitalEnergies'])
     
     referenceEnergies = {'Etotal':Etotal,'Eband':Eband,'Ehartree':Ehartree,'Eexchange':Eexchange,'Ecorrelation':Ecorrelation}
-    scf_args={'inputDensities':inputDensities,'outputDensities':outputDensities,'SCFcount':SCFcount,'nPoints':nPoints,'nMu':nMu,'mixingHistoryCutoff':mixingHistoryCutoff,
+    scf_args={ 'SCFcount':SCFcount,'nPoints':nPoints,'nMu':nMu,'mixingHistoryCutoff':mixingHistoryCutoff,
                'GPUpresent':GPUpresent,'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta,'maxParNode':maxParNode,'batchSize':batchSize,'gaussianAlpha':gaussianAlpha,
                'Energies':Energies,'Times':Times,'exchangeFunctional':exchangeFunctional,'correlationFunctional':correlationFunctional,
                'Vext':Vext,'gaugeShift':gaugeShift,'orbitals':orbitals,'oldOrbitals':oldOrbitals,'subtractSingularity':subtractSingularity,
@@ -605,32 +546,11 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,atoms,nPoints,
                'auxiliaryFile':auxiliaryFile}
     
 
-    """
-    clenshawCurtisNorm = clenshawCurtisNormClosure(W)
-    method='anderson'
-    jacobianOptions={'alpha':1.0, 'M':mixingHistoryCutoff, 'w0':0.01} 
-    solverOptions={'fatol':interScfTolerance, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
- 
-     
-    print('Calling scipyRoot with %s method' %method)
-    scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
-#     print(np.shaoe(RHO))
-    sol = scipyRoot(scfFixedPoint,RHO, args=scf_args, method=method, options=solverOptions)
-    print(sol.success)
-    print(sol.message)
-    RHO = sol.x
-     
-     
-    """
-#     while ( (densityResidual > interScfTolerance) or (energyResidual > interScfTolerance) ):  # terminate SCF when both energy and density are converged.
-       
+            
     for targetEpsilon in np.linspace(lowEps+gaugeShift,highEps+gaugeShift,nEps):   
         print("Target Epsilon: ", targetEpsilon)
         ## CALL SCF FIXED POINT FUNCTION
-#         if SCFcount > 0:
-#             print('Exiting before first SCF (for testing initialized mesh accuracy)')
-#             return
-
+        print("NaNs in  RHO: ", np.isnan(RHO).any())
         eigOneDriverFixedPoint, scf_args = eigOneDriverFixedPointClosure(scf_args)
         eigOneDriverFixedPoint(RHO,targetEpsilon,scf_args)
         SCFcount=scf_args['SCFcount']

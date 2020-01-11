@@ -2,7 +2,7 @@ import numpy as np
 import ctypes
 import time
 
-from numba import cuda
+# from numba import cuda
 
 # computeCapability = cuda.cudadrv.driver.Device(0).compute_capability
 # print('Compute Capability ', computeCapability)
@@ -49,7 +49,7 @@ except ImportError:
     print('Unable to import _gpu_treecodeRoutines due to ImportError')
 except OSError:
     print('Unable to import _gpu_treecodeRoutines due to OSError')
-    _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
+    _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.dylib')
 
 try:
     _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
@@ -57,7 +57,7 @@ except ImportError:
     print('Unable to import _cpu_treecodeRoutines due to ImportError')
 except OSError:
     print('Unable to import _cpu_treecodeRoutines due to OSError')
-    _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
+    _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.so')
 
 print('_treecodeRoutines set.')
 _gpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,

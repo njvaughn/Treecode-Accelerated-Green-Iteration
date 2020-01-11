@@ -2,17 +2,17 @@
 export OMP_NUM_THREADS=6
 
 
-cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/KohnShamTests
+cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/adaptiveMesh/KohnShamTests
 
 
 DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-#INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
+INPUTFILE='../src/utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/carbonAtomAuxiliary.csv'
-INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='../src/utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/lithiumAuxiliary.csv'
 #INPUTFILE='../src/utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 
@@ -25,8 +25,8 @@ GPUPRESENT='False'
 TREECODE='False'
 TREECODEORDER=6
 THETA=0.8
-MAXPARNODE=8000
-BATCHSIZE=8000
+MAXPARNODE=2000
+BATCHSIZE=2000
 
 
 GAUSSIANALPHA=1.0
@@ -38,14 +38,14 @@ RESTART='False'
 MIXINGPARAMETER=0.75 
 MIXINGHISTORY=10  
  
-INTRASCFTOLERANCE=1e-6 
+INTRASCFTOLERANCE=1e-12 
 INTERSCFTOLERANCE=5e-5 
    
 MIXING='Anderson'    
 SMOOTHINGEPS=0.0
 for ADDITIONALDEPTHATATOMS in 0
 do
-for CELLORDER in 4
+for CELLORDER in 5
 do	 
 for BASE in 1
 do
@@ -59,7 +59,7 @@ do
 		do 
 			for MESHPARAM1 in 200			    
 			do
-			OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/krasnyMeshTests/Slice_Testing/Be_LW5_${MESHPARAM1}.csv"
+            OUTPUTFILE="/Users/nathanvaughn/Desktop/CO_very_tight.csv"
 
 			python -u testBatchGreenIterations_KS.py 	$DOMAIN $MINDEPTH $MAXDEPTH $ADDITIONALDEPTHATATOMS $CELLORDER $SINGSUBT \
 																		$SMOOTHINGEPS $GAUSSIANALPHA $MESHTYPE $MESHPARAM1 $MESHPARAM2 $INTERSCFTOLERANCE $INTRASCFTOLERANCE \

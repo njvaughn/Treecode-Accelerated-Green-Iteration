@@ -1,17 +1,17 @@
 #!/bin/bash
 
 
-cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
+cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
 
 DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-SRCDIR='/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
-INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/adaptiveMesh/src/'
+#INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
-#INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
+INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
 #INPUTFILE='utilities/molecularConfigurations/benzeneAuxiliary.csv'
 
 VTKFILEDIR='None'
@@ -22,8 +22,8 @@ SYMMETRICITERATION='False'
 GPUPRESENT='False'
  
 TREECODE='True'      
-MAXPARNODE=4000
-BATCHSIZE=4000   
+MAXPARNODE=2000
+BATCHSIZE=2000   
  
  
 GAUSSIANALPHA=1.0 
@@ -41,7 +41,7 @@ ADDITIONALDEPTHATATOMS=0
 MIXINGPARAMETER=0.5 
 MIXINGHISTORY=10 
   
-INTRASCFTOLERANCE=1e-7
+INTRASCFTOLERANCE=1e-14
 INTERSCFTOLERANCE=1e-6
      
 #MIXING='Anderson'    
@@ -49,12 +49,12 @@ SMOOTHINGEPS=0.0
 
 MESHPARAM1=250
 MESHPARAM2=0
-MESHPARAM3=1e-3
+MESHPARAM3=1e-5
 MESHPARAM4=0   
 
 for SINGSUBT in 1 
 do
-for CELLORDER in 4
+for CELLORDER in 5
 do	      
 for BASE in 1 
 do   
@@ -70,7 +70,8 @@ do
 			for MIXING in 'Anderson'		    
 			do
 
-			OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/paperData/density-mixing/local_H2_mixing_$MIXING.csv"
+			#OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/paperData/density-mixing/local_H2_mixing_$MIXING.csv"
+			OUTPUTFILE="/Users/nathanvaughn/Desktop/CO_very_tight.csv"
 
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/mixingType_Be_$MIXING.csv"
 			#OUTPUTFILE="/home/njvaughn/synchronizedDataFiles/noTreeTesting/Benzene_testing_async_kernels.csv"
