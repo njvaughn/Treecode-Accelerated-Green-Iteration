@@ -8,7 +8,6 @@ from scipy.optimize import root as scipyRoot
 from scipy.optimize.nonlin import BroydenFirst, KrylovJacobian
 from scipy.optimize.nonlin import InverseJacobian
 from scipy.optimize import broyden1, anderson, brentq
-import GPUtil
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -25,7 +24,7 @@ from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 
 
 
-Temperature = 200
+Temperature = 500
 KB = 1/315774.6
 Sigma = Temperature*KB
 def fermiObjectiveFunctionClosure(Energies,nElectrons):
@@ -57,8 +56,8 @@ def sortByEigenvalue(orbitals,orbitalEnergies):
     oldEnergies = np.copy(orbitalEnergies)
     for m in range(len(orbitalEnergies)):
         orbitalEnergies[m] = oldEnergies[newOrder[m]]
-    rprint('Sorted eigenvalues: ', orbitalEnergies)
-    rprint('New order: ', newOrder)
+    rprint(rank,'Sorted eigenvalues: ', orbitalEnergies)
+    rprint(rank,'New order: ', newOrder)
     
     newOrbitals = np.zeros_like(orbitals)
     for m in range(len(orbitalEnergies)):
@@ -122,13 +121,13 @@ def scfFixedPointClosure(scf_args):
 #         scf_args['GItolerancesIdx']=0
         
         scf_args['currentGItolerance']=GItolerances[scf_args['GItolerancesIdx']]
-        rprint("Current GI toelrance: ", scf_args['currentGItolerance'])
+        rprint(rank,"Current GI toelrance: ", scf_args['currentGItolerance'])
         
         GImixingHistoryCutoff = 10
          
         SCFcount += 1
-        rprint('\nSCF Count ', SCFcount)
-        rprint('Orbital Energies: ', Energies['orbitalEnergies'])
+        rprint(rank,'\nSCF Count ', SCFcount)
+        rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies'])
         
         
         if SCFcount>1:
@@ -154,30 +153,32 @@ def scfFixedPointClosure(scf_args):
             densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
             V_hartreeNew = cpuHartreeGaussianSingularitySubract(densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
             Times['timePerConvolution'] = time.time()-start
-            rprint('Convolution time: ', time.time()-start)
+            rprint(rank,'Convolution time: ', time.time()-start)
         else:    
             if singularityHandling=='skipping':
-                rprint("Using singularity skipping in Hartree solve.")
+                rprint(rank,"Using singularity skipping in Hartree solve.")
             elif singularityHandling=='subtraction':                    
-                rprint("Using singularity subtraction in Hartree solve.")
+                rprint(rank,"Using singularity subtraction in Hartree solve.")
             else: 
-                rprint("What should singularityHandling be?")
+                rprint(rank,"What should singularityHandling be?")
                 return
             start = MPI.Wtime()
             
+            
 #             print("Rank %i calling treecode through wrapper..." %(rank))
             kernelName = "coulomb"
+            verbosity=0
             V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
                                                            kernelName, gaussianAlpha, singularityHandling, approximationName,
-                                                           treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+                                                           treecodeOrder, theta, maxParNode, batchSize, GPUpresent, verbosity)
             
 #                 V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
             
             
             Times['timePerConvolution'] = MPI.Wtime()-start
-            rprint('Convolution time: ', MPI.Wtime()-start)
+            rprint(rank,'Convolution time: ', MPI.Wtime()-start)
         
       
         
@@ -191,10 +192,10 @@ def scfFixedPointClosure(scf_args):
         comm.barrier()    
 #         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
 #         VhartreeNorm = np.sqrt( global_dot(W,V_hartreeNew*V_hartreeNew, comm) )
-#         rprint("VHartreeNew norm = ", VhartreeNorm)
+#         rprint(rank,"VHartreeNew norm = ", VhartreeNorm)
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         if abortAfterInitialHartree==True:
-            rprint("Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
+            rprint(rank,"Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
             return np.zeros(nPoints)
     
         exchangeOutput = exchangeFunctional.compute(RHO)
@@ -220,7 +221,7 @@ def scfFixedPointClosure(scf_args):
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
             for m in range(nOrbitals):
-                Energies['orbitalEnergies'][m]=-1
+                Energies['orbitalEnergies'][m]=-4
 # #             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
 # #             for m in range(nOrbitals):
 # #                 if Energies['orbitalEnergies'][m] > 0:
@@ -234,15 +235,15 @@ def scfFixedPointClosure(scf_args):
         ## Solve the eigenvalue problem
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
         eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
-        rprint('Fermi energy: %f'%eF)
+        rprint(rank,'Fermi energy: %f'%eF)
         exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
         previousOccupations = 2*1/(1+np.exp( exponentialArg ) )
         if SCFcount<2: 
             previousOccupations = np.ones(nOrbitals)
         for m in range(nOrbitals): 
             if previousOccupations[m] > 1e-20:
-                rprint('Working on orbital %i' %m)
-                rprint('MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                rprint(rank,'Working on orbital %i' %m)
+                rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                 
         #                         
                             
@@ -293,11 +294,11 @@ def scfFixedPointClosure(scf_args):
 
                 
                 comm.barrier()
-                while ( (resNorm> max(1e-2,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
+                while ( (resNorm> max(2e-1,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     #                 GPUtil.showUtilization()
-                    rprint('MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                    rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                 
                     # Orthonormalize orbital m before beginning Green's iteration
     #                 n,M = np.shape(orbitals)
@@ -315,7 +316,7 @@ def scfFixedPointClosure(scf_args):
                     newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                     eigenvalueDiff=np.abs(oldEigenvalue - newEigenvalue )
                     comm.barrier()
-                    rprint('eigenvalueDiff = %f' %eigenvalueDiff)
+                    rprint(rank,'eigenvalueDiff = %f' %eigenvalueDiff)
                     
     #                 print('greenIterationsCount after: ', greenIterationsCount)
     #                 print('gi_args greenIterationsCount after: ', gi_args["greenIterationsCount"])
@@ -325,15 +326,15 @@ def scfFixedPointClosure(scf_args):
                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                     resNorm = clenshawCurtisNorm(r)
                     
-                    rprint('CC norm of residual vector: %f'%resNorm)
+                    rprint(rank,'CC norm of residual vector: %f'%resNorm)
                     if eigenvalueDiff < resNorm/10:
                         resNorm = eigenvalueDiff
-                        rprint('Using eigenvalueDiff: %f' %resNorm)
+                        rprint(rank,'Using eigenvalueDiff: %f' %resNorm)
 
     
                 
                 psiOut = np.append(orbitals[:,m],Energies['orbitalEnergies'][m])
-                rprint('Power iteration tolerance met.  Beginning rootfinding now...') 
+                rprint(rank,'Power iteration tolerance met.  Beginning rootfinding now...') 
     #             psiIn = np.copy(psiOut)
 #                 tol=intraScfTolerance
                 
@@ -354,7 +355,7 @@ def scfFixedPointClosure(scf_args):
                       
                       
                     greenIterationsCount=gi_args["greenIterationsCount"]
-                    rprint('MEMORY USAGE: %i'%resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                    rprint(rank,'MEMORY USAGE: %i'%resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                       
                     orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M, comm)
                     orbitals[:,m] = np.copy(orthWavefunction)
@@ -384,11 +385,11 @@ def scfFixedPointClosure(scf_args):
                     psiOut = np.append( gi_args["orbitals"][:,m], Energies['orbitalEnergies'][m])
                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                     errorNorm = clenshawCurtisNorm(r)
-                    rprint('Error Norm: %f' %errorNorm)
+                    rprint(rank,'Error Norm: %f' %errorNorm)
                     if errorNorm < scf_args['currentGItolerance']:
                         Done=True
                     eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
-                    rprint('Eigenvalue Diff: %f' %eigenvalueDiff)
+                    rprint(rank,'Eigenvalue Diff: %f' %eigenvalueDiff)
                     if ( (eigenvalueDiff<scf_args['currentGItolerance']/20) and (gi_args["greenIterationsCount"]>8) ): 
                         Done=True
 #                     if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) and ( ( SCFcount <2 ) or previousOccupations[m]<1e-4 ) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
@@ -428,9 +429,9 @@ def scfFixedPointClosure(scf_args):
       
                    
     #             print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
-                rprint('Used %i iterations for wavefunction %i' %(gi_args["greenIterationsCount"],m))
+                rprint(rank,'Used %i iterations for wavefunction %i' %(gi_args["greenIterationsCount"],m))
             else:
-                rprint("Not updating orbital %i because it is unoccupied." %m)
+                rprint(rank,"Not updating orbital %i because it is unoccupied." %m)
             
             
 # #                # Method that uses Scipy Anderson
@@ -486,12 +487,12 @@ def scfFixedPointClosure(scf_args):
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
         eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
-        rprint('Fermi energy: ', eF)
+        rprint(rank,'Fermi energy: ', eF)
         exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
         occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
     
     #         occupations = computeOccupations(Energies['orbitalEnergies'], nElectrons, Temperature)
-        rprint('Occupations: ', occupations)
+        rprint(rank,'Occupations: ', occupations)
         Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
     
      
@@ -523,7 +524,7 @@ def scfFixedPointClosure(scf_args):
     #                                 print('Shape of oldOrbitals[:,m]: ', np.shape(oldOrbitals[:,m]))
                 outputDensities[:,(SCFcount-1)%mixingHistoryCutoff] = newDensity
             
-        rprint('outputDensities[0,:] = ', outputDensities[0,:])
+        rprint(rank,'outputDensities[0,:] = ', outputDensities[0,:])
 #         print('outputDensities[:,0:3] = ', outputDensities[:,0:3])
         
     #         print('Sample of output densities:')
@@ -532,8 +533,8 @@ def scfFixedPointClosure(scf_args):
         integratedDensity = global_dot( newDensity, W, comm )
 #         densityResidual = np.sqrt( np.sum( (newDensity-oldDensity)**2*W ) )
         densityResidual = np.sqrt( global_dot( (newDensity-oldDensity)**2,W,comm ) )
-        rprint('Integrated density: ', integratedDensity)
-        rprint('Density Residual ', densityResidual)
+        rprint(rank,'Integrated density: ', integratedDensity)
+        rprint(rank,'Density Residual ', densityResidual)
         
         
         
@@ -552,7 +553,7 @@ def scfFixedPointClosure(scf_args):
 #             Energies['Etotal'] += Eext_nl
     
         for m in range(nOrbitals):
-            rprint('Orbital %i error: %1.3e' %(m, Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift']))
+            rprint(rank,'Orbital %i error: %1.3e' %(m, Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift']))
         
         
         energyResidual = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
@@ -565,20 +566,20 @@ def scfFixedPointClosure(scf_args):
         Print results from current iteration
         """
     
-        rprint('Orbital Energies: ', Energies['orbitalEnergies']) 
+        rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies']) 
     
-        rprint('Updated V_x:                           %.10f Hartree' %Energies['Vx'])
-        rprint('Updated V_c:                           %.10f Hartree' %Energies['Vc'])
+        rprint(rank,'Updated V_x:                           %.10f Hartree' %Energies['Vx'])
+        rprint(rank,'Updated V_c:                           %.10f Hartree' %Energies['Vc'])
         
-        rprint('Updated Band Energy:                   %.10f H, %.10e H' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
+        rprint(rank,'Updated Band Energy:                   %.10f H, %.10e H' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
     #         print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(Energies['kinetic'], Energies['kinetic']-Ekinetic) )
-        rprint('Updated E_Hartree:                      %.10f H, %.10e H' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
-        rprint('Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
-        rprint('Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
+        rprint(rank,'Updated E_Hartree:                      %.10f H, %.10e H' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
+        rprint(rank,'Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
+        rprint(rank,'Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
     #         print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
-        rprint('Total Energy:                          %.10f H, %.10e H' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
-        rprint('Energy Residual:                        %.3e' %energyResidual)
-        rprint('Density Residual:                       %.3e\n\n'%densityResidual)
+        rprint(rank,'Total Energy:                          %.10f H, %.10e H' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
+        rprint(rank,'Energy Residual:                        %.3e' %energyResidual)
+        rprint(rank,'Density Residual:                       %.3e\n\n'%densityResidual)
     
         scf_args['energyResidual']=energyResidual
         scf_args['densityResidual']=densityResidual

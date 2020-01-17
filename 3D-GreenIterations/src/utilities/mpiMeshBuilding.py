@@ -13,7 +13,7 @@ from AtomStruct import Atom
 
 
 
-def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=0):
+def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=1):
     '''
     Input the domain parameters and a maximum cell size.  Return a list of the minimally refined mesh coordinates.
     
@@ -28,7 +28,7 @@ def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=0):
     nz = int( -( (-2*ZL) // maxSideLength ) )  # give the number of base cells in the z direction
     
 
-    if verbose>0: print('nx, ny, nz: ', nx,ny,nz)
+    if verbose>0: rprint(rank,'nx, ny, nz: %i, %i, %i' %(nx,ny,nz))
     x = np.linspace(-XL,XL,nx+1)
     y = np.linspace(-YL,YL,ny+1)
     z = np.linspace(-ZL,ZL,nz+1)
@@ -40,19 +40,20 @@ def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=0):
             for k in range(nz):
                 cells.append( [x[i], x[i+1], y[j], y[j+1], z[k], z[k+1]] )
     
-#     rprint("Number of coarse cells: ", len(cells))
+    if verbose>0: rprint(rank,"Number of coarse cells: ", len(cells))
 #     for i in range(len(cells)):
 #         print(cells[i])
     return cells
 
-def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion='ParentChildrenIntegral',divideParameter=1,verbose=0):
+def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inputFile,outputFile,srcdir,order,gaugeShift,
+                                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,verbose=0):
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
     
     ## Setup atoms and PSP structs if needed.
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
-    if verbose>-1: rprint('Reading atomic coordinates from: ', coordinateFile)
+    if verbose>-1: rprint(rank,'Reading atomic coordinates from: ', coordinateFile)
     atomData = np.genfromtxt(srcdir+coordinateFile,delimiter=',',dtype=float)
     nElectrons=0
     nOrbitals=0
@@ -89,7 +90,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
 #     nOrbitals = int( np.ceil(nElectrons/2)*1.2  )   # start with the minimum number of orbitals 
     occupations = 2*np.ones(nOrbitals)
 
-    if verbose>0: rprint([coordinateFile, outputFile, nElectrons, nOrbitals, 
+    if verbose>0: rprint(rank,[coordinateFile, outputFile, nElectrons, nOrbitals, 
                           Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     
     
@@ -103,7 +104,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
         if i%size==rank:
 #             print("CALLING refineCell ==================================================")
             X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
-                                                                                         divideParameter1=divideParameter, divideParameter2=divideParameter, divideParameter3=divideParameter, divideParameter4=divideParameter)
+                                                                                         divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4)
             x=np.append(x,X)
             y=np.append(y,Y)
             z=np.append(z,Z)
@@ -124,22 +125,19 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     savedMesh=''
     restart=False
     referenceEigenvalues = np.array( np.genfromtxt(srcdir+referenceEigenvaluesFile,delimiter=',',dtype=float) )
-    if verbose>0: rprint(referenceEigenvalues)
-    if verbose>0: rprint(np.shape(referenceEigenvalues))
+    if verbose>0: rprint(rank,referenceEigenvalues)
+    if verbose>0: rprint(rank,np.shape(referenceEigenvalues))
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,atoms,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile)#, iterationOutFile=outputFile)
 
    
-    
-#     print(tree.atoms)
-#     print(tree.root.gridpoints)
     tree.buildTree( initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=False,onlyFillOne=False)
-
+    
+    tree.finalDivideBasedOnNuclei(coordinateFile)
+    
  
-#     return 
-#     X,Y,Z,W,RHO,orbitals = tree.extractXYZ()
     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
 
 #     
@@ -147,7 +145,6 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     nPoints = len(X)
 
     tree=None
-#     rprint("Returning from setupTree.")
     return X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
 
 

@@ -26,7 +26,7 @@ class Atom(object):
         self.y = y
         self.z = z
         self.atomicNumber = int(atomicNumber)
-        self.orbitalInterpolators()
+        self.orbitalInterpolators(coreRepresentation)
         self.nAtomicOrbitals = nAtomicOrbitals
         self.coreRepresentation = coreRepresentation
         
@@ -56,7 +56,7 @@ class Atom(object):
         output = np.zeros(len(psi))     
         ## sum over the projectors, increment the nonloncal potential. 
         for i in range(self.numberOfChis):
-#             rprint("D_ion = ", self.Dion[str(i)])
+#             rprint(rank,"D_ion = ", self.Dion[str(i)])
             C = global_dot( psi, self.Chi[str(i)]*W, comm)
             output += C * self.Chi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
         return output
@@ -65,7 +65,7 @@ class Atom(object):
         self.Chi = {}
         self.Dion = {}
         D_ion_array = np.array(self.PSP.psp['D_ion'][::self.PSP.psp['header']['number_of_proj']+1]) # grab diagonals of matrix, Ry->Ha /2 already accounted for by upf_to_json
-#         rprint("D_ion_array = ", D_ion_array)
+#         rprint(rank,"D_ion_array = ", D_ion_array)
         num_ell = int(self.PSP.psp['header']['number_of_proj']/2)  # 2 projectors per ell for ONCV
         if self.PSP.psp['header']['number_of_proj']==2:
             assert (num_ell==1), "ERROR IN num_ell"
@@ -136,21 +136,34 @@ class Atom(object):
         if verbose>0: print('Atom with Z=%i will get %i atomic orbitals initialized.' %(self.atomicNumber, self.nAtomicOrbitals))
         
         
-    def orbitalInterpolators(self,verbose=0):
+    def orbitalInterpolators(self,coreRepresentation,verbose=0):
+        
+        if coreRepresentation=="AllElectron":
+            atomDir="allElectron"
+        elif coreRepresentation=="Pseudopotential":
+            atomDir="pseudoPotential"
+        else:
+            print("What is coreRepresentation?  From orbitalInterpolators")
+            exit(-1)
         
 #         print("Setting up interpolators.")
         self.interpolators = {}
         # search for single atom data, either on local machine or on flux
-        if os.path.isdir('/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
+#         if os.path.isdir('/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
+        if os.path.isdir('/Users/nathanvaughn/AtomicData/' + atomDir +'/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
             # working on local machine
-            path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
-        elif os.path.isdir('/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
+#             path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
+            path = '/Users/nathanvaughn/AtomicData/' + atomDir +'/z'+str(int(self.atomicNumber))+'/singleAtomData/'
+#         elif os.path.isdir('/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
+        elif os.path.isdir('/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
             # working on Flux or Great Lakes
-            path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
+#             path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
+            path = '/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/'
         else:
             print('Could not find single atom data...')
-            print('Checked in: /Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
-            print('Checked in: /home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
+#             print('Checked in: /Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
+            print('Checked in: /Users/nathanvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/')
+            print('Checked in: /home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/')
             
             
         if verbose>0: print('Using single atom data from:')

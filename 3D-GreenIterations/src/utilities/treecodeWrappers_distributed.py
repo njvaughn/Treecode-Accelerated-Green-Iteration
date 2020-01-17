@@ -41,7 +41,8 @@ except OSError:
         _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.dylib')
     except OSError:
         print("Could not load GPU treecode library.") 
-        exit(-1) 
+        
+# _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
     
     
         
@@ -58,28 +59,28 @@ try:
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_double,  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
-            ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int ) 
+            ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int,  ctypes.c_int ) 
 except NameError:
-    rprint("Could not set argtypes of _gpu_treecodeRoutines")
-    exit(-1)
+    print("Could not set argtypes of _gpu_treecodeRoutines")
+#     exit(-1)
 try:
     _cpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_double,  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
-            ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int ) 
+            ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int,  ctypes.c_int ) 
 except NameError:
-    rprint("Could not set argtypes of _cpu_treecodeRoutines")
-    exit(-1)
+    print("Could not set argtypes of _cpu_treecodeRoutines")
+#     exit(-1)
 
-rprint('_treecodeRoutines set.')
+print('_treecodeRoutines set.')
 
 
 
 def callTreedriver(numTargets, numSources, 
                    targetX, targetY, targetZ, targetValue, 
                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                   kernelName, kappa, singularityHandling, approximationName, order, theta, maxParNode, batchSize, GPUversion):
+                   kernelName, kappa, singularityHandling, approximationName, order, theta, maxParNode, batchSize, GPUversion, verbosity):
 
    
     global _treecodeRoutines
@@ -106,12 +107,13 @@ def callTreedriver(numTargets, numSources,
     b_singularityHandling = singularityHandling.encode('utf-8')
     
     if GPUversion==True:
+#         print("Calling GPU treecode.")
         _gpu_treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
                                                      targetX_p, targetY_p, targetZ_p, targetValue_p,
                                                      sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
                                                      resultArray_p, b_kernelName, ctypes.c_double(kappa),
                                                      b_singularityHandling, b_approximationName,
-                                                     ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode), ctypes.c_int(batchSize) )
+                                                     ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode), ctypes.c_int(batchSize), ctypes.c_int(verbosity) )
     elif GPUversion==False: # No gpu present
 #         print('No GPU, calling CPU treecode.')
         _cpu_treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
@@ -119,7 +121,7 @@ def callTreedriver(numTargets, numSources,
                                                      sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
                                                      resultArray_p, b_kernelName, ctypes.c_double(kappa),
                                                      b_singularityHandling, b_approximationName,
-                                                     ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode), ctypes.c_int(batchSize) ) 
+                                                     ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode), ctypes.c_int(batchSize), ctypes.c_int(verbosity) ) 
 #         print('Control returned to python...') 
     else: 
         print("What should GPUversion be set to in the wrapper?")

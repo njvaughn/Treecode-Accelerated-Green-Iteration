@@ -1,8 +1,8 @@
 import sys
 import mpi4py.MPI as MPI
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-size = comm.Get_size()
+# comm = MPI.COMM_WORLD
+# rank = comm.Get_rank()
+# size = comm.Get_size()
 import numpy as np
 
 
@@ -69,7 +69,7 @@ def scatterArrays(x,y,z,w,comm, verbose=0):
     return xloc, yloc, zloc, wloc
     
     
-def rprint(message, message2=None, message3=None):
+def rprint(rank, message, message2=None, message3=None):
     '''
     Stands for root-print, meaning only the root proc will print the message.
     :param message:

@@ -41,7 +41,7 @@ class ONCV_PSP(object):
         self.densityInterpolator = InterpolatedUnivariateSpline(r[1:],density[1:],k=3,ext='raise')
         
         # Setup decaying exponential for extrapolation beyond rcutoff.
-        a = r[-5]
+        a = r[-3]
         b = r[-1]
         
         da = self.densityInterpolator(a)
@@ -53,7 +53,7 @@ class ONCV_PSP(object):
         
         # Setup linear function for extrapolation beyond rcutoff.
         a = r[1]
-        b = r[2]
+        b = r[3]
         
         da = self.densityInterpolator(a)/(4*np.pi*a*a)
         db = self.densityInterpolator(b)/(4*np.pi*b*b)
@@ -76,7 +76,7 @@ class ONCV_PSP(object):
         
     def evaluateDensityInterpolator(self,r):
         nr=len(r)
-        Rho = np.zeros(nr)
+        Rho = np.zeros(nr) 
         for i in range(nr):
             try:
                 Rho[i] = self.densityInterpolator(r[i]) / (4*np.pi*r[i]*r[i])
@@ -90,7 +90,7 @@ class ONCV_PSP(object):
     def setLocalPotentialInterpolator(self,verbose=0):
         r = np.array(self.psp['radial_grid'])
         local_potential = np.array(self.psp['local_potential'])   # upf_to_json has already done the Rydberg-to-Hartree conversion by dividing Vloc by 2
-        self.localPotentialInterpolator = InterpolatedUnivariateSpline(r,local_potential,k=3,ext='raise')
+        self.localPotentialInterpolator = InterpolatedUnivariateSpline(r,local_potential,k=1,ext='raise')
     
     def evaluateLocalPotentialInterpolator(self,r):
         nr=len(r)
@@ -120,7 +120,12 @@ class ONCV_PSP(object):
             proj = np.array(self.psp['beta_projectors'][i]['radial_function'])
             length_of_projector_data = len(proj)
             
-            self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[:length_of_projector_data],proj,k=3,ext='raise') # is ext='zeros' okay?  Could do some decay instead
+            print("Last r value in projector interpolator: ", r[length_of_projector_data-1])
+            
+            self.projectorCutoffRadius=r[length_of_projector_data-1] 
+            
+            self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[:length_of_projector_data],proj,k=1,ext='raise') # is ext='zeros' okay?  Could do some decay instead
+#             self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[1:length_of_projector_data],proj[1:]/r[1:length_of_projector_data],k=5,ext='raise') # is ext='zeros' okay?  Could do some decay instead
         return
     
     def evaluateProjectorInterpolator(self,idx,r):
@@ -131,11 +136,19 @@ class ONCV_PSP(object):
         for i in range(nr):
             try:
                 output[i] =  self.projectorInterpolators[str(idx)](r[i])/r[i]
-            except ValueError:
-                if r[i] > self.radialCutoff:
+#                 output[i] =  self.projectorInterpolators[str(idx)](r[i])
+            except ValueError as VE:
+                if r[i] > self.projectorCutoffRadius:
                     output[i] = 0.0
-#                 elif r[i]<self.innerCutoff:
-#                     output[i] = 0.0
+#                     output[i] =  self.projectorInterpolators[str(idx)](self.projectorCutoffRadius)/self.projectorCutoffRadius
+                elif r[i] < self.innerCutoff:
+                    print("Projector interpolator out of range: r was below the inner cutoff radius.")
+                    exit(-1)
+                else:
+                    print("Something went wrong in projector interpolator for r=", r[i])
+                    print("Inner and outer cutoffs: ", self.innerCutoff, self.projectorCutoffRadius)
+                    print("ValueError: ", VE)
+                    exit(-1)
         return output
    
     def plotProjectors(self):

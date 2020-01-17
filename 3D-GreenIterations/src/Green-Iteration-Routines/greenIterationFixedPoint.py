@@ -3,7 +3,7 @@ import numpy as np
 import time
 import csv
 import resource
-import GPUtil
+# import GPUtil
 import os
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
@@ -80,11 +80,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
         if coreRepresentation=='AllElectron':
             f = -2*orbitals[:,m]*Veff_local
         elif coreRepresentation=='Pseudopotential': 
-            rprint("Constructing f with nonlocal routines.")
             V_nl_psi = np.zeros(nPoints)
             for atom in atoms:
                 V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m],W,comm)
             f = -2* ( orbitals[:,m]*Veff_local + V_nl_psi )
+            rprint(rank,"Constructed f with nonlocal routines.")
         else:
             print("coreRepresentation not set to allowed value. Exiting from greenIterationFixedPoint.")
             return
@@ -104,16 +104,17 @@ def greensIteration_FixedPoint_Closure(gi_args):
             kappa = k
             startTime = time.time()
             comm.barrier()
+            verbosity=0
             phiNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(f), np.copy(W),
-                                                           kernelName, kappa, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent)
+                                                           kernelName, kappa, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,verbosity)
 
             if singularityHandling=="skipping": phiNew /= (4*np.pi)
             if singularityHandling=="subtraction": phiNew /= (4*np.pi)
 
             convolutionTime = time.time()-startTime
-            rprint('Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+            rprint(rank,'Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
             comm.barrier()
 
         else:
@@ -131,7 +132,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             if ( (gradientFree==True) and (SCFcount>-1)):                 
                 
                 psiNewNorm = np.sqrt( global_dot( phiNew, phiNew*W, comm))
-                rprint("psiNewNorm = %f" %psiNewNorm)
+                rprint(rank,"psiNewNorm = %f" %psiNewNorm)
                 
         
                 deltaE = -global_dot( orbitals[:,m]*(Veff_local)*(orbitals[:,m]-phiNew), W, comm )
@@ -139,7 +140,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 if coreRepresentation=="AllElectron":
                     pass
                 elif coreRepresentation=="Pseudopotential":
-#                     rprint("Need to address gradient-free eigenvalue update in Pseudopotential case.")
+#                     rprint(rank,"Need to address gradient-free eigenvalue update in Pseudopotential case.")
                     V_nl_psiDiff = np.zeros(nPoints)
                     for atom in atoms:
                         V_nl_psi+= atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m],W,comm)
@@ -152,9 +153,12 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 normSqOfPsiNew = global_dot( phiNew**2, W, comm)
                 deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
 
-                rprint("deltaE = %f" %deltaE)
+                deltaE/=2 # do a simple mixing on epsilon, help with oscillations.
+                rprint(rank,"Halving the deltaE to try to help with oscillations.")
+                
+                rprint(rank,"deltaE = %f" %deltaE)
                 Energies['orbitalEnergies'][m] += deltaE
-                rprint("Energies['orbitalEnergies'][m] = %f" %Energies['orbitalEnergies'][m])
+                rprint(rank,"Energies['orbitalEnergies'][m] = %f" %Energies['orbitalEnergies'][m])
                 orbitals[:,m] = np.copy(phiNew)
                 
         
@@ -170,17 +174,17 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 else:
                     eigenvalueHistory = gi_args['eigenvalueHistory']
                     eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
-                rprint('eigenvalueHistory: \n',eigenvalueHistory)
+                rprint(rank,'eigenvalueHistory: \n',eigenvalueHistory)
                 
                 
                  
         
             elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
-                rprint('gradient and laplacian methods not set up for tree-free')
+                rprint(rank,'gradient and laplacian methods not set up for tree-free')
                 return
                 
             else:
-                rprint('Not updating eigenvalue.  Is that intended?')
+                rprint(rank,'Not updating eigenvalue.  Is that intended?')
                 return
             
         else:  # Explicitly choosing to not update Eigenvalue.  Still orthogonalize
@@ -205,8 +209,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #         if Energies['orbitalEnergies'][m]>Energies['gaugeShift']:
 #             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - np.random.randint(10)
             rand = np.random.rand(1)
+#             Energies['orbitalEnergies'][m] = -2
             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 3*rand
-            print('Energy eigenvalue was positive, setting to gauge shift - ', 3*rand)
+#             rprint(rank,'Energy eigenvalue was positive, setting to  ',-2 )
+            rprint(rank,'Energy eigenvalue was positive, setting to gauge shift - ',( 3*rand) )
             
             if greenIterationsCount%10==0:
                 # Positive energy after 10 iterations..., scramble wavefunction and restart.
@@ -248,8 +254,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         
     
-        rprint('Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift'], eigenvalueDiff))
-        rprint('Orbital %i wavefunction residual: %1.3e\n\n' %(m, orbitalResidual))
+        rprint(rank,'Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift'], eigenvalueDiff))
+        rprint(rank,'Orbital %i wavefunction residual: %1.3e\n\n' %(m, orbitalResidual))
     
     
     

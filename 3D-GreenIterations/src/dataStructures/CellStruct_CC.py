@@ -1759,7 +1759,7 @@ class Cell(object):
         return densityIntegral, sqrtDensityIntegral, sqrtDensityVextIntegral
         
      
-    def refineByCheckingParentChildrenIntegrals(self, divideParameter1, divideParameter2, divideParameter3):
+    def refineByCheckingParentChildrenIntegrals(self, divideParameter1):
         if self.level>=3:
             print('Cell:                                      ', self.uniqueID)
         self.divideFlag = False
@@ -1808,7 +1808,7 @@ class Cell(object):
 #         print('Children Integral:     ', sumChildrenIntegrals)
 #         print()
         
-        if np.abs(parentSqrtDensityVextIntegral-sumChildSqrtDensityVextVextIntegral) > divideParameter3:
+        if np.abs(parentSqrtDensityVextIntegral-sumChildSqrtDensityVextVextIntegral) > divideParameter1:
             self.childrenRefineCause=3
 #             print()
 #             print('Cell:                                      ', self.uniqueID)
@@ -1855,9 +1855,123 @@ class Cell(object):
 #         self.children=None
         delattr(self,"children")
         self.leaf=True
+        
+    
+    def refinePiecewiseUniform(self, nearFieldSpacing, nearFieldCutoff, midFieldSpacing, midFieldCutoff):
+        self.divideFlag = False
+        
+        xdiv = (self.xmax + self.xmin)/2   
+        ydiv = (self.ymax + self.ymin)/2   
+        zdiv = (self.zmax + self.zmin)/2 
+        
+        # determine distance from cell corner to nearest atom
+        distanceToNearestAtom = 10+midFieldCutoff
+        for atom in self.tree.atoms:
+            if ( (atom.x<self.xmax) and (atom.y<self.ymax) and (atom.z<self.zmax) and
+                 (atom.x>self.xmin) and (atom.y>self.xmin) and (atom.z>self.zmin) ): # atom is in cell
+                distanceToNearestAtom=0
+            else:
+                for x in [self.xmax,self.xmin]:
+                    for y in [self.ymin,self.ymax]:
+                        for z in [self.zmin,self.zmax]:
+                            d = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2)
+                            distanceToNearestAtom = min(distanceToNearestAtom,d)
+        
+        # compute cell size
+#         cellRadius = np.sqrt( (self.xmax-xdiv)**2 + (self.ymax-ydiv)**2 + (self.zmax-zdiv)**2 )
+        cellSideLength = np.max( [self.zmax-self.zmin, self.xmax-self.xmin, self.ymax-self.ymin ] )
+        
+        
+        
+        # detemine if cell should be refined
+        if distanceToNearestAtom<nearFieldCutoff:  # if in the inner ring
+            if cellSideLength > nearFieldSpacing:
+                print("REFINING INNER RING")
+                print("New inner cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+                
+        elif distanceToNearestAtom<midFieldCutoff:  # if in the middle annulus
+            if cellSideLength > midFieldSpacing:
+                print("REFINING MIDDLE ANNULUS")
+                print("New annulus cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+        else:                                       # cell is in the far field
+            pass
+        
+       
+        if False:
+            print('\nCell:   ', self.uniqueID)
+            print("distance to nearest atom: ",distanceToNearestAtom)
+            print("Cell center: ", xdiv,ydiv,zdiv)
+            print("Cell side length: ",cellSideLength)
+            print("Cell dividing: ", self.divideFlag)
+            print()
+          
+          
+          
             
-            
+    def refineCoarseningUniform(self, h, H, r):
+        self.divideFlag = False
+        
+        xdiv = (self.xmax + self.xmin)/2   
+        ydiv = (self.ymax + self.ymin)/2   
+        zdiv = (self.zmax + self.zmin)/2 
+        
+        # how many coarsening steps are required:
+        steps = int( np.log2(H/h))
+        
+        # determine distance from cell corner to nearest atom
+        distanceToNearestAtom = 10+H
+        for atom in self.tree.atoms:
+            if ( (atom.x<self.xmax) and (atom.y<self.ymax) and (atom.z<self.zmax) and
+                 (atom.x>self.xmin) and (atom.y>self.xmin) and (atom.z>self.zmin) ): # atom is in cell
+                distanceToNearestAtom=0
+            else:
+                for x in [self.xmax,self.xmin]:
+                    for y in [self.ymin,self.ymax]:
+                        for z in [self.zmin,self.zmax]:
+#                             d = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2)
+                            d = np.max(  [abs(x-atom.x), abs(y-atom.y), abs(z-atom.z)])
+                            distanceToNearestAtom = min(distanceToNearestAtom,d)
+        
+        # compute cell size
+#         cellRadius = np.sqrt( (self.xmax-xdiv)**2 + (self.ymax-ydiv)**2 + (self.zmax-zdiv)**2 )
+        cellSideLength = np.max( [self.zmax-self.zmin, self.xmax-self.xmin, self.ymax-self.ymin ] )
+        
+        
+        
+        # detemine if cell should be refined
+        if distanceToNearestAtom<r:  # if in the inner ring
+            if cellSideLength > h:
+                print("New inner cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+                
+        elif distanceToNearestAtom<r+2*h*np.sqrt(1):  # if in the inner ring
+            if cellSideLength > 2*h:
+                print("First annulus cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+        
+        elif distanceToNearestAtom<r+(2*h+4*h)*np.sqrt(1):  # if in the inner ring
+            if cellSideLength > 4*h:
+                print("Second annulus cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+        
+        elif distanceToNearestAtom<r+(2*h+4*h+8*h)*np.sqrt(1):  # if in the inner ring
+            if cellSideLength > 8*h:
+                print("Third annulus cell size will be ", cellSideLength/2)
+                self.divideFlag=True
 
+        else:                                       # cell is in the far field
+            pass
+        
+       
+        if False:
+            print('\nCell:   ', self.uniqueID)
+            print("distance to nearest atom: ",distanceToNearestAtom)
+            print("Cell center: ", xdiv,ydiv,zdiv)
+            print("Cell side length: ",cellSideLength)
+            print("Cell dividing: ", self.divideFlag)
+            print()
     
     """
     DIVISION FUNCTIONS

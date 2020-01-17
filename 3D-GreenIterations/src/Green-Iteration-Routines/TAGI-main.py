@@ -34,11 +34,11 @@ from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
 try:
     import treecodeWrappers_distributed as treecodeWrappers
 except ImportError:
-    rprint('Unable to import treecodeWrapper due to ImportError')
+    rprint(rank,'Unable to import treecodeWrapper due to ImportError')
 except OSError:
     print('Unable to import treecodeWrapper due to OSError')
     import treecodeWrappers_distributed as treecodeWrappers
-from TreeStruct_CC import Tree
+# from TreeStruct_CC import Tree
 from CellStruct_CC import Cell
 from GridpointStruct import GridPoint
 import densityMixingSchemes as densityMixing
@@ -51,7 +51,7 @@ from scfFixedPoint import scfFixedPointClosure
 # if os.uname()[1] == 'Nathans-MacBook-Pro.local':
 #     rootDirectory = '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/'
 # else:
-#     rprint('os.uname()[1] = ', os.uname()[1])
+#     rprint(rank,'os.uname()[1] = ', os.uname()[1])
 
 
 ## Read in command line arguments
@@ -98,7 +98,6 @@ approximationName   = str(sys.argv[n]); n+=1
 
 # Set up paths based on srcdir
 inputFile = srcdir+inputFile
-rprint('inputFile = ', inputFile)
 sys.path.append(srcdir+'dataStructures')
 sys.path.append(srcdir+'Green-Iteration-Routines')
 sys.path.append(srcdir+'utilities')
@@ -111,9 +110,7 @@ sys.path.append(srcdir+'../ctypesTests/lib')
 
 
 
-rprint('gradientFree = ', noGradients)
-rprint('Mixing scheme = ', mixingScheme)
-rprint('vtk directory = ', vtkDir)
+
 
 if savedMesh == 'None':
     savedMesh=''
@@ -125,34 +122,34 @@ elif noGradients=='False':
 elif noGradients=='Laplacian':
     gradientFree='Laplacian'
 else:
-    rprint('Warning, not correct input for gradientFree')
+    rprint(rank,'Warning, not correct input for gradientFree')
     
 if symmetricIteration=='True':
     symmetricIteration=True
 elif symmetricIteration=='False':
     symmetricIteration=False
 else:
-    rprint('Warning, not correct input for gradientFree')
+    rprint(rank,'Warning, not correct input for gradientFree')
 
 if restart=='True':
     restart=True
 elif restart=='False':
     restart=False
 else:
-    rprint('Warning, not correct input for restart')
+    rprint(rank,'Warning, not correct input for restart')
     
 if GPUpresent=='True':
     GPUpresent=True
 elif GPUpresent=='False':
     GPUpresent=False
 else:
-    rprint('Warning, not correct input for GPUpresent')
+    rprint(rank,'Warning, not correct input for GPUpresent')
 if treecode=='True':
     treecode=True
 elif treecode=='False':
     treecode=False
 else:
-    rprint('Warning, not correct input for treecode')
+    rprint(rank,'Warning, not correct input for treecode')
 
 
 vtkFileBase='/home/njvaughn/results_CO/orbitals'
@@ -186,9 +183,9 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
                 
             
             
-            rprint('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+            rprint(rank,'Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
                       %(atom.atomicNumber, atom.x,atom.y,atom.z))
-            rprint('Orbital index = %i'%orbitalIndex)            
+            rprint(rank,'Orbital index = %i'%orbitalIndex)            
             singleAtomOrbitalCount=0
             for nell in aufbauList:
                 
@@ -235,7 +232,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
 #                         self.importPhiOnLeaves(phi, orbitalIndex)
 #                         self.normalizeOrbital(orbitalIndex)
                         
-                        rprint('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
+                        rprint(rank,'Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
                         orbitalIndex += 1
                         singleAtomOrbitalCount += 1
                     
@@ -246,9 +243,9 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
 #                     print('Not using ', psiID)
                         
         if orbitalIndex < nOrbitals:
-            rprint("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
+            rprint(rank,"Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
 #             print('Filling extra orbitals with decaying exponential.')
-            rprint('Filling extra orbitals with random initial data.')
+            rprint(rank,'Filling extra orbitals with random initial data.')
             for ii in range(orbitalIndex, nOrbitals):
                 R = np.sqrt(X*X+Y*Y+Z*Z)
 #                 orbitals[:,ii] = np.exp(-R)*np.sin(R)
@@ -257,7 +254,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
 #                 self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
 #                 self.orthonormalizeOrbitals(targetOrbital=ii)
         if orbitalIndex > nOrbitals:
-            rprint("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
+            rprint(rank,"Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
 
 #         
@@ -285,8 +282,8 @@ def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms,coreRepresentation):
             totalElectrons += atom.PSP.psp['header']['z_valence']
             rho += atom.PSP.evaluateDensityInterpolator(r)
             
-        rprint("max density: ", max(abs(rho)))
-        rprint("cumulative number of electrons: ", totalElectrons)
+        rprint(rank,"max density: ", max(abs(rho)))
+        rprint(rank,"cumulative number of electrons: ", totalElectrons)
 
 
     rho *= totalElectrons / global_dot(rho,w,comm)
@@ -408,7 +405,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     
     
 #     return
-    rprint('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    rprint(rank,'MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
     # Store Tree variables locally
     gaugeShift = Energies['gaugeShift']
@@ -439,7 +436,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
         try:
             os.mkdir(restartFilesDir)
         except OSError:
-            rprint('Unable to make restart directory ', restartFilesDir)
+            rprint(rank,'Unable to make restart directory ', restartFilesDir)
     
     
 #     tr = tracker.SummaryTracker()   
@@ -460,7 +457,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
 #         
 #         # make and save dictionary
 #         auxiliaryRestartData = np.load(auxiliaryFile+'.npy').item()
-#         rprint('type of aux: ', type(auxiliaryRestartData))
+#         rprint(rank,'type of aux: ', type(auxiliaryRestartData))
 #         SCFcount = auxiliaryRestartData['SCFcount']
 #         Times['totalIterationCount'] = auxiliaryRestartData['totalIterationCount']
 #         Energies['orbitalEnergies'] = auxiliaryRestartData['eigenvalues'] 
@@ -507,18 +504,18 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     
     ## Barrier...
     comm.barrier()
-    rprint('\nEntering greenIterations_KohnSham_SCF()')
+    rprint(rank,'\nEntering greenIterations_KohnSham_SCF()')
     print('Number of targets on proc %i:   %i' %(rank,nPoints) )
 
     
     densityResidual = 10                                   # initialize the densityResidual to something that fails the convergence tolerance
 
     [Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal] = np.genfromtxt(inputFile)[3:9]
-    rprint([Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal])
+    rprint(rank,[Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal])
 
  
 
-    energyResidual=1
+    energyResidual=10
     residuals = 10*np.ones_like(Energies['orbitalEnergies'])
     
     referenceEnergies = {'Etotal':Etotal,'Eband':Eband,'Ehartree':Ehartree,'Eexchange':Eexchange,'Ecorrelation':Ecorrelation}
@@ -554,7 +551,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
      
     """
     comm.barrier()
-    rprint("Starting while loop for density...")
+    rprint(rank,"Starting while loop for density...")
     comm.barrier()
     while ( (densityResidual > SCFtolerance) or (energyResidual > SCFtolerance) ):  # terminate SCF when both energy and density are converged.
           
@@ -571,8 +568,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
           
 #         densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
 #         print('Density Residual from arrays ', densityResidual)
-        rprint('Shape of density histories: ', np.shape(scf_args['inputDensities']), np.shape(scf_args['outputDensities']))
-        rprint('outputDensities[0,:] = ', scf_args['outputDensities'][0,:])
+        rprint(rank,'Shape of density histories: ', np.shape(scf_args['inputDensities']), np.shape(scf_args['outputDensities']))
+        rprint(rank,'outputDensities[0,:] = ', scf_args['outputDensities'][0,:])
         # Now compute new mixing with anderson scheme, then import onto tree. 
     
       
@@ -582,7 +579,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
             simpleMixingDensity = mixingParameter*scf_args['outputDensities'][:,SCFindex] + (1-mixingParameter)*scf_args['inputDensities'][:,SCFindex]
 #             integratedDensity = np.sum( simpleMixingDensity*W )
             integratedDensity = global_dot( simpleMixingDensity, W, comm )
-            rprint('Integrated simple mixing density: ', integratedDensity)  
+            rprint(rank,'Integrated simple mixing density: ', integratedDensity)  
     #             tree.importDensityOnLeaves(simpleMixingDensity)
             RHO = np.copy(simpleMixingDensity)
           
@@ -591,12 +588,12 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
             andersonDensity = densityMixing.computeNewDensity(scf_args['inputDensities'], scf_args['outputDensities'], mixingParameter,W)
 #             integratedDensity = np.sum( andersonDensity*W )
             integratedDensity = global_dot( andersonDensity, W, comm )
-            rprint('Integrated anderson density: ', integratedDensity)
+            rprint(rank,'Integrated anderson density: ', integratedDensity)
     #             tree.importDensityOnLeaves(andersonDensity)
             RHO = np.copy(andersonDensity)
           
         elif mixingScheme == 'None':
-            rprint('Using no mixing.')
+            rprint(rank,'Using no mixing.')
 #             RHO += densityResidualVector
             RHO = np.copy( scf_args['outputDensities'][:,SCFindex] )
                
@@ -628,7 +625,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
   
       
       
-    rprint('\nConvergence to a tolerance of %f took %i iterations' %(SCFtolerance, SCFcount))
+    rprint(rank,'\nConvergence to a tolerance of %f took %i iterations' %(SCFtolerance, SCFcount))
 #     """
     return Energies, RHO, Times
     
@@ -639,14 +636,30 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     
 if __name__ == "__main__": 
     #import sys;sys.argv = ['', 'Test.testName']
-
-    rprint('='*70) 
-    rprint('='*70) 
-    rprint('='*70,'\n') 
     
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size() 
+
+    rprint(rank,'='*70) 
+    rprint(rank,'='*70) 
+    rprint(rank,'='*70,'\n') 
+    
+    
+    
+    rprint(rank,'inputFile = ', inputFile)
+
+    rprint(rank,'gradientFree = ', noGradients)
+    rprint(rank,'Mixing scheme = ', mixingScheme)
+    rprint(rank,'vtk directory = ', vtkDir)
+    
+    
+    # Set domain to be an integrer number of far-field cells
+    
+    domainSize+=1/2*(maxSideLength-(2*domainSize)%maxSideLength)
+    rprint(rank,"Max side length: ",maxSideLength)
+    rprint(rank,"Domain length after adjustment: ", domainSize)
+    rprint(rank," Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
         
     
 #     if rank==0: 
@@ -664,7 +677,8 @@ if __name__ == "__main__":
         
 #     maxSideLength=5.5
     X,Y,Z,W,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
-                                                                                                     inputFile,outputFile,srcdir,order,gaugeShift,divideParameter=divideParameter3)
+                                                                                                     inputFile,outputFile,srcdir,order,gaugeShift,
+                                                                                                     divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
     
     
     comm.barrier()
@@ -674,18 +688,18 @@ if __name__ == "__main__":
     wSum = np.sqrt( global_dot(W,W,comm) ) 
     
 #     print("NOT CALLING LOAD BALANCER.")
-    print('Before load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
+    print('Before load balancing, nPoints and nCells on proc %i: %i, %i' %(rank,len(X),len(X)/(order+1)**3) )
 #     X,Y,Z,W = scatterArrays(X,Y,Z,W,comm)
 #     print('After scattering, nPoints on proc %i: %i' %(rank,len(X)) )
     comm.barrier()
     start=MPI.Wtime()
-    X,Y,Z,W = loadBalance(X,Y,Z,W,LBMETHOD='RANDOM')
-    comm.barrier()
-    print('After random balancing, nPoints on proc %i: %i' %(rank,len(X)) )
+#     X,Y,Z,W = loadBalance(X,Y,Z,W,LBMETHOD='RANDOM')
+#     comm.barrier()
+#     print('After random balancing, nPoints on proc %i: %i' %(rank,len(X)) )
     X,Y,Z,W = loadBalance(X,Y,Z,W)
     comm.barrier()
     end=MPI.Wtime()
-    print("LOAD BALANCING TIME WHEN USING RANDOM FIRST: ", end-start)
+    print("LOAD BALANCING TIME WHEN NOT USING RANDOM FIRST: ", end-start)
     print('After load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
     print("proc %i: average x, y, z: %f,%f,%f"%(rank, np.mean(X), np.mean(Y), np.mean(Z)))
 #     atoms = comm.bcast(atoms, root=0)
@@ -693,7 +707,7 @@ if __name__ == "__main__":
 #     nElectrons = comm.bcast(nElectrons, root=0)
 #     eigenvalues = comm.bcast(eigenvalues, root=0)
 #     referenceEigenvalues = comm.bcast(referenceEigenvalues, root=0)
-    eigenvalues = -np.ones(nOrbitals)
+    eigenvalues = -4*np.ones(nOrbitals)
     xSum2 = np.sqrt( global_dot(X,X,comm) ) 
     ySum2 = np.sqrt( global_dot(Y,Y,comm) ) 
     zSum2 = np.sqrt( global_dot(Z,Z,comm) ) 
@@ -706,7 +720,7 @@ if __name__ == "__main__":
     comm.barrier()
     RHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
     densityIntegral = global_dot( RHO, W, comm)
-    rprint("Initial density integrates to ", densityIntegral)
+    rprint(rank,"Initial density integrates to ", densityIntegral)
     nPointsLocal = len(X)
 #     assert abs(2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
     orbitals = np.zeros((nPointsLocal,nOrbitals))

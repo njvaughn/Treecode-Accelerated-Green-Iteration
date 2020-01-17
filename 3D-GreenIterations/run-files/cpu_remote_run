@@ -3,7 +3,7 @@
 
 
 cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
-DOMAIN=15
+DOMAIN=12
 SINGSUBT=1
 
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
@@ -25,14 +25,14 @@ VTKFILEDIR='None'
 
 GRADIENTFREE='True'
 SYMMETRICITERATION='False'
-GPUPRESENT='True'
+GPUPRESENT='False'
  
 TREECODE='True'      
-MAXPARNODE=4000
-BATCHSIZE=4000   
+MAXPARNODE=500
+BATCHSIZE=500   
  
  
-GAUSSIANALPHA=2.0 
+GAUSSIANALPHA=1.0 
 GAUGESHIFT=-0.5
  
 MESHTYPE='ParentChildrenIntegral'  
@@ -46,28 +46,22 @@ GRADIENTFREE='True'
 MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
   
-INITIAL_GI_TOLERANCE=1e-5 
-FINAL_GI_TOLERANCE=1e-5
+INITIAL_GI_TOLERANCE=1e-3 
+FINAL_GI_TOLERANCE=3e-5
 GRADUALSTEPS=4
-SCF_TOLERANCE=5e-5
+SCF_TOLERANCE=1e-4
      
 
 
-MESHTYPE='coarsenedUniform'
-MAXSIDELENGTH=8 
-MESHPARAM1=0.5 # near field spacing 
-MESHPARAM2=8.0 # far field spacing
-MESHPARAM3=2.0 # ball radius
-MESHPARAM4=0.0 # unused
+MAXSIDELENGTH=6
 
 
-#MAXSIDELENGTH=6
-#MESHPARAM1=0.375 # near field spacing 
-#MESHPARAM2=6.0 # far field spacing
-#MESHPARAM3=1.5 # ball radius
-#MESHPARAM4=0.0 # unused
+MESHTYPE='PiecewiseUniform' 
+MESHPARAM1=2.0 # near field spacing
+MESHPARAM2=1.0 # near field cutoff
 
-
+MESHPARAM3=3.0 # mid field spacing
+MESHPARAM4=2.0 # mid field cutoff
 
 APPROXIMATIONNAME=lagrange
  
@@ -75,16 +69,16 @@ for SINGULARITYHANDLING in subtraction
 do
 for CELLORDER in 4
 do                                                       
-for TREECODEORDER in 8
+for TREECODEORDER in 7
 do         
-    for THETA in 0.5
+    for THETA in 0.7
     do   
         for MIXING in 'Anderson'            
         do 
 
         OUTPUTFILE="/home/njvaughn/ONCV-testing/N_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
         
-        mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
+        srun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

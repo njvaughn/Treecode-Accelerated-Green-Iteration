@@ -1005,7 +1005,7 @@ class Tree(object):
             self.normalizeOrbital(m)
   
     def buildTree(self, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',savedMesh='', restart=False, printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
-
+#         print("ENTERING BUILDTREE, divideCriterion=", divideCriterion)
         if savedMesh!='':
             try:
                 saveList = list( np.load('/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
@@ -1083,8 +1083,14 @@ class Tree(object):
                         Cell.checkDensityInterpolation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                         
                     elif divideCriterion=='ParentChildrenIntegral':
+                        Cell.refineByCheckingParentChildrenIntegrals(divideParameter1)
+                    elif divideCriterion=="PiecewiseUniform":
+#                         print("Refining by piecewise uniform scheme.")
+                        Cell.refinePiecewiseUniform(divideParameter1,divideParameter2,divideParameter3,divideParameter4)
+                    elif divideCriterion=="coarsenedUniform":
+#                         print("Refining by piecewise uniform scheme.")
+                        Cell.refineCoarseningUniform(divideParameter1,divideParameter2,divideParameter3)
                         
-                        Cell.refineByCheckingParentChildrenIntegrals(divideParameter1, divideParameter2, divideParameter3)
                         
                     
                     
@@ -1117,7 +1123,7 @@ class Tree(object):
         if printTreeProperties == True: print("Calling recursive divide on this cell's root.... divideCriterion, divideParameter=",divideCriterion, divideParameter)
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, divideCriterion, divideParameter, levelCounter, saveList, printNumberOfCells, maxDepthAchieved=0)
         
-        
+        self.countCellsAtEachDepth()
          
         
         if printTreeProperties == True: print('Number of gridpoints: ', self.numberOfGridpoints)
