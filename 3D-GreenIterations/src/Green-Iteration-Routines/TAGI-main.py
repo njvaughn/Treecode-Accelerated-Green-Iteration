@@ -707,7 +707,7 @@ if __name__ == "__main__":
 #     nElectrons = comm.bcast(nElectrons, root=0)
 #     eigenvalues = comm.bcast(eigenvalues, root=0)
 #     referenceEigenvalues = comm.bcast(referenceEigenvalues, root=0)
-    eigenvalues = -4*np.ones(nOrbitals)
+    eigenvalues = -2*np.ones(nOrbitals)
     xSum2 = np.sqrt( global_dot(X,X,comm) ) 
     ySum2 = np.sqrt( global_dot(Y,Y,comm) ) 
     zSum2 = np.sqrt( global_dot(Z,Z,comm) ) 

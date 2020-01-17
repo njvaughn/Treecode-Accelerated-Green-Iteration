@@ -205,8 +205,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
     
         
-        if Energies['orbitalEnergies'][m]>0.0:
-#         if Energies['orbitalEnergies'][m]>Energies['gaugeShift']:
+#         if Energies['orbitalEnergies'][m]>0.0:
+        if Energies['orbitalEnergies'][m]>Energies['gaugeShift']:
 #             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - np.random.randint(10)
             rand = np.random.rand(1)
 #             Energies['orbitalEnergies'][m] = -2

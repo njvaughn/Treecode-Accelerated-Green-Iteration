@@ -1930,8 +1930,8 @@ class Cell(object):
                 for x in [self.xmax,self.xmin]:
                     for y in [self.ymin,self.ymax]:
                         for z in [self.zmin,self.zmax]:
-#                             d = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2)
-                            d = np.max(  [abs(x-atom.x), abs(y-atom.y), abs(z-atom.z)])
+                            d = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2)
+#                             d = np.max(  [abs(x-atom.x), abs(y-atom.y), abs(z-atom.z)])
                             distanceToNearestAtom = min(distanceToNearestAtom,d)
         
         # compute cell size
@@ -1946,17 +1946,17 @@ class Cell(object):
                 print("New inner cell size will be ", cellSideLength/2)
                 self.divideFlag=True
                 
-        elif distanceToNearestAtom<r+2*h*np.sqrt(1):  # if in the inner ring
+        elif distanceToNearestAtom<r+2*h*np.sqrt(3):  # if in the inner ring
             if cellSideLength > 2*h:
                 print("First annulus cell size will be ", cellSideLength/2)
                 self.divideFlag=True
         
-        elif distanceToNearestAtom<r+(2*h+4*h)*np.sqrt(1):  # if in the inner ring
+        elif distanceToNearestAtom<r+(2*h+4*h)*np.sqrt(3):  # if in the inner ring
             if cellSideLength > 4*h:
                 print("Second annulus cell size will be ", cellSideLength/2)
                 self.divideFlag=True
         
-        elif distanceToNearestAtom<r+(2*h+4*h+8*h)*np.sqrt(1):  # if in the inner ring
+        elif distanceToNearestAtom<r+(2*h+4*h+8*h)*np.sqrt(3):  # if in the inner ring
             if cellSideLength > 8*h:
                 print("Third annulus cell size will be ", cellSideLength/2)
                 self.divideFlag=True

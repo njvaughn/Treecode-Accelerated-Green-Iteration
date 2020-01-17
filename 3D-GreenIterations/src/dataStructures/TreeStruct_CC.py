@@ -675,7 +675,7 @@ class Tree(object):
 #             if cell.leaf==True:
 #                 cell.level = self.minDepth
 #         
-# #         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
+#         self.exportMeshVTK('/Users/nathanvaughn/Desktop/aspectRatioBefore2.vtk')
 
         def recursiveAspectRatioCheck(self,Cell):
        
@@ -1131,29 +1131,12 @@ class Tree(object):
 #         print("Computing derivative matrices (for Laplacian and Gradient Eigenvalue Updates).")
 #         self.computeDerivativeMatrices()
 # #         self.initializeDensityFromAtomicData()
-# 
-#         self.initializeDensityFromAtomicDataExternally()  # do this extrnal to the tree.  Roughly 10x faster than in the tree.
-#         
-#         ### INITIALIZE ORBTIALS AND DENSITY ####
-#                 # Only need to do this if wavefunctions aren't set during adaptive refinement
-#         # 
-#         if restart==False:
-#             if initializationType=='atomic':
-#                 if onlyFillOne == True:
-#                     self.initializeOrbitalsFromAtomicDataExternally(onlyFillOne=True)
-#                 else:
-#                     self.initializeOrbitalsFromAtomicDataExternally()
-#             elif initializationType=='random':
-#                 self.initializeOrbitalsRandomly()
-#             elif initializationType=='exponential':
-#                 self.initializeOrbitalsToDecayingExponential()
-#         else:
-#             print('Not initializing wavefunctions because using a restart file.')
+
         
         
-#         self.findNearestGridpointToEachAtom()
-#         for m in range(self.nOrbitals):
-#             self.printWavefunctionNearEachAtom(m)
+        self.findNearestGridpointToEachAtom()
+        for m in range(self.nOrbitals):
+            self.printWavefunctionNearEachAtom(m)
                     
         if printTreeProperties == True: 
             print("Tree build completed. \n"
@@ -3264,9 +3247,9 @@ class Tree(object):
                     v.append(gp.v_eff)
                     phi0.append(gp.phi[0])
                     phi1.append(gp.phi[1])
-                    phi2.append(gp.phi[2])
-                    phi3.append(gp.phi[3])
-                    phi4.append(gp.phi[4])
+#                     phi2.append(gp.phi[2])
+#                     phi3.append(gp.phi[3])
+#                     phi4.append(gp.phi[4])
 #                     phi5.append(gp.phi[5])
 #                     phi6.append(gp.phi[6])
 #                     phi7.append(gp.phi[7])
@@ -3313,6 +3296,11 @@ class Tree(object):
         pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
                     {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),
                     "Phi2" : np.array(phi2), "Phi3" : np.array(phi3), "Phi4" : np.array(phi4)  } )
+        
+        # 2 wavefunctions (oxygen)
+        pointsToVTK(filename, np.array(x), np.array(y), np.array(z), data = 
+                    {"rho" : np.array(rho), "V" : np.array(v),  "Phi0" : np.array(phi0), "Phi1" : np.array(phi1),
+                    "Phi2" : np.array(phi2)  } )
         
         
 #                      "Phi7" : np.array(phi7), "Phi8" : np.array(phi8), "Phi9" : np.array(phi9)})

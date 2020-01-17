@@ -137,7 +137,7 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     
     tree.finalDivideBasedOnNuclei(coordinateFile)
     
- 
+    tree.exportGridpoints
     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
 
 #     

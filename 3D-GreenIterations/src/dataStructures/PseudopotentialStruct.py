@@ -90,7 +90,7 @@ class ONCV_PSP(object):
     def setLocalPotentialInterpolator(self,verbose=0):
         r = np.array(self.psp['radial_grid'])
         local_potential = np.array(self.psp['local_potential'])   # upf_to_json has already done the Rydberg-to-Hartree conversion by dividing Vloc by 2
-        self.localPotentialInterpolator = InterpolatedUnivariateSpline(r,local_potential,k=1,ext='raise')
+        self.localPotentialInterpolator = InterpolatedUnivariateSpline(r,local_potential,k=3,ext='raise')
     
     def evaluateLocalPotentialInterpolator(self,r):
         nr=len(r)
@@ -124,7 +124,7 @@ class ONCV_PSP(object):
             
             self.projectorCutoffRadius=r[length_of_projector_data-1] 
             
-            self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[:length_of_projector_data],proj,k=1,ext='raise') # is ext='zeros' okay?  Could do some decay instead
+            self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[:length_of_projector_data],proj,k=3,ext='raise') # is ext='zeros' okay?  Could do some decay instead
 #             self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[1:length_of_projector_data],proj[1:]/r[1:length_of_projector_data],k=5,ext='raise') # is ext='zeros' okay?  Could do some decay instead
         return
     

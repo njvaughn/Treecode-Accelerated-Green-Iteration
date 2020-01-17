@@ -3,7 +3,7 @@
 
 
 cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
-DOMAIN=15
+DOMAIN=20
 SINGSUBT=1
 
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
@@ -20,7 +20,7 @@ INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
   
 
-VTKFILEDIR='None'
+VTKFILEDIR='/Users/nathanvaughn/Desktop/'
  
 
 GRADIENTFREE='True'
@@ -32,7 +32,7 @@ MAXPARNODE=4000
 BATCHSIZE=4000   
  
  
-GAUSSIANALPHA=2.0 
+GAUSSIANALPHA=1.0 
 GAUGESHIFT=-0.5
  
 MESHTYPE='ParentChildrenIntegral'  
@@ -46,7 +46,7 @@ GRADIENTFREE='True'
 MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
   
-INITIAL_GI_TOLERANCE=1e-5 
+INITIAL_GI_TOLERANCE=1e-3 
 FINAL_GI_TOLERANCE=1e-5
 GRADUALSTEPS=4
 SCF_TOLERANCE=5e-5
@@ -68,12 +68,19 @@ MESHPARAM4=0.0 # unused
 #MESHPARAM4=0.0 # unused
 
 
+#MAXSIDELENGTH=8
+#MESHPARAM1=0.25 # near field spacing 
+#MESHPARAM2=4.0 # far field spacing
+#MESHPARAM3=2.0 # ball radius
+#MESHPARAM4=0.0 # unused
+
+
 
 APPROXIMATIONNAME=lagrange
  
 for SINGULARITYHANDLING in subtraction 
 do
-for CELLORDER in 4
+for CELLORDER in 5
 do                                                       
 for TREECODEORDER in 8
 do         
