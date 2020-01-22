@@ -19,6 +19,7 @@ except OSError:
     print('Unable to import treecodeWrapper due to OSError')
     
 from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital as mgs
+from orthogonalizationRoutines import mask
 
 
 def greensIteration_FixedPoint_Closure(gi_args):
@@ -122,6 +123,13 @@ def greensIteration_FixedPoint_Closure(gi_args):
             exit(-1)
 #             gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](np.array([X,Y,Z,f,W]),np.array([X,Y,Z,f,W]),phiNew,k)
         
+        
+#         """ Apply MASK """
+#         print("=================APPLYING MASK===================")
+#         print("=================APPLYING MASK===================")
+#         print("=================APPLYING MASK===================")
+#         domainSize=np.max(X)
+#         phiNew = mask(phiNew,X,Y,Z,domainSize)
 
         
         """ Method where you dont compute kinetics, from Harrison """
@@ -205,8 +213,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
     
         
-#         if Energies['orbitalEnergies'][m]>0.0:
-        if Energies['orbitalEnergies'][m]>Energies['gaugeShift']:
+        if Energies['orbitalEnergies'][m]>0.0:
+#         if Energies['orbitalEnergies'][m]>Energies['gaugeShift']:
 #             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - np.random.randint(10)
             rand = np.random.rand(1)
 #             Energies['orbitalEnergies'][m] = -2

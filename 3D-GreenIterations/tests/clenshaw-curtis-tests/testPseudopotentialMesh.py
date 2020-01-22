@@ -4,6 +4,16 @@ Created on Jun 25, 2018
 @author: nathanvaughn
 '''
 import sys
+
+srcdir="/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/"
+sys.path.append(srcdir+'dataStructures')
+sys.path.append(srcdir+'Green-Iteration-Routines')
+sys.path.append(srcdir+'utilities')
+sys.path.append(srcdir+'../ctypesTests/src')
+
+sys.path.append(srcdir+'../ctypesTests')
+sys.path.append(srcdir+'../ctypesTests/lib')
+
 sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
 import itertools
@@ -27,11 +37,17 @@ from pyevtk.hl import unstructuredGridToVTK
 from pyevtk.vtk import VtkTriangle, VtkQuad, VtkPolygon, VtkVoxel, VtkHexahedron
 
 
-from meshUtilities import *
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
+sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
+from loadBalancer import loadBalance
+from mpiUtilities import global_dot, scatterArrays, rprint
+from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
+
+from mpiMeshBuilding import buildMeshFromMinimumDepthCells
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
 
 from TreeStruct_CC import Tree
-
 
 def find(a, x):
     'Locate the leftmost value exactly equal to x'
@@ -43,11 +59,9 @@ def find(a, x):
 
 
 
-def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
-                          divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
-                          smoothingEpsilon=0.0, 
-                          inputFile='', outputFile='',
-                          savedMesh=''):    
+def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation, 
+                          inputFile,outputFile,srcdir,order,gaugeShift,
+                          divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4):    
     
     
 #     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
@@ -56,39 +70,44 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
 #     nElectrons = int(nElectrons)
 #     nOrbitals = int(nOrbitals)
 
-    print('Reading atomic coordinates from: ', coordinateFile)
-    atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
-    if np.shape(atomData)==(5,):
-        nElectrons = atomData[3]
-    else:
-        nElectrons = 0
-        for i in range(len(atomData)):
-            nElectrons += atomData[i,3]
+#     print('Reading atomic coordinates from: ', coordinateFile)
+#     atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
+#     if np.shape(atomData)==(5,):
+#         nElectrons = atomData[3]
+#     else:
+#         nElectrons = 0
+#         for i in range(len(atomData)):
+#             nElectrons += atomData[i,3]
     
-#     nOrbitals = int( np.ceil(nElectrons/2))
-    nOrbitals = int( np.ceil(nElectrons/2)+1)
-
-    if inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
-        nOrbitals = 30
-        
-    if inputFile=='../src/utilities/molecularConfigurations/O2Auxiliary.csv':
-        nOrbitals = 10
-        
-    print('nElectrons = ', nElectrons)
-    print('nOrbitals  = ', nOrbitals)
     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
-    tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
-                coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
+#     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
+#                 coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
+# 
+#     
+#     print('max depth ', maxDepth)
+# #     tree.minimalBuildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+#     tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
+#                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
+#                     savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
+#     
+#     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_connected()
+    
+    # Set domain to be an integrer number of far-field cells
+    
+    
+    
+#     domainSize+=1/2*(maxSideLength-(2*domainSize)%maxSideLength)
+#     rprint(rank,"Max side length: ",maxSideLength)
+#     rprint(rank,"Domain length after adjustment: ", domainSize)
+#     rprint(rank," Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
+    
+    X,Y,Z,W,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues,tree = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
+                                                                                                     inputFile,outputFile,srcdir,order,gaugeShift,
+                                                                                                     MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4,saveTree=True)
+   
 
-    
-    print('max depth ', maxDepth)
-#     tree.minimalBuildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
-    tree.buildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
-                    divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-                    savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
-    
     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_connected()
-
+    
     print(XV)
     print(YV)
     print(ZV)
@@ -168,82 +187,11 @@ def exportMeshForParaview(domain,order,minDepth, maxDepth, additionalDepthAtAtom
 
     print('Meshes Exported.')
     
-#     tree.saveList = ['']
-#     for _,cell in tree.masterList:
-#         if cell.leaf==True:
-#             tree.saveList.insert(bisect.bisect_left(cell.tree.saveList, cell.uniqueID), [cell.uniqueID] )
-    #     cell.tree.masterList.insert(bisect.bisect_left(cell.tree.masterList, [children[i,j,k].uniqueID,]), [children[i,j,k].uniqueID,children[i,j,k]])
 
     
     return tree
 
-# def testDask(domain,order,minDepth, maxDepth, additionalDepthAtAtoms, divideCriterion, 
-#                           divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, 
-#                           smoothingEpsilon=0.0, 
-#                           inputFile='', outputFile='',
-#                           savedMesh=''):    
-#     
-#     
-# #     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
-#     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
-#     [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
-# #     nElectrons = int(nElectrons)
-# #     nOrbitals = int(nOrbitals)
-# 
-#     print('Reading atomic coordinates from: ', coordinateFile)
-#     atomData = np.genfromtxt(coordinateFile,delimiter=',',dtype=float)
-#     if np.shape(atomData)==(5,):
-#         nElectrons = atomData[3]
-#     else:
-#         nElectrons = 0
-#         for i in range(len(atomData)):
-#             nElectrons += atomData[i,3]
-#     
-# #     nOrbitals = int( np.ceil(nElectrons/2))
-#     nOrbitals = int( np.ceil(nElectrons/2)+1)
-# 
-#     if inputFile=='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv':
-#         nOrbitals = 30
-#         
-#     if inputFile=='../src/utilities/molecularConfigurations/O2Auxiliary.csv':
-#         nOrbitals = 10
-#         
-#     print('nElectrons = ', nElectrons)
-#     print('nOrbitals  = ', nOrbitals)
-#     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
-#     tree = Tree(-domain,domain,order,-domain,domain,order,-domain,domain,order,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
-#                 coordinateFile=coordinateFile,smoothingEps=smoothingEpsilon,inputFile=inputFile)#, iterationOutFile=outputFile)
-# 
-#     
-#     print('max depth ', maxDepth)
-#     tree.minimalBuildTree( maxLevels=maxDepth, initializationType='atomic',divideCriterion=divideCriterion, 
-#                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
-#                     savedMesh=savedMesh, printTreeProperties=True,onlyFillOne=False)
-#     
-#     x,y,z,w = tree.extractXYZ()
-#     return x,y,z,w
-# #     from dask.distributed import Client, progress
-# #     client = Client(processes=False, threads_per_worker=4,
-# #                     n_workers=1, memory_limit='2GB')
-# #     client
-#     CHUNKSIZE=10000
-#     X = da.from_array(x,chunks=(CHUNKSIZE,))
-#     Y = da.from_array(y,chunks=(CHUNKSIZE,))
-#     Z = da.from_array(z,chunks=(CHUNKSIZE,))
-#     W = da.from_array(w,chunks=(CHUNKSIZE,))
-#     nPoints = len(x)
-#     print(nPoints)
-#     print(X)
-#     print(type(x))
-#     print(type(X))
-#     tree=None
-#     
-#     wavefunctions = da.zeros( (nPoints,nOrbitals), chunks=(CHUNKSIZE,1) )
-#     Veff = da.zeros( (nPoints,), chunks=(CHUNKSIZE,))
-#     rho = da.zeros( (nPoints,), chunks=(CHUNKSIZE,))
-#     
-#     
-#     return
+
 
 
 
@@ -252,11 +200,50 @@ if __name__ == "__main__":
     gaugeShift=-0.5
 
     
-#     ## THIS WAS USED TO GENERATE FIGURES IN PAPER
+# #     ## THIS WAS USED TO GENERATE FIGURES IN PAPER
 #     tree = exportMeshForParaview(domain=30,order=5,
 #                         minDepth=3, maxDepth=20, additionalDepthAtAtoms=0, divideCriterion='ParentChildrenIntegral', 
 #                         divideParameter1=1500, divideParameter2=0, divideParameter3=1e-7, divideParameter4=4,
 #                         smoothingEpsilon=0.0,inputFile='../src/utilities/molecularConfigurations/benzeneAuxiliary.csv', 
 #                         outputFile='/Users/nathanvaughn/Desktop/meshTests/forPaper/benzene_1e-7_rotated2D',
-#                         savedMesh='')   
+#                         savedMesh='') 
 
+
+
+#     # Set domain to be an integrer number of far-field cells
+#     n=1
+#     domainSize          = int(sys.argv[n]); n+=1
+#     maxSideLength       = float(sys.argv[n]); n+=1
+#  
+#     print("original domain size: ", domainSize)
+#     remainder=(2*domainSize)%maxSideLength
+#     print("remainder: ", remainder)
+#     if remainder>0:
+#         domainSize+=1/2*(maxSideLength-remainder)
+#     print("Max side length: ",maxSideLength)
+#     print("Domain length after adjustment: ", domainSize)
+#     print(" Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
+
+
+
+    
+    inputFile=srcdir+'molecularConfigurations/berylliumAuxiliaryPSP.csv'
+    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/beryllium"
+    coreRepresentation="Pseudopotential"
+    MESHTYPE='coarsenedUniform'
+    order=4
+    gaugeShift=-0.5
+    domainSize=32
+    MAXSIDELENGTH=2*domainSize
+    MESHPARAM1=0.25 # near field spacing 
+    MESHPARAM2=8.0 # far field spacing
+    MESHPARAM3=2.0 # ball radius
+    MESHPARAM4=0.0 # unused  
+  
+    tree = exportMeshForParaview(domainSize,MAXSIDELENGTH,coreRepresentation, 
+                          inputFile,outputFile,srcdir,order,gaugeShift,
+                          MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
+     
+    
+    
+    

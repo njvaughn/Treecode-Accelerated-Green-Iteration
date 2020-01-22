@@ -46,7 +46,7 @@ def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=1):
     return cells
 
 def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inputFile,outputFile,srcdir,order,gaugeShift,
-                                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,verbose=0):
+                                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,verbose=0, saveTree=False):
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
@@ -103,15 +103,24 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     for i in range(len(cells)):
         if i%size==rank:
 #             print("CALLING refineCell ==================================================")
-            X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
-                                                                                         divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4)
+            if saveTree==False:
+                X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
+                                                                                        divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree)
+            elif saveTree==True:
+                X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
+                                                                                        divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree)
+            
             x=np.append(x,X)
             y=np.append(y,Y)
             z=np.append(z,Z)
             w=np.append(w,W)
-    return x,y,z,w,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+    
+    if saveTree==False:
+        return x,y,z,w,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+    elif saveTree==True:
+        return x,y,z,w,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
 
-def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0):
+def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0, saveTree=False):
     '''
     setUp() gets called before every test below.
     '''
@@ -144,8 +153,14 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     atoms = tree.atoms
     nPoints = len(X)
 
-    tree=None
-    return X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+    if saveTree==False:
+        tree=None
+        return X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+    elif saveTree==True:
+        return X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
+    else:
+        print("What should saveTree be set to?")
+        exit(-1)
 
 
 if __name__=="__main__":

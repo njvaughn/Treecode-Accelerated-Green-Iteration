@@ -1941,22 +1941,24 @@ class Cell(object):
         
         
         # detemine if cell should be refined
-        if distanceToNearestAtom<r:  # if in the inner ring
+        if cellSideLength>H:
+            self.divideFlag=True
+        elif distanceToNearestAtom<r:  # if in the inner ring
             if cellSideLength > h:
                 print("New inner cell size will be ", cellSideLength/2)
                 self.divideFlag=True
                 
-        elif distanceToNearestAtom<r+2*h*np.sqrt(3):  # if in the inner ring
+        elif distanceToNearestAtom<r+2*h*np.sqrt(1):  # if in the inner ring
             if cellSideLength > 2*h:
                 print("First annulus cell size will be ", cellSideLength/2)
                 self.divideFlag=True
         
-        elif distanceToNearestAtom<r+(2*h+4*h)*np.sqrt(3):  # if in the inner ring
+        elif distanceToNearestAtom<r+(2*h+4*h)*np.sqrt(1):  # if in the inner ring
             if cellSideLength > 4*h:
                 print("Second annulus cell size will be ", cellSideLength/2)
                 self.divideFlag=True
         
-        elif distanceToNearestAtom<r+(2*h+4*h+8*h)*np.sqrt(3):  # if in the inner ring
+        elif distanceToNearestAtom<r+(2*h+4*h+8*h)*np.sqrt(1):  # if in the inner ring
             if cellSideLength > 8*h:
                 print("Third annulus cell size will be ", cellSideLength/2)
                 self.divideFlag=True

@@ -1,5 +1,14 @@
 #!/bin/bash
-
+#SBATCH --job-name="comet-testing"
+#SBATCH --output="dataFiles/silicon_sweep--%j.%N.out"
+#SBATCH --partition=gpu-shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=7
+#SBATCH --no-requeue
+#SBATCH --gres=gpu:p100:1
+#SBATCH -t 04:00:00
+#SBATCH -A mia199
+#SBATCH --constraint=exclusive
 
 
 cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
@@ -15,8 +24,8 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 
 
 COREREPRESENTATION="Pseudopotential"
-#INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
-INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
   
 
@@ -70,29 +79,29 @@ MESHPARAM3=2.0 # ball radius
 #MESHPARAM3=1.5 # ball radius
 
 
-MAXSIDELENGTH=8
-MESHPARAM1=0.25 # near field spacing 
-MESHPARAM2=4.0 # far field spacing
-MESHPARAM3=2.0 # ball radius
+#MAXSIDELENGTH=8
+#MESHPARAM1=0.25 # near field spacing 
+#MESHPARAM2=8.0 # far field spacing
+#MESHPARAM3=2.0 # ball radius
 
 
 
-APPROXIMATIONNAME=hermite
+APPROXIMATIONNAME=lagrange
 SINGULARITYHANDLING=subtraction
 for GAUSSIANALPHA in 0.5 
 do
-for CELLORDER in 4
+for CELLORDER in 3 4 5 6 7
 do                                                       
-for TREECODEORDER in 4
+for TREECODEORDER in 6
 do         
     for THETA in 0.7
     do   
         for MIXING in 'Anderson'            
         do 
 
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/N_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/silicon/N_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
         
-        mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
+        mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

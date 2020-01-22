@@ -27,6 +27,7 @@ import mpi4py.MPI as MPI
 
 
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
 sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
 from loadBalancer import loadBalance
 from mpiUtilities import global_dot, scatterArrays, rprint
@@ -167,6 +168,14 @@ def clenshawCurtisNormClosure(W):
         return norm
     return clenshawCurtisNorm
 
+
+def initializeOrbitalsRandomly(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z):
+    print("INITIALIZING ORBITALS RANDOMLY")
+    orbitals = np.random.rand(len(X),nOrbitals)
+    return orbitals
+
+    
+    
 def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z): 
         aufbauList = ['10',                                     # n+ell = 1
                       '20',                                     # n+ell = 2
@@ -183,8 +192,8 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
                 
             
             
-            rprint(rank,'Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
-                      %(atom.atomicNumber, atom.x,atom.y,atom.z))
+            rprint(rank,'Initializing orbitals for atom Z = %i (%i atomic orbitals) located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+                      %(atom.atomicNumber, atom.nAtomicOrbitals, atom.x,atom.y,atom.z))
             rprint(rank,'Orbital index = %i'%orbitalIndex)            
             singleAtomOrbitalCount=0
             for nell in aufbauList:
@@ -196,45 +205,50 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
 #                     print('Using ', psiID)
                     for m in range(-ell,ell+1):
                         
-                        dx = X-atom.x
-                        dy = Y-atom.y
-                        dz = Z-atom.z
-                        phi = np.zeros(len(dx))
-                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
-                        inclination = np.arccos(dz/r)
-#                         print('Type(dx): ', type(dx))
-#                         print('Type(dy): ', type(dy))
-#                         print('Shape(dx): ', np.shape(dx))
-#                         print('Shape(dy): ', np.shape(dy))
-                        azimuthal = np.arctan2(dy,dx)
-                        
-                        if m<0:
-                            Ysp = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
-                        if m>0:
-                            Ysp = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
-#                                     if ( (m==0) and (ell>1) ):
-                        if ( m==0 ):
-                            Ysp = sph_harm(m,ell,azimuthal,inclination)
-#                                     if ( (m==0) and (ell<=1) ):
-#                                         Y = 1
-                        if np.max( abs(np.imag(Ysp)) ) > 1e-14:
-                            print('imag(Y) ', np.imag(Ysp))
-                            return
-#                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
-#                         phi = atom.interpolators[psiID](r)*np.real(Y)
-                        try:
-                            phi = atom.interpolators[psiID](r)*np.real(Ysp)
-                        except ValueError:
-                            phi = 0.0   # if outside the interpolation range, assume 0.
-                        
-                        
-                        orbitals[:,orbitalIndex] = np.copy(phi)
-#                         self.importPhiOnLeaves(phi, orbitalIndex)
-#                         self.normalizeOrbital(orbitalIndex)
-                        
-                        rprint(rank,'Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
-                        orbitalIndex += 1
-                        singleAtomOrbitalCount += 1
+                        if psiID in atom.interpolators:  # pseudopotentials don't start from 10, 20, 21,... they start from the valence, such as 30, 31, ...
+                            dx = X-atom.x
+                            dy = Y-atom.y
+                            dz = Z-atom.z
+                            phi = np.zeros(len(dx))
+                            r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                            inclination = np.arccos(dz/r)
+    #                         print('Type(dx): ', type(dx))
+    #                         print('Type(dy): ', type(dy))
+    #                         print('Shape(dx): ', np.shape(dx))
+    #                         print('Shape(dy): ', np.shape(dy))
+                            azimuthal = np.arctan2(dy,dx)
+                            
+                            if m<0:
+                                Ysp = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                            if m>0:
+                                Ysp = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+    #                                     if ( (m==0) and (ell>1) ):
+                            if ( m==0 ):
+                                Ysp = sph_harm(m,ell,azimuthal,inclination)
+    #                                     if ( (m==0) and (ell<=1) ):
+    #                                         Y = 1
+                            if np.max( abs(np.imag(Ysp)) ) > 1e-14:
+                                print('imag(Y) ', np.imag(Ysp))
+                                return
+    #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+    #                         phi = atom.interpolators[psiID](r)*np.real(Y)
+                            try:
+                                phi = atom.interpolators[psiID](r)*np.real(Ysp)
+                            except ValueError:
+                                phi = 0.0   # if outside the interpolation range, assume 0.
+                            except KeyError:
+                                for key, value in atom.interpolators.items() :
+                                    print (key, value)
+                                exit(-1)
+                            
+                            
+                            orbitals[:,orbitalIndex] = np.copy(phi)
+    #                         self.importPhiOnLeaves(phi, orbitalIndex)
+    #                         self.normalizeOrbital(orbitalIndex)
+                            
+                            rprint(rank,'Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
+                            orbitalIndex += 1
+                            singleAtomOrbitalCount += 1
                     
 #                 else:
 #                     n = int(nell[0])
@@ -286,6 +300,7 @@ def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms,coreRepresentation):
         rprint(rank,"cumulative number of electrons: ", totalElectrons)
 
 
+#     print("NOT NORMALIZING INITIAL DENSITY.")
     rho *= totalElectrons / global_dot(rho,w,comm)
     
     return rho
@@ -519,6 +534,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     residuals = 10*np.ones_like(Energies['orbitalEnergies'])
     
     referenceEnergies = {'Etotal':Etotal,'Eband':Eband,'Ehartree':Ehartree,'Eexchange':Eexchange,'Ecorrelation':Ecorrelation}
+    referenceEnergies["Eelectrostatic"] = -4.0103432928895426 # DFT-FE value for single Beryllium atom
     scf_args={'inputDensities':inputDensities,'outputDensities':outputDensities,'SCFcount':SCFcount,'nPoints':nPoints,'nOrbitals':nOrbitals,'mixingHistoryCutoff':mixingHistoryCutoff,
                'GPUpresent':GPUpresent,'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta,'maxParNode':maxParNode,'batchSize':batchSize,'gaussianAlpha':gaussianAlpha,
                'Energies':Energies,'Times':Times,'exchangeFunctional':exchangeFunctional,'correlationFunctional':correlationFunctional,
@@ -655,8 +671,11 @@ if __name__ == "__main__":
     
     
     # Set domain to be an integrer number of far-field cells
-    
-    domainSize+=1/2*(maxSideLength-(2*domainSize)%maxSideLength)
+    rprint(rank,"original domain size: ", domainSize)
+    remainder=(2*domainSize)%maxSideLength
+    print("remainder: ", remainder)
+    if remainder>0:
+        domainSize+=1/2*(maxSideLength-remainder)
     rprint(rank,"Max side length: ",maxSideLength)
     rprint(rank,"Domain length after adjustment: ", domainSize)
     rprint(rank," Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
@@ -728,6 +747,7 @@ if __name__ == "__main__":
         orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
     elif coreRepresentation=="Pseudopotential":
         orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
+#         orbitals = initializeOrbitalsRandomly(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
     print("Max of first wavefunction: ", np.max(np.abs(orbitals[:,0])))
 #     print('nOrbitals: ', nOrbitals)
     comm.barrier()

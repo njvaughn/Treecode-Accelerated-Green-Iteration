@@ -168,13 +168,15 @@ def scfFixedPointClosure(scf_args):
 #             print("Rank %i calling treecode through wrapper..." %(rank))
             kernelName = "coulomb"
             verbosity=0
+#             singularityHandling="skipping"
+#             print("Forcing the Hartree solve to use singularity skipping.")
             V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
                                                            kernelName, gaussianAlpha, singularityHandling, approximationName,
                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, verbosity)
             
-#                 V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
+#             V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
             
             
             Times['timePerConvolution'] = MPI.Wtime()-start
@@ -194,9 +196,17 @@ def scfFixedPointClosure(scf_args):
 #         VhartreeNorm = np.sqrt( global_dot(W,V_hartreeNew*V_hartreeNew, comm) )
 #         rprint(rank,"VHartreeNew norm = ", VhartreeNorm)
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
+        FIRST_SCF_ELECTROSTATICS_DFTFE=-4.0049522077687829e+00
         if abortAfterInitialHartree==True:
+            Energies["Repulsion"] = global_dot(RHO, Vext_local*W, comm)
+        
+            Energies['totalElectrostatic'] = Energies["Ehartree"] + Energies["Enuclear"] + Energies["Repulsion"]
             rprint(rank,"Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
+#             rprint(rank,"Electrostatics error after initial convolution: ", Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"])
+            rprint(rank,"Electrostatics error after initial convolution: ", Energies['totalElectrostatic']-FIRST_SCF_ELECTROSTATICS_DFTFE)
             return np.zeros(nPoints)
+        
+        
     
         exchangeOutput = exchangeFunctional.compute(RHO)
         correlationOutput = correlationFunctional.compute(RHO)
@@ -221,7 +231,7 @@ def scfFixedPointClosure(scf_args):
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
             for m in range(nOrbitals):
-                Energies['orbitalEnergies'][m]=-4
+                Energies['orbitalEnergies'][m]=-1.0
 # #             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
 # #             for m in range(nOrbitals):
 # #                 if Energies['orbitalEnergies'][m] > 0:
@@ -233,12 +243,13 @@ def scfFixedPointClosure(scf_args):
            
         
         ## Solve the eigenvalue problem
-        fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
-        eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
-        rprint(rank,'Fermi energy: %f'%eF)
-        exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
-        previousOccupations = 2*1/(1+np.exp( exponentialArg ) )
-        if SCFcount<2: 
+        if SCFcount>1:
+            fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
+            eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
+            rprint(rank,'Fermi energy: %f'%eF)
+            exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
+            previousOccupations = 2*1/(1+np.exp( exponentialArg ) )
+        elif SCFcount==1: 
             previousOccupations = np.ones(nOrbitals)
         for m in range(nOrbitals): 
             if previousOccupations[m] > 1e-20:
@@ -294,7 +305,7 @@ def scfFixedPointClosure(scf_args):
 
                 
                 comm.barrier()
-                while ( (resNorm> max(2e-1,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
+                while ( (resNorm> max(1e-4,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     #                 GPUtil.showUtilization()
@@ -418,7 +429,7 @@ def scfFixedPointClosure(scf_args):
                       
                       
                     ## Compute next input wavefunctions
-#                     print('Anderson mixing on the orbital.')
+                    rprint(rank,'Anderson mixing on the orbital.')
                     GImixingParameter=0.5
                     andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
                     Energies['orbitalEnergies'][m] = andersonOrbital[-1]
@@ -537,10 +548,11 @@ def scfFixedPointClosure(scf_args):
         rprint(rank,'Density Residual ', densityResidual)
         
         
+        Energies["Repulsion"] = global_dot(newDensity, Vext_local*W, comm)
         
         Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
         Energies['Etotal'] = Energies['Eband'] - Energies['Ehartree'] + Energies['Ex'] + Energies['Ec'] - Energies['Vx'] - Energies['Vc'] + Energies['Enuclear']
-        
+        Energies['totalElectrostatic'] = Energies["Ehartree"] + Energies["Enuclear"] + Energies["Repulsion"]
         
         ## This might not be needed, because Eext is already captured in the band energy, which includes both local and nonlocal
 #         if coreRepresentation=="Pseudopotential":
@@ -576,7 +588,8 @@ def scfFixedPointClosure(scf_args):
         rprint(rank,'Updated E_Hartree:                      %.10f H, %.10e H' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
         rprint(rank,'Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
         rprint(rank,'Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
-    #         print('Updated totalElectrostatic:            %.10f H, %.10e H' %(tree.totalElectrostatic, tree.totalElectrostatic-Eelectrostatic))
+        rprint(rank,'Updated totalElectrostatic:            %.10f H, %.10e H' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"]))
+        rprint(rank,'Electrostatics w.r.t. SCF 1:           %.10f H, %.10e H' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-FIRST_SCF_ELECTROSTATICS_DFTFE))
         rprint(rank,'Total Energy:                          %.10f H, %.10e H' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
         rprint(rank,'Energy Residual:                        %.3e' %energyResidual)
         rprint(rank,'Density Residual:                       %.3e\n\n'%densityResidual)

@@ -2,7 +2,7 @@
 @author: nathanvaughn
 '''
 import numpy as np
-from scipy.interpolate import InterpolatedUnivariateSpline
+from scipy.interpolate import InterpolatedUnivariateSpline, CubicSpline
 import os
 import upf_to_json 
 
@@ -18,8 +18,9 @@ class ONCV_PSP(object):
         PSP Constructor
         '''
         self.atomicNumber=atomicNumber
-        pspFile_local = "/Users/nathanvaughn/Desktop/ONCV_PSPs_Z/"+str(atomicNumber)+"_ONCV_PBE-1.0.upf"
-        pspFile_remote = "/home/njvaughn/ONCV_PSPs_Z/"+str(atomicNumber)+"_ONCV_PBE-1.0.upf"
+        self.atomicNumberToAtomicSymbol()
+        pspFile_local = "/Users/nathanvaughn/Desktop/ONCV_PSPs_Z/"+self.atomicSymbol+"_ONCV_PBE-1.0.upf"
+        pspFile_remote = "/home/njvaughn/ONCV_PSPs_Z/"+self.atomicSymbol+"_ONCV_PBE-1.0.upf"
         try:
             upf_str = open(pspFile_local, 'r').read()
             pspFile = pspFile_local
@@ -33,12 +34,21 @@ class ONCV_PSP(object):
         self.setDensityInterpolator()
         self.setLocalPotentialInterpolator()
         
+    def atomicNumberToAtomicSymbol(self):
+        if self.atomicNumber==4:
+            self.atomicSymbol="Be"
+        elif self.atomicNumber==14:
+            self.atomicSymbol="Si"
+        else:
+            print("Need to add atomic number %i to ONCV_PSP.atomicNumberToAtomicSymbol()")
+            exit(-1)
+        
     def setDensityInterpolator(self,verbose=0):
         r = np.array(self.psp['radial_grid'])
         self.maxRadialGrid = r[-1]
         density = np.array(self.psp['total_charge_density'])
         ## Is it okay to set the boundary condition to zero?  
-        self.densityInterpolator = InterpolatedUnivariateSpline(r[1:],density[1:],k=3,ext='raise')
+        self.densityInterpolator = InterpolatedUnivariateSpline(r[:],density[:],k=3,ext='raise')
         
         # Setup decaying exponential for extrapolation beyond rcutoff.
         a = r[-3]
@@ -84,13 +94,15 @@ class ONCV_PSP(object):
                 if r[i]>self.radialCutoff:
                     Rho[i] = self.densityFarFieldExtrapolationFunction(r[i]) / (4*np.pi*r[i]*r[i])
                 elif r[i]<self.innerCutoff:
-                    Rho[i] = self.densityNearFieldExtrapolation(r[i]) # already has 4pirr taken care of
+                    print("DENSITY INTERPOLATOR FAILED EVALUATING")
+                    exit(-1)
+#                     Rho[i] = self.densityNearFieldExtrapolation(r[i]) # already has 4pirr taken care of
         return Rho
         
     def setLocalPotentialInterpolator(self,verbose=0):
         r = np.array(self.psp['radial_grid'])
         local_potential = np.array(self.psp['local_potential'])   # upf_to_json has already done the Rydberg-to-Hartree conversion by dividing Vloc by 2
-        self.localPotentialInterpolator = InterpolatedUnivariateSpline(r,local_potential,k=3,ext='raise')
+        self.localPotentialInterpolator = InterpolatedUnivariateSpline(r,local_potential,k=1,ext='raise')
     
     def evaluateLocalPotentialInterpolator(self,r):
         nr=len(r)
@@ -100,6 +112,39 @@ class ONCV_PSP(object):
                 Vloc[i] =  self.localPotentialInterpolator(r[i])
             except ValueError:
                 Vloc[i] = -self.psp['header']['z_valence']/r[i]
+        return Vloc
+    
+    def NEW_setLocalPotentialInterpolator(self,verbose=0):
+        r = np.array(self.psp['radial_grid'])
+        local_potential = np.array(self.psp['local_potential'])   # upf_to_json has already done the Rydberg-to-Hartree conversion by dividing Vloc by 2
+        
+        # left boundary slope (compute slope across last two points, specify this as the left slope)
+        a=r[0]
+        b=r[1]
+        fa=local_potential[0]
+        fb=local_potential[1]
+        slopeL = (fb-fa)/(b-a)
+        
+        # right boundary slope  (should be the same as slope of -Z/r, Z/r^2
+#         slopeR = self.psp['header']['z_valence']/r[-1]**2
+        slopeR = -local_potential[-1]/r[-1]
+        
+        self.localPotentialInterpolator = CubicSpline(r,local_potential,bc_type=((2,slopeL),(2,slopeR)),extrapolate=False)
+        
+    
+    def NEW_evaluateLocalPotentialInterpolator(self,r):
+        nr=len(r)
+        Vloc = np.zeros(nr)
+        for i in range(nr):
+            try:
+                Vloc[i] =  self.localPotentialInterpolator(r[i])
+                if np.isnan(Vloc[i]):
+                    raise ValueError
+            except ValueError:
+                if r[i]>self.radialCutoff:
+                    Vloc[i] = -self.psp['header']['z_valence']/r[i]
+                else:
+                    print("Warning: local PSP interpolator threw an error, not due to extrapolation beyond cutoff radius.")
         return Vloc
         
     def setProjectorInterpolators(self,verbose=0):
