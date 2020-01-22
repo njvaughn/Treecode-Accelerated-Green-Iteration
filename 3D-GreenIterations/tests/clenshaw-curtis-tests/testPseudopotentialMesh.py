@@ -227,16 +227,17 @@ if __name__ == "__main__":
 
 
     
-    inputFile=srcdir+'molecularConfigurations/berylliumAuxiliaryPSP.csv'
-    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/beryllium"
+    inputFile=srcdir+'molecularConfigurations/SiliconClusterAuxiliaryPSP.csv'
+#     inputFile=srcdir+'molecularConfigurations/berylliumAuxiliaryPSP.csv'
+    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/SiCluster"
     coreRepresentation="Pseudopotential"
     MESHTYPE='coarsenedUniform'
-    order=4
+    order=6
     gaugeShift=-0.5
-    domainSize=32
+    domainSize=24
     MAXSIDELENGTH=2*domainSize
-    MESHPARAM1=0.25 # near field spacing 
-    MESHPARAM2=8.0 # far field spacing
+    MESHPARAM1=0.375 # near field spacing 
+    MESHPARAM2=6.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
     MESHPARAM4=0.0 # unused  
   

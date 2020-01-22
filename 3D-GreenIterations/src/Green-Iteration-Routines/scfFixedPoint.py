@@ -23,7 +23,7 @@ from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 
 
 
-
+ 
 Temperature = 500
 KB = 1/315774.6
 Sigma = Temperature*KB

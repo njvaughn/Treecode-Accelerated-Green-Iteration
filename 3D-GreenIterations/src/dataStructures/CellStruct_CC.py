@@ -1924,7 +1924,7 @@ class Cell(object):
         distanceToNearestAtom = 10+H
         for atom in self.tree.atoms:
             if ( (atom.x<self.xmax) and (atom.y<self.ymax) and (atom.z<self.zmax) and
-                 (atom.x>self.xmin) and (atom.y>self.xmin) and (atom.z>self.zmin) ): # atom is in cell
+                 (atom.x>self.xmin) and (atom.y>self.ymin) and (atom.z>self.zmin) ): # atom is in cell
                 distanceToNearestAtom=0
             else:
                 for x in [self.xmax,self.xmin]:

@@ -2,7 +2,7 @@
 @author: nathanvaughn
 '''
 import numpy as np
-from scipy.interpolate import InterpolatedUnivariateSpline, CubicSpline
+from scipy.interpolate import InterpolatedUnivariateSpline, CubicSpline, UnivariateSpline
 import os
 import upf_to_json 
 
@@ -99,12 +99,13 @@ class ONCV_PSP(object):
 #                     Rho[i] = self.densityNearFieldExtrapolation(r[i]) # already has 4pirr taken care of
         return Rho
         
-    def setLocalPotentialInterpolator(self,verbose=0):
+    def OLD_setLocalPotentialInterpolator(self,verbose=0):
         r = np.array(self.psp['radial_grid'])
         local_potential = np.array(self.psp['local_potential'])   # upf_to_json has already done the Rydberg-to-Hartree conversion by dividing Vloc by 2
-        self.localPotentialInterpolator = InterpolatedUnivariateSpline(r,local_potential,k=1,ext='raise')
-    
-    def evaluateLocalPotentialInterpolator(self,r):
+        self.localPotentialInterpolator = InterpolatedUnivariateSpline(r,local_potential,k=3,ext='raise')
+#         self.localPotentialInterpolator = UnivariateSpline(r,local_potential,k=1,s=0.01,ext='raise')
+      
+    def OLD_evaluateLocalPotentialInterpolator(self,r):
         nr=len(r)
         Vloc = np.zeros(nr)
         for i in range(nr):
@@ -114,7 +115,7 @@ class ONCV_PSP(object):
                 Vloc[i] = -self.psp['header']['z_valence']/r[i]
         return Vloc
     
-    def NEW_setLocalPotentialInterpolator(self,verbose=0):
+    def setLocalPotentialInterpolator(self,verbose=0):
         r = np.array(self.psp['radial_grid'])
         local_potential = np.array(self.psp['local_potential'])   # upf_to_json has already done the Rydberg-to-Hartree conversion by dividing Vloc by 2
         
@@ -129,10 +130,10 @@ class ONCV_PSP(object):
 #         slopeR = self.psp['header']['z_valence']/r[-1]**2
         slopeR = -local_potential[-1]/r[-1]
         
-        self.localPotentialInterpolator = CubicSpline(r,local_potential,bc_type=((2,slopeL),(2,slopeR)),extrapolate=False)
+        self.localPotentialInterpolator = CubicSpline(r,local_potential,bc_type=((1,slopeL),(1,slopeR)),extrapolate=False)
         
     
-    def NEW_evaluateLocalPotentialInterpolator(self,r):
+    def evaluateLocalPotentialInterpolator(self,r):
         nr=len(r)
         Vloc = np.zeros(nr)
         for i in range(nr):

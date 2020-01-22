@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/silicon_sweep--%j.%N.out"
+#SBATCH --output="dataFiles/beryllium_sweep--%j.%N.out"
 #SBATCH --partition=gpu-shared
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=7
@@ -24,8 +24,8 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 
 
 COREREPRESENTATION="Pseudopotential"
-INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
-#INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
   
 
@@ -37,8 +37,8 @@ SYMMETRICITERATION='False'
 GPUPRESENT='True'
  
 TREECODE='True'      
-MAXPARNODE=8000
-BATCHSIZE=8000   
+MAXPARNODE=4000
+BATCHSIZE=4000   
  
  
 GAUSSIANALPHA=0.5 
@@ -65,9 +65,9 @@ MESHPARAM4=0.0 # unused
 
 
 MESHTYPE='coarsenedUniform'
-DOMAIN=24
+DOMAIN=16
 
-MAXSIDELENGTH=48
+MAXSIDELENGTH=32
 MESHPARAM1=0.5 # near field spacing 
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
@@ -79,10 +79,10 @@ MESHPARAM3=2.0 # ball radius
 #MESHPARAM3=1.5 # ball radius
 
 
-#MAXSIDELENGTH=8
-#MESHPARAM1=0.25 # near field spacing 
-#MESHPARAM2=8.0 # far field spacing
-#MESHPARAM3=2.0 # ball radius
+MAXSIDELENGTH=8
+MESHPARAM1=0.25 # near field spacing 
+MESHPARAM2=4.0 # far field spacing
+MESHPARAM3=2.0 # ball radius
 
 
 
@@ -92,14 +92,14 @@ for GAUSSIANALPHA in 0.5
 do
 for CELLORDER in 3 4 5 6 7
 do                                                       
-for TREECODEORDER in 6
+for TREECODEORDER in 8
 do         
     for THETA in 0.7
     do   
         for MIXING in 'Anderson'            
         do 
 
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/silicon/N_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/N_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
         
         mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
