@@ -3,7 +3,7 @@
 
 cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Green-Iteration-Routines/
 
-DOMAIN=22
+DOMAIN=16
 SINGSUBT=1
 
 SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
@@ -76,7 +76,7 @@ APPROXIMATIONNAME=lagrange
 
 for SINGULARITYHANDLING in subtraction
 do
-for CELLORDER in 3
+for CELLORDER in 4
 do								  	 				     
 for TREECODEORDER in 8
 do         

@@ -115,6 +115,9 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
             z=np.append(z,Z)
             w=np.append(w,W)
     
+    
+    ## BUG HERE WHEN RANKS=6.  Need every rank to refine at least one cell.
+#     nPoints=len(x)
     if saveTree==False:
         return x,y,z,w,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
     elif saveTree==True:

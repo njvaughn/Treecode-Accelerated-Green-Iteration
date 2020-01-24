@@ -5,6 +5,7 @@ import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline, CubicSpline, UnivariateSpline
 import os
 import upf_to_json 
+import time
 
 
 
@@ -48,7 +49,7 @@ class ONCV_PSP(object):
         self.maxRadialGrid = r[-1]
         density = np.array(self.psp['total_charge_density'])
         ## Is it okay to set the boundary condition to zero?  
-        self.densityInterpolator = InterpolatedUnivariateSpline(r[:],density[:],k=3,ext='raise')
+        self.densityInterpolator = InterpolatedUnivariateSpline(r[:],density[:],k=3,ext='zeros')
         
         # Setup decaying exponential for extrapolation beyond rcutoff.
         a = r[-3]
@@ -85,18 +86,21 @@ class ONCV_PSP(object):
         return self.densityNearFieldLinearSlope * (r-self.innerCutoff) + self.densityNearFieldHeight
         
     def evaluateDensityInterpolator(self,r):
-        nr=len(r)
-        Rho = np.zeros(nr) 
-        for i in range(nr):
-            try:
-                Rho[i] = self.densityInterpolator(r[i]) / (4*np.pi*r[i]*r[i])
-            except ValueError:
-                if r[i]>self.radialCutoff:
-                    Rho[i] = self.densityFarFieldExtrapolationFunction(r[i]) / (4*np.pi*r[i]*r[i])
-                elif r[i]<self.innerCutoff:
-                    print("DENSITY INTERPOLATOR FAILED EVALUATING")
-                    exit(-1)
-#                     Rho[i] = self.densityNearFieldExtrapolation(r[i]) # already has 4pirr taken care of
+        
+        Rho = np.where( r<self.radialCutoff, self.densityInterpolator(r) / (4*np.pi*r*r) ,self.densityFarFieldExtrapolationFunction(r) / (4*np.pi*r*r) )
+
+#         nr=len(r)
+#         Rho = np.zeros(nr) 
+#         for i in range(nr):
+#             try:
+#                 Rho[i] = self.densityInterpolator(r[i]) / (4*np.pi*r[i]*r[i])
+#             except ValueError:
+#                 if r[i]>self.radialCutoff:
+#                     Rho[i] = self.densityFarFieldExtrapolationFunction(r[i]) / (4*np.pi*r[i]*r[i])
+#                 elif r[i]<self.innerCutoff:
+#                     print("DENSITY INTERPOLATOR FAILED EVALUATING")
+#                     exit(-1)
+# #                     Rho[i] = self.densityNearFieldExtrapolation(r[i]) # already has 4pirr taken care of
         return Rho
         
     def OLD_setLocalPotentialInterpolator(self,verbose=0):
@@ -130,23 +134,33 @@ class ONCV_PSP(object):
 #         slopeR = self.psp['header']['z_valence']/r[-1]**2
         slopeR = -local_potential[-1]/r[-1]
         
-        self.localPotentialInterpolator = CubicSpline(r,local_potential,bc_type=((1,slopeL),(1,slopeR)),extrapolate=False)
+        self.localPotentialInterpolator = CubicSpline(r,local_potential,bc_type=((1,slopeL),(1,slopeR)),extrapolate=True)
         
     
-    def evaluateLocalPotentialInterpolator(self,r):
-        nr=len(r)
-        Vloc = np.zeros(nr)
-        for i in range(nr):
-            try:
-                Vloc[i] =  self.localPotentialInterpolator(r[i])
-                if np.isnan(Vloc[i]):
-                    raise ValueError
-            except ValueError:
-                if r[i]>self.radialCutoff:
-                    Vloc[i] = -self.psp['header']['z_valence']/r[i]
-                else:
-                    print("Warning: local PSP interpolator threw an error, not due to extrapolation beyond cutoff radius.")
+    def evaluateLocalPotentialInterpolator(self,r,timer=False):
+        # use np.where to convert this to two vectorized calls, one to the interpolator for r<self.maxRadialGrid, one for r>
+        # this requires changing the 'raise' to 'zeros' or something else.  The far field is handled with the where, not by the intepolator.
+        # For cubic spline, use Extrapolate=True.  This way the call won't raise an exception.  The extrapolation will actually be done with np.where.
+        if timer==True: start=time.time()
+        Vloc = np.where(r<self.maxRadialGrid, self.localPotentialInterpolator(r), -self.psp['header']['z_valence']/r)
+        if timer==True: end=time.time()
+        if timer==True: print("Evaluating Vloc interpolator took %f seconds." %(end-start))
+
+#         nr=len(r)
+#         Vloc = np.zeros(nr)
+#         for i in range(nr):
+#             try:
+#                 Vloc[i] =  self.localPotentialInterpolator(r[i])
+#                 if np.isnan(Vloc[i]):
+#                     raise ValueError
+#             except ValueError:
+#                 if r[i]>self.radialCutoff:
+#                     Vloc[i] = -self.psp['header']['z_valence']/r[i]
+#                 else:
+#                     print("Warning: local PSP interpolator threw an error, not due to extrapolation beyond cutoff radius.")
         return Vloc
+    
+    
         
     def setProjectorInterpolators(self,verbose=0):
         
@@ -174,12 +188,14 @@ class ONCV_PSP(object):
 #             self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[1:length_of_projector_data],proj[1:]/r[1:length_of_projector_data],k=5,ext='raise') # is ext='zeros' okay?  Could do some decay instead
         return
     
-    def evaluateProjectorInterpolator(self,idx,r):
+    def evaluateProjectorInterpolator(self,idx,r,timer=False):
         # if zeroes are okay for the extrapolation, then this is okay.  If not, then need to wrap in try/except.
         # However, for 1 million points, the try/except method takes 8.5 seconds, the vectorized method takes 0.034 seconds.  Big difference.
 #         return self.projectorInterpolators[str(idx)](r)/r ## dividing by r because it UPF manual says the provided fields are really r*Beta
-        nr=len(r)
+        if timer==True: start=time.time()
         output =  self.projectorInterpolators[str(idx)](r)/r
+        
+#         nr=len(r)
 #         output = np.zeros(nr)
 #         for i in range(nr):
 #             try:
@@ -197,6 +213,8 @@ class ONCV_PSP(object):
 #                     print("Inner and outer cutoffs: ", self.innerCutoff, self.projectorCutoffRadius)
 #                     print("ValueError: ", VE)
 #                     exit(-1)
+        if timer==True: end=time.time()
+        if timer==True: print("Evaluating projector interpolator took %f seconds." %(end-start))
         return output
    
     def plotProjectors(self):
