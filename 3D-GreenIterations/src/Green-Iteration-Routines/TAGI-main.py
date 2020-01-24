@@ -387,15 +387,18 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     correlationFunctional = pylibxc.LibXCFunctional(correlationFunctional, polarization)
     
     Vext_local = np.zeros(nPoints)
+    atomCount=1
     for atom in atoms:
         if coreRepresentation=="AllElectron":
             Vext_local += atom.V_all_electron(X,Y,Z)
         elif coreRepresentation=="Pseudopotential":
             Vext_local += atom.V_local_pseudopotential(X,Y,Z)
             atom.generateChi(X,Y,Z)
+            rprint(rank,"Generated projectors and set V_ext_local for atom %i", atomCount)
         else:
             print("Error: what should coreRepresentation be?")
             exit(-1)
+        atomCount+=1
         
 #     print('Does X exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(X))
 #     print('Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))

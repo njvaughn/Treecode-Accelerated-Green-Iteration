@@ -15,8 +15,9 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 
 
 COREREPRESENTATION="Pseudopotential"
-#INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
-INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
   
 
@@ -47,7 +48,7 @@ GRADIENTFREE='True'
 MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
   
-INITIAL_GI_TOLERANCE=1e-5
+INITIAL_GI_TOLERANCE=1e-4
 FINAL_GI_TOLERANCE=1e-7
 GRADUALSTEPS=6
 SCF_TOLERANCE=5e-6
@@ -57,18 +58,18 @@ MESHPARAM4=0.0 # unused
 
 
 MESHTYPE='coarsenedUniform'
-DOMAIN=24
+DOMAIN=16
 
-#MAXSIDELENGTH=32
-#MESHPARAM1=0.5 # near field spacing 
-#MESHPARAM2=8.0 # far field spacing
-#MESHPARAM3=2.0 # ball radius
-
-
-MAXSIDELENGTH=48 
-MESHPARAM1=0.375 # near field spacing 
-MESHPARAM2=6.0 # far field spacing
+MAXSIDELENGTH=8
+MESHPARAM1=0.5 # near field spacing 
+MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=1.5 # ball radius
+
+
+#MAXSIDELENGTH=48 
+#MESHPARAM1=0.375 # near field spacing 
+#MESHPARAM2=6.0 # far field spacing
+#MESHPARAM3=1.5 # ball radius
 
 
 #MAXSIDELENGTH=8
@@ -79,11 +80,11 @@ MESHPARAM3=1.5 # ball radius
 
 
 APPROXIMATIONNAME=lagrange
-SINGULARITYHANDLING=subtraction
+SINGULARITYHANDLING=subtraction 
 
 OUTPUTFILE="/home/njvaughn/ONCV-testing/N_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
 
-for CELLORDER in 9
+for CELLORDER in 4
 do                                                       
     for TREECODEORDER in 8
     do         

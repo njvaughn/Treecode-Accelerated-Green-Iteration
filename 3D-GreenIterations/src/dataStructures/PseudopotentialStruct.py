@@ -170,31 +170,33 @@ class ONCV_PSP(object):
             
             self.projectorCutoffRadius=r[length_of_projector_data-1] 
             
-            self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[:length_of_projector_data],proj,k=3,ext='raise') # is ext='zeros' okay?  Could do some decay instead
+            self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[:length_of_projector_data],proj,k=3,ext='zeros') # is ext='zeros' okay?  Could do some decay instead
 #             self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[1:length_of_projector_data],proj[1:]/r[1:length_of_projector_data],k=5,ext='raise') # is ext='zeros' okay?  Could do some decay instead
         return
     
     def evaluateProjectorInterpolator(self,idx,r):
         # if zeroes are okay for the extrapolation, then this is okay.  If not, then need to wrap in try/except.
+        # However, for 1 million points, the try/except method takes 8.5 seconds, the vectorized method takes 0.034 seconds.  Big difference.
 #         return self.projectorInterpolators[str(idx)](r)/r ## dividing by r because it UPF manual says the provided fields are really r*Beta
         nr=len(r)
-        output = np.zeros(nr)
-        for i in range(nr):
-            try:
-                output[i] =  self.projectorInterpolators[str(idx)](r[i])/r[i]
-#                 output[i] =  self.projectorInterpolators[str(idx)](r[i])
-            except ValueError as VE:
-                if r[i] > self.projectorCutoffRadius:
-                    output[i] = 0.0
-#                     output[i] =  self.projectorInterpolators[str(idx)](self.projectorCutoffRadius)/self.projectorCutoffRadius
-                elif r[i] < self.innerCutoff:
-                    print("Projector interpolator out of range: r was below the inner cutoff radius.")
-                    exit(-1)
-                else:
-                    print("Something went wrong in projector interpolator for r=", r[i])
-                    print("Inner and outer cutoffs: ", self.innerCutoff, self.projectorCutoffRadius)
-                    print("ValueError: ", VE)
-                    exit(-1)
+        output =  self.projectorInterpolators[str(idx)](r)/r
+#         output = np.zeros(nr)
+#         for i in range(nr):
+#             try:
+#                 output[i] =  self.projectorInterpolators[str(idx)](r[i])/r[i]
+# #                 output[i] =  self.projectorInterpolators[str(idx)](r[i])
+#             except ValueError as VE:
+#                 if r[i] > self.projectorCutoffRadius:
+#                     output[i] = 0.0
+# #                     output[i] =  self.projectorInterpolators[str(idx)](self.projectorCutoffRadius)/self.projectorCutoffRadius
+#                 elif r[i] < self.innerCutoff:
+#                     print("Projector interpolator out of range: r was below the inner cutoff radius.")
+#                     exit(-1)
+#                 else:
+#                     print("Something went wrong in projector interpolator for r=", r[i])
+#                     print("Inner and outer cutoffs: ", self.innerCutoff, self.projectorCutoffRadius)
+#                     print("ValueError: ", VE)
+#                     exit(-1)
         return output
    
     def plotProjectors(self):

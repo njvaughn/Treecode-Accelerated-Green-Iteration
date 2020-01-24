@@ -65,7 +65,7 @@ MESHPARAM4=0.0 # unused
 
 
 MESHTYPE='coarsenedUniform'
-DOMAIN=16
+DOMAIN=24
 
 MAXSIDELENGTH=32
 MESHPARAM1=0.5 # near field spacing 
@@ -82,16 +82,16 @@ MESHPARAM3=2.0 # ball radius
 DOMAIN=16
 MAXSIDELENGTH=32
 MESHPARAM1=0.25 # near field spacing 
-MESHPARAM2=4.0 # far field spacing
-MESHPARAM3=2.0 # ball radius 
+MESHPARAM2=8.0 # far field spacing
+#MESHPARAM3=2.0 # ball radius 
 
 
 
 APPROXIMATIONNAME=lagrange
 SINGULARITYHANDLING=subtraction
-for GAUSSIANALPHA in 0.5 
+for MESHPARAM3 in 1.0 1.5 2.0 2.5 3.0 
 do
-for CELLORDER in 8 9
+for CELLORDER in 6
 do                                                       
 for TREECODEORDER in 8
 do         
@@ -100,7 +100,7 @@ do
         for MIXING in 'Anderson'            
         do 
 
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/N_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/ballSize/N_mesh_${MESHPARAM3}_TC_${TREECODEORDER}_${THETA}.csv"
         
         mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \

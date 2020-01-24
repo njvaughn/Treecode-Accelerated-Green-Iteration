@@ -227,18 +227,19 @@ if __name__ == "__main__":
 
 
     
-    inputFile=srcdir+'molecularConfigurations/SiliconClusterAuxiliaryPSP.csv'
+#     inputFile=srcdir+'molecularConfigurations/SiliconClusterAuxiliaryPSP.csv'
 #     inputFile=srcdir+'molecularConfigurations/berylliumAuxiliaryPSP.csv'
-    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/SiCluster"
+    inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
+    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
     coreRepresentation="Pseudopotential"
     MESHTYPE='coarsenedUniform'
-    order=6
+    order=2
     gaugeShift=-0.5
-    domainSize=24
+    domainSize=16
     MAXSIDELENGTH=2*domainSize
-    MESHPARAM1=0.375 # near field spacing 
-    MESHPARAM2=6.0 # far field spacing
-    MESHPARAM3=2.0 # ball radius
+    MESHPARAM1=0.5 # near field spacing 
+    MESHPARAM2=8.0 # far field spacing
+    MESHPARAM3=1.5 # ball radius
     MESHPARAM4=0.0 # unused  
   
     tree = exportMeshForParaview(domainSize,MAXSIDELENGTH,coreRepresentation, 
