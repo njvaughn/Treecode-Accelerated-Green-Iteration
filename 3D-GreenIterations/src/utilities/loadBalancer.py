@@ -45,7 +45,7 @@ def plot_points_single_proc(x, y, z, rank, title):
 #     plt.savefig(savedir+filename)
 
 
-def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
+def loadBalance(x,y,z,data=None,LBMETHOD='RCB',verbosity=0):
     '''
     Each processor calls loadBalance.  Using zoltan, the particles are balanced and redistributed as necessary.  Returns the balanced arrays.
     Does not require each processor to have started with the same number of particles.
@@ -99,25 +99,34 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
     pz.Zoltan_Set_Param('DEBUG_LEVEL', '0')
     pz.Zoltan_Set_Param('IMBALANCE_TOL','1.1')
     pz.Zoltan_LB_Balance()
-    if ( (verbosity>0) and (rank==0) ): print("Load balancer complete.")
+    if ( (verbosity>0) and (rank==0) ): print("Zoltan_LB_Balance complete.")
     
     # get the new assignments
     my_global_ids = list( gid )
     original_my_global_ids = np.copy(my_global_ids)
+    if ( (verbosity>0) and (rank==0) ): print("new assignments set.")   
     
     # remove points to be exported
-    for i in range(pz.numExport):
-        my_global_ids.remove( pz.exportGlobalids[i] )
+#     for i in range(pz.numExport):
+#         if ( (verbosity>0) and (rank==0) ): print("removing: ",pz.exportGlobalids[i])
+#         my_global_ids.remove( pz.exportGlobalids[i] )
+    if ( (verbosity>0)): print("num export = %i, len my_global_ids = %i." %(pz.numExport,len(my_global_ids)))   
+    if ( (verbosity>0)): print("type of pz.exportGlobalids:", type(pz.exportGlobalids))   
+    if ( (verbosity>0)): print("type of my_global_ids:", type(my_global_ids))   
+    
+    my_global_ids = [x for x in my_global_ids if x not in pz.exportGlobalids]
     afterExport_my_global_ids = np.copy(my_global_ids)
     
-    comm.barrier()    
+    if ( (verbosity>0)): print("removed points to be exported from rank %i." %rank)   
+    comm.barrier() 
     ## Communicate the changes
     
     # create the ZComm object
     nsend=len(pz.exportProcs)
     tag = np.int32(0)
     zcomm = zoltan_comm.ZComm(comm, tag=tag, nsend=nsend, proclist=pz.exportProcs.get_npy_array())
-    
+    if ( (verbosity>0) and (rank==0) ): print("zcomm object set.")   
+
     # the data to send and receive
     send_x=np.zeros(nsend)
     send_y=np.zeros(nsend)
@@ -137,6 +146,8 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
     recv_z = np.ones( zcomm.nreturn )
     if dataExists==True: recv_data = np.ones( zcomm.nreturn )
     
+    if ( (verbosity>0) and (rank==0) ): print("send and receive buffers set.")   
+
     # use zoltan to exchange data
     comm.barrier() 
     zcomm.Comm_Do(send_x, recv_x)
@@ -144,6 +155,7 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
     zcomm.Comm_Do(send_z, recv_z)
     if dataExists==True: zcomm.Comm_Do(send_data, recv_data)
 
+    if ( (verbosity>0) and (rank==0) ): print("Comm_Do sends and received complete.")
     
     # Grab particles that remain on this processor.
     original_x = np.zeros(len(afterExport_my_global_ids))
@@ -159,6 +171,8 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
         for i in range(len(afterExport_my_global_ids)):
             original_data[i] = data[ afterExport_my_global_ids[i] - localOffset]
     
+    if ( (verbosity>0) and (rank==0) ): print("Grabbed original particles that remained local.")
+    
     # Append the received particles
     balanced_x = np.append( original_x, np.copy(recv_x))
     balanced_y = np.append( original_y, np.copy(recv_y))
@@ -166,6 +180,7 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
     if dataExists==True: 
         balanced_data = np.append( original_data, np.copy(recv_data))
     
+    if ( (verbosity>0) and (rank==0) ): print("balanced arrays set.  Returning.")
     comm.barrier() 
 #     print("Rank %i started with %i points.  After load balancing it has %i points." %(rank,initialNumPoints,len(balanced_x)))  
     
