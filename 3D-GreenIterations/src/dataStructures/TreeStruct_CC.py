@@ -133,7 +133,8 @@ class Tree(object):
                     gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k], self.gaugeShift, self.atoms, self.coreRepresentation, self.nOrbitals, initPotential=False)
         
         # generate root cell from the gridpoint objects  
-        self.root = Cell( 'second', self.xmin, self.xmax, self.px, 
+#         self.root = Cell( 'second', self.xmin, self.xmax, self.px, 
+        self.root = Cell( 'first', self.xmin, self.xmax, self.px, 
                           self.ymin, self.ymax, self.py, 
                           self.zmin, self.zmax, self.pz, 
                           gridpoints, densityPoints=None, tree=self )
@@ -1126,7 +1127,7 @@ class Tree(object):
         self.countCellsAtEachDepth()
          
         
-        if printTreeProperties == True: print('Number of gridpoints: ', self.numberOfGridpoints)
+#         if printTreeProperties == True: print('Number of gridpoints: ', self.numberOfGridpoints)
 
 #         print("Computing derivative matrices (for Laplacian and Gradient Eigenvalue Updates).")
 #         self.computeDerivativeMatrices()
