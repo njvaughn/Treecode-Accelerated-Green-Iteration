@@ -83,6 +83,9 @@ def rprint(rank, message, message2=None, message3=None):
         if rank==0: print(message)
 
 
+
+
+
 if __name__=="__main__":
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
