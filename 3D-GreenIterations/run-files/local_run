@@ -69,7 +69,7 @@ MESHTYPE='coarsenedUniform'
 MESHPARAM1=0.5 # near field spacing
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
-MESHPARAM4=0.0 # unused
+MESHPARAM4=0.0 
 
 
 APPROXIMATIONNAME=lagrange
@@ -78,16 +78,19 @@ for SINGULARITYHANDLING in subtraction
 do
 for CELLORDER in 4
 do								  	 				     
-for TREECODEORDER in 8
+for TREECODEORDER in 7
 do         
 	for THETA in 0.7
 	do   
 		for MIXING in 'Anderson'		    
 		do 
+		
+		FINEORDER=5
 
 		OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/ONCV-testing/N_piecewise_uniform_mesh_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
 		
-        mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $SINGSUBT \
+        #mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        mpirun -n $1 python -u quadrature-test.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
     											$GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
     											$INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
     											$OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

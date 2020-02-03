@@ -107,7 +107,7 @@ def callTreedriver(numTargets, numSources,
     b_singularityHandling = singularityHandling.encode('utf-8')
     
     if GPUversion==True:
-        print("Calling GPU treecode using ", approximationName)
+#         print("Calling GPU treecode using ", approximationName)
         _gpu_treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
                                                      targetX_p, targetY_p, targetZ_p, targetValue_p,
                                                      sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,

@@ -31,7 +31,7 @@ class Cell(object):
     """
     INITIALIZATION FUNCTIONS
     """
-    def __init__(self, kind, xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, gridpoints=None, densityPoints=None, tree=None, atomAtCorner=False):
+    def __init__(self, kind, xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, gridpoints=None, fine_p=None, fine_gridpoints=None, densityPoints=None, tree=None, atomAtCorner=False):
         '''
         Cell Constructor.  Cell composed of gridpoint objects
         '''
@@ -40,6 +40,9 @@ class Cell(object):
         self.px = px
         self.py = py
         self.pz = pz
+        self.pxf=fine_p
+        self.pyf=fine_p
+        self.pzf=fine_p
         self.pxd = self.px+1 # Points for the density
         self.pyd = self.py+1 # Points for the density secondary mesh
         self.pzd = self.pz+1
@@ -50,13 +53,16 @@ class Cell(object):
         self.zmin = zmin
         self.zmax = zmax
         self.gridpoints = gridpoints
+        self.fine_gridpoints = fine_gridpoints
         self.densityPoints = densityPoints
         self.leaf = True
         self.atomAtCorner = atomAtCorner
         if kind=='first':
 #             print("CELL IS FIRST KIND")
             W = unscaledWeightsFirstKind(px)  # assumed px=py=pz
+            Wf = unscaledWeightsFirstKind(self.pxf)  # assumed px=py=pz
             self.w = weights3DFirstKind(xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, W)
+            self.wf = weights3DFirstKind(xmin, xmax, self.pxf, ymin, ymax, self.pyf, zmin, zmax, self.pzf, Wf)
 #             self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         elif kind=='second':
             W = unscaledWeightsSecondKind(px)  # assumed px=py=pz
@@ -66,6 +72,7 @@ class Cell(object):
             print("Which kind of Chebyshev?")
             return
         self.PxByPyByPz = [element for element in itertools.product(range(self.px+1),range(self.py+1),range(self.pz+1))]
+        self.PxfByPyfByPzf = [element for element in itertools.product(range(self.pxf+1),range(self.pyf+1),range(self.pzf+1))]
         
         self.setCellMidpointAndVolume()
         self.setNearestAtom()
@@ -121,6 +128,19 @@ class Cell(object):
                 (self.gridpoints[-1,-1,-1].z > self.zmax)    ):
             
             print('WARNING: Gridpoints arent contained within cell bounds.')
+            
+    def setFineGridpoints(self,fine_gridpoints):
+        self.fine_gridpoints = fine_gridpoints
+        
+        if  (   (self.fine_gridpoints[0,0,0].x    < self.xmin) or
+                (self.fine_gridpoints[-1,-1,-1].x > self.xmax) or
+                (self.fine_gridpoints[0,0,0].y    < self.ymin) or
+                (self.fine_gridpoints[-1,-1,-1].y > self.ymax) or
+                (self.fine_gridpoints[0,0,0].z    < self.zmin) or
+                (self.fine_gridpoints[-1,-1,-1].z > self.zmax)    ):
+            
+            print('WARNING: Fine_Gridpoints arent contained within cell bounds.')
+            
     
     def setDensityPoints(self,densityPoints):
         self.densityPoints = densityPoints
@@ -1087,6 +1107,58 @@ class Cell(object):
     
     
     
+    def initializeCellWavefunctionsForSingleAtom(self,atom):           
+        
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
+
+        orbitalIndex=0
+
+        nAtomicOrbitals = atom.nAtomicOrbitals
+                  
+        singleAtomOrbitalCount=0
+        for nell in aufbauList:
+            
+            if singleAtomOrbitalCount< nAtomicOrbitals:  
+                n = int(nell[0])
+                ell = int(nell[1])
+                psiID = 'psi'+str(n)+str(ell)
+#                     print('Using ', psiID)
+                for m in range(-ell,ell+1):
+#                         for _,cell in self.masterList:
+#                             if cell.leaf==True:
+
+                    for i,j,k in self.PxByPyByPz:
+                        gp = self.gridpoints[i,j,k]
+                        dx = gp.x-atom.x
+                        dy = gp.y-atom.y
+                        dz = gp.z-atom.z
+                        r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                        inclination = np.arccos(dz/r)
+                        azimuthal = np.arctan2(dy,dx)
+                    
+                        
+                    
+                        if m<0:
+                            Y = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                        if m>0:
+                            Y = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+                        if ( m==0 ):
+                            Y = sph_harm(m,ell,azimuthal,inclination)
+
+                        try:
+                            gp.phi[orbitalIndex] = atom.interpolators[psiID](r)*np.real(Y)
+                        except ValueError:
+                            gp.phi[orbitalIndex] = 0.0
+                           
+                    orbitalIndex += 1
+                    singleAtomOrbitalCount += 1
+    
     
     def initializeCellWavefunctions(self):           
         
@@ -1757,6 +1829,119 @@ class Cell(object):
         sqrtDensityVextIntegral = np.sum(np.sqrt(rho)*Vext*weights)
 
         return densityIntegral, sqrtDensityIntegral, sqrtDensityVextIntegral
+    
+    
+    def intializeAndIntegrateNonlocal(self):
+        psi = np.zeros((self.px+1,self.py+1,self.pz+1))
+        r = np.zeros((self.px+1,self.py+1,self.pz+1))
+        X = np.zeros((self.px+1,self.py+1,self.pz+1))
+        Y = np.zeros((self.px+1,self.py+1,self.pz+1))
+        Z = np.zeros((self.px+1,self.py+1,self.pz+1))
+        Vext = np.zeros((self.px+1,self.py+1,self.pz+1))
+        weights = np.zeros((self.px+1,self.py+1,self.pz+1))
+        
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
+
+        
+        
+        for i,j,k in self.PxByPyByPz:
+            weights[i,j,k] = self.w[i,j,k]
+            X[i,j,k] = self.gridpoints[i,j,k].x
+            Y[i,j,k] = self.gridpoints[i,j,k].y
+            Z[i,j,k] = self.gridpoints[i,j,k].z
+            
+        integralVlocPsiPlusVnlocPsi = 0
+                
+        for atom in self.tree.atoms:
+            
+            dx = self.xmid-atom.x
+            dy = self.ymid-atom.y
+            dz = self.zmid-atom.z
+            distToAtom = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
+            if distToAtom < 32:
+                
+                if atom.coreRepresentation=="AllElectron":
+#                     rho += atom.interpolators['density'](r)    # increment rho for each atom 
+                    Vext += -atom.atomicNumber / r
+                elif atom.coreRepresentation=="Pseudopotential":
+#                     rho += np.reshape(atom.PSP.evaluateDensityInterpolator(r.flatten()),(self.px+1,self.py+1,self.pz+1))
+                    Vext += np.reshape(atom.PSP.evaluateLocalPotentialInterpolator(r.flatten()),(self.px+1,self.py+1,self.pz+1))
+                    Vext -= 10 # some pseudopotentials go positive at the origin.  Don't want those going in to the sqrt.  Constant shift is okay, it doesnt affect integration accuracy
+                    atom.generateChi(X.flatten(),Y.flatten(),Z.flatten()
+                                     
+                                             )
+                
+                orbitalIndex=0
+                nAtomicOrbitals = atom.nAtomicOrbitals
+                singleAtomOrbitalCount=0
+
+                
+                for nell in aufbauList:
+                
+                    if singleAtomOrbitalCount< nAtomicOrbitals:  
+                        n = int(nell[0])
+                        ell = int(nell[1])
+                        psiID = 'psi'+str(n)+str(ell)
+    #                     print('Using ', psiID)
+                        for m in range(-ell,ell+1):
+                            
+                            if psiID in atom.interpolators:  # pseudopotentials don't start from 10, 20, 21,... they start from the valence, such as 30, 31, ...
+                                dx = X-atom.x
+                                dy = Y-atom.y
+                                dz = Z-atom.z
+                                psi = np.zeros(len(dx))
+                                r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                                inclination = np.arccos(dz/r)
+                                azimuthal = np.arctan2(dy,dx)
+                                
+                                if m<0:
+                                    Ysp = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                                if m>0:
+                                    Ysp = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+        #                                     if ( (m==0) and (ell>1) ):
+                                if ( m==0 ):
+                                    Ysp = sph_harm(m,ell,azimuthal,inclination)
+        #                                     if ( (m==0) and (ell<=1) ):
+        #                                         Y = 1
+                                if np.max( abs(np.imag(Ysp)) ) > 1e-14:
+                                    print('imag(Y) ', np.imag(Ysp))
+                                    return
+        #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
+        #                         phi = atom.interpolators[psiID](r)*np.real(Y)
+                                try:
+                                    psi = atom.interpolators[psiID](r)*np.real(Ysp)
+                                except ValueError:
+                                    psi = 0.0   # if outside the interpolation range, assume 0.
+                                except KeyError:
+                                    for key, value in atom.interpolators.items() :
+                                        print (key, value)
+                                    exit(-1)
+                                
+                                
+#                                 print("Computing integral for psi"+str(n)+str(ell))
+                                # integrate local piece
+                                integralVlocPsiPlusVnlocPsi += np.sum(psi*Vext*weights)
+                                
+                                # compute nonlocal piece
+                                V_nl_psi = atom.V_nonlocal_pseudopotential_times_psi(X.flatten(),Y.flatten(),Z.flatten(),psi.flatten(),weights.flatten(),comm=None)
+                                
+                                # integrate nonlocal piece
+                                integralVlocPsiPlusVnlocPsi += np.sum(V_nl_psi*weights.flatten())
+                                
+#                                 print("Integral now = ", integralVlocPsiPlusVnlocPsi)
+                                
+                                orbitalIndex += 1
+                                singleAtomOrbitalCount += 1
+                                
+            atom.removeTempChi()
+
+        return integralVlocPsiPlusVnlocPsi
         
      
     def refineByCheckingParentChildrenIntegrals(self, divideParameter1):
@@ -1856,6 +2041,52 @@ class Cell(object):
         delattr(self,"children")
         self.leaf=True
         
+    def refineByCheckingParentChildrenIntegrals_nonlocal(self, divideParameter1):
+        if self.level>=3:
+            print('Cell:                                      ', self.uniqueID)
+        self.divideFlag = False
+        
+        parentIntegral = self.intializeAndIntegrateNonlocal()
+        sumChildrenIntegrals = 0.0 
+        
+        
+        xdiv = (self.xmax + self.xmin)/2   
+        ydiv = (self.ymax + self.ymin)/2   
+        zdiv = (self.zmax + self.zmin)/2   
+        self.divide_firstKind(xdiv, ydiv, zdiv, temporaryCell=True)
+        (ii,jj,kk) = np.shape(self.children)
+
+        for i in range(ii):
+            for j in range(jj):
+                for k in range(kk):
+                    childIntegral = self.children[i,j,k].intializeAndIntegrateNonlocal()
+                    sumChildrenIntegrals += childIntegral
+                   
+        
+        if np.abs(parentIntegral-sumChildrenIntegrals) > divideParameter1:
+            self.childrenRefineCause=3
+#             print()
+#             print('Cell:                                      ', self.uniqueID)
+            print('Parent Integral:         ', parentIntegral)
+            print('Children Integral:       ', sumChildrenIntegrals)
+            print()
+            self.divideFlag=True
+        
+        
+        # clean up by deleting children
+        for i in range(ii):
+            for j in range(jj):
+                for k in range(kk):
+                    child = self.children[i,j,k]
+                    for i2,j2,k2 in child.PxByPyByPz:
+                        gp = child.gridpoints[i2,j2,k2]
+                        del gp
+                        child.gridpoints[i2,j2,k2]=None
+                    del child
+#         self.children=None
+        delattr(self,"children")
+        self.leaf=True
+        
     
     def refinePiecewiseUniform(self, nearFieldSpacing, nearFieldCutoff, midFieldSpacing, midFieldCutoff):
         self.divideFlag = False
@@ -1910,7 +2141,7 @@ class Cell(object):
           
           
             
-    def refineCoarseningUniform(self, h, H, r):
+    def refineCoarseningUniform(self, h, H, r, level):
         self.divideFlag = False
         
         xdiv = (self.xmax + self.xmin)/2   
@@ -1938,27 +2169,48 @@ class Cell(object):
 #         cellRadius = np.sqrt( (self.xmax-xdiv)**2 + (self.ymax-ydiv)**2 + (self.zmax-zdiv)**2 )
         cellSideLength = np.max( [self.zmax-self.zmin, self.xmax-self.xmin, self.ymax-self.ymin ] )
         
+        radiusFactor=1
+        if level>=3: radiusFactor=2
+        if level>=4: radiusFactor=3
         
         
         # detemine if cell should be refined
         if cellSideLength>H:
             self.divideFlag=True
-        elif distanceToNearestAtom<r:  # if in the inner ring
+            
+#         elif distanceToNearestAtom<(r/8):    ## REFINING TO h/8 within r/8 DOES NOT IMPROVE ACCURACY
+# #             print("Second check: distance < r/4")
+#             if cellSideLength > (h/8):
+#                 print("First check: New inner cell size will be ", cellSideLength/2)
+#                 self.divideFlag=True
+        elif ( (level>=2) and (distanceToNearestAtom<(r/4)) ):  
+#             print("Second check: distance < r/4")
+            if cellSideLength > (h/4):
+                print("First check: New inner cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+        elif ( (level>=1) and (distanceToNearestAtom<(r/2)) ): 
+            if cellSideLength > (h/2):
+                self.divideFlag=True
+                print("Second check: New inner cell size will be ", cellSideLength/2)
+        elif distanceToNearestAtom<r:  #if in the inner ring
+#         elif distanceToNearestAtom<2:  #if in the inner ring
             if cellSideLength > h:
 #                 print("New inner cell size will be ", cellSideLength/2)
                 self.divideFlag=True
                 
-        elif distanceToNearestAtom<r+2*h*np.sqrt(1):  # if in the inner ring
+        elif distanceToNearestAtom<r+2*h*np.sqrt(radiusFactor):  # if in the inner ring
+#         elif distanceToNearestAtom<3:  # if in the inner ring
             if cellSideLength > 2*h:
 #                 print("First annulus cell size will be ", cellSideLength/2)
                 self.divideFlag=True
         
-        elif distanceToNearestAtom<r+(2*h+4*h)*np.sqrt(1):  # if in the inner ring
+        elif distanceToNearestAtom<r+(2*h+4*h)*np.sqrt(radiusFactor):  # if in the inner ring
+#         elif distanceToNearestAtom<12:  # if in the inner ring
             if cellSideLength > 4*h:
 #                 print("Second annulus cell size will be ", cellSideLength/2)
                 self.divideFlag=True
         
-        elif distanceToNearestAtom<r+(2*h+4*h+8*h)*np.sqrt(1):  # if in the inner ring
+        elif distanceToNearestAtom<r+(2*h+4*h+8*h)*np.sqrt(radiusFactor):
             if cellSideLength > 8*h:
 #                 print("Third annulus cell size will be ", cellSideLength/2)
                 self.divideFlag=True
@@ -1997,7 +2249,7 @@ class Cell(object):
         for k in range(self.pz):
             wz[k] = (-1)**k * np.sin(  (2*k+1)*np.pi / (2*(self.pz-1)+2)  )
         
-        def P(xt,yt,zt):  # 2D interpolator.  
+        def P(xt,yt,zt):  # 3D interpolator.  
             
             num = 0
             for i in range(self.px):
@@ -2544,42 +2796,18 @@ class Cell(object):
             
             children = np.empty((2,2,2), dtype=object)
             self.leaf = False
-#             self.nOrbitals = self.gridpoints[0,0,0].nOrbitals
             
-#             if interpolate==True:
-#                 # generate the x, y, and z arrays
-#                 x = np.empty(self.px)
-#                 y = np.empty(self.py)
-#                 z = np.empty(self.pz)
-#                 for i in range(self.px):
-#                     x[i] = self.gridpoints[i,0,0].x
-#                 for j in range(self.py):
-#                     y[j] = self.gridpoints[0,j,0].y
-#                 for k in range(self.pz):
-#                     z[k] = self.gridpoints[0,0,k].z
-#                      
-#                  
-#                 # Generate interpolators for each orbital
-#                 self.nOrbitals = len(self.gridpoints[0,0,0].phi)
-#                 interpolators = np.empty(self.nOrbitals,dtype=object)
-#                 phi = np.zeros((self.px,self.py,self.pz,self.nOrbitals))
-#                 for i,j,k in self.PxByPyByPz:
-#                     for m in range(self.nOrbitals):
-#                         phi[i,j,k,m] = self.gridpoints[i,j,k].phi[m]
-#                  
-#                 for m in range(self.nOrbitals):
-#                     interpolators[m] = self.interpolator(x, y, z, phi[:,:,:,m])
-                    
                     
         
             x = [ChebyshevPointsFirstKind(cell.xmin,float(xdiv),cell.px), ChebyshevPointsFirstKind(float(xdiv),cell.xmax,cell.px)]
             y = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.py), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.py)]
             z = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pz), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pz)]
             
-#             x_density = [ChebyshevPointsFirstKind(cell.xmin,float(xdiv),cell.pxd), ChebyshevPointsFirstKind(float(xdiv),cell.xmax,cell.pxd)]
-#             y_density = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.pyd), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.pyd)]
-#             z_density = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pzd), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pzd)]
+            xf = [ChebyshevPointsFirstKind(cell.xmin,float(xdiv),cell.pxf), ChebyshevPointsFirstKind(float(xdiv),cell.xmax,cell.pxf)]
+            yf = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.pyf), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.pyf)]
+            zf = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pzf), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pzf)]
             
+         
             xbounds = np.array([cell.xmin, float(xdiv), cell.xmax])
             ybounds = np.array([cell.ymin, float(ydiv), cell.ymax])
             zbounds = np.array([cell.zmin, float(zdiv), cell.zmax])
@@ -2590,11 +2818,11 @@ class Cell(object):
                 if hasattr(cell, "tree"):
                     children[i,j,k] = Cell('first', xbounds[i], xbounds[i+1], cell.px, 
                                            ybounds[j], ybounds[j+1], cell.py,
-                                           zbounds[k], zbounds[k+1], cell.pz, tree = cell.tree)
+                                           zbounds[k], zbounds[k+1], cell.pz, fine_p=self.pxf, tree = cell.tree)
                 else:
                     children[i,j,k] = Cell('first', xbounds[i], xbounds[i+1], cell.px, 
                                            ybounds[j], ybounds[j+1], cell.py,
-                                           zbounds[k], zbounds[k+1], cell.pz)
+                                           zbounds[k], zbounds[k+1], cell.pz, fine_p=self.pxf,)
                 children[i,j,k].parent = cell # children should point to their parent
                 if hasattr(cell, "childrenRefineCause"):
                     children[i,j,k].refineCause = cell.childrenRefineCause
@@ -2612,15 +2840,22 @@ class Cell(object):
                 xOct = x[ii]
                 yOct = y[jj]
                 zOct = z[kk]
+                xOctf = xf[ii]
+                yOctf = yf[jj]
+                zOctf = zf[kk]
+                
                 gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
+                fine_gridpoints = np.empty((cell.pxf+1,cell.pyf+1,cell.pzf+1),dtype=object)
                 for i, j, k in cell.PxByPyByPz:
                     newGridpointCount += 1
-#                     gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k],self.nOrbitals, self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
                     gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
-#                     if interpolate == True:
-#                         for m in range(self.nOrbitals):
-#                             gridpoints[i,j,k].setPhi(interpolators[m](xOct[i],yOct[j],zOct[k]),m)
+                
+                for i, j, k in cell.PxfByPyfByPzf:
+                    fine_gridpoints[i,j,k] = GridPoint(xOctf[i],yOctf[j],zOctf[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
+
                 children[ii,jj,kk].setGridpoints(gridpoints)
+                children[ii,jj,kk].setFineGridpoints(fine_gridpoints)
+                
                 if hasattr(cell,'level'):
                     children[ii,jj,kk].level = cell.level+1
                 else:
@@ -2652,6 +2887,10 @@ class Cell(object):
                 y = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.py), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.py)]
                 z = [ChebyshevPointsFirstKind(cell.zmin,cell.zmax,cell.pz)]
                 
+                xf = [ChebyshevPointsFirstKind(cell.xmin,float(xdiv),cell.pxf), ChebyshevPointsFirstKind(float(xdiv),cell.xmax,cell.pxf)]
+                yf = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.pyf), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.pyf)]
+                zf = [ChebyshevPointsFirstKind(cell.zmin,cell.zmax,cell.pzf)]
+                
                 xbounds = np.array([cell.xmin, float(xdiv), cell.xmax])
                 ybounds = np.array([cell.ymin, float(ydiv), cell.ymax])        
 
@@ -2660,7 +2899,7 @@ class Cell(object):
                     
                     children[i,j,0] = Cell('first', xbounds[i], xbounds[i+1], cell.px, 
                                            ybounds[j], ybounds[j+1], cell.py,
-                                           cell.zmin, cell.zmax, cell.pz, tree = cell.tree)
+                                           cell.zmin, cell.zmax, cell.pz, fine_p=self.pxf, tree = cell.tree)
                     children[i,j,0].parent = cell # children should point to their parent
                     if hasattr(cell, "childrenRefineCause"):
                         children[i,j,0].refineCause = cell.childrenRefineCause
@@ -2677,12 +2916,23 @@ class Cell(object):
                     xOct = x[ii]
                     yOct = y[jj]
                     zOct = z[0]
+                    
+                    xOctf = xf[ii]
+                    yOctf = yf[jj]
+                    zOctf = zf[0]
+                    
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
+                    fine_gridpoints = np.empty((cell.pxf+1,cell.pyf+1,cell.pzf+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
-#                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
+
+                    for i, j, k in cell.PxfByPyfByPzf:
+                        fine_gridpoints[i,j,k] = GridPoint(xOctf[i],yOctf[j],zOctf[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
+
+
                     children[ii,jj,0].setGridpoints(gridpoints)
+                    children[ii,jj,0].setFineGridpoints(fine_gridpoints)
                     if hasattr(cell,'level'):
                         children[ii,jj,0].level = cell.level+1
                         
@@ -2694,6 +2944,11 @@ class Cell(object):
                 y = [ChebyshevPointsFirstKind(cell.ymin,cell.ymax,cell.py)]
                 z = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pz), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pz)]
                 
+                xf = [ChebyshevPointsFirstKind(cell.xmin,float(xdiv),cell.pxf), ChebyshevPointsFirstKind(float(xdiv),cell.xmax,cell.pxf)]
+                yf = [ChebyshevPointsFirstKind(cell.ymin,cell.ymax,cell.pyf)]
+                zf = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pzf), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pzf)]
+                
+                
                 xbounds = np.array([cell.xmin, float(xdiv), cell.xmax])
                 zbounds = np.array([cell.zmin, float(zdiv), cell.zmax])
         
@@ -2702,7 +2957,7 @@ class Cell(object):
                     
                     children[i,0,k] = Cell('first', xbounds[i], xbounds[i+1], cell.px, 
                                            cell.ymin, cell.ymax, cell.py,
-                                           zbounds[k], zbounds[k+1], cell.pz, tree = cell.tree)
+                                           zbounds[k], zbounds[k+1], cell.pz, fine_p=self.pxf, tree = cell.tree)
                     children[i,0,k].parent = cell # children should point to their parent
                     if hasattr(cell, "childrenRefineCause"):
                         children[i,0,k].refineCause = cell.childrenRefineCause
@@ -2720,12 +2975,22 @@ class Cell(object):
                     xOct = x[ii]
                     yOct = y[0]
                     zOct = z[kk]
+                    
+                    xOctf = xf[ii]
+                    yOctf = yf[0]
+                    zOctf = zf[kk]
+                    
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
+                    fine_gridpoints = np.empty((cell.pxf+1,cell.pyf+1,cell.pzf+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
-#                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms)
+                    
+                    for i, j, k in cell.PxfByPyfByPzf:
+                        fine_gridpoints[i,j,k] = GridPoint(xOctf[i],yOctf[j],zOctf[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
+                    
                     children[ii,0,kk].setGridpoints(gridpoints)
+                    children[ii,0,kk].setFineGridpoints(fine_gridpoints)
                     if hasattr(cell,'level'):
                         children[ii,0,kk].level = cell.level+1
                         
@@ -2737,6 +3002,10 @@ class Cell(object):
                 y = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.py), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.py)]
                 z = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pz), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pz)]
                 
+                xf = [ChebyshevPointsFirstKind(cell.xmin,cell.xmax,cell.pxf)]
+                yf = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.pyf), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.pyf)]
+                zf = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pzf), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pzf)]
+                
                 ybounds = np.array([cell.ymin, float(ydiv), cell.ymax])
                 zbounds = np.array([cell.zmin, float(zdiv), cell.zmax])
 
@@ -2745,7 +3014,7 @@ class Cell(object):
                     
                     children[0,j,k] = Cell('first', cell.xmin, cell.xmax, cell.px, 
                                            ybounds[j], ybounds[j+1], cell.py,
-                                           zbounds[k], zbounds[k+1], cell.pz, tree = cell.tree)
+                                           zbounds[k], zbounds[k+1], cell.pz, fine_p=self.pxf, tree = cell.tree)
                     children[0,j,k].parent = cell # children should point to their parent
                     if hasattr(cell, "childrenRefineCause"):
                         children[0,j,k].refineCause = cell.childrenRefineCause
@@ -2762,11 +3031,25 @@ class Cell(object):
                     xOct = x[0]
                     yOct = y[jj]
                     zOct = z[kk]
+                    
+                    xOctf = xf[0]
+                    yOctf = yf[jj]
+                    zOctf = zf[kk]
+                    
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
+                    fine_gridpoints = np.empty((cell.pxf+1,cell.pyf+1,cell.pzf+1),dtype=object)
+                    
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
+                    
+                    for i, j, k in cell.PxfByPyfByPzf:
+                        fine_gridpoints[i,j,k] = GridPoint(xOctf[i],yOctf[j],zOctf[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
+                    
+                    
                     children[0,jj,kk].setGridpoints(gridpoints)
+                    children[0,jj,kk].setFineGridpoints(fine_gridpoints)
+
                     if hasattr(cell,'level'):
                         children[0,jj,kk].level = cell.level+1
                 
@@ -2790,6 +3073,10 @@ class Cell(object):
                 y = [ChebyshevPointsFirstKind(cell.ymin,cell.ymax,cell.py)]
                 z = [ChebyshevPointsFirstKind(cell.zmin,cell.zmax,cell.pz)]
                 
+                xf = [ChebyshevPointsFirstKind(cell.xmin,float(xdiv),cell.pxf), ChebyshevPointsFirstKind(float(xdiv),cell.xmax,cell.pxf)]
+                yf = [ChebyshevPointsFirstKind(cell.ymin,cell.ymax,cell.pyf)]
+                zf = [ChebyshevPointsFirstKind(cell.zmin,cell.zmax,cell.pzf)]
+                
                 xbounds = np.array([cell.xmin, float(xdiv), cell.xmax])
         
                 '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
@@ -2797,7 +3084,7 @@ class Cell(object):
                     
                     children[i,0,0] = Cell('first', xbounds[i], xbounds[i+1], cell.px, 
                                            cell.ymin, cell.ymax, cell.py,
-                                           cell.zmin, cell.zmax, cell.pz, tree = cell.tree)
+                                           cell.zmin, cell.zmax, cell.pz, fine_p=self.pxf, tree = cell.tree)
                     children[i,0,0].parent = cell # children should point to their parent
                     if hasattr(cell, "childrenRefineCause"):
                         children[i,0,0].refineCause = cell.childrenRefineCause
@@ -2813,12 +3100,27 @@ class Cell(object):
                     xOct = x[ii]
                     yOct = y[0]
                     zOct = z[0]
+                    
+                    xOctf = xf[ii]
+                    yOctf = yf[0]
+                    zOctf = zf[0]
+                    
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
+                    fine_gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
+                    
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[ii,0,0].setGridpoints(gridpoints)
+                    
+                    
+                    for i, j, k in cell.PxfByPyfByPzf:
+                        fine_gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
+#                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
+                    children[ii,0,0].setFineGridpoints(fine_gridpoints)
+                    
+                    
                     if hasattr(cell,'level'):
                         children[ii,0,0].level = cell.level+1
 #                 print('Not increasing the cell level because only dividing along x axis.')
@@ -2835,6 +3137,10 @@ class Cell(object):
                 y = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.py), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.py)]
                 z = [ChebyshevPointsFirstKind(cell.zmin,cell.zmax,cell.pz)]
                 
+                xf = [ChebyshevPointsFirstKind(cell.xmin,cell.xmax,cell.pxf)]
+                yf = [ChebyshevPointsFirstKind(cell.ymin,float(ydiv),cell.pyf), ChebyshevPointsFirstKind(float(ydiv),cell.ymax,cell.pyf)]
+                zf = [ChebyshevPointsFirstKind(cell.zmin,cell.zmax,cell.pzf)]
+                
                 ybounds = np.array([cell.ymin, float(ydiv), cell.ymax])
         
                 '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
@@ -2842,7 +3148,7 @@ class Cell(object):
                     
                     children[0,j,0] = Cell('first', cell.xmin, cell.xmax, cell.px, 
                                            ybounds[j], ybounds[j+1], cell.py,
-                                           cell.zmin, cell.zmax, cell.pz, tree = cell.tree)
+                                           cell.zmin, cell.zmax, cell.pz, fine_p=self.pxf, tree = cell.tree)
                     children[0,j,0].parent = cell # children should point to their parent
                     if hasattr(cell, "childrenRefineCause"):
                         children[0,j,0].refineCause = cell.childrenRefineCause
@@ -2858,12 +3164,22 @@ class Cell(object):
                     xOct = x[0]
                     yOct = y[jj]
                     zOct = z[0]
+                    
+                    xOctf = xf[0]
+                    yOctf = yf[jj]
+                    zOctf = zf[0]
+                    
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
+                    fine_gridpoints = np.empty((cell.pxf+1,cell.pyf+1,cell.pzf+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
-#                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,jj,0].setGridpoints(gridpoints)
+                    
+                    for i, j, k in cell.PxfByPyfByPzf:
+                        fine_gridpoints[i,j,k] = GridPoint(xOctf[i],yOctf[j],zOctf[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
+                    children[0,jj,0].setFineGridpoints(fine_gridpoints)
+                    
                     if hasattr(cell,'level'):
                         children[0,jj,0].level = cell.level+1
 #                 print('Not increasing the cell level because only dividing along y axis.')
@@ -2881,13 +3197,17 @@ class Cell(object):
                 y = [ChebyshevPointsFirstKind(cell.ymin,cell.ymax,cell.py)]
                 z = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pz), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pz)]
                 
+                xf = [ChebyshevPointsFirstKind(cell.xmin,cell.xmax,cell.pxf)]
+                yf = [ChebyshevPointsFirstKind(cell.ymin,cell.ymax,cell.pyf)]
+                zf = [ChebyshevPointsFirstKind(cell.zmin,float(zdiv),cell.pzf), ChebyshevPointsFirstKind(float(zdiv),cell.zmax,cell.pzf)]
+                
                 zbounds = np.array([cell.zmin, float(zdiv), cell.zmax])
 
                 '''call the cell constructor for the children.  Set up parent, uniqueID, neighbor list.  Append to masterList'''
                 for k in range(2):
                     children[0,0,k] = Cell('first', cell.xmin, cell.xmax, cell.px, 
                                            cell.ymin, cell.ymax, cell.py,
-                                           zbounds[k], zbounds[k+1], cell.pz, tree = cell.tree)
+                                           zbounds[k], zbounds[k+1], cell.pz, fine_p=self.pxf, tree = cell.tree)
                     children[0,0,k].parent = cell # children should point to their parent
                     if hasattr(cell, "childrenRefineCause"):
                         children[0,0,k].refineCause = cell.childrenRefineCause
@@ -2903,12 +3223,26 @@ class Cell(object):
                     xOct = x[0]
                     yOct = y[0]
                     zOct = z[kk]
+                    
+                    xOctf = xf[0]
+                    yOctf = yf[0]
+                    zOctf = zf[kk]
+                    
+                    
                     gridpoints = np.empty((cell.px+1,cell.py+1,cell.pz+1),dtype=object)
                     for i, j, k in cell.PxByPyByPz:
                         newGridpointCount += 1
                         gridpoints[i,j,k] = GridPoint(xOct[i],yOct[j],zOct[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
 #                         gridpoints[i,j,k].setExternalPotential(cell.tree.atoms, cell.tree.gaugeShift)
                     children[0,0,kk].setGridpoints(gridpoints)
+                    
+                    
+                    fine_gridpoints = np.empty((cell.pxf+1,cell.pyf+1,cell.pzf+1),dtype=object)
+                    for i, j, k in cell.PxfByPyfByPzf:
+                        fine_gridpoints[i,j,k] = GridPoint(xOctf[i],yOctf[j],zOctf[k], self.tree.gaugeShift, self.tree.atoms, self.tree.coreRepresentation, self.tree.nOrbitals)
+                    children[0,0,kk].setFineGridpoints(fine_gridpoints)
+                    
+                    
                     if hasattr(cell,'level'):
                         children[0,0,kk].level = cell.level+1
 #                 print('Not increasing the cell level because only dividing along z axis.')

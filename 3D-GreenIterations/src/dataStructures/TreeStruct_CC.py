@@ -74,7 +74,7 @@ class Tree(object):
     def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,atoms,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms,minDepth,gaugeShift=0.0,
                  coordinateFile='',inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
-                 printTreeProperties = False):
+                 printTreeProperties = False, fine_order=None):
         '''
         Tree constructor:  
         First construct the gridpoints for cell consisting of entire domain.  
@@ -84,12 +84,15 @@ class Tree(object):
         self.xmin = xmin
         self.xmax = xmax
         self.px = px
+        self.pxf = fine_order
         self.ymin = ymin
         self.ymax = ymax
         self.py = py
+        self.pyf = fine_order
         self.zmin = zmin
         self.zmax = zmax
         self.pz = pz
+        self.pzf = fine_order
 #         self.PxByPyByPz = [element for element in itertools.product(range(self.px),range(self.py),range(self.pz))]
         self.coreRepresentation = coreRepresentation
         self.nElectrons = nElectrons
@@ -129,15 +132,28 @@ class Tree(object):
         for i in range(self.px+1):
             for j in range(self.py+1):
                 for k in range(self.pz+1):
-#         for i, j, k in self.PxByPyByPz:
                     gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k], self.gaugeShift, self.atoms, self.coreRepresentation, self.nOrbitals, initPotential=False)
+        
+        
+        # Set up fine gridpoints (for projectors)
+        xvec = ChebyshevPointsFirstKind(self.xmin,self.xmax,self.pxf)
+        yvec = ChebyshevPointsFirstKind(self.ymin,self.ymax,self.pyf)
+        zvec = ChebyshevPointsFirstKind(self.zmin,self.zmax,self.pzf)
+        fine_gridpoints = np.empty((self.pxf+1,self.pyf+1,self.pzf+1),dtype=object)
+
+
+        for i in range(self.pxf+1):
+            for j in range(self.pyf+1):
+                for k in range(self.pzf+1):
+                    fine_gridpoints[i,j,k] = GridPoint(xvec[i],yvec[j],zvec[k], self.gaugeShift, self.atoms, self.coreRepresentation, self.nOrbitals, initPotential=False)
+        
         
         # generate root cell from the gridpoint objects  
 #         self.root = Cell( 'second', self.xmin, self.xmax, self.px, 
         self.root = Cell( 'first', self.xmin, self.xmax, self.px, 
                           self.ymin, self.ymax, self.py, 
                           self.zmin, self.zmax, self.pz, 
-                          gridpoints, densityPoints=None, tree=self )
+                          gridpoints, self.pxf, fine_gridpoints, densityPoints=None, tree=self )
         self.root.level = 0
         self.root.uniqueID = ''
         self.masterList = [[self.root.uniqueID, self.root]]
@@ -1084,13 +1100,16 @@ class Tree(object):
                         Cell.checkDensityInterpolation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                         
                     elif divideCriterion=='ParentChildrenIntegral':
+                        print("USING ParentChildrenIntegral##########################################################")
                         Cell.refineByCheckingParentChildrenIntegrals(divideParameter1)
+                    elif divideCriterion=="VPsiIntegral":
+                        Cell.refineByCheckingParentChildrenIntegrals_nonlocal(divideParameter1)
                     elif divideCriterion=="PiecewiseUniform":
 #                         print("Refining by piecewise uniform scheme.")
                         Cell.refinePiecewiseUniform(divideParameter1,divideParameter2,divideParameter3,divideParameter4)
                     elif divideCriterion=="coarsenedUniform":
 #                         print("Refining by piecewise uniform scheme.")
-                        Cell.refineCoarseningUniform(divideParameter1,divideParameter2,divideParameter3)
+                        Cell.refineCoarseningUniform(divideParameter1,divideParameter2,divideParameter3,divideParameter4)
                         
                         
                     
@@ -2205,6 +2224,10 @@ class Tree(object):
         Y = []
         Z = []
         W = []
+        Xf = [] 
+        Yf = []
+        Zf = []
+        Wf = []
         RHO = []
         
         XV = []
@@ -2226,6 +2249,13 @@ class Tree(object):
                     Z.append( gridpt.z )
                     W.append( cell.w[i,j,k] )
                     RHO.append(gridpt.rho)
+                
+                for i,j,k in cell.PxfByPyfByPzf:
+                    gridpt = cell.fine_gridpoints[i,j,k]
+                    Xf.append( gridpt.x )
+                    Yf.append( gridpt.y )
+                    Zf.append( gridpt.z )
+                    Wf.append( cell.wf[i,j,k] )
 #                     WAVEFUNCTIONS.append(gridpt.phi)
 #                     gridpt.x=None
 #                     gridpt.y=None
@@ -2285,7 +2315,7 @@ class Tree(object):
 #                     cell.gridpoints[i,j,k]=None
 #             del cell
                 
-        return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
+        return np.array(X),np.array(Y),np.array(Z),np.array(W),np.array(Xf),np.array(Yf),np.array(Zf),np.array(Wf), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
     
     
     def extractXYZ_connected(self):

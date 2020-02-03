@@ -395,11 +395,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
         elif coreRepresentation=="Pseudopotential":
             Vext_local += atom.V_local_pseudopotential(X,Y,Z)
             atom.generateChi(X,Y,Z)
-            rprint(rank,"Generated projectors and set V_ext_local for atom %i" %atomCount)
-#             for i in range(atom.numberOfChis):
-#                 norm_of_chi = global_dot(W,atom.Chi[str(i)]**2,comm)
-#                 atom.Chi[str(i)] *= np.sqrt( 1.0/norm_of_chi )
-#                 print("NORMALIZING CHI TO 1")
+            rprint(rank,"Generated projectors and set V_ext_local for atom %i", atomCount)
         else:
             print("Error: what should coreRepresentation be?")
             exit(-1)
@@ -658,6 +654,15 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,at
     
 
     
+def func(X,Y,Z,pow):
+    
+    return X**pow
+
+def integral_func(X,Y,Z,pow,domainSize):
+
+    return (domainSize**(pow+1)/(pow+1) - (-domainSize)**(pow+1)/(pow+1))*(2*domainSize)*(2*domainSize)
+
+
 if __name__ == "__main__": 
     #import sys;sys.argv = ['', 'Test.testName']
     
@@ -771,12 +776,44 @@ if __name__ == "__main__":
 
 
 # Test quadrature rule
-    RHO = X**5 + Y**5 + Z**5
+#     RHO = X**5 + Y**5 + Z**6
 #     RHO = np.exp( -np.sqrt(R2) )
-    integral = global_dot(RHO,W,comm)
-    print("Test integral = ", integral)
+    pow=6
+    RHO=func(X,Y,Z,pow)
+    RHOf=func(Xf,Yf,Zf,pow)
+    ANALYTIC=integral_func(X,Y,Z,pow,domainSize)
+    COMPUTED = global_dot(RHO,W,comm)
+    COMPUTEDFINE = global_dot(RHOf,Wf,comm)
+#     print("domainSize = ", domainSize)
+    print("Coarse Computed integral =   %f, %1.2e" %(COMPUTED, (COMPUTED-ANALYTIC)))
+    print("Fine Computed integral =     %f, %1.2e" %(COMPUTEDFINE, (COMPUTEDFINE-ANALYTIC)))
+    print("Analytic intergral =  ", ANALYTIC)
+#     print("Relative error =      ", (ANALYTIC-COMPUTED)/ANALYTIC)
     
-    exit(-1)
+    
+    
+    
+#     Vext_local = np.zeros(nPoints)
+#     atomCount=1
+#     for atom in atoms:
+#         if coreRepresentation=="AllElectron":
+#             Vext_local += atom.V_all_electron(X,Y,Z)
+#         elif coreRepresentation=="Pseudopotential":
+#             Vext_local += atom.V_local_pseudopotential(X,Y,Z)
+#             atom.generateChi(X,Y,Z)
+#             rprint(rank,"Generated projectors and set V_ext_local for atom %i", atomCount)
+#         else:
+#             print("Error: what should coreRepresentation be?")
+#             exit(-1)
+#         atomCount+=1
+        
+        
+#     for atom in atoms:
+#         print("atom ", atom)
+#         atom.generateChi(X,Y,Z)
+#         for i in range(atom.numberOfChis):
+#             print("Norm of CHI %i = %f " %(i,global_dot(W,atom.Chi[str(i)]**2,comm)))
+        
     
 #     initialRho = np.copy(RHO)
 #     finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)

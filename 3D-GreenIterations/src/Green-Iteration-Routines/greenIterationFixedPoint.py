@@ -84,6 +84,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
             V_nl_psi = np.zeros(nPoints)
             for atom in atoms:
                 V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m],W,comm)
+#                 norm_of_V_nl_psi = np.sqrt(global_dot(V_nl_psi**2,W,comm))
+#                 rprint(rank,"NORM OF V_NL_PSI = ", norm_of_V_nl_psi)
             f = -2* ( orbitals[:,m]*Veff_local + V_nl_psi )
             rprint(rank,"Constructed f with nonlocal routines.")
         else:
@@ -114,9 +116,9 @@ def greensIteration_FixedPoint_Closure(gi_args):
             if singularityHandling=="skipping": phiNew /= (4*np.pi)
             if singularityHandling=="subtraction": phiNew /= (4*np.pi)
 
+            comm.barrier()
             convolutionTime = time.time()-startTime
             rprint(rank,'Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
-            comm.barrier()
 
         else:
             print('Exiting because energy too close to 0')

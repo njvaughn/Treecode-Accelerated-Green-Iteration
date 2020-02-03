@@ -51,13 +51,15 @@ class Atom(object):
         r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         return self.PSP.evaluateLocalPotentialInterpolator(r)
     
-    def V_nonlocal_pseudopotential_times_psi(self,x,y,z,psi,W,comm):
-        
+    def V_nonlocal_pseudopotential_times_psi(self,x,y,z,psi,W,comm=None):
         output = np.zeros(len(psi))     
         ## sum over the projectors, increment the nonloncal potential. 
         for i in range(self.numberOfChis):
-#             rprint(rank,"D_ion = ", self.Dion[str(i)])
-            C = global_dot( psi, self.Chi[str(i)]*W, comm)
+            if comm==None: # just a local computation:
+                C = np.dot( psi, self.Chi[str(i)]*W)
+            else:
+                C = global_dot( psi, self.Chi[str(i)]*W, comm)
+
             output += C * self.Chi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
         return output
     
@@ -110,11 +112,20 @@ class Atom(object):
                     self.Dion[str(ID)] = D_ion
                     ID+=1
         self.numberOfChis = ID  # this is larger than number of projectors, which don't depend on m
+        
+    
+    def removeTempChi(self):
+        self.Chi=None
+        self.Dion=None
+        self.numberOfChis=0
+    
                     
     def V_pseudopotential_times_psi(self,x,y,z,psi,W,comm):
         ## Call the local and nonlocal pseudopotential calculations.
         return self.V_local_pseudopotential(x,y,z)*psi + self.V_nonlocal_pseudopotential_times_psi(x,y,z,psi,W,comm)
-        
+     
+    
+       
     def setNumberOfOrbitalsToInitialize(self,verbose=0):
         if self.atomicNumber <=2:       
             self.nAtomicOrbitals = 1    # 1S 

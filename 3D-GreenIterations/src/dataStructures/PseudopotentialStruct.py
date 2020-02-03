@@ -38,10 +38,12 @@ class ONCV_PSP(object):
     def atomicNumberToAtomicSymbol(self):
         if self.atomicNumber==4:
             self.atomicSymbol="Be"
+        elif self.atomicNumber==6:
+            self.atomicSymbol="C"
         elif self.atomicNumber==14:
             self.atomicSymbol="Si"
         else:
-            print("Need to add atomic number %i to ONCV_PSP.atomicNumberToAtomicSymbol()")
+            print("Need to add atomic number %i to ONCV_PSP.atomicNumberToAtomicSymbol()" %self.atomicNumber)
             exit(-1)
         
     def setDensityInterpolator(self,verbose=0):
@@ -184,8 +186,9 @@ class ONCV_PSP(object):
             
             self.projectorCutoffRadius=r[length_of_projector_data-1] 
             
-            self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[:length_of_projector_data],proj,k=3,ext='zeros') # is ext='zeros' okay?  Could do some decay instead
-#             self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[1:length_of_projector_data],proj[1:]/r[1:length_of_projector_data],k=5,ext='raise') # is ext='zeros' okay?  Could do some decay instead
+#             self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[:length_of_projector_data],proj,k=3,ext='zeros') # is ext='zeros' okay?  Could do some decay instead
+            self.projectorInterpolators[str(i)] = CubicSpline(r[:length_of_projector_data],proj,bc_type=((2,0),(2,0)),extrapolate=True)
+#             self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[1:length_of_projector_data],proj[1:]/r[1:length_of_projector_data],k=3,ext='zeros') # is ext='zeros' okay?  Could do some decay instead
         return
     
     def evaluateProjectorInterpolator(self,idx,r,timer=False):
@@ -193,7 +196,10 @@ class ONCV_PSP(object):
         # However, for 1 million points, the try/except method takes 8.5 seconds, the vectorized method takes 0.034 seconds.  Big difference.
 #         return self.projectorInterpolators[str(idx)](r)/r ## dividing by r because it UPF manual says the provided fields are really r*Beta
         if timer==True: start=time.time()
-        output =  self.projectorInterpolators[str(idx)](r)/r
+        
+#         output =  self.projectorInterpolators[str(idx)](r)/r
+        output = np.where(r<self.projectorCutoffRadius, self.projectorInterpolators[str(idx)](r)/r, 0.0) 
+#         output = np.where(r<self.projectorCutoffRadius, self.projectorInterpolators[str(idx)](r), 0.0) 
         
 #         nr=len(r)
 #         output = np.zeros(nr)

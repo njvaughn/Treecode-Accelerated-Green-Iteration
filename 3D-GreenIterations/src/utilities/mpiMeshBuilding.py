@@ -34,18 +34,25 @@ def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=1):
     z = np.linspace(-ZL,ZL,nz+1)
     
     cells = []
+    volumes=[]
     
     for i in range(nx):
         for j in range(ny):
             for k in range(nz):
                 cells.append( [x[i], x[i+1], y[j], y[j+1], z[k], z[k+1]] )
+                volumes.append( (x[i+1]-x[i])*(y[j+1]-y[j])*(z[k+1]-z[k]) )
     
     if verbose>0: rprint(rank,"Number of coarse cells: ", len(cells))
+    if verbose>0: rprint(rank, "Expected volume:   ", (2*XL*2*YL*2*ZL))
+    if verbose>0: rprint(rank, "Cumulative volume: ", np.sum(volumes))
+    assert abs((2*XL*2*YL*2*ZL) - np.sum(volumes)) < 1e-12, "base mesh cells volumes do not add up to the expected total volume."
+    
 #     for i in range(len(cells)):
 #         print(cells[i])
+#     exit(-1)
     return cells
 
-def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inputFile,outputFile,srcdir,order,gaugeShift,
+def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
                                    divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,verbose=0, saveTree=False):
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
@@ -84,10 +91,13 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
                 exit(-1)
     
     
+    
+    
 
     
     
 #     nOrbitals = int( np.ceil(nElectrons/2)*1.2  )   # start with the minimum number of orbitals 
+
     occupations = 2*np.ones(nOrbitals)
 
     if verbose>0: rprint(rank,[coordinateFile, outputFile, nElectrons, nOrbitals, 
@@ -100,30 +110,48 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     y=np.empty(0)
     z=np.empty(0)
     w=np.empty(0)
+    xf=np.empty(0)
+    yf=np.empty(0)
+    zf=np.empty(0)
+    wf=np.empty(0)
     for i in range(len(cells)):
         if i%size==rank:
 #             print("CALLING refineCell ==================================================")
             if saveTree==False:
-                X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
+                X,Y,Z,W,Xf,Yf,Zf,Wf,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
                                                                                         divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree)
             elif saveTree==True:
-                X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,gaugeShift,divideCriterion=divideCriterion,
+                X,Y,Z,W,Xf,Yf,Zf,Wf,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
                                                                                         divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree)
             
             x=np.append(x,X)
             y=np.append(y,Y)
             z=np.append(z,Z)
             w=np.append(w,W)
+            
+            xf=np.append(xf,Xf)
+            yf=np.append(yf,Yf)
+            zf=np.append(zf,Zf)
+            wf=np.append(wf,Wf)
     
     
     ## BUG HERE WHEN RANKS=6.  Need every rank to refine at least one cell.
 #     nPoints=len(x)
     if saveTree==False:
-        return x,y,z,w,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+        return x,y,z,w,xf,yf,zf,wf,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
     elif saveTree==True:
-        return x,y,z,w,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
+        return x,y,z,w,xf,yf,zf,wf,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
 
-def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0, saveTree=False):
+def func(X,Y,Z,pow):
+    
+    return X**pow
+
+def integral_func(X,Y,Z,pow,xL,xH,yL,yH,zL,zH):
+
+    return (xH**(pow+1)/(pow+1) - (xL)**(pow+1)/(pow+1))*(yH-yL)*(zH-zL)
+
+
+def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,fine_order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0, saveTree=False):
     '''
     setUp() gets called before every test below.
     '''
@@ -140,7 +168,7 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     if verbose>0: rprint(rank,referenceEigenvalues)
     if verbose>0: rprint(rank,np.shape(referenceEigenvalues))
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,atoms,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
-                coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile)#, iterationOutFile=outputFile)
+                coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile, fine_order=fine_order)#, iterationOutFile=outputFile)
 
    
     tree.buildTree( initializationType='atomic',divideCriterion=divideCriterion, 
@@ -149,18 +177,46 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     
     tree.finalDivideBasedOnNuclei(coordinateFile)
     
-    tree.exportGridpoints
-    X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
+#     tree.exportGridpoints
+    X, Y, Z, W, Xf, Yf, Zf, Wf, RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
 
-#     
+    
     atoms = tree.atoms
     nPoints = len(X)
+    volume = (xmax-xmin)*(ymax-ymin) * (zmax-zmin)
+    assert len(X)==len(Y), "len(X) not equal to len(Y) for a base mesh tree"
+    assert len(X)==len(Z), "len(X) not equal to len(Z) for a base mesh tree"
+    assert len(X)==len(W), "len(X) not equal to len(W) for a base mesh tree"
+    assert len(X)==len(RHO), "len(X) not equal to len(RHO) for a base mesh tree"
+    assert abs( np.sum(W) - volume)/volume<1e-12, "Sum of weights doesn't equal base mesh volume."
+    assert nPoints>0, "nPoints not > 0 for one of the base mesh trees. "
+    
+    pow=2
+    testfunc = func(X,Y,Z,pow)
+    testfuncFine = func(Xf,Yf,Zf,pow)
+    computedIntegral = np.sum(testfunc*W)
+    computedIntegralFine = np.sum(testfuncFine*Wf)
+    analyticIntegral = integral_func(X,Y,Z,pow,xmin,xmax,ymin,ymax,zmin,zmax)
+    print(nPoints)
+    print("Computed Integral over coarse base mesh:          %f, %1.3e" %(computedIntegral, (analyticIntegral-computedIntegral)/analyticIntegral))
+    print("Computed Integral over fine base mesh:            %f, %1.3e" %(computedIntegralFine,(analyticIntegral-computedIntegralFine)/analyticIntegral))
+    print("Analytic Integral Integral over base mesh:        ", analyticIntegral)
+    try: 
+        assert abs(computedIntegral-analyticIntegral)<1e-8, "Computed (%f) and analytic (%f) integrals not matching for base mesh spanning %f,%f x %f,%f x %f,%f" %(computedIntegral, analyticIntegral, xmin,xmax,ymin,ymax,zmin,zmax)
+    except AssertionError as error:
+        print(error)
+        print(X)
+        print(Y)
+        print(Z)
+        print(W)
+        print(np.sum(W))
+        exit(-1)
 
     if saveTree==False:
         tree=None
-        return X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+        return X, Y, Z, W, Xf, Yf, Zf, Wf, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
     elif saveTree==True:
-        return X,Y,Z,W,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
+        return X, Y, Z, W, Xf, Yf, Zf, Wf, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
     else:
         print("What should saveTree be set to?")
         exit(-1)
