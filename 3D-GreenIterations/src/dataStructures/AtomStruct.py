@@ -51,14 +51,22 @@ class Atom(object):
         r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         return self.PSP.evaluateLocalPotentialInterpolator(r)
     
-    def V_nonlocal_pseudopotential_times_psi(self,x,y,z,psi,W,comm=None):
+    def V_nonlocal_pseudopotential_times_psi(self,psi,interpolatedPsi,Wf,comm=None):
+        
+#         print("Lengths")
+#         print(len(psi))
+#         print(len(interpolatedPsi))
+#         print(len(self.Chi[str(0)]))
+#         print(len(self.FineChi[str(0)]))
+        
+        
         output = np.zeros(len(psi))     
-        ## sum over the projectors, increment the nonloncal potential. 
+        ## sum over the projectors, increment the nonloncal potential.   Compute C on the fine mesh.
         for i in range(self.numberOfChis):
             if comm==None: # just a local computation:
-                C = np.dot( psi, self.Chi[str(i)]*W)
+                C = np.dot( interpolatedPsi, self.FineChi[str(i)]*Wf)
             else:
-                C = global_dot( psi, self.Chi[str(i)]*W, comm)
+                C = global_dot( interpolatedPsi, self.FineChi[str(i)]*Wf, comm)
 
             output += C * self.Chi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
         return output
@@ -112,6 +120,56 @@ class Atom(object):
                     self.Dion[str(ID)] = D_ion
                     ID+=1
         self.numberOfChis = ID  # this is larger than number of projectors, which don't depend on m
+        
+    def generateFineChi(self,X,Y,Z):
+        self.FineChi = {}
+#         self.Dion = {}
+#         D_ion_array = np.array(self.PSP.psp['D_ion'][::self.PSP.psp['header']['number_of_proj']+1]) # grab diagonals of matrix, Ry->Ha /2 already accounted for by upf_to_json
+#         rprint(rank,"D_ion_array = ", D_ion_array)
+        num_ell = int(self.PSP.psp['header']['number_of_proj']/2)  # 2 projectors per ell for ONCV
+        if self.PSP.psp['header']['number_of_proj']==2:
+            assert (num_ell==1), "ERROR IN num_ell"
+        if self.PSP.psp['header']['number_of_proj']==4:
+            assert (num_ell==2), "ERROR IN num_ell"
+        if self.PSP.psp['header']['number_of_proj']==8:
+            assert (num_ell==4) ,"ERROR IN num_ell"
+        ID=0
+#         D_ion_count=0
+        for ell in range(num_ell):
+            
+            for p in [0,1]:  # two projectors per ell for ONCV
+                
+#                 D_ion = D_ion_array[D_ion_count]
+#                 D_ion_count+=1
+#                 print("D_ion = ", D_ion)
+                
+                for m in range(-ell,ell+1):
+
+                    dx = X-self.x
+                    dy = Y-self.y
+                    dz = Z-self.z
+                    chi = np.zeros(len(dx))
+                    r = np.sqrt( dx**2 + dy**2 + dz**2 )
+                    inclination = np.arccos(dz/r)
+                    azimuthal = np.arctan2(dy,dx)
+
+                    if m<0:
+                        Ysp = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
+                    if m>0:
+                        Ysp = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
+
+                    if ( m==0 ):
+                        Ysp = sph_harm(m,ell,azimuthal,inclination)
+
+                    if np.max( abs(np.imag(Ysp)) ) > 1e-14:
+                        print('imag(Y) ', np.imag(Ysp))
+                        return
+
+                    chi = self.PSP.evaluateProjectorInterpolator(2*ell+p, r)*np.real(Ysp) # Is this order the same as the setup order?
+                    self.FineChi[str(ID)] = chi
+#                     self.Dion[str(ID)] = D_ion
+                    ID+=1
+        self.numberOfFineChis = ID  # this is larger than number of projectors, which don't depend on m
         
     
     def removeTempChi(self):

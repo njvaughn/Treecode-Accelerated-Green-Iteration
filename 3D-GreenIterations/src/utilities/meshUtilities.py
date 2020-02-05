@@ -72,7 +72,17 @@ def interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
     # get the number of cells
     numCellsCoarse = int(len(coarseX)/pointsPerCoarseCell)
     numCellsFine = int(len(fineX)/pointsPerFineCell)
+    
+    print("pointsPerCoarseCell ", pointsPerCoarseCell)
+    print("pointsPerFineCell ", pointsPerFineCell)
+    print("numCellsCoarse ", numCellsCoarse)
+    print("numCellsFine ", numCellsFine)
     assert numCellsCoarse==numCellsFine, "numCellsCoarse != numCellsFine"
+    
+    if len(coarseX)==len(fineX):  # meshes are the same, don't need to interpolate.
+        return coarseF
+    
+    
     numCells = numCellsFine
     
     fineF=np.zeros(len(fineX))
@@ -102,6 +112,7 @@ def interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
                                                                fineZ[i*pointsPerFineCell: (i+1)*pointsPerFineCell],
                                                                wx,wy,wz)
 
+    print("returning fineF of length ", len(fineF))
     return fineF
 
 

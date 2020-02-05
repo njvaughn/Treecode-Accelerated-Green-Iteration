@@ -101,8 +101,8 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
 #     rprint(rank,"Domain length after adjustment: ", domainSize)
 #     rprint(rank," Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
     
-    X,Y,Z,W,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues,tree = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
-                                                                                                     inputFile,outputFile,srcdir,order,gaugeShift,
+    X,Y,Z,W,Xf,Yf,Zf,Wf,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues,tree = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
+                                                                                                     inputFile,outputFile,srcdir,order,order,gaugeShift,
                                                                                                      MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4,saveTree=True)
    
 
@@ -241,13 +241,13 @@ if __name__ == "__main__":
     MESHPARAM1=0.5 # near field spacing 
     MESHPARAM2=8.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
-    MESHPARAM4=0.0 # unused  
+    MESHPARAM4=2.0 # unused  
     
-    MESHTYPE="ParentChildrenIntegral"
-    MESHPARAM1=5e-8
-    
-    MESHTYPE="VPsiIntegral"
-    MESHPARAM1=1e-4
+#     MESHTYPE="ParentChildrenIntegral"
+#     MESHPARAM1=5e-8
+#     
+#     MESHTYPE="VPsiIntegral"
+#     MESHPARAM1=1e-4
     
 
   

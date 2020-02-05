@@ -778,6 +778,11 @@ if __name__ == "__main__":
 # Test quadrature rule
 #     RHO = X**5 + Y**5 + Z**6
 #     RHO = np.exp( -np.sqrt(R2) )
+    print("Number of cells = ", int(len(Xf)/(fine_order+1)**3))
+    assert int(len(X)/(order+1)**3)==int(len(Xf)/(fine_order+1)**3), "Two meshes don't seem to have same number of cells."
+    print("Sum of weights = ", np.sum(W))
+    assert abs(np.sum(W) - np.sum(Wf) )/np.sum(W) <1e-12, "Weights and fine weights both sum to same value."
+    
     pow=6
     RHO=func(X,Y,Z,pow)
     RHOf=func(Xf,Yf,Zf,pow)
@@ -791,8 +796,8 @@ if __name__ == "__main__":
 #     print("Relative error =      ", (ANALYTIC-COMPUTED)/ANALYTIC)
     
     
-    
-    
+#     nPoints=len(X)
+#     print("nPoints = ", nPoints)
 #     Vext_local = np.zeros(nPoints)
 #     atomCount=1
 #     for atom in atoms:
@@ -806,13 +811,21 @@ if __name__ == "__main__":
 #             print("Error: what should coreRepresentation be?")
 #             exit(-1)
 #         atomCount+=1
-        
-        
-#     for atom in atoms:
-#         print("atom ", atom)
-#         atom.generateChi(X,Y,Z)
-#         for i in range(atom.numberOfChis):
-#             print("Norm of CHI %i = %f " %(i,global_dot(W,atom.Chi[str(i)]**2,comm)))
+         
+         
+    for atom in atoms:
+        print("atom ", atom)
+        atom.generateChi(X,Y,Z)
+        for i in range(atom.numberOfChis):
+            norm=global_dot(W,atom.Chi[str(i)]**2,comm)
+            print("Coarse: Norm of CHI %i = %f, gap from 1 = %1.3e" %(i,norm, abs(1-norm)))
+            
+    for atom in atoms:
+        print("atom ", atom)
+        atom.generateChi(Xf,Yf,Zf)
+        for i in range(atom.numberOfChis):
+            norm=global_dot(Wf,atom.Chi[str(i)]**2,comm)
+            print("Fine: Norm of CHI %i = %f , gap from 1 = %1.3e" %(i,norm, abs(1-norm)))
         
     
 #     initialRho = np.copy(RHO)
