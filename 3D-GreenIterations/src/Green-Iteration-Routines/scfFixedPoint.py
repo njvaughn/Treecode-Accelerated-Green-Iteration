@@ -99,6 +99,10 @@ def scfFixedPointClosure(scf_args):
         Y = scf_args['Y']
         Z = scf_args['Z']
         W = scf_args['W']
+        Xf = scf_args['Xf']
+        Yf = scf_args['Yf']
+        Zf = scf_args['Zf']
+        Wf = scf_args['Wf']
         gradientFree = scf_args['gradientFree']
         residuals = scf_args['residuals']
         greenIterationOutFile = scf_args['greenIterationOutFile']
@@ -116,6 +120,8 @@ def scfFixedPointClosure(scf_args):
         vHartreeFile=scf_args['vHartreeFile']
         auxiliaryFile=scf_args['auxiliaryFile']
         atoms=scf_args['atoms']
+        order=scf_args['order']
+        fine_order=scf_args['fine_order']
         
         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
 #         scf_args['GItolerancesIdx']=0
@@ -167,13 +173,15 @@ def scfFixedPointClosure(scf_args):
             
 #             print("Rank %i calling treecode through wrapper..." %(rank))
             kernelName = "coulomb"
+            numberOfKernelParameters=1
+            kernelParameters=np.array([gaussianAlpha])
             verbosity=0
 #             singularityHandling="skipping"
 #             print("Forcing the Hartree solve to use singularity skipping.")
             V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-                                                           kernelName, gaussianAlpha, singularityHandling, approximationName,
+                                                           kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName,
                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, verbosity)
             
 #             V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
@@ -264,13 +272,15 @@ def scfFixedPointClosure(scf_args):
                                'symmetricIteration':symmetricIteration,'GPUpresent':GPUpresent,
                                'singularityHandling':singularityHandling, 'approximationName':approximationName,
                                'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta, 'maxParNode':maxParNode,'batchSize':batchSize,
-                               'nPoints':nPoints, 'm':m, 'X':X,'Y':Y,'Z':Z,'W':W,'gradientFree':gradientFree,
+                               'nPoints':nPoints, 'm':m, 'X':X,'Y':Y,'Z':Z,'W':W,'Xf':Xf,'Yf':Yf,'Zf':Zf,'Wf':Wf,'gradientFree':gradientFree,
                                'SCFcount':SCFcount,'greenIterationsCount':greenIterationsCount,'residuals':residuals,
                                'greenIterationOutFile':greenIterationOutFile,
                                'referenceEigenvalues':referenceEigenvalues,
                                'updateEigenvalue':True,
                                'coreRepresentation':coreRepresentation,
-                               'atoms':atoms } 
+                               'atoms':atoms,
+                               'order':order,
+                               'fine_order':fine_order } 
                 
                 n,M = np.shape(orbitals)
                 resNorm=1.0 
@@ -518,6 +528,13 @@ def scfFixedPointClosure(scf_args):
         for m in range(nOrbitals):
             RHO += orbitals[:,m]**2 * occupations[m]
         newDensity = np.copy(RHO)
+        
+        print("Integral of old RHO ", global_dot( oldDensity,W,comm ) )
+        print("Integral of new RHO ", global_dot( newDensity,W,comm ) )
+        
+        print("NORMALIZING NEW RHO")
+        densityIntegral=global_dot( newDensity,W,comm )
+        newDensity *= nElectrons/densityIntegral
         
     
         if SCFcount==1: # not okay anymore because output density gets reset when tolerances get reset.
