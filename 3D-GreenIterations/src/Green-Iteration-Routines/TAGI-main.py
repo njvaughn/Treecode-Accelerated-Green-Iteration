@@ -95,6 +95,8 @@ restart             = str(sys.argv[n]); n+=1
 savedMesh           = str(sys.argv[n]); n+=1
 singularityHandling = str(sys.argv[n]); n+=1
 approximationName   = str(sys.argv[n]); n+=1
+regularize          = str(sys.argv[n]); n+=1
+epsilon             = float(sys.argv[n]); n+=1
 
 
 
@@ -116,9 +118,19 @@ sys.path.append(srcdir+'../ctypesTests/lib')
 
 if savedMesh == 'None':
     savedMesh=''
+    
+if regularize=='True':
+    regularize=True
+elif regularize=='False':
+    regularize=False
+else:
+    print("What should regularize input be set to?")
+    exit(-1)
 
 if noGradients=='True':
     gradientFree=True
+
+    
 elif noGradients=='False':
     gradientFree=False
 elif noGradients=='Laplacian':
@@ -323,7 +335,8 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,eigenval
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha, gaugeShift,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
-                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=False, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations)
+                                 onTheFlyRefinement=onTheFlyRefinement, vtkExport=False, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations,
+                                 regularize=regularize,epsilon=epsilon)
 
 
     if rank==0:
@@ -333,14 +346,15 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,eigenval
         header = ['domainSize','maxSideLength','order','numberOfCells','numberOfPoints','gradientFree',
                   'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
                   'gaussianAlpha','gaugeShift','finalGItolerance',
-                  'GreenSingSubtracted', 'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
+                  'GreenSingSubtracted', 'regularize', 'epsilon',
+                  'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
                   'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
                   'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
         
         myData = [domainSize,maxSideLength,order,nPoints/order**3,nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
                   gaussianAlpha,gaugeShift,finalGItolerance,
-                  subtractSingularity,
+                  subtractSingularity, regularize, epsilon,
                   Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal'],
                   treecode,treecodeOrder,theta,maxParNode,batchSize, Times['totalKohnShamTime'],Times['timePerConvolution'],Times['totalIterationCount'] ]
     #               Energies['Etotal'], tree.
@@ -376,7 +390,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,ei
                                  treecode, treecodeOrder, theta, maxParNode, batchSize, singularityHandling, approximationName,
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                 subtractSingularity, gaussianAlpha, gaugeShift, inputFile='',outputFile='',restartFile=False,
-                                onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None): 
+                                onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None,
+                                regularize=False, epsilon=0.0): 
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
@@ -556,7 +571,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,ei
                'GItolerancesIdx':0,
                'singularityHandling':singularityHandling, 'approximationName':approximationName, 
                'atoms':atoms,'coreRepresentation':coreRepresentation,
-               'order':order,'fine_order':fine_order}
+               'order':order,'fine_order':fine_order,
+               'regularize':regularize,'epsilon':epsilon}
     
 
     """

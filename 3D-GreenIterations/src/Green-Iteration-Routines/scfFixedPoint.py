@@ -122,6 +122,8 @@ def scfFixedPointClosure(scf_args):
         atoms=scf_args['atoms']
         order=scf_args['order']
         fine_order=scf_args['fine_order']
+        regularize=scf_args['regularize']
+        epsilon=scf_args['epsilon']
         
         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
 #         scf_args['GItolerancesIdx']=0
@@ -162,9 +164,31 @@ def scfFixedPointClosure(scf_args):
             rprint(rank,'Convolution time: ', time.time()-start)
         else:    
             if singularityHandling=='skipping':
-                rprint(rank,"Using singularity skipping in Hartree solve.")
-            elif singularityHandling=='subtraction':                    
-                rprint(rank,"Using singularity subtraction in Hartree solve.")
+                if regularize==False:
+                    rprint(rank,"Using singularity skipping in Hartree solve.")
+                    kernelName = "coulomb"
+                    numberOfKernelParameters=1
+                    kernelParameters=np.array([0.0])
+                elif regularize==True:
+                    rprint(rank,"Using regularize coulomb kernel with epsilon = ", epsilon)
+                    kernelName = "regularized-coulomb"
+                    numberOfKernelParameters=1
+                    kernelParameters=np.array([epsilon])
+                else:
+                    print("What should regularize be in SCF?")
+                    exit(-1)
+            elif singularityHandling=='subtraction':
+                if regularize==False:                    
+                    rprint(rank,"Using singularity subtraction in Hartree solve.")
+                    kernelName = "coulomb"
+                    numberOfKernelParameters=1
+                    kernelParameters=np.array([gaussianAlpha])
+                elif regularize==True:
+                    rprint(rank,"Using SS and regularization for Hartree solve.")
+                    kernelName="regularized-coulomb"
+                    numberOfKernelParameters=2
+                    kernelParameters=np.array([gaussianAlpha,epsilon])
+                    
             else: 
                 rprint(rank,"What should singularityHandling be?")
                 return
@@ -172,9 +196,7 @@ def scfFixedPointClosure(scf_args):
             
             
 #             print("Rank %i calling treecode through wrapper..." %(rank))
-            kernelName = "coulomb"
-            numberOfKernelParameters=1
-            kernelParameters=np.array([gaussianAlpha])
+            
             verbosity=0
 #             singularityHandling="skipping"
 #             print("Forcing the Hartree solve to use singularity skipping.")
@@ -280,7 +302,8 @@ def scfFixedPointClosure(scf_args):
                                'coreRepresentation':coreRepresentation,
                                'atoms':atoms,
                                'order':order,
-                               'fine_order':fine_order } 
+                               'fine_order':fine_order,
+                               'regularize':regularize, 'epsilon':epsilon } 
                 
                 n,M = np.shape(orbitals)
                 resNorm=1.0 

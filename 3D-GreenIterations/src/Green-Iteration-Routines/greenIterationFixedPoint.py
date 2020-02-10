@@ -68,6 +68,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         atoms=gi_args['atoms']
         coarse_order=gi_args["order"]
         fine_order=gi_args["fine_order"]
+        regularize=gi_args['regularize']
+        epsilon=gi_args["epsilon"]
 
         
 #         print('Who called F(x)? ', inspect.stack()[2][3])
@@ -84,25 +86,27 @@ def greensIteration_FixedPoint_Closure(gi_args):
         Energies['orbitalEnergies'][m] = np.copy(psiIn[-1])
         
         # get the wavefunction on the fine mesh.
-        start=time.time()
+        
         if fine_order!=coarse_order:
+            start=time.time()
             interpolatedWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], coarse_order,
                                                                Xf, Yf, Zf, fine_order) 
+            end=time.time()
+            rprint(rank,"Time to interpolate wavefunction: ", end-start) 
         else:
             interpolatedWavefunction=orbitals[:,m]
         
-        end=time.time()
-        print("Time to interpolate wavefunction: ", end-start) 
+        
 #         print("length of interpolated wavefunction: ", len(interpolatedWavefunction))
      
         if coreRepresentation=='AllElectron':
             f = -2*orbitals[:,m]*Veff_local
         elif coreRepresentation=='Pseudopotential': 
             V_nl_psi = np.zeros(nPoints)
-            print("SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
-#             for atom in atoms:
-#                 V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],interpolatedWavefunction,Wf,comm)
-# #                 norm_of_V_nl_psi = np.sqrt(global_dot(V_nl_psi**2,W,comm))
+#             rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
+            for atom in atoms:
+                V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],interpolatedWavefunction,Wf,comm)
+#                 norm_of_V_nl_psi = np.sqrt(global_dot(V_nl_psi**2,W,comm))
 #                 rprint(rank,"NORM OF V_NL_PSI = ", norm_of_V_nl_psi)
             f = -2* ( orbitals[:,m]*Veff_local + V_nl_psi )
             rprint(rank,"Constructed f with nonlocal routines.")
@@ -111,9 +115,13 @@ def greensIteration_FixedPoint_Closure(gi_args):
             return
         
         
+#         print("ANY NaNs??? ", np.isnan(f).any())
+        if np.isnan(f).any():
+            print("NaNs detected in f = -2*orbitals[:,m]*Veff_local.  Exiting")
+            exit(-1)
         oldEigenvalue =  Energies['orbitalEnergies'][m] 
         k = np.sqrt(-2*Energies['orbitalEnergies'][m])
-#         print('k = ', k)
+#         rprint(rank, 'k = ', k)
     
         psiNew = np.zeros(nPoints)
         
@@ -121,9 +129,21 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
             
             startTime=time.time()
-            kernelName = "yukawa"
-            numberOfKernelParameters=1
-            kernelParameters=np.array([k])
+            
+            rprint(rank,"singularityHandling = ", singularityHandling)
+            if regularize==False:
+                rprint(rank,"Using singularity subtraction kernel in Green Iteration.")
+                kernelName = "yukawa"
+                numberOfKernelParameters=1
+                kernelParameters=np.array([k])
+            elif regularize==True:
+                rprint(rank,"Using regularized yukawa for Green Iteration with epsilon = ", epsilon)
+                kernelName="regularized-yukawa"
+                numberOfKernelParameters=2
+                kernelParameters=np.array([k, epsilon])
+                
+                
+            
 #             kappa = k
             startTime = time.time()
             comm.barrier()
@@ -135,6 +155,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)
             if singularityHandling=="subtraction": psiNew /= (4*np.pi)
+#             if singularityHandling=="regularized": psiNew /= (4*np.pi)
 
             comm.barrier()
             convolutionTime = time.time()-startTime
@@ -171,23 +192,25 @@ def greensIteration_FixedPoint_Closure(gi_args):
                     pass
                 elif coreRepresentation=="Pseudopotential":
                     
-                    start=time.time()
+                    
                     if fine_order!=coarse_order:
+                        start=time.time()
                         interpolatedWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, psiNew, coarse_order,
                                                                            Xf, Yf, Zf, fine_order) 
+                        end=time.time()
+                        rprint(rank,"Time to interpolate wavefunction for eigenvalue update: ", end-start) 
                     else:
                         interpolatedWavefunction=psiNew
                     
-                    end=time.time()
-                    print("Time to interpolate wavefunction for eigenvalue update: ", end-start) 
+                    
         
         
 #                     rprint(rank,"Need to address gradient-free eigenvalue update in Pseudopotential case.")
                     V_nl_psiDiff = np.zeros(nPoints)
-                    print("SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
-#                     for atom in atoms:
-#                         V_nl_psi+= atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m]-psiNew,interpolatedWavefunction,Wf,comm)
-# #                         V_nl_psiDiff += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m]-psiNew,W,comm)
+#                     rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
+                    for atom in atoms:
+                        V_nl_psi+= atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m]-psiNew,interpolatedWavefunction,Wf,comm)
+#                         V_nl_psiDiff += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m]-psiNew,W,comm)
                     deltaE -= global_dot( V_nl_psi*(orbitals[:,m]-psiNew), W, comm ) 
 #                     deltaE -= global_dot( orbitals[:,m]* V_nl_psiDiff, W, comm ) 
                 else: 
