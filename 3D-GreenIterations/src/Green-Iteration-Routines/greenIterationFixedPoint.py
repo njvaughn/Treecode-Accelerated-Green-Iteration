@@ -85,19 +85,19 @@ def greensIteration_FixedPoint_Closure(gi_args):
         orbitals[:,m] = np.copy(psiIn[:-1])
         Energies['orbitalEnergies'][m] = np.copy(psiIn[-1])
         
-        # get the wavefunction on the fine mesh.
+        # get the input wavefunction on the fine mesh.
         
         if fine_order!=coarse_order:
             start=time.time()
-            interpolatedWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], coarse_order,
+            interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], coarse_order,
                                                                Xf, Yf, Zf, fine_order) 
             end=time.time()
             rprint(rank,"Time to interpolate wavefunction: ", end-start) 
         else:
-            interpolatedWavefunction=orbitals[:,m]
+            interpolatedInputWavefunction=orbitals[:,m]
         
         
-#         print("length of interpolated wavefunction: ", len(interpolatedWavefunction))
+#         print("length of interpolated wavefunction: ", len(interpolatedInputWavefunction))
      
         if coreRepresentation=='AllElectron':
             f = -2*orbitals[:,m]*Veff_local
@@ -105,7 +105,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             V_nl_psi = np.zeros(nPoints)
 #             rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
             for atom in atoms:
-                V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],interpolatedWavefunction,Wf,comm)
+                V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
 #                 norm_of_V_nl_psi = np.sqrt(global_dot(V_nl_psi**2,W,comm))
 #                 rprint(rank,"NORM OF V_NL_PSI = ", norm_of_V_nl_psi)
             f = -2* ( orbitals[:,m]*Veff_local + V_nl_psi )
@@ -193,26 +193,31 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 elif coreRepresentation=="Pseudopotential":
                     
                     
-                    if fine_order!=coarse_order:
-                        start=time.time()
-                        interpolatedWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, psiNew, coarse_order,
-                                                                           Xf, Yf, Zf, fine_order) 
-                        end=time.time()
-                        rprint(rank,"Time to interpolate wavefunction for eigenvalue update: ", end-start) 
-                    else:
-                        interpolatedWavefunction=psiNew
                     
+                    
+                    ## DONT NEED TO INTERPOLATE AGAIN.  interpolatedInputWavefunction IS THE SAME AS BEFORE.
+                    # Obtain old orbital on the same mesh as the projectors
+#                     if fine_order!=coarse_order:
+#                         start=time.time()
+#                         interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], coarse_order,
+#                                                                            Xf, Yf, Zf, fine_order) 
+#                         end=time.time()
+#                         rprint(rank,"Time to interpolate wavefunction for eigenvalue update: ", end-start) 
+#                     else:
+#                         interpolatedInputWavefunction=orbitals[:,m]
+#                     
                     
         
         
-#                     rprint(rank,"Need to address gradient-free eigenvalue update in Pseudopotential case.")
-                    V_nl_psiDiff = np.zeros(nPoints)
 #                     rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
+
+                    # Compute action of V_nl on the old orbital
+                    V_nl_psi = np.zeros(nPoints)
                     for atom in atoms:
-                        V_nl_psi+= atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m]-psiNew,interpolatedWavefunction,Wf,comm)
-#                         V_nl_psiDiff += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[:,m]-psiNew,W,comm)
+                        V_nl_psi+= atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
+
+                    # Compute the delta E, here using the difference between the new psi and old psi
                     deltaE -= global_dot( V_nl_psi*(orbitals[:,m]-psiNew), W, comm ) 
-#                     deltaE -= global_dot( orbitals[:,m]* V_nl_psiDiff, W, comm ) 
                 else: 
                     print("Invalid coreRepresentation.")
                     exit(-1)
