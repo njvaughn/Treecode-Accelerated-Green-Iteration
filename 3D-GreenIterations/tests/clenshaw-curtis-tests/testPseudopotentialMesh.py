@@ -228,26 +228,29 @@ if __name__ == "__main__":
 
     
 #     inputFile=srcdir+'molecularConfigurations/SiliconClusterAuxiliaryPSP.csv'
-    inputFile=srcdir+'molecularConfigurations/berylliumAuxiliaryPSP.csv'
-#     inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
-#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
-    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/beryllium"
+#    inputFile=srcdir+'molecularConfigurations/berylliumAuxiliaryPSP.csv'
+    inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
+    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
+#    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/beryllium"
     coreRepresentation="Pseudopotential"
     MESHTYPE='coarsenedUniform'
-    order=5
+    order=4
     gaugeShift=-0.5
-    domainSize=16
-    MAXSIDELENGTH=32
-    MESHPARAM1=0.5 # near field spacing 
-    MESHPARAM2=8.0 # far field spacing
-    MESHPARAM3=2.0 # ball radius
-    MESHPARAM4=2.0 # unused  
+    domainSize=24
+    MAXSIDELENGTH=48
+    MESHPARAM1=0.375 # near field spacing 
+    MESHPARAM2=6.0 # far field spacing
+    MESHPARAM3=1.5 # ball radius
+    MESHPARAM4=0 # additional inner refinement  
     
 #     MESHTYPE="ParentChildrenIntegral"
 #     MESHPARAM1=5e-8
 #     
-#     MESHTYPE="VPsiIntegral"
-#     MESHPARAM1=1e-4
+#    MAXSIDELENGTH=16
+#    MESHTYPE="VPsiIntegral"
+#    MESHTYPE="ChiIntegral"
+#     MESHPARAM1=1e-5
+#     order=7
     
 
   

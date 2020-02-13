@@ -51,24 +51,46 @@ class Atom(object):
         r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         return self.PSP.evaluateLocalPotentialInterpolator(r)
     
-    def V_nonlocal_pseudopotential_times_psi(self,psi,interpolatedPsi,Wf,comm=None):
+    def V_nonlocal_pseudopotential_times_psi(self,psi,Weights,interpolatedPsi=None,comm=None):
         
 #         print("Lengths")
 #         print(len(psi))
 #         print(len(interpolatedPsi))
 #         print(len(self.Chi[str(0)]))
 #         print(len(self.FineChi[str(0)]))
-        
+        W=None
+        Wf=None
+        if interpolatedPsi is not None:
+            # using two meshes.  Weights and Chis should come from fine Mesh
+            Wf=Weights
+        elif interpolatedPsi is None:
+            W=Weights
+            
         
         output = np.zeros(len(psi))     
         ## sum over the projectors, increment the nonloncal potential.   Compute C on the fine mesh.
         for i in range(self.numberOfChis):
-            if comm==None: # just a local computation:
-                C = np.dot( interpolatedPsi, self.FineChi[str(i)]*Wf)
-            else:
-                C = global_dot( interpolatedPsi, self.FineChi[str(i)]*Wf, comm)
+            if interpolatedPsi is not None:
+                if comm==None: # just a local computation:
+                    C = np.dot( interpolatedPsi, self.FineChi[str(i)]*Wf)
+#                     print("Chi %i, C = %1.8e" %(i,C))
+                else:
+                    C = global_dot( interpolatedPsi, self.FineChi[str(i)]*Wf, comm)
+#                     rprint(rank, "Chi %i, C = %1.8e" %(i,C))
+            elif interpolatedPsi is None:
+                if comm==None: # just a local computation:
+                    C = np.dot( psi, self.Chi[str(i)]*W)
+#                     print("Chi %i, C = %1.8e" %(i,C))
+                else:
+                    C = global_dot( psi, self.Chi[str(i)]*W, comm)
+#                     rprint(rank, "Chi %i, C = %1.8e" %(i,C))
+                    
+                
+            
 
             output += C * self.Chi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
+#         print("Exiting after first call to V_nonlocal_pseudopotential_times_psi")
+#         exit(-1)
         return output
     
     def generateChi(self,X,Y,Z):
@@ -171,6 +193,26 @@ class Atom(object):
                     ID+=1
         self.numberOfFineChis = ID  # this is larger than number of projectors, which don't depend on m
         
+    def normalizeChi(self,W,comm=None):
+        for i in range(self.numberOfChis):
+            
+            norm=np.sqrt( global_dot(W,self.Chi[str(i)]**2,comm) )
+            self.Chi[str(i)]/=norm
+            
+    def integrateProjectors(self, W, comm=None):
+        I=0
+        for i in range(self.numberOfChis):
+            if comm==None:
+                I+=np.dot(W,self.Chi[str(i)])
+            else:
+                print("Are you sure you want to integral projectors with mpi comm?")
+                exit(-1)
+        return I
+     
+    def normalizeFineChi(self,Wf,comm=None):
+        for i in range(self.numberOfChis):       
+            norm=np.sqrt( global_dot(Wf,self.FineChi[str(i)]**2,comm) )
+            self.FineChi[str(i)]/=norm
     
     def removeTempChi(self):
         self.Chi=None
@@ -240,7 +282,7 @@ class Atom(object):
         for singleAtomData in os.listdir(path): 
             if singleAtomData[:3]=='psi':
                 data = np.genfromtxt(path+singleAtomData)
-                self.interpolators[singleAtomData[:5]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext=0)
+                self.interpolators[singleAtomData[:5]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext='zeros')
             elif singleAtomData[:7]=='density':
                 data = np.genfromtxt(path+singleAtomData)
-                self.interpolators[singleAtomData[:7]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext=0)        
+                self.interpolators[singleAtomData[:7]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext='zeros')        

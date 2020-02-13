@@ -200,7 +200,7 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     print(nPoints)
     print("Computed Integral over coarse base mesh:          %f, %1.3e" %(computedIntegral, (analyticIntegral-computedIntegral)/analyticIntegral))
     print("Computed Integral over fine base mesh:            %f, %1.3e" %(computedIntegralFine,(analyticIntegral-computedIntegralFine)/analyticIntegral))
-    print("Analytic Integral Integral over base mesh:        ", analyticIntegral)
+    print("Analytic Integral over base mesh:                   ", analyticIntegral)
     try: 
         assert abs(computedIntegral-analyticIntegral)<1e-8, "Computed (%f) and analytic (%f) integrals not matching for base mesh spanning %f,%f x %f,%f x %f,%f" %(computedIntegral, analyticIntegral, xmin,xmax,ymin,ymax,zmin,zmax)
     except AssertionError as error:

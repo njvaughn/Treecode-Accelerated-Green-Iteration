@@ -44,6 +44,7 @@ from CellStruct_CC import Cell
 from GridpointStruct import GridPoint
 import densityMixingSchemes as densityMixing
 from scfFixedPoint import scfFixedPointClosure
+from meshUtilities import interpolateBetweenTwoMeshes
 
 
 
@@ -790,8 +791,8 @@ if __name__ == "__main__":
     COMPUTED = global_dot(RHO,W,comm)
     COMPUTEDFINE = global_dot(RHOf,Wf,comm)
 #     print("domainSize = ", domainSize)
-    print("Coarse Computed integral =   %f, %1.2e" %(COMPUTED, (COMPUTED-ANALYTIC)))
-    print("Fine Computed integral =     %f, %1.2e" %(COMPUTEDFINE, (COMPUTEDFINE-ANALYTIC)))
+    print("Coarse Computed integral =   %f, %1.2e" %(COMPUTED, (COMPUTED-ANALYTIC)/ANALYTIC))
+    print("Fine Computed integral =     %f, %1.2e" %(COMPUTEDFINE, (COMPUTEDFINE-ANALYTIC)/ANALYTIC))
     print("Analytic intergral =  ", ANALYTIC)
 #     print("Relative error =      ", (ANALYTIC-COMPUTED)/ANALYTIC)
     
@@ -817,15 +818,62 @@ if __name__ == "__main__":
         print("atom ", atom)
         atom.generateChi(X,Y,Z)
         for i in range(atom.numberOfChis):
-            norm=global_dot(W,atom.Chi[str(i)]**2,comm)
+            norm=np.sqrt( global_dot(W,atom.Chi[str(i)]**2,comm) )
             print("Coarse: Norm of CHI %i = %f, gap from 1 = %1.3e" %(i,norm, abs(1-norm)))
             
     for atom in atoms:
         print("atom ", atom)
-        atom.generateChi(Xf,Yf,Zf)
+        atom.generateFineChi(Xf,Yf,Zf)
         for i in range(atom.numberOfChis):
-            norm=global_dot(Wf,atom.Chi[str(i)]**2,comm)
+            norm=np.sqrt( global_dot(Wf,atom.FineChi[str(i)]**2,comm) )
             print("Fine: Norm of CHI %i = %f , gap from 1 = %1.3e" %(i,norm, abs(1-norm)))
+            
+    print()
+    print("Now check V_nonlocal_pseudopotential_times_psi")
+    for atom in atoms:
+        print("atom ", atom)
+        for i in range(nOrbitals):
+            print("\nOrbital ", i)
+            interpolatedPsi = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,i], order, Xf, Yf, Zf, fine_order)
+            originalMeshChiPsi = atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,i],W)
+            interpolatedMeshChiPsi = atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,i],Wf, interpolatedPsi=interpolatedPsi)
+            print("Norm original mesh ChiPsi     = ", np.sqrt( global_dot(W,originalMeshChiPsi**2,comm) ) )
+            print("Norm interpolated mesh ChiPsi = ", np.sqrt( global_dot(W,interpolatedMeshChiPsi**2,comm) ) )
+            print("L2 error in ChiPsi            =  %1.4e\n" %( np.sqrt( global_dot(W,(originalMeshChiPsi-interpolatedMeshChiPsi)**2,comm) ) ))
+        
+    
+    
+    print("REPEAT AFTER NORMALIZING CHIS")
+    for atom in atoms:
+        atom.normalizeChi(W,comm)
+        atom.normalizeFineChi(Wf,comm)
+        print("atom ", atom)
+        for i in range(atom.numberOfChis):
+#             norm=np.sqrt( global_dot(W,atom.Chi[str(i)]**2,comm) )
+#             atom.Chi[str(i)]/=norm
+            norm=np.sqrt( global_dot(W,atom.Chi[str(i)]**2,comm) )
+            print("Coarse: Norm of CHI %i = %f, gap from 1 = %1.3e" %(i,norm, abs(1-norm)))
+#             
+#     for atom in atoms:
+#         print("atom ", atom)
+#         for i in range(atom.numberOfChis):
+#             norm=np.sqrt( global_dot(Wf,atom.FineChi[str(i)]**2,comm) )
+#             atom.FineChi[str(i)]/=norm
+            norm=np.sqrt( global_dot(Wf,atom.FineChi[str(i)]**2,comm) )
+            print("Fine: Norm of CHI %i = %f , gap from 1 = %1.3e" %(i,norm, abs(1-norm)))
+            
+    print()
+    print("Now check V_nonlocal_pseudopotential_times_psi")
+    for atom in atoms:
+        print("atom ", atom)
+        for i in range(nOrbitals):
+            print("\nOrbital ", i)
+            interpolatedPsi = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,i], order, Xf, Yf, Zf, fine_order)
+            originalMeshChiPsi = atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,i],W)
+            interpolatedMeshChiPsi = atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,i],Wf, interpolatedPsi=interpolatedPsi)
+            print("Norm original mesh ChiPsi     = ", np.sqrt( global_dot(W,originalMeshChiPsi**2,comm) ) )
+            print("Norm interpolated mesh ChiPsi = ", np.sqrt( global_dot(W,interpolatedMeshChiPsi**2,comm) ) )
+            print("L2 error in ChiPsi            =  %1.4e\n" %( np.sqrt( global_dot(W,(originalMeshChiPsi-interpolatedMeshChiPsi)**2,comm) ) ))
         
     
 #     initialRho = np.copy(RHO)

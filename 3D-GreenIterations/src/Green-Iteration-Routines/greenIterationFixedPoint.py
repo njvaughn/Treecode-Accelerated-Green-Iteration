@@ -211,12 +211,14 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
 #                     rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
 
-                    # Compute action of V_nl on the old orbital
-                    V_nl_psi = np.zeros(nPoints)
-                    for atom in atoms:
-                        V_nl_psi+= atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
+                    ## Actually, there is no need to recompute V_nl_psi, it is the same as before.
+#                     # Compute action of V_nl on the old orbital
+#                     V_nl_psi = np.zeros(nPoints)
+#                     for atom in atoms:
+#                         V_nl_psi+= atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
 
-                    # Compute the delta E, here using the difference between the new psi and old psi
+#                     pass
+#                     # Compute the delta E, here using the difference between the new psi and old psi
                     deltaE -= global_dot( V_nl_psi*(orbitals[:,m]-psiNew), W, comm ) 
                 else: 
                     print("Invalid coreRepresentation.")
@@ -224,8 +226,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 normSqOfPsiNew = global_dot( psiNew**2, W, comm)
                 deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
 
-                deltaE/=2 # do a simple mixing on epsilon, help with oscillations.
-                rprint(rank,"Halving the deltaE to try to help with oscillations.")
+#                 deltaE/=2 # do a simple mixing on epsilon, help with oscillations.
+#                 rprint(rank,"Halving the deltaE to try to help with oscillations.")
                 
                 rprint(rank,"deltaE = %f" %deltaE)
                 Energies['orbitalEnergies'][m] += deltaE

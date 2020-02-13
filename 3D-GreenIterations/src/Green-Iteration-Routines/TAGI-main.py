@@ -343,7 +343,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,eigenval
         Times['totalKohnShamTime'] = time.time()-startTime
         print('Total Time: ', Times['totalKohnShamTime'])
     
-        header = ['domainSize','maxSideLength','order','numberOfCells','numberOfPoints','gradientFree',
+        header = ['domainSize','maxSideLength','order','fineOrder','numberOfCells','numberOfPoints','gradientFree',
                   'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
                   'gaussianAlpha','gaugeShift','finalGItolerance',
                   'GreenSingSubtracted', 'regularize', 'epsilon',
@@ -351,7 +351,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,eigenval
                   'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
                   'Treecode','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
         
-        myData = [domainSize,maxSideLength,order,nPoints/order**3,nPoints,gradientFree,
+        myData = [domainSize,maxSideLength,order,fine_order, nPoints/order**3,nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
                   gaussianAlpha,gaugeShift,finalGItolerance,
                   subtractSingularity, regularize, epsilon,
@@ -412,6 +412,10 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,ei
             atom.generateChi(X,Y,Z)
             atom.generateFineChi(Xf,Yf,Zf)
             rprint(rank,"Generated projectors and set V_ext_local for atom %i" %atomCount)
+            
+#             print("NORMALIZING CHIS")
+#             atom.normalizeChi(W,comm)
+#             atom.normalizeFineChi(Wf,comm)
 #             for i in range(atom.numberOfChis):
 #                 norm_of_chi = global_dot(W,atom.Chi[str(i)]**2,comm)
 #                 atom.Chi[str(i)] *= np.sqrt( 1.0/norm_of_chi )

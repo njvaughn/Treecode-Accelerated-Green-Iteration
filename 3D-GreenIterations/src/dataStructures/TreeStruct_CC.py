@@ -1104,6 +1104,8 @@ class Tree(object):
                         Cell.refineByCheckingParentChildrenIntegrals(divideParameter1)
                     elif divideCriterion=="VPsiIntegral":
                         Cell.refineByCheckingParentChildrenIntegrals_nonlocal(divideParameter1)
+                    elif divideCriterion=="ChiIntegral":
+                        Cell.refineByCheckingParentChildrenIntegrals_Chi(divideParameter1)
                     elif divideCriterion=="PiecewiseUniform":
 #                         print("Refining by piecewise uniform scheme.")
                         Cell.refinePiecewiseUniform(divideParameter1,divideParameter2,divideParameter3,divideParameter4)

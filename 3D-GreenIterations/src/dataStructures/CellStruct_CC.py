@@ -1929,10 +1929,12 @@ class Cell(object):
                                 integralVlocPsiPlusVnlocPsi += np.sum(psi*Vext*weights)
                                 
                                 # compute nonlocal piece
-                                V_nl_psi = atom.V_nonlocal_pseudopotential_times_psi(X.flatten(),Y.flatten(),Z.flatten(),psi.flatten(),weights.flatten(),comm=None)
+#                                 V_nl_psi = atom.V_nonlocal_pseudopotential_times_psi(X.flatten(),Y.flatten(),Z.flatten(),psi.flatten(),weights.flatten(),comm=None)
+                                V_nl_psi = atom.V_nonlocal_pseudopotential_times_psi(psi.flatten(),weights.flatten(),comm=None)
                                 
                                 # integrate nonlocal piece
                                 integralVlocPsiPlusVnlocPsi += np.sum(V_nl_psi*weights.flatten())
+#                                 integralVlocPsiPlusVnlocPsi = np.sum(V_nl_psi*weights.flatten())
                                 
 #                                 print("Integral now = ", integralVlocPsiPlusVnlocPsi)
                                 
@@ -1942,6 +1944,51 @@ class Cell(object):
             atom.removeTempChi()
 
         return integralVlocPsiPlusVnlocPsi
+    
+    def intializeAndIntegrateProjectors(self):
+#         psi = np.zeros((self.px+1,self.py+1,self.pz+1))
+        r = np.zeros((self.px+1,self.py+1,self.pz+1))
+        X = np.zeros((self.px+1,self.py+1,self.pz+1))
+        Y = np.zeros((self.px+1,self.py+1,self.pz+1))
+        Z = np.zeros((self.px+1,self.py+1,self.pz+1))
+#         Vext = np.zeros((self.px+1,self.py+1,self.pz+1))
+        weights = np.zeros((self.px+1,self.py+1,self.pz+1))
+        
+        aufbauList = ['10',                                     # n+ell = 1
+                      '20',                                     # n+ell = 2
+                      '21', '30',                               # n+ell = 3
+                      '31', '40', 
+                      '32', '41', '50'
+                      '42', '51', '60'
+                      '43', '52', '61', '70']
+
+        
+        
+        for i,j,k in self.PxByPyByPz:
+            weights[i,j,k] = self.w[i,j,k]
+            X[i,j,k] = self.gridpoints[i,j,k].x
+            Y[i,j,k] = self.gridpoints[i,j,k].y
+            Z[i,j,k] = self.gridpoints[i,j,k].z
+            
+        integralProjectors = 0
+                
+        for atom in self.tree.atoms:
+            
+            dx = self.xmid-atom.x
+            dy = self.ymid-atom.y
+            dz = self.zmid-atom.z
+            distToAtom = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
+            if distToAtom < 32:
+                
+                if atom.coreRepresentation=="AllElectron":
+                   exit(-1)
+                elif atom.coreRepresentation=="Pseudopotential":
+                    atom.generateChi(X.flatten(),Y.flatten(),Z.flatten())
+                    integralProjectors += atom.integrateProjectors(weights.flatten(),comm=None)
+                
+            atom.removeTempChi()
+
+        return integralProjectors
         
      
     def refineByCheckingParentChildrenIntegrals(self, divideParameter1):
@@ -2060,6 +2107,52 @@ class Cell(object):
             for j in range(jj):
                 for k in range(kk):
                     childIntegral = self.children[i,j,k].intializeAndIntegrateNonlocal()
+                    sumChildrenIntegrals += childIntegral
+                   
+        
+        if np.abs(parentIntegral-sumChildrenIntegrals) > divideParameter1:
+            self.childrenRefineCause=3
+#             print()
+#             print('Cell:                                      ', self.uniqueID)
+            print('Parent Integral:         ', parentIntegral)
+            print('Children Integral:       ', sumChildrenIntegrals)
+            print()
+            self.divideFlag=True
+        
+        
+        # clean up by deleting children
+        for i in range(ii):
+            for j in range(jj):
+                for k in range(kk):
+                    child = self.children[i,j,k]
+                    for i2,j2,k2 in child.PxByPyByPz:
+                        gp = child.gridpoints[i2,j2,k2]
+                        del gp
+                        child.gridpoints[i2,j2,k2]=None
+                    del child
+#         self.children=None
+        delattr(self,"children")
+        self.leaf=True
+        
+    def refineByCheckingParentChildrenIntegrals_Chi(self, divideParameter1):
+        if self.level>=3:
+            print('Cell:                                      ', self.uniqueID)
+        self.divideFlag = False
+        
+        parentIntegral = self.intializeAndIntegrateProjectors()
+        sumChildrenIntegrals = 0.0 
+        
+        
+        xdiv = (self.xmax + self.xmin)/2   
+        ydiv = (self.ymax + self.ymin)/2   
+        zdiv = (self.zmax + self.zmin)/2   
+        self.divide_firstKind(xdiv, ydiv, zdiv, temporaryCell=True)
+        (ii,jj,kk) = np.shape(self.children)
+
+        for i in range(ii):
+            for j in range(jj):
+                for k in range(kk):
+                    childIntegral = self.children[i,j,k].intializeAndIntegrateProjectors()
                     sumChildrenIntegrals += childIntegral
                    
         

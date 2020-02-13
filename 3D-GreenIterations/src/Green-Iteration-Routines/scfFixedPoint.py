@@ -15,6 +15,7 @@ size = comm.Get_size()
 from mpiUtilities import global_dot, rprint
 
 
+from meshUtilities import interpolateBetweenTwoMeshes
 from fermiDiracDistribution import computeOccupations
 import densityMixingSchemes as densityMixing
 import treecodeWrappers_distributed as treecodeWrappers
@@ -154,6 +155,9 @@ def scfFixedPointClosure(scf_args):
         Compute new electron-electron potential and update pointwise potential values 
         """
         
+        # interpolate density to fine mesh for computing hartree potential
+        RHOf = interpolateBetweenTwoMeshes(X, Y, Z, RHO, order,
+                                               Xf, Yf, Zf, fine_order) 
         
         
         if treecode==False:
@@ -200,9 +204,12 @@ def scfFixedPointClosure(scf_args):
             verbosity=0
 #             singularityHandling="skipping"
 #             print("Forcing the Hartree solve to use singularity skipping.")
-            V_hartreeNew = treecodeWrappers.callTreedriver(nPoints, nPoints, 
+            print("Performing Hartree solve on %i mesh points" %(len(Xf)))
+            print("Coarse order ", order)
+            print("Fine order   ", fine_order)
+            V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(Xf), 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
+                                                           np.copy(Xf), np.copy(Yf), np.copy(Zf), np.copy(RHOf), np.copy(Wf),
                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName,
                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, verbosity)
             
@@ -211,6 +218,10 @@ def scfFixedPointClosure(scf_args):
             
             Times['timePerConvolution'] = MPI.Wtime()-start
             rprint(rank,'Convolution time: ', MPI.Wtime()-start)
+            
+#             # interpolate back to coarse mesh
+#             V_hartreeNew = interpolateBetweenTwoMeshes(Xf, Yf, Zf, V_hartreeNewf, fine_order,
+#                                                X, Y, Z, order) 
         
       
         

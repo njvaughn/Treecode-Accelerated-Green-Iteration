@@ -7,12 +7,14 @@ from numpy import pi, cos, arccos, sin, sqrt, exp, abs
 import numpy as np
 from scipy.special import factorial, comb, erf
 import vtk
+import time
 
 
 def interapolateBetweenTwoMeshesSingleCell(coarseX, coarseY, coarseZ, coarseF,
                                 fineX, fineY, fineZ,
                                 wx,wy,wz):
     
+    start=time.time()
     ptsPerDim=len(wx)
     uniqueX = coarseX[::ptsPerDim*ptsPerDim]
     uniqueY = coarseY[0:ptsPerDim*ptsPerDim:ptsPerDim]
@@ -53,11 +55,63 @@ def interapolateBetweenTwoMeshesSingleCell(coarseX, coarseY, coarseZ, coarseF,
     
     # vectorize interpolator
     interpolator = np.vectorize(P3)
-    
+    end=time.time()
+    print("Time to vectorize = ", end-start)
     # call interpolator
     fineF = interpolator(fineX,fineY,fineZ)
+    print("Time to use vectorized func = ", time.time()-end)
+    print()
     
     return fineF
+
+def interapolateBetweenTwoMeshesSingleCellNoVector(coarseX, coarseY, coarseZ, coarseF,
+                                fineX, fineY, fineZ,
+                                wx,wy,wz):
+    
+#     start=time.time()
+    ptsPerDim=len(wx)
+    uniqueX = coarseX[::ptsPerDim*ptsPerDim]
+    uniqueY = coarseY[0:ptsPerDim*ptsPerDim:ptsPerDim]
+    uniqueZ = coarseZ[0:ptsPerDim]
+    
+    # create interpolator
+#     def P3(xt,yt,zt):  # 3D interpolator.  
+        
+    num = 0
+    idx=0
+    for i in range(len(wx)):
+        numY = 0
+        for j in range(len(wy)):
+            numZ = 0
+            for k in range(len(wz)):
+                numZ += ( wz[k]/(fineZ-uniqueZ[k])*coarseF[idx] )
+                idx+=1
+#                     print(idx)
+                
+            numY += ( wy[j]/(fineY-uniqueY[j]) )*numZ
+        num +=  ( wx[i]/(fineX-uniqueX[i]) )*numY
+    
+    denX=0
+    # issue is that coarseX isn't just the unique values of X, it's all of them.  
+    for i in range(len(wx)):
+        denX += wx[i]/(fineX-uniqueX[i])
+    
+    denY=0
+    for j in range(len(wy)):
+        denY += wy[j]/(fineY-uniqueY[j])
+        
+    denZ=0
+    for k in range(len(wz)):
+        denZ += wz[k]/(fineZ-uniqueZ[k])
+    
+    den = denX*denY*denZ
+    
+#     end=time.time()
+#     print("Time without vectorizing: ", end-start)
+#     print()
+    return num/den
+    
+
 
 def interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
                                 fineX, fineY, fineZ, fineP):
@@ -67,16 +121,17 @@ def interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
     same cell as the first (P+1)**3 points of the fine mesh.  
     '''
     
+#     start=time.time()
     pointsPerCoarseCell=(coarseP+1)**3
     pointsPerFineCell=(fineP+1)**3    
     # get the number of cells
     numCellsCoarse = int(len(coarseX)/pointsPerCoarseCell)
     numCellsFine = int(len(fineX)/pointsPerFineCell)
     
-    print("pointsPerCoarseCell ", pointsPerCoarseCell)
-    print("pointsPerFineCell ", pointsPerFineCell)
-    print("numCellsCoarse ", numCellsCoarse)
-    print("numCellsFine ", numCellsFine)
+#     print("pointsPerCoarseCell ", pointsPerCoarseCell)
+#     print("pointsPerFineCell ", pointsPerFineCell)
+#     print("numCellsCoarse ", numCellsCoarse)
+#     print("numCellsFine ", numCellsFine)
     assert numCellsCoarse==numCellsFine, "numCellsCoarse != numCellsFine"
     
     if len(coarseX)==len(fineX):  # meshes are the same, don't need to interpolate.
@@ -102,7 +157,7 @@ def interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
     
     # call the single-cell function for each cell
     for i in range(numCells):
-        fineF[i*pointsPerFineCell:(i+1)*pointsPerFineCell] = interapolateBetweenTwoMeshesSingleCell(
+        fineF[i*pointsPerFineCell:(i+1)*pointsPerFineCell] = interapolateBetweenTwoMeshesSingleCellNoVector(
                                                                coarseX[i*pointsPerCoarseCell: (i+1)*pointsPerCoarseCell],
                                                                coarseY[i*pointsPerCoarseCell: (i+1)*pointsPerCoarseCell],
                                                                coarseZ[i*pointsPerCoarseCell: (i+1)*pointsPerCoarseCell],
@@ -112,7 +167,9 @@ def interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
                                                                fineZ[i*pointsPerFineCell: (i+1)*pointsPerFineCell],
                                                                wx,wy,wz)
 
-    print("returning fineF of length ", len(fineF))
+#     end=time.time()
+#     print("Interpolating between meshes took %2.3f seconds " %(end-start))
+#     print("returning fineF of length ", len(fineF))
     return fineF
 
 
