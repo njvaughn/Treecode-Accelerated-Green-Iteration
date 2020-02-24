@@ -1864,7 +1864,7 @@ class Cell(object):
             dy = self.ymid-atom.y
             dz = self.zmid-atom.z
             distToAtom = np.sqrt( (dx)**2 + (dy)**2 + (dz)**2 )
-            if distToAtom < 32:
+            if distToAtom < 8:
                 
                 if atom.coreRepresentation=="AllElectron":
 #                     rho += atom.interpolators['density'](r)    # increment rho for each atom 
@@ -2094,45 +2094,49 @@ class Cell(object):
         self.divideFlag = False
         
         parentIntegral = self.intializeAndIntegrateNonlocal()
-        sumChildrenIntegrals = 0.0 
         
-        
-        xdiv = (self.xmax + self.xmin)/2   
-        ydiv = (self.ymax + self.ymin)/2   
-        zdiv = (self.zmax + self.zmin)/2   
-        self.divide_firstKind(xdiv, ydiv, zdiv, temporaryCell=True)
-        (ii,jj,kk) = np.shape(self.children)
-
-        for i in range(ii):
-            for j in range(jj):
-                for k in range(kk):
-                    childIntegral = self.children[i,j,k].intializeAndIntegrateNonlocal()
-                    sumChildrenIntegrals += childIntegral
-                   
-        
-        if np.abs(parentIntegral-sumChildrenIntegrals) > divideParameter1:
-            self.childrenRefineCause=3
-#             print()
-#             print('Cell:                                      ', self.uniqueID)
-            print('Parent Integral:         ', parentIntegral)
-            print('Children Integral:       ', sumChildrenIntegrals)
-            print()
-            self.divideFlag=True
-        
-        
-        # clean up by deleting children
-        for i in range(ii):
-            for j in range(jj):
-                for k in range(kk):
-                    child = self.children[i,j,k]
-                    for i2,j2,k2 in child.PxByPyByPz:
-                        gp = child.gridpoints[i2,j2,k2]
-                        del gp
-                        child.gridpoints[i2,j2,k2]=None
-                    del child
-#         self.children=None
-        delattr(self,"children")
-        self.leaf=True
+        if abs(parentIntegral)>0.0:
+            sumChildrenIntegrals = 0.0 
+            
+            
+            xdiv = (self.xmax + self.xmin)/2   
+            ydiv = (self.ymax + self.ymin)/2   
+            zdiv = (self.zmax + self.zmin)/2   
+            self.divide_firstKind(xdiv, ydiv, zdiv, temporaryCell=True)
+            (ii,jj,kk) = np.shape(self.children)
+    
+            for i in range(ii):
+                for j in range(jj):
+                    for k in range(kk):
+                        childIntegral = self.children[i,j,k].intializeAndIntegrateNonlocal()
+                        sumChildrenIntegrals += childIntegral
+                       
+            
+            if np.abs(parentIntegral-sumChildrenIntegrals) > divideParameter1:
+                self.childrenRefineCause=3
+    #             print()
+    #             print('Cell:                                      ', self.uniqueID)
+                print('Parent Integral:         ', parentIntegral)
+                print('Children Integral:       ', sumChildrenIntegrals)
+                print()
+                self.divideFlag=True
+            
+            
+            # clean up by deleting children
+            for i in range(ii):
+                for j in range(jj):
+                    for k in range(kk):
+                        child = self.children[i,j,k]
+                        for i2,j2,k2 in child.PxByPyByPz:
+                            gp = child.gridpoints[i2,j2,k2]
+                            del gp
+                            child.gridpoints[i2,j2,k2]=None
+                        del child
+    #         self.children=None
+            delattr(self,"children")
+            self.leaf=True
+        else:
+            self.divideFlag=False
         
     def refineByCheckingParentChildrenIntegrals_Chi(self, divideParameter1):
         if self.level>=3:

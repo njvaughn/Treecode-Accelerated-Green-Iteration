@@ -30,15 +30,15 @@ from mpiUtilities import rprint
 
 # _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
 try: 
-    _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.so')
+    _cpu_treecodeRoutines = ctypes.CDLL('libbarytree_cpu.so')
 except OSError:
-        _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
+        _cpu_treecodeRoutines = ctypes.CDLL('libbarytree_cpu.dylib')
         
 try: 
-    _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
+    _gpu_treecodeRoutines = ctypes.CDLL('libbarytree_gpu.so')
 except OSError:
     try:
-        _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.dylib')
+        _gpu_treecodeRoutines = ctypes.CDLL('libbarytree_gpu.dylib')
     except OSError:
         print("Could not load GPU treecode library.") 
         

@@ -90,6 +90,7 @@ def scfFixedPointClosure(scf_args):
         exchangeFunctional=scf_args['exchangeFunctional']
         correlationFunctional=scf_args['correlationFunctional']
         Vext_local=scf_args['Vext_local']
+        Vext_local_fine=scf_args['Vext_local_fine']
         gaugeShift=scf_args['gaugeShift']
         orbitals=scf_args['orbitals']
         oldOrbitals=scf_args['oldOrbitals']
@@ -204,6 +205,7 @@ def scfFixedPointClosure(scf_args):
             verbosity=0
 #             singularityHandling="skipping"
 #             print("Forcing the Hartree solve to use singularity skipping.")
+
             print("Performing Hartree solve on %i mesh points" %(len(Xf)))
             print("Coarse order ", order)
             print("Fine order   ", fine_order)
@@ -212,6 +214,13 @@ def scfFixedPointClosure(scf_args):
                                                            np.copy(Xf), np.copy(Yf), np.copy(Zf), np.copy(RHOf), np.copy(Wf),
                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName,
                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, verbosity)
+#              
+            
+#             V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(X), 
+#                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+#                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
+#                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName,
+#                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, verbosity)
             
 #             V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
             
@@ -301,7 +310,8 @@ def scfFixedPointClosure(scf_args):
                             
                 greenIterationsCount=1
 #                 print("Forcing singularityHandling to be skipping for Green's iteration.")
-                gi_args = {'orbitals':orbitals,'oldOrbitals':oldOrbitals, 'Energies':Energies, 'Times':Times, 'Veff_local':Veff_local, 
+                gi_args = {'orbitals':orbitals,'oldOrbitals':oldOrbitals, 'Energies':Energies, 'Times':Times, 
+                           'Veff_local':Veff_local, 'Vext_local':Vext_local, 'Vext_local_fine':Vext_local_fine,
                                'symmetricIteration':symmetricIteration,'GPUpresent':GPUpresent,
                                'singularityHandling':singularityHandling, 'approximationName':approximationName,
                                'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta, 'maxParNode':maxParNode,'batchSize':batchSize,
@@ -349,7 +359,7 @@ def scfFixedPointClosure(scf_args):
 
                 
                 comm.barrier()
-                while ( (resNorm> max(1e-4,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
+                while ( (resNorm> max(3e-3,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     #                 GPUtil.showUtilization()

@@ -74,9 +74,6 @@ def interapolateBetweenTwoMeshesSingleCellNoVector(coarseX, coarseY, coarseZ, co
     uniqueY = coarseY[0:ptsPerDim*ptsPerDim:ptsPerDim]
     uniqueZ = coarseZ[0:ptsPerDim]
     
-    # create interpolator
-#     def P3(xt,yt,zt):  # 3D interpolator.  
-        
     num = 0
     idx=0
     for i in range(len(wx)):
@@ -86,13 +83,12 @@ def interapolateBetweenTwoMeshesSingleCellNoVector(coarseX, coarseY, coarseZ, co
             for k in range(len(wz)):
                 numZ += ( wz[k]/(fineZ-uniqueZ[k])*coarseF[idx] )
                 idx+=1
-#                     print(idx)
                 
             numY += ( wy[j]/(fineY-uniqueY[j]) )*numZ
         num +=  ( wx[i]/(fineX-uniqueX[i]) )*numY
     
     denX=0
-    # issue is that coarseX isn't just the unique values of X, it's all of them.  
+    
     for i in range(len(wx)):
         denX += wx[i]/(fineX-uniqueX[i])
     
@@ -106,15 +102,235 @@ def interapolateBetweenTwoMeshesSingleCellNoVector(coarseX, coarseY, coarseZ, co
     
     den = denX*denY*denZ
     
+    
+    trueFineF=1+fineX**4 * fineY**4
+#     print("\nTrue fineF = ", trueFineF)
+#     print("\nInterpolated fineF = ", num/den)
+#     print("\nFine Error = ", (num/den-trueFineF)/trueFineF)
+
+    
 #     end=time.time()
 #     print("Time without vectorizing: ", end-start)
 #     print()
     return num/den
     
 
+def PROTOTYPE_FOR_SINGULARITY_CATCHING__interapolateBetweenTwoMeshesSingleCellNoVector(coarseX, coarseY, coarseZ, coarseF,
+                                fineX, fineY, fineZ,
+                                wx,wy,wz):
+    
+#     start=time.time()
+    ptsPerDim=len(wx)
+    uniqueX = coarseX[::ptsPerDim*ptsPerDim]
+    uniqueY = coarseY[0:ptsPerDim*ptsPerDim:ptsPerDim]
+    uniqueZ = coarseZ[0:ptsPerDim]
+    
+    print("Coarse F = ", coarseF)
+    
+    # create interpolator
+#     def P3(xt,yt,zt):  # 3D interpolator.  
+        
+    num = 0
+    idx=0
+
+    
+    x_exact=-np.ones(len(fineX),dtype=int)
+    y_exact=-np.ones(len(fineY),dtype=int)
+    z_exact=-np.ones(len(fineZ),dtype=int)
+    
+    numYs = np.zeros((len(wx),len(fineX)))
+    for i in range(len(wx)):
+        print("i=",i)
+        dx=fineX-uniqueX[i]
+        
+        x_exact = np.where(abs(dx)>1e-14, x_exact, i) # y_exact stores the index for which y_sum should be used
+        
+        numY = 0
+#         y_exact=-np.ones(len(fineY),dtype=int)
+        numZs = np.zeros( (len(wy),len(fineY)) )
+        for j in range(len(wy)):
+            print("\tj=",j)
+            dy=fineY-uniqueY[j]
+            
+            y_exact = np.where(abs(dy)>1e-14, y_exact, j)  # y_exact stores the index for which z_sum should be used
+            
+            numZ = 0
+            
+            
+            for k in range(len(wz)):
+                print("\t\tk=",k)
+#                 print("z=",uniqueZ[k])
+#                 print(np.shape(fineZ))
+                dz=fineZ-uniqueZ[k]
+#                 z_exact_old = np.copy(z_exact)
+                
+                
+                z_exact = np.where(abs(dz)>1e-14, z_exact, idx)  # z_exact stores the index of the point in coarseF
+                print("\t\t\tidx     ",idx)
+#                 print("\t\t\tx_exact",x_exact)
+#                 print("\t\t\ty_exact",y_exact)
+#                 print("\t\t\tz_exact",z_exact)
+
+                numZ = np.where((z_exact==-1) ,   numZ +wz[k]/(dz)*coarseF[idx], coarseF[z_exact])
+                
+
+                idx+=1
+            
+
+            numZs[j,:] = numZ
+#             print("np.shape(numY) ", np.shape(numY))
+#             print("np.shape(numZ) ", np.shape(numZ))
+#             print("np.shape(numZs) ", np.shape(numZs))
+#             print("slice: numZs[y_exact,:] ", np.shape( numZs[max(y_exact),:]) )
+            numY =  np.where(y_exact==-1, (numY + wy[j]/dy)*numZ, numZs[max(y_exact),:])
+#             print("np.shape(numY) ", np.shape(numY))
+
+        print(np.shape(numY))
+        print(np.shape(numYs))
+        numYs[i,:] = numY
+        num = np.where(x_exact==-1, (num +  wx[i]/dx)*numY, numYs[max(x_exact),:])
+        
+#         print("\tnum = ",num)
+
+
+    denX=0
+
+    for i in range(len(wx)):
+        dx=(fineX-uniqueX[i])
+        dx=np.where( abs(dx)>1e-14, dx, 1)
+        denX += wx[i]/dx
+
+    denX = np.where(x_exact==-1,denX,1)
+
+    denY=0
+    for j in range(len(wy)):
+        dy=(fineY-uniqueY[j])
+        dy=np.where( abs(dy)>1e-14, dy, 1) 
+        denY += wy[j]/dy
+        
+    denY = np.where(y_exact==-1,denY,1)
+
+        
+    denZ=0
+    for k in range(len(wz)):
+        dz=(fineZ-uniqueZ[k])
+        dz=np.where( abs(dz)>1e-14, dz, 1)
+        denZ += wz[k]/dz
+    
+    denZ = np.where(z_exact==-1,denZ,1)
+#     print(denZ)
+    
+    den = denX*denY*denZ
+    
+    
+#     print(numZ)
+#     print(numY)
+#     print(num)
+    
+    
+#     print(num[int(len(den)/2)])
+#     print(den[int(len(den)/2)])
+#     print(coarseF[int(len(coarseF)/2)])
+
+#     print()
+#     print(np.sqrt(coarseX**2 + coarseY**2 + coarseZ**2))
+#     print(coarseF)
+#     print(np.sqrt(fineX**2 + fineY**2 + fineZ**2))
+    
+    trueFineF=fineX**4 * fineY**4
+#     print("\nTrue fineF = ", trueFineF)
+#     print("\nInterpolated fineF = ", num/den)
+#     print("Coarse Error = ", coarseF-(coarseX**4 * coarseY**4))
+#     print("\nInterpolated field Error = ", (num/den-trueFineF)/trueFineF)
+    
+    
+    
+    
+#     end=time.time()
+#     print("Time without vectorizing: ", end-start)
+#     print()
+    return num/den
+
+
+
+def PROTOTYPE2_FOR_SINGULARITY_CATCHING__interapolateBetweenTwoMeshesSingleCellNoVector(coarseX, coarseY, coarseZ, coarseF,
+                                fineX, fineY, fineZ,
+                                wx,wy,wz, 
+                                singularities=[]):
+    
+#     start=time.time()
+    ptsPerDim=len(wx)
+    uniqueX = coarseX[::ptsPerDim*ptsPerDim]
+    uniqueY = coarseY[0:ptsPerDim*ptsPerDim:ptsPerDim]
+    uniqueZ = coarseZ[0:ptsPerDim]
+    
+    num = 0
+    idx=0
+    for i in range(len(wx)):
+        numY = 0
+        for j in range(len(wy)):
+            numZ = 0
+            for k in range(len(wz)):
+                dz=(fineZ-uniqueZ[k])
+                dz=np.where( abs(dz)>1e-14, dz, 1)
+                numZ += ( wz[k]/dz*coarseF[idx] )
+                idx+=1
+             
+            dy=(fineY-uniqueY[j])
+            dy=np.where( abs(dy)>1e-14, dy, 1)   
+            numY += ( wy[j]/dy )*numZ
+        dx=(fineX-uniqueX[i])
+        dx=np.where( abs(dx)>1e-14, dx, 1)   
+        num +=  ( wx[i]/dx )*numY
+    
+    denX=0
+    
+    for i in range(len(wx)):
+        dx=(fineX-uniqueX[i])
+        dx=np.where( abs(dx)>1e-14, dx, 1)
+        denX += wx[i]/dx
+    
+    denY=0
+    for j in range(len(wy)):
+        dy=(fineY-uniqueY[j])
+        dy=np.where( abs(dy)>1e-14, dy, 1) 
+        denY += wy[j]/dy
+        
+    denZ=0
+    for k in range(len(wz)):
+        dz=(fineZ-uniqueZ[k])
+        dz=np.where( abs(dz)>1e-14, dz, 1)
+        denZ += wz[k]/dz
+    
+    den = denX*denY*denZ
+    
+    
+    print("Singularities inside: ", singularities)
+    for singularity in singularities:
+        
+        coarseIdx=singularity[0]
+        fineIdx=singularity[1]
+        print("Fixing singularity at x,y,z = ", coarseX[coarseIdx], coarseY[coarseIdx], coarseZ[coarseIdx])
+        
+        den[fineIdx]=1
+        num[fineIdx]=coarseF[coarseIdx]
+        
+    
+    trueFineF=1+fineX**4 * fineY**4
+#     print("\nTrue fineF = ", trueFineF)
+#     print("\nInterpolated fineF = ", num/den)
+#     print("\nFine Error = ", (num/den-trueFineF)/trueFineF)
+    
+    
+
+    
+#     end=time.time()
+#     print("Time without vectorizing: ", end-start)
+#     print()
+    return num/den
 
 def interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
-                                fineX, fineY, fineZ, fineP):
+                                fineX, fineY, fineZ, fineP, singularities=[]):
     '''
     Interpolates between two meshes.  
     Hard assumption that the meshes are arranged the same way, so that the first (p+1)**3 points of the coarse mesh correspond to the 
@@ -157,7 +373,8 @@ def interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
     
     # call the single-cell function for each cell
     for i in range(numCells):
-        fineF[i*pointsPerFineCell:(i+1)*pointsPerFineCell] = interapolateBetweenTwoMeshesSingleCellNoVector(
+#        fineF[i*pointsPerFineCell:(i+1)*pointsPerFineCell] = PROTOTYPE_FOR_SINGULARITY_CATCHING__interapolateBetweenTwoMeshesSingleCellNoVector(
+         fineF[i*pointsPerFineCell:(i+1)*pointsPerFineCell] = interapolateBetweenTwoMeshesSingleCellNoVector(
                                                                coarseX[i*pointsPerCoarseCell: (i+1)*pointsPerCoarseCell],
                                                                coarseY[i*pointsPerCoarseCell: (i+1)*pointsPerCoarseCell],
                                                                coarseZ[i*pointsPerCoarseCell: (i+1)*pointsPerCoarseCell],
@@ -1204,14 +1421,15 @@ def testGradientAndLaplacian():
 
 def testInterpolationBetweenMeshes():
     
-    coarseP = 2
-    fineP = coarseP+1
+    coarseP = 0
+    fineP = 2#coarseP+2
     
     # Test single cell
-    tempX = ChebyshevPointsFirstKind(0,1,coarseP)
-    tempY = ChebyshevPointsFirstKind(0,1,coarseP)
-    tempZ = ChebyshevPointsFirstKind(0,1,coarseP)
-    
+    tempX_coarse = ChebyshevPointsFirstKind(0,1,coarseP)
+    tempY_coarse = ChebyshevPointsFirstKind(0,1,coarseP)
+    tempZ_coarse = ChebyshevPointsFirstKind(0,1,coarseP)
+    print("Coarse Z = ", tempZ_coarse)
+
     coarseX=np.zeros((coarseP+1)**3)
     coarseY=np.zeros((coarseP+1)**3)
     coarseZ=np.zeros((coarseP+1)**3)
@@ -1220,16 +1438,17 @@ def testInterpolationBetweenMeshes():
     for i in range(coarseP+1):
         for j in range(coarseP+1):
             for k in range(coarseP+1):
-                coarseX[idx] = tempX[i]
-                coarseY[idx] = tempY[j]
-                coarseZ[idx] = tempZ[k]
+                coarseX[idx] = tempX_coarse[i]
+                coarseY[idx] = tempY_coarse[j]
+                coarseZ[idx] = tempZ_coarse[k]
                 idx+=1
     coarseW = weights3DFirstKind(0,1,coarseP,0,1,coarseP,0,1,coarseP).reshape([(coarseP+1)**3,])
     
-    tempX = ChebyshevPointsFirstKind(0,1,fineP)
-    tempY = ChebyshevPointsFirstKind(0,1,fineP)
-    tempZ = ChebyshevPointsFirstKind(0,1,fineP)
-    
+    tempX_fine = ChebyshevPointsFirstKind(0,1,fineP)
+    tempY_fine = ChebyshevPointsFirstKind(0,1,fineP)
+    tempZ_fine = ChebyshevPointsFirstKind(0,1,fineP)
+    print("Fine Z = ", tempZ_fine)
+
     fineX=np.zeros((fineP+1)**3)
     fineY=np.zeros((fineP+1)**3)
     fineZ=np.zeros((fineP+1)**3)
@@ -1238,11 +1457,41 @@ def testInterpolationBetweenMeshes():
     for i in range(fineP+1):
         for j in range(fineP+1):
             for k in range(fineP+1):
-                fineX[idx] = tempX[i]
-                fineY[idx] = tempY[j]
-                fineZ[idx] = tempZ[k]
+                fineX[idx] = tempX_fine[i]
+                fineY[idx] = tempY_fine[j]
+                fineZ[idx] = tempZ_fine[k]
                 idx+=1
     fineW = weights3DFirstKind(0,1,fineP,0,1,fineP,0,1,fineP).reshape([(fineP+1)**3,])
+    
+
+#     singularities=[]
+#     
+#     fineIdx=0
+#     for i in range(fineP+1):
+#         for j in range(fineP+1):
+#             for k in range(fineP+1):
+#                 
+#                 coarseIdx=0
+#                 for ii in range(coarseP+1):
+#                     for jj in range(coarseP+1):
+#                         for kk in range(coarseP+1):
+#                             
+#                             if (  (abs(fineX[fineIdx]-coarseX[coarseIdx])<1e-12) and 
+#                                   (abs(fineY[fineIdx]-coarseY[coarseIdx])<1e-12) and 
+#                                   (abs(fineZ[fineIdx]-coarseZ[coarseIdx])<1e-12) ):
+#                                 singularities.append( [coarseIdx,fineIdx])
+#                             
+#                             coarseIdx+=1
+#                             
+#                             
+#                 fineIdx+=1
+                
+#     print("singularities: ", singularities)
+    
+#     x_exact=[]
+#     for i in range(fineP+1):
+#         for ii in range(coarseP+1):
+#             if 
     
     coarseF = coarseX**4 * coarseY**4 
     coarseG =  coarseZ**6
@@ -1251,9 +1500,7 @@ def testInterpolationBetweenMeshes():
     analyticIntegral = 1/175
     coarseComputedIntegral = np.sum(coarseF*coarseG*coarseW)
     fineComputedIntegral = np.sum(fineF*fineG*fineW)
-    print("Expected integral = %f" %analyticIntegral)
-    print("Coarse computed integral         = %f, error %1.3e" %(coarseComputedIntegral,coarseComputedIntegral-analyticIntegral) )
-    print("Fine computed integral           = %f, error %1.3e" %(fineComputedIntegral,fineComputedIntegral-analyticIntegral) )
+
     
     
     interpolatedF = interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
@@ -1262,84 +1509,90 @@ def testInterpolationBetweenMeshes():
 
     interpolatedIntegral = np.sum(interpolatedF*fineG*fineW)
     
-    print("Interpolated computed integral   = %f, error %1.3e" %(interpolatedIntegral,interpolatedIntegral-analyticIntegral) )
-    
-    
-    
-    # Test 8 cells
-    
-    coarseX=np.zeros(8*(coarseP+1)**3)
-    coarseY=np.zeros(8*(coarseP+1)**3)
-    coarseZ=np.zeros(8*(coarseP+1)**3)
-    coarseW=np.array([])
-        
-    idx=0
-    for xlow in [-1,0]:
-        tempX = ChebyshevPointsFirstKind(xlow,xlow+1,coarseP)
-        for ylow in [-1,0]:
-            tempY = ChebyshevPointsFirstKind(xlow,xlow+1,coarseP)
-            for zlow in [-1,0]:
-                tempZ = ChebyshevPointsFirstKind(xlow,xlow+1,coarseP)
-                coarseW = np.append(coarseW, weights3DFirstKind(xlow,xlow+1,coarseP,ylow,ylow+1,coarseP,zlow,zlow+1,coarseP).reshape([(coarseP+1)**3,]) )
-                
-                
-                for i in range(coarseP+1):
-                    for j in range(coarseP+1):
-                        for k in range(coarseP+1):
-                            coarseX[idx] = tempX[i]
-                            coarseY[idx] = tempY[j]
-                            coarseZ[idx] = tempZ[k]
-                            idx+=1
-                
-                
-                
-    fineX=np.zeros(8*(fineP+1)**3)
-    fineY=np.zeros(8*(fineP+1)**3)
-    fineZ=np.zeros(8*(fineP+1)**3)
-    fineW=np.array([])
-    
-    idx=0
-    for xlow in [-1,0]:
-        tempX = ChebyshevPointsFirstKind(xlow,xlow+1,fineP)
-        for ylow in [-1,0]:
-            tempY = ChebyshevPointsFirstKind(xlow,xlow+1,fineP)
-            for zlow in [-1,0]:
-                tempZ = ChebyshevPointsFirstKind(xlow,xlow+1,fineP)
-                
-                fineW = np.append(fineW, weights3DFirstKind(xlow,xlow+1,fineP,ylow,ylow+1,fineP,zlow,zlow+1,fineP).reshape([(fineP+1)**3,]) )
-                
-                
-                for i in range(fineP+1):
-                    for j in range(fineP+1):
-                        for k in range(fineP+1):
-                            fineX[idx] = tempX[i]
-                            fineY[idx] = tempY[j]
-                            fineZ[idx] = tempZ[k]
-                            idx+=1
-                
-
-    
-    print(np.shape(fineX))
-    print(np.shape(fineW))
-    
-    coarseF = coarseX**4 + coarseY**4 + coarseZ**4
-    fineF = fineX**4 + fineY**4 + fineZ**4
-    analyticIntegral = 8*0.6
-    
-    coarseComputedIntegral = np.sum(coarseF*coarseW)
-    fineComputedIntegral = np.sum(fineF*fineW)
     print("Expected integral = %f" %analyticIntegral)
     print("Coarse computed integral         = %f, error %1.3e" %(coarseComputedIntegral,coarseComputedIntegral-analyticIntegral) )
     print("Fine computed integral           = %f, error %1.3e" %(fineComputedIntegral,fineComputedIntegral-analyticIntegral) )
-    
-    
-    interpolatedF = interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
-                                                fineX, fineY, fineZ, fineP)
-
-    interpolatedIntegral = np.sum(interpolatedF*fineW)
-     
     print("Interpolated computed integral   = %f, error %1.3e" %(interpolatedIntegral,interpolatedIntegral-analyticIntegral) )
     
+#     print("coarseF=      ",coarseF[int(len(coarseF)/2)])
+#     print("fineF=        ",fineF[int(len(fineF)/2)])
+#     print("interpolatedF=",interpolatedF)
+    
+    
+#     # Test 8 cells
+#     
+#     coarseX=np.zeros(8*(coarseP+1)**3)
+#     coarseY=np.zeros(8*(coarseP+1)**3)
+#     coarseZ=np.zeros(8*(coarseP+1)**3)
+#     coarseW=np.array([])
+#         
+#     idx=0
+#     for xlow in [-1,0]:
+#         tempX = ChebyshevPointsFirstKind(xlow,xlow+1,coarseP)
+#         for ylow in [-1,0]:
+#             tempY = ChebyshevPointsFirstKind(xlow,xlow+1,coarseP)
+#             for zlow in [-1,0]:
+#                 tempZ = ChebyshevPointsFirstKind(xlow,xlow+1,coarseP)
+#                 coarseW = np.append(coarseW, weights3DFirstKind(xlow,xlow+1,coarseP,ylow,ylow+1,coarseP,zlow,zlow+1,coarseP).reshape([(coarseP+1)**3,]) )
+#                 
+#                 
+#                 for i in range(coarseP+1):
+#                     for j in range(coarseP+1):
+#                         for k in range(coarseP+1):
+#                             coarseX[idx] = tempX[i]
+#                             coarseY[idx] = tempY[j]
+#                             coarseZ[idx] = tempZ[k]
+#                             idx+=1
+#                 
+#                 
+#                 
+#     fineX=np.zeros(8*(fineP+1)**3)
+#     fineY=np.zeros(8*(fineP+1)**3)
+#     fineZ=np.zeros(8*(fineP+1)**3)
+#     fineW=np.array([])
+#     
+#     idx=0
+#     for xlow in [-1,0]:
+#         tempX = ChebyshevPointsFirstKind(xlow,xlow+1,fineP)
+#         for ylow in [-1,0]:
+#             tempY = ChebyshevPointsFirstKind(xlow,xlow+1,fineP)
+#             for zlow in [-1,0]:
+#                 tempZ = ChebyshevPointsFirstKind(xlow,xlow+1,fineP)
+#                 
+#                 fineW = np.append(fineW, weights3DFirstKind(xlow,xlow+1,fineP,ylow,ylow+1,fineP,zlow,zlow+1,fineP).reshape([(fineP+1)**3,]) )
+#                 
+#                 
+#                 for i in range(fineP+1):
+#                     for j in range(fineP+1):
+#                         for k in range(fineP+1):
+#                             fineX[idx] = tempX[i]
+#                             fineY[idx] = tempY[j]
+#                             fineZ[idx] = tempZ[k]
+#                             idx+=1
+#                 
+# 
+#     
+#     print(np.shape(fineX))
+#     print(np.shape(fineW))
+#     
+#     coarseF = coarseX**4 + coarseY**4 + coarseZ**4
+#     fineF = fineX**4 + fineY**4 + fineZ**4
+#     analyticIntegral = 8*0.6
+#     
+#     coarseComputedIntegral = np.sum(coarseF*coarseW)
+#     fineComputedIntegral = np.sum(fineF*fineW)
+#     print("Expected integral = %f" %analyticIntegral)
+#     print("Coarse computed integral         = %f, error %1.3e" %(coarseComputedIntegral,coarseComputedIntegral-analyticIntegral) )
+#     print("Fine computed integral           = %f, error %1.3e" %(fineComputedIntegral,fineComputedIntegral-analyticIntegral) )
+#     
+#     
+#     interpolatedF = interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
+#                                                 fineX, fineY, fineZ, fineP)
+# 
+#     interpolatedIntegral = np.sum(interpolatedF*fineW)
+#      
+#     print("Interpolated computed integral   = %f, error %1.3e" %(interpolatedIntegral,interpolatedIntegral-analyticIntegral) )
+#     
     
     return
 

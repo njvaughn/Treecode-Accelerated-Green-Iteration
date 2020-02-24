@@ -51,13 +51,9 @@ class Atom(object):
         r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
         return self.PSP.evaluateLocalPotentialInterpolator(r)
     
-    def V_nonlocal_pseudopotential_times_psi(self,psi,Weights,interpolatedPsi=None,comm=None):
+    def V_nonlocal_pseudopotential_times_psi_COARSE_OR_FINE(self,psi,Weights,interpolatedPsi=None,comm=None, outputMesh="coarse"):
         
-#         print("Lengths")
-#         print(len(psi))
-#         print(len(interpolatedPsi))
-#         print(len(self.Chi[str(0)]))
-#         print(len(self.FineChi[str(0)]))
+
         W=None
         Wf=None
         if interpolatedPsi is not None:
@@ -88,9 +84,44 @@ class Atom(object):
                 
             
 
-            output += C * self.Chi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
+            if outputMesh=="coarse":
+                output += C * self.Chi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
+            elif outputMesh=="fine":
+                output += C * self.FineChi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
+            else:
+                print("What should outputMesh be in atom struct?")
+                exit(-1)
 #         print("Exiting after first call to V_nonlocal_pseudopotential_times_psi")
 #         exit(-1)
+        return output
+    
+    
+    def V_nonlocal_pseudopotential_times_psi_coarse(self,psi,Weights,finePsi,fineWeights,comm=None):
+        
+        output = np.zeros(len(psi))     
+        ## sum over the projectors, increment the nonloncal potential.   Compute C on the coarse mesh.
+        for i in range(self.numberOfFineChis):
+            if comm==None: # just a local computation:
+                C = np.dot( finePsi, self.FineChi[str(i)]*fineWeights)
+            else:
+                C = global_dot( finePsi, self.FineChi[str(i)]*fineWeights, comm)
+            
+            output += C * self.Chi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
+            
+        return output
+    
+    def V_nonlocal_pseudopotential_times_psi_fine(self,psi,Weights,comm=None):
+        
+        output = np.zeros(len(psi))     
+        ## sum over the projectors, increment the nonloncal potential.   Compute C on the fine mesh.
+        for i in range(self.numberOfFineChis):
+            if comm==None: # just a local computation:
+                C = np.dot( psi, self.FineChi[str(i)]*Weights)
+            else:
+                C = global_dot( psi, self.FineChi[str(i)]*Weights, comm)
+            
+            output += C * self.FineChi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
+            
         return output
     
     def generateChi(self,X,Y,Z):
@@ -108,15 +139,15 @@ class Atom(object):
         ID=0
         D_ion_count=0
         for ell in range(num_ell):
-            
+             
             for p in [0,1]:  # two projectors per ell for ONCV
-                
+                 
                 D_ion = D_ion_array[D_ion_count]
                 D_ion_count+=1
 #                 print("D_ion = ", D_ion)
-                
+                 
                 for m in range(-ell,ell+1):
-
+ 
                     dx = X-self.x
                     dy = Y-self.y
                     dz = Z-self.z
@@ -124,19 +155,19 @@ class Atom(object):
                     r = np.sqrt( dx**2 + dy**2 + dz**2 )
                     inclination = np.arccos(dz/r)
                     azimuthal = np.arctan2(dy,dx)
-
+ 
                     if m<0:
                         Ysp = (sph_harm(m,ell,azimuthal,inclination) + (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2) 
                     if m>0:
                         Ysp = 1j*(sph_harm(m,ell,azimuthal,inclination) - (-1)**m * sph_harm(-m,ell,azimuthal,inclination))/np.sqrt(2)
-
+ 
                     if ( m==0 ):
                         Ysp = sph_harm(m,ell,azimuthal,inclination)
-
+ 
                     if np.max( abs(np.imag(Ysp)) ) > 1e-14:
                         print('imag(Y) ', np.imag(Ysp))
                         return
-
+ 
                     chi = self.PSP.evaluateProjectorInterpolator(2*ell+p, r)*np.real(Ysp) # Is this order the same as the setup order?
                     self.Chi[str(ID)] = chi
                     self.Dion[str(ID)] = D_ion
@@ -210,6 +241,8 @@ class Atom(object):
         return I
      
     def normalizeFineChi(self,Wf,comm=None):
+        print("DID YOU MEAN TO NORMALIZE CHI? Exiting...")
+        exit(-1)
         for i in range(self.numberOfChis):       
             norm=np.sqrt( global_dot(Wf,self.FineChi[str(i)]**2,comm) )
             self.FineChi[str(i)]/=norm

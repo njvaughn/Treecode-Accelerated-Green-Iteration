@@ -40,8 +40,12 @@ class ONCV_PSP(object):
             self.atomicSymbol="Be"
         elif self.atomicNumber==6:
             self.atomicSymbol="C"
+        elif self.atomicNumber==8:
+            self.atomicSymbol="O"
         elif self.atomicNumber==14:
             self.atomicSymbol="Si"
+        elif self.atomicNumber==22:
+            self.atomicSymbol="Ti"
         else:
             print("Need to add atomic number %i to ONCV_PSP.atomicNumberToAtomicSymbol()" %self.atomicNumber)
             exit(-1)
