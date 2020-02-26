@@ -78,6 +78,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     else:
         atoms = np.empty((len(atomData),),dtype=object)
         for i in range(len(atomData)):
+            print(atomData)
             atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4],coreRepresentation)
             atoms[i] = atom
             nOrbitals += int(atomData[i,4])

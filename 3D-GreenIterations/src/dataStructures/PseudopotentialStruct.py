@@ -141,6 +141,7 @@ class ONCV_PSP(object):
         slopeR = -local_potential[-1]/r[-1]
         
         self.localPotentialInterpolator = CubicSpline(r,local_potential,bc_type=((1,slopeL),(1,slopeR)),extrapolate=True)
+#         self.localPotentialInterpolator = CubicSpline(r,local_potential,bc_type=((2,0),(1,slopeR)),extrapolate=True)
         
     
     def evaluateLocalPotentialInterpolator(self,r,timer=False):
@@ -192,6 +193,7 @@ class ONCV_PSP(object):
             
 #             self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[:length_of_projector_data],proj,k=3,ext='zeros') # is ext='zeros' okay?  Could do some decay instead
             self.projectorInterpolators[str(i)] = CubicSpline(r[:length_of_projector_data],proj,bc_type=((2,0),(2,0)),extrapolate=True)
+#             self.projectorInterpolators[str(i)] = CubicSpline(r[1:length_of_projector_data],proj[1:length_of_projector_data]/r[1:length_of_projector_data],bc_type=((2,0),(2,0)),extrapolate=True)
 #             self.projectorInterpolators[str(i)] = InterpolatedUnivariateSpline(r[1:length_of_projector_data],proj[1:]/r[1:length_of_projector_data],k=3,ext='zeros') # is ext='zeros' okay?  Could do some decay instead
         return
     

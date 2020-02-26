@@ -157,8 +157,11 @@ def scfFixedPointClosure(scf_args):
         """
         
         # interpolate density to fine mesh for computing hartree potential
-        RHOf = interpolateBetweenTwoMeshes(X, Y, Z, RHO, order,
-                                               Xf, Yf, Zf, fine_order) 
+        if order!=fine_order:
+            RHOf = interpolateBetweenTwoMeshes(X, Y, Z, RHO, order,
+                                                   Xf, Yf, Zf, fine_order) 
+        else:
+            RHOf=RHO
         
         
         if treecode==False:

@@ -1,9 +1,27 @@
 #!/bin/bash
+#SBATCH --job-name="gl-testing"
+#SBATCH --output="dataFiles/two-mesh-domain16-order5-%j.%N.out"
+#SBATCH --partition=gpu
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=20
+#SBATCH --gres=gpu:1
+#SBATCH --mem-per-cpu=2gb
+#SBATCH -t 01:00:00
+#SBATCH --no-requeue
+#SBATCH -A krasny1
+
+
+
 
 cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
 SINGSUBT=1
 
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
+
+
+#SBATCH --constraint=exclusive
+
+
 
 #COREREPRESENTATION="AllElectron"
 #INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv' 
@@ -13,11 +31,8 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 
 
 COREREPRESENTATION="Pseudopotential"
-#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
-#INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
-INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
-#INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
-  
+INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv'
+
 
 VTKFILEDIR='/Users/nathanvaughn/Desktop/'
  
@@ -31,7 +46,6 @@ MAXPARNODE=4000
 BATCHSIZE=4000   
  
  
-GAUSSIANALPHA=0.5 
 GAUGESHIFT=-0.5
 MIXING='Anderson'
  
@@ -45,15 +59,14 @@ GRADIENTFREE='True'
 MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
   
-INITIAL_GI_TOLERANCE=1e-5
-FINAL_GI_TOLERANCE=1e-7
-GRADUALSTEPS=3
-SCF_TOLERANCE=5e-6
+INITIAL_GI_TOLERANCE=1e-3
+FINAL_GI_TOLERANCE=3e-7
+GRADUALSTEPS=5
+SCF_TOLERANCE=2e-6
      
 
 
 MESHTYPE='coarsenedUniform'
-DOMAIN=16
 
 MAXSIDELENGTH=8
 MESHPARAM1=0.5 # near field spacing 
@@ -61,47 +74,32 @@ MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
 
-#MAXSIDELENGTH=48 
-#MESHPARAM1=0.375 # near field spacing 
-#MESHPARAM2=6.0 # far field spacing
-#MESHPARAM3=1.5 # ball radius
-MESHPARAM4=2
-
-#MAXSIDELENGTH=8
-#MESHPARAM1=0.25 # near field spacing 
-#MESHPARAM2=4.0 # far field spacing
-#MESHPARAM3=2.0 # ball radius
-
-
-
 APPROXIMATIONNAME=lagrange
-SINGULARITYHANDLING=subtraction 
+SINGULARITYHANDLING=subtraction
+
+REGULARIZE='False'
+EPSILON=0.0
+
+GAUSSIANALPHA=2.0 
+TREECODEORDER=7
+THETA=0.7
 
 
-GAUSSIANALPHA=2.0
-TREECODEORDER=8
-
-#MESHTYPE='ParentChildrenIntegral' 
-#MESHTYPE="VPsiIntegral"         
-
-FINEORDER=0 # neglect this for now
-
-
-for MESHPARAM4 in 0
-do                                                       
-    for CELLORDER in 3 4 5 6 7
+MESHPARAM4=0
+for DOMAIN in 32
+do                                                         
+    for CELLORDER in 4
     do         
-        for THETA in 0.7
+        for FINEORDER in 4
         do  
-        
-        
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/surpressed_nonlocal/N_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_order_${CELLORDER}_fineorder_${FINEORDER}.csv" 
-        mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $CELLORDER $SINGSUBT \
+         
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/TiO2/testing/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
+        srun -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
                                                 $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-                                                $SINGULARITYHANDLING $APPROXIMATIONNAME
+                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON
         done 
     done      
 done

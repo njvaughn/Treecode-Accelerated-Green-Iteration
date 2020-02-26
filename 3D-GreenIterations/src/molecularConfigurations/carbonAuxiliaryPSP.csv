@@ -1,0 +1,11 @@
+../src/molecularConfigurations/carbonAtom.csv
+../src/molecularConfigurations/carbonReferenceEigenvaluesPSP.csv
+/home/njvaughn/results_Be/results.csv
+-1.4028020334192959 # band
+ 0.0
+-1.1706081766134178 # exchange
+-1.9330832554469529e-01 # correlation
+0.0                 
+-5.3246968359890081 # total energy
+
+# obtained with DFT-FE, order 5, h=0.25, temp 500.

@@ -241,11 +241,11 @@ if __name__ == "__main__":
     order=4
     gaugeShift=-0.5
     
-    domainSize=12.7*2
-    MAXSIDELENGTH=25.4*2
-    MESHPARAM1=0.4 # near field spacing 
-    MESHPARAM2=6.4 # far field spacing
-    MESHPARAM3=1.6 # ball radius
+    domainSize=16
+    MAXSIDELENGTH=32
+    MESHPARAM1=0.25 # near field spacing 
+    MESHPARAM2=8.0 # far field spacing
+    MESHPARAM3=2.0 # ball radius
     MESHPARAM4=0 # additional inner refinement 
     
 #     domainSize=16
