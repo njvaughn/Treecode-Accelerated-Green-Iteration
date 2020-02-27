@@ -322,13 +322,13 @@ def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms,coreRepresentation):
 
 
 
-def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
+def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
     
     startTime = time.time()
     
 
     
-    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                 scfTolerance, initialGItolerance, finalGItolerance, gradualSteps,
                                 gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
                                 singularityHandling,approximationName,
@@ -384,7 +384,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,eigenval
 
 
 
-def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                              SCFtolerance, initialGItolerance, finalGItolerance, gradualSteps, 
                                              gradientFree, symmetricIteration, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize, singularityHandling, approximationName,
@@ -457,8 +457,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,ei
     
     
 
-    greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(nPoints)+outputFile[-4:]
-    SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(nPoints)+outputFile[-4:]
+    greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(nPoints)+'_'+str(len(Xf))+outputFile[-4:]
+    SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(nPoints)+'_'+str(len(Xf))+outputFile[-4:]
     densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(nPoints)+'_plots'
     restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(nPoints)
 #     restartFilesDir =       '/home/njvaughn/restartFiles/restartFiles_1416000_after25'
@@ -578,7 +578,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,ei
                'singularityHandling':singularityHandling, 'approximationName':approximationName, 
                'atoms':atoms,'coreRepresentation':coreRepresentation,
                'order':order,'fine_order':fine_order,
-               'regularize':regularize,'epsilon':epsilon}
+               'regularize':regularize,'epsilon':epsilon,
+               'pointsPerCell_coarse':pointsPerCell_coarse, 
+               'pointsPerCell_fine':pointsPerCell_fine}
     
 
     """
@@ -727,7 +729,7 @@ if __name__ == "__main__":
 #         nOrbitals=None
         
 #     maxSideLength=5.5
-    X,Y,Z,W,Xf,Yf,Zf,Wf,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
+    X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
                                                                                                      inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
                                                                                                      divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
     
@@ -797,7 +799,7 @@ if __name__ == "__main__":
 
     
     initialRho = np.copy(RHO)
-    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
+    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
 
 
 

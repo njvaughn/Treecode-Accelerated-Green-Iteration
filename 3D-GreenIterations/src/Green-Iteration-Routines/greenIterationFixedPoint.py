@@ -61,6 +61,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         Yf = gi_args['Yf']
         Zf = gi_args['Zf']  
         Wf = gi_args['Wf']
+        pointsPerCell_coarse = gi_args['pointsPerCell_coarse']
+        pointsPerCell_fine = gi_args['pointsPerCell_fine']
 #         print("X, Y, Z, W: ", X[:3], Y[:3], Z[:3], W[:3])
         gradientFree = gi_args['gradientFree']
         SCFcount = gi_args['SCFcount']
@@ -92,24 +94,38 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         # get the input wavefunction on the fine mesh.
         
-        if fine_order!=coarse_order:
+        if len(X)!=len(Xf):
             start=time.time()
-            interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], coarse_order,
-                                                               Xf, Yf, Zf, fine_order) 
+#             interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], coarse_order,
+#                                                                Xf, Yf, Zf, fine_order) 
+            interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], pointsPerCell_coarse,
+                                                            Xf, Yf, Zf, pointsPerCell_fine)
             
+#             ## Want to use interpolated Vlocal???
+             
             # To obtain Veff_local_fine:
             # 1. subtract out the coarse Vext
             # 2. interpolate the remainder on to the fine mesh
             # 3. add in the fine Vext (from the radial data)
             # 4. add back in the subtracted piece on the coarse mesh.
-            
+             
             Veff_local -= Vext_local # step 1
-            Veff_local_fine = interpolateBetweenTwoMeshes(X, Y, Z, Veff_local, coarse_order,
-                                                               Xf, Yf, Zf, fine_order)  # step 2
+#             Veff_local_fine = interpolateBetweenTwoMeshes(X, Y, Z, Veff_local, coarse_order,
+#                                                                Xf, Yf, Zf, fine_order)  # step 2
+#             
+            Veff_local_fine = interpolateBetweenTwoMeshes(X, Y, Z, Veff_local, pointsPerCell_coarse,
+                                                            Xf, Yf, Zf, pointsPerCell_fine) # step 2
+             
             Veff_local_fine += Vext_local_fine # step 3
             Veff_local += Vext_local # step 4
             end=time.time()
-            rprint(rank,"Time to interpolate wavefunction: ", end-start) 
+            
+            
+#             ## OR do I want to just interpolate the whole Veff to the fine grid?
+#             Veff_local_fine = interpolateBetweenTwoMeshes(X, Y, Z, Veff_local, pointsPerCell_coarse,
+#                                                             Xf, Yf, Zf, pointsPerCell_fine) 
+            
+#             rprint(rank,"Time to interpolate wavefunction: ", end-start) 
         else:
             interpolatedInputWavefunction=orbitals[:,m]
             Veff_local_fine=Veff_local

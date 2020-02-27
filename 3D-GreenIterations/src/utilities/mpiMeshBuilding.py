@@ -115,33 +115,38 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     yf=np.empty(0)
     zf=np.empty(0)
     wf=np.empty(0)
+    
+    PtsPerCellCoarse=np.empty(0)
+    PtsPerCellFine=np.empty(0)
     for i in range(len(cells)):
         if i%size==rank:
 #             print("CALLING refineCell ==================================================")
             if saveTree==False:
-                X,Y,Z,W,Xf,Yf,Zf,Wf,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
+                X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
                                                                                         divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree)
             elif saveTree==True:
-                X,Y,Z,W,Xf,Yf,Zf,Wf,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
+                X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
                                                                                         divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree)
             
             x=np.append(x,X)
             y=np.append(y,Y)
             z=np.append(z,Z)
             w=np.append(w,W)
+            PtsPerCellCoarse=np.append(PtsPerCellCoarse,pointsPerCell_coarse)
             
             xf=np.append(xf,Xf)
             yf=np.append(yf,Yf)
             zf=np.append(zf,Zf)
             wf=np.append(wf,Wf)
+            PtsPerCellFine=np.append(PtsPerCellFine,pointsPerCell_fine)
     
     
     ## BUG HERE WHEN RANKS=6.  Need every rank to refine at least one cell.
 #     nPoints=len(x)
     if saveTree==False:
-        return x,y,z,w,xf,yf,zf,wf,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+        return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
     elif saveTree==True:
-        return x,y,z,w,xf,yf,zf,wf,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
+        return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
 
 def func(X,Y,Z,pow):
     
@@ -171,16 +176,25 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,atoms,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile, fine_order=fine_order)#, iterationOutFile=outputFile)
 
+    tree.finalDivideBasedOnNuclei(coordinateFile)
    
     tree.buildTree( initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=False,onlyFillOne=False)
     
-    tree.finalDivideBasedOnNuclei(coordinateFile)
+#     tree.finalDivideBasedOnNuclei(coordinateFile)
     
 #     tree.exportGridpoints
-    X, Y, Z, W, Xf, Yf, Zf, Wf, RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
+    X, Y, Z, W, Xf, Yf, Zf, Wf, pointsPerCell_coarse, pointsPerCell_fine, RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
 
+
+#     print("pointsPerCell_coarse = ", pointsPerCell_coarse)
+#     print("pointsPerCell_fine   = ", pointsPerCell_fine)
+#     print(len(X))
+#     print(len(Xf))
+#     
+#     if not np.array_equal(pointsPerCell_coarse,pointsPerCell_fine):
+#         exit(-1)
     
     atoms = tree.atoms
     nPoints = len(X)
@@ -189,6 +203,9 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     assert len(X)==len(Z), "len(X) not equal to len(Z) for a base mesh tree"
     assert len(X)==len(W), "len(X) not equal to len(W) for a base mesh tree"
     assert len(X)==len(RHO), "len(X) not equal to len(RHO) for a base mesh tree"
+#     print("sum of weights = ", np.sum(W))
+#     print("volume = ",volume)
+#     print(W)
     assert abs( np.sum(W) - volume)/volume<1e-12, "Sum of weights doesn't equal base mesh volume."
     assert nPoints>0, "nPoints not > 0 for one of the base mesh trees. "
     
@@ -215,9 +232,9 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
 
     if saveTree==False:
         tree=None
-        return X, Y, Z, W, Xf, Yf, Zf, Wf, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+        return X, Y, Z, W, Xf, Yf, Zf, Wf, pointsPerCell_coarse, pointsPerCell_fine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
     elif saveTree==True:
-        return X, Y, Z, W, Xf, Yf, Zf, Wf, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
+        return X, Y, Z, W, Xf, Yf, Zf, Wf, pointsPerCell_coarse, pointsPerCell_fine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
     else:
         print("What should saveTree be set to?")
         exit(-1)

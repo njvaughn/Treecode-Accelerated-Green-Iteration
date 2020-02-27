@@ -105,6 +105,8 @@ def scfFixedPointClosure(scf_args):
         Yf = scf_args['Yf']
         Zf = scf_args['Zf']
         Wf = scf_args['Wf']
+        pointsPerCell_coarse = scf_args['pointsPerCell_coarse']
+        pointsPerCell_fine = scf_args['pointsPerCell_fine']
         gradientFree = scf_args['gradientFree']
         residuals = scf_args['residuals']
         greenIterationOutFile = scf_args['greenIterationOutFile']
@@ -157,11 +159,24 @@ def scfFixedPointClosure(scf_args):
         """
         
         # interpolate density to fine mesh for computing hartree potential
-        if order!=fine_order:
-            RHOf = interpolateBetweenTwoMeshes(X, Y, Z, RHO, order,
-                                                   Xf, Yf, Zf, fine_order) 
+#         print(pointsPerCell_coarse)
+#         print(pointsPerCell_fine)
+#         print(len(X))
+#         print(len(Xf))
+#         exit(-1)
+        if len(X) != len(Xf):
+            print("Interpolating density from %i to %i point mesh." %(len(X),len(Xf)))
+            RHOf = interpolateBetweenTwoMeshes(X, Y, Z, RHO, pointsPerCell_coarse,
+                                                   Xf, Yf, Zf, pointsPerCell_fine)
         else:
+#             print("WHY IS LEN(X)=LEN(Xf)?")
+#             exit(-1)
             RHOf=RHO
+#         if order!=fine_order:
+#             RHOf = interpolateBetweenTwoMeshes_variableOrder(X, Y, Z, RHO, order,
+#                                                    Xf, Yf, Zf, fine_order) 
+#         else:
+#             RHOf=RHO
         
         
         if treecode==False:
@@ -327,7 +342,9 @@ def scfFixedPointClosure(scf_args):
                                'atoms':atoms,
                                'order':order,
                                'fine_order':fine_order,
-                               'regularize':regularize, 'epsilon':epsilon } 
+                               'regularize':regularize, 'epsilon':epsilon,
+                               'pointsPerCell_coarse':pointsPerCell_coarse,
+                               'pointsPerCell_fine':pointsPerCell_fine} 
                 
                 n,M = np.shape(orbitals)
                 resNorm=1.0 

@@ -1112,9 +1112,11 @@ class Tree(object):
                     elif divideCriterion=="coarsenedUniform":
 #                         print("Refining by piecewise uniform scheme.")
                         Cell.refineCoarseningUniform(divideParameter1,divideParameter2,divideParameter3,divideParameter4)
+                    elif divideCriterion=="coarsenedUniformTwoLevel":
+#                         print("Refining by refineCoarseningUniform_TwoLevel scheme.")
+                        Cell.refineCoarseningUniform_TwoLevel(divideParameter1,divideParameter2,divideParameter3,divideParameter4)
                         
                         
-                    
                     
                     else:                        
                         Cell.checkIfCellShouldDivide(divideParameter)
@@ -2230,6 +2232,11 @@ class Tree(object):
         Yf = []
         Zf = []
         Wf = []
+        
+        pointsPerCell_coarse = []
+        pointsPerCell_fine = []
+        
+        
         RHO = []
         
         XV = []
@@ -2244,6 +2251,7 @@ class Tree(object):
         for _,cell in self.masterList:
             if cell.leaf == True:
                 
+                pointsPerCell_coarse.append( int(cell.numCoarsePoints ) )
                 for i,j,k in cell.PxByPyByPz:
                     gridpt = cell.gridpoints[i,j,k]
                     X.append( gridpt.x )
@@ -2252,12 +2260,26 @@ class Tree(object):
                     W.append( cell.w[i,j,k] )
                     RHO.append(gridpt.rho)
                 
-                for i,j,k in cell.PxfByPyfByPzf:
-                    gridpt = cell.fine_gridpoints[i,j,k]
-                    Xf.append( gridpt.x )
-                    Yf.append( gridpt.y )
-                    Zf.append( gridpt.z )
-                    Wf.append( cell.wf[i,j,k] )
+                if cell.fineMesh==True: # this cell has a different fine mesh
+#                     print("cell has a fine mesh.")
+#                     exit(-1)
+#                     
+                    pointsPerCell_fine.append( int(cell.numFinePoints) )
+                    for i,j,k in cell.PxfByPyfByPzf:
+                        gridpt = cell.fine_gridpoints[i,j,k]
+                        Xf.append( gridpt.x )
+                        Yf.append( gridpt.y )
+                        Zf.append( gridpt.z )
+                        Wf.append( cell.wf[i,j,k] )
+                else: # this cell's fine mesh == its coarse mesh
+                    pointsPerCell_fine.append( int(cell.numCoarsePoints) )
+                    for i,j,k in cell.PxByPyByPz:
+                        gridpt = cell.gridpoints[i,j,k]
+                        Xf.append( gridpt.x )
+                        Yf.append( gridpt.y )
+                        Zf.append( gridpt.z )
+                        Wf.append( cell.w[i,j,k] )
+                    
 #                     WAVEFUNCTIONS.append(gridpt.phi)
 #                     gridpt.x=None
 #                     gridpt.y=None
@@ -2316,8 +2338,12 @@ class Tree(object):
 #                 for i,j,k in cell.PxByPyByPz:
 #                     cell.gridpoints[i,j,k]=None
 #             del cell
-                
-        return np.array(X),np.array(Y),np.array(Z),np.array(W),np.array(Xf),np.array(Yf),np.array(Zf),np.array(Wf), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
+#         print("Returning from tree extract:  ")
+# #         print("W = ", W)
+#         print("sum(W) = ", np.sum(W))
+#         print("vol approx = ", (np.max(X)-np.min(X))*(np.max(Y)-np.min(Y))*(np.max(Z)-np.min(Z)))
+#         print("pointsPerCell_coarse = ", pointsPerCell_coarse)
+        return np.array(X),np.array(Y),np.array(Z),np.array(W),np.array(Xf),np.array(Yf),np.array(Zf),np.array(Wf), np.array(pointsPerCell_coarse), np.array(pointsPerCell_fine), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
     
     
     def extractXYZ_connected(self):

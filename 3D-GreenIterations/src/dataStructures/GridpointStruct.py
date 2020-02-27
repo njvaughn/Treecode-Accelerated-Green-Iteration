@@ -29,7 +29,7 @@ class GridPoint(object):
         self.v_ext = 0.0
          
 #         if initPotential==True:
-        self.setExternalPotential(atoms,coreRepresentation)
+#         self.setExternalPotential(atoms,coreRepresentation)
         self.updateVeff()
 
     def setExternalPotential(self, atoms, coreRepresentation):

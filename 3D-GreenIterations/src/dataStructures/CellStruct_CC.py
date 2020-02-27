@@ -40,9 +40,11 @@ class Cell(object):
         self.px = px
         self.py = py
         self.pz = pz
+        self.numCoarsePoints=(self.px+1)*(self.py+1)*(self.pz+1)
         self.pxf=fine_p
         self.pyf=fine_p
         self.pzf=fine_p
+        self.fineMesh = False
         self.pxd = self.px+1 # Points for the density
         self.pyd = self.py+1 # Points for the density secondary mesh
         self.pzd = self.pz+1
@@ -60,6 +62,7 @@ class Cell(object):
         if kind=='first':
 #             print("CELL IS FIRST KIND")
             W = unscaledWeightsFirstKind(px)  # assumed px=py=pz
+            self.unscaledW = W
             Wf = unscaledWeightsFirstKind(self.pxf)  # assumed px=py=pz
             self.w = weights3DFirstKind(xmin, xmax, px, ymin, ymax, py, zmin, zmax, pz, W)
             self.wf = weights3DFirstKind(xmin, xmax, self.pxf, ymin, ymax, self.pyf, zmin, zmax, self.pzf, Wf)
@@ -2323,6 +2326,159 @@ class Cell(object):
             print("Cell side length: ",cellSideLength)
             print("Cell dividing: ", self.divideFlag)
             print()
+            
+            
+    def refineCoarseningUniform_TwoLevel(self, h, H, r, level):
+        self.divideFlag = False
+        self.fineMesh = False
+        
+        xdiv = (self.xmax + self.xmin)/2   
+        ydiv = (self.ymax + self.ymin)/2   
+        zdiv = (self.zmax + self.zmin)/2 
+        
+        # how many coarsening steps are required:
+        steps = int( np.log2(H/h))
+        
+        # determine distance from cell corner to nearest atom
+        distanceToNearestAtom = 10+H
+        for atom in self.tree.atoms:
+            if ( (atom.x<self.xmax) and (atom.y<self.ymax) and (atom.z<self.zmax) and
+                 (atom.x>self.xmin) and (atom.y>self.ymin) and (atom.z>self.zmin) ): # atom is in cell
+                distanceToNearestAtom=0
+            else:
+                for x in [self.xmax,self.xmin]:
+                    for y in [self.ymin,self.ymax]:
+                        for z in [self.zmin,self.zmax]:
+                            d = np.sqrt( (x-atom.x)**2 + (y-atom.y)**2 + (z-atom.z)**2)
+#                             d = np.max(  [abs(x-atom.x), abs(y-atom.y), abs(z-atom.z)])
+                            distanceToNearestAtom = min(distanceToNearestAtom,d)
+        
+        # compute cell size
+#         cellRadius = np.sqrt( (self.xmax-xdiv)**2 + (self.ymax-ydiv)**2 + (self.zmax-zdiv)**2 )
+        cellSideLength = np.max( [self.zmax-self.zmin, self.xmax-self.xmin, self.ymax-self.ymin ] )
+        
+        radiusFactor=1
+#         if level>=3: radiusFactor=2
+#         if level>=4: radiusFactor=3
+        
+        
+        # DETERMINE IF THIS CELL SHOULD REFINE
+        if cellSideLength>H:
+            self.divideFlag=True
+            
+        elif ( (level>=2) and (distanceToNearestAtom<(r/4)) ):  
+#             print("Second check: distance < r/4")
+            if cellSideLength > (h/4):
+                print("First check: New inner cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+        elif ( (level>=1) and (distanceToNearestAtom<(r/2)) ): 
+            if cellSideLength > (h/2):
+                self.divideFlag=True
+                print("Second check: New inner cell size will be ", cellSideLength/2)
+        elif distanceToNearestAtom<r:  #if in the inner ring
+#         elif distanceToNearestAtom<2:  #if in the inner ring
+            if cellSideLength > h:
+#                 print("New inner cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+                
+        elif distanceToNearestAtom<r+2*h*np.sqrt(radiusFactor):  # if in the inner ring
+#         elif distanceToNearestAtom<3:  # if in the inner ring
+            if cellSideLength > 2*h:
+#                 print("First annulus cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+        
+        elif distanceToNearestAtom<r+(2*h+4*h)*np.sqrt(radiusFactor):  # if in the inner ring
+#         elif distanceToNearestAtom<12:  # if in the inner ring
+            if cellSideLength > 4*h:
+#                 print("Second annulus cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+        
+        elif distanceToNearestAtom<r+(2*h+4*h+8*h)*np.sqrt(radiusFactor):
+            if cellSideLength > 8*h:
+#                 print("Third annulus cell size will be ", cellSideLength/2)
+                self.divideFlag=True
+
+        else:                                       # cell is in the far field
+            pass
+        
+        # NOW, IF self.divideFlag STILL = FALSE, THEN THIS CELL IS GOING TO BE PART OF THE MESH.  
+        # NEXT, CHECK IF WE WANT TO REFINE IT AGAIN FOR THE FINE MESH.
+        if self.divideFlag==False:  # this cell is not refining.  It will be part of the coarse mesh.
+            
+            
+            
+#             if level==-1: # refine whole inner ball to 1/2 mesh spacing
+            if level<-1: # refine depending on level
+#                 print("TRIGGERED LEVEL==-1, exiting")
+#                 exit(-1)
+                if distanceToNearestAtom<r*1.5:
+                    
+                    print("Creating fine mesh for cell a distance %f from atom." %distanceToNearestAtom)
+                    
+                    self.fineMesh = True
+                    numX=-int(level)
+                    numY=-int(level)
+                    numZ=-int(level)
+                    
+                    self.numFinePoints = numX*numY*numZ*(self.px+1)*(self.py+1)*(self.pz+1)
+                    self.PxfByPyfByPzf = [element for element in itertools.product(range(numX*(self.px+1)),range(numY*(self.py+1)),range(numZ*(self.pz+1)))]
+                    
+                    
+                    fine_gridpoints = np.empty(( (self.px+1)*numX,(self.py+1)*numY,(self.pz+1)*numZ),dtype=object)
+                    fine_weights = np.empty(( (self.px+1)*numX,(self.py+1)*numY,(self.pz+1)*numZ),dtype=object)
+                    for i in range(numX):
+                        
+                        dx = (self.xmax - self.xmin)/numX
+                        
+                        xlow  = self.xmin + (i+0)*dx
+                        xhigh = self.xmin + (i+1)*dx
+                        
+                        for j in range(numY):
+                            
+                            dy = (self.ymax - self.ymin)/numY
+                            
+                            ylow  = self.ymin + (j+0)*dy
+                            yhigh = self.ymin + (j+1)*dy
+                            
+                            for k in range(numZ):
+                                
+                                dz = (self.zmax-self.zmin)/numZ
+                                
+                                zlow  = self.zmin + (k+0)*dz
+                                zhigh = self.zmin + (k+1)*dz
+                            
+                    
+                                # generate points in [xlow,xhigh]x[ylow,yhigh]x[zlow,zhigh]
+                                
+#                                 fine_weights.append( weights3DFirstKind(xlow, xhigh, self.px, ylow, yhigh, self.py, zlow, zhigh, self.pz, self.unscaledW) )
+                                
+                                fine_weights[i*(self.px+1):(i+1)*(self.px+1), j*(self.py+1):(j+1)*(self.py+1), k*(self.pz+1):(k+1)*(self.pz+1)] = weights3DFirstKind(xlow, xhigh, self.px, ylow, yhigh, self.py, zlow, zhigh, self.pz, self.unscaledW) 
+                                xvec = ChebyshevPointsFirstKind(xlow, xhigh, self.px)
+                                yvec = ChebyshevPointsFirstKind(ylow, yhigh, self.py)
+                                zvec = ChebyshevPointsFirstKind(zlow, zhigh, self.pz)
+                                
+                                for ii in range(self.px+1):
+                                    for jj in range(self.py+1):
+                                        for kk in range(self.pz+1):
+                                            fine_gridpoints[i*(self.px+1) + ii, j*(self.py+1) + jj, k*(self.pz+1) + kk] = GridPoint(xvec[ii],yvec[jj],zvec[kk], 0.0, None, None, 0, initPotential=False)
+                                
+                    self.fine_gridpoints = fine_gridpoints
+                    self.wf = fine_weights
+                    
+#                     print("Shape of self.wf: ", np.shape(self.wf))
+#                     print("self.wf = ", self.wf)
+                    
+#                     print( "np.sum(self.wf) = ", np.sum(self.wf))
+#                     print( "np.sum(self.w) = ", np.sum(self.w))
+#                     exit(-1)
+
+                    assert abs(np.sum(self.wf)-np.sum(self.w) )/np.sum(self.wf) < 1e-12, "Fine and Coarse mesh weights not summing to same value."
+                        
+                    
+                                
+                
+                
+        
     
     """
     DIVISION FUNCTIONS

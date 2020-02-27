@@ -101,7 +101,7 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
 #     rprint(rank,"Domain length after adjustment: ", domainSize)
 #     rprint(rank," Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
     
-    X,Y,Z,W,Xf,Yf,Zf,Wf,atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues,tree = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
+    X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues,tree = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
                                                                                                      inputFile,outputFile,srcdir,order,order,gaugeShift,
                                                                                                      MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4,saveTree=True)
    
@@ -237,16 +237,17 @@ if __name__ == "__main__":
     
     
     coreRepresentation="Pseudopotential"
-    MESHTYPE='coarsenedUniform'
-    order=4
+    MESHTYPE='coarsenedUniformTwoLevel'
+#     MESHTYPE='coarsenedUniform'
+    order=2
     gaugeShift=-0.5
     
     domainSize=16
     MAXSIDELENGTH=32
-    MESHPARAM1=0.25 # near field spacing 
+    MESHPARAM1=8.0 # near field spacing 
     MESHPARAM2=8.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
-    MESHPARAM4=0 # additional inner refinement 
+    MESHPARAM4=-1 # additional inner refinement 
     
 #     domainSize=16
 #     MAXSIDELENGTH=32

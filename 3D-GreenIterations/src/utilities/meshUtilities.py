@@ -329,7 +329,88 @@ def PROTOTYPE2_FOR_SINGULARITY_CATCHING__interapolateBetweenTwoMeshesSingleCellN
 #     print()
     return num/den
 
-def interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, coarseP,
+def interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, pointsPerCell_coarse,
+                                fineX, fineY, fineZ, pointsPerCell_fine):
+    '''
+    Interpolates between two meshes.  
+    Hard assumption that the meshes are arranged the same way, so that the first (p+1)**3 points of the coarse mesh correspond to the 
+    same cell as the first (P+1)**3 points of the fine mesh.  
+    '''
+    
+#     start=time.time()
+#     pointsPerCoarseCell=(coarseP+1)**3
+#     pointsPerFineCell=(fineP+1)**3    
+#     # get the number of cells
+#     numCellsCoarse = int(len(coarseX)/pointsPerCoarseCell)
+#     numCellsFine = int(len(fineX)/pointsPerFineCell)
+#     
+# #     print("pointsPerCoarseCell ", pointsPerCoarseCell)
+# #     print("pointsPerFineCell ", pointsPerFineCell)
+# #     print("numCellsCoarse ", numCellsCoarse)
+# #     print("numCellsFine ", numCellsFine)
+#     assert numCellsCoarse==numCellsFine, "numCellsCoarse != numCellsFine"
+    
+    if len(coarseX)==len(fineX):  # meshes are the same, don't need to interpolate.
+        return coarseF
+    
+#     print(pointsPerCell_coarse)
+    pointsPerCell_coarse = pointsPerCell_coarse.astype(int)
+    pointsPerCell_fine = pointsPerCell_fine.astype(int)
+    
+    
+#     numCells = numCellsFine
+    
+    fineF=np.zeros(len(fineX))
+    coarseP = int(np.cbrt(pointsPerCell_coarse[0]))-1
+    
+#     print(pointsPerCell_coarse)
+#     print(courseP)
+#     exit(-1)
+    # Set up weight arrays.
+    wx = np.ones(coarseP+1)
+    for i in range(coarseP+1):
+        wx[i] = (-1)**i * np.sin(  (2*i+1)*np.pi / (2*(coarseP)+2)  )
+    
+    wy = np.ones(coarseP+1)
+    for j in range(coarseP+1):
+        wy[j] = (-1)**j * np.sin(  (2*j+1)*np.pi / (2*(coarseP)+2)  )
+        
+    wz = np.ones(coarseP+1)
+    for k in range(coarseP+1):
+        wz[k] = (-1)**k * np.sin(  (2*k+1)*np.pi / (2*(coarseP)+2)  )
+    
+    
+    
+    # call the single-cell function for each cell
+    coarseIdx=0
+    fineIdx = 0
+    for i in range(len(pointsPerCell_coarse)):
+        
+        if pointsPerCell_coarse[i]==pointsPerCell_fine[i]:
+            fineF[fineIdx:fineIdx+pointsPerCell_fine[i]] = coarseF[coarseIdx:coarseIdx+pointsPerCell_coarse[i]]
+        else:
+            
+#             print("Interpolating for a cell containing %i and %i points" %(pointsPerCell_coarse[i],pointsPerCell_fine[i]))
+#          fineF[i*pointsPerFineCell:(i+1)*pointsPerFineCell] = interapolateBetweenTwoMeshesSingleCellNoVector(
+            fineF[fineIdx:fineIdx+pointsPerCell_fine[i]] = interapolateBetweenTwoMeshesSingleCellNoVector(
+                                                               coarseX[coarseIdx:coarseIdx+pointsPerCell_coarse[i]],
+                                                               coarseY[coarseIdx:coarseIdx+pointsPerCell_coarse[i]],
+                                                               coarseZ[coarseIdx:coarseIdx+pointsPerCell_coarse[i]],
+                                                               coarseF[coarseIdx:coarseIdx+pointsPerCell_coarse[i]],
+                                                               fineX[fineIdx:fineIdx+pointsPerCell_fine[i]],
+                                                               fineY[fineIdx:fineIdx+pointsPerCell_fine[i]],
+                                                               fineZ[fineIdx:fineIdx+pointsPerCell_fine[i]],
+                                                               wx,wy,wz)
+        coarseIdx += pointsPerCell_coarse[i]
+        fineIdx += pointsPerCell_fine[i]
+
+#     end=time.time()
+#     print("Interpolating between meshes took %2.3f seconds " %(end-start))
+#     print("returning fineF of length ", len(fineF))
+    return fineF
+
+
+def interpolateBetweenTwoMeshes_variableOrder(coarseX, coarseY, coarseZ, coarseF, coarseP,
                                 fineX, fineY, fineZ, fineP, singularities=[]):
     '''
     Interpolates between two meshes.  
@@ -1419,7 +1500,7 @@ def testGradientAndLaplacian():
 
 
 
-def testInterpolationBetweenMeshes():
+def testInterpolationBetweenMeshes_OLD():
     
     coarseP = 0
     fineP = 2#coarseP+2
@@ -1597,6 +1678,98 @@ def testInterpolationBetweenMeshes():
     return
 
 
+def testInterpolationBetweenMeshes():
+    
+    
+    order=3
+
+    
+    # Test single cell
+    tempX_coarse = ChebyshevPointsFirstKind(0,1,order)
+    tempY_coarse = ChebyshevPointsFirstKind(0,1,order)
+    tempZ_coarse = ChebyshevPointsFirstKind(0,1,order)
+    print("Coarse Z = ", tempZ_coarse)
+
+    coarseX=np.zeros((order+1)**3)
+    coarseY=np.zeros((order+1)**3)
+    coarseZ=np.zeros((order+1)**3)
+    
+    idx=0
+    for i in range(order+1):
+        for j in range(order+1):
+            for k in range(order+1):
+                coarseX[idx] = tempX_coarse[i]
+                coarseY[idx] = tempY_coarse[j]
+                coarseZ[idx] = tempZ_coarse[k]
+                idx+=1
+    coarseW = weights3DFirstKind(0,1,order,0,1,order,0,1,order).reshape([(order+1)**3,])
+    
+    
+    
+    fineX=np.zeros(8*(order+1)**3)
+    fineY=np.zeros(8*(order+1)**3)
+    fineZ=np.zeros(8*(order+1)**3)
+    fineW=np.empty(0)
+    idx=0
+    
+    
+    for i in range(2):
+        for j in range(2):
+            for k in range(2):
+    
+                xlow = 0+0.5*i
+                xhigh = 0.5+0.5*i
+                
+                ylow = 0+0.5*j
+                yhigh = 0.5+0.5*j
+                
+                zlow = 0+0.5*k
+                zhigh = 0.5+0.5*k
+                
+                
+                tempX_fine = ChebyshevPointsFirstKind(0+0.5*i,0.5+0.5*i,order)
+                tempY_fine = ChebyshevPointsFirstKind(0+0.5*j,0.5+0.5*j,order)
+                tempZ_fine = ChebyshevPointsFirstKind(0+0.5*k,0.5+0.5*k,order)
+#                 print("tempZ_fine = ", tempZ_fine)
+
+    
+                fineW = np.append(fineW, weights3DFirstKind(xlow,xhigh,order,ylow,yhigh,order,zlow,zhigh,order).reshape([(order+1)**3,]) )
+    
+                for ii in range(order+1):
+                    for jj in range(order+1):
+                        for kk in range(order+1):
+                            fineX[idx] = tempX_fine[ii]
+                            fineY[idx] = tempY_fine[jj]
+                            fineZ[idx] = tempZ_fine[kk]
+                            idx+=1
+#     fineW = weights3DFirstKind(0,1,fineP,0,1,fineP,0,1,fineP).reshape([(fineP+1)**3,])
+    
+    
+    coarseF = coarseX**4 * coarseY**4 
+    coarseG =  coarseZ**6
+    fineF = fineX**4 * fineY**4 
+    fineG =  fineZ**6
+    analyticIntegral = 1/175
+    coarseComputedIntegral = np.sum(coarseF*coarseG*coarseW)
+    fineComputedIntegral = np.sum(fineF*fineG*fineW)
+
+    pointsPerCoarseCell=np.array([(order+1)**3])
+    pointsPerFineCell=np.array([8*(order+1)**3])
+    
+    interpolatedF = interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, pointsPerCoarseCell,
+                                                fineX, fineY, fineZ, pointsPerFineCell)
+    
+
+    interpolatedIntegral = np.sum(interpolatedF*fineG*fineW)
+    
+    print("Expected integral = %f" %analyticIntegral)
+    print("Coarse computed integral         = %f, error %1.3e" %(coarseComputedIntegral,coarseComputedIntegral-analyticIntegral) )
+    print("Fine computed integral           = %f, error %1.3e" %(fineComputedIntegral,fineComputedIntegral-analyticIntegral) )
+    print("Interpolated computed integral   = %f, error %1.3e" %(interpolatedIntegral,interpolatedIntegral-analyticIntegral) )
+    
+    
+    
+    return
 if __name__=="__main__":    
     testInterpolationBetweenMeshes()
     
