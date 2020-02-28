@@ -1,103 +1,100 @@
 #!/bin/bash
 
 
-cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Green-Iteration-Routines/
-
-DOMAIN=16
-SINGSUBT=1
+cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
+SINGSUBT=1 
 
 SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 
+
 #COREREPRESENTATION="AllElectron"
-#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
+#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv' 
 #INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/N2Auxiliary.csv'
 #INPUTFILE='molecularConfigurations/NAuxiliary.csv'
 
 
 COREREPRESENTATION="Pseudopotential"
+#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
 INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/carbonAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
+  
 
-
-VTKFILEDIR='None'
-
+VTKFILEDIR='/Users/nathanvaughn/Desktop/'
+ 
 
 GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GPUPRESENT='False'
  
 TREECODE='True'      
-MAXPARNODE=500
-BATCHSIZE=500   
+MAXPARNODE=100
+BATCHSIZE=10   
  
  
-GAUSSIANALPHA=1.0 
 GAUGESHIFT=-0.5
-
-RESTART='False'	
+MIXING='Anderson'
+ 
+#MESHTYPE='LW5'
+RESTART='False' 
 SAVEDMESH='None'
 
 ADDITIONALDEPTHATATOMS=0
-GRADIENTFREE='True'
+GRADIENTFREE='True' 
 
 MIXINGPARAMETER=0.5
-MIXINGHISTORY=10 
+MIXINGHISTORY=10  
   
-INITIAL_GI_TOLERANCE=1e-5 
-FINAL_GI_TOLERANCE=3e-6
+INITIAL_GI_TOLERANCE=3e-3
+FINAL_GI_TOLERANCE=3e-7
 GRADUALSTEPS=4
-SCF_TOLERANCE=1e-4
+SCF_TOLERANCE=2e-6
      
 
-#MESHTYPE='ParentChildrenIntegral' 
-#MESHPARAM1=1e-3  # parent-child integral tolerance
-
-
-
-MAXSIDELENGTH=8
-
-
-#MESHTYPE='PiecewiseUniform'
-#MESHPARAM1=0.5 #near field spacing
-#MESHPARAM2=2.0 # near field cutoff
-
-#MESHPARAM3=1.0 # mid field spacing
-#MESHPARAM4=3.0 # mid field cutoff
-
-MESHTYPE='coarsenedUniform'
-MESHPARAM1=0.5 # near field spacing
-MESHPARAM2=8.0 # far field spacing
-MESHPARAM3=2.0 # ball radius
-MESHPARAM4=0.0 
 
 
 APPROXIMATIONNAME=lagrange
+SINGULARITYHANDLING=subtraction
 
-for SINGULARITYHANDLING in subtraction
-do
-for CELLORDER in 4
-do								  	 				     
-for TREECODEORDER in 7
-do         
-	for THETA in 0.7
-	do   
-		for MIXING in 'Anderson'		    
-		do 
-		
-		FINEORDER=5
+REGULARIZE='False'
+EPSILON=0.0
 
-		OUTPUTFILE="/Users/nathanvaughn/Documents/synchronizedDataFiles/ONCV-testing/N_piecewise_uniform_mesh_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}.csv"
-		
-        #mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
-        mpirun -n $1 python -u quadrature-test.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
-    											$GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
-    											$INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
-    											$OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
-    											$GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-    											$SINGULARITYHANDLING $APPROXIMATIONNAME
-		done   
-	done 
-done      
+GAUSSIANALPHA=2.0 
+TREECODEORDER=9
+THETA=0.5
+
+
+
+MESHTYPE='coarsenedUniformTwoLevel'
+
+DOMAIN=16
+MAXSIDELENGTH=16
+MESHPARAM1=0.5 # near field spacing 
+MESHPARAM2=8.0 # far field spacing
+MESHPARAM3=2.0 # ball radius
+
+MESHPARAM4=0
+
+  
+for DOMAIN in 16  
+do                                                         
+    for CELLORDER in 3
+    do         
+        for FINEORDER in 3
+        do  
+
+        OUTPUTFILE="~/Documents/ONCV-testing/beryllium/twoMesh/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
+         
+        mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+                                                $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
+                                                $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
+                                                $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
+                                                $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
+                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON
+        done 
+    done      
 done
-done
+

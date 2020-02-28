@@ -2418,7 +2418,7 @@ class Cell(object):
                     self.fineMesh = True
                     numX=-int(level)
                     numY=-int(level)
-                    numZ=-int(level)
+                    numZ=-int(level) 
                     
                     self.numFinePoints = numX*numY*numZ*(self.px+1)*(self.py+1)*(self.pz+1)
                     self.PxfByPyfByPzf = [element for element in itertools.product(range(numX*(self.px+1)),range(numY*(self.py+1)),range(numZ*(self.pz+1)))]

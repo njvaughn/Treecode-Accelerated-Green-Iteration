@@ -715,71 +715,55 @@ if __name__ == "__main__":
     rprint(rank," Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
         
     
-#     if rank==0: 
-#         X,Y,Z,W,RHO,XV, YV, ZV, vertexIdx, centerIdx, ghostCells, orbitals,eigenvalues,atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = setUpTree() 
-#     else:
-#         X = np.empty(0)
-#         Y = np.empty(0)
-#         Z = np.empty(0)
-#         W = np.empty(0)
-#         atoms=None
-#         eigenvalues=None
-#         nElectrons=None
-#         referenceEigenvalues=None
-#         nOrbitals=None
-        
-#     maxSideLength=5.5
+
     X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
                                                                                                      inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
                                                                                                      divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
     
     
-    comm.barrier()
-    xSum = np.sqrt( global_dot(X,X,comm) ) 
-    ySum = np.sqrt( global_dot(Y,Y,comm) ) 
-    zSum = np.sqrt( global_dot(Z,Z,comm) ) 
-    wSum = np.sqrt( global_dot(W,W,comm) ) 
-    
-#     print("NOT CALLING LOAD BALANCER.")
-    print('Before load balancing, nPoints and nCells on proc %i: %i, %i' %(rank,len(X),len(X)/(order+1)**3) )
-    print("BEFORE BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
-
-#     X,Y,Z,W = scatterArrays(X,Y,Z,W,comm)
-#     print('After scattering, nPoints on proc %i: %i' %(rank,len(X)) )
-    comm.barrier()
-    start=MPI.Wtime()
-#     X,Y,Z,W = loadBalance(X,Y,Z,W,LBMETHOD='RANDOM')
-#     end=MPI.Wtime()
-#     print("Random balancing took %f seconds." %(end-start))
+    ## NO LONGER PERFORMING LOAD BALANCING AFTER CREATING MESH POINTS.  IT IS TAKEN CARE OF WHEN CHOPPING THE DOMAIN INTO INITIAL BASE MESH.
 #     comm.barrier()
-#     print('After random balancing, nPoints on proc %i: %i' %(rank,len(X)) )
-    X,Y,Z,W = loadBalance(X,Y,Z,W)
-    comm.barrier()
-    end=MPI.Wtime()
-    print("LOAD BALANCING TIME WHEN NOT USING RANDOM FIRST: ", end-start)
-    print('After load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
-    print("proc %i: average x, y, z: %f,%f,%f"%(rank, np.mean(X), np.mean(Y), np.mean(Z)))
-#     atoms = comm.bcast(atoms, root=0)
-#     nOrbitals = comm.bcast(nOrbitals, root=0)
-#     nElectrons = comm.bcast(nElectrons, root=0)
-#     eigenvalues = comm.bcast(eigenvalues, root=0)
-#     referenceEigenvalues = comm.bcast(referenceEigenvalues, root=0)
+#     xSum = np.sqrt( global_dot(X,X,comm) ) 
+#     ySum = np.sqrt( global_dot(Y,Y,comm) ) 
+#     zSum = np.sqrt( global_dot(Z,Z,comm) ) 
+#     wSum = np.sqrt( global_dot(W,W,comm) ) 
+#     
+# #     print("NOT CALLING LOAD BALANCER.")
+#     print('Before load balancing, nPoints and nCells on proc %i: %i, %i' %(rank,len(X),len(X)/(order+1)**3) )
+#     print("BEFORE BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
+# 
+# #     X,Y,Z,W = scatterArrays(X,Y,Z,W,comm)
+# #     print('After scattering, nPoints on proc %i: %i' %(rank,len(X)) )
+#     comm.barrier()
+#     start=MPI.Wtime()
+#     X,Y,Z,W = loadBalance(X,Y,Z,W)
+#     comm.barrier()
+#     end=MPI.Wtime()
+#     print("LOAD BALANCING TIME WHEN NOT USING RANDOM FIRST: ", end-start)
+#     print('After load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
+#     print("proc %i: average x, y, z: %f,%f,%f"%(rank, np.mean(X), np.mean(Y), np.mean(Z)))
+# #     atoms = comm.bcast(atoms, root=0)
+# #     nOrbitals = comm.bcast(nOrbitals, root=0)
+# #     nElectrons = comm.bcast(nElectrons, root=0)
+# #     eigenvalues = comm.bcast(eigenvalues, root=0)
+# #     referenceEigenvalues = comm.bcast(referenceEigenvalues, root=0)
+
+#     xSum2 = np.sqrt( global_dot(X,X,comm) ) 
+#     ySum2 = np.sqrt( global_dot(Y,Y,comm) ) 
+#     zSum2 = np.sqrt( global_dot(Z,Z,comm) ) 
+#     wSum2 = np.sqrt( global_dot(W,W,comm) )
+#     assert abs(xSum-xSum2)/xSum<1e-12, "xSum not matching after DD. xSum=%f, xSum2=%f"%(xSum,xSum2)
+#     assert abs(ySum-ySum2)/ySum<1e-12, "ySum not matching after DD. ySum=%f, ySum2=%f"%(ySum,ySum2)
+#     assert abs(zSum-zSum2)/zSum<1e-12, "zSum not matching after DD. zSum=%f, zSum2=%f"%(zSum,zSum2)
+#     assert abs(wSum-wSum2)/wSum<1e-12, "wSum not matching after DD. wSum=%f, wSum2=%f"%(wSum,wSum2)
+#     
+#     comm.barrier()
+#     
+#     ## Test if load balancing worked...
+#     print("AFTER BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
+# #     exit(-1)
+    
     eigenvalues = -2*np.ones(nOrbitals)
-    xSum2 = np.sqrt( global_dot(X,X,comm) ) 
-    ySum2 = np.sqrt( global_dot(Y,Y,comm) ) 
-    zSum2 = np.sqrt( global_dot(Z,Z,comm) ) 
-    wSum2 = np.sqrt( global_dot(W,W,comm) )
-    assert abs(xSum-xSum2)/xSum<1e-12, "xSum not matching after DD. xSum=%f, xSum2=%f"%(xSum,xSum2)
-    assert abs(ySum-ySum2)/ySum<1e-12, "ySum not matching after DD. ySum=%f, ySum2=%f"%(ySum,ySum2)
-    assert abs(zSum-zSum2)/zSum<1e-12, "zSum not matching after DD. zSum=%f, zSum2=%f"%(zSum,zSum2)
-    assert abs(wSum-wSum2)/wSum<1e-12, "wSum not matching after DD. wSum=%f, wSum2=%f"%(wSum,wSum2)
-    
-    comm.barrier()
-    
-    ## Test if load balancing worked...
-    print("AFTER BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
-#     exit(-1)
-    
     RHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
     densityIntegral = global_dot( RHO, W, comm)
     rprint(rank,"Initial density integrates to ", densityIntegral)

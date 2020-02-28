@@ -30,15 +30,15 @@ from mpiUtilities import rprint
 
 # _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
 try: 
-    _cpu_treecodeRoutines = ctypes.CDLL('libbarytree_cpu.so')
+    _cpu_treecodeRoutines = ctypes.CDLL('libBaryTree_cpu.so')
 except OSError:
-        _cpu_treecodeRoutines = ctypes.CDLL('libbarytree_cpu.dylib')
+        _cpu_treecodeRoutines = ctypes.CDLL('libBaryTree_cpu.dylib')
         
 try: 
-    _gpu_treecodeRoutines = ctypes.CDLL('libbarytree_gpu.so')
+    _gpu_treecodeRoutines = ctypes.CDLL('libBaryTree_gpu.so')
 except OSError:
     try:
-        _gpu_treecodeRoutines = ctypes.CDLL('libbarytree_gpu.dylib')
+        _gpu_treecodeRoutines = ctypes.CDLL('libBaryTree_gpu.dylib')
     except OSError:
         print("Could not load GPU treecode library.") 
         
@@ -48,7 +48,7 @@ except OSError:
         
 """ Set argtypes of the wrappers. """
 try:
-    _gpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
+    _gpu_treecodeRoutines.BaryTreeInterface.argtypes = ( ctypes.c_int, ctypes.c_int,
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_int, ctypes.POINTER(ctypes.c_double),  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
@@ -57,7 +57,7 @@ except NameError:
     print("Could not set argtypes of _gpu_treecodeRoutines")
 
 try:
-    _cpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
+    _cpu_treecodeRoutines.BaryTreeInterface.argtypes = ( ctypes.c_int, ctypes.c_int,
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_int, ctypes.POINTER(ctypes.c_double),  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
@@ -75,7 +75,7 @@ def callTreedriver(numTargets, numSources,
                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
                    kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, order, theta, maxParNode, batchSize, GPUversion, verbosity):
     '''
-    python function which creates pointers to the arrays and calls treedriverWrapper.
+    python function which creates pointers to the arrays and calls BaryTreeInterface.
     returns the results array.
     '''
 
@@ -105,14 +105,14 @@ def callTreedriver(numTargets, numSources,
     b_singularityHandling = singularityHandling.encode('utf-8')
     
     if GPUversion==True:
-        _gpu_treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
+        _gpu_treecodeRoutines.BaryTreeInterface(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
                                                      targetX_p, targetY_p, targetZ_p, targetValue_p,
                                                      sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
                                                      resultArray_p, b_kernelName, ctypes.c_int(numberOfKernelParameters), kernelParameters_p,
                                                      b_singularityHandling, b_approximationName,
                                                      ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode), ctypes.c_int(batchSize), ctypes.c_int(verbosity) )
     elif GPUversion==False: # No gpu present
-        _cpu_treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
+        _cpu_treecodeRoutines.BaryTreeInterface(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
                                                      targetX_p, targetY_p, targetZ_p, targetValue_p,
                                                      sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
                                                      resultArray_p, b_kernelName, ctypes.c_int(numberOfKernelParameters), kernelParameters_p,

@@ -6,6 +6,7 @@ size = comm.Get_size()
 import numpy as np
 
 from mpiUtilities import rprint, global_dot
+from loadBalancer import loadBalance
 sys.path.append('../dataStructures')
 from TreeStruct_CC import Tree
 from AtomStruct import Atom
@@ -46,6 +47,128 @@ def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=1):
     if verbose>0: rprint(rank, "Expected volume:   ", (2*XL*2*YL*2*ZL))
     if verbose>0: rprint(rank, "Cumulative volume: ", np.sum(volumes))
     assert abs((2*XL*2*YL*2*ZL) - np.sum(volumes)) < 1e-12, "base mesh cells volumes do not add up to the expected total volume."
+    
+#     for i in range(len(cells)):
+#         print(cells[i])
+#     exit(-1)
+    return cells
+
+def inializeBaseMesh_distributed(XL,YL,ZL,maxSideLength,verbose=1):
+    '''
+    Input the domain parameters and a maximum cell size.  Return a list of the minimally refined mesh coordinates.
+    
+    :param XL:
+    :param YL:
+    :param ZL:
+    :param maxSideLength:
+    '''
+    
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    
+    nx = int( -( (-2*XL) // maxSideLength ) )  # give the number of base cells in the x direction
+    ny = int( -( (-2*YL) // maxSideLength ) )  # give the number of base cells in the y direction
+    nz = int( -( (-2*ZL) // maxSideLength ) )  # give the number of base cells in the z direction
+    
+
+    if verbose>0: rprint(rank,'nx, ny, nz: %i, %i, %i' %(nx,ny,nz))
+    x = np.linspace(-XL,XL,nx+1)
+    y = np.linspace(-YL,YL,ny+1)
+    z = np.linspace(-ZL,ZL,nz+1)
+    
+    cells = []
+    cellsX = []
+    cellsY = []
+    cellsZ = []
+    volumes=[]
+    idx=0
+    for i in range(nx):
+        for j in range(ny):
+            for k in range(nz):
+                
+                if idx%size==rank:
+                    cells.append( [x[i], x[i+1], y[j], y[j+1], z[k], z[k+1]] )
+                    volumes.append( (x[i+1]-x[i])*(y[j+1]-y[j])*(z[k+1]-z[k]) )
+                    
+                    cellsX.append( (x[i+1]+x[i])/2 )
+                    cellsY.append( (y[j+1]+y[j])/2 )
+                    cellsZ.append( (z[k+1]+z[k])/2 )
+                
+                idx+=1
+    
+    if verbose>0: print("Rank %i, number of coarse cells: %i, volume = %f" %(rank, len(cells), np.sum(volumes)) )
+#     if verbose>0: rprint(rank,"Rank %i, number of coarse cells: %i" %(rank, len(cells)) )
+#     if verbose>0: rprint(rank, "Expected volume:   ", (2*XL*2*YL*2*ZL))
+#     if verbose>0: rprint(rank, "Cumulative volume: ", np.sum(volumes))
+
+    totalVolume = comm.allreduce(np.sum(volumes))
+    rprint(rank,"Total volume: ", totalVolume)
+    assert abs((2*XL*2*YL*2*ZL) - totalVolume) < 1e-12, "base mesh cells volumes do not add up to the expected total volume."
+    
+#     for i in range(len(cells)):
+#         print(cells[i])
+#     exit(-1)
+    return np.array(cellsX),np.array(cellsY),np.array(cellsZ),np.array(cells)
+
+def reconstructBaseMesh_distributed(XL,YL,ZL,maxSideLength,cellsX,cellsY,cellsZ,verbose=1):
+    '''
+    Input the domain parameters and a maximum cell size.  Return a list of the minimally refined mesh coordinates.
+    
+    :param XL:
+    :param YL:
+    :param ZL:
+    :param maxSideLength:
+    '''
+    
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    
+    nx = int( -( (-2*XL) // maxSideLength ) )  # give the number of base cells in the x direction
+    ny = int( -( (-2*YL) // maxSideLength ) )  # give the number of base cells in the y direction
+    nz = int( -( (-2*ZL) // maxSideLength ) )  # give the number of base cells in the z direction
+    
+
+    if verbose>0: rprint(rank,'nx, ny, nz: %i, %i, %i' %(nx,ny,nz))
+    x = np.linspace(-XL,XL,nx+1)
+    dx = x[1]-x[0]
+    y = np.linspace(-YL,YL,ny+1)
+    dy = y[1]-y[0]
+    z = np.linspace(-ZL,ZL,nz+1)
+    dz = z[1]-z[0]
+    
+    cells = []
+#     cellsX = []
+#     cellsY = []
+#     cellsZ = []
+    volumes=[]
+    idx=0
+    
+    for i in range(len(cellsX)):
+        xl = cellsX[i]-dx/2
+        xh = cellsX[i]+dx/2
+        
+        yl = cellsY[i]-dy/2
+        yh = cellsY[i]+dy/2
+        
+        zl = cellsZ[i]-dz/2
+        zh = cellsZ[i]+dz/2
+        
+        
+        cells.append( [xl, xh, yl, yh, zl, zh ] )
+        volumes.append( (xh-xl)*(yh-yl)*(zh-zl) )
+    
+    
+    
+    if verbose>0: print("After LB:  Rank %i, number of coarse cells: %i, volume = %f" %(rank, len(cells), np.sum(volumes)) )
+#     if verbose>0: rprint(rank,"Rank %i, number of coarse cells: %i" %(rank, len(cells)) )
+#     if verbose>0: rprint(rank, "Expected volume:   ", (2*XL*2*YL*2*ZL))
+#     if verbose>0: rprint(rank, "Cumulative volume: ", np.sum(volumes))
+
+    totalVolume = comm.allreduce(np.sum(volumes))
+    rprint(rank,"After LB:  Total volume: ", totalVolume)
+    assert abs((2*XL*2*YL*2*ZL) - totalVolume) < 1e-12, "After LB: base mesh cells volumes do not add up to the expected total volume."
     
 #     for i in range(len(cells)):
 #         print(cells[i])
@@ -105,7 +228,34 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
                           Etotal, Eexchange, Ecorrelation, Eband, gaugeShift])
     
     
-    cells=inializeBaseMesh(XL,YL,ZL,maxSideLength)
+    cellsX,cellsY,cellsZ,cells=inializeBaseMesh_distributed(XL,YL,ZL,maxSideLength)
+    
+    print("rank %i" %rank, cellsX,cellsY,cellsZ, cells)
+    
+    preXmean = np.mean(cellsX)
+    preYmean = np.mean(cellsY)
+    preZmean = np.mean(cellsZ)
+    comm.barrier()
+    start=MPI.Wtime()
+    cellsX,cellsY,cellsZ = loadBalance(cellsX,cellsY,cellsZ,LBMETHOD='RCB')
+    end=MPI.Wtime()
+    print("RCB balancing took %f seconds." %(end-start))
+    comm.barrier()
+    
+    postXmean = np.mean(cellsX)
+    postYmean = np.mean(cellsY)
+    postZmean = np.mean(cellsZ)
+    
+    cells = reconstructBaseMesh_distributed(XL,YL,ZL,maxSideLength,cellsX,cellsY,cellsZ)
+    
+    
+    print("Rank %i, xmean was %f and is now %f " %(rank,preXmean,postXmean))
+    print("Rank %i, ymean was %f and is now %f " %(rank,preYmean,postYmean))
+    print("Rank %i, zmean was %f and is now %f " %(rank,preZmean,postZmean))
+
+#     print("rank %i" %rank, cellsX,cellsY,cellsZ)
+#     exit(-1)
+    
     
     x=np.empty(0)
     y=np.empty(0)
@@ -119,7 +269,8 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     PtsPerCellCoarse=np.empty(0)
     PtsPerCellFine=np.empty(0)
     for i in range(len(cells)):
-        if i%size==rank:
+#         if i%size==rank:
+        if True:  # previously there was a check to determine if this cell should be refined by this proc.  Now assume cells have already been decomposed.
 #             print("CALLING refineCell ==================================================")
             if saveTree==False:
                 X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
@@ -140,7 +291,9 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
             wf=np.append(wf,Wf)
             PtsPerCellFine=np.append(PtsPerCellFine,pointsPerCell_fine)
     
-    
+    print("rank %i, number of points %i" %(rank,len(x)))
+#     comm.barrier()
+#     exit(-1)
     ## BUG HERE WHEN RANKS=6.  Need every rank to refine at least one cell.
 #     nPoints=len(x)
     if saveTree==False:
