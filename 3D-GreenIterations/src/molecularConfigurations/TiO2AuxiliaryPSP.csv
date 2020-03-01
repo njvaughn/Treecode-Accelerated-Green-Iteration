@@ -1,12 +1,12 @@
 ../src/molecularConfigurations/TiO2.csv
 ../src/molecularConfigurations/TiO2ReferenceEigenvaluesPSP.csv
 /home/njvaughn/results_Be/results.csv
--8.1593871143332297e+00
+-35.940782666943868
  0.0
--1.5993296436236459e+00
--2.0573400617986481e-01
+-16.752277282109191
+-1.5968895537054508
 0.0 				
--13.081071171657669
+-60.170688405682505
 
 
 # obtained with DFT-FE, order 5, h=0.3, temp 500.

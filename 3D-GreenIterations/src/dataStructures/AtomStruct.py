@@ -26,6 +26,7 @@ class Atom(object):
         self.y = y
         self.z = z
         self.atomicNumber = int(atomicNumber)
+        self.nuclearCharge = self.atomicNumber # default for all-electron.  Will get changed if pseudopotential is initialized
         self.orbitalInterpolators(coreRepresentation)
         self.nAtomicOrbitals = nAtomicOrbitals
         self.coreRepresentation = coreRepresentation
@@ -42,6 +43,7 @@ class Atom(object):
             PSPs[str(self.atomicNumber)] = ONCV_PSP(self.atomicNumber)
             if verbose>0: print("Updated PSPs: ",PSPs)
             self.PSP = PSPs[str(self.atomicNumber)]
+        self.nuclearCharge = self.PSP.psp['header']['z_valence']  # set the nuclear charge for the PSP.
         
     def V_all_electron(self,x,y,z):
         r = np.sqrt((x - self.x)**2 + (y-self.y)**2 + (z-self.z)**2)
@@ -105,6 +107,20 @@ class Atom(object):
                 C = np.dot( finePsi, self.FineChi[str(i)]*fineWeights)
             else:
                 C = global_dot( finePsi, self.FineChi[str(i)]*fineWeights, comm)
+            
+            output += C * self.Chi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
+            
+        return output
+    
+    def V_nonlocal_pseudopotential_times_psi_SingleMesh(self,psi,Weights,comm=None):
+        
+        output = np.zeros(len(psi))     
+        ## sum over the projectors, increment the nonloncal potential.   Compute C on the coarse mesh.
+        for i in range(self.numberOfFineChis):
+            if comm==None: # just a local computation:
+                C = np.dot( psi, self.Chi[str(i)]*Weights)
+            else:
+                C = global_dot( psi, self.Chi[str(i)]*Weights, comm)
             
             output += C * self.Chi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
             

@@ -379,7 +379,7 @@ def scfFixedPointClosure(scf_args):
 
                 
                 comm.barrier()
-                while ( (resNorm> max(3e-3,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
+                while ( (resNorm> max(1e-3,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     #                 GPUtil.showUtilization()

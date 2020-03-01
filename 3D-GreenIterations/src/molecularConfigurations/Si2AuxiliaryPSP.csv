@@ -1,0 +1,12 @@
+../src/molecularConfigurations/Si2.csv
+../src/molecularConfigurations/Si2ReferenceEigenvaluesPSP.csv
+/home/njvaughn/results_Be/results.csv
+-2.6518459697055392e+00 # Band energy
+-0.0e+00 # Local electrostatic
+-2.1165507448720291e+00 # Exchange
+-3.7375307112585593e-01 # Correlation
+0.0 				
+-6.1097518862089082e+00  # Total energy
+
+
+# obtained with DFT-FE, order 5, h=0.25, temp 500.

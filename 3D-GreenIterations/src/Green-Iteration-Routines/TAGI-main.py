@@ -441,7 +441,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         for atom2 in atoms:
             if atom1!=atom2:
                 r = np.sqrt( (atom1.x-atom2.x)**2 + (atom1.y-atom2.y)**2 + (atom1.z-atom2.z)**2 )
-                Energies['Enuclear'] += atom1.atomicNumber*atom2.atomicNumber/r
+#                 Energies['Enuclear'] += atom1.atomicNumber*atom2.atomicNumber/r
+                Energies['Enuclear'] += atom1.nuclearCharge*atom2.nuclearCharge/r
     Energies['Enuclear'] /= 2 # because of double counting
     
     Times={}

@@ -81,6 +81,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
 #         print('Who called F(x)? ', inspect.stack()[2][3])
         inputWave = np.copy(psiIn[:-1])
+        
+        if ( (len(X)!=len(Xf)) and (SCFcount>4) ):
+            twoMesh=True
+        else:
+            twoMesh=False
     
 
         
@@ -94,7 +99,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         # get the input wavefunction on the fine mesh.
         
-        if len(X)!=len(Xf):
+        if ( twoMesh ):
             start=time.time()
 #             interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], coarse_order,
 #                                                                Xf, Yf, Zf, fine_order) 
@@ -144,8 +149,15 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                 V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi(interpolatedInputWavefunction,Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="fine")
 #                 V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="coarse")
 
-                V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_coarse(orbitals[:,m],W,interpolatedInputWavefunction,Wf,comm=comm)
-                V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi_fine(interpolatedInputWavefunction,Wf,comm=comm)
+                if twoMesh: 
+                    V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_coarse(orbitals[:,m],W,interpolatedInputWavefunction,Wf,comm=comm)
+                else:
+                    V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_SingleMesh(orbitals[:,m],W,comm=comm)
+                    
+                if twoMesh: 
+                    V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi_fine(interpolatedInputWavefunction,Wf,comm=comm)
+                else:
+                    pass
 
 #                 norm_of_V_nl_psi = np.sqrt(global_dot(V_nl_psi**2,W,comm))
 #                 rprint(rank,"NORM OF V_NL_PSI = ", norm_of_V_nl_psi)
@@ -157,7 +169,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                 V_nl_psi_coarse=V_nl_psi_fine
 
 
-            f_fine = -2* ( interpolatedInputWavefunction*Veff_local_fine + V_nl_psi_fine )
+            if twoMesh: f_fine = -2* ( interpolatedInputWavefunction*Veff_local_fine + V_nl_psi_fine )
             f_coarse = -2* ( orbitals[:,m]*Veff_local + V_nl_psi_coarse )
             rprint(rank,"Constructed f with nonlocal routines.")
         else:
@@ -166,9 +178,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         
 #         print("ANY NaNs??? ", np.isnan(f).any())
-        if np.isnan(f_fine).any():
-            print("NaNs detected in f = -2*orbitals[:,m]*Veff_local.  Exiting")
-            exit(-1)
+        if twoMesh:
+            if np.isnan(f_fine).any():
+                print("NaNs detected in f = -2*orbitals[:,m]*Veff_local.  Exiting")
+                exit(-1)
         oldEigenvalue =  Energies['orbitalEnergies'][m] 
         k = np.sqrt(-2*Energies['orbitalEnergies'][m])
 #         rprint(rank, 'k = ', k)
@@ -200,9 +213,24 @@ def greensIteration_FixedPoint_Closure(gi_args):
             startTime = time.time()
             comm.barrier()
             verbosity=0
-            psiNew = treecodeWrappers.callTreedriver(nPoints, len(Xf), 
+            
+            if twoMesh:  # idea: only turn on the two mesh if beyond 4 SCF iterations
+                numSources = len(Xf)
+                sourceX=Xf
+                sourceY=Yf
+                sourceZ=Zf
+                sourceF=f_fine
+                sourceW=Wf
+            else: 
+                numSources = len(X)
+                sourceX=X
+                sourceY=Y
+                sourceZ=Z
+                sourceF=f_coarse
+                sourceW=W
+            psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
-                                                           np.copy(Xf), np.copy(Yf), np.copy(Zf), np.copy(f_fine), np.copy(Wf),
+                                                           np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,verbosity)
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)
@@ -338,6 +366,9 @@ def greensIteration_FixedPoint_Closure(gi_args):
             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 3*rand
 #             rprint(rank,'Energy eigenvalue was positive, setting to  ',-2 )
             rprint(rank,'Energy eigenvalue was positive, setting to gauge shift - ',( 3*rand) )
+            
+            # use whatever random shift the root computed.
+            Energies['orbitalEnergies'][m] = comm.bcast(Energies['orbitalEnergies'][m], root=0)
             
             if greenIterationsCount%10==0:
                 # Positive energy after 10 iterations..., scramble wavefunction and restart.
