@@ -396,6 +396,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
 
+    verbosity=0
     polarization="unpolarized"
     exchangeFunctional="LDA_X"
     correlationFunctional="LDA_C_PZ"
@@ -451,7 +452,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     
     
 #     return
-    rprint(rank,'MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    if verbosity>0: rprint(rank,'MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
     # Store Tree variables locally
     gaugeShift = Energies['gaugeShift']
@@ -635,11 +636,11 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
             RHO = np.copy(simpleMixingDensity)
           
         elif mixingScheme == 'Anderson':
-            print('Using anderson mixing.')
+            if verbosity>0: rprint(rank, 'Using anderson mixing.')
             andersonDensity = densityMixing.computeNewDensity(scf_args['inputDensities'], scf_args['outputDensities'], mixingParameter,W)
 #             integratedDensity = np.sum( andersonDensity*W )
             integratedDensity = global_dot( andersonDensity, W, comm )
-            rprint(rank,'Integrated anderson density: ', integratedDensity)
+            if verbosity>0: rprint(rank,'Integrated anderson density: ', integratedDensity)
     #             tree.importDensityOnLeaves(andersonDensity)
             RHO = np.copy(andersonDensity)
           

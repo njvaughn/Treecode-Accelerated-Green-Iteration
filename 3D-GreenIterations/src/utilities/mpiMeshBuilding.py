@@ -340,6 +340,8 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
 #     tree.exportGridpoints
     X, Y, Z, W, Xf, Yf, Zf, Wf, pointsPerCell_coarse, pointsPerCell_fine, RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ()
 
+    pointsPerCell_coarse = pointsPerCell_coarse.astype(int)
+    pointsPerCell_fine = pointsPerCell_fine.astype(int)
 
 #     print("pointsPerCell_coarse = ", pointsPerCell_coarse)
 #     print("pointsPerCell_fine   = ", pointsPerCell_fine)

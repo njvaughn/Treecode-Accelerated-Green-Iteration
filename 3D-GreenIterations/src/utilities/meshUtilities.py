@@ -9,6 +9,8 @@ from scipy.special import factorial, comb, erf
 import vtk
 import time
 
+import interpolation_wrapper
+
 
 def interapolateBetweenTwoMeshesSingleCell(coarseX, coarseY, coarseZ, coarseF,
                                 fineX, fineY, fineZ,
@@ -1681,7 +1683,7 @@ def testInterpolationBetweenMeshes_OLD():
 def testInterpolationBetweenMeshes():
     
     
-    order=3
+    order=6
 
     
     # Test single cell
@@ -1756,16 +1758,37 @@ def testInterpolationBetweenMeshes():
     pointsPerCoarseCell=np.array([(order+1)**3])
     pointsPerFineCell=np.array([8*(order+1)**3])
     
-    interpolatedF = interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, pointsPerCoarseCell,
-                                                fineX, fineY, fineZ, pointsPerFineCell)
+    
+    start=time.time()
+    for i in range(10):
+        interpolatedF = interpolateBetweenTwoMeshes(coarseX, coarseY, coarseZ, coarseF, pointsPerCoarseCell,
+                                                    fineX, fineY, fineZ, pointsPerFineCell)
+    end=time.time()
+    print("Original time: ", end-start)
+    
+    numberOfCells=1
+    interpolatedF_extern = interpolation_wrapper.callInterpolator(coarseX, coarseY, coarseZ, coarseF, pointsPerCoarseCell,
+                                                fineX, fineY, fineZ, pointsPerFineCell, 
+                                                numberOfCells, order)
+    start=time.time()
+    for i in range(10):
+        interpolatedF_extern = interpolation_wrapper.callInterpolator(coarseX, coarseY, coarseZ, coarseF, pointsPerCoarseCell,
+                                                fineX, fineY, fineZ, pointsPerFineCell, 
+                                                numberOfCells, order)
+    end=time.time()
+    print("External time: ", end-start)
+    
+    print("Max error in interpolation: ", np.max( np.abs( interpolatedF_extern-interpolatedF ) ) )
     
 
     interpolatedIntegral = np.sum(interpolatedF*fineG*fineW)
+    external_interpolatedIntegral = np.sum(interpolatedF_extern*fineG*fineW)
     
     print("Expected integral = %f" %analyticIntegral)
     print("Coarse computed integral         = %f, error %1.3e" %(coarseComputedIntegral,coarseComputedIntegral-analyticIntegral) )
     print("Fine computed integral           = %f, error %1.3e" %(fineComputedIntegral,fineComputedIntegral-analyticIntegral) )
     print("Interpolated computed integral   = %f, error %1.3e" %(interpolatedIntegral,interpolatedIntegral-analyticIntegral) )
+    print("External Interpolated  integral  = %f, error %1.3e" %(external_interpolatedIntegral,external_interpolatedIntegral-analyticIntegral) )
     
     
     

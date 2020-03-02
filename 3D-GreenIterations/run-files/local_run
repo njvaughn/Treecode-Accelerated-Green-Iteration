@@ -48,7 +48,7 @@ GRADIENTFREE='True'
 MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
   
-INITIAL_GI_TOLERANCE=3e-3
+INITIAL_GI_TOLERANCE=3e-1
 FINAL_GI_TOLERANCE=3e-7
 GRADUALSTEPS=4
 SCF_TOLERANCE=2e-6
@@ -63,8 +63,8 @@ REGULARIZE='False'
 EPSILON=0.0
 
 GAUSSIANALPHA=2.0 
-TREECODEORDER=9
-THETA=0.5
+TREECODEORDER=5
+THETA=0.8
 
 
 
@@ -76,17 +76,17 @@ MESHPARAM1=0.5 # near field spacing
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
-MESHPARAM4=0
+MESHPARAM4=-3
 
   
 for DOMAIN in 16  
 do                                                         
-    for CELLORDER in 3
+    for CELLORDER in 4
     do         
-        for FINEORDER in 3
+        for FINEORDER in 4
         do  
 
-        OUTPUTFILE="~/Documents/ONCV-testing/beryllium/twoMesh/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
+        OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/beryllium/twoMesh/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
          
         mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \

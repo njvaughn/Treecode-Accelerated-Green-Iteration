@@ -22,12 +22,14 @@ except OSError:
 from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital as mgs
 from orthogonalizationRoutines import mask
 
+import interpolation_wrapper
+
 
 def greensIteration_FixedPoint_Closure(gi_args):
 #     gi_args_out = {}
     def greensIteration_FixedPoint(psiIn, gi_args):
         # what other things do we need?  Energies, Times, orbitals, Veff, runtime constants (symmetricIteration, GPUpresent, subtractSingularity, treecode, outputfiles, ...)  
-        
+        verbosity=0
         
         ## UNPACK GIARGS
 #         print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
@@ -82,7 +84,9 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #         print('Who called F(x)? ', inspect.stack()[2][3])
         inputWave = np.copy(psiIn[:-1])
         
-        if ( (len(X)!=len(Xf)) and (SCFcount>4) ):
+        TwoMeshStart=4
+        
+        if ( (len(X)!=len(Xf)) and (SCFcount>TwoMeshStart)  ):
             twoMesh=True
         else:
             twoMesh=False
@@ -114,15 +118,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
             # 3. add in the fine Vext (from the radial data)
             # 4. add back in the subtracted piece on the coarse mesh.
              
-            Veff_local -= Vext_local # step 1
-#             Veff_local_fine = interpolateBetweenTwoMeshes(X, Y, Z, Veff_local, coarse_order,
-#                                                                Xf, Yf, Zf, fine_order)  # step 2
-#             
+            Veff_local -= Vext_local                                                                    # step 1          
             Veff_local_fine = interpolateBetweenTwoMeshes(X, Y, Z, Veff_local, pointsPerCell_coarse,
-                                                            Xf, Yf, Zf, pointsPerCell_fine) # step 2
-             
-            Veff_local_fine += Vext_local_fine # step 3
-            Veff_local += Vext_local # step 4
+                                                            Xf, Yf, Zf, pointsPerCell_fine)             # step 2   
+            Veff_local_fine += Vext_local_fine                                                          # step 3
+            Veff_local += Vext_local                                                                    # step 4
             end=time.time()
             
             
@@ -130,7 +130,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #             Veff_local_fine = interpolateBetweenTwoMeshes(X, Y, Z, Veff_local, pointsPerCell_coarse,
 #                                                             Xf, Yf, Zf, pointsPerCell_fine) 
             
-#             rprint(rank,"Time to interpolate wavefunction: ", end-start) 
+#             if verbosity>0: rprint(rank,"Time to interpolate wavefunction: ", end-start) 
         else:
             interpolatedInputWavefunction=orbitals[:,m]
             Veff_local_fine=Veff_local
@@ -143,7 +143,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         elif coreRepresentation=='Pseudopotential': 
             V_nl_psi_fine = np.zeros(len(Veff_local_fine))
             V_nl_psi_coarse = np.zeros(len(Veff_local))
-#             rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
+#             if verbosity>0: rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
             for atom in atoms:
 #                 V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
 #                 V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi(interpolatedInputWavefunction,Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="fine")
@@ -160,7 +160,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                     pass
 
 #                 norm_of_V_nl_psi = np.sqrt(global_dot(V_nl_psi**2,W,comm))
-#                 rprint(rank,"NORM OF V_NL_PSI = ", norm_of_V_nl_psi)
+#                 if verbosity>0: rprint(rank,"NORM OF V_NL_PSI = ", norm_of_V_nl_psi)
 #             f = -2* ( orbitals[:,m]*Veff_local + V_nl_psi )
 
 #             if fine_order!=coarse_order:
@@ -171,7 +171,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 
             if twoMesh: f_fine = -2* ( interpolatedInputWavefunction*Veff_local_fine + V_nl_psi_fine )
             f_coarse = -2* ( orbitals[:,m]*Veff_local + V_nl_psi_coarse )
-            rprint(rank,"Constructed f with nonlocal routines.")
+            if verbosity>0: rprint(rank,"Constructed f with nonlocal routines.")
         else:
             print("coreRepresentation not set to allowed value. Exiting from greenIterationFixedPoint.")
             return
@@ -184,7 +184,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 exit(-1)
         oldEigenvalue =  Energies['orbitalEnergies'][m] 
         k = np.sqrt(-2*Energies['orbitalEnergies'][m])
-#         rprint(rank, 'k = ', k)
+#         if verbosity>0: rprint(rank, 'k = ', k)
     
         psiNew = np.zeros(nPoints)
         
@@ -193,14 +193,14 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
             startTime=time.time()
 #             singularityHandling="skipping"
-            rprint(rank,"singularityHandling = ", singularityHandling)
+            if verbosity>0: rprint(rank,"singularityHandling = ", singularityHandling)
             if regularize==False:
-#                 rprint(rank,"Using singularity subtraction kernel in Green Iteration.")
+#                 if verbosity>0: rprint(rank,"Using singularity subtraction kernel in Green Iteration.")
                 kernelName = "yukawa"
                 numberOfKernelParameters=1
                 kernelParameters=np.array([k])
             elif regularize==True:
-                rprint(rank,"Using regularized yukawa for Green Iteration with epsilon = ", epsilon)
+                if verbosity>0: rprint(rank,"Using regularized yukawa for Green Iteration with epsilon = ", epsilon)
                 kernelName="regularized-yukawa"
                 numberOfKernelParameters=2
                 kernelParameters=np.array([k, epsilon])
@@ -239,7 +239,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 
             comm.barrier()
             convolutionTime = time.time()-startTime
-            rprint(rank,'Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+            if verbosity>0: rprint(rank,'Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
 
         else:
             print('Exiting because energy too close to 0')
@@ -263,7 +263,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             if ( (gradientFree==True) and (SCFcount>-1)):                 
                 
                 psiNewNorm = np.sqrt( global_dot( psiNew, psiNew*W, comm))
-                rprint(rank,"psiNewNorm = %f" %psiNewNorm)
+                if verbosity>0: rprint(rank,"psiNewNorm = %f" %psiNewNorm)
                 
         
                 deltaE = -global_dot( orbitals[:,m]*(Veff_local)*(orbitals[:,m]-psiNew), W, comm )
@@ -282,14 +282,14 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                         interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], coarse_order,
 #                                                                            Xf, Yf, Zf, fine_order) 
 #                         end=time.time()
-#                         rprint(rank,"Time to interpolate wavefunction for eigenvalue update: ", end-start) 
+#                         if verbosity>0: rprint(rank,"Time to interpolate wavefunction for eigenvalue update: ", end-start) 
 #                     else:
 #                         interpolatedInputWavefunction=orbitals[:,m]
 #                     
                     
         
         
-#                     rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
+#                     if verbosity>0: rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
 
                     ## Actually, there is no need to recompute V_nl_psi, it is the same as before.
 #                     # Compute action of V_nl on the old orbital
@@ -307,11 +307,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
 
 #                 deltaE/=2 # do a simple mixing on epsilon, help with oscillations.
-#                 rprint(rank,"Halving the deltaE to try to help with oscillations.")
+#                 if verbosity>0: rprint(rank,"Halving the deltaE to try to help with oscillations.")
                 
-                rprint(rank,"deltaE = %f" %deltaE)
+                if verbosity>0: rprint(rank,"deltaE = %f" %deltaE)
                 Energies['orbitalEnergies'][m] += deltaE
-                rprint(rank,"Energies['orbitalEnergies'][m] = %f" %Energies['orbitalEnergies'][m])
+                if verbosity>0: rprint(rank,"Energies['orbitalEnergies'][m] = %f" %Energies['orbitalEnergies'][m])
                 orbitals[:,m] = np.copy(psiNew)
                 
         
@@ -327,17 +327,17 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 else:
                     eigenvalueHistory = gi_args['eigenvalueHistory']
                     eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
-                rprint(rank,'eigenvalueHistory: \n',eigenvalueHistory)
+                if verbosity>0: rprint(rank,'eigenvalueHistory: \n',eigenvalueHistory)
                 
                 
                  
         
             elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
-                rprint(rank,'gradient and laplacian methods not set up for tree-free')
+                if verbosity>0: rprint(rank,'gradient and laplacian methods not set up for tree-free')
                 return
                 
             else:
-                rprint(rank,'Not updating eigenvalue.  Is that intended?')
+                if verbosity>0: rprint(rank,'Not updating eigenvalue.  Is that intended?')
                 return
             
         else:  # Explicitly choosing to not update Eigenvalue.  Still orthogonalize
@@ -364,8 +364,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
             rand = np.random.rand(1)
 #             Energies['orbitalEnergies'][m] = -2
             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 3*rand
-#             rprint(rank,'Energy eigenvalue was positive, setting to  ',-2 )
-            rprint(rank,'Energy eigenvalue was positive, setting to gauge shift - ',( 3*rand) )
+#             if verbosity>0: rprint(rank,'Energy eigenvalue was positive, setting to  ',-2 )
+            if verbosity>0: rprint(rank,'Energy eigenvalue was positive, setting to gauge shift - ',( 3*rand) )
             
             # use whatever random shift the root computed.
             Energies['orbitalEnergies'][m] = comm.bcast(Energies['orbitalEnergies'][m], root=0)
@@ -410,8 +410,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         
     
-        rprint(rank,'Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift'], eigenvalueDiff))
-        rprint(rank,'Orbital %i wavefunction residual: %1.3e\n\n' %(m, orbitalResidual))
+        if verbosity>0: rprint(rank,'Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift'], eigenvalueDiff))
+        if verbosity>0: rprint(rank,'Orbital %i wavefunction residual: %1.3e\n\n' %(m, orbitalResidual))
     
     
     
