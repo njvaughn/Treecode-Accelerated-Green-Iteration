@@ -434,6 +434,7 @@ class Tree(object):
             print('Searching for cell containing atom ', self.nAtoms)
             recursiveDivideByAtom(self,atom,self.root)
             
+#         print("NOT CHECKING FOR ASPECT RATIO")
         aspectRatioTolerance = 3.0
         recursiveAspectRatioCheck(self,self.root)
      

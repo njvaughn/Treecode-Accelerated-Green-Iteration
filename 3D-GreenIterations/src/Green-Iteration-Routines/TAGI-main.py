@@ -255,7 +255,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
                                 exit(-1)
                             
                             
-                            orbitals[:,orbitalIndex] = np.copy(phi)
+                            orbitals[orbitalIndex,:] = np.copy(phi)
     #                         self.importPhiOnLeaves(phi, orbitalIndex)
     #                         self.normalizeOrbital(orbitalIndex)
                             
@@ -276,7 +276,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
             for ii in range(orbitalIndex, nOrbitals):
                 R = np.sqrt(X*X+Y*Y+Z*Z)
 #                 orbitals[:,ii] = np.exp(-R)*np.sin(R)
-                orbitals[:,ii] = np.random.rand(len(R))
+                orbitals[ii,:] = np.random.rand(len(R))
 #                 self.initializeOrbitalsRandomly(targetOrbital=ii)
 #                 self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
 #                 self.orthonormalizeOrbitals(targetOrbital=ii)
@@ -396,6 +396,64 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
 
+    # Determine nearby atoms.
+    xbounds = [np.min(X), np.max(X)]
+    ybounds = [np.min(Y), np.max(Y)]
+    zbounds = [np.min(Z), np.max(Z)]
+    nearbyAtoms = np.empty((0,),dtype=object)
+    for atom in atoms:
+        if ((atom.x>xbounds[0]) and (atom.x<xbounds[1]) and (atom.y>ybounds[0]) and (atom.y<ybounds[1]) and (atom.z>zbounds[0]) and (atom.z<zbounds[1])):
+            # atom is in this processor's local domain
+            nearbyAtoms = np.append(nearbyAtoms,atom)
+#             print("Trying to append")
+        else:
+            added=False
+#             radius = np.sqrt( (xbounds[1]-xbounds[0])**2 + (ybounds[1]-ybounds[0])**2 + (zbounds[1]-zbounds[0])**2 )
+
+            xmid = (xbounds[1]+xbounds[0])/2
+            ymid = (ybounds[1]+ybounds[0])/2
+            zmid = (zbounds[1]+zbounds[0])/2
+            
+            xwidth = xbounds[1]-xbounds[0]
+            ywidth = ybounds[1]-ybounds[0]
+            zwidth = zbounds[1]-zbounds[0]
+            
+
+            dx = max(abs(atom.x - xmid) - xwidth / 2, 0);
+            dy = max(abs(atom.y - ymid) - ywidth / 2, 0);
+            dz = max(abs(atom.z - zmid) - zwidth / 2, 0);
+            
+            dist = np.sqrt( dx*dx + dy*dy + dz*dz )
+            print("dist = ", dist)
+            if ( (dist<3) and (added==False) ):
+                
+#                 print("Trying to append")
+                nearbyAtoms = np.append(nearbyAtoms,atom)
+                added=True
+            
+            
+#             for x in xbounds:
+# #                 dx = atom.x-x
+#                 dx = max(abs(px - x) - width / 2, 0);
+#                 for y in ybounds:
+#                     dy=atom.y-y
+#                     for z in zbounds:
+#                         dz = atom.z-z
+#                         
+#                         dist = np.sqrt( (atom.x-x)**2 + (atom.y-y)**2 + (atom.z-z)**2)
+# #                         dist = np.max( np.abs(atom.x-x) , np.max( np.abs(atom.y-y), np.abs(atom.z-z)) )
+# #                         dist = np.min( [abs(dx),abs(dy),abs(dz)])
+# #                         print('dist = ',dist)
+#                         if ( (dist<3) and (added==False) ):
+# #                             print("Trying to append")
+#                             nearbyAtoms = np.append(nearbyAtoms,atom)
+#                             added=True
+                            
+    print(np.shape(nearbyAtoms))
+    print("Rank %i owns [%f,%f]x[%f,%f]x[%f,%f] and has %i nearby atoms. " %(rank,xbounds[0],xbounds[1],ybounds[0],ybounds[1],zbounds[0],zbounds[1],len(nearbyAtoms)))
+#     exit(-1)          
+            
+    
     verbosity=0
     polarization="unpolarized"
     exchangeFunctional="LDA_X"
@@ -406,7 +464,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     Vext_local = np.zeros(nPoints)
     Vext_local_fine = np.zeros(len(Xf))
     atomCount=1
-    for atom in atoms:
+    for atom in nearbyAtoms:
         if coreRepresentation=="AllElectron":
             Vext_local += atom.V_all_electron(X,Y,Z)
         elif coreRepresentation=="Pseudopotential":
@@ -578,7 +636,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
                'auxiliaryFile':auxiliaryFile,
                'GItolerancesIdx':0,
                'singularityHandling':singularityHandling, 'approximationName':approximationName, 
-               'atoms':atoms,'coreRepresentation':coreRepresentation,
+               'atoms':atoms,'nearbyAtoms':nearbyAtoms,'coreRepresentation':coreRepresentation,
                'order':order,'fine_order':fine_order,
                'regularize':regularize,'epsilon':epsilon,
                'pointsPerCell_coarse':pointsPerCell_coarse, 
@@ -771,13 +829,13 @@ if __name__ == "__main__":
     rprint(rank,"Initial density integrates to ", densityIntegral)
     nPointsLocal = len(X)
 #     assert abs(2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
-    orbitals = np.zeros((nPointsLocal,nOrbitals))
+    orbitals = np.zeros((nOrbitals,nPointsLocal))
     if coreRepresentation=="AllElectron":
         orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
     elif coreRepresentation=="Pseudopotential":
         orbitals = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
 #         orbitals = initializeOrbitalsRandomly(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
-    print("Max of first wavefunction: ", np.max(np.abs(orbitals[:,0])))
+    print("Max of first wavefunction: ", np.max(np.abs(orbitals[0,:])))
 #     print('nOrbitals: ', nOrbitals)
     comm.barrier()
 

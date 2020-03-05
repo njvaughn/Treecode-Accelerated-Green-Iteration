@@ -1778,7 +1778,7 @@ def testInterpolationBetweenMeshes():
     end=time.time()
     print("External time: ", end-start)
     
-    print("Max error in interpolation: ", np.max( np.abs( interpolatedF_extern-interpolatedF ) ) )
+    print("Max error in external interpolation: ", np.max( np.abs( interpolatedF_extern-interpolatedF ) ) )
     
 
     interpolatedIntegral = np.sum(interpolatedF*fineG*fineW)
@@ -1793,6 +1793,7 @@ def testInterpolationBetweenMeshes():
     
     
     return
+
 if __name__=="__main__":    
     testInterpolationBetweenMeshes()
     

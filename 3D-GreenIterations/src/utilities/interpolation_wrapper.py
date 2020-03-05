@@ -38,8 +38,11 @@ def callInterpolator(coarseX, coarseY, coarseZ, coarseF, pointsPerCoarseCell,
     returns the results array.
     '''
 
-    pointsPerCoarseCell = pointsPerCoarseCell.astype(np.int)
-    pointsPerFineCell = pointsPerFineCell.astype(np.int)
+    pointsPerCoarseCell = pointsPerCoarseCell.astype(np.int32)
+    pointsPerFineCell = pointsPerFineCell.astype(np.int32)
+    
+#     print(pointsPerFineCell[0:5])
+#     exit(-1)
    
     c_double_p = ctypes.POINTER(ctypes.c_double)
     c_int_p = ctypes.POINTER(ctypes.c_int)

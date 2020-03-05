@@ -1,21 +1,24 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/two-mesh-domain16-order5-%j.%N.out"
-#SBATCH --partition=gpu-shared
+#SBATCH --output="dataFiles/hermite-one-mesh-%j.%N.out"
+#SBATCH --partition=gpu
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=1
-#SBATCH --gres=gpu:p100:1
-#SBATCH --mem=25GB 
-#SBATCH -t 02:00:00
+#SBATCH --ntasks-per-node=4
+#SBATCH --gres=gpu:p100:4
+#SBATCH --mem=100GB 
+#SBATCH -t 12:00:00
 #SBATCH --no-requeue
 #SBATCH -A mia314
 #SBATCH --constraint=exclusive
-
+ 
 
 cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
-SINGSUBT=1
+SINGSUBT=1 
+GPUPRESENT='True'
+ 
 
-SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
+SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/' 
+
 
 #COREREPRESENTATION="AllElectron"
 #INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv' 
@@ -25,9 +28,12 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 
 
 COREREPRESENTATION="Pseudopotential"
-#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
-INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/carbonAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
   
 
@@ -36,11 +42,10 @@ VTKFILEDIR='/Users/nathanvaughn/Desktop/'
 
 GRADIENTFREE='True'
 SYMMETRICITERATION='False'
-GPUPRESENT='True'
  
 TREECODE='True'      
-MAXPARNODE=4000
-BATCHSIZE=4000   
+MAXPARNODE=2000
+BATCHSIZE=2000   
  
  
 GAUGESHIFT=-0.5
@@ -55,64 +60,54 @@ GRADIENTFREE='True'
 
 MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
-  
-INITIAL_GI_TOLERANCE=1e-4
+     
+INITIAL_GI_TOLERANCE=3e-2
 FINAL_GI_TOLERANCE=3e-7
-GRADUALSTEPS=4
-SCF_TOLERANCE=2e-6
+GRADUALSTEPS=7
+SCF_TOLERANCE=2e-5
      
 
 
-MESHTYPE='coarsenedUniform'
-DOMAIN=16
 
+APPROXIMATIONNAME=hermite
+SINGULARITYHANDLING=subtraction
+
+REGULARIZE='False'
+EPSILON=0.0
+  
+GAUSSIANALPHA=2.0 
+TREECODEORDER=4
+THETA=0.85
+
+
+
+MESHTYPE='coarsenedUniformTwoLevel'
+
+DOMAIN=32
 MAXSIDELENGTH=8
 MESHPARAM1=0.5 # near field spacing 
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
-
-#MAXSIDELENGTH=6 
-#MESHPARAM1=0.375 # near field spacing 
-#MESHPARAM2=6.0 # far field spacing
-#MESHPARAM3=1.5 # ball radius
-#MESHPARAM4=0
-
-#MAXSIDELENGTH=8
-#MESHPARAM1=0.25 # near field spacing 
-#MESHPARAM2=4.0 # far field spacing
-#MESHPARAM3=2.0 # ball radius
-
-
-
-APPROXIMATIONNAME=lagrange
-SINGULARITYHANDLING=subtraction
-
-REGULARIZE='True'
-EPSILON=0.01
-
-GAUSSIANALPHA=2.0 
-TREECODEORDER=8
-THETA=0.7
-
-#MESHTYPE='ParentChildrenIntegral' 
-#MESHTYPE="VPsiIntegral"         
   
-MESHPARAM4=0
-for DOMAIN in 16
+for MESHPARAM4 in -2
 do                                                         
-    for CELLORDER in 4     
-    do         
-        for FINEORDER in 7
+    for CELLORDER in 4
+    do        
+        for FINEORDER in 4
         do  
+
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/hermite/one_mesh_treecode_params_order_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_approx_${APPROXIMATIONNAME}.csv" 
          
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/silicon/meshTesting/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
+        #OUTPUTFILE="/home/njvaughn/ONCV-testing/carbon/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
+        #OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/silicon/twoMeshHartree/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/silicon/twoMeshLocal/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/twoMeshLocal/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/twoMeshLocal_supressNL/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/testing/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
-        mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        #OUTPUTFILE="/home/njvaughn/ONCV-testing/TiO2/testing/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
+        mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 4 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
@@ -121,3 +116,11 @@ do
         done 
     done      
 done
+       
+       
+       
+       
+       
+       
+       
+    

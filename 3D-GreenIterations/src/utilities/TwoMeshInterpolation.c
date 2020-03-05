@@ -11,17 +11,25 @@
 
 void interapolateBetweenTwoMeshesSingleCell(double *coarseX, double *coarseY, double *coarseZ, double *coarseF, int pointsInCoarseCell, int coarseIdx,
                                             double *fineX,   double *fineY,   double *fineZ,   double *fineF,   int pointsInFineCell,   int fineIdx,
-                                            double *wx, double *wy, double *wz, int interpolationOrder){
+                                            int interpolationOrder){
 
 
     int interpOrderLim = interpolationOrder + 1;
     double nodeX[interpOrderLim], nodeY[interpOrderLim], nodeZ[interpOrderLim];
+    double weights[interpOrderLim];
+
+//    // Compute the interpolation weights
+//    double *wx = malloc((interpOrderLim) * sizeof(double));
+//    double *wy = malloc((interpOrderLim) * sizeof(double));
+//    double *wz = malloc((interpOrderLim) * sizeof(double));
+//
+
 
 
 #ifdef OPENACC_ENABLED
     int streamID = rand() % 4;
-    #pragma acc kernels async(streamID) present(coarseX, coarseY, coarseZ, coarseF, fineX,fineY,fineZ,fineF,wx,wy,wz) \
-                create(nodeX[0:interpOrderLim], nodeY[0:interpOrderLim], nodeZ[0:interpOrderLim])
+    #pragma acc kernels async(streamID) present(coarseX, coarseY, coarseZ, coarseF, fineX,fineY,fineZ,fineF) \
+                create(nodeX[0:interpOrderLim], nodeY[0:interpOrderLim], nodeZ[0:interpOrderLim], weights[0:interpOrderLim])
     {
 #endif
 
@@ -30,9 +38,16 @@ void interapolateBetweenTwoMeshesSingleCell(double *coarseX, double *coarseY, do
     #pragma acc loop independent
 #endif
     for (int i = 0; i < interpOrderLim; i++) {
-        nodeX[i] = coarseX[i*interpOrderLim*interpOrderLim];
-        nodeY[i] = coarseY[i*interpOrderLim];
-        nodeZ[i] = coarseZ[i];
+        nodeX[i] = coarseX[coarseIdx+i*interpOrderLim*interpOrderLim];
+        nodeY[i] = coarseY[coarseIdx+i*interpOrderLim];
+        nodeZ[i] = coarseZ[coarseIdx+i];
+    }
+
+#ifdef OPENACC_ENABLED
+    #pragma acc loop independent
+#endif
+    for (int i=0;i<interpOrderLim;i++){
+        weights[i] = pow(-1,i) * sin(  (2*i+1)*M_PI / (2*(interpOrderLim-1)+2)  );
     }
 
 #ifdef OPENACC_ENABLED
@@ -66,9 +81,9 @@ void interapolateBetweenTwoMeshesSingleCell(double *coarseX, double *coarseY, do
             if (fabs(cz)<DBL_MIN) eiz = j;
 
             // Increment the sums
-            double wx_t = wx[j];
-            double wy_t = wy[j];
-            double wz_t = wz[j];
+            double wx_t = weights[j];
+            double wy_t = weights[j];
+            double wz_t = weights[j];
             sumX += wx_t / cx;
             sumY += wy_t / cy;
             sumZ += wz_t / cz;
@@ -93,9 +108,9 @@ void interapolateBetweenTwoMeshesSingleCell(double *coarseX, double *coarseY, do
             kk = kk - k2;
             int k3 = kk / interpOrderLim;
 
-            double w3 = wz[k1];
-            double w2 = wy[k2];
-            double w1 = wx[k3];
+            double w3 = weights[k1];
+            double w2 = weights[k2];
+            double w1 = weights[k3];
 
             double cx = nodeX[k3];
             double cy = nodeY[k2];
@@ -150,6 +165,11 @@ void InterpolateBetweenTwoMeshes(
         double *fineX,   double *fineY,   double *fineZ,   double *fineF,   int *pointsPerCell_fine, int fineN, int numberOfCells, int cellOrder)
 {
 
+    double *fineF_sameAsCoarse = malloc((fineN) * sizeof(double));
+    for (int i=0; i<fineN;i++){
+        fineF_sameAsCoarse[i]=0.0;
+    }
+
     int interpOrderLim=cellOrder+1;
 //    printf("Beginning external interpolation.\n");
     if (coarseN==fineN){  // meshes are the same, don't need to interpolate.
@@ -159,27 +179,19 @@ void InterpolateBetweenTwoMeshes(
         return;
     }
 
-    // Compute the interpolation weights
-    double *wx = malloc((interpOrderLim) * sizeof(double));
-    double *wy = malloc((interpOrderLim) * sizeof(double));
-    double *wz = malloc((interpOrderLim) * sizeof(double));
+    printf("coarseN, fineN = %i, %i\n", coarseN,fineN);
+
+
 
 #ifdef OPENACC_ENABLED
-    #pragma acc data copyin(wx[0:interpOrderLim], wy[0:interpOrderLim], wz[0:interpOrderLim], \
-                            coarseX[0:coarseN], coarseY[0:coarseN], coarseZ[0:coarseN], coarseF[0:coarseN], \
+    #pragma acc data copyin(coarseX[0:coarseN], coarseY[0:coarseN], coarseZ[0:coarseN], coarseF[0:coarseN], \
                             fineX[0:fineN], fineY[0:fineN], fineZ[0:fineN], \
                             pointsPerCell_coarse[0:numberOfCells], pointsPerCell_fine[0:numberOfCells]) \
                        copy(fineF[0:fineN])
     {
 #endif
 
-    for (int i=0;i<(cellOrder+1);i++){
-        wx[i] = pow(-1,i) * sin(  (2*i+1)*M_PI / (2*(cellOrder)+2)  );
-        wy[i] = wx[i];
-        wz[i] = wx[i];
-    }
 
-//    printf("Computed weights.\n");
 
     // Loop over cells, calling interpolation routine
 
@@ -189,18 +201,23 @@ void InterpolateBetweenTwoMeshes(
     for (int i=0;i<numberOfCells;i++){
         if (pointsPerCell_coarse[i]==pointsPerCell_fine[i]){ // if coarse and fine cell are the same, simply fill fine with coarse.
             for (int j=0;j<pointsPerCell_fine[i];j++){
-                fineF[fineIdx+j] = coarseF[coarseIdx+j];
+                fineF_sameAsCoarse[fineIdx+j] = coarseF[coarseIdx+j];
             }
         }else{
 
 
             interapolateBetweenTwoMeshesSingleCell( coarseX, coarseY, coarseZ, coarseF, pointsPerCell_coarse[i], coarseIdx,
                                                     fineX,   fineY,   fineZ,   fineF,   pointsPerCell_fine[i],   fineIdx,
-                                                    wx, wy, wz, cellOrder);
+                                                    cellOrder);
         }
 
         coarseIdx = coarseIdx + pointsPerCell_coarse[i];
         fineIdx = fineIdx + pointsPerCell_fine[i];
+#ifdef OPENACC_ENABLED
+    #pragma acc wait
+#endif
+
+//        printf("Cell %i of %i: Coarse idx, fine idx: %i and %i, after adding %i and %i\n", i, numberOfCells, coarseIdx,fineIdx,pointsPerCell_coarse[i],pointsPerCell_fine[i]);
     }
 
 #ifdef OPENACC_ENABLED
@@ -208,11 +225,10 @@ void InterpolateBetweenTwoMeshes(
     } // end ACC DATA REGION
 #endif
 
+    for (int i=0; i<fineN;i++){
+        fineF[i] = fineF[i] + fineF_sameAsCoarse[i];
+    }
 
-
-    free(wx);
-    free(wy);
-    free(wz);
 
     return;
 }

@@ -229,11 +229,11 @@ if __name__ == "__main__":
     
 #     inputFile=srcdir+'molecularConfigurations/SiliconClusterAuxiliaryPSP.csv'
 
-    inputFile=srcdir+'molecularConfigurations/berylliumAuxiliaryPSP.csv'
-    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/beryllium"
+#     inputFile=srcdir+'molecularConfigurations/berylliumAuxiliaryPSP.csv'
+#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/beryllium"
 
-#     inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
-#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
+    inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
+    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
     
     
     coreRepresentation="Pseudopotential"
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     
     domainSize=16
     MAXSIDELENGTH=32
-    MESHPARAM1=8.0 # near field spacing 
+    MESHPARAM1=0.5 # near field spacing 
     MESHPARAM2=8.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
     MESHPARAM4=-1 # additional inner refinement 

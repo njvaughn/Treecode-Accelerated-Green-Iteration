@@ -16,13 +16,16 @@ from scipy.special import sph_harm
 from pyevtk.hl import unstructuredGridToVTK
 from pyevtk.vtk import VtkTriangle, VtkQuad, VtkPolygon, VtkVoxel, VtkHexahedron
 import mpi4py.MPI as MPI
+from memory_profiler import profile
+
 
 
 
 
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
-sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
 sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
+sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/dataStructures')
 from loadBalancer import loadBalance
 from mpiUtilities import global_dot, scatterArrays, rprint
 from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
@@ -43,6 +46,9 @@ if __name__=="__main__":
     treecodeOrder=7
     gaussianAlpha=1.0
     
+    numberOfKernelParameters=1
+    kernelParameters=np.array([gaussianAlpha])
+    
     
     N=10000
     n=10
@@ -52,20 +58,25 @@ if __name__=="__main__":
     Z = np.random.rand(N)
     W = np.ones(N)
     
+    verbosity=0
+    
     initialMemory = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     previousMemory=initialMemory
     print('INITIAL MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     
+    time.sleep(2)
     for i in range(10):
         kernelName = "coulomb"
         approximationName = "lagrange"
         singularityHandling = "subtraction"
         verbosity=0
-        V_hartreeNew = treecodeWrappers.callTreedriver(N, N, 
-                                                       np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-                                                       np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-                                                       kernelName, gaussianAlpha, singularityHandling, approximationName,
-                                                       treecodeOrder, theta, maxParNode, batchSize, GPUpresent, verbosity)
+        
+#         V_hartreeNew = treecodeWrappers.callTreedriver(N, N, 
+#                                                        X, Y,Z, RHO, 
+#                                                        X,Y, Z, RHO, W,
+#                                                        kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, 
+#                                                        approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,verbosity)
+
         
 #         V_hartreeNew = treecodeWrappers.callTreedriver(N, N, 
 #                                                        X, Y, Z, RHO, 

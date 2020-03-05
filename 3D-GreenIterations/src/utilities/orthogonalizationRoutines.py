@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-# from numba import jit, njit, cuda
+from numba import jit, njit, cuda
 from math import sqrt
 import time 
 
@@ -20,8 +20,10 @@ def modifiedGramSchrmidt(V,weights):
         
     return U
 
+
+
 # @jit()
-def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, n, k, comm):
+def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, comm):
     U = V[:,targetOrbital]
     for j in range(targetOrbital):
 #         print('Orthogonalizing %i against %i' %(targetOrbital,j))
@@ -30,6 +32,23 @@ def modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, n, k, comm):
 #         U /= np.sqrt( np.dot(U,U*weights) )
         
         U -= global_dot(V[:,targetOrbital],V[:,j]*weights, comm) *V[:,j]
+        U /= np.sqrt( global_dot(U,U*weights, comm) )
+    
+#     U /= np.sqrt( np.dot(U,U*weights) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)
+    U /= np.sqrt( global_dot(U,U*weights, comm) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)
+        
+    return U  
+
+# @jit()
+def modifiedGramSchmidt_singleOrbital_transpose(V,weights,targetOrbital, comm):
+    U = V[targetOrbital,:]
+    for j in range(targetOrbital):
+#         print('Orthogonalizing %i against %i' %(targetOrbital,j))
+#         U -= (np.dot(V[:,targetOrbital],V[:,j]*weights) / np.dot(V[:,j],V[:,j]*weights))*V[:,j]
+#         U -= np.dot(VT[targetOrbital,:],VT[j,:]*weights) *VT[j,:]
+#         U /= np.sqrt( np.dot(U,U*weights) )
+        
+        U -= global_dot(V[targetOrbital,:],V[j,:]*weights, comm) *V[j,:]
         U /= np.sqrt( global_dot(U,U*weights, comm) )
     
 #     U /= np.sqrt( np.dot(U,U*weights) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)
@@ -156,6 +175,7 @@ def m(x,tau):
         return s((1-x)/tau)
     
 
+
 def mask(psi,x,y,z,domainSize, tau=1/16):  # a mask that damps the wavefunctions at the boundary of the domain.
     
     # domain boundaries need to be mapped to [0,1]
@@ -168,22 +188,72 @@ def mask(psi,x,y,z,domainSize, tau=1/16):  # a mask that damps the wavefunctions
     
     return psi*mask_vector
 
+
+
+def testOrthogonalization():
+    from mpi4py import MPI
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size() 
+    from mpiUtilities import global_dot, rprint
+    
+    
+    N = int(1e6)
+    weights=np.ones(N)
+    M = 2
+    targetOrbital=M-1
+    V = np.random.rand(N,M)
+    VT = np.transpose(V)
+    out  = modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, comm)
+    outT = modifiedGramSchmidt_singleOrbital_transpose(VT,weights,targetOrbital, comm)
+    
+    print(np.max(np.abs(out-outT)))
+    
+    for M in [1,2,4,8,16,32,64]:
+#     for M in []:
+        V = np.random.rand(N,M)
+        VT = np.random.rand(M,N)
+#         VT = np.copy(np.transpose(V))
+        
+        
+        targetOrbital=M-1
+        
+        start=time.time()    
+        out = modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, comm)
+        end=time.time()
+        
+        startT=time.time()    
+        outT = modifiedGramSchmidt_singleOrbital_transpose(VT,weights,targetOrbital, comm)
+        endT=time.time()
+        
+#         assert np.max(np.abs(out-outT))<1e-12, "two orthogonalizations didn't agree!"
+        print("Original:  Orthogonalizing %2.ith wavefunction of size %i took %f seconds" %(M,N,end-start))
+        print("Transpose: Orthogonalizing %2.ith wavefunction of size %i took %f seconds\n" %(M,N,endT-startT))
+    
 if __name__=="__main__":
-    N=200
-    domainSize=5
-    x = np.linspace(-domainSize,domainSize,N)
-    mask = np.zeros(N)
-    s_vec = np.zeros(N)
-    psi=np.ones(N)
     
-    for i in range(N):
-        s_vec[i] = s((x[i]+domainSize)/(2*domainSize))
-        mask[i] = m((x[i]+domainSize)/(2*domainSize),1/16)
+    testOrthogonalization()
     
-    plt.figure()
-    plt.plot(x,mask,'.',label="m(x)")
-    plt.plot(x,s_vec,'.',label="s(x)")
-    plt.show()
+    
+    
+#     N=200
+#     domainSize=5
+#     x = np.linspace(-domainSize,domainSize,N)
+#     mask = np.zeros(N)
+#     s_vec = np.zeros(N)
+#     psi=np.ones(N)
+#     
+#     for i in range(N):
+#         s_vec[i] = s((x[i]+domainSize)/(2*domainSize))
+#         mask[i] = m((x[i]+domainSize)/(2*domainSize),1/16)
+#     
+#     plt.figure()
+#     plt.plot(x,mask,'.',label="m(x)")
+#     plt.plot(x,s_vec,'.',label="s(x)")
+#     plt.show()
+#     
+    
+    
 #     masked_psi = mask(psi,x,x,x,domainSize)
 #     NumWavefunctions=5
 #     NumPoints=5*10**5

@@ -71,19 +71,19 @@ THETA=0.8
 MESHTYPE='coarsenedUniformTwoLevel'
 
 DOMAIN=16
-MAXSIDELENGTH=16
+MAXSIDELENGTH=8
 MESHPARAM1=0.5 # near field spacing 
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
-MESHPARAM4=-3
+MESHPARAM4=-2
 
   
 for DOMAIN in 16  
 do                                                         
-    for CELLORDER in 4
+    for CELLORDER in 2
     do         
-        for FINEORDER in 4
+        for FINEORDER in 2
         do  
 
         OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/beryllium/twoMesh/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 

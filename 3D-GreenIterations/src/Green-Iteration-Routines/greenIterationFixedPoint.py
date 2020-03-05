@@ -19,7 +19,7 @@ except ImportError:
 except OSError:
     print('Unable to import treecodeWrapper due to OSError')
     
-from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital as mgs
+from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
 from orthogonalizationRoutines import mask
 
 import interpolation_wrapper
@@ -29,7 +29,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #     gi_args_out = {}
     def greensIteration_FixedPoint(psiIn, gi_args):
         # what other things do we need?  Energies, Times, orbitals, Veff, runtime constants (symmetricIteration, GPUpresent, subtractSingularity, treecode, outputfiles, ...)  
-        verbosity=0
+        verbosity=1
         
         ## UNPACK GIARGS
 #         print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
@@ -74,7 +74,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         referenceEigenvalues = gi_args['referenceEigenvalues']
         updateEigenvalue = gi_args['updateEigenvalue']
         coreRepresentation = gi_args['coreRepresentation']
-        atoms=gi_args['atoms']
+#         atoms=gi_args['atoms']
+        nearbyAtoms=gi_args["nearbyAtoms"]
         coarse_order=gi_args["order"]
         fine_order=gi_args["fine_order"]
         regularize=gi_args['regularize']
@@ -97,17 +98,17 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
         
          
-        oldOrbitals[:,m] = np.copy(psiIn[:-1])    
-        orbitals[:,m] = np.copy(psiIn[:-1])
+        oldOrbitals[m,:] = np.copy(psiIn[:-1])    
+        orbitals[m,:] = np.copy(psiIn[:-1])
         Energies['orbitalEnergies'][m] = np.copy(psiIn[-1])
         
         # get the input wavefunction on the fine mesh.
         
         if ( twoMesh ):
             start=time.time()
-#             interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], coarse_order,
+#             interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[m,:], coarse_order,
 #                                                                Xf, Yf, Zf, fine_order) 
-            interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], pointsPerCell_coarse,
+            interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[m,:], pointsPerCell_coarse,
                                                             Xf, Yf, Zf, pointsPerCell_fine)
             
 #             ## Want to use interpolated Vlocal???
@@ -132,27 +133,28 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
 #             if verbosity>0: rprint(rank,"Time to interpolate wavefunction: ", end-start) 
         else:
-            interpolatedInputWavefunction=orbitals[:,m]
+            interpolatedInputWavefunction=orbitals[m,:]
             Veff_local_fine=Veff_local
         
         
 #         print("length of interpolated wavefunction: ", len(interpolatedInputWavefunction))
      
         if coreRepresentation=='AllElectron':
-            f = -2*orbitals[:,m]*Veff_local
+            f = -2*orbitals[m,:]*Veff_local
         elif coreRepresentation=='Pseudopotential': 
+            start=time.time()
             V_nl_psi_fine = np.zeros(len(Veff_local_fine))
             V_nl_psi_coarse = np.zeros(len(Veff_local))
 #             if verbosity>0: rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
-            for atom in atoms:
-#                 V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
+            for atom in nearbyAtoms:
+#                 V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(orbitals[m,:],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
 #                 V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi(interpolatedInputWavefunction,Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="fine")
-#                 V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="coarse")
+#                 V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi(orbitals[m,:],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="coarse")
 
                 if twoMesh: 
-                    V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_coarse(orbitals[:,m],W,interpolatedInputWavefunction,Wf,comm=comm)
+                    V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_coarse(orbitals[m,:],W,interpolatedInputWavefunction,Wf,comm=comm)
                 else:
-                    V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_SingleMesh(orbitals[:,m],W,comm=comm)
+                    V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_SingleMesh(orbitals[m,:],W,comm=comm)
                     
                 if twoMesh: 
                     V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi_fine(interpolatedInputWavefunction,Wf,comm=comm)
@@ -161,7 +163,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 
 #                 norm_of_V_nl_psi = np.sqrt(global_dot(V_nl_psi**2,W,comm))
 #                 if verbosity>0: rprint(rank,"NORM OF V_NL_PSI = ", norm_of_V_nl_psi)
-#             f = -2* ( orbitals[:,m]*Veff_local + V_nl_psi )
+#             f = -2* ( orbitals[m,:]*Veff_local + V_nl_psi )
 
 #             if fine_order!=coarse_order:
 #                 V_nl_psi_coarse = interpolateBetweenTwoMeshes(Xf, Yf, Zf, V_nl_psi_fine, fine_order,X, Y, Z, coarse_order) 
@@ -170,8 +172,9 @@ def greensIteration_FixedPoint_Closure(gi_args):
 
 
             if twoMesh: f_fine = -2* ( interpolatedInputWavefunction*Veff_local_fine + V_nl_psi_fine )
-            f_coarse = -2* ( orbitals[:,m]*Veff_local + V_nl_psi_coarse )
-            if verbosity>0: rprint(rank,"Constructed f with nonlocal routines.")
+            f_coarse = -2* ( orbitals[m,:]*Veff_local + V_nl_psi_coarse )
+            end=time.time()
+            if verbosity>0: rprint(rank,"Constructing f with nonlocal routines took %f seconds." %(end-start))
         else:
             print("coreRepresentation not set to allowed value. Exiting from greenIterationFixedPoint.")
             return
@@ -180,7 +183,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #         print("ANY NaNs??? ", np.isnan(f).any())
         if twoMesh:
             if np.isnan(f_fine).any():
-                print("NaNs detected in f = -2*orbitals[:,m]*Veff_local.  Exiting")
+                print("NaNs detected in f = -2*orbitals[m,:]*Veff_local.  Exiting")
                 exit(-1)
         oldEigenvalue =  Energies['orbitalEnergies'][m] 
         k = np.sqrt(-2*Energies['orbitalEnergies'][m])
@@ -212,7 +215,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #             kappa = k
             startTime = time.time()
             comm.barrier()
-            verbosity=0
+            treecode_verbosity=0
             
             if twoMesh:  # idea: only turn on the two mesh if beyond 4 SCF iterations
                 numSources = len(Xf)
@@ -228,10 +231,16 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 sourceZ=Z
                 sourceF=f_coarse
                 sourceW=W
+#             psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
+#                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
+#                                                            np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
+#                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,treecode_verbosity)
+
             psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
-                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
-                                                           np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
-                                                           kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,verbosity)
+                                                           X, Y, Z, f_coarse, 
+                                                           sourceX, sourceY, sourceZ, sourceF, sourceW,
+                                                           kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,treecode_verbosity)
+
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)
             if singularityHandling=="subtraction": psiNew /= (4*np.pi)
@@ -266,7 +275,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 if verbosity>0: rprint(rank,"psiNewNorm = %f" %psiNewNorm)
                 
         
-                deltaE = -global_dot( orbitals[:,m]*(Veff_local)*(orbitals[:,m]-psiNew), W, comm )
+                deltaE = -global_dot( orbitals[m,:]*(Veff_local)*(orbitals[m,:]-psiNew), W, comm )
                 
                 if coreRepresentation=="AllElectron":
                     pass
@@ -279,12 +288,12 @@ def greensIteration_FixedPoint_Closure(gi_args):
                     # Obtain old orbital on the same mesh as the projectors
 #                     if fine_order!=coarse_order:
 #                         start=time.time()
-#                         interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[:,m], coarse_order,
+#                         interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[m,:], coarse_order,
 #                                                                            Xf, Yf, Zf, fine_order) 
 #                         end=time.time()
 #                         if verbosity>0: rprint(rank,"Time to interpolate wavefunction for eigenvalue update: ", end-start) 
 #                     else:
-#                         interpolatedInputWavefunction=orbitals[:,m]
+#                         interpolatedInputWavefunction=orbitals[m,:]
 #                     
                     
         
@@ -295,11 +304,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                     # Compute action of V_nl on the old orbital
 #                     V_nl_psi = np.zeros(nPoints)
 #                     for atom in atoms:
-#                         V_nl_psi+= atom.V_nonlocal_pseudopotential_times_psi(orbitals[:,m],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
+#                         V_nl_psi+= atom.V_nonlocal_pseudopotential_times_psi(orbitals[m,:],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
 
 #                     pass
 #                     # Compute the delta E, here using the difference between the new psi and old psi
-                    deltaE -= global_dot( V_nl_psi_coarse*(orbitals[:,m]-psiNew), W, comm ) 
+                    deltaE -= global_dot( V_nl_psi_coarse*(orbitals[m,:]-psiNew), W, comm ) 
                 else: 
                     print("Invalid coreRepresentation.")
                     exit(-1)
@@ -312,14 +321,15 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 if verbosity>0: rprint(rank,"deltaE = %f" %deltaE)
                 Energies['orbitalEnergies'][m] += deltaE
                 if verbosity>0: rprint(rank,"Energies['orbitalEnergies'][m] = %f" %Energies['orbitalEnergies'][m])
-                orbitals[:,m] = np.copy(psiNew)
+                orbitals[m,:] = np.copy(psiNew)
                 
         
                 n,M = np.shape(orbitals) 
-
-                orthWavefunction = mgs(orbitals,W,m, n, M, comm)
-                
-                orbitals[:,m] = np.copy(orthWavefunction)
+                start=time.time()
+                orthWavefunction = mgs(orbitals,W,m, comm)
+                end=time.time()
+                rprint(rank,"Orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
+                orbitals[m,:] = np.copy(orthWavefunction)
 
         
                 if greenIterationsCount==1:
@@ -342,10 +352,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
         else:  # Explicitly choosing to not update Eigenvalue.  Still orthogonalize
             print("Not updating eigenvalue because updateEigenvalue!=True")
-            orbitals[:,m] = np.copy(psiNew)
+            orbitals[m,:] = np.copy(psiNew)
             n,M = np.shape(orbitals) 
-            orthWavefunction = mgs(orbitals,W,m, n, M, comm)
-            orbitals[:,m] = np.copy(orthWavefunction) 
+            orthWavefunction = mgs(orbitals,W,m,comm)
+            orbitals[m,:] = np.copy(orthWavefunction) 
             if greenIterationsCount==1:
                 eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
             else:
@@ -372,23 +382,23 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
             if greenIterationsCount%10==0:
                 # Positive energy after 10 iterations..., scramble wavefunction and restart.
-                orbitals[:,m] = np.ones(len(np.copy(orbitals[:,m])))
+                orbitals[m,:] = np.ones(len(np.copy(orbitals[m,:])))
             
         
     #     tree.printWavefunctionNearEachAtom(m)
             
-    #     residualVector = orbitals[:,m] - oldOrbitals[:,m]
-        psiOut = np.append(np.copy(orbitals[:,m]), np.copy(Energies['orbitalEnergies'][m]))
+    #     residualVector = orbitals[m,:] - oldOrbitals[m,:]
+        psiOut = np.append(np.copy(orbitals[m,:]), np.copy(Energies['orbitalEnergies'][m]))
         residualVector = psiOut - psiIn
         
         
         
-#         print('Max value of wavefunction: ', np.max(np.abs(orbitals[:,m])))
+#         print('Max value of wavefunction: ', np.max(np.abs(orbitals[m,:])))
         loc = np.argmax(np.abs(residualVector[:-1]))
 #         print('Largest residual: ', residualVector[loc])
 #         print('Value at that point: ', psiOut[loc])
 #         print('Location of max residual: ', X[loc], Y[loc], Z[loc])
-    #     residualVector = -(psiIn - orbitals[:,m])
+    #     residualVector = -(psiIn - orbitals[m,:])
     
         newEigenvalue = Energies['orbitalEnergies'][m]
         
@@ -397,11 +407,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
     
         
         if symmetricIteration==False:
-#             normDiff = np.sqrt( np.sum( (orbitals[:,m]-oldOrbitals[:,m])**2*W ) )
-            normDiff = np.sqrt( global_dot( (orbitals[:,m]-oldOrbitals[:,m])**2,W, comm ) )
+#             normDiff = np.sqrt( np.sum( (orbitals[m,:]-oldOrbitals[m,:])**2*W ) )
+            normDiff = np.sqrt( global_dot( (orbitals[m,:]-oldOrbitals[m,:])**2,W, comm ) )
         elif symmetricIteration==True:
-#             normDiff = np.sqrt( np.sum( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2*W ) )
-            normDiff = np.sqrt( global_dot( (orbitals[:,m]*sqrtV-oldOrbitals[:,m]*sqrtV)**2,W,comm ) )
+#             normDiff = np.sqrt( np.sum( (orbitals[m,:]*sqrtV-oldOrbitals[m,:]*sqrtV)**2*W ) )
+            normDiff = np.sqrt( global_dot( (orbitals[m,:]*sqrtV-oldOrbitals[m,:]*sqrtV)**2,W,comm ) )
         eigenvalueDiff = abs(newEigenvalue - oldEigenvalue)    
         
         if rank==0:

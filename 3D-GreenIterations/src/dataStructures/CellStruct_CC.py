@@ -2411,9 +2411,12 @@ class Cell(object):
             if level<-1: # refine depending on level
 #                 print("TRIGGERED LEVEL==-1, exiting")
 #                 exit(-1)
+
+
                 if distanceToNearestAtom<r*1.5:
+#                 if distanceToNearestAtom<r:
                     
-                    print("Creating fine mesh for cell a distance %f from atom." %distanceToNearestAtom)
+#                     print("Creating fine mesh for cell a distance %f from atom." %distanceToNearestAtom)
                     
                     self.fineMesh = True
                     numX=-int(level)
