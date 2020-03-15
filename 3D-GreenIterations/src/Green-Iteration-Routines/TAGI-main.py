@@ -44,6 +44,7 @@ from CellStruct_CC import Cell
 from GridpointStruct import GridPoint
 import densityMixingSchemes as densityMixing
 from scfFixedPoint import scfFixedPointClosure
+from scfFixedPointSimultaneous import scfFixedPointClosureSimultaneous
 
 
 
@@ -659,8 +660,13 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #             print('Exiting before first SCF (for testing initialized mesh accuracy)')
 #             return
         abortAfterInitialHartree=False
-        scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
-        densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
+        
+#         scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
+#         densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
+        
+        scfFixedPointSimultaneous, scf_args = scfFixedPointClosureSimultaneous(scf_args)
+        densityResidualVector = scfFixedPointSimultaneous(RHO,scf_args,abortAfterInitialHartree)
+        
         densityResidual=scf_args['densityResidual']
         energyResidual=scf_args['energyResidual'] 
         SCFcount=scf_args['SCFcount']

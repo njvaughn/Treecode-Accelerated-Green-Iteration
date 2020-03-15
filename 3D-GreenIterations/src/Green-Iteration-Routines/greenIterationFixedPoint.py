@@ -81,6 +81,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         regularize=gi_args['regularize']
         epsilon=gi_args["epsilon"]
         TwoMeshStart=gi_args["TwoMeshStart"]
+        singleWavefunctionOrthogonalization=gi_args["singleWavefunctionOrthogonalization"]
         
         order=coarse_order
 
@@ -192,7 +193,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             if twoMesh: f_fine = -2* ( interpolatedInputWavefunction*Veff_local_fine + V_nl_psi_fine )
             f_coarse = -2* ( orbitals[m,:]*Veff_local + V_nl_psi_coarse )
             end=time.time()
-            if verbosity>0: rprint(rank,"Constructing f with nonlocal routines took %f seconds." %(end-start))
+#             if verbosity>0: rprint(rank,"Constructing f with nonlocal routines took %f seconds." %(end-start))
         else:
             print("coreRepresentation not set to allowed value. Exiting from greenIterationFixedPoint.")
             return
@@ -214,14 +215,14 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
             startTime=time.time()
 #             singularityHandling="skipping"
-            if verbosity>0: rprint(rank,"singularityHandling = ", singularityHandling)
+#             if verbosity>0: rprint(rank,"singularityHandling = ", singularityHandling)
             if regularize==False:
 #                 if verbosity>0: rprint(rank,"Using singularity subtraction kernel in Green Iteration.")
                 kernelName = "yukawa"
                 numberOfKernelParameters=1
                 kernelParameters=np.array([k])
             elif regularize==True:
-                if verbosity>0: rprint(rank,"Using regularized yukawa for Green Iteration with epsilon = ", epsilon)
+#                 if verbosity>0: rprint(rank,"Using regularized yukawa for Green Iteration with epsilon = ", epsilon)
                 kernelName="regularized-yukawa"
                 numberOfKernelParameters=2
                 kernelParameters=np.array([k, epsilon])
@@ -266,7 +267,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 
             comm.barrier()
             convolutionTime = time.time()-startTime
-            if verbosity>0: rprint(rank,'Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+            if verbosity>0: rprint(rank,'Convolution time: ', convolutionTime)
 
         else:
             print('Exiting because energy too close to 0')
@@ -343,11 +344,12 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 
         
                 n,M = np.shape(orbitals) 
-                start=time.time()
-                orthWavefunction = mgs(orbitals,W,m, comm)
-                end=time.time()
-                rprint(rank,"Orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
-                orbitals[m,:] = np.copy(orthWavefunction)
+                if singleWavefunctionOrthogonalization==True:
+                    start=time.time()
+                    orthWavefunction = mgs(orbitals,W,m, comm)
+                    end=time.time()
+                    rprint(rank,"Orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
+                    orbitals[m,:] = np.copy(orthWavefunction)
 
         
                 if greenIterationsCount==1:

@@ -7,16 +7,16 @@ import time
 from mpiUtilities import global_dot
 
 # @jit(parallel=True)
-def modifiedGramSchrmidt(V,weights):
-    n,k = np.shape(V)
+def modifiedGramSchmidt(V, weights, comm):
+    k,n = np.shape(V)
     U = np.zeros_like(V)
-    U[:,0] = V[:,0] / np.dot(V[:,0],V[:,0]*weights)
+    U[0,:] = V[0,:] / np.sqrt( global_dot(V[0,:],V[0,:]*weights, comm) )
     for i in range(1,k):
-        U[:,i] = V[:,i]
+        U[i,:] = V[i,:]
         for j in range(i):
-#             print('Orthogonalizing %i against %i' %(i,j))
-            U[:,i] -= (np.dot(U[:,i],U[:,j]*weights) / np.dot(U[:,j],U[:,j]*weights))*U[:,j]
-        U[:,i] /= np.dot(U[:,i],U[:,i]*weights)
+#             rprint(rank,'Orthogonalizing %i against %i' %(i,j))
+            U[i,:] -= (global_dot(U[i,:],U[j,:]*weights, comm) / global_dot(U[j,:],U[j,:]*weights, comm))*U[j,:]
+        U[i,:] /= np.sqrt( global_dot(U[i,:],U[i,:]*weights, comm) )
         
     return U
 
