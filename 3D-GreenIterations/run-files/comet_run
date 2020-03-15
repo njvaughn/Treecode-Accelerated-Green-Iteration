@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
 #SBATCH --output="dataFiles/hermite-one-mesh-%j.%N.out"
-#SBATCH --partition=gpu
+#SBATCH --partition=gpu-shared
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=4
-#SBATCH --gres=gpu:p100:4
-#SBATCH --mem=100GB 
-#SBATCH -t 12:00:00
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:k80:2
+#SBATCH --mem=25GB 
+#SBATCH -t 48:00:00
 #SBATCH --no-requeue
 #SBATCH -A mia314
 #SBATCH --constraint=exclusive
@@ -28,7 +28,8 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 
 
 COREREPRESENTATION="Pseudopotential"
-INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
@@ -90,6 +91,8 @@ MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
   
+TWOMESHSTART=4
+
 for MESHPARAM4 in -2
 do                                                         
     for CELLORDER in 4
@@ -97,7 +100,7 @@ do
         for FINEORDER in 4
         do  
 
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/hermite/one_mesh_treecode_params_order_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_approx_${APPROXIMATIONNAME}.csv" 
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/hermite/all_atoms_order_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_approx_${APPROXIMATIONNAME}.csv" 
          
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/carbon/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
@@ -107,12 +110,12 @@ do
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/twoMeshLocal_supressNL/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/testing/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/TiO2/testing/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
-        mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 4 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 2 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
                                                 $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON
+                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART
         done 
     done      
 done

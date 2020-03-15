@@ -126,12 +126,13 @@ def scfFixedPointClosure(scf_args):
         inputDensityFile=scf_args['inputDensityFile']
         vHartreeFile=scf_args['vHartreeFile']
         auxiliaryFile=scf_args['auxiliaryFile']
-#         atoms=scf_args['atoms']
+        atoms=scf_args['atoms']
         nearbyAtoms=scf_args['nearbyAtoms']
         order=scf_args['order']
         fine_order=scf_args['fine_order']
         regularize=scf_args['regularize']
         epsilon=scf_args['epsilon']
+        TwoMeshStart=scf_args['TwoMeshStart']
         
         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
 #         scf_args['GItolerancesIdx']=0
@@ -144,7 +145,7 @@ def scfFixedPointClosure(scf_args):
         SCFcount += 1
         rprint(rank,'\nSCF Count ', SCFcount)
         rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies'])
-        TwoMeshStart=4
+#         TwoMeshStart=1
         SCFindex = SCFcount
         if SCFcount>TwoMeshStart:
             SCFindex = SCFcount - TwoMeshStart
@@ -290,17 +291,17 @@ def scfFixedPointClosure(scf_args):
             rprint(rank,"Performing Hartree solve on %i mesh points" %(len(Xf)))
             rprint(rank,"Coarse order ", order)
             rprint(rank,"Fine order   ", fine_order)
-#             V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(Xf), 
-#                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-#                                                            np.copy(Xf), np.copy(Yf), np.copy(Zf), np.copy(RHOf), np.copy(Wf),
-#                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName,
-#                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, treecode_verbosity)
-            
             V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(Xf), 
-                                                           X, Y, Z, RHO, 
-                                                           Xf, Yf, Zf, RHOf, Wf,
+                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+                                                           np.copy(Xf), np.copy(Yf), np.copy(Zf), np.copy(RHOf), np.copy(Wf),
                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName,
                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, treecode_verbosity)
+            
+#             V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(Xf), 
+#                                                            X, Y, Z, RHO, 
+#                                                            Xf, Yf, Zf, RHOf, Wf,
+#                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName,
+#                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, treecode_verbosity)
 #              
             
 #             V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(X), 
@@ -408,13 +409,14 @@ def scfFixedPointClosure(scf_args):
                                'referenceEigenvalues':referenceEigenvalues,
                                'updateEigenvalue':True,
                                'coreRepresentation':coreRepresentation,
-#                                'atoms':atoms,
+                                'atoms':atoms,
                                'nearbyAtoms':nearbyAtoms,
                                'order':order,
                                'fine_order':fine_order,
                                'regularize':regularize, 'epsilon':epsilon,
                                'pointsPerCell_coarse':pointsPerCell_coarse,
-                               'pointsPerCell_fine':pointsPerCell_fine} 
+                               'pointsPerCell_fine':pointsPerCell_fine,
+                               'TwoMeshStart':TwoMeshStart} 
                 
                 n,M = np.shape(orbitals)
                 resNorm=1.0 

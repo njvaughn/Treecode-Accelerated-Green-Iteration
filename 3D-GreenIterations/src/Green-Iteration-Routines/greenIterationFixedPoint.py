@@ -74,18 +74,21 @@ def greensIteration_FixedPoint_Closure(gi_args):
         referenceEigenvalues = gi_args['referenceEigenvalues']
         updateEigenvalue = gi_args['updateEigenvalue']
         coreRepresentation = gi_args['coreRepresentation']
-#         atoms=gi_args['atoms']
-        nearbyAtoms=gi_args["nearbyAtoms"]
+        atoms=gi_args['atoms']
+#         nearbyAtoms=gi_args["nearbyAtoms"]
         coarse_order=gi_args["order"]
         fine_order=gi_args["fine_order"]
         regularize=gi_args['regularize']
         epsilon=gi_args["epsilon"]
+        TwoMeshStart=gi_args["TwoMeshStart"]
+        
+        order=coarse_order
 
         
 #         print('Who called F(x)? ', inspect.stack()[2][3])
         inputWave = np.copy(psiIn[:-1])
         
-        TwoMeshStart=4
+#         TwoMeshStart=1
         
         if ( (len(X)!=len(Xf)) and (SCFcount>TwoMeshStart)  ):
             twoMesh=True
@@ -108,8 +111,13 @@ def greensIteration_FixedPoint_Closure(gi_args):
             start=time.time()
 #             interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[m,:], coarse_order,
 #                                                                Xf, Yf, Zf, fine_order) 
-            interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[m,:], pointsPerCell_coarse,
-                                                            Xf, Yf, Zf, pointsPerCell_fine)
+#             interpolatedInputWavefunction = interpolateBetweenTwoMeshes(X, Y, Z, orbitals[m,:], pointsPerCell_coarse,
+#                                                             Xf, Yf, Zf, pointsPerCell_fine)
+            
+            numberOfCells=len(pointsPerCell_coarse)
+            interpolatedInputWavefunction = interpolation_wrapper.callInterpolator(X,  Y,  Z,  orbitals[m,:], pointsPerCell_coarse,
+                                                           Xf, Yf, Zf, pointsPerCell_fine, 
+                                                           numberOfCells, order)
             
 #             ## Want to use interpolated Vlocal???
              
@@ -120,8 +128,12 @@ def greensIteration_FixedPoint_Closure(gi_args):
             # 4. add back in the subtracted piece on the coarse mesh.
              
             Veff_local -= Vext_local                                                                    # step 1          
-            Veff_local_fine = interpolateBetweenTwoMeshes(X, Y, Z, Veff_local, pointsPerCell_coarse,
-                                                            Xf, Yf, Zf, pointsPerCell_fine)             # step 2   
+#             Veff_local_fine = interpolateBetweenTwoMeshes(X, Y, Z, Veff_local, pointsPerCell_coarse,
+#                                                             Xf, Yf, Zf, pointsPerCell_fine)             # step 2 
+            Veff_local_fine = interpolation_wrapper.callInterpolator(X,  Y,  Z,  Veff_local, pointsPerCell_coarse,
+                                                           Xf, Yf, Zf, pointsPerCell_fine, 
+                                                           numberOfCells, order)
+              
             Veff_local_fine += Vext_local_fine                                                          # step 3
             Veff_local += Vext_local                                                                    # step 4
             end=time.time()
@@ -131,7 +143,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #             Veff_local_fine = interpolateBetweenTwoMeshes(X, Y, Z, Veff_local, pointsPerCell_coarse,
 #                                                             Xf, Yf, Zf, pointsPerCell_fine) 
             
-#             if verbosity>0: rprint(rank,"Time to interpolate wavefunction: ", end-start) 
+            if verbosity>-1: rprint(rank,"Time to interpolate wavefunction: ", end-start) 
         else:
             interpolatedInputWavefunction=orbitals[m,:]
             Veff_local_fine=Veff_local
@@ -146,7 +158,13 @@ def greensIteration_FixedPoint_Closure(gi_args):
             V_nl_psi_fine = np.zeros(len(Veff_local_fine))
             V_nl_psi_coarse = np.zeros(len(Veff_local))
 #             if verbosity>0: rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
-            for atom in nearbyAtoms:
+#             print(nearbyAtoms)
+#             comm.barrier()
+#             exit(-1)
+#             for atom in nearbyAtoms:
+            for atom in atoms:
+                
+#                 pass
 #                 V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(orbitals[m,:],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
 #                 V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi(interpolatedInputWavefunction,Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="fine")
 #                 V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi(orbitals[m,:],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="coarse")
@@ -231,15 +249,15 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 sourceZ=Z
                 sourceF=f_coarse
                 sourceW=W
-#             psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
-#                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
-#                                                            np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
-#                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,treecode_verbosity)
-
             psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
-                                                           X, Y, Z, f_coarse, 
-                                                           sourceX, sourceY, sourceZ, sourceF, sourceW,
+                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
+                                                           np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,treecode_verbosity)
+
+#             psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
+#                                                            X, Y, Z, f_coarse, 
+#                                                            sourceX, sourceY, sourceZ, sourceF, sourceW,
+#                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,treecode_verbosity)
 
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)

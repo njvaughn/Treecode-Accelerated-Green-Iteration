@@ -90,13 +90,14 @@ theta               = float(sys.argv[n]); n+=1
 maxParNode          = int(sys.argv[n]); n+=1
 batchSize           = int(sys.argv[n]); n+=1
 divideParameter3    = float(sys.argv[n]); n+=1
-divideParameter4    = float(sys.argv[n]); n+=1
+divideParameter4    = int(sys.argv[n]); n+=1
 restart             = str(sys.argv[n]); n+=1
 savedMesh           = str(sys.argv[n]); n+=1
 singularityHandling = str(sys.argv[n]); n+=1
 approximationName   = str(sys.argv[n]); n+=1
 regularize          = str(sys.argv[n]); n+=1
 epsilon             = float(sys.argv[n]); n+=1
+TwoMeshStart        = int(sys.argv[n]); n+=1
 
 
 
@@ -396,62 +397,45 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
 
-    # Determine nearby atoms.
-    xbounds = [np.min(X), np.max(X)]
-    ybounds = [np.min(Y), np.max(Y)]
-    zbounds = [np.min(Z), np.max(Z)]
-    nearbyAtoms = np.empty((0,),dtype=object)
-    for atom in atoms:
-        if ((atom.x>xbounds[0]) and (atom.x<xbounds[1]) and (atom.y>ybounds[0]) and (atom.y<ybounds[1]) and (atom.z>zbounds[0]) and (atom.z<zbounds[1])):
-            # atom is in this processor's local domain
-            nearbyAtoms = np.append(nearbyAtoms,atom)
-#             print("Trying to append")
-        else:
-            added=False
-#             radius = np.sqrt( (xbounds[1]-xbounds[0])**2 + (ybounds[1]-ybounds[0])**2 + (zbounds[1]-zbounds[0])**2 )
-
-            xmid = (xbounds[1]+xbounds[0])/2
-            ymid = (ybounds[1]+ybounds[0])/2
-            zmid = (zbounds[1]+zbounds[0])/2
-            
-            xwidth = xbounds[1]-xbounds[0]
-            ywidth = ybounds[1]-ybounds[0]
-            zwidth = zbounds[1]-zbounds[0]
-            
-
-            dx = max(abs(atom.x - xmid) - xwidth / 2, 0);
-            dy = max(abs(atom.y - ymid) - ywidth / 2, 0);
-            dz = max(abs(atom.z - zmid) - zwidth / 2, 0);
-            
-            dist = np.sqrt( dx*dx + dy*dy + dz*dz )
-            print("dist = ", dist)
-            if ( (dist<3) and (added==False) ):
-                
-#                 print("Trying to append")
-                nearbyAtoms = np.append(nearbyAtoms,atom)
-                added=True
-            
-            
-#             for x in xbounds:
-# #                 dx = atom.x-x
-#                 dx = max(abs(px - x) - width / 2, 0);
-#                 for y in ybounds:
-#                     dy=atom.y-y
-#                     for z in zbounds:
-#                         dz = atom.z-z
-#                         
-#                         dist = np.sqrt( (atom.x-x)**2 + (atom.y-y)**2 + (atom.z-z)**2)
-# #                         dist = np.max( np.abs(atom.x-x) , np.max( np.abs(atom.y-y), np.abs(atom.z-z)) )
-# #                         dist = np.min( [abs(dx),abs(dy),abs(dz)])
-# #                         print('dist = ',dist)
-#                         if ( (dist<3) and (added==False) ):
-# #                             print("Trying to append")
-#                             nearbyAtoms = np.append(nearbyAtoms,atom)
-#                             added=True
-                            
-    print(np.shape(nearbyAtoms))
-    print("Rank %i owns [%f,%f]x[%f,%f]x[%f,%f] and has %i nearby atoms. " %(rank,xbounds[0],xbounds[1],ybounds[0],ybounds[1],zbounds[0],zbounds[1],len(nearbyAtoms)))
-#     exit(-1)          
+    ### Determine nearby atoms.  Note, this does not work due to the global dot products in the atom nonlocal potential evaluation.
+    nearbyAtoms = atoms
+#     xbounds = [np.min(X), np.max(X)]
+#     ybounds = [np.min(Y), np.max(Y)]
+#     zbounds = [np.min(Z), np.max(Z)]
+#     nearbyAtoms = np.empty((0,),dtype=object)
+#     for atom in atoms:
+#         if ((atom.x>xbounds[0]) and (atom.x<xbounds[1]) and (atom.y>ybounds[0]) and (atom.y<ybounds[1]) and (atom.z>zbounds[0]) and (atom.z<zbounds[1])):
+#             # atom is in this processor's local domain
+#             nearbyAtoms = np.append(nearbyAtoms,atom)
+# #             print("Trying to append")
+#         else:
+#             added=False
+# #             radius = np.sqrt( (xbounds[1]-xbounds[0])**2 + (ybounds[1]-ybounds[0])**2 + (zbounds[1]-zbounds[0])**2 )
+# 
+#             xmid = (xbounds[1]+xbounds[0])/2
+#             ymid = (ybounds[1]+ybounds[0])/2
+#             zmid = (zbounds[1]+zbounds[0])/2
+#             
+#             xwidth = xbounds[1]-xbounds[0]
+#             ywidth = ybounds[1]-ybounds[0]
+#             zwidth = zbounds[1]-zbounds[0]
+#             
+# 
+#             dx = max(abs(atom.x - xmid) - xwidth / 2, 0);
+#             dy = max(abs(atom.y - ymid) - ywidth / 2, 0);
+#             dz = max(abs(atom.z - zmid) - zwidth / 2, 0);
+#             
+#             dist = np.sqrt( dx*dx + dy*dy + dz*dz )
+#             print("dist = ", dist)
+#             if ( (dist<4) and (added==False) ):
+#                 
+# #                 print("Trying to append")
+#                 nearbyAtoms = np.append(nearbyAtoms,atom)
+#                 added=True
+#             
+#             
+#     print(np.shape(nearbyAtoms))
+             
             
     
     verbosity=0
@@ -464,15 +448,19 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     Vext_local = np.zeros(nPoints)
     Vext_local_fine = np.zeros(len(Xf))
     atomCount=1
-    for atom in nearbyAtoms:
+#     for atom in nearbyAtoms:
+    for atom in atoms:
+        if coreRepresentation=="Pseudopotential":
+            atom.generateChi(X,Y,Z)
+            atom.generateFineChi(Xf,Yf,Zf)
+            rprint(rank,"Generated projectors and set V_ext_local for atom %i" %atomCount)
+            
+    for atom in atoms:
         if coreRepresentation=="AllElectron":
             Vext_local += atom.V_all_electron(X,Y,Z)
         elif coreRepresentation=="Pseudopotential":
             Vext_local += atom.V_local_pseudopotential(X,Y,Z)
             Vext_local_fine += atom.V_local_pseudopotential(Xf,Yf,Zf)
-            atom.generateChi(X,Y,Z)
-            atom.generateFineChi(Xf,Yf,Zf)
-            rprint(rank,"Generated projectors and set V_ext_local for atom %i" %atomCount)
             
 #             print("NORMALIZING CHIS")
 #             atom.normalizeChi(W,comm)
@@ -640,7 +628,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
                'order':order,'fine_order':fine_order,
                'regularize':regularize,'epsilon':epsilon,
                'pointsPerCell_coarse':pointsPerCell_coarse, 
-               'pointsPerCell_fine':pointsPerCell_fine}
+               'pointsPerCell_fine':pointsPerCell_fine,
+               'TwoMeshStart':TwoMeshStart}
     
 
     """

@@ -15,9 +15,12 @@ SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 
 
 COREREPRESENTATION="Pseudopotential"
+INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
+
+
 #INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
-INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/carbonAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
@@ -68,6 +71,8 @@ THETA=0.8
 
 
 
+
+
 MESHTYPE='coarsenedUniformTwoLevel'
 
 DOMAIN=16
@@ -77,6 +82,7 @@ MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
 MESHPARAM4=-2
+TWOMESHSTART=4
 
   
 for DOMAIN in 16  
@@ -93,7 +99,7 @@ do
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
                                                 $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON
+                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART
         done 
     done      
 done

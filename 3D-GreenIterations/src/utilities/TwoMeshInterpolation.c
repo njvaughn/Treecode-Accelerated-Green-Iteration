@@ -179,7 +179,7 @@ void InterpolateBetweenTwoMeshes(
         return;
     }
 
-    printf("coarseN, fineN = %i, %i\n", coarseN,fineN);
+//    printf("coarseN, fineN = %i, %i\n", coarseN,fineN);
 
 
 
