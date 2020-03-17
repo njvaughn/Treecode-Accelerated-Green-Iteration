@@ -455,7 +455,7 @@ def scfFixedPointClosure(scf_args):
                 
                 comm.barrier()
                 if SCFcount==1:  
-                    AndersonActivationTolerance=3e-3
+                    AndersonActivationTolerance=1e-1
                 else:
                     AndersonActivationTolerance=3e3
                 while ( (resNorm> max(AndersonActivationTolerance,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
@@ -558,6 +558,9 @@ def scfFixedPointClosure(scf_args):
                     if verbosity>0: rprint(rank,'Eigenvalue Diff: %f' %eigenvalueDiff)
                     if ( (eigenvalueDiff<scf_args['currentGItolerance']/20) and (gi_args["greenIterationsCount"]>8) ): 
                         Done=True
+                    if greenIterationsCount>50:
+                        rprint(rank,"Terminating fixed point iteration at 50 iterations.")
+                        Done=True
 #                     if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) and ( ( SCFcount <2 ) or previousOccupations[m]<1e-4 ) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
 #                         print('Ending iteration because eigenvalue is converged.')
 #                         Done=True
@@ -586,7 +589,7 @@ def scfFixedPointClosure(scf_args):
                     ## Compute next input wavefunctions
                     if verbosity>0: rprint(rank,'Anderson mixing on the orbital.')
 #                     GImixingParameter=0.5
-                    GImixingParameter=1.0
+                    GImixingParameter=0.5
                     andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
                     Energies['orbitalEnergies'][m] = andersonOrbital[-1]
                     orbitals[m,:] = andersonOrbital[:-1]

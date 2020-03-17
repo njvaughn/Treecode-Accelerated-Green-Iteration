@@ -51,7 +51,7 @@ def loadBalance_manual(x,y,z):
     rank = comm.Get_rank()
     size = comm.Get_size()
     
-    assert size%2==0, "manual load balancer needs size%2==0"
+    assert ((size==1) or (size%2==0)), "manual load balancer needs size%2==0 or size=1"
     
     xmax=np.max(x)
     xmin=np.min(x)
@@ -73,7 +73,9 @@ def loadBalance_manual(x,y,z):
 #         elif cycle%3==2: # cut in z
 #             pass
 
-    if size==2:
+    if size==1:
+        bounds=[xmin, xmax, ymin, ymax, zmin, zmax] # 02/02/02
+    elif size==2:
         xmid = (xmax+xmin)/2
         if rank==0:
             bounds=[xmin, xmid, ymin, ymax, zmin, zmax] # 01/02/02

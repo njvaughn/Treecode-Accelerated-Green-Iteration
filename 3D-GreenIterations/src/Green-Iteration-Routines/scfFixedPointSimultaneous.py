@@ -409,6 +409,8 @@ def scfFixedPointClosureSimultaneous(scf_args):
         #4. Construct output vector consisting of all updated wavfunctions
         #5. Call the mixing scheme on the whole set
         
+        nPointsPlus1=nPoints+1
+        
         set_weights=np.zeros(nOrbitals*nPoints)
         for m in range(nOrbitals):
             set_weights[m*nPoints:(m+1)*nPoints] = W
@@ -422,12 +424,16 @@ def scfFixedPointClosureSimultaneous(scf_args):
         mixingStart = np.copy( 0 )
         
         eigenvalueResiduals=np.ones_like(residuals)
-        
+        updatedOrbitals=np.empty_like(residuals)
+        for m in range(nOrbitals):
+            updatedOrbitals[m]=True
         iterationCount=0
         converged=False
         while not converged:
             iterationCount+=1 
             AtLeastOneWavefunctionUpdated=False
+            
+            set_inputVectors = np.resize(oldOrbitals, (nOrbitals*nPoints,))
             for m in range(nOrbitals): 
                 if ( (previousOccupations[m] > 1e-20) and (eigenvalueResiduals[m]>(scf_args['currentGItolerance']/30)) ):
 #                     rprint(rank,"Eigenvalue residuals: ", eigenvalueResiduals)
@@ -460,7 +466,7 @@ def scfFixedPointClosureSimultaneous(scf_args):
                                    'pointsPerCell_coarse':pointsPerCell_coarse,
                                    'pointsPerCell_fine':pointsPerCell_fine,
                                    'TwoMeshStart':TwoMeshStart,
-                                   'singleWavefunctionOrthogonalization':False
+                                   'singleWavefunctionOrthogonalization':True
                                    } 
                     
                     n,M = np.shape(orbitals)
@@ -468,11 +474,13 @@ def scfFixedPointClosureSimultaneous(scf_args):
 
                     comm.barrier()
 
-                    psiIn = np.append( np.copy(orbitals[m,:]), Energies['orbitalEnergies'][m] )
-       
+
                     oldEigenvalue = np.copy(Energies['orbitalEnergies'][m])
-                    greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
-                    r = greensIteration_FixedPoint(psiIn, gi_args)
+
+                    for calls in range(3):
+                        psiIn = np.append( np.copy(orbitals[m,:]), Energies['orbitalEnergies'][m] )
+                        greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
+                        r = greensIteration_FixedPoint(psiIn, gi_args)
                     newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                     eigenvalueDiff=np.abs(oldEigenvalue - newEigenvalue )
                     comm.barrier()
@@ -494,36 +502,40 @@ def scfFixedPointClosureSimultaneous(scf_args):
                         rprint(rank,"Not updating wavefunction %i because it is unoccupied." %m)
                         
                     orbitals[m] = np.copy(oldOrbitals[m])
-                    set_weights[m*nPoints:(m+1)*nPoints] = np.zeros(nPoints)
+                    updatedOrbitals[m]=False
+#                     set_weights[m*nPoints:(m+1)*nPoints] = np.zeros(nPoints)
 
             if AtLeastOneWavefunctionUpdated==False:
                 converged=True
             else:
                 ## Orthogonalize.
-                orbitals = mgs(orbitals, W, comm)
-                set_inputVectors = np.resize(oldOrbitals, (nOrbitals*nPoints,))
+#                 orbitals = mgs(orbitals, W, comm)
+                
                 set_outputVectors = np.resize(orbitals, (nOrbitals*nPoints,))
                 
                 
                 ## Measure residuals of individual wavefunctions, just for analyzing
                 maxResidual=0.0
+                sumResidual=0.0
                 maxID=-1 
                 for m in range(nOrbitals):
                     clenshawCurtisNorm = clenshawCurtisNormClosure_noAppendedEigenvalueWeight(W)
                     resNorm = clenshawCurtisNorm(set_outputVectors[m*nPoints:(m+1)*nPoints]-set_inputVectors[m*nPoints:(m+1)*nPoints])
+                    sumResidual+=resNorm**2
                     if resNorm>maxResidual:
                         maxID=m
                         maxResidual=resNorm
                 
-                rprint(rank,"============================================")
+                rprint(rank,"\n\n============================================")
                 rprint(rank,"============================================")
                 rprint(rank,"Iteration %i, Measuring residual of entire set of vectors." %iterationCount)
                 clenshawCurtisNorm = clenshawCurtisNormClosure_noAppendedEigenvalueWeight(set_weights)
                 resNorm = clenshawCurtisNorm(set_outputVectors-set_inputVectors)
                 rprint(rank,"Residual norm = %1.3e" %resNorm)
                 rprint(rank,"Largest individual: wavefunction %i with residual %1.3e" %(maxID,maxResidual))
+                rprint(rank,"Sum of individual norms = %1.3e" %np.sqrt(sumResidual) )
                 rprint(rank,"============================================")
-                rprint(rank,"============================================")
+                rprint(rank,"============================================\n\n")
                 
                 if resNorm<scf_args['currentGItolerance']:
                     converged=True
@@ -566,11 +578,19 @@ def scfFixedPointClosureSimultaneous(scf_args):
                     
                 ## Compute next input wavefunctions
                 if verbosity>0: rprint(rank,'Anderson mixing on the wavefunctions.')
-                GImixingParameter=0.5
-                andersonOrbitals, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,set_weights, returnWeights=True)
-    #             Energies['orbitalEnergies'][m] = andersonOrbital[-1]
-    #             orbitals[m,:] = andersonOrbital[:-1]
-                orbitals = np.reshape(andersonOrbitals,(nOrbitals,nPoints))
+                GImixingParameter=1.0
+                
+#                 ## Mix all wavefunctions simultaneously
+#                 andersonOrbitals, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,set_weights, returnWeights=True)
+#                 orbitals = np.reshape(andersonOrbitals,(nOrbitals,nPoints))
+                
+                ## Mix each wavefunction individually
+                for m in range(nOrbitals):
+                    if updatedOrbitals[m]==True:
+#                         rprint(rank,"Anderson mixing on orbital %i" %m)
+                        andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions[m*nPoints:(m+1)*nPoints,:], outputWavefunctions[m*nPoints:(m+1)*nPoints,:], GImixingParameter,W, returnWeights=True)
+        #             Energies['orbitalEnergies'][m] = andersonOrbital[-1]
+                        orbitals[m,:] = andersonOrbital
     #    
         
 
