@@ -29,7 +29,7 @@ import mpi4py.MPI as MPI
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
 sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
-from loadBalancer import loadBalance
+# from loadBalancer import loadBalance
 from mpiUtilities import global_dot, scatterArrays, rprint
 from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
 try:
@@ -99,6 +99,7 @@ approximationName   = str(sys.argv[n]); n+=1
 regularize          = str(sys.argv[n]); n+=1
 epsilon             = float(sys.argv[n]); n+=1
 TwoMeshStart        = int(sys.argv[n]); n+=1
+GI_form             = str(sys.argv[n]); n+=1
 
 
 
@@ -455,7 +456,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
             atom.generateChi(X,Y,Z)
             atom.generateFineChi(Xf,Yf,Zf)
             rprint(rank,"Generated projectors and set V_ext_local for atom %i" %atomCount)
-            
+        atomCount+=1
+    atomCount=1       
     for atom in atoms:
         if coreRepresentation=="AllElectron":
             Vext_local += atom.V_all_electron(X,Y,Z)
@@ -661,12 +663,16 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #             return
         abortAfterInitialHartree=False
         
-#         scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
-#         densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
-        
-        scfFixedPointSimultaneous, scf_args = scfFixedPointClosureSimultaneous(scf_args)
-        densityResidualVector = scfFixedPointSimultaneous(RHO,scf_args,abortAfterInitialHartree)
-        
+        if GI_form=="Sequential":
+            scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
+            densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
+        elif GI_form=="Simultaneous":
+            scfFixedPointSimultaneous, scf_args = scfFixedPointClosureSimultaneous(scf_args)
+            densityResidualVector = scfFixedPointSimultaneous(RHO,scf_args,abortAfterInitialHartree)
+        else:
+            print("What should GI_form be?")
+            exit(-1)
+            
         densityResidual=scf_args['densityResidual']
         energyResidual=scf_args['energyResidual'] 
         SCFcount=scf_args['SCFcount']

@@ -70,6 +70,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         SCFcount = gi_args['SCFcount']
         greenIterationsCount = gi_args['greenIterationsCount']
         residuals = gi_args['residuals']
+        eigenvalueResiduals = gi_args['eigenvalueResiduals']
         greenIterationOutFile = gi_args['greenIterationOutFile']
         referenceEigenvalues = gi_args['referenceEigenvalues']
         updateEigenvalue = gi_args['updateEigenvalue']
@@ -438,6 +439,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
             residuals[m] = normDiff
         orbitalResidual = np.copy(normDiff)
         
+        eigenvalueResiduals[m]=eigenvalueDiff
+        
         
     
         if verbosity>0: rprint(rank,'Orbital %i error and eigenvalue residual:   %1.3e and %1.3e' %(m,Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift'], eigenvalueDiff))
@@ -488,6 +491,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         gi_args['eigenvalueDiff']=eigenvalueDiff
         gi_args['eigenvalueHistory']=eigenvalueHistory
         gi_args['eigenvalueDiff'] = np.abs(deltaE)
+        
+        gi_args['eigenvalueResiduals']=eigenvalueResiduals
         
         
         

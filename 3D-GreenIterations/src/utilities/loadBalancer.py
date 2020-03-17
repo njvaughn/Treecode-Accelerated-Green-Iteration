@@ -4,9 +4,9 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-from cyarray.api import UIntArray, DoubleArray
-from pyzoltan.core import zoltan
-from pyzoltan.core import zoltan_comm
+# from cyarray.api import UIntArray, DoubleArray
+# from pyzoltan.core import zoltan
+# from pyzoltan.core import zoltan_comm
 
 import numpy as np
 
@@ -43,6 +43,104 @@ def plot_points_single_proc(x, y, z, rank, title):
     plt.title(title)
     plt.show() 
 #     plt.savefig(savedir+filename)
+
+
+
+def loadBalance_manual(x,y,z):
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    
+    assert size%2==0, "manual load balancer needs size%2==0"
+    
+    xmax=np.max(x)
+    xmin=np.min(x)
+    
+    ymax=np.max(y)
+    ymin=np.min(y)
+    
+    zmax=np.max(z)
+    zmin=np.min(z)
+    
+#     subdomains=1
+#     cycle=0
+#     while subdomains<size:
+#         subdomains*=
+#         if cycle%3==0:   # cut the x
+#             pass
+#         elif cycle%3==1: # cut in y
+#             pass
+#         elif cycle%3==2: # cut in z
+#             pass
+
+    if size==2:
+        xmid = (xmax+xmin)/2
+        if rank==0:
+            bounds=[xmin, xmid, ymin, ymax, zmin, zmax] # 01/02/02
+        elif rank==1:
+            bounds=[xmid, xmax, ymin, ymax, zmin, zmax] # 12/02/02
+    
+    elif size==4:
+        xmid = (xmax+xmin)/2
+        ymid = (ymax+ymin)/2
+        if rank==0:
+            bounds=[xmin, xmid, ymin, ymid, zmin, zmax] # 01/01/02
+        elif rank==1:
+            bounds=[xmin, xmid, ymid, ymax, zmin, zmax] # 01/12/02
+        elif rank==2:
+            bounds=[xmid, xmax, ymin, ymid, zmin, zmax] # 12/01/02
+        elif rank==3:
+            bounds=[xmid, xmax, ymid, ymax, zmin, zmax] # 12/12/02
+            
+            
+    elif size==8:
+        xmid = (xmax+xmin)/2
+        ymid = (ymax+ymin)/2
+        zmid = (zmax+zmin)/2
+        if rank==0:
+            bounds=[xmin, xmid, ymin, ymid, zmin, zmid] # 01/01/01
+        elif rank==1:
+            bounds=[xmin, xmid, ymid, ymax, zmin, zmid] # 01/12/01
+        elif rank==2:
+            bounds=[xmid, xmax, ymin, ymid, zmin, zmid] # 12/01/01
+        elif rank==3:
+            bounds=[xmid, xmax, ymid, ymax, zmin, zmid] # 12/12/01
+        elif rank==4:
+            bounds=[xmin, xmid, ymin, ymid, zmid, zmax] # 01/01/12
+        elif rank==5:
+            bounds=[xmin, xmid, ymid, ymax, zmid, zmax] # 01/12/12
+        elif rank==6:
+            bounds=[xmid, xmax, ymin, ymid, zmid, zmax] # 12/01/12
+        elif rank==7:
+            bounds=[xmid, xmax, ymid, ymax, zmid, zmax] # 12/12/12
+    
+    else:
+        print("Not set up for domain decomosition of size %i" %size)
+    
+#     elif size==16:
+#         pass
+#     elif size==32:
+#         pass
+
+    print("Rank %i owns " %rank, bounds)
+    comm.barrier()
+    
+    
+    cells = []
+    cellsX = []
+    cellsY = []
+    cellsZ = []
+    
+    for i in range(len(x)):
+        if ( (x[i]>=bounds[0]) and (x[i]<=bounds[1]) ):
+            if ( (y[i]>=bounds[2]) and (y[i]<=bounds[3]) ):
+                if ( (z[i]>=bounds[4]) and (z[i]<=bounds[5]) ):
+                    cellsX.append(x[i])
+                    cellsY.append(y[i])
+                    cellsZ.append(z[i])
+#     exit(-1)
+    return cellsX, cellsY, cellsZ
+        
 
 
 def loadBalance(x,y,z,data=None,LBMETHOD='RCB',verbosity=0):

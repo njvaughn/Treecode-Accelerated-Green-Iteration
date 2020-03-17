@@ -395,7 +395,7 @@ def scfFixedPointClosure(scf_args):
                 if verbosity>0: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                 
         #                         
-                            
+                eigenvalueResiduals=np.ones_like(residuals)           
                 greenIterationsCount=1
 #                 print("Forcing singularityHandling to be skipping for Green's iteration.")
                 gi_args = {'orbitals':orbitals,'oldOrbitals':oldOrbitals, 'Energies':Energies, 'Times':Times, 
@@ -404,7 +404,9 @@ def scfFixedPointClosure(scf_args):
                                'singularityHandling':singularityHandling, 'approximationName':approximationName,
                                'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta, 'maxParNode':maxParNode,'batchSize':batchSize,
                                'nPoints':nPoints, 'm':m, 'X':X,'Y':Y,'Z':Z,'W':W,'Xf':Xf,'Yf':Yf,'Zf':Zf,'Wf':Wf,'gradientFree':gradientFree,
-                               'SCFcount':SCFcount,'greenIterationsCount':greenIterationsCount,'residuals':residuals,
+                               'SCFcount':SCFcount,'greenIterationsCount':greenIterationsCount,
+                               'residuals':residuals,
+                               'eigenvalueResiduals':eigenvalueResiduals,
                                'greenIterationOutFile':greenIterationOutFile,
                                'referenceEigenvalues':referenceEigenvalues,
                                'updateEigenvalue':True,
@@ -583,7 +585,8 @@ def scfFixedPointClosure(scf_args):
                       
                     ## Compute next input wavefunctions
                     if verbosity>0: rprint(rank,'Anderson mixing on the orbital.')
-                    GImixingParameter=0.5
+#                     GImixingParameter=0.5
+                    GImixingParameter=1.0
                     andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
                     Energies['orbitalEnergies'][m] = andersonOrbital[-1]
                     orbitals[m,:] = andersonOrbital[:-1]
