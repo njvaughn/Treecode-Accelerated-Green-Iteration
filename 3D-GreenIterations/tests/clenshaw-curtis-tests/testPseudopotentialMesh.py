@@ -42,7 +42,6 @@ sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations
 sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
 from loadBalancer import loadBalance
 from mpiUtilities import global_dot, scatterArrays, rprint
-from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
 
 from mpiMeshBuilding import buildMeshFromMinimumDepthCells
 ThreeByThreeByThree = [element for element in itertools.product(range(3),range(3),range(3))]
@@ -192,6 +191,27 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
     return tree
 
 
+def timeConvolutions(domainSize,maxSideLength,coreRepresentation, 
+                          inputFile,outputFile,srcdir,order,gaugeShift,
+                          divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4):    
+    
+    
+#     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
+
+    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
+
+    
+    X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues,tree = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
+                                                                                                     inputFile,outputFile,srcdir,order,order,gaugeShift,
+                                                                                                     MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4,saveTree=True)
+   
+    print("Number of points: ", len(X))
+
+    return
+
+
 
 
 
@@ -229,8 +249,8 @@ if __name__ == "__main__":
     
 #     inputFile=srcdir+'molecularConfigurations/SiliconClusterAuxiliaryPSP.csv'
 
-#     inputFile=srcdir+'molecularConfigurations/berylliumAuxiliaryPSP.csv'
-#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/beryllium"
+#     inputFile=srcdir+'molecularConfigurations/siliconAuxiliaryPSP.csv'
+#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/silicon-PSP"
 
     inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
@@ -238,8 +258,8 @@ if __name__ == "__main__":
     
     coreRepresentation="Pseudopotential"
     MESHTYPE='coarsenedUniformTwoLevel'
-#     MESHTYPE='coarsenedUniform'
-    order=2
+
+    order=4
     gaugeShift=-0.5
     
     domainSize=16
@@ -247,7 +267,22 @@ if __name__ == "__main__":
     MESHPARAM1=0.5 # near field spacing 
     MESHPARAM2=8.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
-    MESHPARAM4=-1 # additional inner refinement 
+    MESHPARAM4=0 # additional inner refinement 
+    
+    
+    
+#     coreRepresentation="AllElectron"
+#     MESHTYPE='ParentChildrenIntegral'
+#     order=4
+#     MESHPARAM1=1e-6
+#     MESHPARAM2=1e10
+#     MESHPARAM3=1e10
+#     MESHPARAM4=1e10
+#     
+# #     inputFile=srcdir+'molecularConfigurations/berylliumAuxiliary.csv'
+#     inputFile=srcdir+'molecularConfigurations/siliconAuxiliary.csv'
+#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/silicon-AE"
+    
     
 #     domainSize=16
 #     MAXSIDELENGTH=32
@@ -267,7 +302,12 @@ if __name__ == "__main__":
     
 
   
-    tree = exportMeshForParaview(domainSize,MAXSIDELENGTH,coreRepresentation, 
+#     tree = exportMeshForParaview(domainSize,MAXSIDELENGTH,coreRepresentation, 
+#                           inputFile,outputFile,srcdir,order,gaugeShift,
+#                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
+    
+    
+    tree = timeConvolutions(domainSize,MAXSIDELENGTH,coreRepresentation, 
                           inputFile,outputFile,srcdir,order,gaugeShift,
                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
      

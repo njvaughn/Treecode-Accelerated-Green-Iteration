@@ -119,7 +119,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             numberOfCells=len(pointsPerCell_coarse)
             interpolatedInputWavefunction = interpolation_wrapper.callInterpolator(X,  Y,  Z,  orbitals[m,:], pointsPerCell_coarse,
                                                            Xf, Yf, Zf, pointsPerCell_fine, 
-                                                           numberOfCells, order)
+                                                           numberOfCells, order, GPUpresent)
             
 #             ## Want to use interpolated Vlocal???
              
@@ -134,7 +134,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                                                             Xf, Yf, Zf, pointsPerCell_fine)             # step 2 
             Veff_local_fine = interpolation_wrapper.callInterpolator(X,  Y,  Z,  Veff_local, pointsPerCell_coarse,
                                                            Xf, Yf, Zf, pointsPerCell_fine, 
-                                                           numberOfCells, order)
+                                                           numberOfCells, order, GPUpresent)
               
             Veff_local_fine += Vext_local_fine                                                          # step 3
             Veff_local += Vext_local                                                                    # step 4
@@ -233,9 +233,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 
             
 #             kappa = k
-            startTime = time.time()
-            comm.barrier()
+            
             treecode_verbosity=0
+            
+            
             
             if twoMesh:  # idea: only turn on the two mesh if beyond 4 SCF iterations
                 numSources = len(Xf)
@@ -251,15 +252,17 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 sourceZ=Z
                 sourceF=f_coarse
                 sourceW=W
+            
+            
+#             for batchSize in [1000, 2000, 4000, 8000, 16000]:
+#                 for maxParNode in [1000, 2000, 4000, 8000, 16000]:
+                    
+            comm.barrier()
+            startTime = time.time()
             psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
                                                            np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,treecode_verbosity)
-
-#             psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
-#                                                            X, Y, Z, f_coarse, 
-#                                                            sourceX, sourceY, sourceZ, sourceF, sourceW,
-#                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,treecode_verbosity)
 
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)
@@ -269,6 +272,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
             comm.barrier()
             convolutionTime = time.time()-startTime
             if verbosity>0: rprint(rank,'Convolution time: ', convolutionTime)
+            Times['timePerConvolution'] = convolutionTime
+            rprint(rank,"Batch size %i, cluster size %i, time per convolution %f" %(batchSize,maxParNode,convolutionTime))
+            
+#             rprint(rank,"Exiting because only interested in time per convolution.")
+#             exit(-1)
 
         else:
             print('Exiting because energy too close to 0')

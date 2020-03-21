@@ -197,7 +197,7 @@ def scfFixedPointClosure(scf_args):
 #             print("Type: ", pointsPerCell_fine.dtype)
             RHOf = interpolation_wrapper.callInterpolator(X,  Y,  Z,  RHO, pointsPerCell_coarse,
                                                            Xf, Yf, Zf, pointsPerCell_fine, 
-                                                           numberOfCells, order)
+                                                           numberOfCells, order, GPUpresent)
             
             
             
@@ -313,7 +313,7 @@ def scfFixedPointClosure(scf_args):
 #             V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
             
             
-            Times['timePerConvolution'] = MPI.Wtime()-start
+#             Times['timePerConvolution'] = MPI.Wtime()-start
             rprint(rank,'Convolution time: ', MPI.Wtime()-start)
             
 #             # interpolate back to coarse mesh
@@ -815,7 +815,7 @@ def scfFixedPointClosure(scf_args):
         if scf_args['GItolerancesIdx'] < scf_args['gradualSteps']-1: # GItolerancesIdx goes from 0 to gradualSteps-1
             scf_args['GItolerancesIdx']+=1
             scf_args['currentGItolerance'] = GItolerances[scf_args['GItolerancesIdx']]
-            print('Reducing GI tolerance to ', scf_args['currentGItolerance'])
+            rprint(rank,'Reducing GI tolerance to ', scf_args['currentGItolerance'])
         
         
         ## Write the restart files
