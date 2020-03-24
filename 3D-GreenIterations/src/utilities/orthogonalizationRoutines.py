@@ -48,8 +48,8 @@ def modifiedGramSchmidt_singleOrbital_transpose(V,weights,targetOrbital, comm):
 #         U -= np.dot(VT[targetOrbital,:],VT[j,:]*weights) *VT[j,:]
 #         U /= np.sqrt( np.dot(U,U*weights) )
         
-        U -= global_dot(V[targetOrbital,:],V[j,:]*weights, comm) *V[j,:]
-        U /= np.sqrt( global_dot(U,U*weights, comm) )
+        U -= global_dot(V[targetOrbital,:],V[j,:]*weights, comm)/np.sqrt( global_dot(U,U*weights, comm) ) *V[j,:]
+#         U /= np.sqrt( global_dot(U,U*weights, comm) )
     
 #     U /= np.sqrt( np.dot(U,U*weights) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)
     U /= np.sqrt( global_dot(U,U*weights, comm) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)

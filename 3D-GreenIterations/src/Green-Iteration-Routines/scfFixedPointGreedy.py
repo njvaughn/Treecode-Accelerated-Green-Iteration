@@ -156,9 +156,20 @@ def scfFixedPointClosureGreedy(scf_args):
         
         if SCFcount==1:
             ## For the greedy approach, let the density start as the sum of wavefunctions.
+            orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
+            fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
+            eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
+            rprint(rank,'Fermi energy: %f'%eF)
+            exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
+            occupations = 2*1/(1+np.exp( exponentialArg ) )
+            
+            
+            
             RHO=np.zeros(len(X))
             for m in range(nOrbitals):
-                RHO += orbitals[m,:]**2*initialOccupations[m]
+                RHO += orbitals[m,:]**2*occupations[m]
+                print("Adding wavefunction %i into density, with energy %f and occupation %f." %(m,Energies['orbitalEnergies'][m],occupations[m]))
+#                 input()
              
             rprint(rank, "Integral of initial RHO ", global_dot( RHO,W,comm ) )
             densityIntegral=global_dot( RHO,W,comm )
@@ -380,7 +391,7 @@ def scfFixedPointClosureGreedy(scf_args):
         Energies['Vc'] = global_dot(W, RHO * Vc,comm)
         
         Veff_local = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
-        
+        oldDensity = np.copy(RHO)
         
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
@@ -404,7 +415,7 @@ def scfFixedPointClosureGreedy(scf_args):
             exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
             previousOccupations = 2*1/(1+np.exp( exponentialArg ) )
         elif SCFcount==1: 
-            previousOccupations = np.ones(nOrbitals)
+            previousOccupations = np.sort(initialOccupations)[::-1]
         for m in range(nOrbitals): 
             if previousOccupations[m] > 1e-12:
                 if verbosity>0: rprint(rank,'Working on orbital %i' %m)
@@ -441,38 +452,11 @@ def scfFixedPointClosureGreedy(scf_args):
                 n,M = np.shape(orbitals)
                 resNorm=1.0 
                 
-#                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
-#                 orbitals[m,:] = np.copy(orthWavefunction)
-                
-                
-                
-#                 ## Use previous eigenvalue to generate initial guess
-#                 if SCFcount==1:
-#                     gi_args['updateEigenvalue']=False
-#                     resNormWithoutEig=1 
-#                     orbitals[m,:] = np.random.rand(nPoints)
-#                     if m==0:
-#                         previousEigenvalue=-10
-#                     else:
-#                         previousEigenvalue=Energies['orbitalEnergies'][m-1]
-#                        
-#                     while resNormWithoutEig>1e-2:
-#                         Energies['orbitalEnergies'][m] = previousEigenvalue
-#                         psiIn = np.append( np.copy(orbitals[m,:]), Energies['orbitalEnergies'][m] )
-#                         greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
-#                         r = greensIteration_FixedPoint(psiIn, gi_args)
-#                         Energies['orbitalEnergies'][m] = previousEigenvalue
-#                         clenshawCurtisNorm = clenshawCurtisNormClosureWithoutEigenvalue(W)
-#                         resNormWithoutEig = clenshawCurtisNorm(r)
-#                         
-#                         print('CC norm of residual vector: ', resNormWithoutEig)
-#                     print("Finished generating initial guess.\n\n")
-#                     gi_args['updateEigenvalue']=True
 
                 
                 comm.barrier()
                 if SCFcount==1:  
-                    AndersonActivationTolerance=1e-1
+                    AndersonActivationTolerance=1e-2
                 else:
                     AndersonActivationTolerance=3e3
                 while ( (resNorm> max(AndersonActivationTolerance,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
@@ -622,10 +606,15 @@ def scfFixedPointClosureGreedy(scf_args):
                 
                 ## Update the density and potential after converging each wavefunction.
                 rprint(rank,"Updating the density and potential after converging wavefunction %i" %m)
+                if SCFcount==1:
+                    rprint(rank,"Wavefunction %i has occupation %f" %(m,previousOccupations[m]))
+#                     input()
                 newPsi = np.copy(np.copy(orbitals[m,:]))
-                
-                RHO -= oldPsi**2*previousOccupations[m]
-                RHO += newPsi**2*previousOccupations[m]
+                newOccupations=[2.0,2.0,2.0,2.0, 0.0,0.0,0.0,0.0]
+
+                beta=0.0
+                RHO -= beta*oldPsi**2*newOccupations[m]
+                RHO += beta*newPsi**2*newOccupations[m]
                 
                 ## Update the potential
                 V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(X), 
@@ -648,7 +637,7 @@ def scfFixedPointClosureGreedy(scf_args):
                 Energies['Vc'] = global_dot(W, RHO * Vc,comm)
                 
                 Veff_local = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
-                rprint(rank,"Density and potential updated, moving on to next wavefunction.")
+                rprint(rank,"Density and potential updated, moving on to next wavefunction.\n\n")
                 
             
             else:
@@ -720,17 +709,17 @@ def scfFixedPointClosureGreedy(scf_args):
     
         
     
-        oldDensity = np.copy(RHO)
         
+        ## Maybe I don't need to reconstruct density, as it has already been updated wavefunction by wavefunction.  
         RHO = np.zeros(nPoints)
         for m in range(nOrbitals):
             RHO += orbitals[m,:]**2 * occupations[m]
         newDensity = np.copy(RHO)
         
         if verbosity>0: rprint(rank,"Integral of old RHO ", global_dot( oldDensity,W,comm ) )
-        if verbosity>0: rprint("Integral of new RHO ", global_dot( newDensity,W,comm ) )
+        if verbosity>0: rprint("Integral of new RHO ", global_dot( newDensity,W,comm ) ) 
         
-        if verbosity>0: rprint(rank,"NORMALIZING NEW RHO")
+        if verbosity>0: rprint(rank,"NORMALIZING NEW RHO") 
         densityIntegral=global_dot( newDensity,W,comm )
         newDensity *= nElectrons/densityIntegral
         

@@ -45,9 +45,18 @@ from GridpointStruct import GridPoint
 import densityMixingSchemes as densityMixing
 from scfFixedPoint import scfFixedPointClosure
 from scfFixedPointSimultaneous import scfFixedPointClosureSimultaneous
-from scfFixedPointGreedy import scfFixedPointClosureGreedy
+from scfFixedPointGreedy import scfFixedPointClosureGreedy, sortByEigenvalue, fermiObjectiveFunctionClosure
 
 
+# Temperature = 500
+# KB = 1/315774.6
+# Sigma = Temperature*KB
+# def fermiObjectiveFunctionClosure(Energies,nElectrons):
+#     def fermiObjectiveFunction(fermiEnergy):
+#                 exponentialArg = (Energies['orbitalEnergies']-fermiEnergy)/Sigma
+#                 temp = 1/(1+np.exp( exponentialArg ) )
+#                 return nElectrons - 2 * np.sum(temp)
+#     return fermiObjectiveFunction
 
 
 
@@ -204,6 +213,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
 
         orbitalIndex=0
         initialOccupations=[]
+        initialEnergies=[]
         
         for atom in atoms:
             nAtomicOrbitals = atom.nAtomicOrbitals
@@ -232,6 +242,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
                         
                         if psiID in atom.interpolators:  # pseudopotentials don't start from 10, 20, 21,... they start from the valence, such as 30, 31, ...
                             
+                            initialEnergies.append( -atom.nuclearCharge / (n+ell))  # provide initial eigenvalue guess.  Higher (n,ell) closer to zero.
                             initialOccupations.append(occupation)
                             electronCount+=occupation
                             print("Initial (n,ell,m)=(%i,%i,%i) wavefunction gets occupation %f" %(n,ell,m,occupation))
@@ -300,6 +311,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
 #                 orbitals[:,ii] = np.exp(-R)*np.sin(R)
                 orbitals[ii,:] = np.random.rand(len(R))
                 initialOccupations.append(0.0)
+                initialEnergies.append(-0.1)
 #                 self.initializeOrbitalsRandomly(targetOrbital=ii)
 #                 self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
 #                 self.orthonormalizeOrbitals(targetOrbital=ii)
@@ -313,7 +325,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
 
         print("initial occupations: ",initialOccupations)
         #input()
-        return orbitals, initialOccupations
+        return orbitals, initialOccupations, initialEnergies
     
 def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms,coreRepresentation):
         
@@ -858,13 +870,26 @@ if __name__ == "__main__":
 #     assert abs(2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
     orbitals = np.zeros((nOrbitals,nPointsLocal))
     if coreRepresentation=="AllElectron":
-        orbitals,initialOccupations = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z,W)
+        orbitals,initialOccupations,initialEnergies = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z,W)
     elif coreRepresentation=="Pseudopotential":
-        orbitals,initialOccupations = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z,W)
+        orbitals,initialOccupations,initialEnergies = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z,W)
 #         orbitals = initializeOrbitalsRandomly(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
     print("Max of first wavefunction: ", np.max(np.abs(orbitals[0,:])))
 #     print('nOrbitals: ', nOrbitals)
     comm.barrier()
+    
+    # Sort orbitals
+#     orbitals, initialEnergies = sortByEigenvalue(orbitals, initialEnergies)
+#     fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
+#     eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
+#     rprint(rank,'Fermi energy: %f'%eF)
+#     exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
+#     initialOccupations = 2*1/(1+np.exp( exponentialArg ) )
+    
+    eigenvalues=np.array(initialEnergies)
+    print("Energies:    ",initialEnergies)
+    print("Occupations: ",initialOccupations)
+#     input()
 
 
 
