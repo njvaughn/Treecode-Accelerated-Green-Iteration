@@ -149,6 +149,15 @@ def scfFixedPointClosure(scf_args):
         SCFindex = SCFcount
         if SCFcount>TwoMeshStart:
             SCFindex = SCFcount - TwoMeshStart
+            
+        if SCFcount==1:
+            ## For the greedy approach, let the density start as the sum of wavefunctions.
+            orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
+            fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
+            eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
+            rprint(rank,'Fermi energy: %f'%eF)
+            exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
+            occupations = 2*1/(1+np.exp( exponentialArg ) )
         
         
         if SCFcount>1:

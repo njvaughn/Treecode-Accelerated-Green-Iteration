@@ -5,7 +5,8 @@ Created on Jun 25, 2018
 '''
 import sys
 
-srcdir="/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/"
+# srcdir="/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/"
+srcdir="/home/njvaughn/TAGI/3D-GreenIterations/src/"
 sys.path.append(srcdir+'dataStructures')
 sys.path.append(srcdir+'Green-Iteration-Routines')
 sys.path.append(srcdir+'utilities')
@@ -106,6 +107,13 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
    
 
     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_connected()
+    
+    print("Saving mesh to /home/njvaughn/PSPmesh/")
+    np.save("/home/njvaughn/PSPmesh/X_%i" %(nPoints), X)
+    np.save("/home/njvaughn/PSPmesh/Y_%i" %(nPoints), Y)
+    np.save("/home/njvaughn/PSPmesh/Z_%i" %(nPoints), Z)
+    np.save("/home/njvaughn/PSPmesh/W_%i" %(nPoints), W)
+    np.save("/home/njvaughn/PSPmesh/RHO_%i" %(nPoints), RHO)
     
     print(XV)
     print(YV)
@@ -251,9 +259,11 @@ if __name__ == "__main__":
 
 #     inputFile=srcdir+'molecularConfigurations/siliconAuxiliaryPSP.csv'
 #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/silicon-PSP"
+#     outputFile="/home/njvaughn/PSPmesh/Si2"
 
     inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
-    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
+#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
+    outputFile="/home/njvaughn/PSPmesh/C20"
     
     
     coreRepresentation="Pseudopotential"
@@ -264,7 +274,7 @@ if __name__ == "__main__":
     
     domainSize=16
     MAXSIDELENGTH=32
-    MESHPARAM1=0.5 # near field spacing 
+    MESHPARAM1=0.35 # near field spacing 
     MESHPARAM2=8.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
     MESHPARAM4=0 # additional inner refinement 
@@ -302,14 +312,14 @@ if __name__ == "__main__":
     
 
   
-#     tree = exportMeshForParaview(domainSize,MAXSIDELENGTH,coreRepresentation, 
-#                           inputFile,outputFile,srcdir,order,gaugeShift,
-#                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
-    
-    
-    tree = timeConvolutions(domainSize,MAXSIDELENGTH,coreRepresentation, 
+    tree = exportMeshForParaview(domainSize,MAXSIDELENGTH,coreRepresentation, 
                           inputFile,outputFile,srcdir,order,gaugeShift,
                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
+    
+    
+#     tree = timeConvolutions(domainSize,MAXSIDELENGTH,coreRepresentation, 
+#                           inputFile,outputFile,srcdir,order,gaugeShift,
+#                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
      
     
     

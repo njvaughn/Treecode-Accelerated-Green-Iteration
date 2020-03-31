@@ -273,7 +273,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             convolutionTime = time.time()-startTime
             if verbosity>0: rprint(rank,'Convolution time: ', convolutionTime)
             Times['timePerConvolution'] = convolutionTime
-            rprint(rank,"Batch size %i, cluster size %i, time per convolution %f" %(batchSize,maxParNode,convolutionTime))
+            if verbosity>0: rprint(rank,"Batch size %i, cluster size %i, time per convolution %f" %(batchSize,maxParNode,convolutionTime))
             
 #             rprint(rank,"Exiting because only interested in time per convolution.")
 #             exit(-1)
@@ -402,9 +402,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - np.random.randint(10)
             rand = np.random.rand(1)
 #             Energies['orbitalEnergies'][m] = -2
-            Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 3*rand
+#             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 3*rand
+            Energies['orbitalEnergies'][m] = Energies['gaugeShift']
 #             if verbosity>0: rprint(rank,'Energy eigenvalue was positive, setting to  ',-2 )
-            if verbosity>0: rprint(rank,'Energy eigenvalue was positive, setting to gauge shift - ',( 3*rand) )
+#             if verbosity>0: rprint(rank,'Energy eigenvalue was positive, setting to gauge shift - ',( 3*rand) )
+            if verbosity>0: rprint(rank,'Energy eigenvalue was positive, setting to gauge shift' )
             
             # use whatever random shift the root computed.
             Energies['orbitalEnergies'][m] = comm.bcast(Energies['orbitalEnergies'][m], root=0)

@@ -59,13 +59,13 @@ def clenshawCurtisNormClosureWithoutEigenvalue(W):
         return norm
     return clenshawCurtisNormWithoutEigenvalue
     
-def sortByEigenvalue(orbitals,orbitalEnergies):
+def sortByEigenvalue(orbitals,orbitalEnergies,verbosity=0):
     newOrder = np.argsort(orbitalEnergies)
     oldEnergies = np.copy(orbitalEnergies)
     for m in range(len(orbitalEnergies)):
         orbitalEnergies[m] = oldEnergies[newOrder[m]]
-    rprint(rank,'Sorted eigenvalues: ', orbitalEnergies)
-    rprint(rank,'New order: ', newOrder)
+    if verbosity>1: rprint(rank,'Sorted eigenvalues: ', orbitalEnergies)
+    if verbosity>1: rprint(rank,'New order: ', newOrder)
     
     newOrbitals = np.zeros_like(orbitals)
     for m in range(len(orbitalEnergies)):
@@ -155,6 +155,15 @@ def scfFixedPointClosureSimultaneous(scf_args):
         SCFindex = SCFcount
         if SCFcount>TwoMeshStart:
             SCFindex = SCFcount - TwoMeshStart
+            
+        if SCFcount==1:
+            ## For the greedy approach, let the density start as the sum of wavefunctions.
+            orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
+            fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
+            eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
+            rprint(rank,'Fermi energy: %f'%eF)
+            exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
+            occupations = 2*1/(1+np.exp( exponentialArg ) )
         
         
         if SCFcount>1:
@@ -374,8 +383,8 @@ def scfFixedPointClosureSimultaneous(scf_args):
         
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
-            for m in range(nOrbitals):
-                Energies['orbitalEnergies'][m]=-1.0
+#             for m in range(nOrbitals):
+#                 Energies['orbitalEnergies'][m]=-1.0
 # #             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
 # #             for m in range(nOrbitals):
 # #                 if Energies['orbitalEnergies'][m] > 0:
@@ -383,7 +392,7 @@ def scfFixedPointClosureSimultaneous(scf_args):
         
         
         ## Sort by eigenvalue
-        orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
+#         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
            
         
         ## Solve the eigenvalue problem
@@ -421,7 +430,11 @@ def scfFixedPointClosureSimultaneous(scf_args):
         inputWavefunctions = np.zeros((nOrbitals*nPoints,1))
         outputWavefunctions =  np.zeros((nOrbitals*nPoints,1))
 #         mixingStart = np.copy( gi_args['greenIterationsCount'] )
-        mixingStart = np.copy( 0 )
+        
+        if SCFcount==1:
+            mixingStart = 3
+        elif SCFcount>1:
+            mixingStart = 0
         
         eigenvalueResiduals=np.ones_like(residuals)
         updatedOrbitals=np.empty_like(residuals)
@@ -434,15 +447,17 @@ def scfFixedPointClosureSimultaneous(scf_args):
             AtLeastOneWavefunctionUpdated=False
             
             set_inputVectors = np.resize(oldOrbitals, (nOrbitals*nPoints,))
+            updatedCounter=0
             for m in range(nOrbitals): 
-                if ( (previousOccupations[m] > 1e-20) and (eigenvalueResiduals[m]>(scf_args['currentGItolerance']/30)) ):
+#                 if ( previousOccupations[m] > 1e-12 ):
+                if ( (previousOccupations[m] > 1e-12) and (eigenvalueResiduals[m]>(scf_args['currentGItolerance']/30)) ):
 #                     rprint(rank,"Eigenvalue residuals: ", eigenvalueResiduals)
                     AtLeastOneWavefunctionUpdated=True
-                    if verbosity>0: rprint(rank,'Working on orbital %i' %m)
-                    if verbosity>0: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                    if verbosity>1: rprint(rank,'Working on orbital %i' %m)
+                    if verbosity>1: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                     
             #                         
-                                
+                    updatedCounter+=1          
                     greenIterationsCount=1
     #                 print("Forcing singularityHandling to be skipping for Green's iteration.")
                     gi_args = {'orbitals':orbitals,'oldOrbitals':oldOrbitals, 'Energies':Energies, 'Times':Times, 
@@ -458,7 +473,7 @@ def scfFixedPointClosureSimultaneous(scf_args):
                                    'referenceEigenvalues':referenceEigenvalues,
                                    'updateEigenvalue':True,
                                    'coreRepresentation':coreRepresentation,
-                                    'atoms':atoms,
+                                   'atoms':atoms,
                                    'nearbyAtoms':nearbyAtoms,
                                    'order':order,
                                    'fine_order':fine_order,
@@ -466,7 +481,7 @@ def scfFixedPointClosureSimultaneous(scf_args):
                                    'pointsPerCell_coarse':pointsPerCell_coarse,
                                    'pointsPerCell_fine':pointsPerCell_fine,
                                    'TwoMeshStart':TwoMeshStart,
-                                   'singleWavefunctionOrthogonalization':True
+                                   'singleWavefunctionOrthogonalization':False
                                    } 
                     
                     n,M = np.shape(orbitals)
@@ -477,29 +492,29 @@ def scfFixedPointClosureSimultaneous(scf_args):
 
                     oldEigenvalue = np.copy(Energies['orbitalEnergies'][m])
 
-                    for calls in range(3):
+                    for calls in range(1):
                         psiIn = np.append( np.copy(orbitals[m,:]), Energies['orbitalEnergies'][m] )
                         greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
                         r = greensIteration_FixedPoint(psiIn, gi_args)
                     newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                     eigenvalueDiff=np.abs(oldEigenvalue - newEigenvalue )
                     comm.barrier()
-                    if verbosity>0: rprint(rank,'eigenvalueDiff = %f' %eigenvalueDiff)
+                    if verbosity>1: rprint(rank,'eigenvalueDiff = %f' %eigenvalueDiff)
                         
      
                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                     resNorm = clenshawCurtisNorm(r)
                     
-                    if verbosity>0: rprint(rank,'CC norm of residual vector: %f'%resNorm)
-                    if eigenvalueDiff < resNorm/10:
-                        resNorm = eigenvalueDiff
-                        if verbosity>0: rprint(rank,'Using eigenvalueDiff: %f' %resNorm)
+                    if verbosity>1: rprint(rank,'CC norm of residual vector: %f'%resNorm)
+#                     if eigenvalueDiff < resNorm/10:
+#                         resNorm = eigenvalueDiff
+#                         if verbosity>0: rprint(rank,'Using eigenvalueDiff: %f' %resNorm)
                 else:
                     
                     if (eigenvalueResiduals[m]<scf_args['currentGItolerance']/30):
-                        rprint(rank,"Not updating wavefunction %i because its eigenvalue is converged." %m)
-                    elif (previousOccupations[m] < 1e-20):
-                        rprint(rank,"Not updating wavefunction %i because it is unoccupied." %m)
+                        if verbosity>1: rprint(rank,"Not updating wavefunction %i because its eigenvalue is converged." %m)
+                    elif (previousOccupations[m] < 1e-12):
+                        if verbosity>1: rprint(rank,"Not updating wavefunction %i because it is unoccupied." %m)
                         
                     orbitals[m] = np.copy(oldOrbitals[m])
                     updatedOrbitals[m]=False
@@ -509,7 +524,10 @@ def scfFixedPointClosureSimultaneous(scf_args):
                 converged=True
             else:
                 ## Orthogonalize.
-#                 orbitals = mgs(orbitals, W, comm)
+                
+                
+                
+                orbitals = mgs(orbitals, W, comm)
                 
                 set_outputVectors = np.resize(orbitals, (nOrbitals*nPoints,))
                 
@@ -526,17 +544,31 @@ def scfFixedPointClosureSimultaneous(scf_args):
                         maxID=m
                         maxResidual=resNorm
                 
-                rprint(rank,"\n\n============================================")
+                rprint(rank,"\n============================================")
                 rprint(rank,"============================================")
-                rprint(rank,"Iteration %i, Measuring residual of entire set of vectors." %iterationCount)
+                rprint(rank,"Iteration %i, updated %i of %i wavefunctions." %(iterationCount,updatedCounter,nOrbitals))
                 clenshawCurtisNorm = clenshawCurtisNormClosure_noAppendedEigenvalueWeight(set_weights)
                 resNorm = clenshawCurtisNorm(set_outputVectors-set_inputVectors)
                 rprint(rank,"Residual norm = %1.3e" %resNorm)
                 rprint(rank,"Largest individual: wavefunction %i with residual %1.3e" %(maxID,maxResidual))
                 rprint(rank,"Sum of individual norms = %1.3e" %np.sqrt(sumResidual) )
                 rprint(rank,"============================================")
-                rprint(rank,"============================================\n\n")
+                rprint(rank,"============================================\n")
                 
+                
+                ## Sort if needed...
+                if ( (iterationCount==mixingStart) and (SCFcount==1) ):
+                    oldEnergies=np.copy(Energies['orbitalEnergies'])
+                    if verbosity>1: rprint("Eigenvalues before sorting: ", oldEnergies)
+                    orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
+                    oldOrbitals, oldEnergies = sortByEigenvalue(oldOrbitals,oldEnergies)
+                    
+                    set_inputVectors = np.resize(oldOrbitals, (nOrbitals*nPoints,))
+                    set_outputVectors = np.resize(orbitals, (nOrbitals*nPoints,))
+                    
+                    oldOrbitals=np.copy(orbitals)
+#                     input()
+                    
                 if resNorm<scf_args['currentGItolerance']:
                     converged=True
                 else:
@@ -545,54 +577,66 @@ def scfFixedPointClosureSimultaneous(scf_args):
                     
                 ## Perform Mixing
                 
+                    
                 # Update input vectors history
-                if firstInputWavefunction==True:
-                    inputWavefunctions[:,0] = np.copy(set_inputVectors) # fill first column of inputWavefunctions
-                    firstInputWavefunction=False
-                else:
-                    if (iterationCount-1-mixingStart)<GImixingHistoryCutoff:
-                        inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(set_inputVectors), (nPoints*nOrbitals,1)) ), axis=1)
-                        rprint(rank,'Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
-    
+                if iterationCount>=mixingStart:
+                    if firstInputWavefunction==True:
+                        inputWavefunctions[:,0] = np.copy(set_inputVectors) # fill first column of inputWavefunctions
+                        firstInputWavefunction=False
                     else:
-                        rprint(rank,'Beyond GImixingHistoryCutoff.  Replacing column ', (iterationCount-1-mixingStart)%GImixingHistoryCutoff)
-                        inputWavefunctions[:,(iterationCount-1-mixingStart)%GImixingHistoryCutoff] = np.copy(set_inputVectors)
-                
-                # Update output vectors history
-                if firstOutputWavefunction==True:
-    #                     temp = np.append( orbitals[m,:], Energies['orbitalEnergies'][m])
-                    outputWavefunctions[:,0] = np.copy(set_outputVectors) # fill first column of outputWavefunctions
-                    firstOutputWavefunction=False
-                else:
-                    if (iterationCount-1-mixingStart)<GImixingHistoryCutoff:
-    #                         temp = np.append( orbitals[m,:], Energies['orbitalEnergies'][m])
-                        outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(set_outputVectors), (nOrbitals*nPoints,1)) ), axis=1)
-                        rprint(rank,'Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
-                    else:
-                        rprint(rank,'Beyond GImixingHistoryCutoff.  Replacing column ', (iterationCount-1-mixingStart)%GImixingHistoryCutoff)
-    #                         temp = np.append( orbitals[m,:], Energies['orbitalEnergies'][m])
-                        outputWavefunctions[:,(iterationCount-1-mixingStart)%GImixingHistoryCutoff] = np.copy(set_outputVectors)
-                    
-                    
-                    
-                    
-                ## Compute next input wavefunctions
-                if verbosity>0: rprint(rank,'Anderson mixing on the wavefunctions.')
-                GImixingParameter=1.0
-                
-#                 ## Mix all wavefunctions simultaneously
-#                 andersonOrbitals, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,set_weights, returnWeights=True)
-#                 orbitals = np.reshape(andersonOrbitals,(nOrbitals,nPoints))
-                
-                ## Mix each wavefunction individually
-                for m in range(nOrbitals):
-                    if updatedOrbitals[m]==True:
-#                         rprint(rank,"Anderson mixing on orbital %i" %m)
-                        andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions[m*nPoints:(m+1)*nPoints,:], outputWavefunctions[m*nPoints:(m+1)*nPoints,:], GImixingParameter,W, returnWeights=True)
-        #             Energies['orbitalEnergies'][m] = andersonOrbital[-1]
-                        orbitals[m,:] = andersonOrbital
-    #    
+                        if (iterationCount-1-mixingStart)<GImixingHistoryCutoff:
+                            inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(set_inputVectors), (nPoints*nOrbitals,1)) ), axis=1)
+                            if verbosity>1: rprint(rank,'Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
         
+                        else:
+                            if verbosity>1: rprint(rank,'Beyond GImixingHistoryCutoff.  Replacing column ', (iterationCount-1-mixingStart)%GImixingHistoryCutoff)
+                            inputWavefunctions[:,(iterationCount-1-mixingStart)%GImixingHistoryCutoff] = np.copy(set_inputVectors)
+                    
+                    # Update output vectors history
+                    if firstOutputWavefunction==True:
+        #                     temp = np.append( orbitals[m,:], Energies['orbitalEnergies'][m])
+                        outputWavefunctions[:,0] = np.copy(set_outputVectors) # fill first column of outputWavefunctions
+                        firstOutputWavefunction=False
+                    else:
+                        if (iterationCount-1-mixingStart)<GImixingHistoryCutoff:
+        #                         temp = np.append( orbitals[m,:], Energies['orbitalEnergies'][m])
+                            outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(set_outputVectors), (nOrbitals*nPoints,1)) ), axis=1)
+                            if verbosity>1: rprint(rank,'Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
+                        else:
+                            if verbosity>1: rprint(rank,'Beyond GImixingHistoryCutoff.  Replacing column ', (iterationCount-1-mixingStart)%GImixingHistoryCutoff)
+        #                         temp = np.append( orbitals[m,:], Energies['orbitalEnergies'][m])
+                            outputWavefunctions[:,(iterationCount-1-mixingStart)%GImixingHistoryCutoff] = np.copy(set_outputVectors)
+                    
+                    
+                    
+                    
+                    ## Compute next input wavefunctions
+                    if verbosity>1: rprint(rank,'Anderson mixing on the wavefunctions.')
+                    GImixingParameter=0.25
+                    
+                    ## Mix all wavefunctions simultaneously
+                    andersonOrbitals, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,set_weights, returnWeights=True)
+                    orbitals = np.reshape(andersonOrbitals,(nOrbitals,nPoints))
+                
+#                     ## Mix each wavefunction individually
+#                     for m in range(nOrbitals):
+#                         if updatedOrbitals[m]==True:
+#     #                         rprint(rank,"Anderson mixing on orbital %i" %m)
+#                             andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions[m*nPoints:(m+1)*nPoints,:], outputWavefunctions[m*nPoints:(m+1)*nPoints,:], GImixingParameter,W, returnWeights=True)
+#             #             Energies['orbitalEnergies'][m] = andersonOrbital[-1]
+#                             orbitals[m,:] = andersonOrbital
+    #    
+                    
+                    
+                    ## Periodically update the occupations, might be working on an unoccupied state
+                    if iterationCount%4==0:
+                        fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
+                        eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
+                        if verbosity>1: rprint(rank,'Fermi energy: ', eF)
+                        exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
+                        occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
+                        if verbosity>1: rprint(rank, "New occupations: ", occupations)
+                        previousOccupations=occupations
 
         
         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
@@ -700,7 +744,7 @@ def scfFixedPointClosureSimultaneous(scf_args):
         Print results from current iteration
         """
     
-        rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies']) 
+        rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies']-Energies['gaugeShift']) 
     
         rprint(rank,'Updated V_x:                           %.10f Hartree' %Energies['Vx'])
         rprint(rank,'Updated V_c:                           %.10f Hartree' %Energies['Vc'])

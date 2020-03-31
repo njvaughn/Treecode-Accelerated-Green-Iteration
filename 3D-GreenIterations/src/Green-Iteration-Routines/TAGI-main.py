@@ -323,7 +323,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
 #         for m in range(self.nOrbitals):
 #             self.normalizeOrbital(m)
 
-        print("initial occupations: ",initialOccupations)
+        rprint(rank, "initial occupations: ",initialOccupations)
         #input()
         return orbitals, initialOccupations, initialEnergies
     
@@ -760,7 +760,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
             Energies['Etotal'] = -0.5
               
           
-        if SCFcount >= 150:
+        if SCFcount >= 100:
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
               
