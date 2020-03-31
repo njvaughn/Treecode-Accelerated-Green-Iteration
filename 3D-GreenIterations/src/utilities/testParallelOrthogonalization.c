@@ -44,9 +44,9 @@ int main(int argc, char **argv)
     for (int i=0;i<numWavefunctions;i++){
 //        printf("\nrank %i, wavefunction %i\n",rank,i);
         for (int j=0;j<numPoints;j++){
-            wavefunctions[i][j]=pow(j+1,i+1) - (5-j)*pow(rank,2);
+//            wavefunctions[i][j]=pow(j+1,i+1) - (5-j)*pow(rank,2);
 
-//            wavefunctions[i][j]=(double)rand()/RAND_MAX;
+            wavefunctions[i][j]=(double)rand()/RAND_MAX;
 //            printf("rank %i, wavefunctions[%i][%i] = %f\n", rank, i, j, wavefunctions[i][j]);
         }
     }
@@ -149,11 +149,14 @@ int main(int argc, char **argv)
         }
     }
 
-    for (int j=0;j<numPoints;j++){
-        for (int i=0;i<numWavefunctions;i++){
-            printf("% 5f\t",wavefunctions[i][j]);
-        }
-        printf("\n");
+//    for (int j=0;j<numPoints;j++){
+//        for (int i=0;i<numWavefunctions;i++){
+//            printf("% 5f\t",wavefunctions[i][j]);
+//        }
+//        printf("\n");
+//    }
+    for (int j=0;j<numWavefunctions;j++){
+        printf("% 5f\t",wavefunctions[j][0]);
     }
 
 
