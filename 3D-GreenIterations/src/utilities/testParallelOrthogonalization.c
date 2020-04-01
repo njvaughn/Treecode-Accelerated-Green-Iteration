@@ -13,6 +13,7 @@
 
 
 #include "Orthogonalization.h"
+#include "moveData.h"
 
 int main(int argc, char **argv)
 {
@@ -33,21 +34,27 @@ int main(int argc, char **argv)
 //        printf("\n\nNumber of points:          %i\n", numPoints);
 //        printf("Number of wavefunctions:   %i\n", numWavefunctions);
 //    }
+//    fflush(stdout);
 
-    double **wavefunctions = (double **)malloc(numWavefunctions * sizeof(double *));
-    for (int i=0; i<numWavefunctions; i++){
-         wavefunctions[i] = (double *)malloc(numPoints * sizeof(double));
-    }
+//    double *wavefunctions = (double **)malloc(numWavefunctions * sizeof(double *));
+//    for (int i=0; i<numWavefunctions; i++){
+//         wavefunctions[i] = (double *)malloc(numPoints * sizeof(double));
+//    }
+
+    double *wavefunctions = malloc((numPoints*numWavefunctions) * sizeof(double));
+//    for (int i=0; i<numWavefunctions; i++){
+//         wavefunctions[i] = (double *)malloc(numPoints * sizeof(double));
+//    }
 
     // set wavefunctions to something regular
     srand(rank);
     for (int i=0;i<numWavefunctions;i++){
 //        printf("\nrank %i, wavefunction %i\n",rank,i);
         for (int j=0;j<numPoints;j++){
-//            wavefunctions[i][j]=pow(j+1,i+1) - (5-j)*pow(rank,2);
+            wavefunctions[i*numPoints + j]=pow(j+1,i+1) - (5-j)*pow(rank,2);
 
-            wavefunctions[i][j]=(double)rand()/RAND_MAX;
-//            printf("rank %i, wavefunctions[%i][%i] = %f\n", rank, i, j, wavefunctions[i][j]);
+//            wavefunctions[i*numPoints + j]=(double)rand()/RAND_MAX;
+//            printf("rank %i, wavefunctions[%i][%i] = %f\n", rank, i, j, wavefunctions[i*numPoints + j]);
         }
     }
 
@@ -61,15 +68,17 @@ int main(int argc, char **argv)
     }
 
 
+
+
     // test Normalization
     double local_norm_squared=0.0;
     double global_norm_squared=0.0;
     for (int i=0;i<numWavefunctions;i++){
-        local_norm_squared=local_dot_product(wavefunctions[i],wavefunctions[i],W,numPoints);
+        local_norm_squared=local_dot_product(&wavefunctions[i*numPoints],&wavefunctions[i*numPoints],W,numPoints);
         MPI_Allreduce(&local_norm_squared, &global_norm_squared, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 //        printf("\nrank %i, wavefunction %i local_norm_squared = %f, global_norm_squared = %f\n", rank, i, local_norm_squared,global_norm_squared);
-        normalize(wavefunctions[i], sqrt(global_norm_squared), numPoints);
-        local_norm_squared=local_dot_product(wavefunctions[i],wavefunctions[i],W,numPoints);
+        normalize(&wavefunctions[i*numPoints], sqrt(global_norm_squared), numPoints);
+        local_norm_squared=local_dot_product(&wavefunctions[i*numPoints],&wavefunctions[i*numPoints],W,numPoints);
         MPI_Allreduce(&local_norm_squared, &global_norm_squared, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 //        printf("rank %i, wavefunction %i local_norm_squared = %f, global_norm_squared = %f\n", rank, i, local_norm_squared,global_norm_squared);
         if (fabs(global_norm_squared-1)>1e-16*numPoints){
@@ -82,28 +91,24 @@ int main(int argc, char **argv)
     double start=MPI_Wtime();
 
 
-#ifdef OPENACC_ENABLED
-//#pragma acc data copyin(W) copy(V) create(r_local,r_global)
-    #pragma acc enter data copyin(W[0:numPoints],wavefunctions[0:numWavefunctions][0:numPoints])
-//    {
-#endif
+    copyVectorToDevice(W,numPoints);
+    copyVectorToDevice(wavefunctions,numPoints*numWavefunctions);
 
     for (int targetWavefunction=0; targetWavefunction<numWavefunctions;targetWavefunction++){
-
+        printf("targetWavefunction = %i\n",targetWavefunction);
         for (int j=0; j<numPoints;j++){
-//            wavefunctions[targetWavefunction][j]+=sin(targetWavefunction*j);
-            U[j]=wavefunctions[targetWavefunction][j];
+//            wavefunctions[targetWavefunction*numPoints + j]+=sin(targetWavefunction*j);
+            U[j]=wavefunctions[targetWavefunction*numPoints + j];
         }
 //        modifiedGramSchmidt_singleWavefunction(wavefunctions, wavefunctions[targetWavefunction], W, targetWavefunction, numPoints, numWavefunctions);
+        copyVectorToDevice(U,numPoints);
         modifiedGramSchmidt_singleWavefunction(wavefunctions, U, W, targetWavefunction, numPoints, numWavefunctions);
+        removeVectorFromDevice(U,numPoints);
     }
     MPI_Barrier(MPI_COMM_WORLD);
 
-#ifdef OPENACC_ENABLED
-//    #pragma acc wait
-    #pragma acc exit data copyout(wavefunctions[0:numWavefunctions][0:numPoints])
-//    } // end ACC DATA REGION
-#endif
+    copyVectorFromDevice(wavefunctions,numPoints*numWavefunctions);
+
     double end=MPI_Wtime();
 
 
@@ -113,7 +118,7 @@ int main(int argc, char **argv)
     local_norm_squared=0.0;
     global_norm_squared=0.0;
     for (int i=0;i<numWavefunctions;i++){
-        local_norm_squared=local_dot_product(wavefunctions[i],wavefunctions[i],W,numPoints);
+        local_norm_squared=local_dot_product(&wavefunctions[i*numPoints],&wavefunctions[i*numPoints],W,numPoints);
         MPI_Allreduce(&local_norm_squared, &global_norm_squared, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
         if (fabs(global_norm_squared-1)>1e-16*numPoints){
             if (rank==0){
@@ -128,7 +133,7 @@ int main(int argc, char **argv)
 //    for (int i=0;i<numWavefunctions;i++){
 //        printf("\nrank %i, wavefunction %i\n",rank,i);
 //        for (int j=0;j<numPoints;j++){
-//            printf("rank %i, wavefunctions[%i][%i] = %f\n", rank, i, j, wavefunctions[i][j]);
+//            printf("rank %i, wavefunctions[%i][%i] = %f\n", rank, i, j, wavefunctions[i*numPoints + j]);
 //        }
 //    }
 
@@ -139,7 +144,7 @@ int main(int argc, char **argv)
         for (int j=0; j<i;j++){
 //            printf("i,j = %i,%i\n", i, j);
             fflush(stdout);
-            overlap = local_dot_product(wavefunctions[i],wavefunctions[j],W,numPoints);
+            overlap = local_dot_product(&wavefunctions[i*numPoints],&wavefunctions[j*numPoints],W,numPoints);
             MPI_Allreduce(&overlap, &global_overlap, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
             if (fabs(global_overlap)>1e-15*numPoints){
                 if (rank==0){
@@ -151,12 +156,12 @@ int main(int argc, char **argv)
 
 //    for (int j=0;j<numPoints;j++){
 //        for (int i=0;i<numWavefunctions;i++){
-//            printf("% 5f\t",wavefunctions[i][j]);
+//            printf("% 5f\t",wavefunctions[i*numPoints + j]);
 //        }
 //        printf("\n");
 //    }
     for (int j=0;j<numWavefunctions;j++){
-        printf("% 5f\t",wavefunctions[j][0]);
+        printf("% 5f\t",wavefunctions[j*numPoints + 0]);
     }
 
 
@@ -169,12 +174,12 @@ int main(int argc, char **argv)
 //    printf("Freeing wavefunctions.\n");
     fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
-    for (int i=0; i<numWavefunctions; i++){
-        free(wavefunctions[i]);
-//        printf("Freed wavefunction %i\n", i);
-        fflush(stdout);
-
-    }
+//    for (int i=0; i<numWavefunctions; i++){
+//        free(wavefunctions[i]);
+////        printf("Freed wavefunction %i\n", i);
+//        fflush(stdout);
+//
+//    }
     free(wavefunctions);
 //    printf("Freed wavefunctions.\n");
     fflush(stdout);

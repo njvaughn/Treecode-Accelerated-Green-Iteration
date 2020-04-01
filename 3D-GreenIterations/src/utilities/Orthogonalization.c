@@ -11,7 +11,7 @@
 /* Orthogonalization routines */
 #include "Orthogonalization.h"
 
-void modifiedGramSchmidt_singleWavefunction(double **V, double *U, double *W, int targetWavefunction, int numPoints, int numWavefunctions){
+void modifiedGramSchmidt_singleWavefunction(double *V, double *U, double *W, int targetWavefunction, int numPoints, int numWavefunctions){
 
     int rank, num_procs;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -19,22 +19,29 @@ void modifiedGramSchmidt_singleWavefunction(double **V, double *U, double *W, in
 
 //#ifdef OPENACC_ENABLED
 ////#pragma acc data copyin(W) copy(V) create(r_local,r_global)
-//#pragma acc data copy(W[0:numPoints],V[0:numWavefunctions][0:numPoints])
-//    {
+//    #pragma acc enter data copyin(V[0:numWavefunctions][0:numPoints])
 //#endif
 
     // Step 1:  Compute all local dot products on GPU.  If the target is 6, there need to orthogonalize against 0-5.  Target 6 is readlly the 7th wavefunction.
     double *r_local = malloc((targetWavefunction) * sizeof(double));  // r[j] stores the inner product between the target and jth wavefunctions.
     double *r_global = malloc((targetWavefunction) * sizeof(double));  // r[j] stores the inner product between the target and jth wavefunctions.
 
-//    printf("Made it here0.\n");
+    printf("Made it here0.\n");
+
+//#ifdef OPENACC_ENABLED
+//    #pragma acc enter data copyin(U[0:numPoints])
+//#endif
+
+    for (int j=0;j<numPoints;j++){
+        for (int i=0;i<numWavefunctions;i++){
+            printf("% 5f\t",V[i*numPoints+j]);
+        }
+        printf("\n");
+    }
+//    copyMatrixToDevice(V,numPoints,numWavefunctions);
 
 #ifdef OPENACC_ENABLED
-    #pragma acc enter data copyin(U[0:numPoints])
-#endif
-
-#ifdef OPENACC_ENABLED
-    #pragma acc kernels present(V, W, U), copy(r_local[0:targetWavefunction]) //update self(V[targetWavefunction])
+    #pragma acc kernels present(U, V, W), copy(r_local[0:targetWavefunction]) //update self(V[targetWavefunction])
     {
 #endif
 
@@ -60,7 +67,7 @@ void modifiedGramSchmidt_singleWavefunction(double **V, double *U, double *W, in
     #pragma acc loop independent //reduction(+:local_sum)
 #endif
         for (int j=0;j<numPoints;j++){
-            local_sum += V[i][j]*U[j]*W[j];
+            local_sum += V[i*numPoints+j]*U[j]*W[j];
         }
         r_local[i]=local_sum;
 
@@ -72,7 +79,7 @@ void modifiedGramSchmidt_singleWavefunction(double **V, double *U, double *W, in
 #endif
 
 
-//    printf("Made it here1.\n");
+    printf("Made it here1.\n");
 
     // Step 2:  Global reduction with MPI
     MPI_Allreduce(r_local, r_global, targetWavefunction, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
@@ -97,7 +104,7 @@ void modifiedGramSchmidt_singleWavefunction(double **V, double *U, double *W, in
         #pragma acc loop independent
 #endif
         for (int j=0;j<numPoints;j++){
-            U[j] -= V[i][j]*r_global[i];
+            U[j] -= V[i*numPoints+j]*r_global[i];
         }
     }
 
@@ -118,11 +125,13 @@ void modifiedGramSchmidt_singleWavefunction(double **V, double *U, double *W, in
 #ifdef OPENACC_ENABLED
     } //end ACC kernels
 #endif
-//    printf("Made it here2.\n");
+    printf("Made it here2.\n");
     double global_norm_squared;
     MPI_Allreduce(&local_norm_squared, &global_norm_squared, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 //    printf("Global norm squared = %f\n", sqrt(global_norm_squared));
 //    normalize(U, sqrt(global_norm_squared), numPoints);
+
+//    copyMatrixToDevice(V,numPoints,numWavefunctions);
 #ifdef OPENACC_ENABLED
 //    int streamID = rand() % 4;
     #pragma acc kernels present(V, W, U) copyin(global_norm_squared) //create(local_norm_squared)
@@ -133,22 +142,28 @@ void modifiedGramSchmidt_singleWavefunction(double **V, double *U, double *W, in
 #endif
     for (int j=0;j<numPoints;j++){
         U[j] /= sqrt(global_norm_squared);
-        V[targetWavefunction][j]=U[j];
+        V[targetWavefunction*numPoints+j]=U[j];
     }
 #ifdef OPENACC_ENABLED
     } //end ACC kernels
 #endif
+    printf("Made it here3.\n");
 
-#ifdef OPENACC_ENABLED
-    #pragma acc exit data delete(U[0:numPoints])
-#endif
+//#ifdef OPENACC_ENABLED
+////#pragma acc data copyin(W) copy(V) create(r_local,r_global)
+//    #pragma acc exit data copyout(V[0:numWavefunctions][0:numPoints])
+//#endif
+
+//#ifdef OPENACC_ENABLED
+//    #pragma acc exit data delete(U[0:numPoints])
+//#endif
 
 
     // Step 6:  Clean up
 //    MPI_Barrier(MPI_COMM_WORLD);
     free(r_global);
     free(r_local);
-//    printf("Freed r and returning.\n");
+    printf("Freed r and returning.\n");
 //    fflush(stdout);
 //    MPI_Barrier(MPI_COMM_WORLD);
 

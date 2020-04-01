@@ -2,7 +2,7 @@
 #define H_Orthogonalization_H
 
 
-void modifiedGramSchmidt_singleWavefunction(double **V, double *U, double *W, int targetWavefunction, int numPoints, int numWavefunctions);
+void modifiedGramSchmidt_singleWavefunction(double *V, double *U, double *W, int targetWavefunction, int numPoints, int numWavefunctions);
 
 double local_dot_product(double *A, double *B, double *W, int N);
 
