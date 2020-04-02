@@ -897,11 +897,12 @@ if __name__ == "__main__":
     print("Occupations: ",initialOccupations)
 #     input()
 
-
+    
 
     
     initialRho = np.copy(RHO)
     finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
 
-
+    MOVEDATA.callRemoveVectorFromDevice(orbitals)
+    MOVEDATA.callRemoveVectorFromDevice(W)
 

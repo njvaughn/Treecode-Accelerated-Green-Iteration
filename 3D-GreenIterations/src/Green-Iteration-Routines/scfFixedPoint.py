@@ -200,7 +200,9 @@ def scfFixedPointClosure(scf_args):
 #         print(len(X))
 #         print(len(Xf))
 #         exit(-1)
-        if len(X) != len(Xf):
+
+#         if len(X) != len(Xf):
+        if twoMesh==True:
             print("Interpolating density from %i to %i point mesh." %(len(X),len(Xf)))
 #             start=time.time()
 #             RHOf = interpolateBetweenTwoMeshes(X, Y, Z, RHO, pointsPerCell_coarse,
@@ -351,7 +353,7 @@ def scfFixedPointClosure(scf_args):
             computeType=BT.ComputeType.PARTICLE_CLUSTER
                 
     
-    
+            comm.barrier()
             V_hartreeNew = BT.callTreedriver(  
                                                 nPoints, numSources, 
                                                 np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 

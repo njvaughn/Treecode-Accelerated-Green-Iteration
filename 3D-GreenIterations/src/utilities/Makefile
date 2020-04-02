@@ -26,11 +26,11 @@ CFLAGS=-I. -acc -ta=tesla:cc70 -Minfo=accel -DOPENACC_ENABLED
 LDFLAGS = -Mcuda
 gpuOrthogonalization: testParallelOrthogonalization.c Orthogonalization.c moveData.c
 	$(CC) $(CFLAGS) -o gpu_testParallelOrthogonalization testParallelOrthogonalization.c Orthogonalization.c moveData.c -I.
-	mpicc -I. -acc -ta=tesla:cc70 -Minfo=accel -DOPENACC_ENABLED  -o gpu_testParallelOrthogonalization testParallelOrthogonalization.c Orthogonalization.c moveData.c -I.
+	mpicc -I. -acc -ta=tesla:ccall,cc60 -Minfo=accel -DOPENACC_ENABLED  -o gpu_testParallelOrthogonalization testParallelOrthogonalization.c Orthogonalization.c moveData.c -I.
 
 
 gpuLib: testParallelOrthogonalization.c Orthogonalization.c moveData.c	
-	mpicc -I. -acc -ta=tesla:cc70 -Minfo=accel -DOPENACC_ENABLED -shared -o libOrthogonalization_gpu.so Orthogonalization.c moveData.c -I.	
+	mpicc -I. -acc -ta=tesla:ccall,cc60 -Minfo=accel -DOPENACC_ENABLED -shared -o libOrthogonalization_gpu.so Orthogonalization.c moveData.c -I.	
 	
 #$(LDFLAGS)
 
@@ -42,5 +42,5 @@ gpuLib: testParallelOrthogonalization.c Orthogonalization.c moveData.c
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o libInterpolation_cpu.so TwoMeshInterpolation.c -I.
 
 gpuMoveData: moveData.c
-	mpicc -I. -acc -ta=tesla:cc70 -Minfo=accel -DOPENACC_ENABLED -shared -o libMoveData.so moveData.c -I.
+	mpicc -I. -acc -ta=tesla:ccall,cc60 -Minfo=accel -DOPENACC_ENABLED -shared -o libMoveData.so moveData.c -I.
 	
