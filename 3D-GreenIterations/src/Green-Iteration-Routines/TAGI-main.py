@@ -32,13 +32,13 @@ sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
 # from loadBalancer import loadBalance
 from mpiUtilities import global_dot, scatterArrays, rprint
 from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
-try:
-    import treecodeWrappers_distributed as treecodeWrappers
-except ImportError:
-    rprint(rank,'Unable to import treecodeWrapper due to ImportError')
-except OSError:
-    print('Unable to import treecodeWrapper due to OSError')
-    import treecodeWrappers_distributed as treecodeWrappers
+# try:
+#     import treecodeWrappers_distributed as treecodeWrappers
+# except ImportError:
+#     rprint(rank,'Unable to import treecodeWrapper due to ImportError')
+# except OSError:
+#     print('Unable to import treecodeWrapper due to OSError')
+#     import treecodeWrappers_distributed as treecodeWrappers
 # from TreeStruct_CC import Tree
 from CellStruct_CC import Cell
 from GridpointStruct import GridPoint
@@ -46,7 +46,7 @@ import densityMixingSchemes as densityMixing
 from scfFixedPoint import scfFixedPointClosure
 from scfFixedPointSimultaneous import scfFixedPointClosureSimultaneous
 from scfFixedPointGreedy import scfFixedPointClosureGreedy, sortByEigenvalue, fermiObjectiveFunctionClosure
-
+import moveData_wrapper as MOVEDATA
 
 # Temperature = 500
 # KB = 1/315774.6
@@ -688,7 +688,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
      
     """
     comm.barrier()
-    rprint(rank,"Starting while loop for density...")
+    rprint(rank,"Copying data to GPU and starting while loop for density...")
+    MOVEDATA.callCopyVectorToDevice(orbitals)
+    MOVEDATA.callCopyVectorToDevice(W)
     comm.barrier()
     while ( (densityResidual > SCFtolerance) or (energyResidual > SCFtolerance) ):  # terminate SCF when both energy and density are converged.
           
@@ -697,6 +699,10 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #             print('Exiting before first SCF (for testing initialized mesh accuracy)')
 #             return
         abortAfterInitialHartree=False
+        
+        MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        MOVEDATA.callCopyVectorToDevice(orbitals)
+        
         
         if GI_form=="Sequential":
             scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)

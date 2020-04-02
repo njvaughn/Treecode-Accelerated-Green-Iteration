@@ -12,12 +12,16 @@ size = comm.Get_size()
 
 from mpiUtilities import global_dot, rprint
 from meshUtilities import interpolateBetweenTwoMeshes
-try:
-    import treecodeWrappers_distributed as treecodeWrappers
-except ImportError:
-    print('Unable to import treecodeWrapper due to ImportError')
-except OSError:
-    print('Unable to import treecodeWrapper due to OSError')
+import BaryTreeInterface as BT
+import orthogonalization_wrapper as ORTH
+import moveData_wrapper as MOVEDATA
+
+# try:
+#     import treecodeWrappers_distributed as treecodeWrappers
+# except ImportError:
+#     print('Unable to import treecodeWrapper due to ImportError')
+# except OSError:
+#     print('Unable to import treecodeWrapper due to OSError')
     
 from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
 from orthogonalizationRoutines import mask
@@ -256,14 +260,37 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
 #             for batchSize in [1000, 2000, 4000, 8000, 16000]:
 #                 for maxParNode in [1000, 2000, 4000, 8000, 16000]:
-                    
+            kernel = BT.Kernel.YUKAWA
+            if singularityHandling=="subtraction":
+                singularity=BT.Singularity.SUBTRACTION
+            elif singularityHandling=="skipping":
+                singularity=BT.Singularity.SKIPPING
+            else:
+                print("What should singularityHandling be?")
+                exit(-1)
+            
+            if approximationName=="lagrange":
+                approximation=BT.Approximation.LAGRANGE
+            elif approximationName=="hermite":
+                approximation=BT.Approximation.HERMITE
+            else:
+                print("What should approximationName be?")
+                exit(-1)
+            
+            computeType=BT.ComputeType.PARTICLE_CLUSTER
+            
+              
             comm.barrier()
             startTime = time.time()
-            psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
-                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
-                                                           np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
-                                                           kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,treecode_verbosity)
-
+            psiNew = BT.callTreedriver(
+                                        nPoints, numSources, 
+                                        np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
+                                        np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
+                                        kernel, numberOfKernelParameters, kernelParameters, 
+                                        singularity, approximation, computeType,
+                                        treecodeOrder, theta, maxParNode, batchSize,
+                                        GPUpresent, treecode_verbosity, sizeCheck=1.0
+                                        )
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)
             if singularityHandling=="subtraction": psiNew /= (4*np.pi)
@@ -354,10 +381,26 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
                 n,M = np.shape(orbitals) 
                 if singleWavefunctionOrthogonalization==True:
+#                     start=time.time()
+#                     orthWavefunction = mgs(orbitals,W,m, comm)
+#                     end=time.time()
+#                     rprint(rank,"Original orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
+#                     
                     start=time.time()
-                    orthWavefunction = mgs(orbitals,W,m, comm)
+                    U=np.copy(orbitals[m])
+                    MOVEDATA.callCopyVectorToDevice(U)
+#                     MOVEDATA.callCopyVectorToDevice(orbitals)
+                    ORTH.callOrthogonalization(orbitals, U, W, m, GPUpresent)
+                    MOVEDATA.callCopyVectorFromDevice(U)
+                    orthWavefunction=np.copy(U)
+#                     orbitals[m]=np.copy(U)
+#                     MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        
+#                     orthWavefunction = mgs(orbitals,W,m, comm)
                     end=time.time()
-                    rprint(rank,"Orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
+                    rprint(rank,"New orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
+                    
+                    
                     orbitals[m,:] = np.copy(orthWavefunction)
 
         

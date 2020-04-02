@@ -40,7 +40,7 @@ except NameError:
 def callOrthogonalization(wavefunctions, target, W, targetWavefunction, gpuPresent):
 
     numWavefunctions,numPoints = np.shape(wavefunctions)
-    print("numWavefunctions,numPoints = ", numWavefunctions,numPoints)
+#     print("numWavefunctions,numPoints = ", numWavefunctions,numPoints)
     c_double_p = ctypes.POINTER(ctypes.c_double)    # standard pointer to array of doubles
 #     c_double_pp = ctypes.POINTER(ctypes.c_double)   # double pointer (for 2D arrays of doubles)
     
@@ -60,7 +60,7 @@ def callOrthogonalization(wavefunctions, target, W, targetWavefunction, gpuPrese
     
     
     
-    print("Wrapper is now calling modifiedGramSchmidt_singleWavefunction.")
+#     print("Wrapper is now calling modifiedGramSchmidt_singleWavefunction.")
     if gpuPresent==False:
         _cpu_orthogonalizationRoutines.modifiedGramSchmidt_singleWavefunction(wavefunctions_p, target_p, W_p, targetWavefunction, numPoints, numWavefunctions ) 
     elif gpuPresent==True:

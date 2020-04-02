@@ -26,18 +26,18 @@ void modifiedGramSchmidt_singleWavefunction(double *V, double *U, double *W, int
     double *r_local = malloc((targetWavefunction) * sizeof(double));  // r[j] stores the inner product between the target and jth wavefunctions.
     double *r_global = malloc((targetWavefunction) * sizeof(double));  // r[j] stores the inner product between the target and jth wavefunctions.
 
-    printf("Made it here0.\n");
+//    printf("Made it here0.\n");
 
 //#ifdef OPENACC_ENABLED
 //    #pragma acc enter data copyin(U[0:numPoints])
 //#endif
 
-    for (int j=0;j<numPoints;j++){
-        for (int i=0;i<numWavefunctions;i++){
-            printf("% 5f\t",V[i*numPoints+j]);
-        }
-        printf("\n");
-    }
+//    for (int j=0;j<numPoints;j++){
+//        for (int i=0;i<numWavefunctions;i++){
+//            printf("% 5f\t",V[i*numPoints+j]);
+//        }
+//        printf("\n");
+//    }
 //    copyMatrixToDevice(V,numPoints,numWavefunctions);
 
 #ifdef OPENACC_ENABLED
@@ -79,7 +79,7 @@ void modifiedGramSchmidt_singleWavefunction(double *V, double *U, double *W, int
 #endif
 
 
-    printf("Made it here1.\n");
+//    printf("Made it here1.\n");
 
     // Step 2:  Global reduction with MPI
     MPI_Allreduce(r_local, r_global, targetWavefunction, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
@@ -125,7 +125,7 @@ void modifiedGramSchmidt_singleWavefunction(double *V, double *U, double *W, int
 #ifdef OPENACC_ENABLED
     } //end ACC kernels
 #endif
-    printf("Made it here2.\n");
+//    printf("Made it here2.\n");
     double global_norm_squared;
     MPI_Allreduce(&local_norm_squared, &global_norm_squared, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 //    printf("Global norm squared = %f\n", sqrt(global_norm_squared));
@@ -147,7 +147,7 @@ void modifiedGramSchmidt_singleWavefunction(double *V, double *U, double *W, int
 #ifdef OPENACC_ENABLED
     } //end ACC kernels
 #endif
-    printf("Made it here3.\n");
+//    printf("Made it here3.\n");
 
 //#ifdef OPENACC_ENABLED
 ////#pragma acc data copyin(W) copy(V) create(r_local,r_global)
@@ -163,7 +163,7 @@ void modifiedGramSchmidt_singleWavefunction(double *V, double *U, double *W, int
 //    MPI_Barrier(MPI_COMM_WORLD);
     free(r_global);
     free(r_local);
-    printf("Freed r and returning.\n");
+//    printf("Freed r and returning.\n");
 //    fflush(stdout);
 //    MPI_Barrier(MPI_COMM_WORLD);
 

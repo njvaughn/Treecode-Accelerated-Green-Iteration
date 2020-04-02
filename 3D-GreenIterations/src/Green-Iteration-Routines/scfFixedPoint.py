@@ -19,9 +19,10 @@ from meshUtilities import interpolateBetweenTwoMeshes
 import interpolation_wrapper
 from fermiDiracDistribution import computeOccupations
 import densityMixingSchemes as densityMixing
-import treecodeWrappers_distributed as treecodeWrappers
+import BaryTreeInterface as BT
 from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
+import moveData_wrapper as MOVEDATA
 
 
 
@@ -146,13 +147,22 @@ def scfFixedPointClosure(scf_args):
         rprint(rank,'\nSCF Count ', SCFcount)
         rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies'])
 #         TwoMeshStart=1
+
+        if ( (len(X)!=len(Xf)) and (SCFcount>TwoMeshStart)  ):
+            twoMesh=True
+        else:
+            twoMesh=False
+            
+            
         SCFindex = SCFcount
         if SCFcount>TwoMeshStart:
             SCFindex = SCFcount - TwoMeshStart
             
         if SCFcount==1:
             ## For the greedy approach, let the density start as the sum of wavefunctions.
+            MOVEDATA.callRemoveVectorFromDevice(orbitals)
             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
+            MOVEDATA.callCopyVectorToDevice(orbitals)
             fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
             eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
             rprint(rank,'Fermi energy: %f'%eF)
@@ -274,6 +284,7 @@ def scfFixedPointClosure(scf_args):
                     print("What should regularize be in SCF?")
                     exit(-1)
             elif singularityHandling=='subtraction':
+                
                 if regularize==False:                    
                     rprint(rank,"Using singularity subtraction in Hartree solve.")
                     kernelName = "coulomb"
@@ -294,17 +305,68 @@ def scfFixedPointClosure(scf_args):
 #             print("Rank %i calling treecode through wrapper..." %(rank))
             
             treecode_verbosity=0
+            
+            if twoMesh:  # idea: only turn on the two mesh if beyond 4 SCF iterations
+                numSources = len(Xf)
+                sourceX=Xf
+                sourceY=Yf
+                sourceZ=Zf
+                sourceRHO=RHOf
+                sourceW=Wf
+            else: 
+                numSources = len(X)
+                sourceX=X
+                sourceY=Y
+                sourceZ=Z
+                sourceRHO=RHO
+                sourceW=W
+                
 #             singularityHandling="skipping"
 #             print("Forcing the Hartree solve to use singularity skipping.")
 
-            rprint(rank,"Performing Hartree solve on %i mesh points" %(len(Xf)))
-            rprint(rank,"Coarse order ", order)
-            rprint(rank,"Fine order   ", fine_order)
-            V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(Xf), 
-                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-                                                           np.copy(Xf), np.copy(Yf), np.copy(Zf), np.copy(RHOf), np.copy(Wf),
-                                                           kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName,
-                                                           treecodeOrder, theta, maxParNode, batchSize, GPUpresent, treecode_verbosity)
+            rprint(rank,"Performing Hartree solve on %i mesh points" %numSources)
+#             rprint(rank,"Coarse order ", order)
+#             rprint(rank,"Fine order   ", fine_order)
+#             approximation = BT.Approximation.LAGRANGE
+#             singularity   = BT.Singularity.SUBTRACTION
+#             computeType   = BT.ComputeType.PARTICLE_CLUSTER
+#             
+            kernel = BT.Kernel.COULOMB
+            if singularityHandling=="subtraction":
+                singularity=BT.Singularity.SUBTRACTION
+            elif singularityHandling=="skipping":
+                singularity=BT.Singularity.SKIPPING
+            else:
+                print("What should singularityHandling be?")
+                exit(-1)
+            
+            if approximationName=="lagrange":
+                approximation=BT.Approximation.LAGRANGE
+            elif approximationName=="hermite":
+                approximation=BT.Approximation.HERMITE
+            else:
+                print("What should approximationName be?")
+                exit(-1)
+            
+            computeType=BT.ComputeType.PARTICLE_CLUSTER
+                
+    
+    
+            V_hartreeNew = BT.callTreedriver(  
+                                                nPoints, numSources, 
+                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+                                                np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
+                                                kernel, numberOfKernelParameters, kernelParameters, 
+                                                singularity, approximation, computeType,
+                                                treecodeOrder, theta, maxParNode, batchSize,
+                                                GPUpresent, treecode_verbosity, sizeCheck=1.0
+                                                )
+            
+#             input()
+            
+            
+#                                                            singularity, approximation,
+#                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, treecode_verbosity)
             
 #             V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(Xf), 
 #                                                            X, Y, Z, RHO, 
@@ -386,8 +448,9 @@ def scfFixedPointClosure(scf_args):
         
         
         ## Sort by eigenvalue
+        MOVEDATA.callRemoveVectorFromDevice(orbitals)
         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-           
+        MOVEDATA.callCopyVectorToDevice(orbitals) 
         
         ## Solve the eigenvalue problem
         if SCFcount>1:
@@ -662,7 +725,12 @@ def scfFixedPointClosure(scf_args):
         
         ## Sort by eigenvalue
         
+#         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
+        
+        MOVEDATA.callRemoveVectorFromDevice(orbitals)
         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
+        MOVEDATA.callCopyVectorToDevice(orbitals)
+            
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
         eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)

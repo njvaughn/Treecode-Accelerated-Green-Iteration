@@ -111,7 +111,7 @@ def callCopyFromDevice(X,Y,Z,W,wavefunctions):
 
 def callRemoveVectorFromDevice(U):
 
-    numPoints = len(U)
+    numPoints = np.size(U)
     U_p = U.ctypes.data_as(c_double_p)
     moveDataRoutines.removeVectorFromDevice(U_p, numPoints)
     
@@ -127,7 +127,7 @@ def callRemoveMatrixFromDevice(wavefunctions):
 
 def callCopyVectorToDevice(U):
 
-    numPoints = len(U)
+    numPoints = np.size(U)
     U_p = U.ctypes.data_as(c_double_p)
     moveDataRoutines.copyVectorToDevice(U_p, numPoints)
     
@@ -135,7 +135,7 @@ def callCopyVectorToDevice(U):
 
 def callCopyVectorFromDevice(U):
 
-    numPoints = len(U)
+    numPoints = np.size(U)
     U_p = U.ctypes.data_as(c_double_p)
     moveDataRoutines.copyVectorFromDevice(U_p, numPoints)
     
