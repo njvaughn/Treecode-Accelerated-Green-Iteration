@@ -1,5 +1,5 @@
 ../src/molecularConfigurations/C20.csv
-../src/molecularConfigurations/C20ReferenceEigenvaluesPSP.csv
+../src/molecularConfigurations/C20FirstSCFReferenceEigenvaluesPSP.csv
 /home/njvaughn/results_Be/results.csv
 -4.0238183660650691e+01 # band
  0.0
@@ -8,3 +8,4 @@
 0.0                 
 -1.1283379210482792e+02 # total energy
 
+  

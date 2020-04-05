@@ -197,7 +197,11 @@ def clenshawCurtisNormClosure(W):
 
 def initializeOrbitalsRandomly(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z):
     print("INITIALIZING ORBITALS RANDOMLY")
-    orbitals = np.random.rand(len(X),nOrbitals)
+#     orbitals = np.zeros(nOrbitals,len(X))
+    R2=X*X+Y*Y+Z*Z
+    R = np.sqrt(R2)
+    for m in range(nOrbitals):
+        orbitals[m,:] = np.exp(-R)*np.sin(m*R)
     return orbitals
 
     
@@ -880,6 +884,8 @@ if __name__ == "__main__":
     elif coreRepresentation=="Pseudopotential":
         orbitals,initialOccupations,initialEnergies = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z,W)
 #         orbitals = initializeOrbitalsRandomly(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
+#         initialOccupations=2*np.ones(nOrbitals)
+#         initialEnergies=-1*np.ones(nOrbitals)
     print("Max of first wavefunction: ", np.max(np.abs(orbitals[0,:])))
 #     print('nOrbitals: ', nOrbitals)
     comm.barrier()

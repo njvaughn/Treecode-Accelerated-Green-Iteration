@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/comet-testing-%j.%N.out"
+#SBATCH --output="dataFiles/final-tight-history-10-%j.%N.out"
 #SBATCH --partition=gpu
 #SBATCH --nodes=2
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:p100:4
 #SBATCH --mem=100GB 
-#SBATCH -t 24:00:00
+#SBATCH -t 48:00:00
 #SBATCH --no-requeue
 #SBATCH -A mia320
 #SBATCH --constraint=exclusive
@@ -45,8 +45,6 @@ GRADIENTFREE='True'
 SYMMETRICITERATION='False'
  
 TREECODE='True'      
-MAXPARNODE=4000
-BATCHSIZE=4000   
  
  
 GAUGESHIFT=-0.5
@@ -60,24 +58,24 @@ ADDITIONALDEPTHATATOMS=0
 GRADIENTFREE='True' 
 
 MIXINGPARAMETER=0.5
-MIXINGHISTORY=5  
+MIXINGHISTORY=10  
      
-INITIAL_GI_TOLERANCE=5e-3
-FINAL_GI_TOLERANCE=1e-6
-GRADUALSTEPS=8
-SCF_TOLERANCE=1e-5
+INITIAL_GI_TOLERANCE=3e-2 
+FINAL_GI_TOLERANCE=3e-5
+GRADUALSTEPS=10
+SCF_TOLERANCE=3e-5
      
 
 
 
-APPROXIMATIONNAME=lagrange
+APPROXIMATIONNAME=hermite
 SINGULARITYHANDLING=subtraction
 
 REGULARIZE='False'
 EPSILON=0.0
-  
+   
 GAUSSIANALPHA=2.0 
-TREECODEORDER=7
+TREECODEORDER=4
 THETA=0.8
 
 CELLORDER=4
@@ -94,12 +92,12 @@ MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
   
-TWOMESHSTART=4
+TWOMESHSTART=444
 #GIFORM="Simultaneous"
 GIFORM="Sequential"
 #GIFORM="Greedy" 
 
-for MESHPARAM4 in -2
+for MESHPARAM4 in 0
 do                                                         
     for BATCHSIZE in 2000
     do          
@@ -107,7 +105,7 @@ do
         do  
 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/treecode_params/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/C20_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/final_tight_history_10_C20_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/orth/C20-GI_form_${GIFORM}.csv" 
          
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/carbon/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
@@ -125,6 +123,6 @@ do
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
                                                 $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
                                                 $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART $GIFORM
-        done 
+        done  
     done      
 done

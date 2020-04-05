@@ -155,6 +155,84 @@ def loadBalance_manual(x,y,z):
             bounds=[xmidR, xmax, ymin, ymid, zmid, zmax] # 12/01/12
         elif rank==15:
             bounds=[xmidR, xmax, ymid, ymax, zmid, zmax] # 12/12/12
+            
+    elif size==32:
+        
+        fraction=4
+        xmid = (xmax+xmin)/2
+        xmidL = (xmin+fraction*xmid)/(fraction+1)
+        xmidR = (xmax+fraction*xmid)/(fraction+1)
+        ymid = (ymax+ymin)/2
+        ymidL = (ymin+fraction*ymid)/(fraction+1)
+        ymidR = (ymax+fraction*ymid)/(fraction+1)
+        zmid = (zmax+zmin)/2
+        if rank==0:
+            bounds=[xmin, xmidL, ymin, ymidL, zmin, zmid] # 01/01/01
+        elif rank==1:
+            bounds=[xmin, xmidL, ymidL, ymid, zmin, zmid] # 01/12/01
+        elif rank==2:
+            bounds=[xmidL, xmid, ymin, ymidL, zmin, zmid] # 12/01/01
+        elif rank==3:
+            bounds=[xmidL, xmid, ymidL, ymid, zmin, zmid] # 12/12/01
+        elif rank==4:
+            bounds=[xmin, xmidL, ymin, ymidL, zmid, zmax] # 01/01/12
+        elif rank==5:
+            bounds=[xmin, xmidL, ymidL, ymid, zmid, zmax] # 01/12/12
+        elif rank==6:
+            bounds=[xmidL, xmid, ymin, ymidL, zmid, zmax] # 12/01/12
+        elif rank==7:
+            bounds=[xmidL, xmid, ymidL, ymid, zmid, zmax] # 12/12/12
+        
+        elif rank==8:
+            bounds=[xmid, xmidR, ymin, ymidL, zmin, zmid] # 01/01/01
+        elif rank==9:
+            bounds=[xmid, xmidR, ymidL, ymid, zmin, zmid] # 01/12/01
+        elif rank==10:
+            bounds=[xmidR, xmax, ymin, ymidL, zmin, zmid] # 12/01/01
+        elif rank==11:
+            bounds=[xmidR, xmax, ymidL, ymid, zmin, zmid] # 12/12/01
+        elif rank==12:
+            bounds=[xmid, xmidR, ymin, ymidL, zmid, zmax] # 01/01/12
+        elif rank==13:
+            bounds=[xmid, xmidR, ymidL, ymid, zmid, zmax] # 01/12/12
+        elif rank==14:
+            bounds=[xmidR, xmax, ymin, ymidL, zmid, zmax] # 12/01/12
+        elif rank==15:
+            bounds=[xmidR, xmax, ymidL, ymid, zmid, zmax] # 12/12/12
+        
+        elif rank==16:
+            bounds=[xmin, xmidL, ymid, ymidR, zmin, zmid] # 01/01/01
+        elif rank==17:
+            bounds=[xmin, xmidL, ymidR, ymax, zmin, zmid] # 01/12/01
+        elif rank==18:
+            bounds=[xmidL, xmid, ymid, ymidR, zmin, zmid] # 12/01/01
+        elif rank==19:
+            bounds=[xmidL, xmid, ymidR, ymax, zmin, zmid] # 12/12/01
+        elif rank==20:
+            bounds=[xmin, xmidL, ymid, ymidR, zmid, zmax] # 01/01/12
+        elif rank==21:
+            bounds=[xmin, xmidL, ymidR, ymax, zmid, zmax] # 01/12/12
+        elif rank==22:
+            bounds=[xmidL, xmid, ymid, ymidR, zmid, zmax] # 12/01/12
+        elif rank==23:
+            bounds=[xmidL, xmid, ymidR, ymax, zmid, zmax] # 12/12/12
+        
+        elif rank==24:
+            bounds=[xmid, xmidR, ymid, ymidR, zmin, zmid] # 01/01/01
+        elif rank==25:
+            bounds=[xmid, xmidR, ymidR, ymax, zmin, zmid] # 01/12/01
+        elif rank==26:
+            bounds=[xmidR, xmax, ymid, ymidR, zmin, zmid] # 12/01/01
+        elif rank==27:
+            bounds=[xmidR, xmax, ymidR, ymax, zmin, zmid] # 12/12/01
+        elif rank==28:
+            bounds=[xmid, xmidR, ymid, ymidR, zmid, zmax] # 01/01/12
+        elif rank==29:
+            bounds=[xmid, xmidR, ymidR, ymax, zmid, zmax] # 01/12/12
+        elif rank==30:
+            bounds=[xmidR, xmax, ymid, ymidR, zmid, zmax] # 12/01/12
+        elif rank==31:
+            bounds=[xmidR, xmax, ymidR, ymax, zmid, zmax] # 12/12/12
     
     else:
         print("Not set up for domain decomosition of size %i" %size)
