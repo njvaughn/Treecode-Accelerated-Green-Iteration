@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/final-tight-history-10-%j.%N.out"
+#SBATCH --output="dataFiles/ten_steps_delay_7_ones_reset-10-%j.%N.out"
 #SBATCH --partition=gpu
 #SBATCH --nodes=2
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:p100:4
 #SBATCH --mem=100GB 
-#SBATCH -t 48:00:00
+#SBATCH -t 24:00:00
 #SBATCH --no-requeue
 #SBATCH -A mia320
 #SBATCH --constraint=exclusive
@@ -61,7 +61,7 @@ MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
      
 INITIAL_GI_TOLERANCE=3e-2 
-FINAL_GI_TOLERANCE=3e-5
+FINAL_GI_TOLERANCE=1e-5
 GRADUALSTEPS=10
 SCF_TOLERANCE=3e-5
      
@@ -92,20 +92,20 @@ MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
   
-TWOMESHSTART=444
+TWOMESHSTART=7
 #GIFORM="Simultaneous"
 GIFORM="Sequential"
 #GIFORM="Greedy" 
 
-for MESHPARAM4 in 0
+for MESHPARAM4 in -2 
 do                                                         
     for BATCHSIZE in 2000
     do          
         for MAXPARNODE in 2000
         do  
 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/treecode_params/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/final_tight_history_10_C20_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+        #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/debug/ten_steps_delay_7_ones_eig_guess_twoMesh_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/tenGradualSteps_twoMeshDelay7_C20_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/orth/C20-GI_form_${GIFORM}.csv" 
          
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/carbon/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 

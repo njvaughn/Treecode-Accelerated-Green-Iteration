@@ -442,8 +442,11 @@ def scfFixedPointClosure(scf_args):
         
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
+            ## WHY WAS THIS HERE?  I AM ALREADY PROVIDING INITIAL GUESS FOR EIGENVALUES BASED ON THEIR QUANTUM NUMBERS.  COMMENTING OUT.
             for m in range(nOrbitals):
                 Energies['orbitalEnergies'][m]=-1.0
+                
+                
 # #             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
 # #             for m in range(nOrbitals):
 # #                 if Energies['orbitalEnergies'][m] > 0:

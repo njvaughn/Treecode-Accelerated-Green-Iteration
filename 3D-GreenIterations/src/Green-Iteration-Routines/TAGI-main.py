@@ -872,7 +872,7 @@ if __name__ == "__main__":
 #     print("AFTER BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
 # #     exit(-1)
     
-    eigenvalues = -2*np.ones(nOrbitals)
+#     eigenvalues = -2*np.ones(nOrbitals)
     RHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
     densityIntegral = global_dot( RHO, W, comm)
     rprint(rank,"Initial density integrates to ", densityIntegral)
