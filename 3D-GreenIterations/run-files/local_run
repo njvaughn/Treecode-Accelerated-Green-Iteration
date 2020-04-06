@@ -15,12 +15,12 @@ SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 
 
 COREREPRESENTATION="Pseudopotential"
-INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
 
 
 #INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
-#INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/carbonAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
@@ -49,9 +49,9 @@ ADDITIONALDEPTHATATOMS=0
 GRADIENTFREE='True' 
 
 MIXINGPARAMETER=0.5
-MIXINGHISTORY=10  
+MIXINGHISTORY=4  
   
-INITIAL_GI_TOLERANCE=3e-1
+INITIAL_GI_TOLERANCE=3e-5
 FINAL_GI_TOLERANCE=3e-7
 GRADUALSTEPS=4
 SCF_TOLERANCE=2e-6
@@ -81,7 +81,7 @@ MESHPARAM1=0.5 # near field spacing
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
-MESHPARAM4=-2
+MESHPARAM4=0
 TWOMESHSTART=4
 
   

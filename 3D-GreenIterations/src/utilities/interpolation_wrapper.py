@@ -6,12 +6,15 @@ from mpiUtilities import rprint
 
 
 try: 
-    _cpu_interpolationRoutines = ctypes.CDLL('libInterpolation_gpu.so')
-#     _cpu_interpolationRoutines = ctypes.CDLL('libInterpolation_gpu.so')
+    _cpu_interpolationRoutines = ctypes.CDLL('libInterpolation_cpu.so')
 except OSError as e:
     print(e)
     exit(-1)
-#         _cpu_interpolationRoutines = ctypes.CDLL('libInterpolation.dylib')
+try: 
+    _gpu_interpolationRoutines = ctypes.CDLL('libInterpolation_gpu.so')
+except OSError as e:
+    print(e)
+    exit(-1)
         
 
         
@@ -24,6 +27,14 @@ try:
             ctypes.c_int,  ctypes.c_int ) 
 except NameError:
     print("Could not set argtypes of _cpu_interpolationRoutines")
+    
+try:
+    _gpu_interpolationRoutines.InterpolateBetweenTwoMeshes.argtypes = ( 
+            ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_int), ctypes.c_int,
+            ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_int), ctypes.c_int,
+            ctypes.c_int,  ctypes.c_int ) 
+except NameError:
+    print("Could not set argtypes of _gpu_interpolationRoutines")
 
 print('_treecodeRoutines set.')
 
@@ -31,7 +42,7 @@ print('_treecodeRoutines set.')
 
 
 def callInterpolator(coarseX, coarseY, coarseZ, coarseF, pointsPerCoarseCell,
-                    fineX, fineY, fineZ, pointsPerFineCell, numberOfCells, order):
+                    fineX, fineY, fineZ, pointsPerFineCell, numberOfCells, order,gpuPresent):
         
     '''
     python function which creates pointers to the arrays and calls the compiled C interpolation routines.
@@ -62,7 +73,15 @@ def callInterpolator(coarseX, coarseY, coarseZ, coarseF, pointsPerCoarseCell,
     fineF_p =  fineF.ctypes.data_as(c_double_p)
     pointsPerFineCell_p = pointsPerFineCell.ctypes.data_as(c_int_p)
 
-    _cpu_interpolationRoutines.InterpolateBetweenTwoMeshes(
+
+    if gpuPresent==False:
+        _cpu_interpolationRoutines.InterpolateBetweenTwoMeshes(
+                                                 coarseX_p, coarseY_p, coarseZ_p, coarseF_p, pointsPerCoarseCell_p, ctypes.c_int(len(coarseX)),
+                                                 fineX_p,   fineY_p,   fineZ_p,   fineF_p,   pointsPerFineCell_p,   ctypes.c_int(len(fineX)),
+                                                 ctypes.c_int(numberOfCells), 
+                                                 ctypes.c_int(order) ) 
+    elif gpuPresent==True:
+        _gpu_interpolationRoutines.InterpolateBetweenTwoMeshes(
                                                  coarseX_p, coarseY_p, coarseZ_p, coarseF_p, pointsPerCoarseCell_p, ctypes.c_int(len(coarseX)),
                                                  fineX_p,   fineY_p,   fineZ_p,   fineF_p,   pointsPerFineCell_p,   ctypes.c_int(len(fineX)),
                                                  ctypes.c_int(numberOfCells), 

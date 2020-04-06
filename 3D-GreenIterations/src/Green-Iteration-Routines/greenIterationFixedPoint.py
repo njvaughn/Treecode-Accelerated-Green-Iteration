@@ -12,12 +12,16 @@ size = comm.Get_size()
 
 from mpiUtilities import global_dot, rprint
 from meshUtilities import interpolateBetweenTwoMeshes
-try:
-    import treecodeWrappers_distributed as treecodeWrappers
-except ImportError:
-    print('Unable to import treecodeWrapper due to ImportError')
-except OSError:
-    print('Unable to import treecodeWrapper due to OSError')
+import BaryTreeInterface as BT
+import orthogonalization_wrapper as ORTH
+import moveData_wrapper as MOVEDATA
+
+# try:
+#     import treecodeWrappers_distributed as treecodeWrappers
+# except ImportError:
+#     print('Unable to import treecodeWrapper due to ImportError')
+# except OSError:
+#     print('Unable to import treecodeWrapper due to OSError')
     
 from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
 from orthogonalizationRoutines import mask
@@ -70,6 +74,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         SCFcount = gi_args['SCFcount']
         greenIterationsCount = gi_args['greenIterationsCount']
         residuals = gi_args['residuals']
+        eigenvalueResiduals = gi_args['eigenvalueResiduals']
         greenIterationOutFile = gi_args['greenIterationOutFile']
         referenceEigenvalues = gi_args['referenceEigenvalues']
         updateEigenvalue = gi_args['updateEigenvalue']
@@ -81,6 +86,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         regularize=gi_args['regularize']
         epsilon=gi_args["epsilon"]
         TwoMeshStart=gi_args["TwoMeshStart"]
+        singleWavefunctionOrthogonalization=gi_args["singleWavefunctionOrthogonalization"]
         
         order=coarse_order
 
@@ -117,7 +123,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             numberOfCells=len(pointsPerCell_coarse)
             interpolatedInputWavefunction = interpolation_wrapper.callInterpolator(X,  Y,  Z,  orbitals[m,:], pointsPerCell_coarse,
                                                            Xf, Yf, Zf, pointsPerCell_fine, 
-                                                           numberOfCells, order)
+                                                           numberOfCells, order, GPUpresent)
             
 #             ## Want to use interpolated Vlocal???
              
@@ -132,7 +138,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                                                             Xf, Yf, Zf, pointsPerCell_fine)             # step 2 
             Veff_local_fine = interpolation_wrapper.callInterpolator(X,  Y,  Z,  Veff_local, pointsPerCell_coarse,
                                                            Xf, Yf, Zf, pointsPerCell_fine, 
-                                                           numberOfCells, order)
+                                                           numberOfCells, order, GPUpresent)
               
             Veff_local_fine += Vext_local_fine                                                          # step 3
             Veff_local += Vext_local                                                                    # step 4
@@ -192,7 +198,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             if twoMesh: f_fine = -2* ( interpolatedInputWavefunction*Veff_local_fine + V_nl_psi_fine )
             f_coarse = -2* ( orbitals[m,:]*Veff_local + V_nl_psi_coarse )
             end=time.time()
-            if verbosity>0: rprint(rank,"Constructing f with nonlocal routines took %f seconds." %(end-start))
+#             if verbosity>0: rprint(rank,"Constructing f with nonlocal routines took %f seconds." %(end-start))
         else:
             print("coreRepresentation not set to allowed value. Exiting from greenIterationFixedPoint.")
             return
@@ -214,14 +220,14 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
             startTime=time.time()
 #             singularityHandling="skipping"
-            if verbosity>0: rprint(rank,"singularityHandling = ", singularityHandling)
+#             if verbosity>0: rprint(rank,"singularityHandling = ", singularityHandling)
             if regularize==False:
 #                 if verbosity>0: rprint(rank,"Using singularity subtraction kernel in Green Iteration.")
                 kernelName = "yukawa"
                 numberOfKernelParameters=1
                 kernelParameters=np.array([k])
             elif regularize==True:
-                if verbosity>0: rprint(rank,"Using regularized yukawa for Green Iteration with epsilon = ", epsilon)
+#                 if verbosity>0: rprint(rank,"Using regularized yukawa for Green Iteration with epsilon = ", epsilon)
                 kernelName="regularized-yukawa"
                 numberOfKernelParameters=2
                 kernelParameters=np.array([k, epsilon])
@@ -231,9 +237,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 
             
 #             kappa = k
-            startTime = time.time()
-            comm.barrier()
+            
             treecode_verbosity=0
+            
+            
             
             if twoMesh:  # idea: only turn on the two mesh if beyond 4 SCF iterations
                 numSources = len(Xf)
@@ -249,16 +256,41 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 sourceZ=Z
                 sourceF=f_coarse
                 sourceW=W
-            psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
-                                                           np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
-                                                           np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
-                                                           kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,treecode_verbosity)
-
-#             psiNew = treecodeWrappers.callTreedriver(nPoints, numSources, 
-#                                                            X, Y, Z, f_coarse, 
-#                                                            sourceX, sourceY, sourceZ, sourceF, sourceW,
-#                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, treecodeOrder, theta, maxParNode, batchSize, GPUpresent,treecode_verbosity)
-
+            
+            
+#             for batchSize in [1000, 2000, 4000, 8000, 16000]:
+#                 for maxParNode in [1000, 2000, 4000, 8000, 16000]:
+            kernel = BT.Kernel.YUKAWA
+            if singularityHandling=="subtraction":
+                singularity=BT.Singularity.SUBTRACTION
+            elif singularityHandling=="skipping":
+                singularity=BT.Singularity.SKIPPING
+            else:
+                print("What should singularityHandling be?")
+                exit(-1)
+            
+            if approximationName=="lagrange":
+                approximation=BT.Approximation.LAGRANGE
+            elif approximationName=="hermite":
+                approximation=BT.Approximation.HERMITE
+            else:
+                print("What should approximationName be?")
+                exit(-1)
+            
+            computeType=BT.ComputeType.PARTICLE_CLUSTER
+            
+              
+            comm.barrier()
+            startTime = time.time()
+            psiNew = BT.callTreedriver(
+                                        nPoints, numSources, 
+                                        np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
+                                        np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
+                                        kernel, numberOfKernelParameters, kernelParameters, 
+                                        singularity, approximation, computeType,
+                                        treecodeOrder, theta, maxParNode, batchSize,
+                                        GPUpresent, treecode_verbosity, sizeCheck=1.0
+                                        )
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)
             if singularityHandling=="subtraction": psiNew /= (4*np.pi)
@@ -266,7 +298,12 @@ def greensIteration_FixedPoint_Closure(gi_args):
 
             comm.barrier()
             convolutionTime = time.time()-startTime
-            if verbosity>0: rprint(rank,'Using asymmetric singularity subtraction.  Convolution time: ', convolutionTime)
+            if verbosity>0: rprint(rank,'Convolution time: ', convolutionTime)
+            Times['timePerConvolution'] = convolutionTime
+            if verbosity>0: rprint(rank,"Batch size %i, cluster size %i, time per convolution %f" %(batchSize,maxParNode,convolutionTime))
+            
+#             rprint(rank,"Exiting because only interested in time per convolution.")
+#             exit(-1)
 
         else:
             print('Exiting because energy too close to 0')
@@ -343,11 +380,28 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 
         
                 n,M = np.shape(orbitals) 
-                start=time.time()
-                orthWavefunction = mgs(orbitals,W,m, comm)
-                end=time.time()
-                rprint(rank,"Orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
-                orbitals[m,:] = np.copy(orthWavefunction)
+                if singleWavefunctionOrthogonalization==True:
+#                     start=time.time()
+#                     orthWavefunction = mgs(orbitals,W,m, comm)
+#                     end=time.time()
+#                     rprint(rank,"Original orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
+#                     
+                    start=time.time()
+                    U=np.copy(orbitals[m])
+                    MOVEDATA.callCopyVectorToDevice(U)
+#                     MOVEDATA.callCopyVectorToDevice(orbitals)
+                    ORTH.callOrthogonalization(orbitals, U, W, m, GPUpresent)
+                    MOVEDATA.callCopyVectorFromDevice(U)
+                    orthWavefunction=np.copy(U)
+#                     orbitals[m]=np.copy(U)
+#                     MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        
+#                     orthWavefunction = mgs(orbitals,W,m, comm)
+                    end=time.time()
+                    rprint(rank,"New orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
+                    
+                    
+                    orbitals[m,:] = np.copy(orthWavefunction)
 
         
                 if greenIterationsCount==1:
@@ -391,9 +445,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - np.random.randint(10)
             rand = np.random.rand(1)
 #             Energies['orbitalEnergies'][m] = -2
-            Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 3*rand
+#             Energies['orbitalEnergies'][m] = Energies['gaugeShift'] - 3*rand
+            Energies['orbitalEnergies'][m] = Energies['gaugeShift']
 #             if verbosity>0: rprint(rank,'Energy eigenvalue was positive, setting to  ',-2 )
-            if verbosity>0: rprint(rank,'Energy eigenvalue was positive, setting to gauge shift - ',( 3*rand) )
+#             if verbosity>0: rprint(rank,'Energy eigenvalue was positive, setting to gauge shift - ',( 3*rand) )
+            if verbosity>0: rprint(rank,'Energy eigenvalue was positive, setting to gauge shift' )
             
             # use whatever random shift the root computed.
             Energies['orbitalEnergies'][m] = comm.bcast(Energies['orbitalEnergies'][m], root=0)
@@ -435,6 +491,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         if rank==0:
             residuals[m] = normDiff
         orbitalResidual = np.copy(normDiff)
+        
+        eigenvalueResiduals[m]=eigenvalueDiff
         
         
     
@@ -486,6 +544,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         gi_args['eigenvalueDiff']=eigenvalueDiff
         gi_args['eigenvalueHistory']=eigenvalueHistory
         gi_args['eigenvalueDiff'] = np.abs(deltaE)
+        
+        gi_args['eigenvalueResiduals']=eigenvalueResiduals
         
         
         

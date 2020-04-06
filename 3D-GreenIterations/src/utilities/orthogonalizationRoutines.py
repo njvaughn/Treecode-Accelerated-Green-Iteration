@@ -7,16 +7,16 @@ import time
 from mpiUtilities import global_dot
 
 # @jit(parallel=True)
-def modifiedGramSchrmidt(V,weights):
-    n,k = np.shape(V)
+def modifiedGramSchmidt(V, weights, comm):
+    k,n = np.shape(V)
     U = np.zeros_like(V)
-    U[:,0] = V[:,0] / np.dot(V[:,0],V[:,0]*weights)
+    U[0,:] = V[0,:] / np.sqrt( global_dot(V[0,:],V[0,:]*weights, comm) )
     for i in range(1,k):
-        U[:,i] = V[:,i]
+        U[i,:] = V[i,:]
         for j in range(i):
-#             print('Orthogonalizing %i against %i' %(i,j))
-            U[:,i] -= (np.dot(U[:,i],U[:,j]*weights) / np.dot(U[:,j],U[:,j]*weights))*U[:,j]
-        U[:,i] /= np.dot(U[:,i],U[:,i]*weights)
+#             rprint(rank,'Orthogonalizing %i against %i' %(i,j))
+            U[i,:] -= (global_dot(U[i,:],U[j,:]*weights, comm) / global_dot(U[j,:],U[j,:]*weights, comm))*U[j,:]
+        U[i,:] /= np.sqrt( global_dot(U[i,:],U[i,:]*weights, comm) )
         
     return U
 
@@ -48,8 +48,8 @@ def modifiedGramSchmidt_singleOrbital_transpose(V,weights,targetOrbital, comm):
 #         U -= np.dot(VT[targetOrbital,:],VT[j,:]*weights) *VT[j,:]
 #         U /= np.sqrt( np.dot(U,U*weights) )
         
-        U -= global_dot(V[targetOrbital,:],V[j,:]*weights, comm) *V[j,:]
-        U /= np.sqrt( global_dot(U,U*weights, comm) )
+        U -= global_dot(V[targetOrbital,:],V[j,:]*weights, comm)/np.sqrt( global_dot(U,U*weights, comm) ) *V[j,:]
+#         U /= np.sqrt( global_dot(U,U*weights, comm) )
     
 #     U /= np.sqrt( np.dot(U,U*weights) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)
     U /= np.sqrt( global_dot(U,U*weights, comm) )  # normalize again at end (safegaurd for the zeroth orbital, which doesn't enter the above loop)
@@ -151,8 +151,8 @@ def normalizeOrbitals(V,weights):
     
     return U
 
-
-
+ 
+ 
 def eigenvalueNorm(psi):
     norm = np.sqrt( psi[-1]**2 )
     return norm
@@ -190,7 +190,7 @@ def mask(psi,x,y,z,domainSize, tau=1/16):  # a mask that damps the wavefunctions
 
 
 
-def testOrthogonalization():
+def testOrthogonalization(N,M):
     from mpi4py import MPI
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
@@ -198,41 +198,53 @@ def testOrthogonalization():
     from mpiUtilities import global_dot, rprint
     
     
-    N = int(1e6)
+#     N = int(1e6)
     weights=np.ones(N)
-    M = 2
+#     M = 2
     targetOrbital=M-1
-    V = np.random.rand(N,M)
-    VT = np.transpose(V)
-    out  = modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, comm)
-    outT = modifiedGramSchmidt_singleOrbital_transpose(VT,weights,targetOrbital, comm)
+    V = np.random.rand(M,N)
+#     VT = np.transpose(V)
+#     out  = modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, comm)
+#     outT = modifiedGramSchmidt_singleOrbital_transpose(VT,weights,targetOrbital, comm)
     
-    print(np.max(np.abs(out-outT)))
+#     print(np.max(np.abs(out-outT)))
     
-    for M in [1,2,4,8,16,32,64]:
-#     for M in []:
-        V = np.random.rand(N,M)
-        VT = np.random.rand(M,N)
-#         VT = np.copy(np.transpose(V))
-        
-        
-        targetOrbital=M-1
-        
-        start=time.time()    
-        out = modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, comm)
-        end=time.time()
-        
-        startT=time.time()    
-        outT = modifiedGramSchmidt_singleOrbital_transpose(VT,weights,targetOrbital, comm)
-        endT=time.time()
-        
-#         assert np.max(np.abs(out-outT))<1e-12, "two orthogonalizations didn't agree!"
-        print("Original:  Orthogonalizing %2.ith wavefunction of size %i took %f seconds" %(M,N,end-start))
-        print("Transpose: Orthogonalizing %2.ith wavefunction of size %i took %f seconds\n" %(M,N,endT-startT))
+    comm.Barrier()
+    start=time.time() 
+    for targetOrbital in range(M):
+        out  = modifiedGramSchmidt_singleOrbital_transpose(V,weights,targetOrbital, comm)
+#         out  = modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, comm)
+    comm.Barrier()
+    end=time.time()
+    
+    if rank==0: print("\n\nPython time to orthogonalize %i wavefunctions of %i points distributed over %i processors: %f seconds\n\n" %(M,size*N,size,end-start))
+    
+#     for M in [1,2,4,8,16,32,64]:
+# #     for M in []:
+#         V = np.random.rand(N,M)
+#         VT = np.random.rand(M,N)
+# #         VT = np.copy(np.transpose(V))
+#         
+#         
+#         targetOrbital=M-1
+#         
+#         start=time.time()    
+#         out = modifiedGramSchmidt_singleOrbital(V,weights,targetOrbital, comm)
+#         end=time.time()
+#         
+#         startT=time.time()    
+#         outT = modifiedGramSchmidt_singleOrbital_transpose(VT,weights,targetOrbital, comm)
+#         endT=time.time()
+#         
+# #         assert np.max(np.abs(out-outT))<1e-12, "two orthogonalizations didn't agree!"
+#         print("Original:  Orthogonalizing %2.ith wavefunction of size %i took %f seconds" %(M,N,end-start))
+#         print("Transpose: Orthogonalizing %2.ith wavefunction of size %i took %f seconds\n" %(M,N,endT-startT))
     
 if __name__=="__main__":
-    
-    testOrthogonalization()
+    import sys
+    numPoints          = int(sys.argv[1]);
+    numWavefunctions          = int(sys.argv[2]);
+    testOrthogonalization(numPoints,numWavefunctions)
     
     
     

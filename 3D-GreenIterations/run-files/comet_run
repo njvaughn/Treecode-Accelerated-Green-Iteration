@@ -1,14 +1,14 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/hermite-one-mesh-%j.%N.out"
-#SBATCH --partition=gpu-shared
-#SBATCH --nodes=1
-#SBATCH --ntasks-per-node=2
-#SBATCH --gres=gpu:k80:2
-#SBATCH --mem=25GB 
-#SBATCH -t 48:00:00
+#SBATCH --output="dataFiles/ten_steps_delay_7_ones_reset-10-%j.%N.out"
+#SBATCH --partition=gpu
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=4
+#SBATCH --gres=gpu:p100:4
+#SBATCH --mem=100GB 
+#SBATCH -t 24:00:00
 #SBATCH --no-requeue
-#SBATCH -A mia314
+#SBATCH -A mia320
 #SBATCH --constraint=exclusive
  
 
@@ -28,8 +28,8 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 
 
 COREREPRESENTATION="Pseudopotential"
-INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
-#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
@@ -45,8 +45,6 @@ GRADIENTFREE='True'
 SYMMETRICITERATION='False'
  
 TREECODE='True'      
-MAXPARNODE=2000
-BATCHSIZE=2000   
  
  
 GAUGESHIFT=-0.5
@@ -62,10 +60,10 @@ GRADIENTFREE='True'
 MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
      
-INITIAL_GI_TOLERANCE=3e-2
-FINAL_GI_TOLERANCE=3e-7
-GRADUALSTEPS=7
-SCF_TOLERANCE=2e-5
+INITIAL_GI_TOLERANCE=3e-2 
+FINAL_GI_TOLERANCE=1e-5
+GRADUALSTEPS=10
+SCF_TOLERANCE=3e-5
      
 
 
@@ -75,13 +73,16 @@ SINGULARITYHANDLING=subtraction
 
 REGULARIZE='False'
 EPSILON=0.0
-  
+   
 GAUSSIANALPHA=2.0 
 TREECODEORDER=4
-THETA=0.85
+THETA=0.8
+
+CELLORDER=4
+FINEORDER=4
 
 
-
+ 
 MESHTYPE='coarsenedUniformTwoLevel'
 
 DOMAIN=32
@@ -91,16 +92,21 @@ MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
   
-TWOMESHSTART=4
+TWOMESHSTART=7
+#GIFORM="Simultaneous"
+GIFORM="Sequential"
+#GIFORM="Greedy" 
 
-for MESHPARAM4 in -2
+for MESHPARAM4 in -2 
 do                                                         
-    for CELLORDER in 4
-    do        
-        for FINEORDER in 4
+    for BATCHSIZE in 2000
+    do          
+        for MAXPARNODE in 2000
         do  
 
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/hermite/all_atoms_order_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_approx_${APPROXIMATIONNAME}.csv" 
+        #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/debug/ten_steps_delay_7_ones_eig_guess_twoMesh_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/tenGradualSteps_twoMeshDelay7_C20_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+        #OUTPUTFILE="/home/njvaughn/ONCV-testing/orth/C20-GI_form_${GIFORM}.csv" 
          
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/carbon/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
@@ -110,20 +116,13 @@ do
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/twoMeshLocal_supressNL/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/testing/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/TiO2/testing/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
-        mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 2 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        #mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 8 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        ibrun -n 8 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
                                                 $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART
-        done 
+                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART $GIFORM
+        done  
     done      
 done
-       
-       
-       
-       
-       
-       
-       
-    

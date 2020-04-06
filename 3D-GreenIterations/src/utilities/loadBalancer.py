@@ -4,9 +4,9 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-from cyarray.api import UIntArray, DoubleArray
-from pyzoltan.core import zoltan
-from pyzoltan.core import zoltan_comm
+# from cyarray.api import UIntArray, DoubleArray
+# from pyzoltan.core import zoltan
+# from pyzoltan.core import zoltan_comm
 
 import numpy as np
 
@@ -43,6 +43,224 @@ def plot_points_single_proc(x, y, z, rank, title):
     plt.title(title)
     plt.show() 
 #     plt.savefig(savedir+filename)
+
+
+
+def loadBalance_manual(x,y,z):
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    
+    assert ((size==1) or (size%2==0)), "manual load balancer needs size%2==0 or size=1"
+    
+    xmax=np.max(x)
+    xmin=np.min(x)
+    
+    ymax=np.max(y)
+    ymin=np.min(y)
+    
+    zmax=np.max(z)
+    zmin=np.min(z)
+    
+#     subdomains=1
+#     cycle=0
+#     while subdomains<size:
+#         subdomains*=
+#         if cycle%3==0:   # cut the x
+#             pass
+#         elif cycle%3==1: # cut in y
+#             pass
+#         elif cycle%3==2: # cut in z
+#             pass
+
+    if size==1:
+        bounds=[xmin, xmax, ymin, ymax, zmin, zmax] # 02/02/02
+    elif size==2:
+        xmid = (xmax+xmin)/2
+        if rank==0:
+            bounds=[xmin, xmid, ymin, ymax, zmin, zmax] # 01/02/02
+        elif rank==1:
+            bounds=[xmid, xmax, ymin, ymax, zmin, zmax] # 12/02/02
+    
+    elif size==4:
+        xmid = (xmax+xmin)/2
+        ymid = (ymax+ymin)/2
+        if rank==0:
+            bounds=[xmin, xmid, ymin, ymid, zmin, zmax] # 01/01/02
+        elif rank==1:
+            bounds=[xmin, xmid, ymid, ymax, zmin, zmax] # 01/12/02
+        elif rank==2:
+            bounds=[xmid, xmax, ymin, ymid, zmin, zmax] # 12/01/02
+        elif rank==3:
+            bounds=[xmid, xmax, ymid, ymax, zmin, zmax] # 12/12/02
+            
+            
+    elif size==8:
+        xmid = (xmax+xmin)/2
+        ymid = (ymax+ymin)/2
+        zmid = (zmax+zmin)/2
+        if rank==0:
+            bounds=[xmin, xmid, ymin, ymid, zmin, zmid] # 01/01/01
+        elif rank==1:
+            bounds=[xmin, xmid, ymid, ymax, zmin, zmid] # 01/12/01
+        elif rank==2:
+            bounds=[xmid, xmax, ymin, ymid, zmin, zmid] # 12/01/01
+        elif rank==3:
+            bounds=[xmid, xmax, ymid, ymax, zmin, zmid] # 12/12/01
+        elif rank==4:
+            bounds=[xmin, xmid, ymin, ymid, zmid, zmax] # 01/01/12
+        elif rank==5:
+            bounds=[xmin, xmid, ymid, ymax, zmid, zmax] # 01/12/12
+        elif rank==6:
+            bounds=[xmid, xmax, ymin, ymid, zmid, zmax] # 12/01/12
+        elif rank==7:
+            bounds=[xmid, xmax, ymid, ymax, zmid, zmax] # 12/12/12
+    
+    elif size==16:
+        xmid = (xmax+xmin)/2
+        xmidL = (xmin+xmid)/2
+        xmidR = (xmax+xmid)/2
+        ymid = (ymax+ymin)/2
+        zmid = (zmax+zmin)/2
+        if rank==0:
+            bounds=[xmin, xmidL, ymin, ymid, zmin, zmid] # 01/01/01
+        elif rank==1:
+            bounds=[xmin, xmidL, ymid, ymax, zmin, zmid] # 01/12/01
+        elif rank==2:
+            bounds=[xmidL, xmid, ymin, ymid, zmin, zmid] # 12/01/01
+        elif rank==3:
+            bounds=[xmidL, xmid, ymid, ymax, zmin, zmid] # 12/12/01
+        elif rank==4:
+            bounds=[xmin, xmidL, ymin, ymid, zmid, zmax] # 01/01/12
+        elif rank==5:
+            bounds=[xmin, xmidL, ymid, ymax, zmid, zmax] # 01/12/12
+        elif rank==6:
+            bounds=[xmidL, xmid, ymin, ymid, zmid, zmax] # 12/01/12
+        elif rank==7:
+            bounds=[xmidL, xmid, ymid, ymax, zmid, zmax] # 12/12/12
+        
+        elif rank==8:
+            bounds=[xmid, xmidR, ymin, ymid, zmin, zmid] # 01/01/01
+        elif rank==9:
+            bounds=[xmid, xmidR, ymid, ymax, zmin, zmid] # 01/12/01
+        elif rank==10:
+            bounds=[xmidR, xmax, ymin, ymid, zmin, zmid] # 12/01/01
+        elif rank==11:
+            bounds=[xmidR, xmax, ymid, ymax, zmin, zmid] # 12/12/01
+        elif rank==12:
+            bounds=[xmid, xmidR, ymin, ymid, zmid, zmax] # 01/01/12
+        elif rank==13:
+            bounds=[xmid, xmidR, ymid, ymax, zmid, zmax] # 01/12/12
+        elif rank==14:
+            bounds=[xmidR, xmax, ymin, ymid, zmid, zmax] # 12/01/12
+        elif rank==15:
+            bounds=[xmidR, xmax, ymid, ymax, zmid, zmax] # 12/12/12
+            
+    elif size==32:
+        
+        fraction=4
+        xmid = (xmax+xmin)/2
+        xmidL = (xmin+fraction*xmid)/(fraction+1)
+        xmidR = (xmax+fraction*xmid)/(fraction+1)
+        ymid = (ymax+ymin)/2
+        ymidL = (ymin+fraction*ymid)/(fraction+1)
+        ymidR = (ymax+fraction*ymid)/(fraction+1)
+        zmid = (zmax+zmin)/2
+        if rank==0:
+            bounds=[xmin, xmidL, ymin, ymidL, zmin, zmid] # 01/01/01
+        elif rank==1:
+            bounds=[xmin, xmidL, ymidL, ymid, zmin, zmid] # 01/12/01
+        elif rank==2:
+            bounds=[xmidL, xmid, ymin, ymidL, zmin, zmid] # 12/01/01
+        elif rank==3:
+            bounds=[xmidL, xmid, ymidL, ymid, zmin, zmid] # 12/12/01
+        elif rank==4:
+            bounds=[xmin, xmidL, ymin, ymidL, zmid, zmax] # 01/01/12
+        elif rank==5:
+            bounds=[xmin, xmidL, ymidL, ymid, zmid, zmax] # 01/12/12
+        elif rank==6:
+            bounds=[xmidL, xmid, ymin, ymidL, zmid, zmax] # 12/01/12
+        elif rank==7:
+            bounds=[xmidL, xmid, ymidL, ymid, zmid, zmax] # 12/12/12
+        
+        elif rank==8:
+            bounds=[xmid, xmidR, ymin, ymidL, zmin, zmid] # 01/01/01
+        elif rank==9:
+            bounds=[xmid, xmidR, ymidL, ymid, zmin, zmid] # 01/12/01
+        elif rank==10:
+            bounds=[xmidR, xmax, ymin, ymidL, zmin, zmid] # 12/01/01
+        elif rank==11:
+            bounds=[xmidR, xmax, ymidL, ymid, zmin, zmid] # 12/12/01
+        elif rank==12:
+            bounds=[xmid, xmidR, ymin, ymidL, zmid, zmax] # 01/01/12
+        elif rank==13:
+            bounds=[xmid, xmidR, ymidL, ymid, zmid, zmax] # 01/12/12
+        elif rank==14:
+            bounds=[xmidR, xmax, ymin, ymidL, zmid, zmax] # 12/01/12
+        elif rank==15:
+            bounds=[xmidR, xmax, ymidL, ymid, zmid, zmax] # 12/12/12
+        
+        elif rank==16:
+            bounds=[xmin, xmidL, ymid, ymidR, zmin, zmid] # 01/01/01
+        elif rank==17:
+            bounds=[xmin, xmidL, ymidR, ymax, zmin, zmid] # 01/12/01
+        elif rank==18:
+            bounds=[xmidL, xmid, ymid, ymidR, zmin, zmid] # 12/01/01
+        elif rank==19:
+            bounds=[xmidL, xmid, ymidR, ymax, zmin, zmid] # 12/12/01
+        elif rank==20:
+            bounds=[xmin, xmidL, ymid, ymidR, zmid, zmax] # 01/01/12
+        elif rank==21:
+            bounds=[xmin, xmidL, ymidR, ymax, zmid, zmax] # 01/12/12
+        elif rank==22:
+            bounds=[xmidL, xmid, ymid, ymidR, zmid, zmax] # 12/01/12
+        elif rank==23:
+            bounds=[xmidL, xmid, ymidR, ymax, zmid, zmax] # 12/12/12
+        
+        elif rank==24:
+            bounds=[xmid, xmidR, ymid, ymidR, zmin, zmid] # 01/01/01
+        elif rank==25:
+            bounds=[xmid, xmidR, ymidR, ymax, zmin, zmid] # 01/12/01
+        elif rank==26:
+            bounds=[xmidR, xmax, ymid, ymidR, zmin, zmid] # 12/01/01
+        elif rank==27:
+            bounds=[xmidR, xmax, ymidR, ymax, zmin, zmid] # 12/12/01
+        elif rank==28:
+            bounds=[xmid, xmidR, ymid, ymidR, zmid, zmax] # 01/01/12
+        elif rank==29:
+            bounds=[xmid, xmidR, ymidR, ymax, zmid, zmax] # 01/12/12
+        elif rank==30:
+            bounds=[xmidR, xmax, ymid, ymidR, zmid, zmax] # 12/01/12
+        elif rank==31:
+            bounds=[xmidR, xmax, ymidR, ymax, zmid, zmax] # 12/12/12
+    
+    else:
+        print("Not set up for domain decomosition of size %i" %size)
+    
+#     elif size==16:
+#         pass
+#     elif size==32:
+#         pass
+
+    print("Rank %i owns " %rank, bounds)
+    comm.barrier()
+    
+    
+    cells = []
+    cellsX = []
+    cellsY = []
+    cellsZ = []
+    
+    for i in range(len(x)):
+        if ( (x[i]>=bounds[0]) and (x[i]<=bounds[1]) ):
+            if ( (y[i]>=bounds[2]) and (y[i]<=bounds[3]) ):
+                if ( (z[i]>=bounds[4]) and (z[i]<=bounds[5]) ):
+                    cellsX.append(x[i])
+                    cellsY.append(y[i])
+                    cellsZ.append(z[i])
+#     exit(-1)
+    return cellsX, cellsY, cellsZ
+        
 
 
 def loadBalance(x,y,z,data=None,LBMETHOD='RCB',verbosity=0):
