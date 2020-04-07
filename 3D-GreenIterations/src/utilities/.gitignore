@@ -1,1 +1,6 @@
 /savedMeshes/
+/Orthogonalization.o
+/libMoveData.so
+/libOrthogonalization_cpu.so
+/libOrthogonalization_gpu.so
+/moveData.o

@@ -773,6 +773,17 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         if SCFcount >= 100:
             print('Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
+        
+    
+    ## DO ONE FINAL ITERATION WITH TWO LEVEL MESH
+    print("\n\n\n\nDoing one final SCF iteration with Two Level Mesh.\n\n\n")
+    MOVEDATA.callRemoveVectorFromDevice(orbitals)
+    MOVEDATA.callCopyVectorToDevice(orbitals)
+    scf_args["TwoMeshStart"]=SCFcount
+    
+    if GI_form=="Sequential":
+        scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
+        densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
               
 #         if SCFcount >= 1:
 #             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')

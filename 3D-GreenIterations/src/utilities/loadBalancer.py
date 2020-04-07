@@ -263,6 +263,30 @@ def loadBalance_manual(x,y,z):
         
 
 
+def loadBalance_bins(x,y,z,atoms):
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+        
+    xmax=np.max(x)
+    xmin=np.min(x)
+    
+    ymax=np.max(y)
+    ymin=np.min(y)
+    
+    zmax=np.max(z)
+    zmin=np.min(z)
+    
+    # construct subdomains that each contain an (almost) equal number of atoms.
+    
+    atomsPerBin=int(len(atoms))/size
+    
+    
+    
+    
+    
+    
+
 def loadBalance(x,y,z,data=None,LBMETHOD='RCB',verbosity=0):
     '''
     Each processor calls loadBalance.  Using zoltan, the particles are balanced and redistributed as necessary.  Returns the balanced arrays.

@@ -23,8 +23,8 @@ import moveData_wrapper as MOVEDATA
 # except OSError:
 #     print('Unable to import treecodeWrapper due to OSError')
     
-from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
-from orthogonalizationRoutines import mask
+# from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
+# from orthogonalizationRoutines import mask
 
 import interpolation_wrapper
 
@@ -399,8 +399,6 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                     orthWavefunction = mgs(orbitals,W,m, comm)
                     end=time.time()
                     rprint(rank,"New orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
-                    
-                    
                     orbitals[m,:] = np.copy(orthWavefunction)
 
         
@@ -424,19 +422,20 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
         else:  # Explicitly choosing to not update Eigenvalue.  Still orthogonalize
             print("Not updating eigenvalue because updateEigenvalue!=True")
-            orbitals[m,:] = np.copy(psiNew)
-            n,M = np.shape(orbitals) 
-            orthWavefunction = mgs(orbitals,W,m,comm)
-            orbitals[m,:] = np.copy(orthWavefunction) 
-            if greenIterationsCount==1:
-                eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
-            else:
-                eigenvalueHistory = gi_args['eigenvalueHistory']
-                eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
-            if rank==0: print('eigenvalueHistory (should be constant): \n',eigenvalueHistory)
-            gi_args['eigenvalueDiff']=0
-            deltaE=0
-            gi_args['eigenvalueHistory']=eigenvalueHistory
+            exit(-1)
+#             orbitals[m,:] = np.copy(psiNew)
+#             n,M = np.shape(orbitals) 
+#             orthWavefunction = mgs(orbitals,W,m,comm)
+#             orbitals[m,:] = np.copy(orthWavefunction) 
+#             if greenIterationsCount==1:
+#                 eigenvalueHistory = np.array(Energies['orbitalEnergies'][m])
+#             else:
+#                 eigenvalueHistory = gi_args['eigenvalueHistory']
+#                 eigenvalueHistory = np.append(eigenvalueHistory, Energies['orbitalEnergies'][m])
+#             if rank==0: print('eigenvalueHistory (should be constant): \n',eigenvalueHistory)
+#             gi_args['eigenvalueDiff']=0
+#             deltaE=0
+#             gi_args['eigenvalueHistory']=eigenvalueHistory
             
     
         

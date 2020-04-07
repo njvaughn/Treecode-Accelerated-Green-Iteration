@@ -20,7 +20,7 @@ import interpolation_wrapper
 from fermiDiracDistribution import computeOccupations
 import densityMixingSchemes as densityMixing
 import BaryTreeInterface as BT
-from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
+# from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 import moveData_wrapper as MOVEDATA
 
@@ -186,7 +186,9 @@ def scfFixedPointClosure(scf_args):
                 inputDensities[:,0] = np.copy(RHO)
                 
                 outputDensities = np.zeros((nPoints,1))
-
+                
+                eigenvalueResiduals=np.ones_like(residuals)  # reset eigenvalue residuals
+                residuals = np.ones_like(Energies['orbitalEnergies'])
      
         
     
@@ -536,6 +538,8 @@ def scfFixedPointClosure(scf_args):
                 comm.barrier()
                 if SCFcount==1:  
                     AndersonActivationTolerance=1e-1
+                elif SCFcount == TwoMeshStart:
+                    AndersonActivationTolerance=1e-1
                 else:
                     AndersonActivationTolerance=3e3
                 while ( (resNorm> max(AndersonActivationTolerance,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
@@ -603,8 +607,10 @@ def scfFixedPointClosure(scf_args):
                     greenIterationsCount=gi_args["greenIterationsCount"]
                     if verbosity>0: rprint(rank,'MEMORY USAGE: %i'%resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                       
-                    orthWavefunction = mgs(orbitals,W,m, comm)
-                    orbitals[m,:] = np.copy(orthWavefunction)
+                      
+#                     # Why is this mgs call happening?  Isn't  orbitals[m,:] already orthogonal after exiting the previous Green Iteration call? 
+#                     orthWavefunction = mgs(orbitals,W,m, comm)
+#                     orbitals[m,:] = np.copy(orthWavefunction)
                     psiIn = np.append( np.copy(orbitals[m,:]), Energies['orbitalEnergies'][m] )
                       
                       
