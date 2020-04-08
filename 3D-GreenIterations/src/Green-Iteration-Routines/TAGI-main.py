@@ -47,6 +47,7 @@ from scfFixedPoint import scfFixedPointClosure
 from scfFixedPointSimultaneous import scfFixedPointClosureSimultaneous
 from scfFixedPointGreedy import scfFixedPointClosureGreedy, sortByEigenvalue, fermiObjectiveFunctionClosure
 import moveData_wrapper as MOVEDATA
+from twoMeshCorrection import twoMeshCorrectionClosure
 
 # Temperature = 500
 # KB = 1/315774.6
@@ -780,10 +781,14 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     MOVEDATA.callRemoveVectorFromDevice(orbitals)
     MOVEDATA.callCopyVectorToDevice(orbitals)
     scf_args["TwoMeshStart"]=SCFcount
+      
+#     scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
+#     densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
     
-    if GI_form=="Sequential":
-        scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
-        densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
+    twoMeshCorrection, scf_args = twoMeshCorrectionClosure(scf_args)
+    twoMeshCorrection(RHO,scf_args)
+     
+     
               
 #         if SCFcount >= 1:
 #             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')

@@ -21,6 +21,8 @@ from fermiDiracDistribution import computeOccupations
 import densityMixingSchemes as densityMixing
 import BaryTreeInterface as BT
 # from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
+import orthogonalization_wrapper as ORTH
+import moveData_wrapper as MOVEDATA
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 import moveData_wrapper as MOVEDATA
 
@@ -608,9 +610,25 @@ def scfFixedPointClosure(scf_args):
                     if verbosity>0: rprint(rank,'MEMORY USAGE: %i'%resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                       
                       
-#                     # Why is this mgs call happening?  Isn't  orbitals[m,:] already orthogonal after exiting the previous Green Iteration call? 
+                    # Why is this mgs call happening?  Isn't  orbitals[m,:] already orthogonal after exiting the previous Green Iteration call? 
+                    ### ACTUALLY THIS APPEARS TO BE IMPORTANT.... WHY? ###
+                    ### OHHH, because after anderson mixing the resulting wavefunction won't still be orthogonal.  Apparently this *can* matter for convergence. 
+                    ### Still though, how would this affect the first wavefunction?  It says the measured difference is 0.00e0.  And it only needs to be normalized, not orthogonalized. 
+                    U=np.copy(orbitals[m])
+                    MOVEDATA.callCopyVectorToDevice(U)
+                    ORTH.callOrthogonalization(orbitals, U, W, m, GPUpresent)
+                    MOVEDATA.callCopyVectorFromDevice(U)
+                    orthWavefunction=np.copy(U)
+                    
 #                     orthWavefunction = mgs(orbitals,W,m, comm)
-#                     orbitals[m,:] = np.copy(orthWavefunction)
+#                     diff=orthWavefunction-orbitals[m,:]
+#                     L2diff = np.sqrt(global_dot(W,diff**2,comm))
+#                     rprint(rank,"\n\n\n Just did the extra orthgonalization.  L2 difference between orbitals[m,:] and the newly orthogonalize vector: %1.2e" %L2diff)
+                    orbitals[m,:] = np.copy(orthWavefunction)
+#                     comm.barrier()
+#                     tempPsi=np.copy(orbitals[m,:])
+#                     orbitals[m,:] = np.copy(tempPsi)
+#                     comm.barrier()
                     psiIn = np.append( np.copy(orbitals[m,:]), Energies['orbitalEnergies'][m] )
                       
                       

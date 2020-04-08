@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/twoLevelAtEnd-%j.%N.out"
+#SBATCH --output="dataFiles/gpu_orth_C20_singleConvolutionCorrection-%j.%N.out"
 #SBATCH --partition=gpu
 #SBATCH --nodes=2
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:p100:4
 #SBATCH --mem=100GB 
-#SBATCH -t 24:00:00
+#SBATCH -t 04:00:00
 #SBATCH --no-requeue
 #SBATCH -A mia320
 #SBATCH --constraint=exclusive
@@ -29,8 +29,8 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 
 COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
-#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
-INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv'
@@ -61,7 +61,7 @@ MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
      
 INITIAL_GI_TOLERANCE=3e-2 
-FINAL_GI_TOLERANCE=1e-5
+FINAL_GI_TOLERANCE=3e-5
 GRADUALSTEPS=10
 SCF_TOLERANCE=3e-5
      
@@ -92,7 +92,7 @@ MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
   
-TWOMESHSTART=444
+TWOMESHSTART=999
 #GIFORM="Simultaneous"
 GIFORM="Sequential"
 #GIFORM="Greedy" 
@@ -102,10 +102,10 @@ do
     for BATCHSIZE in 2000
     do          
         for MAXPARNODE in 2000
-        do  
+        do    
 
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/debug/twoMeshAtEnd_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/tenGradualSteps_twoMeshDelay4_resetResiduals_C20_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+        #OUTPUTFILE="/home/njvaughn/ONCV-testing/Si2/debug/gpu_orth_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+        OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/twoMeshCorrection/gpuOrth_singleConvolutionCorrection_C20_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/orth/C20-GI_form_${GIFORM}.csv" 
          
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/carbon/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
