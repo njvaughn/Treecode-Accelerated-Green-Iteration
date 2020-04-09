@@ -44,3 +44,9 @@ gpuLib: testParallelOrthogonalization.c Orthogonalization.c moveData.c
 gpuMoveData: moveData.c
 	mpicc -I. -acc -ta=tesla:ccall,cc60 -Minfo=accel -DOPENACC_ENABLED -shared -o libMoveData.so moveData.c -I.
 	
+	
+	
+LB: testLoadBalancing.c zoltan_fns.c
+	mpicc -O3 -lm -L/Users/nathanvaughn/Zoltan_py/lib -I/Users/nathanvaughn/Zoltan_py/include -lzoltan -o testLoadBalance testLoadBalancing.c zoltan_fns.c -I.
+
+	
