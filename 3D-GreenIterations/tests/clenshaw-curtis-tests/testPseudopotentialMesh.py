@@ -5,8 +5,8 @@ Created on Jun 25, 2018
 '''
 import sys
 
-# srcdir="/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/"
-srcdir="/home/njvaughn/TAGI/3D-GreenIterations/src/"
+srcdir="/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/"
+# srcdir="/home/njvaughn/TAGI/3D-GreenIterations/src/"
 sys.path.append(srcdir+'dataStructures')
 sys.path.append(srcdir+'Green-Iteration-Routines')
 sys.path.append(srcdir+'utilities')
@@ -108,21 +108,26 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
 
     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_connected()
     
-    print("Saving mesh to /home/njvaughn/PSPmesh/")
-    np.save("/home/njvaughn/PSPmesh/X_%i" %(nPoints), X)
-    np.save("/home/njvaughn/PSPmesh/Y_%i" %(nPoints), Y)
-    np.save("/home/njvaughn/PSPmesh/Z_%i" %(nPoints), Z)
-    np.save("/home/njvaughn/PSPmesh/W_%i" %(nPoints), W)
-    np.save("/home/njvaughn/PSPmesh/RHO_%i" %(nPoints), RHO)
+#     print("Saving mesh to /home/njvaughn/PSPmesh/")
+#     np.save("/home/njvaughn/PSPmesh/X_%i" %(nPoints), X)
+#     np.save("/home/njvaughn/PSPmesh/Y_%i" %(nPoints), Y)
+#     np.save("/home/njvaughn/PSPmesh/Z_%i" %(nPoints), Z)
+#     np.save("/home/njvaughn/PSPmesh/W_%i" %(nPoints), W)
+#     np.save("/home/njvaughn/PSPmesh/RHO_%i" %(nPoints), RHO)
     
-    print(XV)
-    print(YV)
-    print(ZV)
-    print(len(XV))
-    print(XV.size)
-    print(RHO)
-    print(vertexIdx)
-    print(centerIdx)
+#     print(XV)
+#     print(YV)
+#     print(ZV)
+#     print(len(XV))
+#     print(XV.size)
+#     print(RHO)
+#     print(vertexIdx)
+#     print(centerIdx)
+
+    print("Number of coarse mesh points = %i" %len(X))
+    print("Number of coarse mesh cells  = %i" %len(pointsPerCell_coarse))
+    print("Number of fine mesh points   = %i" %len(Xf))
+
     conn=np.zeros(XV.size)
     for i in range(len(conn)):
         conn[i] = i
@@ -257,27 +262,27 @@ if __name__ == "__main__":
     
 #     inputFile=srcdir+'molecularConfigurations/SiliconClusterAuxiliaryPSP.csv'
 
-#     inputFile=srcdir+'molecularConfigurations/siliconAuxiliaryPSP.csv'
-#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/silicon-PSP"
+    inputFile=srcdir+'molecularConfigurations/siliconAuxiliaryPSP.csv'
+    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/silicon-PSP"
 #     outputFile="/home/njvaughn/PSPmesh/Si2"
 
-    inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
+#     inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
 #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
-    outputFile="/home/njvaughn/PSPmesh/C20"
+#     outputFile="/home/njvaughn/PSPmesh/C20"
     
     
     coreRepresentation="Pseudopotential"
     MESHTYPE='coarsenedUniformTwoLevel'
 
-    order=4
+    order=3
     gaugeShift=-0.5
     
     domainSize=16
     MAXSIDELENGTH=32
-    MESHPARAM1=0.35 # near field spacing 
+    MESHPARAM1=1.0 # near field spacing 
     MESHPARAM2=8.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
-    MESHPARAM4=0 # additional inner refinement 
+    MESHPARAM4=-3 # additional inner refinement 
     
     
     

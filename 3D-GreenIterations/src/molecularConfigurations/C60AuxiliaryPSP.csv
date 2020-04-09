@@ -1,0 +1,11 @@
+../src/molecularConfigurations/C60.csv
+../src/molecularConfigurations/C60ReferenceEigenvaluesPSP.csv
+/home/njvaughn/results_Be/results.csv
+-4.0238183660650691e+01 # band
+ 0.0
+-2.9736201447167016e+01 # exchange
+-4.3417587560665645e+00 # correlation
+0.0                 
+-1.1283379210482792e+02 # total energy
+
+  
