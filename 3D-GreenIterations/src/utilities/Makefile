@@ -46,7 +46,14 @@ gpuMoveData: moveData.c
 	
 	
 	
-LB: testLoadBalancing.c zoltan_fns.c
-	mpicc -O3 -lm -L/Users/nathanvaughn/Zoltan_py/lib -I/Users/nathanvaughn/Zoltan_py/include -lzoltan -o testLoadBalance testLoadBalancing.c zoltan_fns.c -I.
+LB_local: testLoadBalancing.c zoltan_fns.c ZoltanRCB.c
+	mpicc -O3 -lm -L/Users/nathanvaughn/Zoltan_py/lib -I/Users/nathanvaughn/Zoltan_py/include -lzoltan -o testLoadBalance testLoadBalancing.c ZoltanRCB.c zoltan_fns.c -I.
+
+LB_lib: zoltan_fns.c ZoltanRCB.c
+	mpicc -O3 -lm -fPIC -shared -L/Users/nathanvaughn/Zoltan_py/lib -I/Users/nathanvaughn/Zoltan_py/include -lzoltan -o ZoltanRCB.so ZoltanRCB.c zoltan_fns.c -I.
+
+
+LB_gl: testLoadBalancing.c zoltan_fns.c ZoltanRCB.c
+	mpicc -O3 -lm -L/Users/nathanvaughn/Zoltan_py/lib -I/Users/nathanvaughn/Zoltan_py/include -lzoltan -o testLoadBalance testLoadBalancing.c ZoltanRCB.c zoltan_fns.c -I.
 
 	
