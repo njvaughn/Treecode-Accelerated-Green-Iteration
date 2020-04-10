@@ -78,6 +78,8 @@ void ztn_pack(void *data, int num_gid_entries, int num_lid_entries,
     mesh_single->dx = mesh->dx[(*local_id)];
     mesh_single->dy = mesh->dy[(*local_id)];
     mesh_single->dz = mesh->dz[(*local_id)];
+    mesh_single->coarsePtsPerCell = mesh->coarsePtsPerCell[(*local_id)];
+    mesh_single->finePtsPerCell = mesh->finePtsPerCell[(*local_id)];
     mesh_single->myGlobalID = mesh->myGlobalIDs[(*local_id)];
 
     mesh->myGlobalIDs[(*local_id)] = (ZOLTAN_ID_TYPE)(-1); // Mark local particle as exported
@@ -103,6 +105,8 @@ void ztn_unpack(void *data, int num_gid_entries,
     mesh->dx = (double *)realloc(mesh->dx, sizeof(double) * mesh->numMyPoints);
     mesh->dy = (double *)realloc(mesh->dy, sizeof(double) * mesh->numMyPoints);
     mesh->dz = (double *)realloc(mesh->dz, sizeof(double) * mesh->numMyPoints);
+    mesh->coarsePtsPerCell = (int *)realloc(mesh->coarsePtsPerCell, sizeof(int) * mesh->numMyPoints);
+    mesh->finePtsPerCell   = (int *)realloc(mesh->finePtsPerCell,   sizeof(int) * mesh->numMyPoints);
 
     mesh->x[mesh->numMyPoints-1] = mesh_single->x;
     mesh->y[mesh->numMyPoints-1] = mesh_single->y;
@@ -110,6 +114,9 @@ void ztn_unpack(void *data, int num_gid_entries,
     mesh->dx[mesh->numMyPoints-1] = mesh_single->dx;
     mesh->dy[mesh->numMyPoints-1] = mesh_single->dy;
     mesh->dz[mesh->numMyPoints-1] = mesh_single->dz;
+    mesh->coarsePtsPerCell[mesh->numMyPoints-1] = mesh_single->coarsePtsPerCell;
+    mesh->finePtsPerCell[mesh->numMyPoints-1] = mesh_single->finePtsPerCell;
+
     mesh->myGlobalIDs[mesh->numMyPoints-1] = mesh_single->myGlobalID;
 
     return;

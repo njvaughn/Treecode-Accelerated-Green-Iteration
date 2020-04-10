@@ -13,6 +13,8 @@ typedef struct{
     double *dx;
     double *dy;
     double *dz;
+    int *coarsePtsPerCell;
+    int *finePtsPerCell;
 } MESH_DATA;
 
 typedef struct{
@@ -23,6 +25,8 @@ typedef struct{
     double dx;
     double dy;
     double dz;
+    int coarsePtsPerCell;
+    int finePtsPerCell;
 } SINGLE_MESH_DATA;
 
 

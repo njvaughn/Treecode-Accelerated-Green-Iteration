@@ -16,14 +16,14 @@
 
 void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
                     double **cellsDX, double **cellsDY, double **cellsDZ,
-//                    double **newCellsX, double **newCellsY, double **newCellsZ,
-//                    double **newCellsDX, double **newCellsDY, double **newCellsDZ,
+                    int **coarsePtsPerCell, int **finePtsPerCell,
                     int numCells, int globalStart, int * newNumCells){
 
     int rank, numProcs;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
 
+    int verbosity=0;
 
     /* Zoltan variables */
     int rc;
@@ -45,14 +45,16 @@ void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
         exit(0);
     }
     MPI_Barrier(MPI_COMM_WORLD);
-    if (rank==0) printf("\nZoltan initialized.\n\n");
+    if (verbosity>0) {
+        if (rank==0) printf("\nZoltan initialized.\n\n");
+    }
     fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
 
     /* Set up a variable number of cells for each rank */
 
 
-    printf("Rank %i starts at %i\n", rank, globalStart);
+    if (verbosity>0) printf("Rank %i starts at %i\n", rank, globalStart);
     fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -63,6 +65,8 @@ void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
     myCells.dx = *cellsDX;
     myCells.dy = *cellsDY;
     myCells.dz = *cellsDZ;
+    myCells.coarsePtsPerCell = *coarsePtsPerCell;
+    myCells.finePtsPerCell = *finePtsPerCell;
     myCells.myGlobalIDs = (ZOLTAN_ID_TYPE *)malloc(sizeof(ZOLTAN_ID_TYPE) * numCells);
 
 
@@ -75,12 +79,17 @@ void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
     MPI_Allreduce(&numCells, &totalNumberOfCells, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
     myCells.numGlobalPoints = totalNumberOfCells;
 
-    if (rank==0) printf("Initialized myCells.\n");
-
-    for (int i=0;i<5;i++){
-        printf("rank %i, before load balancing, value = %f\n", rank, myCells.x[i]);
-//        printf("rank %i, before load balancing, value = %f\n", rank, *cellsX[i]);
+    if (verbosity>0){
+        if (rank==0) printf("Initialized myCells.\n");
     }
+
+    if (verbosity>0){
+        for (int i=0;i<5;i++){
+//            printf("rank %i, before load balancing, value = %f\n", rank, myCells.x[i]);
+        printf("rank %i, before load balancing, value = %f\n", rank, (*cellsX)[i]);
+        }
+    }
+
 
 
 
@@ -130,8 +139,9 @@ void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
         &exportProcs,    /* Process to which I send each of the vertices */
         &exportToPart);  /* Partition to which each vertex will belong */
 
-
-    if (rank==0) printf("Set up load balancer.\n");
+    if (verbosity>0){
+        if (rank==0) printf("Set up load balancer.\n");
+    }
 
      /* Call load balancer */
     int i = 0;
@@ -157,9 +167,14 @@ void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
     *cellsDY=myCells.dy;
     *cellsDZ=myCells.dz;
 
-    for (int i=0;i<5;i++){
-        printf("rank %i, after load balancing, value = %f\n", rank, myCells.x[i]);
-//        printf("rank %i, after load balancing, value = %f\n", rank, *cellsX[i]);
+    *coarsePtsPerCell=myCells.coarsePtsPerCell;
+    *finePtsPerCell=myCells.finePtsPerCell;
+
+
+    if (verbosity>0){
+        for (int i=0;i<5;i++){
+            printf("rank %i, after load balancing, value = %f\n", rank, (*cellsX)[i]);
+        }
     }
 
 

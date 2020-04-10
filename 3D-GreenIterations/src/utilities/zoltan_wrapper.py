@@ -25,6 +25,8 @@ try:
                                                     ctypes.POINTER(ctypes.POINTER(ctypes.c_double)), 
                                                     ctypes.POINTER(ctypes.POINTER(ctypes.c_double)), 
                                                     ctypes.POINTER(ctypes.POINTER(ctypes.c_double)), 
+                                                    ctypes.POINTER(ctypes.POINTER(ctypes.c_int)), 
+                                                    ctypes.POINTER(ctypes.POINTER(ctypes.c_int)), 
                                                     ctypes.c_int, 
                                                     ctypes.c_int, 
                                                     ctypes.POINTER(ctypes.c_int) 
@@ -34,7 +36,7 @@ except NameError:
 
 
 
-def callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, numCells, globalStart):
+def callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, coarsePtsPerCell, finePtsPerCell, numCells, globalStart):
     
     numCells=len(cellsX)
     newNumCells=np.array(0,dtype=np.int)
@@ -50,6 +52,9 @@ def callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, numCells, glob
     cellsDY_p = cellsDY.ctypes.data_as(c_double_p)
     cellsDZ_p = cellsDZ.ctypes.data_as(c_double_p)
 
+    coarsePtsPerCell_p = coarsePtsPerCell.ctypes.data_as(c_int_p)
+    finePtsPerCell_p = finePtsPerCell.ctypes.data_as(c_int_p)
+
 
     newNumCells_p = newNumCells.ctypes.data_as(c_int_p)
     
@@ -62,6 +67,8 @@ def callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, numCells, glob
                                         ctypes.byref(cellsDX_p),
                                         ctypes.byref(cellsDY_p),
                                         ctypes.byref(cellsDZ_p),
+                                        ctypes.byref(coarsePtsPerCell_p),
+                                        ctypes.byref(finePtsPerCell_p),
                                         ctypes.c_int(numCells),
                                         ctypes.c_int(globalStart),
                                         newNumCells_p
@@ -70,7 +77,7 @@ def callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, numCells, glob
     print("Rank %i, After call: cellsX = " %rank, cellsX_p[:5])
 
     
-    return cellsX_p[:newNumCells], cellsY_p[:newNumCells], cellsZ_p[:newNumCells], cellsDX_p[:newNumCells], cellsDY_p[:newNumCells], cellsDZ_p[:newNumCells], newNumCells
+    return cellsX_p[:newNumCells], cellsY_p[:newNumCells], cellsZ_p[:newNumCells], cellsDX_p[:newNumCells], cellsDY_p[:newNumCells], cellsDZ_p[:newNumCells], coarsePtsPerCell_p[:newNumCells], finePtsPerCell_p[:newNumCells], newNumCells
 
 
 if __name__=="__main__":
@@ -81,7 +88,7 @@ if __name__=="__main__":
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
-    r=50
+    r=15
     numCells=r*(rank+1)
     
     np.random.seed(rank)
@@ -92,13 +99,21 @@ if __name__=="__main__":
     cellsDY=np.ones(numCells)
     cellsDZ=np.ones(numCells)
     
+    coarsePtsPerCell=(rank+1)*np.ones(numCells, dtype=np.int32)
+    finePtsPerCell=-(rank+1)*np.ones(numCells, dtype=np.int32)
+    print("rank %i before balancing, coarse points per cell: " %rank, coarsePtsPerCell)
+    print("rank %i before balancing, fine points per cell:   " %rank, finePtsPerCell)
+
+    print(type(coarsePtsPerCell))
+    print(coarsePtsPerCell.dtype)
+    
     globalStart=0
     
     for i in range(rank):
         globalStart += r*(i+1)
     print("rank %i starts at %i and has %i cells. " %(rank,globalStart,numCells))
     
-    newCellsX, newCellsY, newCellsZ, newCellsDX, newCellsDY, newCellsDZ, newNumCells = callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, numCells, globalStart)
+    newCellsX, newCellsY, newCellsZ, newCellsDX, newCellsDY, newCellsDZ, newCoarsePtsPerCell, newFinePtsPerCell, newNumCells = callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, coarsePtsPerCell, finePtsPerCell, numCells, globalStart)
     
     xmean=np.mean(newCellsX)
     ymean=np.mean(newCellsY)
@@ -113,9 +128,16 @@ if __name__=="__main__":
     print("Plot the points from each rank now.")
     
     
+    comm.Barrier()
+    print("rank %i, coarse points per cell: " %rank, newCoarsePtsPerCell)
+    comm.Barrier()
+    print("rank %i, fine points per cell: " %rank, newFinePtsPerCell)
+    
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     color=np.random.rand(3,)
+#     for i in range(len(newCellsX)):
+#         ax.scatter(newCellsX[i],newCellsY[i],newCellsZ[i],'o',c=[newCoarsePtsPerCell[i]*size/255],label="rank %i" %rank)
     ax.scatter(newCellsX,newCellsY,newCellsZ,'o',color=color,label="rank %i" %rank)
     ax.set_xlim([-1,1])
     ax.set_ylim([-1,1])
