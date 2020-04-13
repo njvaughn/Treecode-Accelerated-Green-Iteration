@@ -2346,6 +2346,88 @@ class Tree(object):
 #         print("pointsPerCell_coarse = ", pointsPerCell_coarse)
         return np.array(X),np.array(Y),np.array(Z),np.array(W),np.array(Xf),np.array(Yf),np.array(Zf),np.array(Wf), np.array(pointsPerCell_coarse), np.array(pointsPerCell_fine), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
     
+    def extractCellXYZ(self):
+        '''
+        Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
+        '''
+#         print('Extracting the gridpoints from all leaves...')
+        cellX = [] 
+        cellY = []
+        cellZ = []
+        cellDX = [] 
+        cellDY = []
+        cellDZ = []
+        
+        pointsPerCell_coarse = []
+        pointsPerCell_fine = []
+        
+        
+        RHO = []
+        
+        XV = []
+        YV = []
+        ZV = []
+        quadIdx = []
+        centerIdx = []
+        ghostCells=[]
+#         WAVEFUNCTIONS = []
+        cellCount=0
+        leafCount=0
+        for _,cell in self.masterList:
+            if cell.leaf == True:
+                
+                pointsPerCell_coarse.append( int(cell.numCoarsePoints ) )
+                
+                cellX.append( (cell.xmin+cell.xmax)/2 )
+                cellY.append( (cell.ymin+cell.ymax)/2 )
+                cellZ.append( (cell.zmin+cell.zmax)/2 )
+                
+                cellDX.append( (cell.xmax-cell.xmin) )
+                cellDY.append( (cell.ymax-cell.ymin) )
+                cellDZ.append( (cell.zmax-cell.zmin) )
+                
+                
+                if cell.fineMesh==True: # this cell has a different fine mesh
+               
+                    pointsPerCell_fine.append( int(cell.numFinePoints) )
+                    
+                else: # this cell's fine mesh == its coarse mesh
+                    pointsPerCell_fine.append( int(cell.numCoarsePoints) )
+                    
+                    
+                XV = XV + [cell.xmin,cell.xmax,cell.xmin,cell.xmax,cell.xmin,cell.xmax,cell.xmin,cell.xmax] # 01010101
+                YV = YV + [cell.ymin,cell.ymin,cell.ymax,cell.ymax,cell.ymin,cell.ymin,cell.ymax,cell.ymax] # 00110011
+                ZV = ZV + [cell.zmin,cell.zmin,cell.zmin,cell.zmin,cell.zmax,cell.zmax,cell.zmax,cell.zmax] # 00001111
+                
+                offset = (cell.px+1)*(cell.py+1)*(cell.pz+1) * leafCount
+                p = cell.px+1
+              
+                quadIdx = quadIdx + [offset+p**0-1, offset+p**0-1+p*p*(p-1), 
+                                     offset + p**0-1 + p*(p-1),offset+ p**0-1 + p*(p-1)+p*p*(p-1),
+                                     offset+p**1-1,offset+ p**1-1+p*p*(p-1),
+                                     offset+ p**1-1 + p*(p-1),offset+ p**1-1 + p*(p-1)+p*p*(p-1) ]  ## For 8 vertices
+    
+                
+                if p%2==1:
+                    midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2
+                else:
+                    midpointQuadPt = p*p * (p-1)/2 + (p*p-1)/2 # this is not right, there is no midpoint for p%2==0.  
+#                 centerIdx = centerIdx + [int(offset+midpointQuadPt)] # for midpoint
+                centerIdx =0
+    
+    
+                
+                if leafCount==1: print(quadIdx)
+                
+    #                 quadIdx = quadIdx + [000, 001, 010, 011, 100, 101, 110, 111 ] 
+                
+                
+                cellCount += 1
+                if cell.leaf == True: leafCount+=1
+        
+
+        return np.array(cellX),np.array(cellY),np.array(cellZ),np.array(cellDX),np.array(cellDY),np.array(cellDZ), np.array(pointsPerCell_coarse), np.array(pointsPerCell_fine), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
+    
     
     def extractXYZ_connected(self):
         '''

@@ -9,12 +9,12 @@ try:
     _cpu_interpolationRoutines = ctypes.CDLL('libInterpolation_cpu.so')
 except OSError as e:
     print(e)
-    exit(-1)
+#     exit(-1)
 try: 
     _gpu_interpolationRoutines = ctypes.CDLL('libInterpolation_gpu.so')
 except OSError as e:
     print(e)
-    exit(-1)
+#     exit(-1)
         
 
         

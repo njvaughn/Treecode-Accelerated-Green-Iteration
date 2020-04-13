@@ -59,7 +59,7 @@ def callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, coarsePtsPerCe
     newNumCells_p = newNumCells.ctypes.data_as(c_int_p)
     
     
-    print("Rank %i, Before call: cellsX = " %rank, cellsX[:5])
+#     print("Rank %i, Before call: cellsX = " %rank, cellsX[:5])
     zoltanLoadBalancing.loadBalanceRCB(
                                         ctypes.byref(cellsX_p), 
                                         ctypes.byref(cellsY_p),
@@ -74,7 +74,7 @@ def callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, coarsePtsPerCe
                                         newNumCells_p
                                         )
     
-    print("Rank %i, After call: cellsX = " %rank, cellsX_p[:5])
+#     print("Rank %i, After call: cellsX = " %rank, cellsX_p[:5])
 
     
     return cellsX_p[:newNumCells], cellsY_p[:newNumCells], cellsZ_p[:newNumCells], cellsDX_p[:newNumCells], cellsDY_p[:newNumCells], cellsDZ_p[:newNumCells], coarsePtsPerCell_p[:newNumCells], finePtsPerCell_p[:newNumCells], newNumCells

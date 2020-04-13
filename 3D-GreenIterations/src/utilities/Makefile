@@ -1,9 +1,7 @@
-#CC=gcc
-#CFLAGS=-I. -o3 -lm -fPIC
-#LDFLAGS = -shared 
-#
-#TwoMeshInterpolation: TwoMeshInterpolation.c TwoMeshInterpolation.c
-#	$(CC) $(CFLAGS) $(LDFLAGS) -o libInterpolation_cpu.so TwoMeshInterpolation.c -I.
+
+
+TwoMeshInterpolation_cpu: TwoMeshInterpolation.c TwoMeshInterpolation.c
+	mpicc -O3 -lm -fPIC -shared -o libInterpolation_cpu.so TwoMeshInterpolation.c -I.
 #	
 #	 
 cpuOrthogonalization: testParallelOrthogonalization.c Orthogonalization.c moveData.c
@@ -43,6 +41,9 @@ gpuLib: testParallelOrthogonalization.c Orthogonalization.c moveData.c
 
 gpuMoveData: moveData.c
 	mpicc -I. -acc -ta=tesla:ccall,cc60 -Minfo=accel -DOPENACC_ENABLED -shared -o libMoveData.so moveData.c -I.
+	
+gpuMoveData_cpu: moveData.c
+	mpicc -O3 -lm -fPIC -shared -o libMoveData.so moveData.c -I.
 	
 	
 	

@@ -777,7 +777,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         
     
     ## DO ONE FINAL ITERATION WITH TWO LEVEL MESH
-    print("\n\n\n\nDoing one final SCF iteration with Two Level Mesh.\n\n\n")
+    rprint(rank,"\n\n\n\nDoing one final SCF iteration with Two Level Mesh.\n\n\n")
     MOVEDATA.callRemoveVectorFromDevice(orbitals)
     MOVEDATA.callCopyVectorToDevice(orbitals)
     scf_args["TwoMeshStart"]=SCFcount
@@ -844,6 +844,9 @@ if __name__ == "__main__":
     X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
                                                                                                      inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
                                                                                                      divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
+    
+    
+
     
     
     ## NO LONGER PERFORMING LOAD BALANCING AFTER CREATING MESH POINTS.  IT IS TAKEN CARE OF WHEN CHOPPING THE DOMAIN INTO INITIAL BASE MESH.
