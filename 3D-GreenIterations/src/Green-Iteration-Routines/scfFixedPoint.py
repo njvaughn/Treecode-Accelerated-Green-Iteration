@@ -24,7 +24,6 @@ import BaryTreeInterface as BT
 import orthogonalization_wrapper as ORTH
 import moveData_wrapper as MOVEDATA
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
-import moveData_wrapper as MOVEDATA
 
 
 
@@ -163,9 +162,9 @@ def scfFixedPointClosure(scf_args):
             
         if SCFcount==1:
             ## For the greedy approach, let the density start as the sum of wavefunctions.
-            MOVEDATA.callRemoveVectorFromDevice(orbitals)
+            if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-            MOVEDATA.callCopyVectorToDevice(orbitals)
+            if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
             fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
             eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
             rprint(rank,'Fermi energy: %f'%eF)
@@ -359,15 +358,30 @@ def scfFixedPointClosure(scf_args):
                 
     
             comm.barrier()
+#             count=0
+#             while True:
+#                 count+=1
+#                 print("Hartree count %i" %count)
             V_hartreeNew = BT.callTreedriver(  
-                                                nPoints, numSources, 
-                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-                                                np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
-                                                kernel, numberOfKernelParameters, kernelParameters, 
-                                                singularity, approximation, computeType,
-                                                treecodeOrder, theta, maxParNode, batchSize,
-                                                GPUpresent, treecode_verbosity, sizeCheck=1.0
-                                                )
+                                            nPoints, numSources, 
+                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+                                            np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
+                                            kernel, numberOfKernelParameters, kernelParameters, 
+                                            singularity, approximation, computeType,
+                                            treecodeOrder, theta, maxParNode, batchSize,
+                                            GPUpresent, treecode_verbosity, sizeCheck=1.0
+                                            )
+            
+#             print("CALLING TREEDRIVER TWICE IN A ROW, JUST FOR TESTING PURPOSES.")
+#             V_hartreeNew = BT.callTreedriver(  
+#                                                 nPoints, numSources, 
+#                                                 np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+#                                                 np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
+#                                                 kernel, numberOfKernelParameters, kernelParameters, 
+#                                                 singularity, approximation, computeType,
+#                                                 treecodeOrder, theta, maxParNode, batchSize,
+#                                                 GPUpresent, treecode_verbosity, sizeCheck=1.0
+#                                                 )
             
 #             input()
             
@@ -458,9 +472,14 @@ def scfFixedPointClosure(scf_args):
         
         
         ## Sort by eigenvalue
-        MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        
+        if GPUpresent: 
+            rprint(rank,"About to call MOVEDATA before sorting by eigenvalue.")
+            MOVEDATA.callRemoveVectorFromDevice(orbitals)
         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-        MOVEDATA.callCopyVectorToDevice(orbitals) 
+        if GPUpresent: 
+            MOVEDATA.callCopyVectorToDevice(orbitals) 
+            rprint(rank,"Completed calls to MOVEDATA after sorting by eigenvalue.")
         
         ## Solve the eigenvalue problem
         if SCFcount>1:
@@ -472,8 +491,8 @@ def scfFixedPointClosure(scf_args):
         elif SCFcount==1: 
             previousOccupations = np.ones(nOrbitals)
         for m in range(nOrbitals): 
-            MOVEDATA.callRemoveVectorFromDevice(orbitals)
-            MOVEDATA.callCopyVectorToDevice(orbitals) 
+            if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+            if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals) 
             if previousOccupations[m] > 1e-20:
                 if verbosity>0: rprint(rank,'Working on orbital %i' %m)
                 if verbosity>0: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
@@ -615,9 +634,9 @@ def scfFixedPointClosure(scf_args):
                     ### OHHH, because after anderson mixing the resulting wavefunction won't still be orthogonal.  Apparently this *can* matter for convergence. 
                     ### Still though, how would this affect the first wavefunction?  It says the measured difference is 0.00e0.  And it only needs to be normalized, not orthogonalized. 
                     U=np.copy(orbitals[m])
-                    MOVEDATA.callCopyVectorToDevice(U)
+                    if GPUpresent: MOVEDATA.callCopyVectorToDevice(U)
                     ORTH.callOrthogonalization(orbitals, U, W, m, GPUpresent)
-                    MOVEDATA.callCopyVectorFromDevice(U)
+                    if GPUpresent: MOVEDATA.callCopyVectorFromDevice(U)
                     orthWavefunction=np.copy(U)
                     
 #                     orthWavefunction = mgs(orbitals,W,m, comm)
@@ -759,9 +778,9 @@ def scfFixedPointClosure(scf_args):
         
 #         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
         
-        MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-        MOVEDATA.callCopyVectorToDevice(orbitals)
+        if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
             
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        

@@ -694,8 +694,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     """
     comm.barrier()
     rprint(rank,"Copying data to GPU and starting while loop for density...")
-    MOVEDATA.callCopyVectorToDevice(orbitals)
-    MOVEDATA.callCopyVectorToDevice(W)
+    if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
+    if GPUpresent: MOVEDATA.callCopyVectorToDevice(W)
     comm.barrier()
     while ( (densityResidual > SCFtolerance) or (energyResidual > SCFtolerance) ):  # terminate SCF when both energy and density are converged.
           
@@ -705,8 +705,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #             return
         abortAfterInitialHartree=False
         
-        MOVEDATA.callRemoveVectorFromDevice(orbitals)
-        MOVEDATA.callCopyVectorToDevice(orbitals)
+        if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
         
         
         if GI_form=="Sequential":
@@ -778,8 +778,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     
     ## DO ONE FINAL ITERATION WITH TWO LEVEL MESH
     rprint(rank,"\n\n\n\nDoing one final SCF iteration with Two Level Mesh.\n\n\n")
-    MOVEDATA.callRemoveVectorFromDevice(orbitals)
-    MOVEDATA.callCopyVectorToDevice(orbitals)
+    if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+    if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
     scf_args["TwoMeshStart"]=SCFcount
       
 #     scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
@@ -928,6 +928,6 @@ if __name__ == "__main__":
     initialRho = np.copy(RHO)
     finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
 
-    MOVEDATA.callRemoveVectorFromDevice(orbitals)
-    MOVEDATA.callRemoveVectorFromDevice(W)
+    if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+    if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(W)
 

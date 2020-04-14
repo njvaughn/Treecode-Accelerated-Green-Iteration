@@ -1,6 +1,7 @@
 import numpy as np
 import ctypes
 from mpi4py import MPI
+import gc
 
 from mpiUtilities import rprint
 
@@ -9,6 +10,7 @@ try:
     zoltanLoadBalancing = ctypes.CDLL('ZoltanRCB.so')
 except OSError as e:
     print(e)
+    print("Exiting since ZoltanRCB.so could not be loaded.")
     exit(-1)
 
         
@@ -17,7 +19,6 @@ except OSError as e:
 """ Set argtypes of the wrappers. """
 
 try:
-#     _cpu_orthogonalizationRoutines.modifiedGramSchmidt_singleWavefunction.argtypes = (np.ctypeslib.ndpointer(dtype=np.intp), 
     zoltanLoadBalancing.loadBalanceRCB.argtypes = (
                                                     ctypes.POINTER(ctypes.POINTER(ctypes.c_double)), 
                                                     ctypes.POINTER(ctypes.POINTER(ctypes.c_double)), 
@@ -75,8 +76,9 @@ def callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, coarsePtsPerCe
                                         )
     
 #     print("Rank %i, After call: cellsX = " %rank, cellsX_p[:5])
-
-    
+    print("Calling garbage collector")
+    gc.collect()
+    print("garbage collection complete.")
     return cellsX_p[:newNumCells], cellsY_p[:newNumCells], cellsZ_p[:newNumCells], cellsDX_p[:newNumCells], cellsDY_p[:newNumCells], cellsDZ_p[:newNumCells], coarsePtsPerCell_p[:newNumCells], finePtsPerCell_p[:newNumCells], newNumCells
 
 
@@ -133,18 +135,18 @@ if __name__=="__main__":
     comm.Barrier()
     print("rank %i, fine points per cell: " %rank, newFinePtsPerCell)
     
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    color=np.random.rand(3,)
-#     for i in range(len(newCellsX)):
-#         ax.scatter(newCellsX[i],newCellsY[i],newCellsZ[i],'o',c=[newCoarsePtsPerCell[i]*size/255],label="rank %i" %rank)
-    ax.scatter(newCellsX,newCellsY,newCellsZ,'o',color=color,label="rank %i" %rank)
-    ax.set_xlim([-1,1])
-    ax.set_ylim([-1,1])
-    ax.set_zlim([-1,1])
-    plt.title("Rank %i" %rank)
-    comm.Barrier()
-    plt.show()
+#     fig = plt.figure()
+#     ax = fig.add_subplot(111, projection='3d')
+#     color=np.random.rand(3,)
+# #     for i in range(len(newCellsX)):
+# #         ax.scatter(newCellsX[i],newCellsY[i],newCellsZ[i],'o',c=[newCoarsePtsPerCell[i]*size/255],label="rank %i" %rank)
+#     ax.scatter(newCellsX,newCellsY,newCellsZ,'o',color=color,label="rank %i" %rank)
+#     ax.set_xlim([-1,1])
+#     ax.set_ylim([-1,1])
+#     ax.set_zlim([-1,1])
+#     plt.title("Rank %i" %rank)
+#     comm.Barrier()
+#     plt.show()
     
 
 

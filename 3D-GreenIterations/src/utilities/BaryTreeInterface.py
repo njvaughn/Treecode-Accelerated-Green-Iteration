@@ -88,6 +88,10 @@ def callTreedriver(numTargets, numSources,
     returns the results array.
     '''
 
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size() 
     c_double_p = ctypes.POINTER(ctypes.c_double)
     
     targetX_p = targetX.ctypes.data_as(c_double_p)
@@ -111,6 +115,8 @@ def callTreedriver(numTargets, numSources,
             sizeCheck = 1.0
         if approximationName == Approximation.HERMITE:
             sizeCheck = 4.0
+            
+#     print("rank %i setup BaryTree call, now calling interface routine." %rank)
     
     if GPUpresent==True:
         _gpu_treecodeRoutines.BaryTreeInterface(ctypes.c_int(numTargets),  ctypes.c_int(numSources),

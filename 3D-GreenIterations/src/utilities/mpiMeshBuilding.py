@@ -4,6 +4,8 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 import numpy as np
+import gc
+
 
 from mpiUtilities import rprint, global_dot
 from loadBalancer import loadBalance_manual
@@ -444,6 +446,9 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, newNumCells = callZoltan(refinedCellsX,refinedCellsY,refinedCellsZ,refinedCellsDX,refinedCellsDY,refinedCellsDZ, refinedPtsPerCellCoarse, refinedPtsPerCellFine, numCellsLocal, globalStart)
     print("rank %i, number of cells after balancing = %i" %(rank,len(cellsX)))
     comm.barrier()
+#     gc.collect()
+#     comm.barrier()
+#     print("Called garbage collector after calling Zoltan.")
     
     ## Check that the cell decompositions make sense after load balancing.
     localVolume = 0
@@ -457,7 +462,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     assert abs((2*XL*2*YL*2*ZL) - totalVolume) < 1e-12, "AFTER LOAD BALANCING: base mesh cells volumes do not add up to the expected total volume.  Expected volume = %f" %(2*XL*2*YL*2*ZL)
      
      
-     
+    
     for i in range(len(cellsX)):
         # construct quadrature points for base mesh
         xl=cellsX[i]-cellsDX[i]/2

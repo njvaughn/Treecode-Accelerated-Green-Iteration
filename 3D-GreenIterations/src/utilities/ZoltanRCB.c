@@ -153,6 +153,8 @@ void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
             myCells.dx[i] = myCells.dx[myCells.numMyPoints-1];
             myCells.dy[i] = myCells.dy[myCells.numMyPoints-1];
             myCells.dz[i] = myCells.dz[myCells.numMyPoints-1];
+            myCells.coarsePtsPerCell[i] = myCells.coarsePtsPerCell[myCells.numMyPoints-1];
+            myCells.finePtsPerCell[i] = myCells.finePtsPerCell[myCells.numMyPoints-1];
             myCells.myGlobalIDs[i] = myCells.myGlobalIDs[myCells.numMyPoints-1];
             myCells.numMyPoints--;
         } else {
