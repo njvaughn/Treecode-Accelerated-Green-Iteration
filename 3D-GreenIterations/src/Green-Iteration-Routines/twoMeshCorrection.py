@@ -240,7 +240,7 @@ def twoMeshCorrectionClosure(scf_args):
         """
         
         ## Energy update after computing Vhartree
-        
+          
         comm.barrier()    
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         exchangeOutput = exchangeFunctional.compute(RHO)

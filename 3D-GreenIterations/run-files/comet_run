@@ -2,11 +2,11 @@
 #SBATCH --job-name="comet-testing"
 #SBATCH --output="dataFiles/C60_test-%j.%N.out"
 #SBATCH --partition=gpu
-#SBATCH --nodes=2
+#SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:p100:4
 #SBATCH --mem=100GB 
-#SBATCH -t 48:00:00
+#SBATCH -t 04:00:00
 #SBATCH --no-requeue
 #SBATCH -A mia320
 #SBATCH --constraint=exclusive
@@ -29,9 +29,9 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 
 COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
-INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
-#INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv'
@@ -98,7 +98,7 @@ TWOMESHSTART=999
 GIFORM="Sequential"
 #GIFORM="Greedy" 
 
-for MESHPARAM4 in -4
+for MESHPARAM4 in -2
 do                                                         
     for BATCHSIZE in 2000
     do          
@@ -108,19 +108,13 @@ do
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/Si2/debug/baseline_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
         #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/debug/quarters_spacing_1p0_order4_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
         OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/testing/order3_gpuOrth_singleConvolutionCorrection_C20_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/twoMeshCorrection/order3_gpuOrth_singleConvolutionCorrection_C20_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/orth/C20-GI_form_${GIFORM}.csv" 
-         
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/carbon/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/loc_mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/silicon/twoMeshHartree/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/silicon/twoMeshLocal/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/twoMeshLocal/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/twoMeshLocal_supressNL/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/testing/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
-        #OUTPUTFILE="/home/njvaughn/ONCV-testing/TiO2/testing/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
+
+
+        #OUTPUTFILE="/home/njvaughn/ONCV-testing/Si2/debug/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}.csv" 
+
+
         #mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 8 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
-        ibrun -n 8 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        ibrun -n 4 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

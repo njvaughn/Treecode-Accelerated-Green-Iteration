@@ -23,6 +23,9 @@ from scipy.special import sph_harm
 from pyevtk.hl import unstructuredGridToVTK
 from pyevtk.vtk import VtkTriangle, VtkQuad, VtkPolygon, VtkVoxel, VtkHexahedron
 import mpi4py.MPI as MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 
 
 
@@ -123,6 +126,8 @@ sys.path.append(srcdir+'../ctypesTests/src')
 
 sys.path.append(srcdir+'../ctypesTests')
 sys.path.append(srcdir+'../ctypesTests/lib') 
+
+
 
 
 
@@ -385,7 +390,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
         Times['totalKohnShamTime'] = time.time()-startTime
         print('Total Time: ', Times['totalKohnShamTime'])
     
-        header = ['domainSize','maxSideLength','order','fineOrder','numberOfCells','numberOfPoints','gradientFree',
+        header = ['numProcs','domainSize','maxSideLength','order','fineOrder','numberOfCells','numberOfPoints','gradientFree',
                   'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
                   'gaussianAlpha','gaugeShift','finalGItolerance',
                   'GreenSingSubtracted', 'regularize', 'epsilon',
@@ -393,7 +398,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
                   'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
                   'Treecode','approximationName','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
         
-        myData = [domainSize,maxSideLength,order,fine_order, nPoints/order**3,nPoints,gradientFree,
+        myData = [size,domainSize,maxSideLength,order,fine_order, nPoints/order**3,nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
                   gaussianAlpha,gaugeShift,finalGItolerance,
                   subtractSingularity, regularize, epsilon,
