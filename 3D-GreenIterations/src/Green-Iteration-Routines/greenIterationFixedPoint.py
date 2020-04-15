@@ -291,7 +291,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                                         kernel, numberOfKernelParameters, kernelParameters, 
                                         singularity, approximation, computeType,
                                         treecodeOrder, theta, maxParNode, batchSize,
-                                        GPUpresent, treecode_verbosity, sizeCheck=1.0
+                                        GPUpresent, treecode_verbosity
                                         )
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)

@@ -369,7 +369,7 @@ def scfFixedPointClosure(scf_args):
                                             kernel, numberOfKernelParameters, kernelParameters, 
                                             singularity, approximation, computeType,
                                             treecodeOrder, theta, maxParNode, batchSize,
-                                            GPUpresent, treecode_verbosity, sizeCheck=1.0
+                                            GPUpresent, treecode_verbosity
                                             )
             
 #             print("CALLING TREEDRIVER TWICE IN A ROW, JUST FOR TESTING PURPOSES.")
