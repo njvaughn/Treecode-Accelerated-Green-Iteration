@@ -3,7 +3,7 @@
 
 cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
 SINGSUBT=1 
-
+GPUPRESENT='False'  
 SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 
 
@@ -13,12 +13,10 @@ SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 #INPUTFILE='molecularConfigurations/N2Auxiliary.csv'
 #INPUTFILE='molecularConfigurations/NAuxiliary.csv'
 
-
 COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
-
-
 #INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
 INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv'
@@ -31,11 +29,8 @@ VTKFILEDIR='/Users/nathanvaughn/Desktop/'
 
 GRADIENTFREE='True'
 SYMMETRICITERATION='False'
-GPUPRESENT='False'
  
 TREECODE='True'      
-MAXPARNODE=100
-BATCHSIZE=10   
  
  
 GAUGESHIFT=-0.5
@@ -49,58 +44,60 @@ ADDITIONALDEPTHATATOMS=0
 GRADIENTFREE='True' 
 
 MIXINGPARAMETER=0.5
-MIXINGHISTORY=4  
-  
-INITIAL_GI_TOLERANCE=3e-5
-FINAL_GI_TOLERANCE=3e-7
-GRADUALSTEPS=4
-SCF_TOLERANCE=2e-6
+MIXINGHISTORY=10  
+     
+INITIAL_GI_TOLERANCE=3e-2 
+FINAL_GI_TOLERANCE=3e-5
+GRADUALSTEPS=10
+SCF_TOLERANCE=3e-2
      
 
 
 
-APPROXIMATIONNAME=lagrange
+APPROXIMATIONNAME=hermite
 SINGULARITYHANDLING=subtraction
 
 REGULARIZE='False'
 EPSILON=0.0
-
+   
 GAUSSIANALPHA=2.0 
-TREECODEORDER=5
+TREECODEORDER=4
 THETA=0.8
 
+CELLORDER=4
+FINEORDER=4
 
 
-
-
+ 
 MESHTYPE='coarsenedUniformTwoLevel'
 
 DOMAIN=16
 MAXSIDELENGTH=8
-MESHPARAM1=0.5 # near field spacing 
+MESHPARAM1=1.0 # near field spacing 
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
-MESHPARAM4=0
-TWOMESHSTART=4
-
   
-for DOMAIN in 16  
-do                                                         
-    for CELLORDER in 2
-    do         
-        for FINEORDER in 2
-        do  
+TWOMESHSTART=999
+#GIFORM="Simultaneous"
+GIFORM="Sequential"
+#GIFORM="Greedy" 
 
-        OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/beryllium/twoMesh/mesh_${MESHPARAM1}_${MESHPARAM2}_${MESHPARAM3}_${MESHPARAM4}_order_${CELLORDER}_fineOrder_${FINEORDER}_domain_${DOMAIN}.csv" 
-         
+for MESHPARAM4 in -2
+do                                                         
+    for BATCHSIZE in 20
+    do        
+        for MAXPARNODE in 200
+        do   
+
+        OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/beryllium/twoMesh/twoMesh_correction_at_end_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
         mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
                                                 $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART
+                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART $GIFORM
         done 
     done      
 done
-
+       

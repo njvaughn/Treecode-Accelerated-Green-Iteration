@@ -14,7 +14,8 @@ try:
     _gpu_orthogonalizationRoutines = ctypes.CDLL('libOrthogonalization_gpu.so')
 except OSError as e:
     print(e)
-    exit(-1)
+    print("Ignore libOrthogonalization_gpu errors if not using GPUs")
+#     exit(-1)
         
 
         

@@ -24,7 +24,6 @@ import BaryTreeInterface as BT
 import orthogonalization_wrapper as ORTH
 import moveData_wrapper as MOVEDATA
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
-import moveData_wrapper as MOVEDATA
 
 
 
@@ -163,9 +162,9 @@ def scfFixedPointClosure(scf_args):
             
         if SCFcount==1:
             ## For the greedy approach, let the density start as the sum of wavefunctions.
-            MOVEDATA.callRemoveVectorFromDevice(orbitals)
+            if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-            MOVEDATA.callCopyVectorToDevice(orbitals)
+            if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
             fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
             eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
             rprint(rank,'Fermi energy: %f'%eF)
@@ -360,45 +359,18 @@ def scfFixedPointClosure(scf_args):
     
             comm.barrier()
             V_hartreeNew = BT.callTreedriver(  
-                                                nPoints, numSources, 
-                                                np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-                                                np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
-                                                kernel, numberOfKernelParameters, kernelParameters, 
-                                                singularity, approximation, computeType,
-                                                treecodeOrder, theta, maxParNode, batchSize,
-                                                GPUpresent, treecode_verbosity, sizeCheck=1.0
-                                                )
+                                            nPoints, numSources, 
+                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+                                            np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
+                                            kernel, numberOfKernelParameters, kernelParameters, 
+                                            singularity, approximation, computeType,
+                                            treecodeOrder, theta, maxParNode, batchSize,
+                                            GPUpresent, treecode_verbosity
+                                            )
             
-#             input()
-            
-            
-#                                                            singularity, approximation,
-#                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, treecode_verbosity)
-            
-#             V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(Xf), 
-#                                                            X, Y, Z, RHO, 
-#                                                            Xf, Yf, Zf, RHOf, Wf,
-#                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName,
-#                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, treecode_verbosity)
-#              
-            
-#             V_hartreeNew = treecodeWrappers.callTreedriver(len(X), len(X), 
-#                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-#                                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
-#                                                            kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName,
-#                                                            treecodeOrder, theta, maxParNode, batchSize, GPUpresent, verbosity)
-            
-#             V_hartreeNew += 2.0*np.pi*gaussianAlpha*gaussianAlpha*RHO
-            
-            
-#             Times['timePerConvolution'] = MPI.Wtime()-start
+
             rprint(rank,'Convolution time: ', MPI.Wtime()-start)
-            
-#             # interpolate back to coarse mesh
-#             V_hartreeNew = interpolateBetweenTwoMeshes(Xf, Yf, Zf, V_hartreeNewf, fine_order,
-#                                                X, Y, Z, order) 
         
-      
         
         
         """ 
@@ -408,18 +380,14 @@ def scfFixedPointClosure(scf_args):
         ## Energy update after computing Vhartree
         
         comm.barrier()    
-#         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
-#         VhartreeNorm = np.sqrt( global_dot(W,V_hartreeNew*V_hartreeNew, comm) )
-#         rprint(rank,"VHartreeNew norm = ", VhartreeNorm)
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
-        FIRST_SCF_ELECTROSTATICS_DFTFE=-4.0049522077687829e+00
+        
         if abortAfterInitialHartree==True:
             Energies["Repulsion"] = global_dot(RHO, Vext_local*W, comm)
         
             Energies['totalElectrostatic'] = Energies["Ehartree"] + Energies["Enuclear"] + Energies["Repulsion"]
             rprint(rank,"Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
 #             rprint(rank,"Electrostatics error after initial convolution: ", Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"])
-            rprint(rank,"Electrostatics error after initial convolution: ", Energies['totalElectrostatic']-FIRST_SCF_ELECTROSTATICS_DFTFE)
             return np.zeros(nPoints)
         
         
@@ -446,21 +414,20 @@ def scfFixedPointClosure(scf_args):
         
         if SCFcount==1: # generate initial guesses for eigenvalues
             Energies['Eold']=-10
-            ## WHY WAS THIS HERE?  I AM ALREADY PROVIDING INITIAL GUESS FOR EIGENVALUES BASED ON THEIR QUANTUM NUMBERS.  COMMENTING OUT.
             for m in range(nOrbitals):
                 Energies['orbitalEnergies'][m]=-1.0
                 
                 
-# #             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals, Energies['orbitalEnergies'])
-# #             for m in range(nOrbitals):
-# #                 if Energies['orbitalEnergies'][m] > 0:
-# #                     Energies['orbitalEnergies'][m] = -0.5
-        
-        
+
         ## Sort by eigenvalue
-        MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        
+        if GPUpresent: 
+            rprint(rank,"About to call MOVEDATA before sorting by eigenvalue.")
+            MOVEDATA.callRemoveVectorFromDevice(orbitals)
         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-        MOVEDATA.callCopyVectorToDevice(orbitals) 
+        if GPUpresent: 
+            MOVEDATA.callCopyVectorToDevice(orbitals) 
+            rprint(rank,"Completed calls to MOVEDATA after sorting by eigenvalue.")
         
         ## Solve the eigenvalue problem
         if SCFcount>1:
@@ -472,16 +439,14 @@ def scfFixedPointClosure(scf_args):
         elif SCFcount==1: 
             previousOccupations = np.ones(nOrbitals)
         for m in range(nOrbitals): 
-            MOVEDATA.callRemoveVectorFromDevice(orbitals)
-            MOVEDATA.callCopyVectorToDevice(orbitals) 
+            if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+            if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals) 
             if previousOccupations[m] > 1e-20:
                 if verbosity>0: rprint(rank,'Working on orbital %i' %m)
                 if verbosity>0: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                 
-        #                         
                 eigenvalueResiduals=np.ones_like(residuals)           
                 greenIterationsCount=1
-#                 print("Forcing singularityHandling to be skipping for Green's iteration.")
                 gi_args = {'orbitals':orbitals,'oldOrbitals':oldOrbitals, 'Energies':Energies, 'Times':Times, 
                            'Veff_local':Veff_local, 'Vext_local':Vext_local, 'Vext_local_fine':Vext_local_fine,
                                'symmetricIteration':symmetricIteration,'GPUpresent':GPUpresent,
@@ -507,11 +472,7 @@ def scfFixedPointClosure(scf_args):
                 
                 n,M = np.shape(orbitals)
                 resNorm=1.0 
-                
-#                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
-#                 orbitals[m,:] = np.copy(orthWavefunction)
-                
-                
+                 
                 
 #                 ## Use previous eigenvalue to generate initial guess
 #                 if SCFcount==1:
@@ -568,11 +529,7 @@ def scfFixedPointClosure(scf_args):
                     comm.barrier()
                     if verbosity>0: rprint(rank,'eigenvalueDiff = %f' %eigenvalueDiff)
                     
-    #                 print('greenIterationsCount after: ', greenIterationsCount)
-    #                 print('gi_args greenIterationsCount after: ', gi_args["greenIterationsCount"])
-    
-    #                 print('orbitals after: ',orbitals[1:5,m])
-    #                 print('gi_args orbitals after: ',gi_args["orbitals"][1:5,m])
+
                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                     resNorm = clenshawCurtisNorm(r)
                     
@@ -584,27 +541,18 @@ def scfFixedPointClosure(scf_args):
     
                 
                 psiOut = np.append(orbitals[m,:],Energies['orbitalEnergies'][m])
-#                 print("np.shape(psiOut) = ", np.shape(psiOut))
                 if verbosity>0: rprint(rank,'Power iteration tolerance met.  Beginning rootfinding now...') 
-    #             psiIn = np.copy(psiOut)
-#                 tol=intraScfTolerance
                 
                 
                 ## Begin Anderson Mixing on Wavefunction
                 Done = False
-#                 Done = True
                 firstInputWavefunction=True
                 firstOutputWavefunction=True
                 inputWavefunctions = np.zeros((psiOut.size,1))
                 outputWavefunctions =  np.zeros((psiOut.size,1))
-#                 print("np.shape(outputWavefunctions) = ", np.shape(outputWavefunctions))
                 mixingStart = np.copy( gi_args['greenIterationsCount'] )
-                
-                
-     
     
                 while Done==False:
-                      
                       
                     greenIterationsCount=gi_args["greenIterationsCount"]
                     if verbosity>0: rprint(rank,'MEMORY USAGE: %i'%resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
@@ -615,9 +563,9 @@ def scfFixedPointClosure(scf_args):
                     ### OHHH, because after anderson mixing the resulting wavefunction won't still be orthogonal.  Apparently this *can* matter for convergence. 
                     ### Still though, how would this affect the first wavefunction?  It says the measured difference is 0.00e0.  And it only needs to be normalized, not orthogonalized. 
                     U=np.copy(orbitals[m])
-                    MOVEDATA.callCopyVectorToDevice(U)
+                    if GPUpresent: MOVEDATA.callCopyVectorToDevice(U)
                     ORTH.callOrthogonalization(orbitals, U, W, m, GPUpresent)
-                    MOVEDATA.callCopyVectorFromDevice(U)
+                    if GPUpresent: MOVEDATA.callCopyVectorFromDevice(U)
                     orthWavefunction=np.copy(U)
                     
 #                     orthWavefunction = mgs(orbitals,W,m, comm)
@@ -625,10 +573,6 @@ def scfFixedPointClosure(scf_args):
 #                     L2diff = np.sqrt(global_dot(W,diff**2,comm))
 #                     rprint(rank,"\n\n\n Just did the extra orthgonalization.  L2 difference between orbitals[m,:] and the newly orthogonalize vector: %1.2e" %L2diff)
                     orbitals[m,:] = np.copy(orthWavefunction)
-#                     comm.barrier()
-#                     tempPsi=np.copy(orbitals[m,:])
-#                     orbitals[m,:] = np.copy(tempPsi)
-#                     comm.barrier()
                     psiIn = np.append( np.copy(orbitals[m,:]), Energies['orbitalEnergies'][m] )
                       
                       
@@ -647,10 +591,8 @@ def scfFixedPointClosure(scf_args):
       
                     ## Perform one step of iterations
                     oldEigenvalue = np.copy(Energies['orbitalEnergies'][m])
-    #                 print('Before GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
                     greensIteration_FixedPoint, gi_args = greensIteration_FixedPoint_Closure(gi_args)
                     r = greensIteration_FixedPoint(psiIn,gi_args)
-    #                 print('After GI Energies:[orbitalEnergies] ', Energies['orbitalEnergies'])
                     newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                     psiOut = np.append( gi_args["orbitals"][m,:], Energies['orbitalEnergies'][m])
                     clenshawCurtisNorm = clenshawCurtisNormClosure(W)
@@ -679,12 +621,8 @@ def scfFixedPointClosure(scf_args):
                         firstOutputWavefunction=False
                     else:
                         if (greenIterationsCount-1-mixingStart)<GImixingHistoryCutoff:
-    #                         temp = np.append( orbitals[m,:], Energies['orbitalEnergies'][m])
                             outputWavefunctions = np.concatenate( ( outputWavefunctions, np.reshape(np.copy(psiOut), (psiOut.size,1)) ), axis=1)
-#                             print('Concatenated outputWavefunction.  Now has shape: ', np.shape(outputWavefunctions))
                         else:
-#                             print('Beyond GImixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff)
-    #                         temp = np.append( orbitals[m,:], Energies['orbitalEnergies'][m])
                             outputWavefunctions[:,(greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff] = np.copy(psiOut)
                       
                       
@@ -692,7 +630,6 @@ def scfFixedPointClosure(scf_args):
                       
                     ## Compute next input wavefunctions
                     if verbosity>0: rprint(rank,'Anderson mixing on the orbital.')
-#                     GImixingParameter=0.5
                     GImixingParameter=0.5
                     andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
                     Energies['orbitalEnergies'][m] = andersonOrbital[-1]
@@ -702,66 +639,17 @@ def scfFixedPointClosure(scf_args):
       
       
                    
-    #             print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
                 if verbosity>0: rprint(rank,'Used %i iterations for wavefunction %i' %(gi_args["greenIterationsCount"],m))
             else:
                 if verbosity>0: rprint(rank,"Not updating orbital %i because it is unoccupied." %m)
             
-            
-# #                # Method that uses Scipy Anderson
-#                 Done = False
-#                 while Done==False:
-#                     try:
-#                         # Call anderson mixing on the Green's iteration fixed point function
-#           
-#                         # Orthonormalize orbital m before beginning Green's iteration
-#                         n,M = np.shape(orbitals)
-#                         orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
-#                         orbitals[m,:] = np.copy(orthWavefunction)
-#                            
-#                         psiIn = np.append( np.copy(orbitals[m,:]), Energies['orbitalEnergies'][m] )
-#           
-#                              
-#                         ### Anderson Options
-#                         clenshawCurtisNorm = clenshawCurtisNormClosure(W)
-#                         method='anderson'
-# #                         jacobianOptions={'alpha':1.0, 'M':10, 'w0':0.01} 
-#                         jacobianOptions={'alpha':1.0, 'M':5, 'w0':0.01} 
-#                         solverOptions={'fatol':intraScfTolerance, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
-# #                         solverOptions={'fatol':intraScfTolerance, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'disp':True}
-#           
-#                           
-#                         print('Calling scipyRoot with %s method' %method)
-#                         sol = scipyRoot(greensIteration_FixedPoint,psiIn, args=gi_args, method=method, options=solverOptions)
-#                         print(sol.success)
-#                         print(sol.message)
-#                         psiOut = sol.x
-#                         Done = True
-#                     except Exception:
-# #                         print('Not converged.  What to do?')
-# #                         return
-#                         if np.abs(gi_args['eigenvalueDiff']) < tol/10:
-#                             print("Rootfinding didn't converge but eigenvalue is converged.  Exiting because this is probably due to degeneracy in the space.")
-#         #                         targets = tree.extractPhi(m)
-#                             psiOut = np.append(orbitals[m,:], Energies['orbitalEnergies'][m])
-#                             Done=True
-#                         else:
-#                             print('Not converged.  What to do?')
-#                             return
-#                 orbitals[m,:] = np.copy(psiOut[:-1])
-#                 Energies['orbitalEnergies'][m] = np.copy(psiOut[-1])
-#                    
-#                 print('Used %i iterations for wavefunction %i' %(greenIterationsCount,m))
-#             
-    
+
         
         ## Sort by eigenvalue
-        
-#         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-        
-        MOVEDATA.callRemoveVectorFromDevice(orbitals)
+                
+        if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-        MOVEDATA.callCopyVectorToDevice(orbitals)
+        if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
             
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
@@ -770,14 +658,8 @@ def scfFixedPointClosure(scf_args):
         exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
         occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
     
-    #         occupations = computeOccupations(Energies['orbitalEnergies'], nElectrons, Temperature)
         if verbosity>0: rprint(rank,'Occupations: ', occupations)
         Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
-    
-     
-    
-        
-    
         
     
         oldDensity = np.copy(RHO)
@@ -799,10 +681,7 @@ def scfFixedPointClosure(scf_args):
             outputDensities[:,0] = np.copy(newDensity)
         else:
             
-    #             outputDensities = np.concatenate( ( outputDensities, np.reshape(np.copy(newDensity), (nPoints,1)) ), axis=1)
-            
-#             if (SCFcount-1)<mixingHistoryCutoff:
-#             if (len(outputDensities[0,:]))<mixingHistoryCutoff:
+
             if (SCFindex-1)<mixingHistoryCutoff:
                 outputDensities = np.concatenate( (outputDensities, np.reshape(np.copy(newDensity), (nPoints,1))), axis=1)
 #                 print('Concatenated outputDensity.  Now has shape: ', np.shape(outputDensities))
@@ -816,22 +695,14 @@ def scfFixedPointClosure(scf_args):
                 outputDensities[:,0] = np.copy(newDensity)
     
          
-#         if SCFcount == TwoMeshStart:
-#              outputDensities[:,0] = np.copy(newDensity)
-            
+  
         if verbosity>0: rprint(rank,'outputDensities[0,:] = ', outputDensities[0,:])
         
         rprint(rank,"\n\n\n\n\nShape of input densities: ", np.shape(inputDensities))
         rprint(rank,"Shape of output densities: ", np.shape(outputDensities))
         rprint(rank,"\n\n\n\n\n")
-#         input("Press Enter to continue...")
-#         print('outputDensities[:,0:3] = ', outputDensities[:,0:3])
-        
-    #         print('Sample of output densities:')
-    #         print(outputDensities[0,:])    
-#         integratedDensity = np.sum( newDensity*W )
+
         integratedDensity = global_dot( newDensity, W, comm )
-#         densityResidual = np.sqrt( np.sum( (newDensity-oldDensity)**2*W ) )
         densityResidual = np.sqrt( global_dot( (newDensity-oldDensity)**2,W,comm ) )
         if verbosity>0: rprint(rank,'Integrated density: ', integratedDensity)
         rprint(rank,'Density Residual ', densityResidual)
@@ -843,22 +714,12 @@ def scfFixedPointClosure(scf_args):
         Energies['Etotal'] = Energies['Eband'] - Energies['Ehartree'] + Energies['Ex'] + Energies['Ec'] - Energies['Vx'] - Energies['Vc'] + Energies['Enuclear']
         Energies['totalElectrostatic'] = Energies["Ehartree"] + Energies["Enuclear"] + Energies["Repulsion"]
         
-        ## This might not be needed, because Eext is already captured in the band energy, which includes both local and nonlocal
-#         if coreRepresentation=="Pseudopotential":
-#             Eext_nl=0.0
-#             for m in range(nOrbitals):
-#                 Vext_nl = np.zeros(nPoints)
-#                 for atom in atoms:
-#                     Vext_nl += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[m,:],W,comm)
-#                 Eext_nl += global_dot(orbitals[m,:], Vext_nl,comm)
-#             Energies['Etotal'] += Eext_nl
     
         for m in range(nOrbitals):
             if verbosity>0: rprint(rank,'Orbital %i error: %1.3e' %(m, Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift']))
         
         
         energyResidual = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
-#         energyError = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
         Energies['Eold'] = np.copy(Energies['Etotal'])
         
         
@@ -878,7 +739,6 @@ def scfFixedPointClosure(scf_args):
         rprint(rank,'Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
         rprint(rank,'Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
         rprint(rank,'Updated totalElectrostatic:            %.10f H, %.10e H' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"]))
-        rprint(rank,'Electrostatics w.r.t. SCF 1:           %.10f H, %.10e H' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-FIRST_SCF_ELECTROSTATICS_DFTFE))
         rprint(rank,'Total Energy:                          %.10f H, %.10e H' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
         rprint(rank,'Energy Residual:                        %.3e' %energyResidual)
         rprint(rank,'Density Residual:                       %.3e\n\n'%densityResidual)
@@ -901,11 +761,6 @@ def scfFixedPointClosure(scf_args):
             myData = [SCFcount, densityResidual, Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], 
                       Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal'], scf_args['currentGItolerance']]
 
-#             header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
-#                       'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy']
-#         
-#             myData = [SCFcount, densityResidual, Energies['orbitalEnergies'], Energies['Eband'], Energies['kinetic'], 
-#                       Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal']]
             
             if rank==0:
                 if not os.path.isfile(SCFiterationOutFile):
@@ -920,39 +775,40 @@ def scfFixedPointClosure(scf_args):
                     writer = csv.writer(myFile)
                     writer.writerow(myData)
                 
-#         if scf_args['currentGItolerance'] > scf_args['finalGItolerance']: # desired final tolerance
         if scf_args['GItolerancesIdx'] < scf_args['gradualSteps']-1: # GItolerancesIdx goes from 0 to gradualSteps-1
             scf_args['GItolerancesIdx']+=1
             scf_args['currentGItolerance'] = GItolerances[scf_args['GItolerancesIdx']]
             rprint(rank,'Reducing GI tolerance to ', scf_args['currentGItolerance'])
         
         
-        ## Write the restart files
-        
-        # save arrays 
-        try:
-            np.save(wavefunctionFile, orbitals)
-            
-    #             sources = tree.extractLeavesDensity()
-            np.save(densityFile, RHO)
-            np.save(outputDensityFile, outputDensities)
-            np.save(inputDensityFile, inputDensities)
-            
-            np.save(vHartreeFile, V_hartreeNew)
-            
-            
-            
-            # make and save dictionary
-            auxiliaryRestartData = {}
-            auxiliaryRestartData['SCFcount'] = SCFcount
-            auxiliaryRestartData['totalIterationCount'] = Times['totalIterationCount']
-            auxiliaryRestartData['eigenvalues'] = Energies['orbitalEnergies']
-            auxiliaryRestartData['Eold'] = Energies['Eold']
-    
-            np.save(auxiliaryFile, auxiliaryRestartData)
-        except FileNotFoundError:
-            pass
+#         ## Write the restart files
+#         ## COMMENTED OUT FOR NOW UNTIL RESTART CAPABILITY IS SUPPORTED FOR DOMAIN DECOMPOSITION APPROACH
+#         
+#         # save arrays 
+#         try:
+#             np.save(wavefunctionFile, orbitals)
+#             
+#     #             sources = tree.extractLeavesDensity()
+#             np.save(densityFile, RHO)
+#             np.save(outputDensityFile, outputDensities)
+#             np.save(inputDensityFile, inputDensities)
+#             
+#             np.save(vHartreeFile, V_hartreeNew)
+#             
+#             
+#             
+#             # make and save dictionary
+#             auxiliaryRestartData = {}
+#             auxiliaryRestartData['SCFcount'] = SCFcount
+#             auxiliaryRestartData['totalIterationCount'] = Times['totalIterationCount']
+#             auxiliaryRestartData['eigenvalues'] = Energies['orbitalEnergies']
+#             auxiliaryRestartData['Eold'] = Energies['Eold']
+#     
+#             np.save(auxiliaryFile, auxiliaryRestartData)
+#         except FileNotFoundError:
+#             pass
                 
+        
         
 #         if plotSliceOfDensity==True:
 #     #             densitySliceSavefile = densityPlotsDir+'/iteration'+str(SCFcount)

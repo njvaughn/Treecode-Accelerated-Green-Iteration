@@ -240,7 +240,7 @@ def twoMeshCorrectionClosure(scf_args):
         """
         
         ## Energy update after computing Vhartree
-        
+          
         comm.barrier()    
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         exchangeOutput = exchangeFunctional.compute(RHO)
@@ -387,9 +387,9 @@ def twoMeshCorrectionClosure(scf_args):
         
 #         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
         
-        MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-        MOVEDATA.callCopyVectorToDevice(orbitals)
+        if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
             
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        

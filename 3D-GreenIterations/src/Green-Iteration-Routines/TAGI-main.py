@@ -23,6 +23,9 @@ from scipy.special import sph_harm
 from pyevtk.hl import unstructuredGridToVTK
 from pyevtk.vtk import VtkTriangle, VtkQuad, VtkPolygon, VtkVoxel, VtkHexahedron
 import mpi4py.MPI as MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 
 
 
@@ -123,6 +126,8 @@ sys.path.append(srcdir+'../ctypesTests/src')
 
 sys.path.append(srcdir+'../ctypesTests')
 sys.path.append(srcdir+'../ctypesTests/lib') 
+
+
 
 
 
@@ -385,7 +390,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
         Times['totalKohnShamTime'] = time.time()-startTime
         print('Total Time: ', Times['totalKohnShamTime'])
     
-        header = ['domainSize','maxSideLength','order','fineOrder','numberOfCells','numberOfPoints','gradientFree',
+        header = ['numProcs','domainSize','maxSideLength','order','fineOrder','numberOfCells','numberOfPoints','gradientFree',
                   'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
                   'gaussianAlpha','gaugeShift','finalGItolerance',
                   'GreenSingSubtracted', 'regularize', 'epsilon',
@@ -393,7 +398,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
                   'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
                   'Treecode','approximationName','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
         
-        myData = [domainSize,maxSideLength,order,fine_order, nPoints/order**3,nPoints,gradientFree,
+        myData = [size,domainSize,maxSideLength,order,fine_order, nPoints/order**3,nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
                   gaussianAlpha,gaugeShift,finalGItolerance,
                   subtractSingularity, regularize, epsilon,
@@ -694,8 +699,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     """
     comm.barrier()
     rprint(rank,"Copying data to GPU and starting while loop for density...")
-    MOVEDATA.callCopyVectorToDevice(orbitals)
-    MOVEDATA.callCopyVectorToDevice(W)
+    if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
+    if GPUpresent: MOVEDATA.callCopyVectorToDevice(W)
     comm.barrier()
     while ( (densityResidual > SCFtolerance) or (energyResidual > SCFtolerance) ):  # terminate SCF when both energy and density are converged.
           
@@ -705,8 +710,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #             return
         abortAfterInitialHartree=False
         
-        MOVEDATA.callRemoveVectorFromDevice(orbitals)
-        MOVEDATA.callCopyVectorToDevice(orbitals)
+        if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
         
         
         if GI_form=="Sequential":
@@ -777,9 +782,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         
     
     ## DO ONE FINAL ITERATION WITH TWO LEVEL MESH
-    print("\n\n\n\nDoing one final SCF iteration with Two Level Mesh.\n\n\n")
-    MOVEDATA.callRemoveVectorFromDevice(orbitals)
-    MOVEDATA.callCopyVectorToDevice(orbitals)
+    rprint(rank,"\n\n\n\nDoing one final SCF iteration with Two Level Mesh.\n\n\n")
+    if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+    if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
     scf_args["TwoMeshStart"]=SCFcount
       
 #     scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
@@ -844,6 +849,9 @@ if __name__ == "__main__":
     X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
                                                                                                      inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
                                                                                                      divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
+    
+    
+
     
     
     ## NO LONGER PERFORMING LOAD BALANCING AFTER CREATING MESH POINTS.  IT IS TAKEN CARE OF WHEN CHOPPING THE DOMAIN INTO INITIAL BASE MESH.
@@ -925,6 +933,6 @@ if __name__ == "__main__":
     initialRho = np.copy(RHO)
     finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
 
-    MOVEDATA.callRemoveVectorFromDevice(orbitals)
-    MOVEDATA.callRemoveVectorFromDevice(W)
+    if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+    if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(W)
 

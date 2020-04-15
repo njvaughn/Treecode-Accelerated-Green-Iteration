@@ -35,6 +35,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
         # what other things do we need?  Energies, Times, orbitals, Veff, runtime constants (symmetricIteration, GPUpresent, subtractSingularity, treecode, outputfiles, ...)  
         verbosity=1
         
+#         print("entered greensIteration_FixedPoint.")
+        
         ## UNPACK GIARGS
 #         print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
 #         GPUtil.showUtilization()
@@ -289,7 +291,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                                         kernel, numberOfKernelParameters, kernelParameters, 
                                         singularity, approximation, computeType,
                                         treecodeOrder, theta, maxParNode, batchSize,
-                                        GPUpresent, treecode_verbosity, sizeCheck=1.0
+                                        GPUpresent, treecode_verbosity
                                         )
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)
@@ -388,13 +390,13 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                     
                     start=time.time()
                     U=np.copy(orbitals[m])
-                    MOVEDATA.callCopyVectorToDevice(U)
-#                     MOVEDATA.callCopyVectorToDevice(orbitals)
+                    if GPUpresent: MOVEDATA.callCopyVectorToDevice(U)
+#                     if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
                     ORTH.callOrthogonalization(orbitals, U, W, m, GPUpresent)
-                    MOVEDATA.callCopyVectorFromDevice(U)
+                    if GPUpresent: MOVEDATA.callCopyVectorFromDevice(U)
                     orthWavefunction=np.copy(U)
 #                     orbitals[m]=np.copy(U)
-#                     MOVEDATA.callRemoveVectorFromDevice(orbitals)
+#                     if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
         
 #                     orthWavefunction = mgs(orbitals,W,m, comm)
                     end=time.time()
