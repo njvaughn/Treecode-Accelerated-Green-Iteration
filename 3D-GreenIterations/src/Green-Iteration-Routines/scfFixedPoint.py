@@ -633,7 +633,13 @@ def scfFixedPointClosure(scf_args):
                     GImixingParameter=0.5
                     andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
                     Energies['orbitalEnergies'][m] = andersonOrbital[-1]
-                    orbitals[m,:] = andersonOrbital[:-1]
+                    orbitals[m,:] = andersonOrbital[:-1] 
+                     
+                    
+                    if Energies['orbitalEnergies'][m]>0.0:
+                        # Anderson mixing led to a positive eigenvalue.  This better be an unoccupied state.  Fixing it to the gauge shift value.
+                        rprint(rank,"Anderson mixing led to a positive eigenvalue.  This better be an unoccupied state.  Fixing it to the gauge shift value.")
+                        Energies['orbitalEnergies'][m] = Energies['gaugeShift']
                       
                       
       

@@ -227,8 +227,8 @@ def twoMeshCorrectionClosure(scf_args):
                                             kernel, numberOfKernelParameters, kernelParameters, 
                                             singularity, approximation, computeType,
                                             treecodeOrder, theta, maxParNode, batchSize,
-                                            GPUpresent, treecode_verbosity, sizeCheck=1.0
-                                            )
+                                            GPUpresent, treecode_verbosity
+                                            )  
         
 
         rprint(rank,'Convolution time: ', MPI.Wtime()-start)
@@ -362,7 +362,7 @@ def twoMeshCorrectionClosure(scf_args):
                                         kernel, numberOfKernelParameters, kernelParameters, 
                                         singularity, approximation, computeType,
                                         treecodeOrder, theta, maxParNode, batchSize,
-                                        GPUpresent, treecode_verbosity, sizeCheck=1.0
+                                        GPUpresent, treecode_verbosity
                                         )
 
             psiNew /= (4*np.pi)
