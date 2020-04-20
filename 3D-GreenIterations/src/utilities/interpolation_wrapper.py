@@ -1,19 +1,20 @@
 import numpy as np
 import ctypes
 from mpi4py import MPI
-
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 from mpiUtilities import rprint
-
 
 try: 
     _cpu_interpolationRoutines = ctypes.CDLL('libInterpolation_cpu.so')
 except OSError as e:
-    print(e)
+    rprint(rank, e)
 #     exit(-1)
 try: 
     _gpu_interpolationRoutines = ctypes.CDLL('libInterpolation_gpu.so')
-except OSError as e:
-    print(e)
+except OSError:
+    rprint(rank, "Warning: Could not load GPU interpolation library.  Ignore if not using GPUs.") 
 #     exit(-1)
         
 
@@ -26,7 +27,7 @@ try:
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_int), ctypes.c_int,
             ctypes.c_int,  ctypes.c_int ) 
 except NameError:
-    print("Could not set argtypes of _cpu_interpolationRoutines")
+    rprint(rank, "[interpolationCould not set argtypes of _cpu_interpolationRoutines")
     
 try:
     _gpu_interpolationRoutines.InterpolateBetweenTwoMeshes.argtypes = ( 
@@ -34,9 +35,7 @@ try:
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_int), ctypes.c_int,
             ctypes.c_int,  ctypes.c_int ) 
 except NameError:
-    print("Could not set argtypes of _gpu_interpolationRoutines")
-
-print('_treecodeRoutines set.')
+    rprint(rank, "Could not set argtypes of _gpu_interpolationRoutines")
 
 
 
@@ -52,7 +51,7 @@ def callInterpolator(coarseX, coarseY, coarseZ, coarseF, pointsPerCoarseCell,
     pointsPerCoarseCell = pointsPerCoarseCell.astype(np.int32)
     pointsPerFineCell = pointsPerFineCell.astype(np.int32)
     
-#     print(pointsPerFineCell[0:5])
+#     rprint(rank, pointsPerFineCell[0:5])
 #     exit(-1)
    
     c_double_p = ctypes.POINTER(ctypes.c_double)

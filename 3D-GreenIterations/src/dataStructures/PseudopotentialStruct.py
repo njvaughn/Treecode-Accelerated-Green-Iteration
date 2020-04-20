@@ -7,6 +7,10 @@ import os
 import upf_to_json 
 import time
 
+import mpi4py.MPI as MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 
 
 class ONCV_PSP(object):
@@ -47,7 +51,7 @@ class ONCV_PSP(object):
         elif self.atomicNumber==22:
             self.atomicSymbol="Ti"
         else:
-            print("Need to add atomic number %i to ONCV_PSP.atomicNumberToAtomicSymbol()" %self.atomicNumber)
+            rprint(rank,"Need to add atomic number %i to ONCV_PSP.atomicNumberToAtomicSymbol()" %self.atomicNumber)
             exit(-1)
         
     def setDensityInterpolator(self,verbose=0):
@@ -104,7 +108,7 @@ class ONCV_PSP(object):
 #                 if r[i]>self.radialCutoff:
 #                     Rho[i] = self.densityFarFieldExtrapolationFunction(r[i]) / (4*np.pi*r[i]*r[i])
 #                 elif r[i]<self.innerCutoff:
-#                     print("DENSITY INTERPOLATOR FAILED EVALUATING")
+#                     rprint(rank,"DENSITY INTERPOLATOR FAILED EVALUATING")
 #                     exit(-1)
 # #                     Rho[i] = self.densityNearFieldExtrapolation(r[i]) # already has 4pirr taken care of
         return Rho
@@ -151,7 +155,7 @@ class ONCV_PSP(object):
         if timer==True: start=time.time()
         Vloc = np.where(r<self.maxRadialGrid, self.localPotentialInterpolator(r), -self.psp['header']['z_valence']/r)
         if timer==True: end=time.time()
-        if timer==True: print("Evaluating Vloc interpolator took %f seconds." %(end-start))
+        if timer==True: rprint(rank,"Evaluating Vloc interpolator took %f seconds." %(end-start))
 
 #         nr=len(r)
 #         Vloc = np.zeros(nr)
@@ -164,7 +168,7 @@ class ONCV_PSP(object):
 #                 if r[i]>self.radialCutoff:
 #                     Vloc[i] = -self.psp['header']['z_valence']/r[i]
 #                 else:
-#                     print("Warning: local PSP interpolator threw an error, not due to extrapolation beyond cutoff radius.")
+#                     rprint(rank,"Warning: local PSP interpolator threw an error, not due to extrapolation beyond cutoff radius.")
         return Vloc
     
     
@@ -174,7 +178,7 @@ class ONCV_PSP(object):
         self.projectorInterpolators = {}
         r = np.array(self.psp['radial_grid'])
         if verbose>0: 
-            print("Number of porjectors: ", self.psp['header']['number_of_proj'])
+            rprint(rank,"Number of porjectors: ", self.psp['header']['number_of_proj'])
             
 #         self.projectorNearFieldSlopes = np.zeros(self.psp['header']['number_of_proj'])
 #         self.projectorNearFieldOffsets = np.zeros(self.psp['header']['number_of_proj'])
@@ -182,12 +186,12 @@ class ONCV_PSP(object):
         for i in range(self.psp['header']['number_of_proj']):
             
             if verbose>0: 
-                print("Creating interpolator for projector %i with angular momentum %i" %(i,self.psp['beta_projectors'][i]['angular_momentum']))
+                rprint(rank,"Creating interpolator for projector %i with angular momentum %i" %(i,self.psp['beta_projectors'][i]['angular_momentum']))
             
             proj = np.array(self.psp['beta_projectors'][i]['radial_function'])
             length_of_projector_data = len(proj)
             
-            print("Last r value in projector interpolator: ", r[length_of_projector_data-1])
+#             rprint(rank,"Last r value in projector interpolator: ", r[length_of_projector_data-1])
             
             self.projectorCutoffRadius=r[length_of_projector_data-1] 
             
@@ -218,15 +222,15 @@ class ONCV_PSP(object):
 #                     output[i] = 0.0
 # #                     output[i] =  self.projectorInterpolators[str(idx)](self.projectorCutoffRadius)/self.projectorCutoffRadius
 #                 elif r[i] < self.innerCutoff:
-#                     print("Projector interpolator out of range: r was below the inner cutoff radius.")
+#                     rprint(rank,"Projector interpolator out of range: r was below the inner cutoff radius.")
 #                     exit(-1)
 #                 else:
-#                     print("Something went wrong in projector interpolator for r=", r[i])
-#                     print("Inner and outer cutoffs: ", self.innerCutoff, self.projectorCutoffRadius)
-#                     print("ValueError: ", VE)
+#                     rprint(rank,"Something went wrong in projector interpolator for r=", r[i])
+#                     rprint(rank,"Inner and outer cutoffs: ", self.innerCutoff, self.projectorCutoffRadius)
+#                     rprint(rank,"ValueError: ", VE)
 #                     exit(-1)
         if timer==True: end=time.time()
-        if timer==True: print("Evaluating projector interpolator took %f seconds." %(end-start))
+        if timer==True: rprint(rank,"Evaluating projector interpolator took %f seconds." %(end-start))
         return output
    
     def plotProjectors(self):

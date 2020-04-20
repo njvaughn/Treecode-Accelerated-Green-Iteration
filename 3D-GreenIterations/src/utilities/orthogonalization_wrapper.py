@@ -2,20 +2,22 @@ import numpy as np
 import ctypes
 from mpi4py import MPI
 
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 from mpiUtilities import rprint
-
 
 try: 
     _cpu_orthogonalizationRoutines = ctypes.CDLL('libOrthogonalization_cpu.so')
 except OSError as e:
-    print(e)
+    rprint(rank, e)
     exit(-1)
 try: 
     _gpu_orthogonalizationRoutines = ctypes.CDLL('libOrthogonalization_gpu.so')
-except OSError as e:
-    print(e)
-    print("Ignore libOrthogonalization_gpu errors if not using GPUs")
-#     exit(-1)
+except OSError:
+        rprint(rank, "Warning: Could not load GPU orthogonalization library.  Ignore if not using GPUs.") 
+
         
 
         
@@ -26,14 +28,14 @@ try:
     _cpu_orthogonalizationRoutines.modifiedGramSchmidt_singleWavefunction.argtypes = (ctypes.POINTER(ctypes.c_double), 
                                                                                       ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.c_int, ctypes.c_int, ctypes.c_int) 
 except NameError:
-    print("Could not set argtypes of _cpu_orthogonalizationRoutines")
+    rprint(rank, "Could not set argtypes of _cpu_orthogonalizationRoutines")
     
 try:
 #     _gpu_orthogonalizationRoutines.modifiedGramSchmidt_singleWavefunction.argtypes = (np.ctypeslib.ndpointer(dtype=np.intp), 
     _gpu_orthogonalizationRoutines.modifiedGramSchmidt_singleWavefunction.argtypes = (ctypes.POINTER(ctypes.c_double), 
                                                                                       ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.c_int, ctypes.c_int, ctypes.c_int) 
 except NameError:
-    print("Could not set argtypes of _gpu_orthogonalizationRoutines")
+    rprint(rank, "Could not set argtypes of _gpu_orthogonalizationRoutines")
 
 
 
@@ -41,7 +43,7 @@ except NameError:
 def callOrthogonalization(wavefunctions, target, W, targetWavefunction, gpuPresent):
 
     numWavefunctions,numPoints = np.shape(wavefunctions)
-#     print("numWavefunctions,numPoints = ", numWavefunctions,numPoints)
+#     rprint(rank, "numWavefunctions,numPoints = ", numWavefunctions,numPoints)
     c_double_p = ctypes.POINTER(ctypes.c_double)    # standard pointer to array of doubles
 #     c_double_pp = ctypes.POINTER(ctypes.c_double)   # double pointer (for 2D arrays of doubles)
     
@@ -56,12 +58,12 @@ def callOrthogonalization(wavefunctions, target, W, targetWavefunction, gpuPrese
     wavefunctions_p = wavefunctions.ctypes.data_as(c_double_p)
     
 #     wavefunctions_pp = (wavefunctions.__array_interface__['data'][0] + np.arange(wavefunctions.shape[0])*wavefunctions.strides[0]).astype(np.intp)
-#     print("\n\n Inside callOrthogonalization, wavefunctions_pp = ",wavefunctions_pp,"\n\n")
+#     rprint(rank, "\n\n Inside callOrthogonalization, wavefunctions_pp = ",wavefunctions_pp,"\n\n")
 #     doublepp = np.ctypeslib.ndpointer(dtype=np.intp)
     
     
     
-#     print("Wrapper is now calling modifiedGramSchmidt_singleWavefunction.")
+#     rprint(rank, "Wrapper is now calling modifiedGramSchmidt_singleWavefunction.")
     if gpuPresent==False:
         _cpu_orthogonalizationRoutines.modifiedGramSchmidt_singleWavefunction(wavefunctions_p, target_p, W_p, targetWavefunction, numPoints, numWavefunctions ) 
     elif gpuPresent==True:

@@ -4,6 +4,10 @@
 import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline
 from scipy.special import erf, sph_harm
+import mpi4py.MPI as MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 
 import os
 from PseudopotentialStruct import ONCV_PSP
@@ -34,14 +38,14 @@ class Atom(object):
     def setPseudopotentialObject(self, PSPs,verbose=0):
         ## If the pseudopotential dictionary already contains this atomic number, have it point there.
         ## Otherwise, need to create a new one.
-        print("Setting PSP for atomic number ", self.atomicNumber, self)
+        rprint(rank, "Setting PSP for atomic number ", self.atomicNumber, self)
         try: 
             self.PSP = PSPs[str(self.atomicNumber)]
-            if verbose>0: print("PSP already present for atomic number ", self.atomicNumber)
+            if verbose>0: rprint(rank , "PSP already present for atomic number ", self.atomicNumber)
         except KeyError:
-            if verbose>0: print("PSP not already present for atomic number ", self.atomicNumber)
+            if verbose>0: rprint(rank , "PSP not already present for atomic number ", self.atomicNumber)
             PSPs[str(self.atomicNumber)] = ONCV_PSP(self.atomicNumber)
-            if verbose>0: print("Updated PSPs: ",PSPs)
+            if verbose>0: rprint(rank , "Updated PSPs: ",PSPs)
             self.PSP = PSPs[str(self.atomicNumber)]
         self.nuclearCharge = self.PSP.psp['header']['z_valence']  # set the nuclear charge for the PSP.
         
@@ -71,14 +75,14 @@ class Atom(object):
             if interpolatedPsi is not None:
                 if comm==None: # just a local computation:
                     C = np.dot( interpolatedPsi, self.FineChi[str(i)]*Wf)
-#                     print("Chi %i, C = %1.8e" %(i,C))
+#                     rprint(rank , "Chi %i, C = %1.8e" %(i,C))
                 else:
                     C = global_dot( interpolatedPsi, self.FineChi[str(i)]*Wf, comm)
 #                     rprint(rank, "Chi %i, C = %1.8e" %(i,C))
             elif interpolatedPsi is None:
                 if comm==None: # just a local computation:
                     C = np.dot( psi, self.Chi[str(i)]*W)
-#                     print("Chi %i, C = %1.8e" %(i,C))
+#                     rprint(rank , "Chi %i, C = %1.8e" %(i,C))
                 else:
                     C = global_dot( psi, self.Chi[str(i)]*W, comm)
 #                     rprint(rank, "Chi %i, C = %1.8e" %(i,C))
@@ -91,9 +95,9 @@ class Atom(object):
             elif outputMesh=="fine":
                 output += C * self.FineChi[str(i)] * self.Dion[str(i)]##/np.sqrt(2)  # check how to use Dion.  Is it h, or is it 1/h?  Or something else?
             else:
-                print("What should outputMesh be in atom struct?")
+                rprint(rank, "What should outputMesh be in atom struct?")
                 exit(-1)
-#         print("Exiting after first call to V_nonlocal_pseudopotential_times_psi")
+#         rprint(rank , "Exiting after first call to V_nonlocal_pseudopotential_times_psi")
 #         exit(-1)
         return output
     
@@ -160,7 +164,7 @@ class Atom(object):
                  
                 D_ion = D_ion_array[D_ion_count]
                 D_ion_count+=1
-#                 print("D_ion = ", D_ion)
+#                 rprint(rank, "D_ion = ", D_ion)
                  
                 for m in range(-ell,ell+1):
  
@@ -181,7 +185,7 @@ class Atom(object):
                         Ysp = sph_harm(m,ell,azimuthal,inclination)
  
                     if np.max( abs(np.imag(Ysp)) ) > 1e-14:
-                        print('imag(Y) ', np.imag(Ysp))
+                        rprint(rank, 'imag(Y) ', np.imag(Ysp))
                         return
  
                     chi = self.PSP.evaluateProjectorInterpolator(2*ell+p, r)*np.real(Ysp) # Is this order the same as the setup order?
@@ -210,7 +214,7 @@ class Atom(object):
                 
 #                 D_ion = D_ion_array[D_ion_count]
 #                 D_ion_count+=1
-#                 print("D_ion = ", D_ion)
+#                 rprint(rank, "D_ion = ", D_ion)
                 
                 for m in range(-ell,ell+1):
 
@@ -231,7 +235,7 @@ class Atom(object):
                         Ysp = sph_harm(m,ell,azimuthal,inclination)
 
                     if np.max( abs(np.imag(Ysp)) ) > 1e-14:
-                        print('imag(Y) ', np.imag(Ysp))
+                        rprint(rank, 'imag(Y) ', np.imag(Ysp))
                         return
 
                     chi = self.PSP.evaluateProjectorInterpolator(2*ell+p, r)*np.real(Ysp) # Is this order the same as the setup order?
@@ -252,12 +256,12 @@ class Atom(object):
             if comm==None:
                 I+=np.dot(W,self.Chi[str(i)])
             else:
-                print("Are you sure you want to integral projectors with mpi comm?")
+                rprint(rank, "Are you sure you want to integral projectors with mpi comm?")
                 exit(-1)
         return I
      
     def normalizeFineChi(self,Wf,comm=None):
-        print("DID YOU MEAN TO NORMALIZE CHI? Exiting...")
+        rprint(rank, "DID YOU MEAN TO NORMALIZE CHI? Exiting...")
         exit(-1)
         for i in range(self.numberOfChis):       
             norm=np.sqrt( global_dot(Wf,self.FineChi[str(i)]**2,comm) )
@@ -291,9 +295,9 @@ class Atom(object):
         elif self.atomicNumber <=30:
             self.nAtomicOrbitals = 15   # 1S 2S 2P 3S 3P 4S 3D
         else:
-            print('Not ready for > 30 atomic number.  Revisit atom.setNumberOfOrbitalsToInitialize()')
+            rprint(rank, 'Not ready for > 30 atomic number.  Revisit atom.setNumberOfOrbitalsToInitialize()')
         
-        if verbose>0: print('Atom with Z=%i will get %i atomic orbitals initialized.' %(self.atomicNumber, self.nAtomicOrbitals))
+        if verbose>0: rprint(rank, 'Atom with Z=%i will get %i atomic orbitals initialized.' %(self.atomicNumber, self.nAtomicOrbitals))
         
         
     def orbitalInterpolators(self,coreRepresentation,verbose=0):
@@ -303,10 +307,10 @@ class Atom(object):
         elif coreRepresentation=="Pseudopotential":
             atomDir="pseudoPotential"
         else:
-            print("What is coreRepresentation?  From orbitalInterpolators")
+            rprint(rank, "What is coreRepresentation?  From orbitalInterpolators")
             exit(-1)
         
-#         print("Setting up interpolators.")
+#         rprint(rank, "Setting up interpolators.")
         self.interpolators = {}
         # search for single atom data, either on local machine or on flux
 #         if os.path.isdir('/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
@@ -320,14 +324,14 @@ class Atom(object):
 #             path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
             path = '/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/'
         else:
-            print('Could not find single atom data...')
-#             print('Checked in: /Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
-            print('Checked in: /Users/nathanvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/')
-            print('Checked in: /home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/')
+            rprint(rank, 'Could not find single atom data...')
+#             rprint(rank, 'Checked in: /Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
+            rprint(rank, 'Checked in: /Users/nathanvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/')
+            rprint(rank, 'Checked in: /home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/')
             
             
-        if verbose>0: print('Using single atom data from:')
-        if verbose>0: print(path)
+        if verbose>0: rprint(rank, 'Using single atom data from:')
+        if verbose>0: rprint(rank, path)
         for singleAtomData in os.listdir(path): 
             if singleAtomData[:3]=='psi':
                 data = np.genfromtxt(path+singleAtomData)

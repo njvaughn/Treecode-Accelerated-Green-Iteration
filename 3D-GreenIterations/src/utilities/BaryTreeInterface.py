@@ -3,6 +3,12 @@ import ctypes
 from mpi4py import MPI
 import resource
 from enum import IntEnum
+import mpi4py.MPI as MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+from mpiUtilities import rprint
+
 
 class CEnum(IntEnum):
     @classmethod
@@ -53,7 +59,7 @@ except OSError:
     try:
         _gpu_treecodeRoutines = ctypes.CDLL('libBaryTree_gpu.dylib')
     except OSError:
-        print("Warning: Could not load GPU BaryTree library.  Ignore if not using GPUs.") 
+        rprint(rank, "Warning: Could not load GPU BaryTree library.  Ignore if not using GPUs.") 
         
     
 """ Set argtypes of the wrappers. """
@@ -64,7 +70,7 @@ try:
             ctypes.POINTER(ctypes.c_double), Kernel, ctypes.c_int, ctypes.POINTER(ctypes.c_double), Singularity, Approximation, ComputeType,
             ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int,  ctypes.c_double,  ctypes.c_int )
 except NameError:
-    print("Warning: Could not set argtypes of _gpu_treecodeRoutines.  Ignore if not using GPUs.")
+    rprint(rank, "Warning: Could not set argtypes of _gpu_treecodeRoutines.  Ignore if not using GPUs.")
 
 try:
     _cpu_treecodeRoutines.BaryTreeInterface.argtypes = ( ctypes.c_int, ctypes.c_int,
@@ -73,7 +79,7 @@ try:
             ctypes.POINTER(ctypes.c_double), Kernel, ctypes.c_int, ctypes.POINTER(ctypes.c_double),  Singularity, Approximation, ComputeType,
             ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int,  ctypes.c_double,  ctypes.c_int )
 except NameError:
-    print("Could not set argtypes of _cpu_treecodeRoutines.")
+    rprint(rank, "Could not set argtypes of _cpu_treecodeRoutines.")
 
 
 
@@ -116,7 +122,6 @@ def callTreedriver(numTargets, numSources,
         if approximationName == Approximation.HERMITE:
             sizeCheck = 4.0
             
-#     print("rank %i setup BaryTree call, now calling interface routine." %rank)
     
     if GPUpresent==True:
         _gpu_treecodeRoutines.BaryTreeInterface(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
@@ -133,7 +138,7 @@ def callTreedriver(numTargets, numSources,
                                                 singularityHandling, approximationName, computeType,
                                                 ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode), ctypes.c_int(batchSize), ctypes.c_double(sizeCheck), ctypes.c_int(verbosity) )
     else: 
-        print("What should GPUpresent be set to in the wrapper?")
+        rprint(rank, "What should GPUpresent be set to in the wrapper?")
         exit(-1) 
     
     

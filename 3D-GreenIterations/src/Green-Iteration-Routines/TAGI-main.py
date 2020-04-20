@@ -32,35 +32,19 @@ size = comm.Get_size()
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
 sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
-# from loadBalancer import loadBalance
+
 from mpiUtilities import global_dot, scatterArrays, rprint
 from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
-# try:
-#     import treecodeWrappers_distributed as treecodeWrappers
-# except ImportError:
-#     rprint(rank,'Unable to import treecodeWrapper due to ImportError')
-# except OSError:
-#     print('Unable to import treecodeWrapper due to OSError')
-#     import treecodeWrappers_distributed as treecodeWrappers
-# from TreeStruct_CC import Tree
+
+
 from CellStruct_CC import Cell
 from GridpointStruct import GridPoint
 import densityMixingSchemes as densityMixing
 from scfFixedPoint import scfFixedPointClosure
-from scfFixedPointSimultaneous import scfFixedPointClosureSimultaneous
-from scfFixedPointGreedy import scfFixedPointClosureGreedy, sortByEigenvalue, fermiObjectiveFunctionClosure
+# from scfFixedPointSimultaneous import scfFixedPointClosureSimultaneous
+
 import moveData_wrapper as MOVEDATA
 from twoMeshCorrection import twoMeshCorrectionClosure
-
-# Temperature = 500
-# KB = 1/315774.6
-# Sigma = Temperature*KB
-# def fermiObjectiveFunctionClosure(Energies,nElectrons):
-#     def fermiObjectiveFunction(fermiEnergy):
-#                 exponentialArg = (Energies['orbitalEnergies']-fermiEnergy)/Sigma
-#                 temp = 1/(1+np.exp( exponentialArg ) )
-#                 return nElectrons - 2 * np.sum(temp)
-#     return fermiObjectiveFunction
 
 
 
@@ -143,7 +127,7 @@ if regularize=='True':
 elif regularize=='False':
     regularize=False
 else:
-    print("What should regularize input be set to?")
+    rprint(0, "What should regularize input be set to?")
     exit(-1)
 
 if noGradients=='True':
@@ -186,7 +170,7 @@ else:
 
 
 vtkFileBase='/home/njvaughn/results_CO/orbitals'
-# print("Converting command line arguments to correct types.")
+# rprint(0, "Converting command line arguments to correct types.")
 
 def global_dot(u,v,comm):
     local_dot = np.dot(u,v)
@@ -202,7 +186,7 @@ def clenshawCurtisNormClosure(W):
 
 
 def initializeOrbitalsRandomly(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z):
-    print("INITIALIZING ORBITALS RANDOMLY")
+    rprint(0, "INITIALIZING ORBITALS RANDOMLY")
 #     orbitals = np.zeros(nOrbitals,len(X))
     R2=X*X+Y*Y+Z*Z
     R = np.sqrt(R2)
@@ -241,7 +225,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
                     n = int(nell[0])
                     ell = int(nell[1])
                     psiID = 'psi'+str(n)+str(ell)
-#                     print('Using ', psiID)
+#                     rprint(0, 'Using ', psiID)
                     # filling these requires 2 * (2*ell+1) electrons
                     if atom.nuclearCharge - electronCount - 2*(2*ell+1) >= 0:
                         occupation=2.0
@@ -255,8 +239,8 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
                             initialEnergies.append( -atom.nuclearCharge / (n+ell))  # provide initial eigenvalue guess.  Higher (n,ell) closer to zero.
                             initialOccupations.append(occupation)
                             electronCount+=occupation
-                            print("Initial (n,ell,m)=(%i,%i,%i) wavefunction gets occupation %f" %(n,ell,m,occupation))
-                            print("Accounted for %f of %i electrons now." %(electronCount,atom.nuclearCharge))
+                            rprint(rank, "Initial (n,ell,m)=(%i,%i,%i) wavefunction gets occupation %f" %(n,ell,m,occupation))
+                            rprint(rank, "Accounted for %f of %i electrons now." %(electronCount,atom.nuclearCharge))
                             #input()
                             
                             dx = X-atom.x
@@ -265,10 +249,10 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
                             phi = np.zeros(len(dx))
                             r = np.sqrt( dx**2 + dy**2 + dz**2 )
                             inclination = np.arccos(dz/r)
-    #                         print('Type(dx): ', type(dx))
-    #                         print('Type(dy): ', type(dy))
-    #                         print('Shape(dx): ', np.shape(dx))
-    #                         print('Shape(dy): ', np.shape(dy))
+    #                         rprint(0, 'Type(dx): ', type(dx))
+    #                         rprint(0, 'Type(dy): ', type(dy))
+    #                         rprint(0, 'Shape(dx): ', np.shape(dx))
+    #                         rprint(0, 'Shape(dy): ', np.shape(dy))
                             azimuthal = np.arctan2(dy,dx)
                             
                             if m<0:
@@ -281,7 +265,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
     #                                     if ( (m==0) and (ell<=1) ):
     #                                         Y = 1
                             if np.max( abs(np.imag(Ysp)) ) > 1e-14:
-                                print('imag(Y) ', np.imag(Ysp))
+                                rprint(0, 'imag(Y) ', np.imag(Ysp))
                                 return
     #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
     #                         phi = atom.interpolators[psiID](r)*np.real(Y)
@@ -291,7 +275,7 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
                                 phi = 0.0   # if outside the interpolation range, assume 0.
                             except KeyError:
                                 for key, value in atom.interpolators.items() :
-                                    print (key, value)
+                                    rprint(rank,key, value)
                                 exit(-1)
                             
                             
@@ -310,11 +294,11 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
 #                     n = int(nell[0])
 #                     ell = int(nell[1])
 #                     psiID = 'psi'+str(n)+str(ell)
-#                     print('Not using ', psiID)
+#                     rprint(0, 'Not using ', psiID)
                         
         if orbitalIndex < nOrbitals:
             rprint(rank,"Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
-#             print('Filling extra orbitals with decaying exponential.')
+#             rprint(0, 'Filling extra orbitals with decaying exponential.')
             rprint(rank,'Filling extra orbitals with random initial data.')
             for ii in range(orbitalIndex, nOrbitals):
                 R = np.sqrt(X*X+Y*Y+Z*Z)
@@ -360,7 +344,7 @@ def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms,coreRepresentation):
         rprint(rank,"cumulative number of electrons: ", totalElectrons)
 
 
-#     print("NOT NORMALIZING INITIAL DENSITY.")
+#     rprint(0, "NOT NORMALIZING INITIAL DENSITY.")
     rho *= totalElectrons / global_dot(rho,w,comm)
     
     return rho
@@ -388,7 +372,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
 
     if rank==0:
         Times['totalKohnShamTime'] = time.time()-startTime
-        print('Total Time: ', Times['totalKohnShamTime'])
+        rprint(rank, 'Total Time: ', Times['totalKohnShamTime'])
     
         header = ['numProcs','domainSize','maxSideLength','order','fineOrder','numberOfCells','numberOfPoints','gradientFree',
                   'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
@@ -453,7 +437,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #         if ((atom.x>xbounds[0]) and (atom.x<xbounds[1]) and (atom.y>ybounds[0]) and (atom.y<ybounds[1]) and (atom.z>zbounds[0]) and (atom.z<zbounds[1])):
 #             # atom is in this processor's local domain
 #             nearbyAtoms = np.append(nearbyAtoms,atom)
-# #             print("Trying to append")
+# #             rprint(0, "Trying to append")
 #         else:
 #             added=False
 # #             radius = np.sqrt( (xbounds[1]-xbounds[0])**2 + (ybounds[1]-ybounds[0])**2 + (zbounds[1]-zbounds[0])**2 )
@@ -472,15 +456,15 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #             dz = max(abs(atom.z - zmid) - zwidth / 2, 0);
 #             
 #             dist = np.sqrt( dx*dx + dy*dy + dz*dz )
-#             print("dist = ", dist)
+#             rprint(0, "dist = ", dist)
 #             if ( (dist<4) and (added==False) ):
 #                 
-# #                 print("Trying to append")
+# #                 rprint(0, "Trying to append")
 #                 nearbyAtoms = np.append(nearbyAtoms,atom)
 #                 added=True
 #             
 #             
-#     print(np.shape(nearbyAtoms))
+#     rprint(0, np.shape(nearbyAtoms))
              
             
     
@@ -509,20 +493,20 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
             Vext_local += atom.V_local_pseudopotential(X,Y,Z)
             Vext_local_fine += atom.V_local_pseudopotential(Xf,Yf,Zf)
             
-#             print("NORMALIZING CHIS")
+#             rprint(0, "NORMALIZING CHIS")
 #             atom.normalizeChi(W,comm)
 #             atom.normalizeFineChi(Wf,comm)
 #             for i in range(atom.numberOfChis):
 #                 norm_of_chi = global_dot(W,atom.Chi[str(i)]**2,comm)
 #                 atom.Chi[str(i)] *= np.sqrt( 1.0/norm_of_chi )
-#                 print("NORMALIZING CHI TO 1")
+#                 rprint(0, "NORMALIZING CHI TO 1")
         else:
-            print("Error: what should coreRepresentation be?")
+            rprint(0, "Error: what should coreRepresentation be?")
             exit(-1)
         atomCount+=1
         
-#     print('Does X exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(X))
-#     print('Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))
+#     rprint(0, 'Does X exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(X))
+#     rprint(0, 'Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))
     
     Energies={}
 #     Energies['orbitalEnergies'] = -1*np.ones(nOrbitals)
@@ -570,7 +554,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         try:
             os.mkdir(densityPlotsDir)
         except OSError:
-            print('Unable to make directory ', densityPlotsDir)
+            rprint(0, 'Unable to make directory ', densityPlotsDir)
         
     if rank==0:
         try:
@@ -581,7 +565,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     
 #     tr = tracker.SummaryTracker()   
     if restartFile!=False:
-        print("Not ready to handle restarts in mpi version.")
+        rprint(0, "Not ready to handle restarts in mpi version.")
         return
 #         orbitals = np.load(wavefunctionFile+'.npy')
 #         oldOrbitals = np.copy(orbitals)
@@ -644,8 +628,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     
     ## Barrier...
     comm.barrier()
-    rprint(rank,'\nEntering greenIterations_KohnSham_SCF()')
-    print('Number of targets on proc %i:   %i' %(rank,nPoints) )
+    rprint(rank,'Entering greenIterations_KohnSham_SCF()')
+    rprint(0, 'Number of targets on proc %i:   %i' %(rank,nPoints) )
 
     
     densityResidual = 10                                   # initialize the densityResidual to something that fails the convergence tolerance
@@ -687,12 +671,12 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     solverOptions={'fatol':interScfTolerance, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
  
      
-    print('Calling scipyRoot with %s method' %method)
+    rprint(0, 'Calling scipyRoot with %s method' %method)
     scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
-#     print(np.shaoe(RHO))
+#     rprint(0, np.shaoe(RHO))
     sol = scipyRoot(scfFixedPoint,RHO, args=scf_args, method=method, options=solverOptions)
-    print(sol.success)
-    print(sol.message)
+    rprint(0, sol.success)
+    rprint(0, sol.message)
     RHO = sol.x
      
      
@@ -706,7 +690,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
           
         ## CALL SCF FIXED POINT FUNCTION
 #         if SCFcount > 0:
-#             print('Exiting before first SCF (for testing initialized mesh accuracy)')
+#             rprint(0, 'Exiting before first SCF (for testing initialized mesh accuracy)')
 #             return
         abortAfterInitialHartree=False
         
@@ -724,7 +708,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
             scfFixedPointGreedy, scf_args = scfFixedPointClosureGreedy(scf_args)
             densityResidualVector = scfFixedPointGreedy(RHO,scf_args,abortAfterInitialHartree)
         else:
-            print("What should GI_form be?")
+            rprint(0, "What should GI_form be?")
             exit(-1)
             
         densityResidual=scf_args['densityResidual']
@@ -732,7 +716,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         SCFcount=scf_args['SCFcount']
           
 #         densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
-#         print('Density Residual from arrays ', densityResidual)
+#         rprint(0, 'Density Residual from arrays ', densityResidual)
         rprint(rank,'Shape of density histories: ', np.shape(scf_args['inputDensities']), np.shape(scf_args['outputDensities']))
         rprint(rank,'outputDensities[0,:] = ', scf_args['outputDensities'][0,:])
         # Now compute new mixing with anderson scheme, then import onto tree. 
@@ -740,7 +724,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
       
         SCFindex = (SCFcount-1)%scf_args['mixingHistoryCutoff']
         if mixingScheme == 'Simple':
-            print('Using simple mixing, from the input/output arrays')
+            rprint(0, 'Using simple mixing, from the input/output arrays')
             simpleMixingDensity = mixingParameter*scf_args['outputDensities'][:,SCFindex] + (1-mixingParameter)*scf_args['inputDensities'][:,SCFindex]
 #             integratedDensity = np.sum( simpleMixingDensity*W )
             integratedDensity = global_dot( simpleMixingDensity, W, comm )
@@ -765,24 +749,25 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
           
           
         else:
-            print('Mixing must be set to either Simple, Anderson, or None')
+            rprint(0, 'Mixing must be set to either Simple, Anderson, or None')
             return
       
                   
        
           
         if Energies['Etotal'] > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
-            print('Warning, Energy is positive')
+            rprint(0, 'Warning, Energy is positive')
             Energies['Etotal'] = -0.5
               
           
         if SCFcount >= 100:
-            print('Setting density residual to -1 to exit after the 150th SCF')
+            rprint(0, 'Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
         
     
     ## DO ONE FINAL ITERATION WITH TWO LEVEL MESH
-    rprint(rank,"\n\n\n\nDoing one final SCF iteration with Two Level Mesh.\n\n\n")
+    rprint(rank,"\n\n\n\n")
+    rprint(rank,"\n\n\n\nCalling the Two-Level Mesh Correction.\n\n\n")
     if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
     if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
     scf_args["TwoMeshStart"]=SCFcount
@@ -796,7 +781,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
      
               
 #         if SCFcount >= 1:
-#             print('Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+#             rprint(0, 'Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
 #             energyResidual = -1
 #             densityResidual = -1
           
@@ -819,7 +804,8 @@ if __name__ == "__main__":
     
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
-    size = comm.Get_size() 
+    size = comm.Get_size()
+    verbosity=0 
 
     rprint(rank,'='*70) 
     rprint(rank,'='*70) 
@@ -835,14 +821,15 @@ if __name__ == "__main__":
     
     
     # Set domain to be an integrer number of far-field cells
-    rprint(rank,"original domain size: ", domainSize)
+    if verbosity>0: rprint(rank,"original domain size: ", domainSize)
     remainder=(2*domainSize)%maxSideLength
-    print("remainder: ", remainder)
+    if verbosity>0: rprint(0, "remainder: ", remainder)
     if remainder>0:
         domainSize+=1/2*(maxSideLength-remainder)
-    rprint(rank,"Max side length: ",maxSideLength)
-    rprint(rank,"Domain length after adjustment: ", domainSize)
-    rprint(rank," Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
+    if verbosity>0: 
+        rprint(rank,"Max side length: ",maxSideLength)
+        rprint(rank,"Domain length after adjustment: ", domainSize)
+        rprint(rank," Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
         
     
 
@@ -861,20 +848,20 @@ if __name__ == "__main__":
 #     zSum = np.sqrt( global_dot(Z,Z,comm) ) 
 #     wSum = np.sqrt( global_dot(W,W,comm) ) 
 #     
-# #     print("NOT CALLING LOAD BALANCER.")
-#     print('Before load balancing, nPoints and nCells on proc %i: %i, %i' %(rank,len(X),len(X)/(order+1)**3) )
-#     print("BEFORE BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
+# #     rprint(0, "NOT CALLING LOAD BALANCER.")
+#     rprint(0, 'Before load balancing, nPoints and nCells on proc %i: %i, %i' %(rank,len(X),len(X)/(order+1)**3) )
+#     rprint(0, "BEFORE BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
 # 
 # #     X,Y,Z,W = scatterArrays(X,Y,Z,W,comm)
-# #     print('After scattering, nPoints on proc %i: %i' %(rank,len(X)) )
+# #     rprint(0, 'After scattering, nPoints on proc %i: %i' %(rank,len(X)) )
 #     comm.barrier()
 #     start=MPI.Wtime()
 #     X,Y,Z,W = loadBalance(X,Y,Z,W)
 #     comm.barrier()
 #     end=MPI.Wtime()
-#     print("LOAD BALANCING TIME WHEN NOT USING RANDOM FIRST: ", end-start)
-#     print('After load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
-#     print("proc %i: average x, y, z: %f,%f,%f"%(rank, np.mean(X), np.mean(Y), np.mean(Z)))
+#     rprint(0, "LOAD BALANCING TIME WHEN NOT USING RANDOM FIRST: ", end-start)
+#     rprint(0, 'After load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
+#     rprint(0, "proc %i: average x, y, z: %f,%f,%f"%(rank, np.mean(X), np.mean(Y), np.mean(Z)))
 # #     atoms = comm.bcast(atoms, root=0)
 # #     nOrbitals = comm.bcast(nOrbitals, root=0)
 # #     nElectrons = comm.bcast(nElectrons, root=0)
@@ -893,7 +880,7 @@ if __name__ == "__main__":
 #     comm.barrier()
 #     
 #     ## Test if load balancing worked...
-#     print("AFTER BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
+#     rprint(0, "AFTER BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
 # #     exit(-1)
     
 #     eigenvalues = -2*np.ones(nOrbitals)
@@ -910,21 +897,14 @@ if __name__ == "__main__":
 #         orbitals = initializeOrbitalsRandomly(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
 #         initialOccupations=2*np.ones(nOrbitals)
 #         initialEnergies=-1*np.ones(nOrbitals)
-    print("Max of first wavefunction: ", np.max(np.abs(orbitals[0,:])))
-#     print('nOrbitals: ', nOrbitals)
+#     rprint(0, 'nOrbitals: ', nOrbitals)
     comm.barrier()
     
-    # Sort orbitals
-#     orbitals, initialEnergies = sortByEigenvalue(orbitals, initialEnergies)
-#     fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
-#     eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
-#     rprint(rank,'Fermi energy: %f'%eF)
-#     exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
-#     initialOccupations = 2*1/(1+np.exp( exponentialArg ) )
+
     
     eigenvalues=np.array(initialEnergies)
-    print("Energies:    ",initialEnergies)
-    print("Occupations: ",initialOccupations)
+    rprint(rank, "Initial eigenvalues:  ",initialEnergies)
+    rprint(rank, "Initial occupations:  ",initialOccupations)
 #     input()
 
     

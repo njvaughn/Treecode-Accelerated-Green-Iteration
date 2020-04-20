@@ -1,16 +1,19 @@
 import numpy as np
 import ctypes
 from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+from mpiUtilities import rprint
 import gc
 
-from mpiUtilities import rprint
 
 
 try: 
     zoltanLoadBalancing = ctypes.CDLL('ZoltanRCB.so')
 except OSError as e:
-    print(e)
-    print("Exiting since ZoltanRCB.so could not be loaded.")
+    rprint(rank,e)
+    rprint(rank,"Exiting since ZoltanRCB.so could not be loaded.")
     exit(-1)
 
         
@@ -33,7 +36,7 @@ try:
                                                     ctypes.POINTER(ctypes.c_int) 
                                                     )
 except NameError:
-    print("Could not set argtypes of zoltanLoadBalancing")
+    rprint(rank,"Could not set argtypes of zoltanLoadBalancing")
 
 
 
@@ -60,7 +63,7 @@ def callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, coarsePtsPerCe
     newNumCells_p = newNumCells.ctypes.data_as(c_int_p)
     
     
-#     print("Rank %i, Before call: cellsX = " %rank, cellsX[:5])
+#     rprint(0,"Rank %i, Before call: cellsX = " %rank, cellsX[:5])
     zoltanLoadBalancing.loadBalanceRCB(
                                         ctypes.byref(cellsX_p), 
                                         ctypes.byref(cellsY_p),
@@ -75,10 +78,10 @@ def callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, coarsePtsPerCe
                                         newNumCells_p
                                         )
     
-#     print("Rank %i, After call: cellsX = " %rank, cellsX_p[:5])
-    print("Calling garbage collector")
+#     rprint(0,"Rank %i, After call: cellsX = " %rank, cellsX_p[:5])
+    rprint(rank,"Calling garbage collector")
     gc.collect()
-    print("garbage collection complete.")
+    rprint(rank,"garbage collection complete.")
     return cellsX_p[:newNumCells], cellsY_p[:newNumCells], cellsZ_p[:newNumCells], cellsDX_p[:newNumCells], cellsDY_p[:newNumCells], cellsDZ_p[:newNumCells], coarsePtsPerCell_p[:newNumCells], finePtsPerCell_p[:newNumCells], newNumCells
 
 
@@ -103,17 +106,17 @@ if __name__=="__main__":
     
     coarsePtsPerCell=(rank+1)*np.ones(numCells, dtype=np.int32)
     finePtsPerCell=-(rank+1)*np.ones(numCells, dtype=np.int32)
-    print("rank %i before balancing, coarse points per cell: " %rank, coarsePtsPerCell)
-    print("rank %i before balancing, fine points per cell:   " %rank, finePtsPerCell)
+    rprint(0,"rank %i before balancing, coarse points per cell: " %rank, coarsePtsPerCell)
+    rprint(0,"rank %i before balancing, fine points per cell:   " %rank, finePtsPerCell)
 
-    print(type(coarsePtsPerCell))
-    print(coarsePtsPerCell.dtype)
+#     rprint(0,type(coarsePtsPerCell))
+#     rprint(0,coarsePtsPerCell.dtype)
     
     globalStart=0
     
     for i in range(rank):
         globalStart += r*(i+1)
-    print("rank %i starts at %i and has %i cells. " %(rank,globalStart,numCells))
+    rprint(0,"rank %i starts at %i and has %i cells. " %(rank,globalStart,numCells))
     
     newCellsX, newCellsY, newCellsZ, newCellsDX, newCellsDY, newCellsDZ, newCoarsePtsPerCell, newFinePtsPerCell, newNumCells = callZoltan(cellsX, cellsY, cellsZ, cellsDX, cellsDY, cellsDZ, coarsePtsPerCell, finePtsPerCell, numCells, globalStart)
     
@@ -124,16 +127,16 @@ if __name__=="__main__":
     rprint(0,"len(newCellsX) = ", len(newCellsX)) 
     rprint(0,"newNumCells = ", newNumCells)    
     assert len(newCellsX)==newNumCells, "Length of cellsX does not equal newNumCells."  
-    print("After load balancing, rank %i has %i cells cenetered at (x,y,z)=(%f,%f,%f)." %(rank,len(newCellsX),xmean,ymean,zmean))
+    rprint(0,"After load balancing, rank %i has %i cells cenetered at (x,y,z)=(%f,%f,%f)." %(rank,len(newCellsX),xmean,ymean,zmean))
 
     comm.Barrier()    
-    print("Plot the points from each rank now.")
+    rprint(0,"Plot the points from each rank now.")
     
     
     comm.Barrier()
-    print("rank %i, coarse points per cell: " %rank, newCoarsePtsPerCell)
+    rprint(0,"rank %i, coarse points per cell: " %rank, newCoarsePtsPerCell)
     comm.Barrier()
-    print("rank %i, fine points per cell: " %rank, newFinePtsPerCell)
+    rprint(0,"rank %i, fine points per cell: " %rank, newFinePtsPerCell)
     
 #     fig = plt.figure()
 #     ax = fig.add_subplot(111, projection='3d')
