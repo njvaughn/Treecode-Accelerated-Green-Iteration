@@ -73,7 +73,7 @@ def twoMeshCorrectionClosure(scf_args):
     
     def twoMeshCorrection(RHO,scf_args, abortAfterInitialHartree=False):
         
-        verbosity=1
+        verbosity=0
         
         ## Unpack scf_args
         inputDensities = scf_args['inputDensities']
@@ -141,13 +141,10 @@ def twoMeshCorrectionClosure(scf_args):
 #         scf_args['GItolerancesIdx']=0
         
         scf_args['currentGItolerance']=GItolerances[scf_args['GItolerancesIdx']]
-        rprint(rank,"Current GI toelrance: ", scf_args['currentGItolerance'])
         
         GImixingHistoryCutoff = 10
          
         SCFcount += 1
-        rprint(rank,'\nSCF Count ', SCFcount)
-        rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies'])
 #         TwoMeshStart=1
 
         twoMesh=True
@@ -159,7 +156,7 @@ def twoMeshCorrectionClosure(scf_args):
             SCFindex = SCFcount - TwoMeshStart
             
 
-        print("Interpolating density from %i to %i point mesh." %(len(X),len(Xf)))
+        rprint(rank,"Interpolating density from %i to %i point mesh." %(len(X),len(Xf)))
         numberOfCells=len(pointsPerCell_coarse)
         RHOf = interpolation_wrapper.callInterpolator(X,  Y,  Z,  RHO, pointsPerCell_coarse,
                                                            Xf, Yf, Zf, pointsPerCell_fine, 
@@ -168,7 +165,6 @@ def twoMeshCorrectionClosure(scf_args):
 
            
           
-        rprint(rank,"Using singularity subtraction in Hartree solve.")
         kernelName = "coulomb"
         numberOfKernelParameters=1
         kernelParameters=np.array([gaussianAlpha])
@@ -177,7 +173,7 @@ def twoMeshCorrectionClosure(scf_args):
         start = MPI.Wtime()
         
         
-#             print("Rank %i calling treecode through wrapper..." %(rank))
+#             rprint(rank,"Rank %i calling treecode through wrapper..." %(rank))
         
         treecode_verbosity=0
         
@@ -190,9 +186,8 @@ def twoMeshCorrectionClosure(scf_args):
 
             
 #             singularityHandling="skipping"
-#             print("Forcing the Hartree solve to use singularity skipping.")
+#             rprint(rank,"Forcing the Hartree solve to use singularity skipping.")
 
-        rprint(rank,"Performing Hartree solve on %i mesh points" %numSources)
 #             rprint(rank,"Coarse order ", order)
 #             rprint(rank,"Fine order   ", fine_order)
 #             approximation = BT.Approximation.LAGRANGE
@@ -205,7 +200,7 @@ def twoMeshCorrectionClosure(scf_args):
         elif singularityHandling=="skipping":
             singularity=BT.Singularity.SKIPPING
         else:
-            print("What should singularityHandling be?")
+            rprint(rank,"What should singularityHandling be?")
             exit(-1)
         
         if approximationName=="lagrange":
@@ -213,7 +208,7 @@ def twoMeshCorrectionClosure(scf_args):
         elif approximationName=="hermite":
             approximation=BT.Approximation.HERMITE
         else:
-            print("What should approximationName be?")
+            rprint(rank,"What should approximationName be?")
             exit(-1)
         
         computeType=BT.ComputeType.PARTICLE_CLUSTER
@@ -298,8 +293,8 @@ def twoMeshCorrectionClosure(scf_args):
             
 #             eigenvalue -= oldLocal
 #             eigenvalue += newLocal
-            rprint(rank,"\n\nold Local to be subtracted: ", oldLocal)
-            rprint(rank,"new Local to be added:      ", newLocal)
+            if verbosity>0: rprint(rank,"\n\nold Local to be subtracted: ", oldLocal)
+            if verbosity>0: rprint(rank,"new Local to be added:      ", newLocal)
             
             
             # Update nonlocal piece
@@ -320,8 +315,9 @@ def twoMeshCorrectionClosure(scf_args):
 #             eigenvalue-=oldNonLocal
 #             eigenvalue+=newNonLocal
             
-            rprint(rank,"\n\nold nonlocal to be subtracted: ", oldNonLocal)
-            rprint(rank,"new nonlocal to be added:      ", newNonLocal)
+            if verbosity>0: rprint(rank,"\n\n")
+            if verbosity>0: rprint(rank,"old nonlocal to be subtracted: ", oldNonLocal)
+            if verbosity>0: rprint(rank,"new nonlocal to be added:      ", newNonLocal)
             
             
             f_coarse = -2* ( psi_coarse*Veff_local_new + V_nl_psi_coarse_new )
@@ -348,7 +344,7 @@ def twoMeshCorrectionClosure(scf_args):
             elif approximationName=="hermite":
                 approximation=BT.Approximation.HERMITE
             else:
-                print("What should approximationName be?")
+                rprint(rank,"What should approximationName be?")
                 exit(-1)
             
             computeType=BT.ComputeType.PARTICLE_CLUSTER
@@ -373,10 +369,10 @@ def twoMeshCorrectionClosure(scf_args):
             deltaE = -global_dot( psi_coarse*(Veff_local_new)*(psi_coarse-psiNew), W, comm )
             deltaE -= global_dot( V_nl_psi_coarse_new*(psi_coarse-psiNew), W, comm ) 
             normSqOfPsiNew = global_dot( psiNew**2, W, comm)
-            rprint(rank,"normSqOfPsiNew = ", normSqOfPsiNew)
+            if verbosity>0: rprint(rank,"normSqOfPsiNew = ", normSqOfPsiNew)
             deltaE /= (normSqOfPsiNew)
                          
-            rprint(rank,"Wavefunction %i, delta E = %f" %(m,deltaE))
+            if verbosity>0: rprint(rank,"Wavefunction %i, delta E = %f" %(m,deltaE))
             
             
             # Replace updated eigenvalue in array
@@ -393,7 +389,10 @@ def twoMeshCorrectionClosure(scf_args):
             
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
-        eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
+        upperBound=1
+        lowerBoundIdx = int(np.floor(nElectrons/2))-1   
+        lowerBound =  Energies['orbitalEnergies'][lowerBoundIdx]
+        eF = brentq(fermiObjectiveFunction, lowerBound, upperBound, xtol=1e-14)
         if verbosity>0: rprint(rank,'Fermi energy: ', eF)
         exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
         occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*

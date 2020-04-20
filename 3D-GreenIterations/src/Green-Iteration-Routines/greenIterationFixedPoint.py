@@ -16,12 +16,6 @@ import BaryTreeInterface as BT
 import orthogonalization_wrapper as ORTH
 import moveData_wrapper as MOVEDATA
 
-# try:
-#     import treecodeWrappers_distributed as treecodeWrappers
-# except ImportError:
-#     print('Unable to import treecodeWrapper due to ImportError')
-# except OSError:
-#     print('Unable to import treecodeWrapper due to OSError')
     
 # from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
 # from orthogonalizationRoutines import mask

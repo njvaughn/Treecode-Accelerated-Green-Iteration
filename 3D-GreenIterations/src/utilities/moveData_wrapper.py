@@ -1,14 +1,17 @@
 import numpy as np
 import ctypes
 from mpi4py import MPI
-
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 from mpiUtilities import rprint
+
 
 
 try: 
     moveDataRoutines = ctypes.CDLL('libMoveData.so')
 except OSError as e:
-    print(e)
+    rprint(rank, e)
     exit(-1)
     
 c_double_p  = ctypes.POINTER(ctypes.c_double) 
@@ -74,7 +77,7 @@ try:
                                                         )
     
 except NameError:
-    print("Could not set argtypes of moveDataRoutines")
+    rprint(rank, "Could not set argtypes of moveDataRoutines")
 
 
 
@@ -146,7 +149,7 @@ def callCopyMatrixToDevice(wavefunctions):
     numWavefunctions,numPoints = np.shape(wavefunctions)
     wavefunctions_pp = (wavefunctions.__array_interface__['data'][0] + np.arange(wavefunctions.shape[0])*wavefunctions.strides[0]).astype(np.intp)
     moveDataRoutines.copyMatrixToDevice(wavefunctions_pp, numPoints, numWavefunctions)
-    print("\n\n Inside callCopyMatrixToDevice, wavefunctions_pp = ",wavefunctions_pp,"\n\n")
+    rprint(rank, "\n\n Inside callCopyMatrixToDevice, wavefunctions_pp = ",wavefunctions_pp,"\n\n")
 
     return 
 

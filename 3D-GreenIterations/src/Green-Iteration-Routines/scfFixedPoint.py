@@ -31,11 +31,17 @@ from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 Temperature = 500
 KB = 1/315774.6
 Sigma = Temperature*KB
+
 def fermiObjectiveFunctionClosure(Energies,nElectrons):
     def fermiObjectiveFunction(fermiEnergy):
-                exponentialArg = (Energies['orbitalEnergies']-fermiEnergy)/Sigma
-                temp = 1/(1+np.exp( exponentialArg ) )
-                return nElectrons - 2 * np.sum(temp)
+        exponentialArg = (Energies['orbitalEnergies']-fermiEnergy)/Sigma
+        temp = 1/(1+np.exp( exponentialArg ) )
+#         rprint(rank, "input fermiEnergy = ", fermiEnergy)
+#         rprint(rank, "Energies['orbitalEnergies'] = ", Energies['orbitalEnergies'])
+#         rprint(rank, "exponentialArg = ", exponentialArg)
+#         rprint(rank, "temp = ", temp)
+        
+        return nElectrons - 2 * np.sum(temp)
     return fermiObjectiveFunction
 
 
@@ -146,7 +152,8 @@ def scfFixedPointClosure(scf_args):
         GImixingHistoryCutoff = 10
          
         SCFcount += 1
-        rprint(rank,'\nSCF Count ', SCFcount)
+        rprint(rank,'\n')
+        rprint(rank,'SCF Count ', SCFcount)
         rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies'])
 #         TwoMeshStart=1
 
@@ -165,9 +172,13 @@ def scfFixedPointClosure(scf_args):
             if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
             orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
             if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
-            fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
-            eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
+            fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)  
+            upperBound=1
+            lowerBoundIdx = int(np.floor(nElectrons/2))-1   
+            lowerBound =  Energies['orbitalEnergies'][lowerBoundIdx]
+            eF = brentq(fermiObjectiveFunction, lowerBound, upperBound, xtol=1e-14)
             rprint(rank,'Fermi energy: %f'%eF)
+            
             exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
             occupations = 2*1/(1+np.exp( exponentialArg ) )
         
@@ -199,27 +210,27 @@ def scfFixedPointClosure(scf_args):
         """
         
         # interpolate density to fine mesh for computing hartree potential
-#         print(pointsPerCell_coarse)
-#         print(pointsPerCell_fine)
-#         print(len(X))
-#         print(len(Xf))
+#         rprint(rank, pointsPerCell_coarse)
+#         rprint(rank, pointsPerCell_fine)
+#         rprint(rank, len(X))
+#         rprint(rank, len(Xf))
 #         exit(-1)
 
 #         if len(X) != len(Xf):
         if twoMesh==True:
-            print("Interpolating density from %i to %i point mesh." %(len(X),len(Xf)))
+            rprint(rank, "Interpolating density from %i to %i point mesh." %(len(X),len(Xf)))
 #             start=time.time()
 #             RHOf = interpolateBetweenTwoMeshes(X, Y, Z, RHO, pointsPerCell_coarse,
 #                                                    Xf, Yf, Zf, pointsPerCell_fine)
 #             end=time.time()
-#             print("Original interpolation time: ", end-start)
+#             rprint(rank, "Original interpolation time: ", end-start)
 #             
             numberOfCells=len(pointsPerCell_coarse)
 #             start=time.time()
-#             print("pointsPerCell_coarse = ", pointsPerCell_coarse[0:5])
-#             print("pointsPerCell_fine = ", pointsPerCell_fine[0:5])
+#             rprint(rank, "pointsPerCell_coarse = ", pointsPerCell_coarse[0:5])
+#             rprint(rank, "pointsPerCell_fine = ", pointsPerCell_fine[0:5])
 #             if numberOfCells
-#             print("Type: ", pointsPerCell_fine.dtype)
+#             rprint(rank, "Type: ", pointsPerCell_fine.dtype)
             RHOf = interpolation_wrapper.callInterpolator(X,  Y,  Z,  RHO, pointsPerCell_coarse,
                                                            Xf, Yf, Zf, pointsPerCell_fine, 
                                                            numberOfCells, order, GPUpresent)
@@ -229,8 +240,8 @@ def scfFixedPointClosure(scf_args):
             
 #             end=time.time()
 #             comm.barrier() 
-#             print("External interpolation time: ", end-start)
-#             print("Difference: ", np.max( np.abs(RHOf-RHOf2)))
+#             rprint(rank, "External interpolation time: ", end-start)
+#             rprint(rank, "Difference: ", np.max( np.abs(RHOf-RHOf2)))
 #             
 #             fCount=0
 #             f2Count=0
@@ -241,24 +252,24 @@ def scfFixedPointClosure(scf_args):
 #                 if abs(RHOf2[i])==0.0:
 #                     f2Count+=1
 # #                 if abs(RHOf[i]-RHOf2[i])>1e-12:
-# #                     print(i,RHOf[i], RHOf2[i])
+# #                     rprint(rank, i,RHOf[i], RHOf2[i])
 #                     
-#             print("Number of zeros: ", fCount, f2Count)
+#             rprint(rank, "Number of zeros: ", fCount, f2Count)
 #             exit(-1)
-#             print("RHOf = ", RHOf)
-#             print("RHOf2 = ", RHOf2)
+#             rprint(rank, "RHOf = ", RHOf)
+#             rprint(rank, "RHOf2 = ", RHOf2)
 #             
 #             
 #             start=0
 #             for i in range(numberOfCells):
 #                 if pointsPerCell_fine[i]==512:
 #                     for j in range(512):
-#                         print(RHOf[start+j], RHOf2[start+j])
+#                         rprint(rank, RHOf[start+j], RHOf2[start+j])
 #                     exit(-1)
 #                 start+=int(pointsPerCell_fine[i])
 #             exit(-1)
         else:
-#             print("WHY IS LEN(X)=LEN(Xf)?")
+#             rprint(rank, "WHY IS LEN(X)=LEN(Xf)?")
 #             exit(-1)
             RHOf=RHO
 #         if order!=fine_order:
@@ -287,7 +298,7 @@ def scfFixedPointClosure(scf_args):
                     numberOfKernelParameters=1
                     kernelParameters=np.array([epsilon])
                 else:
-                    print("What should regularize be in SCF?")
+                    rprint(rank, "What should regularize be in SCF?")
                     exit(-1)
             elif singularityHandling=='subtraction':
                 
@@ -308,7 +319,7 @@ def scfFixedPointClosure(scf_args):
             start = MPI.Wtime()
             
             
-#             print("Rank %i calling treecode through wrapper..." %(rank))
+#             rprint(0, "Rank %i calling treecode through wrapper..." %(rank))
             
             treecode_verbosity=0
             
@@ -328,7 +339,7 @@ def scfFixedPointClosure(scf_args):
                 sourceW=W
                 
 #             singularityHandling="skipping"
-#             print("Forcing the Hartree solve to use singularity skipping.")
+#             rprint(rank, "Forcing the Hartree solve to use singularity skipping.")
 
             rprint(rank,"Performing Hartree solve on %i mesh points" %numSources)
 #             rprint(rank,"Coarse order ", order)
@@ -343,7 +354,7 @@ def scfFixedPointClosure(scf_args):
             elif singularityHandling=="skipping":
                 singularity=BT.Singularity.SKIPPING
             else:
-                print("What should singularityHandling be?")
+                rprint(rank, "What should singularityHandling be?")
                 exit(-1)
             
             if approximationName=="lagrange":
@@ -351,7 +362,7 @@ def scfFixedPointClosure(scf_args):
             elif approximationName=="hermite":
                 approximation=BT.Approximation.HERMITE
             else:
-                print("What should approximationName be?")
+                rprint(rank, "What should approximationName be?")
                 exit(-1)
             
             computeType=BT.ComputeType.PARTICLE_CLUSTER
@@ -432,7 +443,10 @@ def scfFixedPointClosure(scf_args):
         ## Solve the eigenvalue problem
         if SCFcount>1:
             fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
-            eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
+            upperBound=1
+            lowerBoundIdx = int(np.floor(nElectrons/2))-1   
+            lowerBound =  Energies['orbitalEnergies'][lowerBoundIdx]
+            eF = brentq(fermiObjectiveFunction, lowerBound, upperBound, xtol=1e-14)
             rprint(rank,'Fermi energy: %f'%eF)
             exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
             previousOccupations = 2*1/(1+np.exp( exponentialArg ) )
@@ -493,8 +507,8 @@ def scfFixedPointClosure(scf_args):
 #                         clenshawCurtisNorm = clenshawCurtisNormClosureWithoutEigenvalue(W)
 #                         resNormWithoutEig = clenshawCurtisNorm(r)
 #                         
-#                         print('CC norm of residual vector: ', resNormWithoutEig)
-#                     print("Finished generating initial guess.\n\n")
+#                         rprint(rank, 'CC norm of residual vector: ', resNormWithoutEig)
+#                     rprint(rank, "Finished generating initial guess.\n\n")
 #                     gi_args['updateEigenvalue']=True
 
                 
@@ -507,7 +521,7 @@ def scfFixedPointClosure(scf_args):
                     AndersonActivationTolerance=3e3
                 while ( (resNorm> max(AndersonActivationTolerance,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
-    #                 print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+    #                 rprint(rank, 'MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
     #                 GPUtil.showUtilization()
                     if verbosity>0: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                 
@@ -515,8 +529,8 @@ def scfFixedPointClosure(scf_args):
     #                 n,M = np.shape(orbitals)
     #                 orthWavefunction = modifiedGramSchmidt_singleOrbital(orbitals,W,m, n, M)
     #                 orbitals[m,:] = np.copy(orthWavefunction)
-    #                 print('orbitals before: ',orbitals[1:5,m])
-    #                 print('greenIterationsCount before: ', greenIterationsCount)
+    #                 rprint(rank, 'orbitals before: ',orbitals[1:5,m])
+    #                 rprint(rank, 'greenIterationsCount before: ', greenIterationsCount)
                     psiIn = np.append( np.copy(orbitals[m,:]), Energies['orbitalEnergies'][m] )
          
             
@@ -583,10 +597,10 @@ def scfFixedPointClosure(scf_args):
                     else:
                         if (greenIterationsCount-1-mixingStart)<GImixingHistoryCutoff:
                             inputWavefunctions = np.concatenate( ( inputWavefunctions, np.reshape(np.copy(psiIn), (psiIn.size,1)) ), axis=1)
-#                             print('Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
+#                             rprint(rank, 'Concatenated inputWavefunction.  Now has shape: ', np.shape(inputWavefunctions))
       
                         else:
-#                             print('Beyond GImixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff)
+#                             rprint(rank, 'Beyond GImixingHistoryCutoff.  Replacing column ', (greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff)
                             inputWavefunctions[:,(greenIterationsCount-1-mixingStart)%GImixingHistoryCutoff] = np.copy(psiIn)
       
                     ## Perform one step of iterations
@@ -608,7 +622,7 @@ def scfFixedPointClosure(scf_args):
                         rprint(rank,"Terminating fixed point iteration at 50 iterations.")
                         Done=True
 #                     if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) and ( ( SCFcount <2 ) or previousOccupations[m]<1e-4 ) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
-#                         print('Ending iteration because eigenvalue is converged.')
+#                         rprint(rank, 'Ending iteration because eigenvalue is converged.')
 #                         Done=True
                       
                       
@@ -659,7 +673,10 @@ def scfFixedPointClosure(scf_args):
             
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
-        eF = brentq(fermiObjectiveFunction, Energies['orbitalEnergies'][0], 1, xtol=1e-14)
+        upperBound=1
+        lowerBoundIdx = int(np.floor(nElectrons/2))-1   
+        lowerBound =  Energies['orbitalEnergies'][lowerBoundIdx]
+        eF = brentq(fermiObjectiveFunction, lowerBound, upperBound, xtol=1e-14)
         if verbosity>0: rprint(rank,'Fermi energy: ', eF)
         exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
         occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
@@ -690,10 +707,10 @@ def scfFixedPointClosure(scf_args):
 
             if (SCFindex-1)<mixingHistoryCutoff:
                 outputDensities = np.concatenate( (outputDensities, np.reshape(np.copy(newDensity), (nPoints,1))), axis=1)
-#                 print('Concatenated outputDensity.  Now has shape: ', np.shape(outputDensities))
+#                 rprint(rank, 'Concatenated outputDensity.  Now has shape: ', np.shape(outputDensities))
             else:
-#                 print('Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
-    #                                 print('Shape of oldOrbitals[m,:]: ', np.shape(oldOrbitals[m,:]))
+#                 rprint(rank, 'Beyond mixingHistoryCutoff.  Replacing column ', (SCFcount-1)%mixingHistoryCutoff)
+    #                                 rprint(rank, 'Shape of oldOrbitals[m,:]: ', np.shape(oldOrbitals[m,:]))
                 outputDensities[:,(SCFindex-1)%mixingHistoryCutoff] = newDensity
             
             if SCFcount == TwoMeshStart:
@@ -702,11 +719,12 @@ def scfFixedPointClosure(scf_args):
     
          
   
-        if verbosity>0: rprint(rank,'outputDensities[0,:] = ', outputDensities[0,:])
+        if verbosity>0: 
+            rprint(rank,'outputDensities[0,:] = ', outputDensities[0,:])
         
-        rprint(rank,"\n\n\n\n\nShape of input densities: ", np.shape(inputDensities))
-        rprint(rank,"Shape of output densities: ", np.shape(outputDensities))
-        rprint(rank,"\n\n\n\n\n")
+            rprint(rank,"Shape of input densities: ", np.shape(inputDensities))
+            rprint(rank,"Shape of output densities: ", np.shape(outputDensities))
+            rprint(rank,"\n\n\n\n\n")
 
         integratedDensity = global_dot( newDensity, W, comm )
         densityResidual = np.sqrt( global_dot( (newDensity-oldDensity)**2,W,comm ) )
@@ -740,7 +758,7 @@ def scfFixedPointClosure(scf_args):
         rprint(rank,'Updated V_c:                           %.10f Hartree' %Energies['Vc'])
         
         rprint(rank,'Updated Band Energy:                   %.10f H, %.10e H' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
-    #         print('Updated Kinetic Energy:                 %.10f H, %.10e H' %(Energies['kinetic'], Energies['kinetic']-Ekinetic) )
+    #         rprint(rank, 'Updated Kinetic Energy:                 %.10f H, %.10e H' %(Energies['kinetic'], Energies['kinetic']-Ekinetic) )
         rprint(rank,'Updated E_Hartree:                      %.10f H, %.10e H' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
         rprint(rank,'Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
         rprint(rank,'Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )

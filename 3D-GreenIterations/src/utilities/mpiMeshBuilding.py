@@ -52,7 +52,7 @@ def inializeBaseMesh(XL,YL,ZL,maxSideLength,verbose=1):
     assert abs((2*XL*2*YL*2*ZL) - np.sum(volumes)) < 1e-12, "base mesh cells volumes do not add up to the expected total volume."
     
 #     for i in range(len(cells)):
-#         print(cells[i])
+#         rprint(0, cells[i])
 #     exit(-1)
     return cells
 
@@ -100,7 +100,7 @@ def inializeBaseMesh_distributed(XL,YL,ZL,maxSideLength,verbose=1):
                 
                 idx+=1
     
-    if verbose>0: print("Rank %i, number of coarse cells: %i, volume = %f" %(rank, len(cells), np.sum(volumes)) )
+    if verbose>0: rprint(0, "Rank %i, number of coarse cells: %i, volume = %f" %(rank, len(cells), np.sum(volumes)) )
 #     if verbose>0: rprint(rank,"Rank %i, number of coarse cells: %i" %(rank, len(cells)) )
 #     if verbose>0: rprint(rank, "Expected volume:   ", (2*XL*2*YL*2*ZL))
 #     if verbose>0: rprint(rank, "Cumulative volume: ", np.sum(volumes))
@@ -110,7 +110,7 @@ def inializeBaseMesh_distributed(XL,YL,ZL,maxSideLength,verbose=1):
     assert abs((2*XL*2*YL*2*ZL) - totalVolume) < 1e-12, "base mesh cells volumes do not add up to the expected total volume."
     
 #     for i in range(len(cells)):
-#         print(cells[i])
+#         rprint(0, cells[i])
 #     exit(-1)
     return np.array(cellsX),np.array(cellsY),np.array(cellsZ),np.array(cells)
 
@@ -158,7 +158,7 @@ def inializeBaseMesh_distributed_duplicated(XL,YL,ZL,maxSideLength,verbose=1):
                 
                 idx+=1
     
-    if verbose>0: print("Rank %i, number of coarse cells: %i, volume = %f" %(rank, len(cells), np.sum(volumes)) )
+    if verbose>0: rprint(0, "Rank %i, number of coarse cells: %i, volume = %f" %(rank, len(cells), np.sum(volumes)) )
 #     if verbose>0: rprint(rank,"Rank %i, number of coarse cells: %i" %(rank, len(cells)) )
 #     if verbose>0: rprint(rank, "Expected volume:   ", (2*XL*2*YL*2*ZL))
 #     if verbose>0: rprint(rank, "Cumulative volume: ", np.sum(volumes))
@@ -168,7 +168,7 @@ def inializeBaseMesh_distributed_duplicated(XL,YL,ZL,maxSideLength,verbose=1):
     assert abs((2*XL*2*YL*2*ZL) - totalVolume/size) < 1e-12, "base mesh cells volumes do not add up to the expected total volume."
     
 #     for i in range(len(cells)):
-#         print(cells[i])
+#         rprint(0, cells[i])
 #     exit(-1)
     return np.array(cellsX),np.array(cellsY),np.array(cellsZ),np.array(cells)
 
@@ -206,7 +206,7 @@ def reconstructBaseMesh_distributed(XL,YL,ZL,maxSideLength,cellsX,cellsY,cellsZ,
     volumes=[]
     idx=0
     
-    print("Rank %i, length of cells arrays: " %rank, len(cellsX))
+    rprint(0, "Rank %i, length of cells arrays: " %rank, len(cellsX))
     
     for i in range(len(cellsX)):
         xl = cellsX[i]-dx/2
@@ -224,7 +224,7 @@ def reconstructBaseMesh_distributed(XL,YL,ZL,maxSideLength,cellsX,cellsY,cellsZ,
     
     
     
-    if verbose>0: print("After LB:  Rank %i, number of coarse cells: %i, volume = %f" %(rank, len(cells), np.sum(volumes)) )
+    if verbose>0: rprint(0, "After LB:  Rank %i, number of coarse cells: %i, volume = %f" %(rank, len(cells), np.sum(volumes)) )
 #     if verbose>0: rprint(rank,"Rank %i, number of coarse cells: %i" %(rank, len(cells)) )
 #     if verbose>0: rprint(rank, "Expected volume:   ", (2*XL*2*YL*2*ZL))
 #     if verbose>0: rprint(rank, "Cumulative volume: ", np.sum(volumes))
@@ -234,7 +234,7 @@ def reconstructBaseMesh_distributed(XL,YL,ZL,maxSideLength,cellsX,cellsY,cellsZ,
     assert abs((2*XL*2*YL*2*ZL) - totalVolume) < 1e-12, "After LB: base mesh cells volumes do not add up to the expected total volume."
     
 #     for i in range(len(cells)):
-#         print(cells[i])
+#         rprint(0, cells[i])
 #     exit(-1)
     return cells
 
@@ -264,7 +264,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     else:
         atoms = np.empty((len(atomData),),dtype=object)
         for i in range(len(atomData)):
-            print(atomData)
+            rprint(0, atomData)
             atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4],coreRepresentation)
             atoms[i] = atom
             nOrbitals += int(atomData[i,4])
@@ -274,7 +274,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
                 atom.setPseudopotentialObject(PSPs)
                 nElectrons += atom.PSP.psp['header']['z_valence']
             else:
-                print("What is coreRepresentation?")
+                rprint(rank,"What is coreRepresentation?")
                 exit(-1)
     
     
@@ -294,8 +294,8 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     cellsX,cellsY,cellsZ,cells=inializeBaseMesh_distributed(XL,YL,ZL,maxSideLength)  # rank p of P get's every Pth cell.
 #     cellsX,cellsY,cellsZ,cells=inializeBaseMesh_distributed_duplicated(XL,YL,ZL,maxSideLength)
     
-#     print("rank %i" %rank, cellsX,cellsY,cellsZ, cells)
-    print("rank %i, number of cells before refinement = %i" %(rank,len(cellsX)))
+#     rprint(0, "rank %i" %rank, cellsX,cellsY,cellsZ, cells)
+    rprint(0, "rank %i, number of cells before refinement = %i" %(rank,len(cellsX)))
 
     
 #     preXmean = np.mean(cellsX)
@@ -306,7 +306,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
 # #     cellsX,cellsY,cellsZ = loadBalance(cellsX,cellsY,cellsZ,LBMETHOD='RCB')
 #     cellsX,cellsY,cellsZ = loadBalance_manual(cellsX,cellsY,cellsZ)
 #     end=MPI.Wtime()
-#     print("Manual RCB balancing took %f seconds and resulted in %i cells for rank %i." %((end-start),len(cellsX),rank))
+#     rprint(0, "Manual RCB balancing took %f seconds and resulted in %i cells for rank %i." %((end-start),len(cellsX),rank))
     comm.barrier()
     
 #     postXmean = np.mean(cellsX)
@@ -316,13 +316,13 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
 #     cells = reconstructBaseMesh_distributed(XL,YL,ZL,maxSideLength,cellsX,cellsY,cellsZ)
 #     
 #     
-#     print("Rank %i, xmean was %f and is now %f " %(rank,preXmean,postXmean))
-#     print("Rank %i, ymean was %f and is now %f " %(rank,preYmean,postYmean))
-#     print("Rank %i, zmean was %f and is now %f " %(rank,preZmean,postZmean))
+#     rprint(0, "Rank %i, xmean was %f and is now %f " %(rank,preXmean,postXmean))
+#     rprint(0, "Rank %i, ymean was %f and is now %f " %(rank,preYmean,postYmean))
+#     rprint(0, "Rank %i, zmean was %f and is now %f " %(rank,preZmean,postZmean))
     
 #     exit(-1)
 
-#     print("rank %i" %rank, cellsX,cellsY,cellsZ)
+#     rprint(0, "rank %i" %rank, cellsX,cellsY,cellsZ)
 #     exit(-1)
     
     
@@ -342,7 +342,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
 #     for i in range(len(cells)):
 #         if i%size==rank:
 # #         if True:  # previously there was a check to determine if this cell should be refined by this proc.  Now assume cells have already been decomposed.
-# #             print("CALLING refineCell ==================================================")
+# #             rprint(0, "CALLING refineCell ==================================================")
 #             if saveTree==False:
 #                 X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues = refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
 #                                                                                         divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree)
@@ -383,15 +383,18 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     refinedPtsPerCellCoarse=np.empty(0,dtype=np.int32)
     refinedPtsPerCellFine=np.empty(0,dtype=np.int32)
     
+    divideBasedOnNuclei=False
+    rprint(rank, "Not dividing cells at nuclei. Seems to be okay for pseudopoential mesh.")
+    
     for i in range(len(cells)):
 #         if i%size==rank:
         if True:  ## the i%size==rank check already occurs when constructing the set of cells.
             if saveTree==False:
                 cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, atoms,nOrbitals,nElectrons,referenceEigenvalues = refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
-                                                                                        divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree)
+                                                                                        divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree,divideBasedOnNuclei=divideBasedOnNuclei)
             elif saveTree==True:
                 cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree = refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
-                                                                                        divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree)
+                                                                                        divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree,divideBasedOnNuclei=divideBasedOnNuclei)
             
             refinedCellsX=np.append(refinedCellsX,cellsX)
             refinedCellsY=np.append(refinedCellsY,cellsY)
@@ -423,16 +426,17 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     
     refinedPtsPerCellCoarse = refinedPtsPerCellCoarse.astype(np.int32)
     refinedPtsPerCellFine = refinedPtsPerCellFine.astype(np.int32)
-    print("rank %i, number of cells after refinement = %i, starts at %i" %(rank,numCellsLocal, globalStart))
-    print("max, min of refinedPtsPerCellCoarse: ", max(refinedPtsPerCellCoarse), min(refinedPtsPerCellCoarse))
-    print("max, min of refinedPtsPerCellFine: ", max(refinedPtsPerCellFine), min(refinedPtsPerCellFine))
-    print("dtype of refinedPtsPerCellCoarse: ", refinedPtsPerCellCoarse.dtype)
+    if verbose>0:
+        rprint(0, "rank %i, number of cells after refinement = %i, starts at %i" %(rank,numCellsLocal, globalStart))
+        rprint(0, "max, min of refinedPtsPerCellCoarse: ", max(refinedPtsPerCellCoarse), min(refinedPtsPerCellCoarse))
+        rprint(0, "max, min of refinedPtsPerCellFine: ", max(refinedPtsPerCellFine), min(refinedPtsPerCellFine))
+        rprint(0, "dtype of refinedPtsPerCellCoarse: ", refinedPtsPerCellCoarse.dtype)
     comm.barrier()
     ## Check that the cell decompositions make sense before load balancing.
     localVolume = 0
     for i in range(len(refinedCellsX)):
         localVolume += (refinedCellsDX[i]*refinedCellsDY[i]*refinedCellsDZ[i])
-    print("rank %i local volume: %f" %(rank,localVolume))
+    rprint(0, "rank %i local volume: %f" %(rank,localVolume))
     totalVolume = comm.allreduce(np.sum(localVolume))
     rprint(rank,"Total volume: ", totalVolume)
     assert abs((2*XL*2*YL*2*ZL) - totalVolume) < 1e-12, "BEFORE LOAD BALANCING: base mesh cells volumes do not add up to the expected total volume.  Expected volume = %f" %(2*XL*2*YL*2*ZL) 
@@ -444,18 +448,18 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     
     ## Load balance the cells
     cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, newNumCells = callZoltan(refinedCellsX,refinedCellsY,refinedCellsZ,refinedCellsDX,refinedCellsDY,refinedCellsDZ, refinedPtsPerCellCoarse, refinedPtsPerCellFine, numCellsLocal, globalStart)
-    print("rank %i, number of cells after balancing = %i" %(rank,len(cellsX)))
+    rprint(0, "rank %i, number of cells after balancing = %i" %(rank,len(cellsX)))
     comm.barrier()
 #     gc.collect()
 #     comm.barrier()
-#     print("Called garbage collector after calling Zoltan.")
+#     rprint(0, "Called garbage collector after calling Zoltan.")
     
     ## Check that the cell decompositions make sense after load balancing.
     localVolume = 0
     for i in range(len(cellsX)):
         localVolume += (cellsDX[i]*cellsDY[i]*cellsDZ[i])
     
-    print("rank %i, local volume after refinement: %f" %(rank,localVolume))
+    rprint(0, "rank %i, local volume after refinement: %f" %(rank,localVolume))
     totalVolume = comm.allreduce(np.sum(localVolume))
     
     rprint(rank,"Total volume: ", totalVolume)
@@ -503,11 +507,11 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     nPoints=len(x)
     PtsPerCellCoarse=np.array(PtsPerCellCoarse, dtype=np.int32)
     PtsPerCellFine=np.array(PtsPerCellFine, dtype=np.int32)
-    
-    print("len(x) = ", len(x))
-    print("first few PtsPerCellCoarse: ", PtsPerCellCoarse[0:5])
-    print("np.sum(PtsPerCellCoarse) = ", np.sum(PtsPerCellCoarse))
-    print("max, min of PtsPerCellCoarse: ", max(PtsPerCellCoarse), min(PtsPerCellCoarse))
+    if verbose>0:
+        rprint(0, "len(x) = ", len(x))
+        rprint(0, "first few PtsPerCellCoarse: ", PtsPerCellCoarse[0:5])
+        rprint(0, "np.sum(PtsPerCellCoarse) = ", np.sum(PtsPerCellCoarse))
+        rprint(0, "max, min of PtsPerCellCoarse: ", max(PtsPerCellCoarse), min(PtsPerCellCoarse))
     assert len(x) == int(np.sum(PtsPerCellCoarse)), "Error: len(x) != np.sum(PtsPerCellCoarse)"
     assert len(xf) == np.sum(PtsPerCellFine), "Error: len(xf) != np.sum(PtsPerCellFine)"
 
@@ -530,7 +534,7 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     setUp() gets called before every test below.
     '''
     [xmin, xmax, ymin, ymax, zmin, zmax] = coordinates
-    if verbose>0: print(xmin,xmax,ymin,ymax,zmin,zmax)
+    if verbose>0: rprint(0, xmin,xmax,ymin,ymax,zmin,zmax)
 
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
     [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
@@ -545,7 +549,7 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
                 coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile, fine_order=fine_order)#, iterationOutFile=outputFile)
 
     tree.finalDivideBasedOnNuclei(coordinateFile)
-#     print("Not dividing based on Nuclei.")
+#     rprint(0, "Not dividing based on Nuclei.")
     tree.buildTree( initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=False,onlyFillOne=False)
@@ -558,10 +562,10 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     pointsPerCell_coarse = pointsPerCell_coarse.astype(int)
     pointsPerCell_fine = pointsPerCell_fine.astype(int)
 
-#     print("pointsPerCell_coarse = ", pointsPerCell_coarse)
-#     print("pointsPerCell_fine   = ", pointsPerCell_fine)
-#     print(len(X))
-#     print(len(Xf))
+#     rprint(0, "pointsPerCell_coarse = ", pointsPerCell_coarse)
+#     rprint(0, "pointsPerCell_fine   = ", pointsPerCell_fine)
+#     rprint(0, len(X))
+#     rprint(0, len(Xf))
 #     
 #     if not np.array_equal(pointsPerCell_coarse,pointsPerCell_fine):
 #         exit(-1)
@@ -573,9 +577,9 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     assert len(X)==len(Z), "len(X) not equal to len(Z) for a base mesh tree"
     assert len(X)==len(W), "len(X) not equal to len(W) for a base mesh tree"
     assert len(X)==len(RHO), "len(X) not equal to len(RHO) for a base mesh tree"
-#     print("sum of weights = ", np.sum(W))
-#     print("volume = ",volume)
-#     print(W)
+#     rprint(0, "sum of weights = ", np.sum(W))
+#     rprint(0, "volume = ",volume)
+#     rprint(0, W)
     assert abs( np.sum(W) - volume)/volume<1e-12, "Sum of weights doesn't equal base mesh volume."
     assert nPoints>0, "nPoints not > 0 for one of the base mesh trees. "
     
@@ -585,19 +589,20 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     computedIntegral = np.sum(testfunc*W)
     computedIntegralFine = np.sum(testfuncFine*Wf)
     analyticIntegral = integral_func(X,Y,Z,pow,xmin,xmax,ymin,ymax,zmin,zmax)
-    print(nPoints)
-    print("Computed Integral over coarse base mesh:          %f, %1.3e" %(computedIntegral, (analyticIntegral-computedIntegral)/analyticIntegral))
-    print("Computed Integral over fine base mesh:            %f, %1.3e" %(computedIntegralFine,(analyticIntegral-computedIntegralFine)/analyticIntegral))
-    print("Analytic Integral over base mesh:                   ", analyticIntegral)
+    if verbose>0:
+        rprint(0, nPoints)
+        rprint(0, "Computed Integral over coarse base mesh:          %f, %1.3e" %(computedIntegral, (analyticIntegral-computedIntegral)/analyticIntegral))
+        rprint(0, "Computed Integral over fine base mesh:            %f, %1.3e" %(computedIntegralFine,(analyticIntegral-computedIntegralFine)/analyticIntegral))
+        rprint(0, "Analytic Integral over base mesh:                   ", analyticIntegral)
     try: 
         assert abs(computedIntegral-analyticIntegral)<1e-8, "Computed (%f) and analytic (%f) integrals not matching for base mesh spanning %f,%f x %f,%f x %f,%f" %(computedIntegral, analyticIntegral, xmin,xmax,ymin,ymax,zmin,zmax)
     except AssertionError as error:
-        print(error)
-        print(X)
-        print(Y)
-        print(Z)
-        print(W)
-        print(np.sum(W))
+        rprint(0, error)
+        rprint(0, X)
+        rprint(0, Y)
+        rprint(0, Z)
+        rprint(0, W)
+        rprint(0, np.sum(W))
         exit(-1)
 
     if saveTree==False:
@@ -606,15 +611,16 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     elif saveTree==True:
         return X, Y, Z, W, Xf, Yf, Zf, Wf, pointsPerCell_coarse, pointsPerCell_fine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
     else:
-        print("What should saveTree be set to?")
+        rprint(0, "What should saveTree be set to?")
         exit(-1)
         
-def refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,fine_order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0, saveTree=False):
+def refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,fine_order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0, 
+                          saveTree=False,divideBasedOnNuclei=False):
     '''
     setUp() gets called before every test below.
     '''
     [xmin, xmax, ymin, ymax, zmin, zmax] = coordinates
-    if verbose>0: print(xmin,xmax,ymin,ymax,zmin,zmax)
+    if verbose>0: rprint(0, xmin,xmax,ymin,ymax,zmin,zmax)
 
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
     [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
@@ -628,8 +634,9 @@ def refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,coordina
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,atoms,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile, fine_order=fine_order)#, iterationOutFile=outputFile)
 
-#     tree.finalDivideBasedOnNuclei(coordinateFile)
-    print("Not dividing based on Nuclei.")
+    if divideBasedOnNuclei:
+        tree.finalDivideBasedOnNuclei(coordinateFile)
+#     rprint(rank,"Not dividing based on Nuclei.")
     tree.buildTree( initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=False,onlyFillOne=False)
@@ -655,7 +662,7 @@ def refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,coordina
         return cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, atoms,nOrbitals,nElectrons,referenceEigenvalues
 #         return X, Y, Z, W, Xf, Yf, Zf, Wf, pointsPerCell_coarse, pointsPerCell_fine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
     else:
-        print("What should saveTree be set to?")
+        rprint(0, "What should saveTree be set to?")
         exit(-1)
 
 
@@ -699,9 +706,9 @@ def fineQuadraturePointsSingleCell(xlow,xhigh,ylow,yhigh,zlow,zhigh,order,ptsInF
     ptsInCoarseCell=(order+1)**3
     numChildren = int( ptsInFineCell/ptsInCoarseCell )
     
-#     print("ptsInFineCell = ", ptsInFineCell)
-#     print("ptsInCoarseCell = ", ptsInCoarseCell)
-#     print("numChildren = ", numChildren)
+#     rprint(0,"ptsInFineCell = ", ptsInFineCell)
+#     rprint(0, "ptsInCoarseCell = ", ptsInCoarseCell)
+#     rprint(0, "numChildren = ", numChildren)
     
     if numChildren==1:
         xbounds=[xlow,xhigh]
@@ -744,7 +751,7 @@ def fineQuadraturePointsSingleCell(xlow,xhigh,ylow,yhigh,zlow,zhigh,order,ptsInF
         ybounds=[ylow,ymidL,ymid,ymidR,yhigh]
         zbounds=[zlow,zmidL,zmid,zmidR,zhigh]
     else:
-        print("Number of children in fine mesh was not 1, 8, 27, or 64.  It was %i.  Exiting." %numChildren)
+        rprint(0, "Number of children in fine mesh was not 1, 8, 27, or 64.  It was %i.  Exiting." %numChildren)
         exit(-1)
     
     
@@ -763,7 +770,7 @@ def fineQuadraturePointsSingleCell(xlow,xhigh,ylow,yhigh,zlow,zhigh,order,ptsInF
                 zvec = ChebyshevPointsFirstKind(zbounds[kk], zbounds[kk+1], order)
                 
                 w_temp = weights3DFirstKind(xbounds[ii], xbounds[ii+1], order, ybounds[jj], ybounds[jj+1], order, zbounds[kk], zbounds[kk+1], order, W)
-#                 print("shape of w_temp: ", np.shape(w_temp))
+#                 rprint(0, "shape of w_temp: ", np.shape(w_temp))
                 localIdx=0
                 for i in range(order+1):
                     xt = xvec[i]

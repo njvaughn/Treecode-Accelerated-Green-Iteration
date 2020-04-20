@@ -4,6 +4,7 @@ import mpi4py.MPI as MPI
 # rank = comm.Get_rank()
 # size = comm.Get_size()
 import numpy as np
+import inspect
 
 
 
@@ -76,11 +77,15 @@ def rprint(rank, message, message2=None, message3=None):
     '''
     if message2 is not None:
         if message3 is not None:
-            if rank==0: print(message, message2, message3)
+            if rank==0: print("[", inspect.stack()[1][3], "] ", message, message2, message3)
         else:
-            if rank==0: print(message, message2)
+            if rank==0: print("[", inspect.stack()[1][3], "] ", message, message2)
     else:
-        if rank==0: print(message)
+#         if rank==0: print("[", __file__, "] ", message)
+        if rank==0: print("[", inspect.stack()[1][3], "] ", message)
+        
+                
+        
 
 
 

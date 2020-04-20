@@ -45,7 +45,7 @@ except ImportError:
     try:
         from pyevtk.hl import pointsToVTK
     except ImportError:
-        print("Wasn't able to import pyevtk.hl.pointsToVTK, even after appending '/home/njvaughn' to path.")
+        rprint(rank, "Wasn't able to import pyevtk.hl.pointsToVTK, even after appending '/home/njvaughn' to path.")
     pass
 
 from GridpointStruct import GridPoint
@@ -74,13 +74,14 @@ class Tree(object):
     def __init__(self, xmin,xmax,px,ymin,ymax,py,zmin,zmax,pz,atoms,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms,minDepth,gaugeShift=0.0,
                  coordinateFile='',inputFile='',exchangeFunctional="LDA_X",correlationFunctional="LDA_C_PZ",
                  polarization="unpolarized", 
-                 printTreeProperties = False, fine_order=None):
+                 printTreeProperties = False, fine_order=None,verbosity=0):
         '''
         Tree constructor:  
         First construct the gridpoints for cell consisting of entire domain.  
         Then construct the cell that are composed of gridpoints. 
         Then construct the root of the tree.
         '''
+        self.verbosity=verbosity
         self.xmin = xmin
         self.xmax = xmax
         self.px = px
@@ -161,16 +162,16 @@ class Tree(object):
 # #         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
 #         self.gaugeShift = np.genfromtxt(inputFile,dtype=[(str,str,int,int,float,float,float,float,float)])[8]
         if  printTreeProperties == True:
-            print('Gauge shift ', self.gaugeShift)
-            print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-            print('~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~')
-            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+            rprint(rank, 'Gauge shift ', self.gaugeShift)
+            rprint(rank, '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+            rprint(rank, '~~~~~~~~~~~~~~~~~~~~~~~ Atoms ~~~~~~~~~~~~~~~~~~~~~~~')
+            rprint(rank, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
             for i in range(len(self.atoms)):
-                print('Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+                rprint(rank, 'Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
                       %(self.atoms[i].atomicNumber, self.atoms[i].x,self.atoms[i].y,self.atoms[i].z))
-            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
+            rprint(rank, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+            rprint(rank, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+            rprint(rank, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
         
     
     
@@ -190,10 +191,10 @@ class Tree(object):
         
         eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1, xtol=1e-14)
 #         eF = brentq(self.fermiObjectiveFunction, self.orbitalEnergies[0], 1)
-        print('Fermi energy: ', eF)
+        rprint(rank, 'Fermi energy: ', eF)
         exponentialArg = (self.orbitalEnergies-eF)/self.sigma
         self.occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
-        print('Occupations: ', self.occupations)
+        rprint(rank, 'Occupations: ', self.occupations)
     
     def computeOrbitalMoments(self, targetOrbital=None):
         if targetOrbital!=None:
@@ -219,13 +220,13 @@ class Tree(object):
                         y2 += gp.phi[m]*gp.y**2*cell.w[i,j,k]
                         z2 += gp.phi[m]*gp.z**2*cell.w[i,j,k]
             
-            print('\nOrbital ', m, ' moments:')
-            print('x1 = ', x1)
-            print('y1 = ', y1)
-            print('z1 = ', z1)
-            print('x2 = ', x2)
-            print('y2 = ', y2)
-            print('z2 = ', z2, '\n')
+            rprint(rank, '\nOrbital ', m, ' moments:')
+            rprint(rank, 'x1 = ', x1)
+            rprint(rank, 'y1 = ', y1)
+            rprint(rank, 'z1 = ', z1)
+            rprint(rank, 'x2 = ', x2)
+            rprint(rank, 'y2 = ', y2)
+            rprint(rank, 'z2 = ', z2, '\n')
             
             maxMoment = np.max( [np.abs(x1),np.abs(y1),np.abs(z1),np.abs(x2),np.abs(y2),np.abs(z2)])
             
@@ -255,13 +256,13 @@ class Tree(object):
                             y2 += gp.phi[m]*gp.y**2*cell.w[i,j,k]
                             z2 += gp.phi[m]*gp.z**2*cell.w[i,j,k]
                 
-                print('\nOrbital ', m, ' moments:')
-                print('x1 = ', x1)
-                print('y1 = ', y1)
-                print('z1 = ', z1)
-                print('x2 = ', x2)
-                print('y2 = ', y2)
-                print('z2 = ', z2, '\n')
+                rprint(rank, '\nOrbital ', m, ' moments:')
+                rprint(rank, 'x1 = ', x1)
+                rprint(rank, 'y1 = ', y1)
+                rprint(rank, 'z1 = ', z1)
+                rprint(rank, 'x2 = ', x2)
+                rprint(rank, 'y2 = ', y2)
+                rprint(rank, 'z2 = ', z2, '\n')
             
         return
           
@@ -270,7 +271,7 @@ class Tree(object):
             # Divide the root to the minimum depth, BEFORE dividing at the nuclear positions
             
             if (Cell.level) < self.minDepth:
-                print('Dividing cell %s because it is at depth %i.' %(Cell.uniqueID, Cell.level))
+                rprint(rank, 'Dividing cell %s because it is at depth %i.' %(Cell.uniqueID, Cell.level))
                 xdiv = (Cell.xmax + Cell.xmin)/2   
                 ydiv = (Cell.ymax + Cell.ymin)/2   
                 zdiv = (Cell.zmax + Cell.zmin)/2   
@@ -295,12 +296,12 @@ class Tree(object):
                             if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
                                 if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
                                     if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
-#                                         print('Atom located inside or on the boundary of child ', Cell.children[i,j,k].uniqueID, '. Calling recursive divide.')
+#                                         rprint(rank, 'Atom located inside or on the boundary of child ', Cell.children[i,j,k].uniqueID, '. Calling recursive divide.')
                                         recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
 
   
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
-#                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
+#                 rprint(rank, 'Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
                 if ( (Atom.x <= Cell.xmax) and (Atom.x >= Cell.xmin) and 
                      (Atom.y <= Cell.ymax) and (Atom.y >= Cell.ymin) and
                      (Atom.z <= Cell.zmax) and (Atom.z >= Cell.zmin) ):
@@ -316,7 +317,7 @@ class Tree(object):
                     if zRatio == np.inf: zRatio = 0.0 
                     
                     if np.max( [xRatio, yRatio, zRatio]) > 3.0:
-                        print('ratio would have been %f if diving at nucleus.' %np.max( [xRatio, yRatio, zRatio]))
+                        rprint(rank, 'ratio would have been %f if diving at nucleus.' %np.max( [xRatio, yRatio, zRatio]))
 #                         if xRatio>3.0:
 #                             xdiv = 1/3*( 2*Cell.xmid + Atom.x)
 #                         else:
@@ -346,7 +347,7 @@ class Tree(object):
 #                             zdiv=None
 
                         # Divide at midpoint, recurse on children
-                        print('Dividing cell %s at midpoint because atom is in interior but close to edge.' %(Cell.uniqueID))   
+                        rprint(rank, 'Dividing cell %s at midpoint because atom is in interior but close to edge.' %(Cell.uniqueID))   
                         Cell.divide_firstKind(xdiv, ydiv, zdiv)
                         if hasattr(Cell, "children"):
                             (ii,jj,kk) = np.shape(Cell.children)
@@ -381,7 +382,7 @@ class Tree(object):
                         
             
                         if ( (xdiv!=None) or (ydiv!=None) or (zdiv!=None) ): 
-                            print('Dividing cell %s because atom is in interior or edge.' %(Cell.uniqueID))   
+                            rprint(rank, 'Dividing cell %s because atom is in interior or edge.' %(Cell.uniqueID))   
                             Cell.divide_firstKind(xdiv, ydiv, zdiv)
                             (ii,jj,kk) = np.shape(Cell.children)
                             for i in range(ii):
@@ -392,10 +393,10 @@ class Tree(object):
 #                             if xdiv!=None: # then cell was divided at Atom.x
 #                                 for child
                         else:  
-                            print('Atom is already at corner of cell %s' %(Cell.uniqueID))
+                            rprint(rank, 'Atom is already at corner of cell %s' %(Cell.uniqueID))
 #                             Cell.locateAtomAtCorner(Atom)
-#                             print('Flagging that atom is at corner...', Cell.atomAtCorner)
-#                             print('Now refine at midpoint with second kind (one child will get first kind)')
+#                             rprint(rank, 'Flagging that atom is at corner...', Cell.atomAtCorner)
+#                             rprint(rank, 'Now refine at midpoint with second kind (one child will get first kind)')
 #                             if xdiv==None:
 #                                 xdiv = Cell.xmid
 #                             if ydiv==None:
@@ -409,7 +410,7 @@ class Tree(object):
                         for _,cell in self.masterList:
                             if cell.leaf==True:
                                 leafCount += 1
-                        print('There are now %i leaf cells.' %leafCount)
+                        rprint(rank, 'There are now %i leaf cells.' %leafCount)
                     
         def recursiveAspectRatioCheck(self,Cell):
        
@@ -422,19 +423,19 @@ class Tree(object):
                             recursiveAspectRatioCheck(self,Cell.children[i,j,k])
                 
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
-#                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
+#                 rprint(rank, 'Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
                 Cell.divideIfAspectRatioExceeds(aspectRatioTolerance)
                     
         self.maxDepthAtAtoms = self.additionalDepthAtAtoms + self.maxDepthAchieved
-#         print('Refining an additional %i levels, from %i to %i' %(self.additionalDepthAtAtoms,self.maxDepthAchieved, self.maxDepthAtAtoms ))
+#         rprint(rank, 'Refining an additional %i levels, from %i to %i' %(self.additionalDepthAtAtoms,self.maxDepthAchieved, self.maxDepthAtAtoms ))
 #         refineToMinDepth(self,self.root)
         self.nAtoms = 0
         for atom in self.atoms:
             self.nAtoms += 1
-            print('Searching for cell containing atom ', self.nAtoms)
+            rprint(rank, 'Searching for cell containing atom ', self.nAtoms)
             recursiveDivideByAtom(self,atom,self.root)
             
-#         print("NOT CHECKING FOR ASPECT RATIO")
+#         rprint(rank, "NOT CHECKING FOR ASPECT RATIO")
         aspectRatioTolerance = 3.0
         recursiveAspectRatioCheck(self,self.root)
      
@@ -444,7 +445,7 @@ class Tree(object):
             # Divide the root to the minimum depth, BEFORE dividing at the nuclear positions
             
             if (Cell.level) < self.minDepth:
-                print('Dividing cell %s because it is at depth %i.' %(Cell.uniqueID, Cell.level))
+                rprint(rank, 'Dividing cell %s because it is at depth %i.' %(Cell.uniqueID, Cell.level))
                 xdiv = (Cell.xmax + Cell.xmin)/2   
                 ydiv = (Cell.ymax + Cell.ymin)/2   
                 zdiv = (Cell.zmax + Cell.zmin)/2   
@@ -470,12 +471,12 @@ class Tree(object):
                             if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
                                 if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
                                     if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
-#                                         print('Atom located inside or on the boundary of child ', Cell.children[i,j,k].uniqueID, '. Calling recursive divide.')
+#                                         rprint(rank, 'Atom located inside or on the boundary of child ', Cell.children[i,j,k].uniqueID, '. Calling recursive divide.')
                                         recursiveDivideByAtom(self, Atom, Cell.children[i,j,k])
 
   
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
-#                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
+#                 rprint(rank, 'Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
                 if ( (Atom.x <= Cell.xmax) and (Atom.x >= Cell.xmin) and 
                      (Atom.y <= Cell.ymax) and (Atom.y >= Cell.ymin) and
                      (Atom.z <= Cell.zmax) and (Atom.z >= Cell.zmin) ):
@@ -491,7 +492,7 @@ class Tree(object):
                     if zRatio == np.inf: zRatio = 0.0 
                     
                     if np.max( [xRatio, yRatio, zRatio]) > 400.0:
-                        print('ratio would have been %f if diving at nucleus.' %np.max( [xRatio, yRatio, zRatio]))
+                        rprint(rank, 'ratio would have been %f if diving at nucleus.' %np.max( [xRatio, yRatio, zRatio]))
 #                         if xRatio>3.0:
 #                             xdiv = 1/3*( 2*Cell.xmid + Atom.x)
 #                         else:
@@ -521,7 +522,7 @@ class Tree(object):
 #                             zdiv=None
 
                         # Divide at midpoint, recurse on children
-                        print('Dividing cell %s at midpoint because atom is in interior but close to edge.' %(Cell.uniqueID))   
+                        rprint(rank, 'Dividing cell %s at midpoint because atom is in interior but close to edge.' %(Cell.uniqueID))   
                         Cell.divide_secondKind(xdiv, ydiv, zdiv)
                         if hasattr(Cell, "children"):
                             (ii,jj,kk) = np.shape(Cell.children)
@@ -556,7 +557,7 @@ class Tree(object):
                         
             
                         if ( (xdiv!=None) or (ydiv!=None) or (zdiv!=None) ): 
-                            print('Dividing cell %s because atom is in interior or edge.' %(Cell.uniqueID))   
+                            rprint(rank, 'Dividing cell %s because atom is in interior or edge.' %(Cell.uniqueID))   
                             Cell.divide_firstKind(xdiv, ydiv, zdiv)
                             (ii,jj,kk) = np.shape(Cell.children)
                             for i in range(ii):
@@ -567,10 +568,10 @@ class Tree(object):
 #                             if xdiv!=None: # then cell was divided at Atom.x
 #                                 for child
                         else: 
-                            print('Atom is already at corner of cell %s' %(Cell.uniqueID))
+                            rprint(rank, 'Atom is already at corner of cell %s' %(Cell.uniqueID))
                             Cell.locateAtomAtCorner(Atom)
-                            print('Flagging that atom is at corner...', Cell.atomAtCorner)
-                            print('Now refine at midpoint with second kind (one child will get first kind)')
+                            rprint(rank, 'Flagging that atom is at corner...', Cell.atomAtCorner)
+                            rprint(rank, 'Now refine at midpoint with second kind (one child will get first kind)')
                             if xdiv==None:
                                 xdiv = Cell.xmid
                             if ydiv==None:
@@ -584,7 +585,7 @@ class Tree(object):
                         for _,cell in self.masterList:
                             if cell.leaf==True:
                                 leafCount += 1
-                        print('There are now %i leaf cells.' %leafCount)
+                        rprint(rank, 'There are now %i leaf cells.' %leafCount)
                     
                     
         
@@ -602,17 +603,17 @@ class Tree(object):
                             recursiveAspectRatioCheck(self,Cell.children[i,j,k])
                 
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
-#                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
+#                 rprint(rank, 'Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
                 Cell.divideIfAspectRatioExceeds(aspectRatioTolerance)
                     
     
 #         self.maxDepthAtAtoms = self.additionalDepthAtAtoms + self.maxDepthAchieved
-#         print('Refining an additional %i levels, from %i to %i' %(self.additionalDepthAtAtoms,self.maxDepthAchieved, self.maxDepthAtAtoms ))
+#         rprint(rank, 'Refining an additional %i levels, from %i to %i' %(self.additionalDepthAtAtoms,self.maxDepthAchieved, self.maxDepthAtAtoms ))
         refineToMinDepth(self,self.root)
         self.nAtoms = 0
         for atom in self.atoms:
             self.nAtoms += 1
-            print('Searching for cell containing atom ', self.nAtoms)
+            rprint(rank, 'Searching for cell containing atom ', self.nAtoms)
             recursiveDivideByAtom(self,atom,self.root)
             
             
@@ -623,7 +624,7 @@ class Tree(object):
 #         for _,cell in self.masterList:
 #             if cell.leaf==True:
 #                 leafCount += 1
-#         print('After aspect ratio divide there are %i leaf cells.' %leafCount)
+#         rprint(rank, 'After aspect ratio divide there are %i leaf cells.' %leafCount)
 #         
 #         # Now reset level to self.minDepth for any cell near an atom (which might not be 1 anymore because of aspect ratio divisions)
 #         for _,cell in self.masterList:
@@ -637,7 +638,7 @@ class Tree(object):
 # #             if cell.leaf==True:
 # #                 cell.level = 1
 #         
-# #         print('Dividing adjacent to nuclei')  
+# #         rprint(rank, 'Dividing adjacent to nuclei')  
 # #         for atom in self.atoms:
 # #             refineToMaxDepth(self,atom,self.root)
      
@@ -656,28 +657,28 @@ class Tree(object):
                             if ( (Atom.x <= Cell.children[i,j,k].xmax) and (Atom.x >= Cell.children[i,j,k].xmin) ):
                                 if ( (Atom.y <= Cell.children[i,j,k].ymax) and (Atom.y >= Cell.children[i,j,k].ymin) ):
                                     if ( (Atom.z <= Cell.children[i,j,k].zmax) and (Atom.z >= Cell.children[i,j,k].zmin) ): 
-#                                         print('Atom located inside or on the boundary of child ', Cell.children[i,j,k].uniqueID, '. Calling recursive divide.')
+#                                         rprint(rank, 'Atom located inside or on the boundary of child ', Cell.children[i,j,k].uniqueID, '. Calling recursive divide.')
                                         recursiveZeroingWeightsByAtom(self, Atom, Cell.children[i,j,k])
 
   
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
-#                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
+#                 rprint(rank, 'Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
                 if ( (Atom.x <= Cell.xmax) and (Atom.x >= Cell.xmin) and 
                      (Atom.y <= Cell.ymax) and (Atom.y >= Cell.ymin) and
                      (Atom.z <= Cell.zmax) and (Atom.z >= Cell.zmin) ):
                     
-                    print('Zeroing weights for cell %s with volume %1.2e which contains a nucleus. ' %(Cell.uniqueID, Cell.volume))
+                    rprint(rank, 'Zeroing weights for cell %s with volume %1.2e which contains a nucleus. ' %(Cell.uniqueID, Cell.volume))
                     for i,j,k in Cell.PxByPyByPz:
                         Cell.w[i,j,k] = 0.0
                         
                         
         self.maxDepthAtAtoms = self.additionalDepthAtAtoms + self.maxDepthAchieved
-        print('Refining an additional %i levels, from %i to %i' %(self.additionalDepthAtAtoms,self.maxDepthAchieved, self.maxDepthAtAtoms ))
+        rprint(rank, 'Refining an additional %i levels, from %i to %i' %(self.additionalDepthAtAtoms,self.maxDepthAchieved, self.maxDepthAtAtoms ))
         self.nAtoms = 0
         for atom in self.atoms:
             self.nAtoms += 1
-            print('Searching for cell containing atom ', self.nAtoms)
-            print('Zeroing weights of cells containing nuclei...')
+            rprint(rank, 'Searching for cell containing atom ', self.nAtoms)
+            rprint(rank, 'Zeroing weights of cells containing nuclei...')
             recursiveZeroingWeightsByAtom(self,atom,self.root)
             
             
@@ -706,12 +707,12 @@ class Tree(object):
                             recursiveAspectRatioCheck(self,Cell.children[i,j,k])
                 
             else:  # sets the divideInto8 location.  If atom is on the boundary, sets divideInto8 location to None for that dimension
-#                 print('Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
+#                 rprint(rank, 'Atom is contained in cell ', Cell.uniqueID,' which has no children.  Divide at atomic location.')
                 Cell.divideIfAspectRatioExceeds(aspectRatioTolerance)
       
     def initializeOrbitalsRandomly(self,targetOrbital=None):
         if targetOrbital==None:
-            print('Initializing all orbitals randomly...')
+            rprint(rank, 'Initializing all orbitals randomly...')
             for _,cell in self.masterList:
                 if cell.leaf==True:
                     for i,j,k in cell.PxByPyByPz:
@@ -721,7 +722,7 @@ class Tree(object):
                             gp.phi[m] = np.random.rand(1)
                             
         else:
-            print('Initializing orbital ',targetOrbital,' randomly...')
+            rprint(rank, 'Initializing orbital ',targetOrbital,' randomly...')
             for _,cell in self.masterList:
                 if cell.leaf==True:
                     for i,j,k in cell.PxByPyByPz:
@@ -733,7 +734,7 @@ class Tree(object):
     def initializeOrbitalsToDecayingExponential(self,targetOrbital=None):
 
         if targetOrbital==None:
-            print('Initializing all orbitals randomly...')  
+            rprint(rank, 'Initializing all orbitals randomly...')  
             for _,cell in self.masterList:
                 if cell.leaf==True: 
                     for i,j,k in cell.PxByPyByPz:
@@ -745,7 +746,7 @@ class Tree(object):
     #                         gp.phi[m] = np.sin(gp.x)/(abs(gp.x)+abs(gp.y)+abs(gp.z))/(m+1)
                             
         else:
-            print('Initializing orbital ',targetOrbital,' randomly...')
+            rprint(rank, 'Initializing orbital ',targetOrbital,' randomly...')
             for _,cell in self.masterList:
                 if cell.leaf==True:
                     for i,j,k in cell.PxByPyByPz:
@@ -779,14 +780,14 @@ class Tree(object):
             except ValueError:
                 rho += 0.0   # if outside the interpolation range, assume 0.
                 
-            print("max density: ", max(abs(rho)))
+            rprint(rank, "max density: ", max(abs(rho)))
             self.importDensityOnLeaves(rho)
-#             print('Should I normalize density??')
+#             rprint(rank, 'Should I normalize density??')
 #             self.normalizeDensityToValue(totalElectrons) 
             sources = self.extractLeavesDensity()
             rho = np.copy(sources[:,3])
         
-#         print("max density: ", max(abs(rho)))
+#         rprint(rank, "max density: ", max(abs(rho)))
 #         self.importDensityOnLeaves(rho) 
 
         self.normalizeDensityToValue(totalElectrons)
@@ -833,11 +834,11 @@ class Tree(object):
 
         orbitalIndex=0
         
-#         print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+#         rprint(rank, 'Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
 #         self.atoms[1].nAtomicOrbitals = 2
 #         self.nOrbitals = 7
         
-#         print('Initializing gridpoint.phi')
+#         rprint(rank, 'Initializing gridpoint.phi')
 #         for _,cell in self.masterList:
 #             if cell.leaf==True:
 #                 for i,j,k in cell.PxByPyByPz:
@@ -845,16 +846,16 @@ class Tree(object):
     
         for atom in self.atoms:
             if onlyFillOne == True:
-                print('Setting number of orbitals equal to 1 for oxygen, just for testing the deep state without initializing everything')
+                if self.verbosity>0: rprint(rank, 'Setting number of orbitals equal to 1 for oxygen, just for testing the deep state without initializing everything')
                 nAtomicOrbitals = 1
             else:
                 nAtomicOrbitals = atom.nAtomicOrbitals
                 
             
             
-            print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+            if self.verbosity>0: rprint(rank, 'Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
                       %(atom.atomicNumber, atom.x,atom.y,atom.z))
-            print('Orbital index = %i'%orbitalIndex)            
+            if self.verbosity>0: rprint(rank, 'Orbital index = %i'%orbitalIndex)            
             singleAtomOrbitalCount=0
             for nell in aufbauList:
                 
@@ -862,7 +863,7 @@ class Tree(object):
                     n = int(nell[0])
                     ell = int(nell[1])
                     psiID = 'psi'+str(n)+str(ell)
-#                     print('Using ', psiID)
+#                     rprint(rank, 'Using ', psiID)
                     for m in range(-ell,ell+1):
                         
                         sources = self.extractPhi(orbitalIndex)
@@ -884,7 +885,7 @@ class Tree(object):
 #                                     if ( (m==0) and (ell<=1) ):
 #                                         Y = 1
                         if np.max( abs(np.imag(Y)) ) > 1e-14:
-                            print('imag(Y) ', np.imag(Y))
+                            rprint(rank, 'imag(Y) ', np.imag(Y))
                             return
 #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
 #                         phi = atom.interpolators[psiID](r)*np.real(Y)
@@ -897,7 +898,7 @@ class Tree(object):
                         self.importPhiOnLeaves(phi, orbitalIndex)
                         self.normalizeOrbital(orbitalIndex)
                         
-                        print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
+                        if self.verbosity>0: rprint(rank, 'Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
                         orbitalIndex += 1
                         singleAtomOrbitalCount += 1
                     
@@ -905,18 +906,18 @@ class Tree(object):
 #                     n = int(nell[0])
 #                     ell = int(nell[1])
 #                     psiID = 'psi'+str(n)+str(ell)
-#                     print('Not using ', psiID)
+#                     rprint(rank, 'Not using ', psiID)
                         
         if orbitalIndex < self.nOrbitals:
-            print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
-            print('Filling extra orbitals with decaying exponential.')
-#             print('Filling extra orbitals with random initial data.')
+            if self.verbosity>0: rprint(rank, "Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
+#             if self.verbosity>0: rprint(rank, 'Filling extra orbitals with decaying exponential.')
+            if self.verbosity>0: rprint(rank, 'Filling extra orbitals with random initial data.')
             for ii in range(orbitalIndex, self.nOrbitals):
                 self.initializeOrbitalsRandomly(targetOrbital=ii)
 #                 self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
 #                 self.orthonormalizeOrbitals(targetOrbital=ii)
         if orbitalIndex > self.nOrbitals:
-            print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
+            if self.verbosity>0: rprint(rank, "Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
 
         for m in range(self.nOrbitals):
@@ -937,25 +938,25 @@ class Tree(object):
         orbitalIndex=0
         
         
-#         print('Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
-# #         print('Hard coding nAtomicOrbitals to 0 for the second hydrogen atom.')
-#         print('Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
+#         rprint(rank, 'Hard coding nAtomicOrbitals to 2 for the oxygen atom.')
+# #         rprint(rank, 'Hard coding nAtomicOrbitals to 0 for the second hydrogen atom.')
+#         rprint(rank, 'Setting second atom nOrbitals to 2 for carbon monoxide.  Also setting tree.nOrbitals to 7')
 #         self.atoms[1].nAtomicOrbitals = 2
 #         self.nOrbitals = 7
 #         self.atoms[1].nAtomicOrbitals = 0
     
         for atom in self.atoms:
             if onlyFillOne == True:
-                print('Setting number of orbitals equal to 1 for oxygen, just for testing the deep state without initializing everything')
+                rprint(rank, 'Setting number of orbitals equal to 1 for oxygen, just for testing the deep state without initializing everything')
                 nAtomicOrbitals = 1
             else:
                 nAtomicOrbitals = atom.nAtomicOrbitals
                 
             
             
-            print('Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
+            rprint(rank, 'Initializing orbitals for atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f)' 
                       %(atom.atomicNumber, atom.x,atom.y,atom.z))
-            print('Orbital index = %i'%orbitalIndex)            
+            rprint(rank, 'Orbital index = %i'%orbitalIndex)            
             singleAtomOrbitalCount=0
             for nell in aufbauList:
                 
@@ -963,7 +964,7 @@ class Tree(object):
                     n = int(nell[0])
                     ell = int(nell[1])
                     psiID = 'psi'+str(n)+str(ell)
-#                     print('Using ', psiID)
+#                     rprint(rank, 'Using ', psiID)
                     for m in range(-ell,ell+1):
                         for _,cell in self.masterList:
                             if cell.leaf==True:
@@ -988,7 +989,7 @@ class Tree(object):
 #                                     if ( (m==0) and (ell<=1) ):
 #                                         Y = 1
                                     if abs(np.imag(Y)) > 1e-14:
-                                        print('imag(Y) ', np.imag(Y))
+                                        rprint(rank, 'imag(Y) ', np.imag(Y))
     #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
                                     try:
                                         gp.phi[orbitalIndex] = atom.interpolators[psiID](r)*np.real(Y)
@@ -997,7 +998,7 @@ class Tree(object):
                                         
                         
                         
-                        print('Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
+                        rprint(rank, 'Orbital %i filled with (n,ell,m) = (%i,%i,%i) ' %(orbitalIndex,n,ell,m))
                         orbitalIndex += 1
                         singleAtomOrbitalCount += 1
                     
@@ -1005,34 +1006,34 @@ class Tree(object):
 #                     n = int(nell[0])
 #                     ell = int(nell[1])
 #                     psiID = 'psi'+str(n)+str(ell)
-#                     print('Not using ', psiID)
+#                     rprint(rank, 'Not using ', psiID)
                         
         if orbitalIndex < self.nOrbitals:
-            print("Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
-#             print('Filling extra orbitals with random initial data.')
-            print('Filling extra orbitals with decaying exponential.')
+            rprint(rank, "Didn't fill all the orbitals.  Should you initialize more?  Randomly, or using more single atom data?")
+#             rprint(rank, 'Filling extra orbitals with random initial data.')
+            rprint(rank, 'Filling extra orbitals with decaying exponential.')
             for ii in range(orbitalIndex, self.nOrbitals):
                 self.initializeOrbitalsToDecayingExponential(targetOrbital=ii)
 #                 self.initializeOrbitalsRandomly(targetOrbital=ii)
 #                 self.orthonormalizeOrbitals(targetOrbital=ii)
         if orbitalIndex > self.nOrbitals:
-            print("Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
+            rprint(rank, "Filled too many orbitals, somehow.  That should have thrown an error and never reached this point.")
                         
 
         for m in range(self.nOrbitals):
             self.normalizeOrbital(m)
   
     def buildTree(self, divideCriterion, divideParameter1, divideParameter2=0.0, divideParameter3=0.0, divideParameter4=0.0, initializationType='atomic',savedMesh='', restart=False, printNumberOfCells=False, printTreeProperties = True, onlyFillOne=False): # call the recursive divison on the root of the tree
-#         print("ENTERING BUILDTREE, divideCriterion=", divideCriterion)
+#         rprint(rank, "ENTERING BUILDTREE, divideCriterion=", divideCriterion)
         if savedMesh!='':
             try:
                 saveList = list( np.load('/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
-                print("Mesh loaded from: ", savedMesh)
+                rprint(rank, "Mesh loaded from: ", savedMesh)
             except Exception:
                 saveList = list( np.load('/home/njvaughn/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/utilities/savedMeshes/' + savedMesh) )
-                print("Mesh loaded from: ", savedMesh)
+                rprint(rank, "Mesh loaded from: ", savedMesh)
             
-            print(saveList[0:10])
+            rprint(rank, saveList[0:10])
         else:
             saveList=None
         divideParameter = divideParameter1 # for methods that use only one divide parameter.
@@ -1042,7 +1043,7 @@ class Tree(object):
             levelCounter += 1
             
             if hasattr(Cell, "children"):
-#                 print('Cell already has children')
+#                 rprint(rank, 'Cell already has children')
                 (ii,jj,kk) = np.shape(Cell.children)
 
                 for i in range(ii):
@@ -1056,17 +1057,17 @@ class Tree(object):
             else:                
                 if Cell.level < self.minDepth:
                     Cell.divideFlag = True 
-#                     print('dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
+#                     rprint(rank, 'dividing cell ', Cell.uniqueID, ' because it is below the minimum level')
                 else:
                     if saveList!=None:
-#                         print('Checking saveList for cell ', Cell.uniqueID)
+#                         rprint(rank, 'Checking saveList for cell ', Cell.uniqueID)
                         Cell.checkIfChildrenInSaveList(saveList)
                         # do the search
 #                         return
                     elif ( (divideCriterion == 'LW1') or (divideCriterion == 'LW2') or (divideCriterion == 'LW3') or (divideCriterion == 'LW3_modified') or 
                          (divideCriterion == 'LW4') or (divideCriterion == 'LW5') or(divideCriterion == 'Phani') 
                          or (divideCriterion == 'Krasny_density') or (divideCriterion == 'Nathan_density')  ):
-#                         print('checking divide criterion for cell ', Cell.uniqueID)
+#                         rprint(rank, 'checking divide criterion for cell ', Cell.uniqueID)
                         Cell.checkIfAboveMeshDensity(divideParameter,divideCriterion)  
                     elif divideCriterion=='Biros':
                         Cell.checkIfChebyshevCoefficientsAboveTolerance(divideParameter)
@@ -1101,20 +1102,20 @@ class Tree(object):
                         Cell.checkDensityInterpolation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                         
                     elif divideCriterion=='ParentChildrenIntegral':
-                        print("USING ParentChildrenIntegral##########################################################")
+                        rprint(rank, "USING ParentChildrenIntegral##########################################################")
                         Cell.refineByCheckingParentChildrenIntegrals(divideParameter1)
                     elif divideCriterion=="VPsiIntegral":
                         Cell.refineByCheckingParentChildrenIntegrals_nonlocal(divideParameter1)
                     elif divideCriterion=="ChiIntegral":
                         Cell.refineByCheckingParentChildrenIntegrals_Chi(divideParameter1)
                     elif divideCriterion=="PiecewiseUniform":
-#                         print("Refining by piecewise uniform scheme.")
+#                         rprint(rank, "Refining by piecewise uniform scheme.")
                         Cell.refinePiecewiseUniform(divideParameter1,divideParameter2,divideParameter3,divideParameter4)
                     elif divideCriterion=="coarsenedUniform":
-#                         print("Refining by piecewise uniform scheme.")
+#                         rprint(rank, "Refining by piecewise uniform scheme.")
                         Cell.refineCoarseningUniform(divideParameter1,divideParameter2,divideParameter3,divideParameter4)
                     elif divideCriterion=="coarsenedUniformTwoLevel":
-#                         print("Refining by refineCoarseningUniform_TwoLevel scheme.")
+#                         rprint(rank, "Refining by refineCoarseningUniform_TwoLevel scheme.")
                         Cell.refineCoarseningUniform_TwoLevel(divideParameter1,divideParameter2,divideParameter3,divideParameter4)
                         
                         
@@ -1145,26 +1146,26 @@ class Tree(object):
             return maxDepthAchieved, minDepthAchieved, levelCounter
         
         levelCounter=0
-        if printTreeProperties == True: print("Calling recursive divide on this cell's root.... divideCriterion, divideParameter=",divideCriterion, divideParameter)
+        if printTreeProperties == True: rprint(rank, "Calling recursive divide on this cell's root.... divideCriterion, divideParameter=",divideCriterion, divideParameter)
         self.maxDepthAchieved, self.minDepthAchieved, self.treeSize = recursiveDivide(self, self.root, divideCriterion, divideParameter, levelCounter, saveList, printNumberOfCells, maxDepthAchieved=0)
         
-        self.countCellsAtEachDepth()
+#         self.countCellsAtEachDepth()
          
         
-#         if printTreeProperties == True: print('Number of gridpoints: ', self.numberOfGridpoints)
+#         if printTreeProperties == True: rprint(rank, 'Number of gridpoints: ', self.numberOfGridpoints)
 
-#         print("Computing derivative matrices (for Laplacian and Gradient Eigenvalue Updates).")
+#         rprint(rank, "Computing derivative matrices (for Laplacian and Gradient Eigenvalue Updates).")
 #         self.computeDerivativeMatrices()
 # #         self.initializeDensityFromAtomicData()
 
         
         
-        self.findNearestGridpointToEachAtom()
-        for m in range(self.nOrbitals):
-            self.printWavefunctionNearEachAtom(m)
+#         self.findNearestGridpointToEachAtom()
+#         for m in range(self.nOrbitals):
+#             self.printWavefunctionNearEachAtom(m)
                     
         if printTreeProperties == True: 
-            print("Tree build completed. \n"
+            rprint(rank, "Tree build completed. \n"
                   "Domain Size:                                 [%.1f, %.1f] \n"
                   "Divide Criterion:                            %s \n"
                   "Divide Parameter1:                           %1.2e \n"
@@ -1182,11 +1183,11 @@ class Tree(object):
                    
                   %(self.xmin, self.xmax, divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4, self.treeSize, self.numberOfCells, self.numberOfGridpoints, self.minDepthAchieved,self.maxDepthAchieved, 
                     self.maxDepthAtAtoms, self.px, 0.0))
-#             print('Closest gridpoint to origin: ', closestCoords)
-#             print('For a distance of: ', closestToOrigin)
-#             print('Part of a cell centered at: ', closestMidpoint) 
-#             print('at depth ', closestDepth)
-#             print('of kind ', closestKind)
+#             rprint(rank, 'Closest gridpoint to origin: ', closestCoords)
+#             rprint(rank, 'For a distance of: ', closestToOrigin)
+#             rprint(rank, 'Part of a cell centered at: ', closestMidpoint) 
+#             rprint(rank, 'at depth ', closestDepth)
+#             rprint(rank, 'of kind ', closestKind)
 
     
            
@@ -1209,37 +1210,37 @@ class Tree(object):
                     levelCounts[cell.level] += 1
                 else:
                     levelCounts[cell.level] = 1
-                    print('Added level %i to dictionary.' %cell.level)
+                    rprint(rank, 'Added level %i to dictionary.' %cell.level)
                 if hasattr(cell, "refineCause"):
                     if cell.refineCause==1:
                         if cell.level in criteria1:
                             criteria1[cell.level] += 1
                         else:
                             criteria1[cell.level] = 1
-                            print('Added level %i to criteria1 dictionary.' %cell.level)
+                            rprint(rank, 'Added level %i to criteria1 dictionary.' %cell.level)
                     
                     if cell.refineCause==2:
                         if cell.level in criteria2:
                             criteria2[cell.level] += 1
                         else:
                             criteria2[cell.level] = 1
-                            print('Added level %i to criteria2 dictionary.' %cell.level)
+                            rprint(rank, 'Added level %i to criteria2 dictionary.' %cell.level)
                     if cell.refineCause==3:
                         if cell.level in criteria3:
                             criteria3[cell.level] += 1
                         else:
                             criteria3[cell.level] = 1
-                            print('Added level %i to criteria3 dictionary.' %cell.level)
+                            rprint(rank, 'Added level %i to criteria3 dictionary.' %cell.level)
                     if cell.refineCause==4:
                         if cell.level in criteria4:
                             criteria4[cell.level] += 1
                         else:
                             criteria4[cell.level] = 1
-                            print('Added level %i to criteria4 dictionary.' %cell.level)
+                            rprint(rank, 'Added level %i to criteria4 dictionary.' %cell.level)
                         
         
-        print('Number of cells at each level: ')
-        print(levelCounts)
+        if self.verbosity>0: rprint(rank, 'Number of cells at each level: ')
+        if self.verbosity>0: rprint(rank, levelCounts)
         
         self.levelCounts=levelCounts
         self.criteria1=criteria1
@@ -1258,20 +1259,22 @@ class Tree(object):
             r = np.sqrt( (Atom.x-x)**2 + (Atom.y-y)**2 + (Atom.z-z)**2)
             loc = np.argmin(r)
             self.nearestGridpoints[Atom] = loc
-        print(self.nearestGridpoints)
+        rprint(rank, self.nearestGridpoints)
              
     def printWavefunctionNearEachAtom(self,m):
-        print('Wavefunction %i' %m)
+        rprint(rank, 'Wavefunction %i' %m)
         targets = self.extractPhi(m) 
         for Atom in self.atoms:
             loc = self.nearestGridpoints[Atom]
-            print('Atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f) ::::::::: psi = %1.3e' %(Atom.atomicNumber, Atom.x, Atom.y, Atom.z, targets[loc,3]))
-        print()
+            rprint(rank, 'Atom Z = %i located at (x, y, z) = (%6.3f, %6.3f, %6.3f) ::::::::: psi = %1.3e' %(Atom.atomicNumber, Atom.x, Atom.y, Atom.z, targets[loc,3]))
+        rprint(rank, "")
+    
+    
     """
     UPDATE DENSITY AND EFFECTIVE POTENTIAL AT GRIDPOINTS
     """
     def updateVxcAndVeffAtQuadpoints(self):
-#         print('Warning: v_xc is zeroed out')
+#         rprint(rank, 'Warning: v_xc is zeroed out')
         
         def CellupdateVxcAndVeff(cell,exchangeFunctional, correlationFunctional):
             '''
@@ -1321,7 +1324,7 @@ class Tree(object):
 #                     cell.gridpoints[i,j,k].rho = ( self.mixingParameter*cell.gridpoints[i,j,k].rho + 
 #                         (1-self.mixingParameter)*newRho )
                 else: 
-                    print('Not a valid density mixing scheme.')
+                    rprint(rank, 'Not a valid density mixing scheme.')
                     return
             
             
@@ -1336,7 +1339,7 @@ class Tree(object):
                 for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     A += gp.rho * cell.w[i,j,k]
-        print('Integrated density before normalization: ', A)
+        rprint(rank, 'Integrated density before normalization: ', A)
         for _,cell in self.masterList:
             if cell.leaf==True:
                 for i,j,k in cell.PxByPyByPz:
@@ -1349,7 +1352,7 @@ class Tree(object):
                 for i,j,k in cell.PxByPyByPz:
                     gp = cell.gridpoints[i,j,k]
                     A += gp.rho * cell.w[i,j,k]
-        print('Integrated density after normalization: ', A)
+        rprint(rank, 'Integrated density after normalization: ', A)
                    
     def normalizeDensity(self):            
         def integrateDensity(cell):
@@ -1370,7 +1373,7 @@ class Tree(object):
             
             return np.sum( cell.w_density * rho )
         
-        print('Normalizing density... are you sure?')
+        rprint(rank, 'Normalizing density... are you sure?')
         A = 0.0
         B = 0.0
         for _,cell in self.masterList:
@@ -1378,8 +1381,8 @@ class Tree(object):
                 A += integrateDensity(cell)
                 B += integrateDensity_secondaryMesh(cell)
         if B==0.0:
-            print('Warning, integrated density to 0')
-#         print('Raw computed density ', B)
+            rprint(rank, 'Warning, integrated density to 0')
+#         rprint(rank, 'Raw computed density ', B)
         for _,cell in self.masterList:
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
@@ -1417,9 +1420,9 @@ class Tree(object):
         
         C = np.sqrt(C)
 
-        print('Original mesh computed density  ', A)
-        print('Secondary mesh computed density ', B)
-        print('L2 norm of the difference (cell averaged) : ', C)
+        rprint(rank, 'Original mesh computed density  ', A)
+        rprint(rank, 'Secondary mesh computed density ', B)
+        rprint(rank, 'L2 norm of the difference (cell averaged) : ', C)
 
     
                 
@@ -1466,15 +1469,15 @@ class Tree(object):
         self.totalEx = E_x
         self.totalEc = E_c
         self.totalVext = E_electronNucleus
-#         print('Total V_xc : ')
+#         rprint(rank, 'Total V_xc : ')
         
-        print('Electrostatic Energies:')
-        print('Hartree:         ', 1/2*V_hartree)
-        print('External:        ', E_electronNucleus)
-        print('Nuclear-Nuclear: ', self.nuclearNuclear)
-#         print('Sanity check...')
-#         print('Band minus kinetic: ', self.totalBandEnergy - self.totalKinetic)
-#         print('Electrostatic minus external and Nuclear plus V_x and V_c: ', self.totalElectrostatic - self.nuclearNuclear - E_electronNucleus + self.totalVc + self.totalVx)
+        rprint(rank, 'Electrostatic Energies:')
+        rprint(rank, 'Hartree:         ', 1/2*V_hartree)
+        rprint(rank, 'External:        ', E_electronNucleus)
+        rprint(rank, 'Nuclear-Nuclear: ', self.nuclearNuclear)
+#         rprint(rank, 'Sanity check...')
+#         rprint(rank, 'Band minus kinetic: ', self.totalBandEnergy - self.totalKinetic)
+#         rprint(rank, 'Electrostatic minus external and Nuclear plus V_x and V_c: ', self.totalElectrostatic - self.nuclearNuclear - E_electronNucleus + self.totalVc + self.totalVx)
         
 #         self.totalPotential = -1/2*V_hartree + E_xc - V_xc 
 #         self.totalPotential = -1/2*V_hartree + E_x + E_c - V_x - V_c + self.nuclearNuclear
@@ -1482,7 +1485,7 @@ class Tree(object):
                        
     def computeBandEnergy(self):
         # sum over the kinetic energies of all orbitals
-        print('Computing band energy.  Current orbital energies are: ', self.orbitalEnergies)
+        rprint(rank, 'Computing band energy.  Current orbital energies are: ', self.orbitalEnergies)
         self.totalBandEnergy = 0.0
         for i in range(self.nOrbitals):
             self.totalBandEnergy += self.occupations[i]*(self.orbitalEnergies[i] - self.gaugeShift) 
@@ -1494,14 +1497,14 @@ class Tree(object):
         
         if gradientFree==True:
             self.E = self.totalBandEnergy - self.totalEhartree + self.totalEx + self.totalEc - self.totalVx - self.totalVc + self.nuclearNuclear
-            print('Updating total energy without explicit kinetic evaluation.')
+            rprint(rank, 'Updating total energy without explicit kinetic evaluation.')
         elif ( (gradientFree==False) or (gradientFree=='Laplacian') ):
-            print('Updating total energy WITH explicit kinetic evaluation.')
+            rprint(rank, 'Updating total energy WITH explicit kinetic evaluation.')
             self.E = self.totalKinetic + self.totalPotential
         else:
-            print('Invalid option for gradientFree.')
-            print('gradientFree = ', gradientFree)
-            print('type: ', type(gradientFree))
+            rprint(rank, 'Invalid option for gradientFree.')
+            rprint(rank, 'gradientFree = ', gradientFree)
+            rprint(rank, 'type: ', type(gradientFree))
             return
             
     def computeOrbitalPotentials(self,targetEnergy=None, saveAsReference=False): 
@@ -1517,7 +1520,7 @@ class Tree(object):
         self.totalOrbitalPotential = np.sum( (self.orbitalPotential - self.gaugeShift) * self.occupations)
                        
     def computeOrbitalKinetics(self,targetEnergy=None, saveAsReference=False):
-        print('Computing orbital kinetics using Gradients')
+        rprint(rank, 'Computing orbital kinetics using Gradients')
         self.orbitalKinetic = np.zeros(self.nOrbitals)
         for _,cell in self.masterList:
             if cell.leaf == True:
@@ -1529,7 +1532,7 @@ class Tree(object):
         self.totalKinetic = np.sum(self.occupations*self.orbitalKinetic)
         
     def computeOrbitalKinetics_Laplacian(self,targetEnergy=None):
-        print('Computing orbital kinetics using Laplacian')
+        rprint(rank, 'Computing orbital kinetics using Laplacian')
         self.orbitalKinetic = np.zeros(self.nOrbitals)
         for _,cell in self.masterList:
             if cell.leaf == True:
@@ -1580,10 +1583,10 @@ class Tree(object):
         self.nOrbitals -= 1
         
         if len(self.orbitalEnergies)!=self.nOrbitals:
-            print('WARNING: decreaseNumberOfWavefunctionByOne did not work as expected.')
+            rprint(rank, 'WARNING: decreaseNumberOfWavefunctionByOne did not work as expected.')
     
     def softenOrbital(self,m):
-        print('Softening orbital ', m)
+        rprint(rank, 'Softening orbital ', m)
         # randomize orbital because its energy went > Vgauge
         for _,cell in self.masterList:
             if cell.leaf==True:
@@ -1593,8 +1596,8 @@ class Tree(object):
                     gp.phi[m] *= np.exp(-r)
                     
     def zeroOutOrbital(self,m):
-#         print('Zeroing orbital ', m)
-        print('setting orbital %i to exp(-r).'%m)
+#         rprint(rank, 'Zeroing orbital ', m)
+        rprint(rank, 'setting orbital %i to exp(-r).'%m)
         # randomize orbital because its energy went > Vgauge
         for _,cell in self.masterList:
             if cell.leaf==True:
@@ -1619,8 +1622,8 @@ class Tree(object):
             if cell.leaf==True:
                 kineticError = abs(cell.orbitalKE[0] - cell.referenceKinetic)
                 potentialError = abs(cell.orbitalPE[0] - cell.referencePotential)
-#                 print(kineticError)
-#                 print(potentialError)
+#                 rprint(rank, kineticError)
+#                 rprint(rank, potentialError)
                 totalError = potentialError + kineticError
                 radius = np.sqrt(cell.xmid**2 + cell.ymid**2 + cell.zmid**2)
                 cellErrorsList.append( [cell.level, radius, float(kineticError), float(potentialError), float(totalError), cell ] )
@@ -1629,13 +1632,13 @@ class Tree(object):
         sortedByPotential = sorted(cellErrorsList,key=lambda x:x[3], reverse=True)
         sortedByTotal = sorted(cellErrorsList,key=lambda x:x[4], reverse=True)
         
-#         print(cellErrorsList)
-#         print('Twenty worst cells for kinetic: ',sortedByKinetic[:20])
-#         print('Twenty worst cells for potential: ',sortedByPotential[:20])
+#         rprint(rank, cellErrorsList)
+#         rprint(rank, 'Twenty worst cells for kinetic: ',sortedByKinetic[:20])
+#         rprint(rank, 'Twenty worst cells for potential: ',sortedByPotential[:20])
         
         if refineFraction > 0:
             numToDivide = int(np.ceil(len(sortedByTotal)*refineFraction))
-            print('Refining worst ', numToDivide, 'cells in terms of deepest orbital energy errors. ' )
+            rprint(rank, 'Refining worst ', numToDivide, 'cells in terms of deepest orbital energy errors. ' )
             for i in range(numToDivide):
 #                 cell = sortedByTotal[i][5]
                 cell = sortedByPotential[i][5]
@@ -1645,56 +1648,56 @@ class Tree(object):
         return
       
     def updateOrbitalEnergies(self,laplacian=False,newOccupations=False,correctPositiveEnergies=False,sortByEnergy=False,targetEnergy=None, saveAsReference=False, sortOrder=None):
-#         print()
+#         rprint(rank, "")
         start = time.time()
         if laplacian==False:
             self.computeOrbitalKinetics(targetEnergy, saveAsReference)
         elif laplacian=='Laplacian':
-            print('Updating orbital energy using laplacian')
+            rprint(rank, 'Updating orbital energy using laplacian')
             self.computeOrbitalKinetics_Laplacian(targetEnergy)
         else:
-            print('Not updating kinetics.... why?')
+            rprint(rank, 'Not updating kinetics.... why?')
         kinTime = time.time()-start
         start=time.time()
         self.computeOrbitalPotentials(targetEnergy, saveAsReference)
         potTime = time.time()-start
         self.orbitalEnergies = self.orbitalKinetic + self.orbitalPotential
-#         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
-#         print('Orbital Potential Energy: ', self.orbitalPotential)
-#         print('Orbital Energy:           ', self.orbitalEnergies)
+#         rprint(rank, 'Orbital Kinetic Energy:   ', self.orbitalKinetic)
+#         rprint(rank, 'Orbital Potential Energy: ', self.orbitalPotential)
+#         rprint(rank, 'Orbital Energy:           ', self.orbitalEnergies)
         ### CHECK IF NEED TO RE-ORDER ORBITALS ###
         if sortByEnergy==True:
             if not np.all(self.orbitalEnergies[:-1] <= self.orbitalEnergies[1:]):
-                print('Need to re-order orbitals.')
-#                 print('Orbital Energies before sorting: ', self.orbitalEnergies)
+                rprint(rank, 'Need to re-order orbitals.')
+#                 rprint(rank, 'Orbital Energies before sorting: ', self.orbitalEnergies)
                 self.sortOrbitalsAndEnergies()
                 self.updateOrbitalEnergies()
-#             print('After sorting...')
+#             rprint(rank, 'After sorting...')
             else:
-                print('Orbital Energy:           ', self.orbitalEnergies)
+                rprint(rank, 'Orbital Energy:           ', self.orbitalEnergies)
                     
-        #         print('Kinetic took %2.3f, Potential took %2.3f seconds' %(kinTime,potTime))
+        #         rprint(rank, 'Kinetic took %2.3f, Potential took %2.3f seconds' %(kinTime,potTime))
                 energyResetFlag = 0
                 if correctPositiveEnergies==True:
                     for m in range(self.nOrbitals):
         #                 if self.orbitalEnergies[m] > self.gaugeShift:
         #                     if m==0:
-        #                         print('phi0 energy > gauge shift, setting to gauge shift - 3')
+        #                         rprint(rank, 'phi0 energy > gauge shift, setting to gauge shift - 3')
         #                         self.orbitalEnergies[m] = self.gaugeShift-3
         #                     else:
-        #                         print('orbital %i energy > gauge shift.  Setting orbital to same as %i, energy slightly higher' %(m,m-1))
+        #                         rprint(rank, 'orbital %i energy > gauge shift.  Setting orbital to same as %i, energy slightly higher' %(m,m-1))
         #                         self.resetOrbitalij(m,m-1)
         #                         self.orbitalEnergies[m] = self.orbitalEnergies[m-1] + 0.1
                         if self.orbitalEnergies[m] > 0.0:
         #                 if self.orbitalEnergies[m] > self.gaugeShift:
-                            print('Warning: %i orbital energy > 0.  Resetting to gauge shift/2.' %m)
-        #                     print('Warning: %i orbital energy > gauge shift.  Resetting to gauge shift.' %m)
+                            rprint(rank, 'Warning: %i orbital energy > 0.  Resetting to gauge shift/2.' %m)
+        #                     rprint(rank, 'Warning: %i orbital energy > gauge shift.  Resetting to gauge shift.' %m)
                             self.orbitalEnergies[m] = self.gaugeShift/2
-        #                     print('Warning: %i orbital energy > gaugeShift. Setting phi to zero' %m)
+        #                     rprint(rank, 'Warning: %i orbital energy > gaugeShift. Setting phi to zero' %m)
                             
         #                     self.zeroOutOrbital(m)
         #                     self.orbitalEnergies[m] = self.gaugeShift - 1/(m+1)
-        #                     print('Setting energy to %1.3e' %self.orbitalEnergies[m])
+        #                     rprint(rank, 'Setting energy to %1.3e' %self.orbitalEnergies[m])
         #                 self.scrambleOrbital(m)
         #                 self.softenOrbital(m)
         #                     energyResetFlag=1
@@ -1702,18 +1705,18 @@ class Tree(object):
                 
                 
         #         if energyResetFlag==1:
-        #             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
-        #             print('Re-orthonormalizing orbitals after scrambling those with positive energy.')
+        #             rprint(rank, 'Re-orthonormalizing orbitals after scrambling those with positive energy.')
+        #             rprint(rank, 'Re-orthonormalizing orbitals after scrambling those with positive energy.')
         #             self.orthonormalizeOrbitals()
         #             self.updateOrbitalEnergies()
         
                 
         else: 
-            print('Orbital Energy:           ', self.orbitalEnergies)
-#                 print()
+            rprint(rank, 'Orbital Energy:           ', self.orbitalEnergies)
+#                 rprint(rank, "")
         if newOccupations==True:
             self.computeOccupations()
-#             print('Occupations: ', self.occupations)
+#             rprint(rank, 'Occupations: ', self.occupations)
 
     def updateOrbitalEnergies_NoGradients(self,targetEnergy,newOccupations=True,symmetric=False):
         
@@ -1745,20 +1748,20 @@ class Tree(object):
                 normSqOfPsiNew += np.sum( phiNew**2 * cell.w)
 #         deltaE /= np.sqrt(normSqOfPsiNew)
         deltaE /= (normSqOfPsiNew)
-        print('Norm of psiNew = ', np.sqrt(normSqOfPsiNew))
-        print('Delta E = ', deltaE)
+        rprint(rank, 'Norm of psiNew = ', np.sqrt(normSqOfPsiNew))
+        rprint(rank, 'Delta E = ', deltaE)
         
-#         print('Previous orbital energy: ', self.orbitalEnergies[targetEnergy])
+#         rprint(rank, 'Previous orbital energy: ', self.orbitalEnergies[targetEnergy])
         self.orbitalEnergies[targetEnergy] += deltaE
-#         print('Updated orbital energy:  ', self.orbitalEnergies[targetEnergy])
-#         print('Orbital Kinetic Energy:   ', self.orbitalKinetic)
-#         print('Orbital Potential Energy: ', self.orbitalPotential)
-#         print('Orbital Energy:           ', self.orbitalEnergies)
+#         rprint(rank, 'Updated orbital energy:  ', self.orbitalEnergies[targetEnergy])
+#         rprint(rank, 'Orbital Kinetic Energy:   ', self.orbitalKinetic)
+#         rprint(rank, 'Orbital Potential Energy: ', self.orbitalPotential)
+#         rprint(rank, 'Orbital Energy:           ', self.orbitalEnergies)
         ### CHECK IF NEED TO RE-ORDER ORBITALS ###
         
         if newOccupations==True:
             self.computeOccupations()
-#             print('Occupations: ', self.occupations)
+#             rprint(rank, 'Occupations: ', self.occupations)
 
     def swapWavefunctions(self,m1,m2):
         for _,cell in self.masterList:
@@ -1782,8 +1785,8 @@ class Tree(object):
         oldEnergies = np.copy(self.orbitalEnergies)
         for m in range(self.nOrbitals):
             self.orbitalEnergies[m] = oldEnergies[newOrder[m]]
-        print('Sorted eigenvalues: ', self.orbitalEnergies)
-        print('New order: ', newOrder)
+        rprint(rank, 'Sorted eigenvalues: ', self.orbitalEnergies)
+        rprint(rank, 'New order: ', newOrder)
         for _,cell in self.masterList:
             if cell.leaf==True:
                 for i,j,k in cell.PxByPyByPz:
@@ -1804,7 +1807,7 @@ class Tree(object):
                     r = sqrt( (atom1.x-atom2.x)**2 + (atom1.y-atom2.y)**2 + (atom1.z-atom2.z)**2 )
                     self.nuclearNuclear += atom1.atomicNumber*atom2.atomicNumber/r
         self.nuclearNuclear /= 2 # because of double counting
-        print('Nuclear energy: ', self.nuclearNuclear)
+        rprint(rank, 'Nuclear energy: ', self.nuclearNuclear)
       
                     
     """
@@ -1846,9 +1849,9 @@ class Tree(object):
         energyEigenvalue = self.orbitalEnergies[energyLevel]
         kinetic = self.orbitalKinetic[energyLevel]
         potential = self.orbitalPotential[energyLevel]
-        print('Energy Eigenvalue: ', energyEigenvalue)
-#         print('kinetic part:      ', kinetic)
-#         print('potential part:    ', potential)
+        rprint(rank, 'Energy Eigenvalue: ', energyEigenvalue)
+#         rprint(rank, 'kinetic part:      ', kinetic)
+#         rprint(rank, 'potential part:    ', potential)
         needToPrint=False
         
         L2residual = 0.0
@@ -1874,21 +1877,21 @@ class Tree(object):
                 potentialResidual += np.sum( (VeffPhi - potential*phi)**2 * cell.w )
 
                 if ((needToPrint==True) and (cell.level>8) ):
-                    print(energyEigenvalue*phi)
-                    print()
-                    print(-1/2*laplacianPhi)
-                    print()
-                    print(VeffPhi)
-                    print()
-                    print(Hphi - energyEigenvalue*phi)
+                    rprint(rank, energyEigenvalue*phi)
+                    rprint(rank, "")
+                    rprint(rank, -1/2*laplacianPhi)
+                    rprint(rank, "")
+                    rprint(rank, VeffPhi)
+                    rprint(rank, "")
+                    rprint(rank, Hphi - energyEigenvalue*phi)
                     
                     needToPrint=False
 #                     return
         L2residual = np.sqrt( L2residual )
         
-        print('L2 norm of wavefunction residual (H*psi-lambda*psi):   ', L2residual)
-#         print('Kinetic portion:                                       ', kineticResidual)
-#         print('Potential portion:                                     ', potentialResidual)
+        rprint(rank, 'L2 norm of wavefunction residual (H*psi-lambda*psi):   ', L2residual)
+#         rprint(rank, 'Kinetic portion:                                       ', kineticResidual)
+#         rprint(rank, 'Potential portion:                                     ', potentialResidual)
                 
                 
 #             self.orbitalKE[targetEnergy] = 1/2*np.sum( self.w * gradPhiSq )
@@ -1909,9 +1912,9 @@ class Tree(object):
                     A += cell.gridpoints[i,j,k].phi[n]**2*cell.w[i,j,k]
         
         if A<0.0:
-            print('Warning: normalization value A is less than zero...')
+            rprint(rank, 'Warning: normalization value A is less than zero...')
         if A==0.0:
-            print('Warning: normalization value A is zero...')
+            rprint(rank, 'Warning: normalization value A is zero...')
 
         
         """ Rescale wavefunction values, flip the flag """
@@ -1974,7 +1977,7 @@ class Tree(object):
         
         def orthogonalizePhiNew(tree,targetOrbital,n):
             
-#             print('Orthogonalizing phiNew %i against orbital %i' %(targetOrbital,n))
+#             rprint(rank, 'Orthogonalizing phiNew %i against orbital %i' %(targetOrbital,n))
             """ Compute the overlap, integral phi_r * phi_s """
             B = 0.0
             for _,cell in tree.masterList:
@@ -2006,8 +2009,8 @@ class Tree(object):
                     for i,j,k in cell.PxByPyByPz:
                             cell.gridpoints[i,j,k].phiNew /= np.sqrt(A)
                             
-        print('Orthogonalizing phiNew, but not normalizing.')
-#         print('Orthonormalizing phiNew.')
+        rprint(rank, 'Orthogonalizing phiNew, but not normalizing.')
+#         rprint(rank, 'Orthonormalizing phiNew.')
         for n in range(targetOrbital):
             orthogonalizePhiNew(self,targetOrbital,n)
 #             normalizePhiNew(self,targetOrbital)
@@ -2036,8 +2039,8 @@ class Tree(object):
         def orthogonalizeOrbitals(tree,m,n):
             
 #             return
-#             print('Orthogonalizing %i against %i' %(m,n))
-#             print('Orthogonalizing orbital %i against %i' %(m,n))
+#             rprint(rank, 'Orthogonalizing %i against %i' %(m,n))
+#             rprint(rank, 'Orthogonalizing orbital %i against %i' %(m,n))
             """ Compute the overlap, integral phi_r * phi_s """
             B = 0.0
             for _,cell in tree.masterList:
@@ -2048,7 +2051,7 @@ class Tree(object):
 #                         if abs(phi_m*phi_n*cell.w[i,j,k])>1e-8:
 #                             B += phi_m*phi_n*cell.w[i,j,k]
                         B += phi_m*phi_n*cell.w[i,j,k]
-#             print('Overlap before orthogonalization: ', B)
+#             rprint(rank, 'Overlap before orthogonalization: ', B)
 
             """ Subtract the projection """
             for _,cell in tree.masterList:
@@ -2065,7 +2068,7 @@ class Tree(object):
 #                         phi_m = cell.gridpoints[i,j,k].phi[m]
 #                         phi_n = cell.gridpoints[i,j,k].phi[n]
 #                         B += phi_m*phi_n*cell.w[i,j,k]
-#             print('Overlap after orthogonalization: ', B)
+#             rprint(rank, 'Overlap after orthogonalization: ', B)
         
         def normalizeOrbital(tree,m):
         
@@ -2087,15 +2090,15 @@ class Tree(object):
 #                 if cell.leaf == True:
 #                     for i,j,k in cell.PxByPyByPz:
 #                         A += cell.gridpoints[i,j,k].phi[m]**2*cell.w[i,j,k]
-#             print('Integral of phi%i**2 = ' %m, A )
+#             rprint(rank, 'Integral of phi%i**2 = ' %m, A )
         
-        print('DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
-        print('DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
-        print('DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
-        print('DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
-        print('DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
+        rprint(rank, 'DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
+        rprint(rank, 'DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
+        rprint(rank, 'DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
+        rprint(rank, 'DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
+        rprint(rank, 'DO NOT USE TREE METHOD FOR ORTHOGONALIZATION')
         if targetOrbital==None:
-#         print('Orthonormalizing orbitals within tree structure up to orbital %i.' %maxOrbital)
+#         rprint(rank, 'Orthonormalizing orbitals within tree structure up to orbital %i.' %maxOrbital)
             for m in range(self.nOrbitals):
                 if external==True:
                     normalizeOrbital(self,m)
@@ -2126,7 +2129,7 @@ class Tree(object):
                     phi_n = np.copy(sources[:,3])
                     orthogonalizeOrbitals_external(self,phi_m,phi_n,weights,targetOrbital=targetOrbital)
 #                     else:
-#                         print('Not orthogonalizing orbital %i against %i because energy is lower.' %(targetOrbital,n))
+#                         rprint(rank, 'Not orthogonalizing orbital %i against %i because energy is lower.' %(targetOrbital,n))
                 else:
                     normalizeOrbital(self,n)
                     orthogonalizeOrbitals(self,targetOrbital,n)
@@ -2152,14 +2155,14 @@ class Tree(object):
 #                 leaves.append( [midpoint.x, midpoint.y, midpoint.z, midpoint.phi, potential(midpoint.x, midpoint.y, midpoint.z), element[1].volume ] )
 #                 counter+=1 
 #                 
-#         print('Warning: extracting midpoints even tho this is a non-uniform mesh.')
+#         rprint(rank, 'Warning: extracting midpoints even tho this is a non-uniform mesh.')
 #         return np.array(leaves)
     
     def extractLeavesAllGridpoints(self):
         '''
         Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         leaves = []
         for _,cell in self.masterList:
             for i,j,k in cell.PxByPyByPz:
@@ -2184,7 +2187,7 @@ class Tree(object):
         '''
         Extract the leaves as a Nx4 array [ [x1,y1,z1,psi1], [x2,y2,z2,psi2], ... ]
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         leaves = []
 #         for _,cell in self.masterList:
 #             for i,j,k in cell.PxByPyByPz:
@@ -2209,7 +2212,7 @@ class Tree(object):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         leaves = []
                 
         for _,cell in self.masterList:
@@ -2224,7 +2227,7 @@ class Tree(object):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         X = [] 
         Y = []
         Z = []
@@ -2262,7 +2265,7 @@ class Tree(object):
                     RHO.append(gridpt.rho)
                 
                 if cell.fineMesh==True: # this cell has a different fine mesh
-#                     print("cell has a fine mesh.")
+#                     rprint(rank, "cell has a fine mesh.")
 #                     exit(-1)
 #                     
                     pointsPerCell_fine.append( int(cell.numFinePoints) )
@@ -2326,7 +2329,7 @@ class Tree(object):
     
     
                 
-                if leafCount==1: print(quadIdx)
+                if leafCount==1: rprint(rank, quadIdx)
                 
     #                 quadIdx = quadIdx + [000, 001, 010, 011, 100, 101, 110, 111 ] 
                 
@@ -2339,18 +2342,18 @@ class Tree(object):
 #                 for i,j,k in cell.PxByPyByPz:
 #                     cell.gridpoints[i,j,k]=None
 #             del cell
-#         print("Returning from tree extract:  ")
-# #         print("W = ", W)
-#         print("sum(W) = ", np.sum(W))
-#         print("vol approx = ", (np.max(X)-np.min(X))*(np.max(Y)-np.min(Y))*(np.max(Z)-np.min(Z)))
-#         print("pointsPerCell_coarse = ", pointsPerCell_coarse)
+#         rprint(rank, "Returning from tree extract:  ")
+# #         rprint(rank, "W = ", W)
+#         rprint(rank, "sum(W) = ", np.sum(W))
+#         rprint(rank, "vol approx = ", (np.max(X)-np.min(X))*(np.max(Y)-np.min(Y))*(np.max(Z)-np.min(Z)))
+#         rprint(rank, "pointsPerCell_coarse = ", pointsPerCell_coarse)
         return np.array(X),np.array(Y),np.array(Z),np.array(W),np.array(Xf),np.array(Yf),np.array(Zf),np.array(Wf), np.array(pointsPerCell_coarse), np.array(pointsPerCell_fine), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
     
     def extractCellXYZ(self):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         cellX = [] 
         cellY = []
         cellZ = []
@@ -2417,7 +2420,7 @@ class Tree(object):
     
     
                 
-                if leafCount==1: print(quadIdx)
+                if leafCount==1: rprint(rank, quadIdx)
                 
     #                 quadIdx = quadIdx + [000, 001, 010, 011, 100, 101, 110, 111 ] 
                 
@@ -2433,7 +2436,7 @@ class Tree(object):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         X = [] 
         Y = []
         Z = []
@@ -2504,7 +2507,7 @@ class Tree(object):
     
     
                 
-                if leafCount==1: print(quadIdx)
+                if leafCount==1: rprint(rank, quadIdx)
                 
     #                 quadIdx = quadIdx + [000, 001, 010, 011, 100, 101, 110, 111 ] 
                 
@@ -2525,7 +2528,7 @@ class Tree(object):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         
         
         XV = []
@@ -2550,7 +2553,7 @@ class Tree(object):
                     key = 'x%+1.10ey%+1.10ez%+1.10e' %(gridpt.x,gridpt.y,gridpt.z)
                     if key in masterDict:
                         duplicates+=1
-#                         print('Found duplicate at: ', gridpt.x, gridpt.y, gridpt.z)
+#                         rprint(rank, 'Found duplicate at: ', gridpt.x, gridpt.y, gridpt.z)
 #                         masterDict[key][0] += gridpt.rho  ## DONT COMBINE DENSITY AT THE SHARED POINT, ONLY THE QUADRATURE WEIGHT
                         masterDict[key][1] += cell.w[i,j,k]
                     else:
@@ -2603,7 +2606,7 @@ class Tree(object):
     
     
                 
-                if leafCount==1: print(quadIdx)
+                if leafCount==1: rprint(rank, quadIdx)
                 
     #                 quadIdx = quadIdx + [000, 001, 010, 011, 100, 101, 110, 111 ] 
                 
@@ -2616,7 +2619,7 @@ class Tree(object):
         W = []
         RHO = []       
         for key in masterDict:
-#             print(key)
+#             rprint(rank, key)
             x=float(key[1:18])
             y=float(key[19:36])
             z=float(key[37:54])
@@ -2626,16 +2629,16 @@ class Tree(object):
             RHO.append(masterDict[key][0])
             W.append( masterDict[key][1] )
         
-        print('Sum, cubert of weights: ', np.sum(W), np.cbrt(np.sum(W)))
-        print('Average x,y,z: ', np.mean(X), np.mean(Y), np.mean(Z))
-        print('Integral of rho: ', np.sum(np.array(RHO)*np.array(W)) )
+        rprint(rank, 'Sum, cubert of weights: ', np.sum(W), np.cbrt(np.sum(W)))
+        rprint(rank, 'Average x,y,z: ', np.mean(X), np.mean(Y), np.mean(Z))
+        rprint(rank, 'Integral of rho: ', np.sum(np.array(RHO)*np.array(W)) )
         for _,cell in self.masterList:
             if cell.leaf == False:
                 for i,j,k in cell.PxByPyByPz:
                     cell.gridpoints[i,j,k]=None
             del cell
-        print('Number of duplicate points: ', duplicates)  
-        print('number of points: ', len(Z))
+        rprint(rank, 'Number of duplicate points: ', duplicates)  
+        rprint(rank, 'number of points: ', len(Z))
         return np.array(X),np.array(Y),np.array(Z),np.array(W), np.array(RHO), np.array(XV), np.array(YV), np.array(ZV), np.array(quadIdx), np.array(centerIdx), np.array(ghostCells)#, np.array(WAVEFUNCTIONS)
     
 
@@ -2643,7 +2646,7 @@ class Tree(object):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         leaves = []
                 
         for _,cell in self.masterList:
@@ -2664,7 +2667,7 @@ class Tree(object):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         leaves = []
                 
         for _,cell in self.masterList:
@@ -2680,7 +2683,7 @@ class Tree(object):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         leaves = []
                 
         for _,cell in self.masterList:
@@ -2696,7 +2699,7 @@ class Tree(object):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         leaves = []
         sqrtV = []
                 
@@ -2729,13 +2732,13 @@ class Tree(object):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,f1,w1], [x2,y2,z2,f2,w2], ... ] where f is the function being convolved
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         leaves = []
         if m>0:
             dotProducts = np.zeros(m)
             for n in range(m):
                 dotProducts[n] = np.dot( orbitals[:,m], orbitals[:,n]*weights)
-            print('Dot products: ', dotProducts)
+            rprint(rank, 'Dot products: ', dotProducts)
         for _,cell in self.masterList:
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
@@ -2753,7 +2756,7 @@ class Tree(object):
     
     
     def computeSelfCellInterations(self,k):
-        print("Computing interaction of each point with its own cell..")
+        rprint(rank, "Computing interaction of each point with its own cell..")
         for _,cell in self.masterList:
             if cell.leaf == True:
                 for i,j,k in cell.PxByPyByPz:
@@ -2763,7 +2766,7 @@ class Tree(object):
                     tempW[i,j,k] = 0  # set the weight at the target point equal to zero
                     tempW *= cell.volume / np.sum(tempW)  # renormalize so that sum of weights = volume 
                     if abs(np.sum(tempW) - cell.volume)>1e-12:
-                        print('Warning: temporary weights not summing to cell volume.')
+                        rprint(rank, 'Warning: temporary weights not summing to cell volume.')
                     # simple skipping    
                     gp_t.selfCellContribution = 0.0
                     
@@ -2782,12 +2785,12 @@ class Tree(object):
                             
                             # simple singularity subtraction
                             gp_t.selfCellContribution += tempW[ii,jj,kk] * (gp_s.f - gp_t.f) *exp(-k*r)/(r)
-        print('Done.')
+        rprint(rank, 'Done.')
         
         
     def computeSelfCellInterations_GaussianIntegralIdentity(self,containing=None):
 
-        print("Computing interaction of each point with its own cell using Gaussian Integral Identity..")
+        rprint(rank, "Computing interaction of each point with its own cell using Gaussian Integral Identity..")
         counter=0
         for _,cell in self.masterList:
             if cell.leaf == True:
@@ -2799,7 +2802,7 @@ class Tree(object):
                            ( (cell.zmin<containing[2]) and (cell.zmax>containing[2]) ) )
                     ):
                     if containing != None:
-                        print('Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid, ' at a depth of ', cell.level)
+                        rprint(rank, 'Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid, ' at a depth of ', cell.level)
                     
                     # determine an appropriate time discretization, based on the gridpoint spacing
                     maxDist = np.sqrt( (cell.xmax-cell.xmin)**2 + (cell.ymax-cell.ymin)**2 + (cell.zmax-cell.zmin)**2 )
@@ -2816,13 +2819,13 @@ class Tree(object):
                     
 #                     timeIntervals = int(np.ceil(tmax/0.5))
                     tvec = np.linspace(0,tmax,timeIntervals+1)
-                    print('Cell ', counter, ' of ', self.numberOfCells)
-                    print('Closest points: ', minDist)
-                    print('Corner to corner: ',maxDist)
-                    print('tmax = ', tmax)
-                    print('dt = ', tvec[1]-tvec[0])
-                    print('timeIntervals   = ', timeIntervals)
-                    print()
+                    rprint(rank, 'Cell ', counter, ' of ', self.numberOfCells)
+                    rprint(rank, 'Closest points: ', minDist)
+                    rprint(rank, 'Corner to corner: ',maxDist)
+                    rprint(rank, 'tmax = ', tmax)
+                    rprint(rank, 'dt = ', tvec[1]-tvec[0])
+                    rprint(rank, 'timeIntervals   = ', timeIntervals)
+                    rprint(rank, "")
                 
                 
                     # for each target point in cell...
@@ -2855,11 +2858,11 @@ class Tree(object):
                     for i,j,k in cell.PxByPyByPz:
                         gp_t = cell.gridpoints[i,j,k]
                         gp_t.selfCellContribution = 0.0 
-        print('Done.')
+        rprint(rank, 'Done.')
         
     def computeSelfCellInterations_GaussianIntegralIdentity_singularitySubtraction(self,alpha,containing=None):
 
-        print("Computing interaction of each point with its own cell using Gaussian Integral Identity..")
+        rprint(rank, "Computing interaction of each point with its own cell using Gaussian Integral Identity..")
         counter=0
         for _,cell in self.masterList:
             if cell.leaf == True:
@@ -2871,7 +2874,7 @@ class Tree(object):
                            ( (cell.zmin<containing[2]) and (cell.zmax>containing[2]) ) )
                     ):
                     if containing != None:
-                        print('Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid, ' at a depth of ', cell.level)
+                        rprint(rank, 'Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid, ' at a depth of ', cell.level)
                     
                     # determine an appropriate time discretization, based on the gridpoint spacing
                     maxDist = np.sqrt( (cell.xmax-cell.xmin)**2 + (cell.ymax-cell.ymin)**2 + (cell.zmax-cell.zmin)**2 )
@@ -2888,13 +2891,13 @@ class Tree(object):
                     
 #                     timeIntervals = int(np.ceil(tmax/0.5))
                     tvec = np.linspace(0,tmax,timeIntervals+1)
-                    print('Cell ', counter, ' of ', self.numberOfCells)
-                    print('Closest points: ', minDist)
-                    print('Corner to corner: ',maxDist)
-                    print('tmax = ', tmax)
-                    print('dt = ', tvec[1]-tvec[0])
-                    print('timeIntervals   = ', timeIntervals)
-                    print()
+                    rprint(rank, 'Cell ', counter, ' of ', self.numberOfCells)
+                    rprint(rank, 'Closest points: ', minDist)
+                    rprint(rank, 'Corner to corner: ',maxDist)
+                    rprint(rank, 'tmax = ', tmax)
+                    rprint(rank, 'dt = ', tvec[1]-tvec[0])
+                    rprint(rank, 'timeIntervals   = ', timeIntervals)
+                    rprint(rank, "")
                 
                 
                     # for each target point in cell...
@@ -2927,12 +2930,12 @@ class Tree(object):
                     for i,j,k in cell.PxByPyByPz:
                         gp_t = cell.gridpoints[i,j,k]
                         gp_t.selfCellContribution = 0.0 
-        print('Done.')
+        rprint(rank, 'Done.')
         
         
     def computeSelfCellInterations_GaussianIntegralIdentity_3intervals(self,t_lin, t_log,timeIntervals, containing=None):
 
-        print("Computing interaction of each point with its own cell using Gaussian Integral Identity..")
+        rprint(rank, "Computing interaction of each point with its own cell using Gaussian Integral Identity..")
         counter=0
         for _,cell in self.masterList:
             if cell.leaf == True:
@@ -2944,7 +2947,7 @@ class Tree(object):
                            ( (cell.zmin<containing[2]) and (cell.zmax>containing[2]) ) )
                     ):
                     if containing != None:
-                        print('Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid, ' at a depth of ', cell.level)
+                        rprint(rank, 'Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid, ' at a depth of ', cell.level)
                     
                     # determine an appropriate time discretization, based on the gridpoint spacing
                     maxDist = np.sqrt( (cell.xmax-cell.xmin)**2 + (cell.ymax-cell.ymin)**2 + (cell.zmax-cell.zmin)**2 )
@@ -2974,14 +2977,14 @@ class Tree(object):
                     
                     tvec = np.append(tvec1,tvec2)
                     weights = np.append(weights1, weights2)
-                    print('Cell ', counter, ' of ', self.numberOfCells)
-                    print('Closest points: ', minDist)
-                    print('Corner to corner: ',maxDist)
-                    print('t_lin = ', t_lin)
-                    print('t_log = ', t_log)
-                    print('dt = ', tvec[1]-tvec[0])
-                    print('timeIntervals   = ', timeIntervals)
-                    print()
+                    rprint(rank, 'Cell ', counter, ' of ', self.numberOfCells)
+                    rprint(rank, 'Closest points: ', minDist)
+                    rprint(rank, 'Corner to corner: ',maxDist)
+                    rprint(rank, 't_lin = ', t_lin)
+                    rprint(rank, 't_log = ', t_log)
+                    rprint(rank, 'dt = ', tvec[1]-tvec[0])
+                    rprint(rank, 'timeIntervals   = ', timeIntervals)
+                    rprint(rank, "")
                 
                 
                     # for each target point in cell...
@@ -3012,12 +3015,12 @@ class Tree(object):
                     for i,j,k in cell.PxByPyByPz:
                         gp_t = cell.gridpoints[i,j,k]
                         gp_t.selfCellContribution = 0.0 
-        print('Done.')
+        rprint(rank, 'Done.')
         
         
     def computeSelfCellInterations_GaussianIntegralIdentity_t_inner(self,containing=None):
 
-        print("Computing interaction of each point with its own cell using Gaussian Integral Identity..")
+        rprint(rank, "Computing interaction of each point with its own cell using Gaussian Integral Identity..")
         counter=0
         for _,cell in self.masterList:
             if cell.leaf == True:
@@ -3029,7 +3032,7 @@ class Tree(object):
                            ( (cell.zmin<containing[2]) and (cell.zmax>containing[2]) ) )
                     ):
                     if containing != None:
-                        print('Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid)
+                        rprint(rank, 'Computing self interaction for cell centered at ', cell.xmid, cell.ymid, cell.zmid)
                     
                     # determine an appropriate time discretization, based on the gridpoint spacing
 #                     maxDist = np.sqrt( (cell.xmax-cell.xmin)**2 + (cell.ymax-cell.ymin)**2 + (cell.zmax-cell.zmin)**2 )
@@ -3043,11 +3046,11 @@ class Tree(object):
                     
 #                     timeIntervals = int(np.ceil(tmax/0.05))
 #                     tvec = np.linspace(0,tmax,timeIntervals+1)
-                    print('Cell ', counter, ' of ', self.numberOfCells)
-#                     print('tmax = ', tmax)
-#                     print('dt = ', tvec[1]-tvec[0])
-#                     print('timeIntervals   = ', timeIntervals)
-#                     print()
+                    rprint(rank, 'Cell ', counter, ' of ', self.numberOfCells)
+#                     rprint(rank, 'tmax = ', tmax)
+#                     rprint(rank, 'dt = ', tvec[1]-tvec[0])
+#                     rprint(rank, 'timeIntervals   = ', timeIntervals)
+#                     rprint(rank, "")
                 
                 
                     # for each target point in cell...
@@ -3065,11 +3068,11 @@ class Tree(object):
                                 tmax = int(np.ceil(5/r))
                                 timeIntervals = 40
                                 tvec = np.linspace(0,tmax,timeIntervals+1)
-                                print('r = ', r)
-                                print('tmax = ', tmax)
-                                print('dt = ', tvec[1]-tvec[0])
-                                print('timeIntervals   = ', timeIntervals)
-                                print()
+                                rprint(rank, 'r = ', r)
+                                rprint(rank, 'tmax = ', tmax)
+                                rprint(rank, 'dt = ', tvec[1]-tvec[0])
+                                rprint(rank, 'timeIntervals   = ', timeIntervals)
+                                rprint(rank, "")
                                 # integrate over time (midpoint or trapezoid)
                                 for ell in range(timeIntervals):
                                     dt = tvec[ell+1]-tvec[ell]
@@ -3086,7 +3089,7 @@ class Tree(object):
                     for i,j,k in cell.PxByPyByPz:
                         gp_t = cell.gridpoints[i,j,k]
                         gp_t.selfCellContribution = 0.0 
-        print('Done.')
+        rprint(rank, 'Done.')
                         
                         
 
@@ -3116,7 +3119,7 @@ class Tree(object):
         '''
         Extract the leaves as a Nx5 array [ [x1,y1,z1,rho1,w1], [x2,y2,z2,rho2,w2], ... ]
         '''
-#         print('Extracting the gridpoints from all leaves...')
+#         rprint(rank, 'Extracting the gridpoints from all leaves...')
         leaves = []
                 
         for _,cell in self.masterList:
@@ -3148,9 +3151,9 @@ class Tree(object):
 #             for i,j,k in cell.PxByPyByPz:
 #                 cell.gridpoints[i,j,k].phiImported = None
         if importIndex != len(phiNew):
-            print('Warning: import index not equal to len(phiNew)')
-            print(importIndex)
-            print(len(phiNew))
+            rprint(rank, 'Warning: import index not equal to len(phiNew)')
+            rprint(rank, importIndex)
+            rprint(rank, len(phiNew))
             
     def importDensityOnLeaves(self,rho):
         '''
@@ -3167,9 +3170,9 @@ class Tree(object):
                     
 
         if importIndex != len(rho):
-            print('Warning: import index not equal to len(rho)')
-            print(importIndex)
-            print(len(rho))
+            rprint(rank, 'Warning: import index not equal to len(rho)')
+            rprint(rank, importIndex)
+            rprint(rank, len(rho))
             
     def importPhiNewOnLeaves(self,phiNew):
         '''
@@ -3192,9 +3195,9 @@ class Tree(object):
 #             for i,j,k in cell.PxByPyByPz:
 #                 cell.gridpoints[i,j,k].phiImported = None
         if importIndex != len(phiNew):
-            print('Warning: import index not equal to len(phiNew)')
-            print(importIndex)
-            print(len(phiNew))
+            rprint(rank, 'Warning: import index not equal to len(phiNew)')
+            rprint(rank, importIndex)
+            rprint(rank, len(phiNew))
             
     def setPhiOldOnLeaves_symmetric(self, normalizedPsiSqrtV):
         importIndex = 0        
@@ -3206,9 +3209,9 @@ class Tree(object):
                     importIndex += 1
 
         if importIndex != len(normalizedPsiSqrtV):
-            print('Warning: import index not equal to len(phiNew)')
-            print(importIndex)
-            print(len(normalizedPsiSqrtV))
+            rprint(rank, 'Warning: import index not equal to len(phiNew)')
+            rprint(rank, importIndex)
+            rprint(rank, len(normalizedPsiSqrtV))
 
     def setPhiOldOnLeaves(self,m):
         for _,cell in self.masterList:
@@ -3232,9 +3235,9 @@ class Tree(object):
                     importIndex += 1
 
         if importIndex != len(V_hartreeNew):
-            print('Warning: import index not equal to len(V_hartreeNew)')
-            print(importIndex)
-            print(len(V_hartreeNew))
+            rprint(rank, 'Warning: import index not equal to len(V_hartreeNew)')
+            rprint(rank, importIndex)
+            rprint(rank, len(V_hartreeNew))
             
     
                 
@@ -3296,7 +3299,7 @@ class Tree(object):
                 for i in range(8):
 #                     scalars.InsertTuple1(pointcounter+i,cell.level)
 #                     scalars.InsertTuple1(pointcounter+i,interpolators[0](cell.xmid, cell.ymid, cell.zmid))
-                    print('Warning: using gridpoints[1,1,1] as midpoint')
+                    rprint(rank, 'Warning: using gridpoints[1,1,1] as midpoint')
                     scalars.InsertTuple1(pointcounter+i,cell.gridpoints[1,1,1].phi)
                 
                 faces.append((pointcounter+0,pointcounter+1,pointcounter+2,pointcounter+3))
@@ -3329,7 +3332,7 @@ class Tree(object):
         writer.SetInputData(mesh)
 
         writer.Write()
-        print('Done writing ', filename)
+        rprint(rank, 'Done writing ', filename)
     
     def exportAitkenWavefunction(self, filename,x,y,z,psiA,psiB,psiC,psiAitken):
   
@@ -3338,7 +3341,7 @@ class Tree(object):
             {"PhiA" : psiA, "PhiB" : psiB,
             "PhiC" : psiC, "PhiAitken" : psiAitken  } )
         
-        print('Exported aitken wavefunction')
+        rprint(rank, 'Exported aitken wavefunction')
                     
             
     def exportGridpoints(self,filename):
@@ -3530,7 +3533,7 @@ class Tree(object):
         writer.SetInputData(mesh)
 
         writer.Write()
-        print('Done writing ', filename)
+        rprint(rank, 'Done writing ', filename)
         
     def interpolateDensity(self, xi,yi,zi, xf,yf,zf, numpts, plot=False, save=False):
         
@@ -3570,7 +3573,7 @@ class Tree(object):
             if save==False:
                 plt.show()
             else:
-                print('Saving figure to ', save)
+                rprint(rank, 'Saving figure to ', save)
                 plt.savefig(save+'.pdf',format='pdf',bbox_inches='tight')
                 plt.close(fig)
         return r, rho
