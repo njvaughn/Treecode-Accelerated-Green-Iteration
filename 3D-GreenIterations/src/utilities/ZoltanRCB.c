@@ -58,15 +58,38 @@ void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
     fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
 
+//    myCells.numMyPoints = numCells;
+//    myCells.x  = *cellsX;
+//    myCells.y  = *cellsY;
+//    myCells.z  = *cellsZ;
+//    myCells.dx = *cellsDX;
+//    myCells.dy = *cellsDY;
+//    myCells.dz = *cellsDZ;
+//    myCells.coarsePtsPerCell = *coarsePtsPerCell;
+//    myCells.finePtsPerCell = *finePtsPerCell;
+//    myCells.myGlobalIDs = (ZOLTAN_ID_TYPE *)malloc(sizeof(ZOLTAN_ID_TYPE) * numCells);
+
     myCells.numMyPoints = numCells;
-    myCells.x  = *cellsX;
-    myCells.y  = *cellsY;
-    myCells.z  = *cellsZ;
-    myCells.dx = *cellsDX;
-    myCells.dy = *cellsDY;
-    myCells.dz = *cellsDZ;
-    myCells.coarsePtsPerCell = *coarsePtsPerCell;
-    myCells.finePtsPerCell = *finePtsPerCell;
+    myCells.x  = (double *)malloc(sizeof(double) * numCells);
+    myCells.y  = (double *)malloc(sizeof(double) * numCells);
+    myCells.z  = (double *)malloc(sizeof(double) * numCells);
+    myCells.dx = (double *)malloc(sizeof(double) * numCells);
+    myCells.dy = (double *)malloc(sizeof(double) * numCells);
+    myCells.dz = (double *)malloc(sizeof(double) * numCells);
+    myCells.coarsePtsPerCell = (int *)malloc(sizeof(int) * numCells);
+    myCells.finePtsPerCell = (int *)malloc(sizeof(int) * numCells);
+
+    printf("allocated new arrays for myCells, now filling them.\n");
+    for (int i=0;i<numCells;i++){
+        myCells.x[i] = (*cellsX)[i];
+        myCells.y[i] = (*cellsY)[i];
+        myCells.z[i] = (*cellsZ)[i];
+        myCells.dx[i] = (*cellsDX)[i];
+        myCells.dy[i] = (*cellsDY)[i];
+        myCells.dz[i] = (*cellsDZ)[i];
+        myCells.coarsePtsPerCell[i] = (*coarsePtsPerCell)[i];
+        myCells.finePtsPerCell[i] = (*finePtsPerCell)[i];
+    }
     myCells.myGlobalIDs = (ZOLTAN_ID_TYPE *)malloc(sizeof(ZOLTAN_ID_TYPE) * numCells);
 
 
@@ -173,7 +196,7 @@ void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
     *finePtsPerCell=myCells.finePtsPerCell;
 
 
-    if (verbosity>0){
+    if (verbosity>-1){
         for (int i=0;i<5;i++){
             printf("rank %i, after load balancing, value = %f\n", rank, (*cellsX)[i]);
         }
@@ -183,7 +206,10 @@ void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
     newNumCells[0]=myCells.numMyPoints;
     fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
-//    free(myCells.myGlobalIDs);
+
+
+    free(myCells.myGlobalIDs);
+
 
 
     if (rc != ZOLTAN_OK) {

@@ -3,6 +3,7 @@ import os
 import csv
 import time
 import resource
+import gc
 
 from scipy.optimize import root as scipyRoot
 from scipy.optimize.nonlin import BroydenFirst, KrylovJacobian
@@ -496,6 +497,10 @@ def twoMeshCorrectionClosure(scf_args):
         scf_args['orbitals']=orbitals
         scf_args['oldOrbitals']=oldOrbitals
         scf_args['Veff_local']=Veff_local_new
+        
+        rprint(rank,"Calling garbage collector")
+        gc.collect()
+        rprint(rank,"garbage collection complete.")
     
     
         return

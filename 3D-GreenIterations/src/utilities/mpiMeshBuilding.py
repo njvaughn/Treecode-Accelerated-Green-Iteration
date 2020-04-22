@@ -8,7 +8,7 @@ import gc
 
 
 from mpiUtilities import rprint, global_dot
-from loadBalancer import loadBalance_manual
+# from loadBalancer import loadBalance_manual
 sys.path.append('../dataStructures')
 from TreeStruct_CC import Tree
 from AtomStruct import Atom
@@ -244,6 +244,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     rank = comm.Get_rank()
     size = comm.Get_size()
     
+    
     ## Setup atoms and PSP structs if needed.
     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
     if verbose>-1: rprint(rank,'Reading atomic coordinates from: ', coordinateFile)
@@ -264,7 +265,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     else:
         atoms = np.empty((len(atomData),),dtype=object)
         for i in range(len(atomData)):
-            rprint(0, atomData)
+            if verbose>0: rprint(rank, atomData)
             atom = Atom(atomData[i,0],atomData[i,1],atomData[i,2],atomData[i,3],atomData[i,4],coreRepresentation)
             atoms[i] = atom
             nOrbitals += int(atomData[i,4])
@@ -405,14 +406,14 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
             refinedPtsPerCellCoarse=np.append(refinedPtsPerCellCoarse,PtsPerCellCoarse)
             refinedPtsPerCellFine=np.append(refinedPtsPerCellFine,PtsPerCellFine)
     
-            del cellsX
-            del cellsY
-            del cellsZ
-            del cellsDX
-            del cellsDY
-            del cellsDZ   
-            del PtsPerCellCoarse
-            del PtsPerCellFine
+#             del cellsX
+#             del cellsY
+#             del cellsZ
+#             del cellsDX
+#             del cellsDY
+#             del cellsDZ   
+#             del PtsPerCellCoarse
+#             del PtsPerCellFine
     
     # compute numCellsLocal and globalStart
     numCellsLocal=len(refinedCellsX)
@@ -443,21 +444,55 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
       
     
         
-
-    
-    
+    del cellsX
+    del cellsY
+    del cellsZ
+    del cellsDX
+    del cellsDY
+    del cellsDZ   
+    del PtsPerCellCoarse
+    del PtsPerCellFine
+     
+     
     ## Load balance the cells
-    cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, newNumCells = callZoltan(refinedCellsX,refinedCellsY,refinedCellsZ,refinedCellsDX,refinedCellsDY,refinedCellsDZ, refinedPtsPerCellCoarse, refinedPtsPerCellFine, numCellsLocal, globalStart)
-    rprint(0, "rank %i, number of cells after balancing = %i" %(rank,len(cellsX)))
+#     newCellsX,newCellsY,newCellsZ,newCellsDX,newCellsDY,newCellsDZ,PtsPerCellCoarse,PtsPerCellFine, newNumCells = callZoltan(refinedCellsX,refinedCellsY,refinedCellsZ,refinedCellsDX,refinedCellsDY,refinedCellsDZ, refinedPtsPerCellCoarse, refinedPtsPerCellFine, numCellsLocal, globalStart)
+    newCellsX,newCellsY,newCellsZ,newCellsDX,newCellsDY,newCellsDZ,PtsPerCellCoarse,PtsPerCellFine, newNumCells = callZoltan(np.copy(refinedCellsX),np.copy(refinedCellsY),np.copy(refinedCellsZ),np.copy(refinedCellsDX),np.copy(refinedCellsDY),np.copy(refinedCellsDZ), np.copy(refinedPtsPerCellCoarse), np.copy(refinedPtsPerCellFine), np.copy(numCellsLocal), np.copy(globalStart))
+     
+    del refinedCellsX
+    del refinedCellsY
+    del refinedCellsZ
+    del refinedCellsDX
+    del refinedCellsDY
+    del refinedCellsDZ
+    del refinedPtsPerCellCoarse
+    del refinedPtsPerCellFine
+    del numCellsLocal
+    del globalStart
+
+
+#     ## Mock the call to zoltan:
+#     rprint(rank,"Mocking the call to zoltan load balancer.")
+#     newCellsX=refinedCellsX
+#     newCellsY=refinedCellsY
+#     newCellsZ=refinedCellsZ
+#     newCellsDX=refinedCellsDX
+#     newCellsDY=refinedCellsDY
+#     newCellsDZ=refinedCellsDZ
+#     PtsPerCellCoarse=refinedPtsPerCellCoarse
+#     PtsPerCellFine=refinedPtsPerCellFine
+#     newNumCells=len(refinedCellsX)
+        
+    
+    rprint(0, "rank %i, number of cells after balancing = %i" %(rank,len(newCellsX)))
     comm.barrier()
-#     gc.collect()
-#     comm.barrier()
-#     rprint(0, "Called garbage collector after calling Zoltan.")
+    gc.collect()
+    comm.barrier()
+    rprint(0, "Called garbage collector after calling Zoltan.")
     
     ## Check that the cell decompositions make sense after load balancing.
     localVolume = 0
-    for i in range(len(cellsX)):
-        localVolume += (cellsDX[i]*cellsDY[i]*cellsDZ[i])
+    for i in range(len(newCellsX)):
+        localVolume += (newCellsDX[i]*newCellsDY[i]*newCellsDZ[i])
     
     rprint(0, "rank %i, local volume after refinement: %f" %(rank,localVolume))
     totalVolume = comm.allreduce(np.sum(localVolume))
@@ -467,16 +502,16 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
      
      
     
-    for i in range(len(cellsX)):
+    for i in range(len(newCellsX)):
         # construct quadrature points for base mesh
-        xl=cellsX[i]-cellsDX[i]/2
-        xh=cellsX[i]+cellsDX[i]/2
+        xl=newCellsX[i]-newCellsDX[i]/2
+        xh=newCellsX[i]+newCellsDX[i]/2
         
-        yl=cellsY[i]-cellsDY[i]/2
-        yh=cellsY[i]+cellsDY[i]/2
+        yl=newCellsY[i]-newCellsDY[i]/2
+        yh=newCellsY[i]+newCellsDY[i]/2
         
-        zl=cellsZ[i]-cellsDZ[i]/2
-        zh=cellsZ[i]+cellsDZ[i]/2
+        zl=newCellsZ[i]-newCellsDZ[i]/2
+        zh=newCellsZ[i]+newCellsDZ[i]/2
         
         xc,yc,zc,wc = coarseQuadraturePointsSingleCell(xl,xh,yl,yh,zl,zh,order)
         
@@ -507,7 +542,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     nPoints=len(x)
     PtsPerCellCoarse=np.array(PtsPerCellCoarse, dtype=np.int32)
     PtsPerCellFine=np.array(PtsPerCellFine, dtype=np.int32)
-    if verbose>0:
+    if verbose>-2:
         rprint(0, "len(x) = ", len(x))
         rprint(0, "first few PtsPerCellCoarse: ", PtsPerCellCoarse[0:5])
         rprint(0, "np.sum(PtsPerCellCoarse) = ", np.sum(PtsPerCellCoarse))
@@ -515,10 +550,14 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     assert len(x) == int(np.sum(PtsPerCellCoarse)), "Error: len(x) != np.sum(PtsPerCellCoarse)"
     assert len(xf) == np.sum(PtsPerCellFine), "Error: len(xf) != np.sum(PtsPerCellFine)"
 
-    if saveTree==False:
-        return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
-    elif saveTree==True:
-        return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
+    comm.barrier()
+    rprint(0,"rank %i preparing to exit." %rank)
+    comm.barrier()
+    return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+#     if saveTree==False:
+#         return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+#     elif saveTree==True:
+#         return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
 
 def func(X,Y,Z,pow):
     

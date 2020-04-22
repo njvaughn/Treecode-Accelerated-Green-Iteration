@@ -9,6 +9,7 @@ Created on Mar 13, 2018
 '''
 import os
 import sys
+import gc
 import time
 import inspect
 import resource
@@ -28,6 +29,7 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 
 
+# gc.set_debug(gc.DEBUG_LEAK)
 
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
@@ -630,7 +632,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     comm.barrier()
     rprint(rank,'Entering greenIterations_KohnSham_SCF()')
     rprint(0, 'Number of targets on proc %i:   %i' %(rank,nPoints) )
-
+    comm.barrier()
     
     densityResidual = 10                                   # initialize the densityResidual to something that fails the convergence tolerance
 
@@ -717,8 +719,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
           
 #         densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
 #         rprint(0, 'Density Residual from arrays ', densityResidual)
-        rprint(rank,'Shape of density histories: ', np.shape(scf_args['inputDensities']), np.shape(scf_args['outputDensities']))
-        rprint(rank,'outputDensities[0,:] = ', scf_args['outputDensities'][0,:])
+        if verbosity>0: rprint(rank,'Shape of density histories: ', np.shape(scf_args['inputDensities']), np.shape(scf_args['outputDensities']))
+        if verbosity>0: rprint(rank,'outputDensities[0,:] = ', scf_args['outputDensities'][0,:])
         # Now compute new mixing with anderson scheme, then import onto tree. 
     
       
@@ -837,7 +839,7 @@ if __name__ == "__main__":
                                                                                                      inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
                                                                                                      divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
     
-    
+    rprint(rank,"Returned from buildMeshFromMinimumDepthCells()")
 
     
     
@@ -915,4 +917,12 @@ if __name__ == "__main__":
 
     if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
     if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(W)
+    
+    
+    
+#     rprint(rank,"Calling garbage collector")
+#     gc.set_debug(gc.DEBUG_COLLECTABLE)
+#     input()
+#     gc.collect()
+#     rprint(rank,"garbage collection complete.")
 

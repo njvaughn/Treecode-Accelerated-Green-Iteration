@@ -15,7 +15,7 @@ SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 
 COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
-#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
 INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
@@ -49,49 +49,50 @@ MIXINGHISTORY=10
 INITIAL_GI_TOLERANCE=3e-2 
 FINAL_GI_TOLERANCE=3e-5
 GRADUALSTEPS=10
-SCF_TOLERANCE=3e-2
+SCF_TOLERANCE=3e-0
      
 
-
-
-APPROXIMATIONNAME=hermite
 SINGULARITYHANDLING=subtraction
 
 REGULARIZE='False'
 EPSILON=0.0
    
 GAUSSIANALPHA=2.0 
-TREECODEORDER=4
-THETA=0.8
 
-CELLORDER=4
-FINEORDER=4
+
+CELLORDER=3
+FINEORDER=3
 
 
  
 MESHTYPE='coarsenedUniformTwoLevel'
 
-DOMAIN=16
+DOMAIN=32
 MAXSIDELENGTH=8
-MESHPARAM1=1.0 # near field spacing 
+MESHPARAM1=1 # near field spacing 
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
   
 TWOMESHSTART=999
-#GIFORM="Simultaneous"
 GIFORM="Sequential"
-#GIFORM="Greedy" 
+
+
+
+APPROXIMATIONNAME=lagrange
+TREECODEORDER=7
+THETA=0.75
 
 for MESHPARAM4 in -2
 do                                                         
-    for BATCHSIZE in 20
+    for BATCHSIZE in 30
     do        
-        for MAXPARNODE in 200
+        for MAXPARNODE in 30
         do   
 
         OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/beryllium/twoMesh/twoMesh_correction_at_end_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
-        mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        #valgrind --tool=memcheck --suppressions=/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/tests/miscellaneous-tests/local-valgrind-python.supp python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        mpirun -n 6 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

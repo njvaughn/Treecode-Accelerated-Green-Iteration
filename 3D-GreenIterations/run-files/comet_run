@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/test-%j.%N.out"
+#SBATCH --output="dataFiles/4_nodes_C60_test-%j.%N.out"
 #SBATCH --partition=gpu
 #SBATCH --nodes=2
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:p100:4
 #SBATCH --mem=100GB 
-#SBATCH -t 08:00:00
+#SBATCH -t 12:00:00
 #SBATCH --no-requeue
 #SBATCH -A mia320
 #SBATCH --constraint=exclusive
@@ -30,6 +30,7 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv' 
 INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
@@ -62,7 +63,7 @@ MIXINGHISTORY=10
   
 
 INITIAL_GI_TOLERANCE=3e-2 
-FINAL_GI_TOLERANCE=1e-5 
+FINAL_GI_TOLERANCE=3e-5 
 GRADUALSTEPS=10
 SCF_TOLERANCE=3e-5 
 
@@ -76,10 +77,10 @@ EPSILON=0.0
    
 GAUSSIANALPHA=2.0 
 TREECODEORDER=5
-THETA=0.75
+THETA=0.7
 
-CELLORDER=4
-FINEORDER=4
+CELLORDER=3
+FINEORDER=3
 
 
  
@@ -99,10 +100,10 @@ GIFORM="Sequential"
 MESHPARAM4=-2
   
 BATCHSIZE=2000
-MAXPARNODE=2000  
+MAXPARNODE=2000   
                                                        
 
-OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/testing/2_nodes_tighteningTCparams_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
+OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/testing/4_nodes_tighteningTCparams_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
 ibrun -n 8 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                         $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \

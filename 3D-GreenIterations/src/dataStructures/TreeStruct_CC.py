@@ -2420,7 +2420,7 @@ class Tree(object):
     
     
                 
-                if leafCount==1: rprint(rank, quadIdx)
+#                 if leafCount==1: rprint(rank, quadIdx)
                 
     #                 quadIdx = quadIdx + [000, 001, 010, 011, 100, 101, 110, 111 ] 
                 
