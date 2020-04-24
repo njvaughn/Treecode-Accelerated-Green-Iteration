@@ -444,8 +444,8 @@ def scfFixedPointClosure(scf_args):
         if SCFcount>1:
             fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
             upperBound=1
-            lowerBoundIdx = int(np.floor(nElectrons/2))-1   
-            lowerBound =  Energies['orbitalEnergies'][lowerBoundIdx]
+#             lowerBoundIdx = int(np.floor(nElectrons/2))-1   
+            lowerBound =  Energies['orbitalEnergies'][0]
             eF = brentq(fermiObjectiveFunction, lowerBound, upperBound, xtol=1e-14)
             rprint(rank,'Fermi energy: %f'%eF)
             exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma

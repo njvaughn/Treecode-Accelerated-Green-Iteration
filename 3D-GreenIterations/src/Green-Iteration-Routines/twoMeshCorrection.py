@@ -391,8 +391,8 @@ def twoMeshCorrectionClosure(scf_args):
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
         upperBound=1
-        lowerBoundIdx = int(np.floor(nElectrons/2))-1   
-        lowerBound =  Energies['orbitalEnergies'][lowerBoundIdx]
+#         lowerBoundIdx = int(np.floor(nElectrons/2))-1   
+        lowerBound =  Energies['orbitalEnergies'][0]
         eF = brentq(fermiObjectiveFunction, lowerBound, upperBound, xtol=1e-14)
         if verbosity>0: rprint(rank,'Fermi energy: ', eF)
         exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
