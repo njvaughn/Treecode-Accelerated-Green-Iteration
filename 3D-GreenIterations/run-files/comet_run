@@ -2,7 +2,7 @@
 #SBATCH --job-name="comet-testing"
 #SBATCH --output="dataFiles/k80_C60_correctedReference-%j.%N.out"
 #SBATCH --partition=gpu
-#SBATCH --nodes=2
+#SBATCH --nodes=4
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:4   
 #SBATCH --mem=100GB 
@@ -29,8 +29,8 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 
 COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv' 
-INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
-#INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv' 
 #INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
@@ -105,7 +105,7 @@ MAXPARNODE=2000
 
 OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/testing/k80_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
-ibrun -n 8 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+ibrun -n 16 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                         $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                         $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                         $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

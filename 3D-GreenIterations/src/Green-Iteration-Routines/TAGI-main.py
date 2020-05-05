@@ -54,6 +54,10 @@ from twoMeshCorrection import twoMeshCorrectionClosure
 #     rootDirectory = '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/'
 # else:
 #     rprint(rank,'os.uname()[1] = ', os.uname()[1])
+from pathlib import Path
+homePath = str(Path.home())
+rprint(rank,"Home path: ", homePath)
+# exit(-1)
 
 
 ## Read in command line arguments
@@ -538,20 +542,37 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     # Store Tree variables locally
     gaugeShift = Energies['gaugeShift']
     
-    
+    globalNumPoints = comm.allreduce(nPoints)
 
     greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(nPoints)+'_'+str(len(Xf))+outputFile[-4:]
     SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(nPoints)+'_'+str(len(Xf))+outputFile[-4:]
     densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(nPoints)+'_plots'
-    restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(nPoints)
+#     restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(nPoints)
+
+#     if rank==0:
+#         print("homePath = ", homePath, "type = ", type(homePath))
+#         print("np.genfromtxt(inputFile)[2] = ", np.genfromtxt(inputFile,dtype=str)[2], "type = ", type(np.genfromtxt(inputFile,dtype=str)[2]))
+#         print("globalNumPoints = ", globalNumPoints, "type = ", type(globalNumPoints))
+#         print("str(globalNumPoints) = ", str(globalNumPoints), "type = ", type(str(globalNumPoints)))
+    comm.barrier()
+    restartFilesDir =       homePath+np.genfromtxt(inputFile,dtype=str)[2] + "numPoints_" + str(globalNumPoints)
+    
+    rprint(rank,"restartFilesDir = ", restartFilesDir)
+#     exit(-1)
 #     restartFilesDir =       '/home/njvaughn/restartFiles/restartFiles_1416000_after25'
 #     restartFilesDir =       '/Users/nathanvaughn/Documents/synchronizedDataFiles/restartFiles_1416000_after25'
-    wavefunctionFile =      restartFilesDir+'/wavefunctions'
-    densityFile =           restartFilesDir+'/density'
-    inputDensityFile =      restartFilesDir+'/inputdensity'
-    outputDensityFile =     restartFilesDir+'/outputdensity'
-    vHartreeFile =          restartFilesDir+'/vHartree'
-    auxiliaryFile =         restartFilesDir+'/auxiliary'
+    wavefunctionFile =      restartFilesDir+'/wavefunctions_rank_%i_of_%i' %(rank,size)
+    densityFile =           restartFilesDir+'/density_rank_%i_of_%i' %(rank,size)
+    inputDensityFile =      restartFilesDir+'/inputdensity_rank_%i_of_%i' %(rank,size)
+    outputDensityFile =     restartFilesDir+'/outputdensity_rank_%i_of_%i' %(rank,size)
+    vHartreeFile =          restartFilesDir+'/vHartree_rank_%i_of_%i' %(rank,size)
+    auxiliaryFile =         restartFilesDir+'/auxiliary_rank_%i_of_%i' %(rank,size)
+    
+#     rprint(0,"wavefunctionFile = ", wavefunctionFile)
+#     comm.barrier()
+#     exit(-1)
+    
+    
     
     plotSliceOfDensity=False
     if plotSliceOfDensity==True:
@@ -569,42 +590,52 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     
 #     tr = tracker.SummaryTracker()   
     if restartFile!=False:
-        rprint(0, "Not ready to handle restarts in mpi version.")
-        return
-#         orbitals = np.load(wavefunctionFile+'.npy')
-#         oldOrbitals = np.copy(orbitals)
-# #         for m in range(nOrbitals): 
-# #             tree.importPhiOnLeaves(orbitals[:,m], m)
-#         RHO = np.load(densityFile+'.npy')
-#         
-#         inputDensities = np.load(inputDensityFile+'.npy')
-#         outputDensities = np.load(outputDensityFile+'.npy')
-#         
-#         V_hartreeNew = np.load(vHartreeFile+'.npy')
-#         
-#         
-#         # make and save dictionary
-#         auxiliaryRestartData = np.load(auxiliaryFile+'.npy').item()
-#         rprint(rank,'type of aux: ', type(auxiliaryRestartData))
-#         SCFcount = auxiliaryRestartData['SCFcount']
-#         Times['totalIterationCount'] = auxiliaryRestartData['totalIterationCount']
-#         Energies['orbitalEnergies'] = auxiliaryRestartData['eigenvalues'] 
-#         Energies['Eold'] = auxiliaryRestartData['Eold']
-#         
-#         
-#         
-#         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
-#         exchangeOutput = exchangeFunctional.compute(RHO)
-#         correlationOutput = correlationFunctional.compute(RHO)
-#         Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
-#         Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
-#         
-#         Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
-#         Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
-#         
-#         Energies['Vx'] = np.sum(W * RHO * Vx)
-#         Energies['Vc'] = np.sum(W * RHO * Vc)
-#          
+#         rprint(0, "Not ready to handle restarts in mpi version.")
+#         return
+        orbitals = np.load(wavefunctionFile+'.npy')
+        oldOrbitals = np.copy(orbitals)
+#         for m in range(nOrbitals): 
+#             tree.importPhiOnLeaves(orbitals[:,m], m)
+        RHO = np.load(densityFile+'.npy')
+         
+        inputDensities = np.load(inputDensityFile+'.npy')
+        outputDensities = np.load(outputDensityFile+'.npy')
+        
+        if mixingScheme == 'Anderson':
+            if verbosity>-1: rprint(rank, 'Using anderson mixing during restart data load.')
+            andersonDensity = densityMixing.computeNewDensity(inputDensities, outputDensities, mixingParameter,W)
+#             integratedDensity = np.sum( andersonDensity*W )
+            integratedDensity = global_dot( andersonDensity, W, comm )
+            if verbosity>0: rprint(rank,'Integrated anderson density: ', integratedDensity)
+    #             tree.importDensityOnLeaves(andersonDensity)
+            RHO = np.copy(andersonDensity)
+         
+        V_hartreeNew = np.load(vHartreeFile+'.npy')
+         
+         
+        auxiliaryRestartData = np.load(auxiliaryFile+'.npy',allow_pickle = True).item()
+        rprint(rank,'type of aux: ', type(auxiliaryRestartData))
+        SCFcount = auxiliaryRestartData['SCFcount']
+        Times['totalIterationCount'] = auxiliaryRestartData['totalIterationCount']
+        Energies['orbitalEnergies'] = auxiliaryRestartData['eigenvalues'] 
+        Energies['Eold'] = auxiliaryRestartData['Eold']
+        
+        initialGItolerancesIdx = auxiliaryRestartData['GItolerancesIdx'] 
+         
+         
+         
+        Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
+        exchangeOutput = exchangeFunctional.compute(RHO)
+        correlationOutput = correlationFunctional.compute(RHO)
+        Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
+        Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
+         
+        Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
+        Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
+         
+        Energies['Vx'] = np.sum(W * RHO * Vx)
+        Energies['Vc'] = np.sum(W * RHO * Vc)
+          
 #         Veff = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
         
         
@@ -612,6 +643,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     else: 
         Eold = -10
         SCFcount=0
+        initialGItolerancesIdx=0
         Times['totalIterationCount'] = 0
 
         inputDensities = np.zeros((nPoints,1))
@@ -622,12 +654,12 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 
 #     tr.print_diff()
     
-    if plotSliceOfDensity==True:
-        densitySliceSavefile = densityPlotsDir+'/densities'
-        r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
-        
-        densities = np.concatenate( (np.reshape(r, (numpts,1)), np.reshape(rho, (numpts,1))), axis=1)
-        np.save(densitySliceSavefile,densities)
+#     if plotSliceOfDensity==True:
+#         densitySliceSavefile = densityPlotsDir+'/densities'
+#         r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
+#         
+#         densities = np.concatenate( (np.reshape(r, (numpts,1)), np.reshape(rho, (numpts,1))), axis=1)
+#         np.save(densitySliceSavefile,densities)
 
     
     ## Barrier...
@@ -659,7 +691,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
                'SCFtolerance':SCFtolerance,'initialGItolerance':initialGItolerance, 'finalGItolerance':finalGItolerance, 'gradualSteps':gradualSteps, 'nElectrons':nElectrons,'referenceEnergies':referenceEnergies,'SCFiterationOutFile':SCFiterationOutFile,
                'wavefunctionFile':wavefunctionFile,'densityFile':densityFile,'outputDensityFile':outputDensityFile,'inputDensityFile':inputDensityFile,'vHartreeFile':vHartreeFile,
                'auxiliaryFile':auxiliaryFile,
-               'GItolerancesIdx':0,
+               'GItolerancesIdx':initialGItolerancesIdx,
                'singularityHandling':singularityHandling, 'approximationName':approximationName, 
                'atoms':atoms,'nearbyAtoms':nearbyAtoms,'coreRepresentation':coreRepresentation,
                'order':order,'fine_order':fine_order,
@@ -797,10 +829,10 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
      
      
               
-#         if SCFcount >= 1:
-#             rprint(0, 'Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-#             energyResidual = -1
-#             densityResidual = -1
+#     if SCFcount >= 1:
+#         rprint(0, 'Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
+#         energyResidual = -1
+#         densityResidual = -1
           
   
    
