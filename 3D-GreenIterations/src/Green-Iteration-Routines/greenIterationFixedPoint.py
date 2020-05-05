@@ -27,9 +27,9 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #     gi_args_out = {}
     def greensIteration_FixedPoint(psiIn, gi_args):
         # what other things do we need?  Energies, Times, orbitals, Veff, runtime constants (symmetricIteration, GPUpresent, subtractSingularity, treecode, outputfiles, ...)  
-        verbosity=1
+        verbosity=0
         
-#         print("entered greensIteration_FixedPoint.")
+#         rprint(rank,"entered greensIteration_FixedPoint.")
         
         ## UNPACK GIARGS
 #         print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
@@ -65,7 +65,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         Wf = gi_args['Wf']
         pointsPerCell_coarse = gi_args['pointsPerCell_coarse']
         pointsPerCell_fine = gi_args['pointsPerCell_fine']
-#         print("X, Y, Z, W: ", X[:3], Y[:3], Z[:3], W[:3])
+#         rprint(rank,"X, Y, Z, W: ", X[:3], Y[:3], Z[:3], W[:3])
         gradientFree = gi_args['gradientFree']
         SCFcount = gi_args['SCFcount']
         greenIterationsCount = gi_args['greenIterationsCount']
@@ -151,7 +151,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             Veff_local_fine=Veff_local
         
         
-#         print("length of interpolated wavefunction: ", len(interpolatedInputWavefunction))
+#         rprint(rank,"length of interpolated wavefunction: ", len(interpolatedInputWavefunction))
      
         if coreRepresentation=='AllElectron':
             f = -2*orbitals[m,:]*Veff_local
@@ -196,14 +196,14 @@ def greensIteration_FixedPoint_Closure(gi_args):
             end=time.time()
 #             if verbosity>0: rprint(rank,"Constructing f with nonlocal routines took %f seconds." %(end-start))
         else:
-            print("coreRepresentation not set to allowed value. Exiting from greenIterationFixedPoint.")
+            rprint(rank, "coreRepresentation not set to allowed value. Exiting from greenIterationFixedPoint.")
             return
         
         
-#         print("ANY NaNs??? ", np.isnan(f).any())
+#         rprint(rank,"ANY NaNs??? ", np.isnan(f).any())
         if twoMesh:
             if np.isnan(f_fine).any():
-                print("NaNs detected in f = -2*orbitals[m,:]*Veff_local.  Exiting")
+                rprint(rank,"NaNs detected in f = -2*orbitals[m,:]*Veff_local.  Exiting")
                 exit(-1)
         oldEigenvalue =  Energies['orbitalEnergies'][m] 
         k = np.sqrt(-2*Energies['orbitalEnergies'][m])
@@ -228,7 +228,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 numberOfKernelParameters=2
                 kernelParameters=np.array([k, epsilon])
                 if epsilon!=0.0:
-                    print("WARNING: SHOULD EPSILON BE NONZERO?")
+                    rprint(rank,"WARNING: SHOULD EPSILON BE NONZERO?")
                 
                 
             
@@ -262,7 +262,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             elif singularityHandling=="skipping":
                 singularity=BT.Singularity.SKIPPING
             else:
-                print("What should singularityHandling be?")
+                rprint(rank,"What should singularityHandling be?")
                 exit(-1)
             
             if approximationName=="lagrange":
@@ -270,25 +270,28 @@ def greensIteration_FixedPoint_Closure(gi_args):
             elif approximationName=="hermite":
                 approximation=BT.Approximation.HERMITE
             else:
-                print("What should approximationName be?")
+                rprint(rank,"What should approximationName be?")
                 exit(-1)
             
             computeType=BT.ComputeType.PARTICLE_CLUSTER
             
             
-            ## Optimization:  Can get away with looser treecode parameters in the early SCF iterations since high accuracy is not demanded
-            if SCFcount<2:
-                treecodeOrder=max(2,treecodeOrder-3)
-                theta = (theta+1.0)/2  # midway between input and 1.0
-            elif SCFcount<4:
-                treecodeOrder=max(2,treecodeOrder-2)
-                theta = (theta+1.0)/2  # midway between input and 1.0
-            elif SCFcount<8:
-                treecodeOrder=max(2,treecodeOrder-1)
-                theta = (3*theta+1.0)/4  # 3/4 of the way to input theta
-            else: 
-                # use the user input treecode parameters
-                pass
+#             ## Optimization:  Can get away with looser treecode parameters in the early SCF iterations since high accuracy is not demanded
+#             
+#             if SCFcount<2:
+#                 treecodeOrder=max(2,treecodeOrder-3)
+#                 theta = (theta+1.0)/2  # midway between input and 1.0
+#             elif SCFcount<4:
+#                 treecodeOrder=max(2,treecodeOrder-2)
+#                 theta = (theta+1.0)/2  # midway between input and 1.0
+#             elif SCFcount<8:
+#                 treecodeOrder=max(2,treecodeOrder-1)
+#                 theta = (3*theta+1.0)/4  # 3/4 of the way to input theta
+#             else: 
+#                 # use the user input treecode parameters
+#                 pass
+            
+            
                
             comm.barrier()
             startTime = time.time()
@@ -316,15 +319,15 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #             exit(-1)
 
         else:
-            print('Exiting because energy too close to 0')
+            rprint(rank, 'Exiting because energy too close to 0. m=%i, orbitalEnergy=%f' %(m,Energies['orbitalEnergies'][m]) )
             exit(-1)
 #             gpuHelmholtzConvolution[blocksPerGrid, threadsPerBlock](np.array([X,Y,Z,f,W]),np.array([X,Y,Z,f,W]),psiNew,k)
         
         
 #         """ Apply MASK """
-#         print("=================APPLYING MASK===================")
-#         print("=================APPLYING MASK===================")
-#         print("=================APPLYING MASK===================")
+#         rprint(rank,"=================APPLYING MASK===================")
+#         rprint(rank,"=================APPLYING MASK===================")
+#         rprint(rank,"=================APPLYING MASK===================")
 #         domainSize=np.max(X)
 #         psiNew = mask(psiNew,X,Y,Z,domainSize)
 
@@ -375,7 +378,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                     # Compute the delta E, here using the difference between the new psi and old psi
                     deltaE -= global_dot( V_nl_psi_coarse*(orbitals[m,:]-psiNew), W, comm ) 
                 else: 
-                    print("Invalid coreRepresentation.")
+                    rprint(rank,"Invalid coreRepresentation.")
                     exit(-1)
                 normSqOfPsiNew = global_dot( psiNew**2, W, comm)
                 deltaE /= (normSqOfPsiNew)  # divide by norm squared, according to Harrison-Fann- et al
@@ -408,7 +411,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
         
 #                     orthWavefunction = mgs(orbitals,W,m, comm)
                     end=time.time()
-                    rprint(rank,"New orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
+                    if verbosity>0: rprint(rank,"New orthogonalizing wavefunctiong %i took %f seconds " %(m, end-start))
                     orbitals[m,:] = np.copy(orthWavefunction)
 
         
@@ -431,7 +434,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 return
             
         else:  # Explicitly choosing to not update Eigenvalue.  Still orthogonalize
-            print("Not updating eigenvalue because updateEigenvalue!=True")
+            rprint(rank,"Not updating eigenvalue because updateEigenvalue!=True")
             exit(-1)
 #             orbitals[m,:] = np.copy(psiNew)
 #             n,M = np.shape(orbitals) 

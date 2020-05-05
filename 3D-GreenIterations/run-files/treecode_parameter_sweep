@@ -1,18 +1,18 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/treecode_params-%j.%N.out"
-#SBATCH --partition=gpu
+#SBATCH --output="dataFiles/order4_hartree_after_density_update_C60_test-%j.%N.out"
+#SBATCH --partition=gpu-shared
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --gres=gpu:2
-#SBATCH --mem=80GB 
-#SBATCH -t 00:20:00
+#SBATCH --gres=gpu:p100:1  
+#SBATCH --mem=20GB 
+#SBATCH -t 24:00:00
 #SBATCH --no-requeue
-#SBATCH -A krasny1
+#SBATCH -A mia320
+#SBATCH --constraint=exclusive
 
-## For comet
-##SBATCH --constraint=exclusive
-#export LD_LIBRARY_PATH=/home/njvaughn/mvapich2_ib_Zoltan_Shared/lib:$LD_LIBRARY_PATH
+
+export LD_LIBRARY_PATH=/home/njvaughn/mvapich2_ib_Zoltan_Shared/lib:$LD_LIBRARY_PATH
  
 
 cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
@@ -60,24 +60,24 @@ GRADIENTFREE='True'
 MIXINGPARAMETER=0.5 
 MIXINGHISTORY=10  
   
-
+ 
 INITIAL_GI_TOLERANCE=3e-2 
-FINAL_GI_TOLERANCE=1e-5 
-GRADUALSTEPS=8
-SCF_TOLERANCE=3e-5
+FINAL_GI_TOLERANCE=1e-6 
+GRADUALSTEPS=12
+SCF_TOLERANCE=3e-6
 
 
 
 APPROXIMATIONNAME=hermite
-SINGULARITYHANDLING=subtraction
+SINGULARITYHANDLING=subtraction 
 
 REGULARIZE='False'
 EPSILON=0.0
    
 GAUSSIANALPHA=2.0 
 
-
-CELLORDER=4
+    
+CELLORDER=4 
 FINEORDER=4
 
 
@@ -96,21 +96,21 @@ TWOMESHSTART=999
 GIFORM="Sequential" 
 #GIFORM="Greedy" 
 MESHPARAM4=-2
-
+ 
 APPROXIMATIONNAME=hermite 
 BATCHSIZE=2000
 MAXPARNODE=2000
 
    
-for THETA in 0.8
+for THETA in 0.6 0.9
 do                                                          
-    for TREECODEORDER in 4
+    for TREECODEORDER in 4 6
     do        
 
         OUTPUTFILE="/home/njvaughn/ONCV-testing/Si2/treecodeParams/lagrange_not_tighteningTCparams__${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
         #ibrun -n 4 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
-        mpirun -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        ibrun -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

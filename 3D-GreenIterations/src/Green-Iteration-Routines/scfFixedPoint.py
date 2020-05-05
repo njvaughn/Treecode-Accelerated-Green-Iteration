@@ -4,6 +4,10 @@ import csv
 import time
 import resource
 
+import sys
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
+sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
 from scipy.optimize import root as scipyRoot
 from scipy.optimize.nonlin import BroydenFirst, KrylovJacobian
 from scipy.optimize.nonlin import InverseJacobian
@@ -26,7 +30,15 @@ import moveData_wrapper as MOVEDATA
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 
 
-
+def print_eigs_and_occupations(eigs,occupations,errors):
+    rprint(rank," ")
+    rprint(rank," "+'-'*60)
+    rprint(rank,"| Index\t Eigenvalue \t\t Occupation \t  Error      |")
+    rprint(rank,'|'+'-'*60+'|')
+    for i in range(len(eigs)):
+        rprint(rank,"|%4i:\t %1.10e \t %1.4e \t % 1.4e |" %(i,eigs[i],occupations[i],errors[i]))
+    rprint(rank," "+'-'*60+"\n")
+    
  
 Temperature = 500
 KB = 1/315774.6
@@ -62,13 +74,13 @@ def clenshawCurtisNormClosureWithoutEigenvalue(W):
         return norm
     return clenshawCurtisNormWithoutEigenvalue
     
-def sortByEigenvalue(orbitals,orbitalEnergies):
+def sortByEigenvalue(orbitals,orbitalEnergies,verbosity=0):
     newOrder = np.argsort(orbitalEnergies)
     oldEnergies = np.copy(orbitalEnergies)
     for m in range(len(orbitalEnergies)):
         orbitalEnergies[m] = oldEnergies[newOrder[m]]
-    rprint(rank,'Sorted eigenvalues: ', orbitalEnergies)
-    rprint(rank,'New order: ', newOrder)
+    if verbosity>0: rprint(rank,'Sorted eigenvalues: ', orbitalEnergies)
+    if verbosity>0: rprint(rank,'New order: ', newOrder)
     
     newOrbitals = np.zeros_like(orbitals)
     for m in range(len(orbitalEnergies)):
@@ -80,7 +92,7 @@ def scfFixedPointClosure(scf_args):
     
     def scfFixedPoint(RHO,scf_args, abortAfterInitialHartree=False):
         
-        verbosity=1
+        verbosity=0
         
         ## Unpack scf_args
         inputDensities = scf_args['inputDensities']
@@ -154,13 +166,16 @@ def scfFixedPointClosure(scf_args):
         SCFcount += 1
         rprint(rank,'\n')
         rprint(rank,'SCF Count ', SCFcount)
-        rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies'])
+        if verbosity>0: rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies'])
 #         TwoMeshStart=1
 
         if ( (len(X)!=len(Xf)) and (SCFcount>TwoMeshStart)  ):
             twoMesh=True
         else:
             twoMesh=False
+#             
+        twoMesh=True
+        rprint(rank,"Setting twoMesh=True in SCF iteration so that the Hartree energy is computed more accurately.  Might not be necessary, but want to check results for C60 before convergence.")
             
             
         SCFindex = SCFcount
@@ -177,7 +192,7 @@ def scfFixedPointClosure(scf_args):
 #             lowerBoundIdx = int(np.floor(nElectrons/2))-1   
             lowerBound =  Energies['orbitalEnergies'][0]
             eF = brentq(fermiObjectiveFunction, lowerBound, upperBound, xtol=1e-14)
-            rprint(rank,'Fermi energy: %f'%eF)
+            if verbosity>0: rprint(rank,'Fermi energy: %f'%eF)
             
             exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
             occupations = 2*1/(1+np.exp( exponentialArg ) )
@@ -284,16 +299,16 @@ def scfFixedPointClosure(scf_args):
             densityInput = np.transpose( np.array([X,Y,Z,RHO,W]) )
             V_hartreeNew = cpuHartreeGaussianSingularitySubract(densityInput,densityInput,V_hartreeNew,gaussianAlpha*gaussianAlpha)
             Times['timePerConvolution'] = time.time()-start
-            rprint(rank,'Convolution time: ', time.time()-start)
+            if verbosity>0: rprint(rank,'Convolution time: ', time.time()-start)
         else:    
             if singularityHandling=='skipping':
                 if regularize==False:
-                    rprint(rank,"Using singularity skipping in Hartree solve.")
+                    if verbosity>0: rprint(rank,"Using singularity skipping in Hartree solve.")
                     kernelName = "coulomb"
                     numberOfKernelParameters=1
                     kernelParameters=np.array([0.0])
                 elif regularize==True:
-                    rprint(rank,"Using regularize coulomb kernel with epsilon = ", epsilon)
+                    if verbosity>0: rprint(rank,"Using regularize coulomb kernel with epsilon = ", epsilon)
                     kernelName = "regularized-coulomb"
                     numberOfKernelParameters=1
                     kernelParameters=np.array([epsilon])
@@ -303,12 +318,12 @@ def scfFixedPointClosure(scf_args):
             elif singularityHandling=='subtraction':
                 
                 if regularize==False:                    
-                    rprint(rank,"Using singularity subtraction in Hartree solve.")
+                    if verbosity>0: rprint(rank,"Using singularity subtraction in Hartree solve.")
                     kernelName = "coulomb"
                     numberOfKernelParameters=1
                     kernelParameters=np.array([gaussianAlpha])
                 elif regularize==True:
-                    rprint(rank,"Using SS and regularization for Hartree solve.")
+                    if verbosity>0: rprint(rank,"Using SS and regularization for Hartree solve.")
                     kernelName="regularized-coulomb"
                     numberOfKernelParameters=2
                     kernelParameters=np.array([gaussianAlpha,epsilon])
@@ -341,7 +356,7 @@ def scfFixedPointClosure(scf_args):
 #             singularityHandling="skipping"
 #             rprint(rank, "Forcing the Hartree solve to use singularity skipping.")
 
-            rprint(rank,"Performing Hartree solve on %i mesh points" %numSources)
+            if verbosity>0: rprint(rank,"Performing Hartree solve on %i mesh points" %numSources)
 #             rprint(rank,"Coarse order ", order)
 #             rprint(rank,"Fine order   ", fine_order)
 #             approximation = BT.Approximation.LAGRANGE
@@ -369,36 +384,41 @@ def scfFixedPointClosure(scf_args):
                 
     
             comm.barrier()
+#             rprint(rank,"Using tighter treecode parameters for Hartree solve.")
             V_hartreeNew = BT.callTreedriver(  
                                             nPoints, numSources, 
                                             np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                             np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
                                             kernel, numberOfKernelParameters, kernelParameters, 
                                             singularity, approximation, computeType,
-                                            treecodeOrder, theta, maxParNode, batchSize,
+                                            treecodeOrder+0, theta-0.0, maxParNode, batchSize,
                                             GPUpresent, treecode_verbosity
                                             )
             
 
-            rprint(rank,'Convolution time: ', MPI.Wtime()-start)
+            if verbosity>0: rprint(rank,'Convolution time: ', MPI.Wtime()-start)
         
         
-        
+         
         """ 
-        Compute the new orbital and total energies 
+        Compute the new orbital and total energies  
         """
         
         ## Energy update after computing Vhartree
         
-        comm.barrier()    
+        comm.barrier()  
+        Energies["Repulsion"] = global_dot(RHO, Vext_local*W, comm)  
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         
+        rprint(rank,"Initial Hartree, nuclear, and repulsion energies: % .6f, % .6f, % .6f Ha" %(Energies["Ehartree"], Energies["Enuclear"], Energies["Repulsion"]))
         if abortAfterInitialHartree==True:
             Energies["Repulsion"] = global_dot(RHO, Vext_local*W, comm)
         
             Energies['totalElectrostatic'] = Energies["Ehartree"] + Energies["Enuclear"] + Energies["Repulsion"]
+            rprint(rank,"Energies['Repulsion'] after initial convolution: ", Energies['Repulsion'])
             rprint(rank,"Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
 #             rprint(rank,"Electrostatics error after initial convolution: ", Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"])
+            exit(-1)
             return np.zeros(nPoints)
         
         
@@ -433,12 +453,12 @@ def scfFixedPointClosure(scf_args):
         ## Sort by eigenvalue
         
         if GPUpresent: 
-            rprint(rank,"About to call MOVEDATA before sorting by eigenvalue.")
+            if verbosity>0: rprint(rank,"About to call MOVEDATA before sorting by eigenvalue.")
             MOVEDATA.callRemoveVectorFromDevice(orbitals)
         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
         if GPUpresent: 
             MOVEDATA.callCopyVectorToDevice(orbitals) 
-            rprint(rank,"Completed calls to MOVEDATA after sorting by eigenvalue.")
+            if verbosity>0: rprint(rank,"Completed calls to MOVEDATA after sorting by eigenvalue.")
         
         ## Solve the eigenvalue problem
         if SCFcount>1:
@@ -447,7 +467,7 @@ def scfFixedPointClosure(scf_args):
 #             lowerBoundIdx = int(np.floor(nElectrons/2))-1   
             lowerBound =  Energies['orbitalEnergies'][0]
             eF = brentq(fermiObjectiveFunction, lowerBound, upperBound, xtol=1e-14)
-            rprint(rank,'Fermi energy: %f'%eF)
+            if verbosity>0: rprint(rank,'Fermi energy: %f'%eF)
             exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
             previousOccupations = 2*1/(1+np.exp( exponentialArg ) )
         elif SCFcount==1: 
@@ -455,7 +475,8 @@ def scfFixedPointClosure(scf_args):
         for m in range(nOrbitals): 
             if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
             if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals) 
-            if previousOccupations[m] > 1e-20:
+#             if previousOccupations[m] > 1e-20:
+            if (  (previousOccupations[m] > 1e-20) or (SCFcount<20) ):  # 
                 if verbosity>0: rprint(rank,'Working on orbital %i' %m)
                 if verbosity>0: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                 
@@ -514,11 +535,11 @@ def scfFixedPointClosure(scf_args):
                 
                 comm.barrier()
                 if SCFcount==1:  
-                    AndersonActivationTolerance=1e-1
+                    AndersonActivationTolerance=3e-2
                 elif SCFcount == TwoMeshStart:
-                    AndersonActivationTolerance=1e-1
+                    AndersonActivationTolerance=3e-2
                 else:
-                    AndersonActivationTolerance=3e3
+                    AndersonActivationTolerance=3e-2
                 while ( (resNorm> max(AndersonActivationTolerance,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 rprint(rank, 'MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
@@ -621,6 +642,12 @@ def scfFixedPointClosure(scf_args):
                     if greenIterationsCount>50:
                         rprint(rank,"Terminating fixed point iteration at 50 iterations.")
                         Done=True
+                        
+#                     if ( (greenIterationsCount>20) and (Energies['orbitalEnergies'][m] > Energies['gaugeShift']) ):
+#                         rprint(rank,"Terminating fixed point iteration at 20 iterations because energy is still positive.")
+#                         Done=True
+                        
+                    
 #                     if ( (eigenvalueDiff < intraScfTolerance/10) and (gi_args['greenIterationsCount'] > 20) and ( ( SCFcount <2 ) or previousOccupations[m]<1e-4 ) ):  # must have tried to converge wavefunction. If after 20 iteration, allow eigenvalue tolerance to be enough. 
 #                         rprint(rank, 'Ending iteration because eigenvalue is converged.')
 #                         Done=True
@@ -652,7 +679,7 @@ def scfFixedPointClosure(scf_args):
                     
                     if Energies['orbitalEnergies'][m]>0.0:
                         # Anderson mixing led to a positive eigenvalue.  This better be an unoccupied state.  Fixing it to the gauge shift value.
-                        rprint(rank,"Anderson mixing led to a positive eigenvalue.  This better be an unoccupied state.  Fixing it to the gauge shift value.")
+                        rprint(rank,"Anderson mixing led to a positive eigenvalue for %i state.  This better be an unoccupied state.  Fixing it to the gauge shift value." %m)
                         Energies['orbitalEnergies'][m] = Energies['gaugeShift']
                       
                       
@@ -673,9 +700,10 @@ def scfFixedPointClosure(scf_args):
             
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
-        upperBound=1
+        upperBound=1    
         lowerBoundIdx = int(np.floor(nElectrons/2))-1   
-        lowerBound =  Energies['orbitalEnergies'][lowerBoundIdx]
+#         lowerBound =  Energies['orbitalEnergies'][lowerBoundIdx]
+        lowerBound =  Energies['orbitalEnergies'][0]
         eF = brentq(fermiObjectiveFunction, lowerBound, upperBound, xtol=1e-14)
         if verbosity>0: rprint(rank,'Fermi energy: ', eF)
         exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
@@ -729,7 +757,76 @@ def scfFixedPointClosure(scf_args):
         integratedDensity = global_dot( newDensity, W, comm )
         densityResidual = np.sqrt( global_dot( (newDensity-oldDensity)**2,W,comm ) )
         if verbosity>0: rprint(rank,'Integrated density: ', integratedDensity)
-        rprint(rank,'Density Residual ', densityResidual)
+        if verbosity>0: rprint(rank,'Density Residual ', densityResidual)
+        
+        
+#         ## Compute new Hartree potential and energy
+# #         if twoMesh:  # idea: only turn on the two mesh if beyond 4 SCF iterations
+# #             numSources = len(Xf)
+# #             sourceX=Xf
+# #             sourceY=Yf
+# #             sourceZ=Zf
+# #             sourceRHO=RHOf
+# #             sourceW=Wf
+# #         else: 
+#         numSources = len(X)
+#         sourceX=X
+#         sourceY=Y
+#         sourceZ=Z
+#         sourceRHO=newDensity
+#         sourceW=W
+# 
+#         if verbosity>0: rprint(rank,"Performing Hartree solve on %i mesh points" %numSources)
+# #             rprint(rank,"Coarse order ", order)
+# #             rprint(rank,"Fine order   ", fine_order)
+# #             approximation = BT.Approximation.LAGRANGE
+# #             singularity   = BT.Singularity.SUBTRACTION
+# #             computeType   = BT.ComputeType.PARTICLE_CLUSTER
+# #             
+#         kernel = BT.Kernel.COULOMB
+#         if singularityHandling=="subtraction":
+#             singularity=BT.Singularity.SUBTRACTION
+# #         elif singularityHandling=="skipping":
+# #             singularity=BT.Singularity.SKIPPING
+#         else:
+#             rprint(rank, "What should singularityHandling be?")
+#             exit(-1)
+#         
+#         if approximationName=="lagrange":
+#             approximation=BT.Approximation.LAGRANGE
+#         elif approximationName=="hermite":
+#             approximation=BT.Approximation.HERMITE
+#         else:
+#             rprint(rank, "What should approximationName be?")
+#             exit(-1)
+#         
+#         computeType=BT.ComputeType.PARTICLE_CLUSTER
+#             
+# 
+#         comm.barrier()
+#         V_hartreeNew = BT.callTreedriver(  
+#                                         nPoints, numSources, 
+#                                         np.copy(X), np.copy(Y), np.copy(Z), np.copy(newDensity), 
+#                                         np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(newDensity), np.copy(sourceW),
+#                                         kernel, numberOfKernelParameters, kernelParameters, 
+#                                         singularity, approximation, computeType,
+#                                         treecodeOrder, theta, maxParNode, batchSize,
+#                                         GPUpresent, treecode_verbosity
+#                                         )
+#         
+# 
+#         if verbosity>0: rprint(rank,'Hartree Convolution time: ', MPI.Wtime()-start)
+#         
+#         
+#         
+#         """ 
+#         Compute the new orbital and total energies 
+#         """
+#         
+#         ## Energy update after computing Vhartree
+#         
+#         comm.barrier()    
+#         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         
         
         Energies["Repulsion"] = global_dot(newDensity, Vext_local*W, comm)
@@ -752,20 +849,20 @@ def scfFixedPointClosure(scf_args):
         Print results from current iteration
         """
     
-        rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies']) 
+        print_eigs_and_occupations(Energies['orbitalEnergies']-Energies['gaugeShift'], occupations, Energies['orbitalEnergies']-referenceEigenvalues[:nOrbitals]-Energies['gaugeShift'])
     
-        rprint(rank,'Updated V_x:                           %.10f Hartree' %Energies['Vx'])
-        rprint(rank,'Updated V_c:                           %.10f Hartree' %Energies['Vc'])
-        
-        rprint(rank,'Updated Band Energy:                   %.10f H, %.10e H' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
-    #         rprint(rank, 'Updated Kinetic Energy:                 %.10f H, %.10e H' %(Energies['kinetic'], Energies['kinetic']-Ekinetic) )
-        rprint(rank,'Updated E_Hartree:                      %.10f H, %.10e H' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
-        rprint(rank,'Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
-        rprint(rank,'Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
-        rprint(rank,'Updated totalElectrostatic:            %.10f H, %.10e H' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"]))
-        rprint(rank,'Total Energy:                          %.10f H, %.10e H' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
-        rprint(rank,'Energy Residual:                        %.3e' %energyResidual)
-        rprint(rank,'Density Residual:                       %.3e\n\n'%densityResidual)
+        rprint(rank,'Updated V_x:                               % .10f Ha' %Energies['Vx'])
+        rprint(rank,'Updated V_c:                               % .10f Ha' %Energies['Vc'])
+        rprint(rank,'Updated Band Energy:                       % .10f Ha, %.10e Ha' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
+    #         rprint(rank, 'Updated Kinetic Energy:                 %.10f H, %.10e Ha' %(Energies['kinetic'], Energies['kinetic']-Ekinetic) )
+        rprint(rank,'Updated E_Hartree:                         % .10f H, %.10e Ha' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
+        rprint(rank,'Updated E_x:                               % .10f H, %.10e Ha' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
+        rprint(rank,'Updated E_c:                               % .10f H, %.10e Ha' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
+        rprint(rank,'Updated totalElectrostatic:                % .10f H, %.10e Ha' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"]))
+        rprint(rank,"Hartree, Nuclear, Repulsion:               % .6f, % .6f, % .6f Ha" %(Energies["Ehartree"], Energies["Enuclear"], Energies["Repulsion"]))
+        rprint(rank,'Total Energy:                              % .10f H, %.10e Ha' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
+        rprint(rank,'Energy Residual:                            %.3e' %energyResidual)
+        rprint(rank,'Density Residual:                           %.3e\n\n'%densityResidual)
     
         scf_args['energyResidual']=energyResidual
         scf_args['densityResidual']=densityResidual
@@ -780,10 +877,10 @@ def scfFixedPointClosure(scf_args):
     
         if printEachIteration==True:
             header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
-                      'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy', 'GItolerance']
+                      'exchangeEnergy', 'correlationEnergy', 'totalElectrostatic', 'totalEnergy', 'GItolerance']
          
             myData = [SCFcount, densityResidual, Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], 
-                      Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal'], scf_args['currentGItolerance']]
+                      Energies['Ex'], Energies['Ec'], Energies['totalElectrostatic'], Energies['Etotal'], scf_args['currentGItolerance']]
 
             
             if rank==0:
@@ -858,5 +955,14 @@ def scfFixedPointClosure(scf_args):
         return newDensity-oldDensity
     return scfFixedPoint, scf_args
 
+
+if __name__=="__main__":
+    
+    
+
+
+    eigs = -1*np.random.rand(10)
+    occs = np.random.rand(10)
+    print_eigs_and_occupations(eigs,occs)
 
 

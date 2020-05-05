@@ -394,8 +394,8 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
                 cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, atoms,nOrbitals,nElectrons,referenceEigenvalues = refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
                                                                                         divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree,divideBasedOnNuclei=divideBasedOnNuclei)
             elif saveTree==True:
-                cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree = refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
-                                                                                        divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree,divideBasedOnNuclei=divideBasedOnNuclei)
+                cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, atoms,nOrbitals,nElectrons,referenceEigenvalues, tree = refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,cells[i],inputFile,outputFile,srcdir,order,fine_order,gaugeShift,divideCriterion=divideCriterion,
+                                                                                        divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, saveTree=saveTree,divideBasedOnNuclei=divideBasedOnNuclei,minDepth=3)
             
             refinedCellsX=np.append(refinedCellsX,cellsX)
             refinedCellsY=np.append(refinedCellsY,cellsY)
@@ -553,11 +553,11 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     comm.barrier()
     rprint(0,"rank %i preparing to exit." %rank)
     comm.barrier()
-    return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
-#     if saveTree==False:
-#         return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
-#     elif saveTree==True:
-#         return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
+#     return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+    if saveTree==False:
+        return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+    elif saveTree==True:
+        return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
 
 def func(X,Y,Z,pow):
     
@@ -587,7 +587,7 @@ def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFi
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,atoms,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile, fine_order=fine_order)#, iterationOutFile=outputFile)
 
-    tree.finalDivideBasedOnNuclei(coordinateFile)
+#     tree.finalDivideBasedOnNuclei(coordinateFile)
 #     rprint(0, "Not dividing based on Nuclei.")
     tree.buildTree( initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
@@ -698,7 +698,7 @@ def refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,coordina
         return cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, atoms,nOrbitals,nElectrons,referenceEigenvalues
 #         return X, Y, Z, W, Xf, Yf, Zf, Wf, pointsPerCell_coarse, pointsPerCell_fine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues
     elif saveTree==True:
-        return cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, atoms,nOrbitals,nElectrons,referenceEigenvalues
+        return cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, atoms,nOrbitals,nElectrons,referenceEigenvalues, tree
 #         return X, Y, Z, W, Xf, Yf, Zf, Wf, pointsPerCell_coarse, pointsPerCell_fine, atoms,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
     else:
         rprint(0, "What should saveTree be set to?")

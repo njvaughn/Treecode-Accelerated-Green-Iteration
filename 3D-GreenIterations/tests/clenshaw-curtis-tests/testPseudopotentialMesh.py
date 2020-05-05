@@ -100,12 +100,17 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
 #     rprint(rank,"Max side length: ",maxSideLength)
 #     rprint(rank,"Domain length after adjustment: ", domainSize)
 #     rprint(rank," Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
-    
     X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues,tree = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
                                                                                                      inputFile,outputFile,srcdir,order,order,gaugeShift,
                                                                                                      MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4,saveTree=True)
    
-
+   
+#     X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
+#                                                                                                      inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
+#                                                                                                      divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
+    np.savetxt(outputFile+'-X.csv', X, delimiter=',')
+    np.savetxt(outputFile+'-Y.csv', Y, delimiter=',')
+    np.savetxt(outputFile+'-Z.csv', Z, delimiter=',')
     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_connected()
     
 #     print("Saving mesh to /home/njvaughn/PSPmesh/")
@@ -197,6 +202,7 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
 # #     tree.orthonormalizeOrbitals()
 # #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
 
+
     print('Meshes Exported.')
     
 
@@ -262,37 +268,41 @@ if __name__ == "__main__":
     
 #     inputFile=srcdir+'molecularConfigurations/SiliconClusterAuxiliaryPSP.csv'
 
-    inputFile=srcdir+'molecularConfigurations/siliconAuxiliaryPSP.csv'
-    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/silicon-PSP"
+#     inputFile=srcdir+'molecularConfigurations/siliconAuxiliaryPSP.csv'
+#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/silicon-PSP"
+    
 #     outputFile="/home/njvaughn/PSPmesh/Si2"
 
 #     inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
 #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
 #     outputFile="/home/njvaughn/PSPmesh/C20"
-    
-    
-    coreRepresentation="Pseudopotential"
-    MESHTYPE='coarsenedUniformTwoLevel'
 
-    order=3
+    inputFile=srcdir+'molecularConfigurations/C60AuxiliaryPSP.csv'
+    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C60-AE"
+    
+    
+#     coreRepresentation="Pseudopotential"
+#     MESHTYPE='coarsenedUniformTwoLevel'
+# 
+#     order=3
     gaugeShift=-0.5
+     
+    domainSize=32
+    MAXSIDELENGTH=64
+#     MESHPARAM1=0.5 # near field spacing 
+#     MESHPARAM2=8.0 # far field spacing
+#     MESHPARAM3=2.0 # ball radius
+#     MESHPARAM4=0 # additional inner refinement 
     
-    domainSize=16
-    MAXSIDELENGTH=32
-    MESHPARAM1=1.0 # near field spacing 
-    MESHPARAM2=8.0 # far field spacing
-    MESHPARAM3=2.0 # ball radius
-    MESHPARAM4=-3 # additional inner refinement 
     
     
-    
-#     coreRepresentation="AllElectron"
-#     MESHTYPE='ParentChildrenIntegral'
-#     order=4
-#     MESHPARAM1=1e-6
-#     MESHPARAM2=1e10
-#     MESHPARAM3=1e10
-#     MESHPARAM4=1e10
+    coreRepresentation="AllElectron"
+    MESHTYPE='ParentChildrenIntegral'
+    order=4
+    MESHPARAM1=1e-5
+    MESHPARAM2=1e10
+    MESHPARAM3=1e10
+    MESHPARAM4=1e10
 #     
 # #     inputFile=srcdir+'molecularConfigurations/berylliumAuxiliary.csv'
 #     inputFile=srcdir+'molecularConfigurations/siliconAuxiliary.csv'

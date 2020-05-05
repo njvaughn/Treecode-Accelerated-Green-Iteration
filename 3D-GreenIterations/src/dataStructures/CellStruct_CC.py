@@ -9,6 +9,12 @@ from scipy.special import sph_harm
 import itertools
 import bisect
 
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size() 
+
+from mpiUtilities import rprint
 from meshUtilities import meshDensity, weights3DFirstKind, unscaledWeightsFirstKind, weights3DSecondKind,unscaledWeightsSecondKind, \
   ChebGradient3D, ChebyshevPointsFirstKind,ChebyshevPointsSecondKind,computeDerivativeMatrix,\
     computeLaplacianMatrix, ChebLaplacian3D, sumChebyshevCoefficicentsGreaterThanOrderQ, sumChebyshevCoefficicentsEachGreaterThanOrderQ, sumChebyshevCoefficicentsAnyGreaterThanOrderQ,\
@@ -166,7 +172,7 @@ class Cell(object):
             rprint(rank, 'Dz = ', self.zmax-self.zmin)
             rprint(rank, 'zmin = ', self.zmin)
             rprint(rank, 'zmax = ', self.zmax)
-            rprint(rank, )
+            rprint(rank, " ")
             
         
         if abs(np.sum(self.w) - self.volume) / self.volume > 1e-10:
@@ -1520,7 +1526,7 @@ class Cell(object):
         
         
 #         rprint(rank, 'Density Coefficient Sum = ', coefficientSum)
-#         rprint(rank, )
+#         rprint(rank, " ")
         if densityCoefficientSum > divideParameter:
             self.divideFlag=True
             
@@ -1770,7 +1776,7 @@ class Cell(object):
 #         rprint(rank, 'Cell ID: ', self.uniqueID)
 #         rprint(rank, 'Density Coefficient Sum = ', densityCoefficientSum)
 #         rprint(rank, 'Wavefunction Coefficient Sum = ', wavefunctionCoefficientSum)
-#         rprint(rank, )
+#         rprint(rank, " ")
 #         if wavefunctionCoefficientSum > densityCoefficientSum:
 #             rprint(rank, 'wavefunctino sum greater than density sum.')
         if (densityCoefficientSum+wavefunctionCoefficientSum) > divideParameter:
@@ -2037,19 +2043,19 @@ class Cell(object):
                     sumChildSqrtDensityIntegral += childSqrtDensityIntegral
                     sumChildSqrtDensityVextVextIntegral += childSqrtDensityVextIntegral
         
-#         rprint(rank, )
+#         rprint(rank, " ")
 #         rprint(rank, 'Cell:                  ', self.uniqueID)
 #         rprint(rank, 'Parent Integral:       ', parentIntegral)
 #         rprint(rank, 'Children Integral:     ', sumChildrenIntegrals)
-#         rprint(rank, )
+#         rprint(rank, " ")
         
         if np.abs(parentSqrtDensityVextIntegral-sumChildSqrtDensityVextVextIntegral) > divideParameter1:
             self.childrenRefineCause=3
-#             rprint(rank, )
+#             rprint(rank, " ")
 #             rprint(rank, 'Cell:                                      ', self.uniqueID)
             rprint(rank, 'Parent sqrt(Density)Vext Integral:         ', parentSqrtDensityVextIntegral)
             rprint(rank, 'Children sqrt(Density)Vext Integral:       ', sumChildSqrtDensityVextVextIntegral)
-            rprint(rank, )
+            rprint(rank, " ")
             self.divideFlag=True
         
         
@@ -2057,20 +2063,20 @@ class Cell(object):
         
 #         elif np.abs(parentSqrtDensityIntegral-sumChildSqrtDensityIntegral) > divideParameter2:
 #             self.childrenRefineCause=2
-#             rprint(rank, )
+#             rprint(rank, " ")
 #             rprint(rank, 'Cell:                                      ', self.uniqueID)
 #             rprint(rank, 'Parent sqrt(Density) Integral:             ', parentSqrtDensityIntegral)
 #             rprint(rank, 'Children sqrt(Density) Integral:           ', sumChildSqrtDensityIntegral)
-#             rprint(rank, )
+#             rprint(rank, " ")
 #             self.divideFlag=True
 #             
 #         elif np.abs(parentDensityIntegral-sumChildDensityIntegral) > divideParameter1:
 #             self.childrenRefineCause=1
-#             rprint(rank, )
+#             rprint(rank, " ")
 #             rprint(rank, 'Cell:                                      ', self.uniqueID)
 #             rprint(rank, 'Parent Density Integral:                   ', parentDensityIntegral)
 #             rprint(rank, 'Children Density Integral:                 ', sumChildDensityIntegral)
-#             rprint(rank, )
+#             rprint(rank, " ")
 #             self.divideFlag=True
             
             
@@ -2117,11 +2123,11 @@ class Cell(object):
             
             if np.abs(parentIntegral-sumChildrenIntegrals) > divideParameter1:
                 self.childrenRefineCause=3
-    #             rprint(rank, )
+    #             rprint(rank, " ")
     #             rprint(rank, 'Cell:                                      ', self.uniqueID)
                 rprint(rank, 'Parent Integral:         ', parentIntegral)
                 rprint(rank, 'Children Integral:       ', sumChildrenIntegrals)
-                rprint(rank, )
+                rprint(rank, " ")
                 self.divideFlag=True
             
             
@@ -2165,11 +2171,11 @@ class Cell(object):
         
         if np.abs(parentIntegral-sumChildrenIntegrals) > divideParameter1:
             self.childrenRefineCause=3
-#             rprint(rank, )
+#             rprint(rank, " ")
 #             rprint(rank, 'Cell:                                      ', self.uniqueID)
             rprint(rank, 'Parent Integral:         ', parentIntegral)
             rprint(rank, 'Children Integral:       ', sumChildrenIntegrals)
-            rprint(rank, )
+            rprint(rank, " ")
             self.divideFlag=True
         
         
@@ -2236,7 +2242,7 @@ class Cell(object):
             rprint(rank, "Cell center: ", xdiv,ydiv,zdiv)
             rprint(rank, "Cell side length: ",cellSideLength)
             rprint(rank, "Cell dividing: ", self.divideFlag)
-            rprint(rank, )
+            rprint(rank, " ")
           
           
           
@@ -2325,7 +2331,7 @@ class Cell(object):
             rprint(rank, "Cell center: ", xdiv,ydiv,zdiv)
             rprint(rank, "Cell side length: ",cellSideLength)
             rprint(rank, "Cell dividing: ", self.divideFlag)
-            rprint(rank, )
+            rprint(rank, " ")
             
             
     def refineCoarseningUniform_TwoLevel(self, h, H, r, level):

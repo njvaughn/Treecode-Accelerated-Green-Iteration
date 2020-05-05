@@ -24,6 +24,7 @@ import BaryTreeInterface as BT
 # from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 import moveData_wrapper as MOVEDATA
+from scfFixedPoint import print_eigs_and_occupations, sortByEigenvalue
 
 
 
@@ -33,7 +34,7 @@ KB = 1/315774.6
 Sigma = Temperature*KB
 def fermiObjectiveFunctionClosure(Energies,nElectrons):
     def fermiObjectiveFunction(fermiEnergy):
-                exponentialArg = (Energies['orbitalEnergies']-fermiEnergy)/Sigma
+                exponentialArg = (Energies['orbitalEnergies_corrected']-fermiEnergy)/Sigma
                 temp = 1/(1+np.exp( exponentialArg ) )
                 return nElectrons - 2 * np.sum(temp)
     return fermiObjectiveFunction
@@ -56,19 +57,19 @@ def clenshawCurtisNormClosureWithoutEigenvalue(W):
         return norm
     return clenshawCurtisNormWithoutEigenvalue
     
-def sortByEigenvalue(orbitals,orbitalEnergies):
-    newOrder = np.argsort(orbitalEnergies)
-    oldEnergies = np.copy(orbitalEnergies)
-    for m in range(len(orbitalEnergies)):
-        orbitalEnergies[m] = oldEnergies[newOrder[m]]
-    rprint(rank,'Sorted eigenvalues: ', orbitalEnergies)
-    rprint(rank,'New order: ', newOrder)
-    
-    newOrbitals = np.zeros_like(orbitals)
-    for m in range(len(orbitalEnergies)):
-        newOrbitals[m,:] = orbitals[newOrder[m],:]            
-   
-    return newOrbitals, orbitalEnergies
+# def sortByEigenvalue(orbitals,orbitalEnergies):
+#     newOrder = np.argsort(orbitalEnergies)
+#     oldEnergies = np.copy(orbitalEnergies)
+#     for m in range(len(orbitalEnergies)):
+#         orbitalEnergies[m] = oldEnergies[newOrder[m]]
+# #     rprint(rank,'Sorted eigenvalues: ', orbitalEnergies)
+# #     rprint(rank,'New order: ', newOrder)
+#     
+#     newOrbitals = np.zeros_like(orbitals)
+#     for m in range(len(orbitalEnergies)):
+#         newOrbitals[m,:] = orbitals[newOrder[m],:]            
+#    
+#     return newOrbitals, orbitalEnergies
       
 def twoMeshCorrectionClosure(scf_args): 
     
@@ -77,8 +78,8 @@ def twoMeshCorrectionClosure(scf_args):
         verbosity=0
         
         ## Unpack scf_args
-        inputDensities = scf_args['inputDensities']
-        outputDensities=scf_args['outputDensities']
+#         inputDensities = scf_args['inputDensities']
+#         outputDensities=scf_args['outputDensities']
         SCFcount = scf_args['SCFcount']
         coreRepresentation = scf_args['coreRepresentation']
         nPoints = scf_args['nPoints']
@@ -138,29 +139,29 @@ def twoMeshCorrectionClosure(scf_args):
         epsilon=scf_args['epsilon']
         TwoMeshStart=scf_args['TwoMeshStart']
         
-        GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
+#         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
 #         scf_args['GItolerancesIdx']=0
         
-        scf_args['currentGItolerance']=GItolerances[scf_args['GItolerancesIdx']]
+#         scf_args['currentGItolerance']=GItolerances[scf_args['GItolerancesIdx']]
         
-        GImixingHistoryCutoff = 10
+#         GImixingHistoryCutoff = 10
          
-        SCFcount += 1
+#         SCFcount += 1
 #         TwoMeshStart=1
 
         twoMesh=True
         
             
             
-        SCFindex = SCFcount
-        if SCFcount>TwoMeshStart:
-            SCFindex = SCFcount - TwoMeshStart
+#         SCFindex = SCFcount
+#         if SCFcount>TwoMeshStart:
+#             SCFindex = SCFcount - TwoMeshStart
             
 
         rprint(rank,"Interpolating density from %i to %i point mesh." %(len(X),len(Xf)))
         numberOfCells=len(pointsPerCell_coarse)
-        RHOf = interpolation_wrapper.callInterpolator(X,  Y,  Z,  RHO, pointsPerCell_coarse,
-                                                           Xf, Yf, Zf, pointsPerCell_fine, 
+        RHOf = interpolation_wrapper.callInterpolator(np.copy(X),  np.copy(Y),  np.copy(Z),  np.copy(RHO), pointsPerCell_coarse,
+                                                           np.copy(Xf), np.copy(Yf), np.copy(Zf), pointsPerCell_fine, 
                                                            numberOfCells, order, GPUpresent)
             
 
@@ -216,27 +217,30 @@ def twoMeshCorrectionClosure(scf_args):
             
 
         comm.barrier()
+#         V_hartreeNew=np.ones(len(X))
+#         rprint(rank,"Using tighter treecode parameters for Hartree solve.")
         V_hartreeNew = BT.callTreedriver(  
                                             nPoints, numSources, 
                                             np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
                                             np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
                                             kernel, numberOfKernelParameters, kernelParameters, 
                                             singularity, approximation, computeType,
-                                            treecodeOrder, theta, maxParNode, batchSize,
+                                            treecodeOrder+0, theta-0.0, maxParNode, batchSize,
                                             GPUpresent, treecode_verbosity
-                                            )  
-        
+                                            )
 
+         
+ 
         rprint(rank,'Convolution time: ', MPI.Wtime()-start)
-            
-
-        
+             
+ 
+         
         """ 
         Compute the new orbital and total energies 
         """
-        
+         
         ## Energy update after computing Vhartree
-          
+           
         comm.barrier()    
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         exchangeOutput = exchangeFunctional.compute(RHO)
@@ -261,6 +265,8 @@ def twoMeshCorrectionClosure(scf_args):
         ## Update each of the eigenvalues with new local and nonlocal pieces
         for m in range(nOrbitals): 
             
+#         if False: 
+            
             # Extract the mth eigenpair
             eigenvalue=Energies['orbitalEnergies'][m]
             psi_coarse = orbitals[m,:]
@@ -268,15 +274,15 @@ def twoMeshCorrectionClosure(scf_args):
             
             # Obtain wavefunction and local potential on the fine mesh
             numberOfCells=len(pointsPerCell_coarse)
-            psi_fine = interpolation_wrapper.callInterpolator(X,  Y,  Z, psi_coarse, pointsPerCell_coarse,
-                                                           Xf, Yf, Zf, pointsPerCell_fine, 
+            psi_fine = interpolation_wrapper.callInterpolator(np.copy(X),  np.copy(Y),  np.copy(Z), np.copy(psi_coarse), pointsPerCell_coarse,
+                                                           np.copy(Xf), np.copy(Yf), np.copy(Zf), pointsPerCell_fine, 
                                                            numberOfCells, order, GPUpresent)
             Veff_local_new -= Vext_local           
 #             Veff_local_fine_old = interpolation_wrapper.callInterpolator(X,  Y,  Z,  Veff_local_old, pointsPerCell_coarse,
 #                                                            Xf, Yf, Zf, pointsPerCell_fine, 
 #                                                            numberOfCells, order, GPUpresent)
-            Veff_local_fine_new = interpolation_wrapper.callInterpolator(X,  Y,  Z,  Veff_local_new, pointsPerCell_coarse,
-                                                           Xf, Yf, Zf, pointsPerCell_fine, 
+            Veff_local_fine_new = interpolation_wrapper.callInterpolator(np.copy(X),  np.copy(Y),  np.copy(Z),  Veff_local_new, pointsPerCell_coarse,
+                                                           np.copy(Xf), np.copy(Yf), np.copy(Zf), pointsPerCell_fine, 
                                                            numberOfCells, order, GPUpresent)
                 
             Veff_local_fine_new += Vext_local_fine       
@@ -377,30 +383,29 @@ def twoMeshCorrectionClosure(scf_args):
             
             
             # Replace updated eigenvalue in array
-            Energies['orbitalEnergies'][m] += deltaE
+            Energies['orbitalEnergies_corrected'][m] = Energies['orbitalEnergies'][m] + deltaE
 #             Energies['orbitalEnergies'][m]=eigenvalue
             
         ## Sort by eigenvalue
         
-#         orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
         
-        if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
-        orbitals, Energies['orbitalEnergies'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies'])
-        if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
+#         if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        orbitals, Energies['orbitalEnergies_corrected'] = sortByEigenvalue(orbitals,Energies['orbitalEnergies_corrected'])
+#         if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
             
         
         fermiObjectiveFunction = fermiObjectiveFunctionClosure(Energies,nElectrons)        
         upperBound=1
 #         lowerBoundIdx = int(np.floor(nElectrons/2))-1   
-        lowerBound =  Energies['orbitalEnergies'][0]
+        lowerBound =  Energies['orbitalEnergies_corrected'][0]
         eF = brentq(fermiObjectiveFunction, lowerBound, upperBound, xtol=1e-14)
         if verbosity>0: rprint(rank,'Fermi energy: ', eF)
-        exponentialArg = (Energies['orbitalEnergies']-eF)/Sigma
+        exponentialArg = (Energies['orbitalEnergies_corrected']-eF)/Sigma
         occupations = 2*1/(1+np.exp( exponentialArg ) )  # these are # of electrons, not fractional occupancy.  Hence the 2*
     
-    #         occupations = computeOccupations(Energies['orbitalEnergies'], nElectrons, Temperature)
+    #         occupations = computeOccupations(Energies['orbitalEnergies_corrected'], nElectrons, Temperature)
         if verbosity>0: rprint(rank,'Occupations: ', occupations)
-        Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
+        Energies['Eband'] = np.sum( (Energies['orbitalEnergies_corrected']-Energies['gaugeShift']) * occupations)
     
      
     
@@ -411,8 +416,8 @@ def twoMeshCorrectionClosure(scf_args):
         
 #         Energies["Repulsion"] = global_dot(RHO, Vext_local*W, comm)  # this doesn't need updating.
         
-        Energies['Eband'] = np.sum( (Energies['orbitalEnergies']-Energies['gaugeShift']) * occupations)
-        Energies['Etotal'] = Energies['Eband'] - Energies['Ehartree'] + Energies['Ex'] + Energies['Ec'] - Energies['Vx'] - Energies['Vc'] + Energies['Enuclear']
+        Energies['Eband'] = np.sum( (Energies['orbitalEnergies_corrected']-Energies['gaugeShift']) * occupations)
+        Energies['Etotal_corrected'] = Energies['Eband'] - Energies['Ehartree'] + Energies['Ex'] + Energies['Ec'] - Energies['Vx'] - Energies['Vc'] + Energies['Enuclear']
         Energies['totalElectrostatic'] = Energies["Ehartree"] + Energies["Enuclear"] + Energies["Repulsion"]
         
         ## This might not be needed, because Eext is already captured in the band energy, which includes both local and nonlocal
@@ -423,15 +428,15 @@ def twoMeshCorrectionClosure(scf_args):
 #                 for atom in atoms:
 #                     Vext_nl += atom.V_nonlocal_pseudopotential_times_psi(X,Y,Z,orbitals[m,:],W,comm)
 #                 Eext_nl += global_dot(orbitals[m,:], Vext_nl,comm)
-#             Energies['Etotal'] += Eext_nl
+#             Energies['Etotal_corrected'] += Eext_nl
     
         for m in range(nOrbitals):
-            if verbosity>0: rprint(rank,'Orbital %i error: %1.3e' %(m, Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift']))
+            if verbosity>0: rprint(rank,'Orbital %i error: %1.3e' %(m, Energies['orbitalEnergies_corrected'][m]-referenceEigenvalues[m]-Energies['gaugeShift']))
         
         
-        energyResidual = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
-#         energyError = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
-        Energies['Eold'] = np.copy(Energies['Etotal'])
+        energyResidual = abs( Energies['Etotal_corrected'] - Energies['Eold_corrected'] )  # Compute the energyResidual for determining convergence
+#         energyError = abs( Energies['Etotal_corrected'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
+        Energies['Eold_corrected'] = np.copy(Energies['Etotal_corrected'])
         
         
         
@@ -439,18 +444,20 @@ def twoMeshCorrectionClosure(scf_args):
         Print results from current iteration
         """
     
-        rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies']) 
+#         rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies_corrected']) 
+        rprint(rank,"Corrected Eigenvalues")
+        print_eigs_and_occupations(Energies['orbitalEnergies_corrected']-Energies['gaugeShift'], occupations, Energies['orbitalEnergies_corrected']-referenceEigenvalues[:nOrbitals]-Energies['gaugeShift'])
     
-        rprint(rank,'Updated V_x:                           %.10f Hartree' %Energies['Vx'])
-        rprint(rank,'Updated V_c:                           %.10f Hartree' %Energies['Vc'])
-        
-        rprint(rank,'Updated Band Energy:                   %.10f H, %.10e H' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
-        rprint(rank,'Updated E_Hartree:                      %.10f H, %.10e H' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
-        rprint(rank,'Updated E_x:                           %.10f H, %.10e H' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
-        rprint(rank,'Updated E_c:                           %.10f H, %.10e H' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
-        rprint(rank,'Updated totalElectrostatic:            %.10f H, %.10e H' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"]))
-        rprint(rank,'Total Energy:                          %.10f H, %.10e H' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
-        rprint(rank,'Energy Residual:                        %.3e' %energyResidual)
+        rprint(rank,'Updated V_x:                               % .10f Hartree' %Energies['Vx'])
+        rprint(rank,'Updated V_c:                               % .10f Hartree' %Energies['Vc'])
+        rprint(rank,'Updated Band Energy:                       % .10f H, %.10e Ha' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
+        rprint(rank,'Updated E_Hartree:                         % .10f H, %.10e Ha' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
+        rprint(rank,'Updated E_x:                               % .10f H, %.10e Ha' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
+        rprint(rank,'Updated E_c:                               % .10f H, %.10e Ha' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
+        rprint(rank,'Updated totalElectrostatic:                % .10f H, %.10e Ha' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"]))
+        rprint(rank,"Hartree, Nuclear, Repulsion:               % .6f, % .6f, % .6f Ha" %(Energies["Ehartree"], Energies["Enuclear"], Energies["Repulsion"]))
+        rprint(rank,'Total Energy:                              % .10f H, %.10e Ha' %(Energies['Etotal_corrected'], Energies['Etotal_corrected']-referenceEnergies['Etotal']))
+        rprint(rank,'Energy Residual (wrt previous corrected):  % .3e' %energyResidual)
 #         rprint(rank,'Density Residual:                       %.3e\n\n'%densityResidual)
     
         scf_args['energyResidual']=energyResidual
@@ -460,16 +467,16 @@ def twoMeshCorrectionClosure(scf_args):
             
     #         if vtkExport != False:
     #             filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
-    #             Energies['Etotal']xportGridpoints(filename)
+    #             Energies['Etotal_corrected']xportGridpoints(filename)
     
         printEachIteration=True
     
         if printEachIteration==True:
             header = ['Iteration', 'densityResidual', 'orbitalEnergies','bandEnergy', 'kineticEnergy', 
-                      'exchangeEnergy', 'correlationEnergy', 'hartreeEnergy', 'totalEnergy', 'GItolerance']
+                      'exchangeEnergy', 'correlationEnergy', 'totalElectrostatic', 'totalEnergy', 'GItolerance']
          
-            myData = [SCFcount, 0.0, Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], 
-                      Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal'], scf_args['currentGItolerance']]
+            myData = [SCFcount, 0.0, Energies['orbitalEnergies_corrected']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], 
+                      Energies['Ex'], Energies['Ec'], Energies['totalElectrostatic'], Energies['Etotal_corrected'], scf_args['currentGItolerance']]
 
 
           
@@ -489,18 +496,18 @@ def twoMeshCorrectionClosure(scf_args):
 
             
         ## Pack up scf_args
-        scf_args['outputDensities']=outputDensities
-        scf_args['inputDensities']=inputDensities
-        scf_args['SCFcount']=SCFcount
+#         scf_args['outputDensities']=outputDensities
+#         scf_args['inputDensities']=inputDensities
+#         scf_args['SCFcount']=SCFcount
         scf_args['Energies']=Energies
-        scf_args['Times']=Times
-        scf_args['orbitals']=orbitals
-        scf_args['oldOrbitals']=oldOrbitals
+#         scf_args['Times']=Times
+#         scf_args['orbitals']=orbitals
+#         scf_args['oldOrbitals']=oldOrbitals
         scf_args['Veff_local']=Veff_local_new
         
-        rprint(rank,"Calling garbage collector")
-        gc.collect()
-        rprint(rank,"garbage collection complete.")
+#         rprint(rank,"Calling garbage collector")
+#         gc.collect()
+#         rprint(rank,"garbage collection complete.")
     
     
         return

@@ -381,14 +381,14 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
                   'gaussianAlpha','gaugeShift','finalGItolerance',
                   'GreenSingSubtracted', 'regularize', 'epsilon',
                   'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
-                  'ExchangeEnergy','CorrelationEnergy','HartreeEnergy','TotalEnergy',
+                  'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy',
                   'Treecode','approximationName','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
         
         myData = [size,domainSize,maxSideLength,order,fine_order, nPoints/order**3,nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
                   gaussianAlpha,gaugeShift,finalGItolerance,
                   subtractSingularity, regularize, epsilon,
-                  Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], Energies['Ex'], Energies['Ec'], Energies['Ehartree'], Energies['Etotal'],
+                  Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], Energies['Ex'], Energies['Ec'], Energies['totalElectrostatic'], Energies['Etotal'],
                   treecode,approximationName,treecodeOrder,theta,maxParNode,batchSize, Times['totalKohnShamTime'],Times['timePerConvolution'],Times['totalIterationCount'] ]
     #               Energies['Etotal'], tree.
     #               Energies['Etotal'], Energies['orbitalEnergies'][0], abs(Energies['Etotal']+1.1373748), abs(Energies['orbitalEnergies'][0]+0.378665)]
@@ -513,9 +513,11 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     Energies={}
 #     Energies['orbitalEnergies'] = -1*np.ones(nOrbitals)
     Energies['orbitalEnergies'] = eigenvalues
+    Energies['orbitalEnergies_corrected'] = np.copy(eigenvalues)
     Energies['gaugeShift'] = gaugeShift
     Energies['kinetic'] = 0.0
     Energies['Enuclear'] = 0.0
+    Energies['Eold_corrected']=0.0
     
     for atom1 in atoms:
         for atom2 in atoms:
@@ -636,16 +638,18 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     
     densityResidual = 10                                   # initialize the densityResidual to something that fails the convergence tolerance
 
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal] = np.genfromtxt(inputFile)[3:9]
-    rprint(rank,[Eband, Ekinetic, Eexchange, Ecorrelation, Ehartree, Etotal])
+    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:9]
+    rprint(rank,[Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal])
 
  
 
     energyResidual=10
     residuals = 10*np.ones_like(Energies['orbitalEnergies'])
     
-    referenceEnergies = {'Etotal':Etotal,'Eband':Eband,'Ehartree':Ehartree,'Eexchange':Eexchange,'Ecorrelation':Ecorrelation}
-    referenceEnergies["Eelectrostatic"] = -4.0103432928895426 # DFT-FE value for single Beryllium atom
+    referenceEnergies = {'Etotal':Etotal,'Eband':Eband,'Eelectrostatic':Eelectrostatic,'Eexchange':Eexchange,'Ecorrelation':Ecorrelation}
+    referenceEnergies["Ehartree"] = 0.0 # DFT-FE value for single Beryllium atom
+    
+    
     scf_args={'inputDensities':inputDensities,'outputDensities':outputDensities,'SCFcount':SCFcount,'nPoints':nPoints,'nOrbitals':nOrbitals,'mixingHistoryCutoff':mixingHistoryCutoff,
                'GPUpresent':GPUpresent,'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta,'maxParNode':maxParNode,'batchSize':batchSize,'gaussianAlpha':gaussianAlpha,
                'Energies':Energies,'Times':Times,'exchangeFunctional':exchangeFunctional,'correlationFunctional':correlationFunctional,
@@ -694,7 +698,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #         if SCFcount > 0:
 #             rprint(0, 'Exiting before first SCF (for testing initialized mesh accuracy)')
 #             return
-        abortAfterInitialHartree=False
+        abortAfterInitialHartree=False 
         
         if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
         if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
@@ -758,13 +762,21 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
        
           
         if Energies['Etotal'] > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
-            rprint(0, 'Warning, Energy is positive')
+            rprint(rank, 'Warning, Energy is positive')
             Energies['Etotal'] = -0.5
               
           
         if SCFcount >= 100:
             rprint(0, 'Setting density residual to -1 to exit after the 150th SCF')
             densityResidual = -1
+            
+            
+#         # perform two mesh correction after each SCF iteration
+# #         rprint(rank,"Performing two mesh correction after %i SCF iteration." %SCFcount)
+# #         if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+# #         if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
+#         twoMeshCorrection, scf_args = twoMeshCorrectionClosure(scf_args)
+#         twoMeshCorrection(RHO,scf_args)
         
     
     ## DO ONE FINAL ITERATION WITH TWO LEVEL MESH
@@ -779,6 +791,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     
     twoMeshCorrection, scf_args = twoMeshCorrectionClosure(scf_args)
     twoMeshCorrection(RHO,scf_args)
+    
+    Energies['Etotal']=Energies['Etotal_corrected']
+    Energies['Etotal']=Energies['Etotal_corrected']
      
      
               
