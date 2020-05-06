@@ -1,6 +1,6 @@
 ../src/molecularConfigurations/C20.csv
 ../src/molecularConfigurations/C20FirstSCFReferenceEigenvaluesPSP.csv
-/home/njvaughn/results_Be/results.csv
+/restartFiles/C20/
 -4.0238183660650691e+01 # band
  0.0
 -2.9736201447167016e+01 # exchange

@@ -1,6 +1,6 @@
 ../src/molecularConfigurations/Si2.csv
 ../src/molecularConfigurations/Si2ReferenceEigenvaluesPSP.csv
-/Desktop/restartFiles/Si2/
+/restartFiles/Si2/
 -2.6518459697055392e+00 # Band energy
 0.0                     # Kinetic
 -2.1165507448720291e+00 # Exchange

@@ -555,7 +555,20 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #         print("globalNumPoints = ", globalNumPoints, "type = ", type(globalNumPoints))
 #         print("str(globalNumPoints) = ", str(globalNumPoints), "type = ", type(str(globalNumPoints)))
     comm.barrier()
-    restartFilesDir =       homePath+np.genfromtxt(inputFile,dtype=str)[2] + "numPoints_" + str(globalNumPoints)
+    exampleDir = homePath+np.genfromtxt(inputFile,dtype=str)[2]
+    if rank==0:
+        try:
+            os.mkdir(exampleDir)
+        except OSError as e:
+            rprint(rank,'Unable to make restart directory %s for this test case due to %s'  %(exampleDir,e))
+
+            
+    restartFilesDir =       exampleDir + "numPoints_" + str(globalNumPoints)
+    if rank==0:
+        try:
+            os.mkdir(restartFilesDir)
+        except OSError as e:
+            rprint(rank,'Unable to make restart directory %s for this specific run due to %s' %(restartFilesDir,e) )
     
     rprint(rank,"restartFilesDir = ", restartFilesDir)
 #     exit(-1)
@@ -578,21 +591,21 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     if plotSliceOfDensity==True:
         try:
             os.mkdir(densityPlotsDir)
-        except OSError:
-            rprint(0, 'Unable to make directory ', densityPlotsDir)
+        except OSError as e:
+            rprint(rank,'Unable to make densityPlotsDir directory %s due to %s' %(densityPlotsDir,e) )
         
-    if rank==0:
-        try:
-            os.mkdir(restartFilesDir)
-        except OSError:
-            rprint(rank,'Unable to make restart directory ', restartFilesDir)
+
     
     
 #     tr = tracker.SummaryTracker()   
     if restartFile!=False:
 #         rprint(0, "Not ready to handle restarts in mpi version.")
 #         return
-        orbitals = np.load(wavefunctionFile+'.npy')
+        try:
+            orbitals = np.load(wavefunctionFile+'.npy')
+        except FileNotFoundError:
+            rprint(0, "Rank %i could not find restart file " %rank, wavefunctionFile + ".npy.  Exiting.")
+            exit(-1)
         oldOrbitals = np.copy(orbitals)
 #         for m in range(nOrbitals): 
 #             tree.importPhiOnLeaves(orbitals[:,m], m)

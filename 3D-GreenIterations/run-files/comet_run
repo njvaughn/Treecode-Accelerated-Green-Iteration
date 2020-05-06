@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/k80_C60_correctedReference-%j.%N.out"
+#SBATCH --output="dataFiles/8_k80_restart_C60_correctedReference-%j.%N.out"
 #SBATCH --partition=gpu
-#SBATCH --nodes=4
+#SBATCH --nodes=2
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:4   
 #SBATCH --mem=100GB 
-#SBATCH -t 12:00:00 
+#SBATCH -t 6:00:00 
 #SBATCH --no-requeue
 #SBATCH -A mia320
 #SBATCH --constraint=exclusive
@@ -19,10 +19,10 @@ cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
 SINGSUBT=1   
 GPUPRESENT='True'  
     
-SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/' 
+SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'  
 
 #COREREPRESENTATION="AllElectron" 
-#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv' 
+#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'  
 #INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/N2Auxiliary.csv'
 #INPUTFILE='molecularConfigurations/NAuxiliary.csv'
@@ -103,9 +103,9 @@ BATCHSIZE=2000
 MAXPARNODE=2000   
                                                        
 
-OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/testing/k80_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
+OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/testing/16_k80_restart_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
-ibrun -n 16 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+ibrun -n 8 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                         $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                         $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                         $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
