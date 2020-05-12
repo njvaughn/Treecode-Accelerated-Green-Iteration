@@ -1,11 +1,11 @@
 ../src/molecularConfigurations/C20.csv
 ../src/molecularConfigurations/C20FirstSCFReferenceEigenvaluesPSP.csv
 /restartFiles/C20/
--4.0238183660650691e+01 # band
+-4.0204036760689050e+01 # band
  0.0
--2.9736201447167016e+01 # exchange
--4.3417587560665645e+00 # correlation
--1.6353529819956208e+02 # local electrostatic               
--1.1283379210482792e+02 # total energy
+-2.9815876942398557e+01 # exchange
+-4.3460297228765405e+00 # correlation
+-1.6699044416228668e+02 # local electrostatic               
+-1.1346908867662380e+02 # total energy
 
   
