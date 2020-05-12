@@ -225,7 +225,7 @@ def twoMeshCorrectionClosure(scf_args):
                                             np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
                                             kernel, numberOfKernelParameters, kernelParameters, 
                                             singularity, approximation, computeType,
-                                            treecodeOrder+0, theta-0.0, maxParNode, batchSize,
+                                            treecodeOrder+1, theta-0.1, maxParNode, batchSize,
                                             GPUpresent, treecode_verbosity
                                             )
 
@@ -364,7 +364,7 @@ def twoMeshCorrectionClosure(scf_args):
                                         np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
                                         kernel, numberOfKernelParameters, kernelParameters, 
                                         singularity, approximation, computeType,
-                                        treecodeOrder, theta, maxParNode, batchSize,
+                                        treecodeOrder+1, theta-0.1, maxParNode, batchSize,
                                         GPUpresent, treecode_verbosity
                                         )
 

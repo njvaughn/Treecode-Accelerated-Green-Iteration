@@ -1,16 +1,16 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/8_k80_restart_C60_correctedReference-%j.%N.out"
+#SBATCH --output="dataFiles/8node_LDA_C60_correctedReference-%j.%N.out"
 #SBATCH --partition=gpu
-#SBATCH --nodes=2
+#SBATCH --nodes=8
 #SBATCH --ntasks-per-node=4
-#SBATCH --gres=gpu:4   
+#SBATCH --gres=gpu:p100:4   
 #SBATCH --mem=100GB 
-#SBATCH -t 6:00:00 
+#SBATCH -t 24:00:00 
 #SBATCH --no-requeue
 #SBATCH -A mia320
 #SBATCH --constraint=exclusive
- 
+   
 
 export LD_LIBRARY_PATH=/home/njvaughn/mvapich2_ib_Zoltan_Shared/lib:$LD_LIBRARY_PATH
  
@@ -22,7 +22,7 @@ GPUPRESENT='True'
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'  
 
 #COREREPRESENTATION="AllElectron" 
-#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'  
+#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'   
 #INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/N2Auxiliary.csv'
 #INPUTFILE='molecularConfigurations/NAuxiliary.csv'
@@ -40,7 +40,7 @@ INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
   
 
 VTKFILEDIR='/Users/nathanvaughn/Desktop/'
-  
+ 
 
 GRADIENTFREE='True'
 SYMMETRICITERATION='False'
@@ -55,12 +55,8 @@ MIXING='Anderson'
 RESTART='False' 
 SAVEDMESH='None' 
 
-ADDITIONALDEPTHATATOMS=0
+ADDITIONALDEPTHATATOMS=0 
 GRADIENTFREE='True' 
-
-MIXINGPARAMETER=0.5 
-MIXINGHISTORY=6  
-  
 
 INITIAL_GI_TOLERANCE=3e-2 
 FINAL_GI_TOLERANCE=1e-5 
@@ -69,15 +65,15 @@ SCF_TOLERANCE=3e-5
 
 
 
-APPROXIMATIONNAME=hermite
+APPROXIMATIONNAME=lagrange
 SINGULARITYHANDLING=subtraction
 
 REGULARIZE='False'
 EPSILON=0.0 
    
-GAUSSIANALPHA=1.0 
+GAUSSIANALPHA=2.0 
 TREECODEORDER=7
-THETA=0.7 
+THETA=0.9
 
 CELLORDER=3
 FINEORDER=3
@@ -94,18 +90,18 @@ MESHPARAM3=2.0 # ball radius
 
   
 TWOMESHSTART=999
-#GIFORM="Simultaneous"
+#GIFORM="Simultaneous" 
 GIFORM="Sequential"    
 #GIFORM="Greedy" 
-MESHPARAM4=-2 
+MESHPARAM4=-2
   
-BATCHSIZE=2000
-MAXPARNODE=2000   
+BATCHSIZE=4000
+MAXPARNODE=4000    
                                                        
 
-OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/testing/16_k80_restart_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
+OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/LDA/${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
-ibrun -n 8 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+ibrun -n 32 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                         $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                         $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                         $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
