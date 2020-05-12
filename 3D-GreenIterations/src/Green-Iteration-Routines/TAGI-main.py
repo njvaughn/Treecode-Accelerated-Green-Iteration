@@ -1,35 +1,27 @@
 '''
-testGreenIterations.py
-This is a unitTest module for testing Green iterations.  It begins by building the tree-based
-adaotively refined mesh, then performs Green iterations to obtain the ground state energy
-and wavefunction for the single electron hydrogen atom.  -- 03/20/2018 NV
+TAGI-main.py
+This is the main run file for TAGI.  
 
 Created on Mar 13, 2018
 @author: nathanvaughn
 '''
-import os
-import sys
-import gc
+
 import time
-import inspect
 import resource
-import unittest
 import numpy as np
 import pylibxc
-import itertools
 import csv
-from scipy.optimize import anderson
-from scipy.optimize import root as scipyRoot
-from pyevtk.hl import unstructuredGridToVTK
-from pyevtk.vtk import VtkTriangle, VtkQuad, VtkPolygon, VtkVoxel, VtkHexahedron
 import mpi4py.MPI as MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
 
-# gc.set_debug(gc.DEBUG_LEAK)
-
+### PATH SETUP ###
+import os
+import sys
+from pathlib import Path
+homePath = str(Path.home())
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
 sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
@@ -51,14 +43,6 @@ from twoMeshCorrection import twoMeshCorrectionClosure
 
 
 
-# if os.uname()[1] == 'Nathans-MacBook-Pro.local':
-#     rootDirectory = '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/'
-# else:
-#     rprint(rank,'os.uname()[1] = ', os.uname()[1])
-from pathlib import Path
-homePath = str(Path.home())
-rprint(rank,"Home path: ", homePath)
-# exit(-1)
 
 
 ## Read in command line arguments
@@ -232,9 +216,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
                   subtractSingularity, regularize, epsilon,
                   Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], Energies['Ex'], Energies['Ec'], Energies['totalElectrostatic'], Energies['Etotal'],
                   treecode,approximationName,treecodeOrder,theta,maxParNode,batchSize, Times['totalKohnShamTime'],Times['timePerConvolution'],Times['totalIterationCount'] ]
-    #               Energies['Etotal'], tree.
-    #               Energies['Etotal'], Energies['orbitalEnergies'][0], abs(Energies['Etotal']+1.1373748), abs(Energies['orbitalEnergies'][0]+0.378665)]
-        
+
     
         runComparisonFile = os.path.split(outputFile)[0] + '/runComparison.csv'
         
@@ -337,23 +319,13 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
             Vext_local += atom.V_local_pseudopotential(X,Y,Z)
             Vext_local_fine += atom.V_local_pseudopotential(Xf,Yf,Zf)
             
-#             rprint(0, "NORMALIZING CHIS")
-#             atom.normalizeChi(W,comm)
-#             atom.normalizeFineChi(Wf,comm)
-#             for i in range(atom.numberOfChis):
-#                 norm_of_chi = global_dot(W,atom.Chi[str(i)]**2,comm)
-#                 atom.Chi[str(i)] *= np.sqrt( 1.0/norm_of_chi )
-#                 rprint(0, "NORMALIZING CHI TO 1")
         else:
             rprint(0, "Error: what should coreRepresentation be?")
             exit(-1)
         atomCount+=1
         
-#     rprint(0, 'Does X exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(X))
-#     rprint(0, 'Does RHO exist in greenIterations_KohnSham_SCF_rootfinding()? ', len(RHO))
-    
+
     Energies={}
-#     Energies['orbitalEnergies'] = -1*np.ones(nOrbitals)
     Energies['orbitalEnergies'] = eigenvalues
     Energies['orbitalEnergies_corrected'] = np.copy(eigenvalues)
     Energies['gaugeShift'] = gaugeShift
@@ -365,7 +337,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         for atom2 in atoms:
             if atom1!=atom2:
                 r = np.sqrt( (atom1.x-atom2.x)**2 + (atom1.y-atom2.y)**2 + (atom1.z-atom2.z)**2 )
-#                 Energies['Enuclear'] += atom1.atomicNumber*atom2.atomicNumber/r
                 Energies['Enuclear'] += atom1.nuclearCharge*atom2.nuclearCharge/r
     Energies['Enuclear'] /= 2 # because of double counting
     
@@ -374,7 +345,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     
     
     
-#     return
     if verbosity>0: rprint(rank,'MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
     # Store Tree variables locally
@@ -385,13 +355,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(nPoints)+'_'+str(len(Xf))+outputFile[-4:]
     SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(nPoints)+'_'+str(len(Xf))+outputFile[-4:]
     densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(nPoints)+'_plots'
-#     restartFilesDir =       '/home/njvaughn/restartFiles/'+'restartFiles_'+str(nPoints)
 
-#     if rank==0:
-#         print("homePath = ", homePath, "type = ", type(homePath))
-#         print("np.genfromtxt(inputFile)[2] = ", np.genfromtxt(inputFile,dtype=str)[2], "type = ", type(np.genfromtxt(inputFile,dtype=str)[2]))
-#         print("globalNumPoints = ", globalNumPoints, "type = ", type(globalNumPoints))
-#         print("str(globalNumPoints) = ", str(globalNumPoints), "type = ", type(str(globalNumPoints)))
     comm.barrier()
     exampleDir = homePath+np.genfromtxt(inputFile,dtype=str)[2]
     if rank==0:
@@ -409,19 +373,13 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
             rprint(rank,'Unable to make restart directory %s for this specific run due to %s' %(restartFilesDir,e) )
     
     rprint(rank,"restartFilesDir = ", restartFilesDir)
-#     exit(-1)
-#     restartFilesDir =       '/home/njvaughn/restartFiles/restartFiles_1416000_after25'
-#     restartFilesDir =       '/Users/nathanvaughn/Documents/synchronizedDataFiles/restartFiles_1416000_after25'
+
     wavefunctionFile =      restartFilesDir+'/wavefunctions_rank_%i_of_%i' %(rank,size)
     densityFile =           restartFilesDir+'/density_rank_%i_of_%i' %(rank,size)
     inputDensityFile =      restartFilesDir+'/inputdensity_rank_%i_of_%i' %(rank,size)
     outputDensityFile =     restartFilesDir+'/outputdensity_rank_%i_of_%i' %(rank,size)
     vHartreeFile =          restartFilesDir+'/vHartree_rank_%i_of_%i' %(rank,size)
     auxiliaryFile =         restartFilesDir+'/auxiliary_rank_%i_of_%i' %(rank,size)
-    
-#     rprint(0,"wavefunctionFile = ", wavefunctionFile)
-#     comm.barrier()
-#     exit(-1)
     
     
     
@@ -445,8 +403,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
             rprint(0, "Rank %i could not find restart file " %rank, wavefunctionFile + ".npy.  Exiting.")
             exit(-1)
         oldOrbitals = np.copy(orbitals)
-#         for m in range(nOrbitals): 
-#             tree.importPhiOnLeaves(orbitals[:,m], m)
         RHO = np.load(densityFile+'.npy')
          
         inputDensities = np.load(inputDensityFile+'.npy')
@@ -455,10 +411,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         if mixingScheme == 'Anderson':
             if verbosity>-1: rprint(rank, 'Using anderson mixing during restart data load.')
             andersonDensity = densityMixing.computeNewDensity(inputDensities, outputDensities, mixingParameter,W)
-#             integratedDensity = np.sum( andersonDensity*W )
             integratedDensity = global_dot( andersonDensity, W, comm )
             if verbosity>0: rprint(rank,'Integrated anderson density: ', integratedDensity)
-    #             tree.importDensityOnLeaves(andersonDensity)
             RHO = np.copy(andersonDensity)
          
         V_hartreeNew = np.load(vHartreeFile+'.npy')
@@ -485,10 +439,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
          
         Energies['Vx'] = np.sum(W * RHO * Vx)
-        Energies['Vc'] = np.sum(W * RHO * Vc)
-          
-#         Veff = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
-        
+        Energies['Vc'] = np.sum(W * RHO * Vc)        
         
     
     else: 
@@ -503,7 +454,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         inputDensities[:,0] = np.copy(RHO)
         oldOrbitals = np.copy(orbitals)
 
-#     tr.print_diff()
     
 #     if plotSliceOfDensity==True:
 #         densitySliceSavefile = densityPlotsDir+'/densities'
@@ -553,23 +503,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
                'occupations':initialOccupations}
     
 
-    """
-    clenshawCurtisNorm = clenshawCurtisNormClosure(W)
-    method='anderson'
-    jacobianOptions={'alpha':1.0, 'M':mixingHistoryCutoff, 'w0':0.01} 
-    solverOptions={'fatol':interScfTolerance, 'tol_norm':clenshawCurtisNorm, 'jac_options':jacobianOptions,'maxiter':1000, 'line_search':None, 'disp':True}
- 
-     
-    rprint(0, 'Calling scipyRoot with %s method' %method)
-    scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
-#     rprint(0, np.shaoe(RHO))
-    sol = scipyRoot(scfFixedPoint,RHO, args=scf_args, method=method, options=solverOptions)
-    rprint(0, sol.success)
-    rprint(0, sol.message)
-    RHO = sol.x
-     
-     
-    """
+
     comm.barrier()
     rprint(rank,"Copying data to GPU and starting while loop for density...")
     if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
@@ -604,8 +538,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         energyResidual=scf_args['energyResidual'] 
         SCFcount=scf_args['SCFcount']
           
-#         densityResidual = np.sqrt( np.sum( (outputDensities[:,SCFcount-1] - inputDensities[:,SCFcount-1])**2*weights ) )
-#         rprint(0, 'Density Residual from arrays ', densityResidual)
+
         if verbosity>0: rprint(rank,'Shape of density histories: ', np.shape(scf_args['inputDensities']), np.shape(scf_args['outputDensities']))
         if verbosity>0: rprint(rank,'outputDensities[0,:] = ', scf_args['outputDensities'][0,:])
         # Now compute new mixing with anderson scheme, then import onto tree. 
@@ -615,10 +548,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         if mixingScheme == 'Simple':
             rprint(0, 'Using simple mixing, from the input/output arrays')
             simpleMixingDensity = mixingParameter*scf_args['outputDensities'][:,SCFindex] + (1-mixingParameter)*scf_args['inputDensities'][:,SCFindex]
-#             integratedDensity = np.sum( simpleMixingDensity*W )
             integratedDensity = global_dot( simpleMixingDensity, W, comm )
             rprint(rank,'Integrated simple mixing density: ', integratedDensity)  
-    #             tree.importDensityOnLeaves(simpleMixingDensity)
             RHO = np.copy(simpleMixingDensity)
           
         elif mixingScheme == 'Anderson':
@@ -627,7 +558,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #             integratedDensity = np.sum( andersonDensity*W )
             integratedDensity = global_dot( andersonDensity, W, comm )
             if verbosity>0: rprint(rank,'Integrated anderson density: ', integratedDensity)
-    #             tree.importDensityOnLeaves(andersonDensity)
             RHO = np.copy(andersonDensity)
           
         elif mixingScheme == 'None':
@@ -816,11 +746,4 @@ if __name__ == "__main__":
     if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
     if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(W)
     
-    
-    
-#     rprint(rank,"Calling garbage collector")
-#     gc.set_debug(gc.DEBUG_COLLECTABLE)
-#     input()
-#     gc.collect()
-#     rprint(rank,"garbage collection complete.")
-
+    
