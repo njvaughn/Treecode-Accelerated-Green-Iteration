@@ -3,7 +3,15 @@ Created on Jun 25, 2018
 
 @author: nathanvaughn
 '''
+import matplotlib
+matplotlib.use('TkAgg')
+
 import sys
+import mpi4py.MPI as MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
 
 srcdir="/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/"
 # srcdir="/home/njvaughn/TAGI/3D-GreenIterations/src/"
@@ -17,11 +25,14 @@ sys.path.append(srcdir+'../ctypesTests/lib')
 
 sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
+from mpiUtilities import global_dot, rprint
+from initializationRoutines import initializeDensityFromAtomicDataExternally
 import itertools
 import time
 import numpy as np
 # import dask.array as da
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import bisect
 from pyevtk.hl import pointsToVTK
 try:
@@ -100,113 +111,156 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
 #     rprint(rank,"Max side length: ",maxSideLength)
 #     rprint(rank,"Domain length after adjustment: ", domainSize)
 #     rprint(rank," Far field nx, ny, nz = ", 2*domainSize/maxSideLength)
-    X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues,tree = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
+    X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
                                                                                                      inputFile,outputFile,srcdir,order,order,gaugeShift,
-                                                                                                     MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4,saveTree=True)
+                                                                                                     MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4,saveTree=False)
    
-   
+    RHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
 #     X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
 #                                                                                                      inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
 #                                                                                                      divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
-    np.savetxt(outputFile+'-X.csv', X, delimiter=',')
-    np.savetxt(outputFile+'-Y.csv', Y, delimiter=',')
-    np.savetxt(outputFile+'-Z.csv', Z, delimiter=',')
-    X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_connected()
     
-#     print("Saving mesh to /home/njvaughn/PSPmesh/")
-#     np.save("/home/njvaughn/PSPmesh/X_%i" %(nPoints), X)
-#     np.save("/home/njvaughn/PSPmesh/Y_%i" %(nPoints), Y)
-#     np.save("/home/njvaughn/PSPmesh/Z_%i" %(nPoints), Z)
-#     np.save("/home/njvaughn/PSPmesh/W_%i" %(nPoints), W)
-#     np.save("/home/njvaughn/PSPmesh/RHO_%i" %(nPoints), RHO)
-    
-#     print(XV)
-#     print(YV)
-#     print(ZV)
-#     print(len(XV))
-#     print(XV.size)
-#     print(RHO)
-#     print(vertexIdx)
-#     print(centerIdx)
-
-    print("Number of coarse mesh points = %i" %len(X))
-    print("Number of coarse mesh cells  = %i" %len(pointsPerCell_coarse))
-    print("Number of fine mesh points   = %i" %len(Xf))
-
-    conn=np.zeros(XV.size)
-    for i in range(len(conn)):
-        conn[i] = i
-    offset=np.zeros(int(XV.size/8))
-    for i in range(len(offset)):
-        offset[i] = 8*(i+1)
-    ctype = np.zeros(len(offset))
-    for i in range(len(ctype)):
-        ctype[i] = VtkVoxel.tid
-    pointVals = {"density":np.zeros(XV.size)}
-    x1=y1=z1=-1
-    x2=y2=z2=1
-    for i in range(len(XV)):
-        pointVals["density"][i] = max( RHO[vertexIdx[i]], 1e-16) 
-#         r1 = np.sqrt(  (XV[i]-x1)*(XV[i]-x1) + (YV[i]-y1)*(YV[i]-y1) + (ZV[i]-z1)*(ZV[i]-z1) )
-#         r2 = np.sqrt(  (XV[i]-x2)*(XV[i]-x2) + (YV[i]-y2)*(YV[i]-y2) + (ZV[i]-z2)*(ZV[i]-z2) )
-# #         print(r)
-#         pointVals["density"][i] = np.exp( - r1) + np.exp( - 2*r2)
-#         pointVals["density_p"][i] = np.exp( - r1 )
-    
-    cellVals = {"density":np.zeros(offset.size)}
-#     for i in range(len(offset)):
-#         
-# #         startIdx = 8*i
-# #         xmid = (XV[startIdx] + XV[startIdx+1])/2
-# #         ymid = (YV[startIdx] + YV[startIdx+2])/2
-# #         zmid = (ZV[startIdx] + ZV[startIdx+4])/2
-# #         
-# #         r1 = np.sqrt( (xmid-x1)**2 + (ymid-y1)**2 + (zmid-z1)**2)
-# #         r2 = np.sqrt( (xmid-x2)**2 + (ymid-y2)**2 + (zmid-z2)**2)
-# #         
-#         cellVals["density"][i] = max( RHO[centerIdx[i]], 1e-16) 
+    # Gather all the remote points onto rank 0
+    if rank==0:
+        RANKS=np.zeros(len(X),dtype=np.int)
+        rprint(rank,"Initial rank 0 has %i points." %len(X))
+    for sender in range(1,size):
+        rprint(rank,"Getting data from rank %i" %sender)
+        if rank==0:
+            numData = comm.recv(source=sender)
+            rprint(rank,"Number of remote points: %i" %numData)
+            tempX = np.empty(numData)
+            tempY = np.empty(numData)
+            tempZ = np.empty(numData)
+            tempRHO = np.empty(numData)
+            comm.Recv(tempX, source=sender)
+            comm.Recv(tempY, source=sender)
+            comm.Recv(tempZ, source=sender)
+            comm.Recv(tempRHO, source=sender)
+            
+            X = np.append(X,tempX)
+            Y = np.append(Y,tempY)
+            Z = np.append(Z,tempZ)
+            RHO = np.append(RHO,tempRHO)
+            RANKS = np.append(RANKS, sender*np.ones(numData,dtype=np.int))
+            rprint(rank,"New length of X: %i" %len(X))
+        elif rank==sender:
+            comm.send(len(X), dest=0)
+            comm.Send(X,dest=0)
+            comm.Send(Y,dest=0)
+            comm.Send(Z,dest=0)
+            comm.Send(RHO,dest=0)
+        else:
+            pass
         
-        
+    if rank==0:
+        np.savetxt(outputFile+'-X.csv', X, delimiter=',')
+        np.savetxt(outputFile+'-Y.csv', Y, delimiter=',')
+        np.savetxt(outputFile+'-Z.csv', Z, delimiter=',')
+        np.savetxt(outputFile+'-RHO.csv', RHO, delimiter=',')
+        np.savetxt(outputFile+'-RANKS.csv', RANKS, delimiter=',')
     
-#     savefile="/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium"
-    unstructuredGridToVTK(outputFile, 
-                          XV, YV, ZV, connectivity = conn, offsets = offset, cell_types = ctype, 
-                          cellData = cellVals, pointData = pointVals)
-#     x=[]
-#     y=[]
-#     z=[]
-#     w=[]
-#     rho=[]
-#     for i in range(len(X)):
-#         if ( (Z[i]>=-300.3) and (Z[i]<300.3) ):
-#             newPoint=True
-# #             for j in range(min(len(x),100)):
-# #                 if ( (X[i] == x[-j]) and (Y[i] == y[-j]) ): 
-# #                     newPoint=False
-# #                     print('This (x,y) has already been added.')
-#             if newPoint==True: 
-#                 
-#                 x.append(X[i])
-#                 y.append(Y[i])
-# #                 z.append(Z[i])
-#                 z.append(0)
-#                 w.append(W[i])
-# #                 rho.append(RHO[i])
-#                 rho.append(np.exp(-(np.sqrt(X[i]**2 + Y[i]**2 + Z[i]**2))))
-#     print('Number of plotting points: ', len(x))
+    
+    
+    
+    
+#     ## FOR VISIT OR PARAVIEW CONNECTIVITY GRAPHS NEED TO UNCOMMENT STUFF BELOW AND EXTRACT TREE FROM ABOVE
+#     X,Y,Z,W,RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractXYZ_connected()
 #     
-#     print('About to export mesh.')
-#     pointsToVTK(outputFile, np.array(x), np.array(y), np.array(z), data = 
-#                     {"rho" : np.array(rho)} )
-# #     tree.exportGridpoints(outputFile)
-# #     tree.orthonormalizeOrbitals()
-# #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
-
-
-    print('Meshes Exported.')
+# #     print("Saving mesh to /home/njvaughn/PSPmesh/")
+# #     np.save("/home/njvaughn/PSPmesh/X_%i" %(nPoints), X)
+# #     np.save("/home/njvaughn/PSPmesh/Y_%i" %(nPoints), Y)
+# #     np.save("/home/njvaughn/PSPmesh/Z_%i" %(nPoints), Z)
+# #     np.save("/home/njvaughn/PSPmesh/W_%i" %(nPoints), W)
+# #     np.save("/home/njvaughn/PSPmesh/RHO_%i" %(nPoints), RHO)
+#     
+# #     print(XV)
+# #     print(YV)
+# #     print(ZV)
+# #     print(len(XV))
+# #     print(XV.size)
+# #     print(RHO)
+# #     print(vertexIdx)
+# #     print(centerIdx)
+# 
+#     print("Number of coarse mesh points = %i" %len(X))
+#     print("Number of coarse mesh cells  = %i" %len(pointsPerCell_coarse))
+#     print("Number of fine mesh points   = %i" %len(Xf))
+# 
+#     conn=np.zeros(XV.size)
+#     for i in range(len(conn)):
+#         conn[i] = i
+#     offset=np.zeros(int(XV.size/8))
+#     for i in range(len(offset)):
+#         offset[i] = 8*(i+1)
+#     ctype = np.zeros(len(offset))
+#     for i in range(len(ctype)):
+#         ctype[i] = VtkVoxel.tid
+#     pointVals = {"density":np.zeros(XV.size)}
+#     x1=y1=z1=-1
+#     x2=y2=z2=1
+#     for i in range(len(XV)):
+#         pointVals["density"][i] = max( RHO[vertexIdx[i]], 1e-16) 
+# #         r1 = np.sqrt(  (XV[i]-x1)*(XV[i]-x1) + (YV[i]-y1)*(YV[i]-y1) + (ZV[i]-z1)*(ZV[i]-z1) )
+# #         r2 = np.sqrt(  (XV[i]-x2)*(XV[i]-x2) + (YV[i]-y2)*(YV[i]-y2) + (ZV[i]-z2)*(ZV[i]-z2) )
+# # #         print(r)
+# #         pointVals["density"][i] = np.exp( - r1) + np.exp( - 2*r2)
+# #         pointVals["density_p"][i] = np.exp( - r1 )
+#     
+#     cellVals = {"density":np.zeros(offset.size)}
+# #     for i in range(len(offset)):
+# #         
+# # #         startIdx = 8*i
+# # #         xmid = (XV[startIdx] + XV[startIdx+1])/2
+# # #         ymid = (YV[startIdx] + YV[startIdx+2])/2
+# # #         zmid = (ZV[startIdx] + ZV[startIdx+4])/2
+# # #         
+# # #         r1 = np.sqrt( (xmid-x1)**2 + (ymid-y1)**2 + (zmid-z1)**2)
+# # #         r2 = np.sqrt( (xmid-x2)**2 + (ymid-y2)**2 + (zmid-z2)**2)
+# # #         
+# #         cellVals["density"][i] = max( RHO[centerIdx[i]], 1e-16) 
+#         
+#         
+#     
+# #     savefile="/Users/nathanvaughn/Desktop/meshTests/forVisitTesting/beryllium"
+#     unstructuredGridToVTK(outputFile, 
+#                           XV, YV, ZV, connectivity = conn, offsets = offset, cell_types = ctype, 
+#                           cellData = cellVals, pointData = pointVals)
+# #     x=[]
+# #     y=[]
+# #     z=[]
+# #     w=[]
+# #     rho=[]
+# #     for i in range(len(X)):
+# #         if ( (Z[i]>=-300.3) and (Z[i]<300.3) ):
+# #             newPoint=True
+# # #             for j in range(min(len(x),100)):
+# # #                 if ( (X[i] == x[-j]) and (Y[i] == y[-j]) ): 
+# # #                     newPoint=False
+# # #                     print('This (x,y) has already been added.')
+# #             if newPoint==True: 
+# #                 
+# #                 x.append(X[i])
+# #                 y.append(Y[i])
+# # #                 z.append(Z[i])
+# #                 z.append(0)
+# #                 w.append(W[i])
+# # #                 rho.append(RHO[i])
+# #                 rho.append(np.exp(-(np.sqrt(X[i]**2 + Y[i]**2 + Z[i]**2))))
+# #     print('Number of plotting points: ', len(x))
+# #     
+# #     print('About to export mesh.')
+# #     pointsToVTK(outputFile, np.array(x), np.array(y), np.array(z), data = 
+# #                     {"rho" : np.array(rho)} )
+# # #     tree.exportGridpoints(outputFile)
+# # #     tree.orthonormalizeOrbitals()
+# # #     tree.exportGridpoints('/Users/nathanvaughn/Desktop/meshTests/CO_afterOrth')
+# 
+# 
+#     print('Meshes Exported.')
     
-
     
+    tree=[]
     return tree
 
 
@@ -230,6 +284,21 @@ def timeConvolutions(domainSize,maxSideLength,coreRepresentation,
 
     return
 
+
+def plotMeshPoints(outputFile):
+    
+    X=np.loadtxt(outputFile+'-X.csv', delimiter=',')
+    Y=np.loadtxt(outputFile+'-Y.csv', delimiter=',')
+    Z=np.loadtxt(outputFile+'-Z.csv', delimiter=',')
+    RHO=np.loadtxt(outputFile+'-RHO.csv', delimiter=',')
+    RANKS=np.loadtxt(outputFile+'-RANKS.csv', delimiter=',')
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection = '3d')
+    
+    ax.scatter(X, Y, Z, c = RANKS)
+    plt.show()
 
 
 
@@ -271,7 +340,8 @@ if __name__ == "__main__":
 #     inputFile=srcdir+'molecularConfigurations/siliconAuxiliaryPSP.csv'
 #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/silicon-PSP"
     
-#     outputFile="/home/njvaughn/PSPmesh/Si2"
+#     inputFile=srcdir+'molecularConfigurations/Si2AuxiliaryPSP.csv'
+#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/Si2"
 
 #     inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
 #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
@@ -281,28 +351,30 @@ if __name__ == "__main__":
     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C60-AE"
     
     
-#     coreRepresentation="Pseudopotential"
-#     MESHTYPE='coarsenedUniformTwoLevel'
-# 
-#     order=3
+    coreRepresentation="Pseudopotential"
+    MESHTYPE='coarsenedUniformTwoLevel'
+ 
+    order=2
     gaugeShift=-0.5
      
     domainSize=32
-    MAXSIDELENGTH=64
-#     MESHPARAM1=0.5 # near field spacing 
-#     MESHPARAM2=8.0 # far field spacing
-#     MESHPARAM3=2.0 # ball radius
-#     MESHPARAM4=0 # additional inner refinement 
+    MAXSIDELENGTH=16
+    
+    MESHPARAM1=1.0 # near field spacing 
+    MESHPARAM2=8.0 # far field spacing
+    MESHPARAM3=2.0 # ball radius
+    MESHPARAM4=0 # additional inner refinement 
     
     
     
-    coreRepresentation="AllElectron"
-    MESHTYPE='ParentChildrenIntegral'
-    order=4
-    MESHPARAM1=1e-5
-    MESHPARAM2=1e10
-    MESHPARAM3=1e10
-    MESHPARAM4=1e10
+#     coreRepresentation="AllElectron"
+#     MESHTYPE='ParentChildrenIntegral'
+#     order=4
+#     MESHPARAM1=1e-5
+#     MESHPARAM2=1e10
+#     MESHPARAM3=1e10
+#     MESHPARAM4=1e10
+    
 #     
 # #     inputFile=srcdir+'molecularConfigurations/berylliumAuxiliary.csv'
 #     inputFile=srcdir+'molecularConfigurations/siliconAuxiliary.csv'
@@ -331,6 +403,9 @@ if __name__ == "__main__":
                           inputFile,outputFile,srcdir,order,gaugeShift,
                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
     
+#     if rank==0:
+#         plotMeshPoints(outputFile)
+        
     
 #     tree = timeConvolutions(domainSize,MAXSIDELENGTH,coreRepresentation, 
 #                           inputFile,outputFile,srcdir,order,gaugeShift,

@@ -476,7 +476,7 @@ def scfFixedPointClosure(scf_args):
             if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
             if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals) 
 #             if previousOccupations[m] > 1e-20:
-            if (  (previousOccupations[m] > 1e-20) or (SCFcount<20) ):  # 
+            if (  (previousOccupations[m] > 1e-20) or (SCFcount<8) ):  # 
                 if verbosity>0: rprint(rank,'Working on orbital %i' %m)
                 if verbosity>0: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                 
@@ -539,7 +539,7 @@ def scfFixedPointClosure(scf_args):
                 elif SCFcount == TwoMeshStart:
                     AndersonActivationTolerance=3e-2
                 else:
-                    AndersonActivationTolerance=3e-2
+                    AndersonActivationTolerance=3e2
                 while ( (resNorm> max(AndersonActivationTolerance,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 rprint(rank, 'MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
@@ -605,7 +605,7 @@ def scfFixedPointClosure(scf_args):
                     
 #                     orthWavefunction = mgs(orbitals,W,m, comm)
 #                     diff=orthWavefunction-orbitals[m,:]
-#                     L2diff = np.sqrt(global_dot(W,diff**2,comm))
+#                     L2diff = np.sqrt(global_dot(W,diff**2,comm)) 
 #                     rprint(rank,"\n\n\n Just did the extra orthgonalization.  L2 difference between orbitals[m,:] and the newly orthogonalize vector: %1.2e" %L2diff)
                     orbitals[m,:] = np.copy(orthWavefunction)
                     psiIn = np.append( np.copy(orbitals[m,:]), Energies['orbitalEnergies'][m] )
@@ -637,10 +637,10 @@ def scfFixedPointClosure(scf_args):
                         Done=True
                     eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
                     if verbosity>0: rprint(rank,'Eigenvalue Diff: %f' %eigenvalueDiff)
-                    if ( (eigenvalueDiff<scf_args['currentGItolerance']/20) and (gi_args["greenIterationsCount"]>8) ): 
+                    if ( (eigenvalueDiff<scf_args['currentGItolerance']/10) and (gi_args["greenIterationsCount"]>8) ): 
                         Done=True
                     if greenIterationsCount>50:
-                        rprint(rank,"Terminating fixed point iteration at 50 iterations.")
+                        rprint(rank,"Terminating fixed point iteration for state %i at 50 iterations." %m) 
                         Done=True
                         
 #                     if ( (greenIterationsCount>20) and (Energies['orbitalEnergies'][m] > Energies['gaugeShift']) ):
@@ -675,6 +675,7 @@ def scfFixedPointClosure(scf_args):
                     andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
                     Energies['orbitalEnergies'][m] = andersonOrbital[-1]
                     orbitals[m,:] = andersonOrbital[:-1] 
+                    
                      
                     
                     if Energies['orbitalEnergies'][m]>0.0:
@@ -682,8 +683,14 @@ def scfFixedPointClosure(scf_args):
                         rprint(rank,"Anderson mixing led to a positive eigenvalue for %i state.  This better be an unoccupied state.  Fixing it to the gauge shift value." %m)
                         Energies['orbitalEnergies'][m] = Energies['gaugeShift']
                       
-                      
-      
+#                     if ( (Done==False) and (greenIterationsCount%20==0) ):
+#                         rprint(rank,"Resetting history for state %i after iteration %i." %(m,greenIterationsCount))                         
+#                         firstInputWavefunction=True
+#                         firstOutputWavefunction=True
+#                         inputWavefunctions = np.zeros((psiOut.size,1))
+#                         outputWavefunctions =  np.zeros((psiOut.size,1))
+#                         mixingStart = np.copy( gi_args['greenIterationsCount'] ) 
+#       
       
                    
                 if verbosity>0: rprint(rank,'Used %i iterations for wavefunction %i' %(gi_args["greenIterationsCount"],m))
@@ -755,7 +762,7 @@ def scfFixedPointClosure(scf_args):
             rprint(rank,"\n\n\n\n\n")
 
         integratedDensity = global_dot( newDensity, W, comm )
-        densityResidual = np.sqrt( global_dot( (newDensity-oldDensity)**2,W,comm ) )
+        densityResidual = np.sqrt( global_dot( (newDensity-oldDensity)**2,W,comm ) ) / len(atoms)
         if verbosity>0: rprint(rank,'Integrated density: ', integratedDensity)
         if verbosity>0: rprint(rank,'Density Residual ', densityResidual)
         
@@ -840,7 +847,7 @@ def scfFixedPointClosure(scf_args):
             if verbosity>0: rprint(rank,'Orbital %i error: %1.3e' %(m, Energies['orbitalEnergies'][m]-referenceEigenvalues[m]-Energies['gaugeShift']))
         
         
-        energyResidual = abs( Energies['Etotal'] - Energies['Eold'] )  # Compute the energyResidual for determining convergence
+        energyResidual = abs( Energies['Etotal'] - Energies['Eold'] )/len(atoms)  # Compute the energyResidual for determining convergence
         Energies['Eold'] = np.copy(Energies['Etotal'])
         
         
@@ -850,7 +857,6 @@ def scfFixedPointClosure(scf_args):
         """
     
         print_eigs_and_occupations(Energies['orbitalEnergies']-Energies['gaugeShift'], occupations, Energies['orbitalEnergies']-referenceEigenvalues[:nOrbitals]-Energies['gaugeShift'])
-    
         rprint(rank,'Updated V_x:                               % .10f Ha' %Energies['Vx'])
         rprint(rank,'Updated V_c:                               % .10f Ha' %Energies['Vc'])
         rprint(rank,'Updated Band Energy:                       % .10f Ha, %.10e Ha' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
@@ -861,8 +867,9 @@ def scfFixedPointClosure(scf_args):
         rprint(rank,'Updated totalElectrostatic:                % .10f H, %.10e Ha' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"]))
         rprint(rank,"Hartree, Nuclear, Repulsion:               % .6f, % .6f, % .6f Ha" %(Energies["Ehartree"], Energies["Enuclear"], Energies["Repulsion"]))
         rprint(rank,'Total Energy:                              % .10f H, %.10e Ha' %(Energies['Etotal'], Energies['Etotal']-referenceEnergies['Etotal']))
-        rprint(rank,'Energy Residual:                            %.3e' %energyResidual)
-        rprint(rank,'Density Residual:                           %.3e\n\n'%densityResidual)
+        rprint(rank,'Total Energy Per Atom:                     % .10f H, %.10e Ha' %(Energies['Etotal']/len(atoms), (Energies['Etotal']-referenceEnergies['Etotal'])/len(atoms) ))
+        rprint(rank,'Energy Residual per atom:                  % .3e' %energyResidual)
+        rprint(rank,'Density Residual per atom:                 % .3e\n\n'%densityResidual)
     
         scf_args['energyResidual']=energyResidual
         scf_args['densityResidual']=densityResidual
@@ -937,6 +944,7 @@ def scfFixedPointClosure(scf_args):
 #         if plotSliceOfDensity==True:
 #     #             densitySliceSavefile = densityPlotsDir+'/iteration'+str(SCFcount)
 #             r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
+
 #         
 #     #
 #             densities = np.load(densitySliceSavefile+'.npy')

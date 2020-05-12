@@ -689,7 +689,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
  
 
     energyResidual=10
-    residuals = 10*np.ones_like(Energies['orbitalEnergies'])
+    residuals = 5*np.ones_like(Energies['orbitalEnergies'])
     
     referenceEnergies = {'Etotal':Etotal,'Eband':Eband,'Eelectrostatic':Eelectrostatic,'Eexchange':Eexchange,'Ecorrelation':Ecorrelation}
     referenceEnergies["Ehartree"] = 0.0 # DFT-FE value for single Beryllium atom

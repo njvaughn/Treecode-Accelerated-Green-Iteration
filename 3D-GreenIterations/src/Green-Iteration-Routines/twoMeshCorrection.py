@@ -457,7 +457,8 @@ def twoMeshCorrectionClosure(scf_args):
         rprint(rank,'Updated totalElectrostatic:                % .10f H, %.10e Ha' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"]))
         rprint(rank,"Hartree, Nuclear, Repulsion:               % .6f, % .6f, % .6f Ha" %(Energies["Ehartree"], Energies["Enuclear"], Energies["Repulsion"]))
         rprint(rank,'Total Energy:                              % .10f H, %.10e Ha' %(Energies['Etotal_corrected'], Energies['Etotal_corrected']-referenceEnergies['Etotal']))
-        rprint(rank,'Energy Residual (wrt previous corrected):  % .3e' %energyResidual)
+        rprint(rank,'Total Energy Per Atom:                     % .10f H, %.10e Ha' %(Energies['Etotal_corrected']/len(atoms), (Energies['Etotal_corrected']-referenceEnergies['Etotal'])/len(atoms) ))
+#         rprint(rank,'Energy Residual (wrt previous corrected):  % .3e' %energyResidual)
 #         rprint(rank,'Density Residual:                       %.3e\n\n'%densityResidual)
     
         scf_args['energyResidual']=energyResidual

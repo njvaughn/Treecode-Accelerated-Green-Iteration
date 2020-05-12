@@ -276,23 +276,27 @@ def greensIteration_FixedPoint_Closure(gi_args):
             computeType=BT.ComputeType.PARTICLE_CLUSTER
             
             
-#             ## Optimization:  Can get away with looser treecode parameters in the early SCF iterations since high accuracy is not demanded
-#             
-#             if SCFcount<2:
-#                 treecodeOrder=max(2,treecodeOrder-3)
-#                 theta = (theta+1.0)/2  # midway between input and 1.0
-#             elif SCFcount<4:
-#                 treecodeOrder=max(2,treecodeOrder-2)
-#                 theta = (theta+1.0)/2  # midway between input and 1.0
-#             elif SCFcount<8:
-#                 treecodeOrder=max(2,treecodeOrder-1)
-#                 theta = (3*theta+1.0)/4  # 3/4 of the way to input theta
-#             else: 
-#                 # use the user input treecode parameters
-#                 pass
+            ## Optimization:  Can get away with looser treecode parameters in the early SCF iterations since high accuracy is not demanded
+            
+            graduallyTightenTreecodeParameters=True
+            
+            if graduallyTightenTreecodeParameters:
+                if SCFcount<2:
+                    treecodeOrder=max(2,treecodeOrder-3)
+                    theta = (theta+1.0)/2  # midway between input and 1.0
+                elif SCFcount<4:
+                    treecodeOrder=max(2,treecodeOrder-2)
+                    theta = (theta+1.0)/2  # midway between input and 1.0
+                elif SCFcount<8:
+                    treecodeOrder=max(2,treecodeOrder-1)
+                    theta = (3*theta+1.0)/4  # 3/4 of the way to input theta
+                else: 
+                    # use the user input treecode parameters
+                    pass
             
             
-               
+#             for sizeCheck in [1.0, 2.0, 4.0, 8.0]:
+#                 verbosity=1
             comm.barrier()
             startTime = time.time()
             psiNew = BT.callTreedriver(
@@ -313,8 +317,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             convolutionTime = time.time()-startTime
             if verbosity>0: rprint(rank,'Convolution time: ', convolutionTime)
             Times['timePerConvolution'] = convolutionTime
-            if verbosity>0: rprint(rank,"Batch size %i, cluster size %i, time per convolution %f" %(batchSize,maxParNode,convolutionTime))
-            
+            if verbosity>0: rprint(rank,"Batch size %i, cluster size %i, sizeCheck %1.1f, time per convolution %f" %(batchSize,maxParNode,sizeCheck,convolutionTime))
 #             rprint(rank,"Exiting because only interested in time per convolution.")
 #             exit(-1)
 

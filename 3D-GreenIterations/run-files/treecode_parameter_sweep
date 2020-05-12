@@ -1,18 +1,14 @@
 #!/bin/bash
-#SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/order4_hartree_after_density_update_C60_test-%j.%N.out"
-#SBATCH --partition=gpu-shared
+#SBATCH --job-name="gl-testing"
+#SBATCH --output="dataFiles/sizeCheck_lagrange_one_SCF_hermite_vs_lagrange_testing_%j.%N.out"
+#SBATCH --partition=gpu
 #SBATCH --nodes=1
+#SBATCH --gres=gpu:1
 #SBATCH --ntasks-per-node=1
-#SBATCH --gres=gpu:p100:1  
-#SBATCH --mem=20GB 
-#SBATCH -t 24:00:00
+#SBATCH --mem-per-cpu=48gb  
+#SBATCH -t 12:00:00
 #SBATCH --no-requeue
-#SBATCH -A mia320
-#SBATCH --constraint=exclusive
-
-
-export LD_LIBRARY_PATH=/home/njvaughn/mvapich2_ib_Zoltan_Shared/lib:$LD_LIBRARY_PATH
+#SBATCH -A krasny1
  
 
 cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
@@ -61,10 +57,10 @@ MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
   
  
-INITIAL_GI_TOLERANCE=3e-2 
-FINAL_GI_TOLERANCE=1e-6 
-GRADUALSTEPS=12
-SCF_TOLERANCE=3e-6
+INITIAL_GI_TOLERANCE=3e-3 
+FINAL_GI_TOLERANCE=1e-5 
+GRADUALSTEPS=8
+SCF_TOLERANCE=3e0
 
 
 
@@ -86,7 +82,7 @@ MESHTYPE='coarsenedUniformTwoLevel'
 
 DOMAIN=32
 MAXSIDELENGTH=8
-MESHPARAM1=0.5 # near field spacing  
+MESHPARAM1=0.25 # near field spacing  
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
@@ -97,24 +93,25 @@ GIFORM="Sequential"
 #GIFORM="Greedy" 
 MESHPARAM4=-2
  
+ 
+ 
 APPROXIMATIONNAME=hermite 
-BATCHSIZE=2000
-MAXPARNODE=2000
+BATCHSIZE=4000
+CLUSTERSIZE=4000
 
+TREECODEORDER=5
    
-for THETA in 0.6 0.9
+for THETA in 0.5 0.7 0.9
 do                                                          
-    for TREECODEORDER in 4 6
-    do        
+    #CLUSTERSIZE=${BATCHSIZE}
 
-        OUTPUTFILE="/home/njvaughn/ONCV-testing/Si2/treecodeParams/lagrange_not_tighteningTCparams__${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
+    OUTPUTFILE="/home/njvaughn/ONCV-testing/Si2/treecodeParams_fine/first_SCF_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}_batchSize_${BATCHSIZE}_clusterSize_${CLUSTERSIZE}.csv" 
+    #OUTPUTFILE="/home/njvaughn/ONCV-testing/Si2/treecodeParams_fine/first_SCF_DirectSum.csv" 
 
-        #ibrun -n 4 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
-        ibrun -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
-                                                $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
-                                                $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
-                                                $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
-                                                $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART $GIFORM
-    done      
+    mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+                                            $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
+                                            $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
+                                            $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
+                                            $GPUPRESENT $TREECODE $TREECODEORDER $THETA $CLUSTERSIZE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
+                                            $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART $GIFORM
 done
