@@ -278,21 +278,21 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
             ## Optimization:  Can get away with looser treecode parameters in the early SCF iterations since high accuracy is not demanded
             
-            graduallyTightenTreecodeParameters=True
-            
-            if graduallyTightenTreecodeParameters:
-                if SCFcount<2:
-                    treecodeOrder=max(2,treecodeOrder-3)
-                    theta = (theta+1.0)/2  # midway between input and 1.0
-                elif SCFcount<4:
-                    treecodeOrder=max(2,treecodeOrder-2)
-                    theta = (theta+1.0)/2  # midway between input and 1.0
-                elif SCFcount<8:
-                    treecodeOrder=max(2,treecodeOrder-1)
-                    theta = (3*theta+1.0)/4  # 3/4 of the way to input theta
-                else: 
-                    # use the user input treecode parameters
-                    pass
+#             graduallyTightenTreecodeParameters=True
+#             
+#             if graduallyTightenTreecodeParameters:
+#                 if SCFcount<2:
+#                     treecodeOrder=max(2,treecodeOrder-3)
+#                     theta = (theta+1.0)/2  # midway between input and 1.0
+#                 elif SCFcount<4:
+#                     treecodeOrder=max(2,treecodeOrder-2)
+#                     theta = (theta+1.0)/2  # midway between input and 1.0
+#                 elif SCFcount<8:
+#                     treecodeOrder=max(2,treecodeOrder-1)
+#                     theta = (3*theta+1.0)/4  # 3/4 of the way to input theta
+#                 else: 
+#                     # use the user input treecode parameters
+#                     pass
             
             
 #             for sizeCheck in [1.0, 2.0, 4.0, 8.0]:

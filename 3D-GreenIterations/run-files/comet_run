@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/8node_LDA_C60_correctedReference-%j.%N.out"
+#SBATCH --output="dataFiles/restart_with_extra_states_and_tighterGI_LDA_C60_correctedReference-%j.%N.out"
 #SBATCH --partition=gpu
-#SBATCH --nodes=8
+#SBATCH --nodes=4
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:p100:4   
 #SBATCH --mem=100GB 
-#SBATCH -t 24:00:00 
+#SBATCH -t 10:00:00  
 #SBATCH --no-requeue
 #SBATCH -A mia320
 #SBATCH --constraint=exclusive
@@ -16,7 +16,7 @@ export LD_LIBRARY_PATH=/home/njvaughn/mvapich2_ib_Zoltan_Shared/lib:$LD_LIBRARY_
  
 
 cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
-SINGSUBT=1   
+SINGSUBT=1    
 GPUPRESENT='True'  
     
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'  
@@ -25,14 +25,14 @@ SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'   
 #INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/N2Auxiliary.csv'
-#INPUTFILE='molecularConfigurations/NAuxiliary.csv'
+#INPUTFILE='molecularConfigurations/NAuxiliary.csv' 
 
 COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv' 
-#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv' 
 INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
-#INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv' 
+#INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'   
 #INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/carbonAuxiliaryPSP.csv'
@@ -50,30 +50,34 @@ TREECODE='True'
  
 GAUGESHIFT=-0.5
 MIXING='Anderson'
- 
+  
 #MESHTYPE='LW5'
-RESTART='False' 
+RESTART='True' 
 SAVEDMESH='None' 
 
 ADDITIONALDEPTHATATOMS=0 
 GRADIENTFREE='True' 
 
-INITIAL_GI_TOLERANCE=3e-2 
-FINAL_GI_TOLERANCE=1e-5 
-GRADUALSTEPS=12
-SCF_TOLERANCE=3e-5 
+MIXINGPARAMETER=0.5 
+MIXINGHISTORY=10   
+  
+
+INITIAL_GI_TOLERANCE=1e-2 
+FINAL_GI_TOLERANCE=1e-5   
+GRADUALSTEPS=10
+SCF_TOLERANCE=1e-4  
 
 
 
 APPROXIMATIONNAME=lagrange
 SINGULARITYHANDLING=subtraction
-
+  
 REGULARIZE='False'
 EPSILON=0.0 
    
 GAUSSIANALPHA=2.0 
-TREECODEORDER=7
-THETA=0.9
+TREECODEORDER=8
+THETA=0.85
 
 CELLORDER=3
 FINEORDER=3
@@ -82,7 +86,7 @@ FINEORDER=3
  
 MESHTYPE='coarsenedUniformTwoLevel'
 
-DOMAIN=32
+DOMAIN=64
 MAXSIDELENGTH=8 
 MESHPARAM1=0.5 # near field spacing     
 MESHPARAM2=8.0 # far field spacing
@@ -96,12 +100,13 @@ GIFORM="Sequential"
 MESHPARAM4=-2
   
 BATCHSIZE=4000
-MAXPARNODE=4000    
+MAXPARNODE=4000   
+
                                                        
 
-OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/LDA/${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
+OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/LDA/restart_with_extra_states_and_tighterGI_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
-ibrun -n 32 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+ibrun -n 16 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                         $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                         $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                         $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

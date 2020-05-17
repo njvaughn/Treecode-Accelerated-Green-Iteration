@@ -539,7 +539,7 @@ def scfFixedPointClosure(scf_args):
                 elif SCFcount == TwoMeshStart:
                     AndersonActivationTolerance=3e-2
                 else:
-                    AndersonActivationTolerance=3e2
+                    AndersonActivationTolerance=3e-2
                 while ( (resNorm> max(AndersonActivationTolerance,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
 #                 while resNorm>intraScfTolerance:
     #                 rprint(rank, 'MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
