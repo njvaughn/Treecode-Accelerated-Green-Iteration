@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/restart_with_extra_states_and_tighterGI_LDA_C60_correctedReference-%j.%N.out"
+#SBATCH --output="dataFiles/8node_LDA_C60_correctedReference-%j.%N.out"
 #SBATCH --partition=gpu
-#SBATCH --nodes=4
+#SBATCH --nodes=8
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:p100:4   
 #SBATCH --mem=100GB 
-#SBATCH -t 10:00:00  
+#SBATCH -t 24:00:00  
 #SBATCH --no-requeue
 #SBATCH -A mia320
 #SBATCH --constraint=exclusive
@@ -52,7 +52,7 @@ GAUGESHIFT=-0.5
 MIXING='Anderson'
   
 #MESHTYPE='LW5'
-RESTART='True' 
+RESTART='False' 
 SAVEDMESH='None' 
 
 ADDITIONALDEPTHATATOMS=0 
@@ -66,7 +66,7 @@ INITIAL_GI_TOLERANCE=1e-2
 FINAL_GI_TOLERANCE=1e-5   
 GRADUALSTEPS=10
 SCF_TOLERANCE=1e-4  
-
+  
 
 
 APPROXIMATIONNAME=lagrange
@@ -106,7 +106,7 @@ MAXPARNODE=4000
 
 OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/LDA/restart_with_extra_states_and_tighterGI_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
-ibrun -n 16 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+ibrun -n 32 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                         $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                         $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                         $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

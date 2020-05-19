@@ -4,7 +4,10 @@ Created on Jun 25, 2018
 @author: nathanvaughn
 '''
 import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use('Qt4Agg')
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
 
 import sys
 import mpi4py.MPI as MPI
@@ -13,8 +16,8 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 
 
-srcdir="/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/"
-# srcdir="/home/njvaughn/TAGI/3D-GreenIterations/src/"
+# srcdir="/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/"
+srcdir="/home/njvaughn/TAGI/3D-GreenIterations/src/"
 sys.path.append(srcdir+'dataStructures')
 sys.path.append(srcdir+'Green-Iteration-Routines')
 sys.path.append(srcdir+'utilities')
@@ -31,8 +34,6 @@ import itertools
 import time
 import numpy as np
 # import dask.array as da
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import bisect
 from pyevtk.hl import pointsToVTK
 try:
@@ -120,6 +121,15 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
 #                                                                                                      inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
 #                                                                                                      divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
     
+    # compute aspect ratios
+    
+    xl = np.max(X) - np.min(X)
+    yl = np.max(Y) - np.min(Y)
+    zl = np.max(Z) - np.min(Z)
+    
+    aspectRatio = max( xl, max(yl,zl) )/ min( xl, min(yl,zl) )
+    
+    
     # Gather all the remote points onto rank 0
     if rank==0:
         RANKS=np.zeros(len(X),dtype=np.int)
@@ -159,6 +169,10 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
         np.savetxt(outputFile+'-Z.csv', Z, delimiter=',')
         np.savetxt(outputFile+'-RHO.csv', RHO, delimiter=',')
         np.savetxt(outputFile+'-RANKS.csv', RANKS, delimiter=',')
+        
+        
+    comm.barrier()
+    rprint(0,"rank %i aspect ratio = %f" %(rank,aspectRatio))
     
     
     
@@ -298,7 +312,14 @@ def plotMeshPoints(outputFile):
     ax = fig.add_subplot(111, projection = '3d')
     
     ax.scatter(X, Y, Z, c = RANKS)
-    plt.show()
+#     plt.savefig(outputFile+'_'+str(size)+"_rank_decomposition.png")
+#     plt.show()
+    
+    
+    for ii in range(180):
+        rprint(rank,2*ii)
+        ax.view_init(elev=10., azim=2*ii)
+        plt.savefig(outputFile+'_'+str(size)+"_rank_decomposition%d.png" % ii)
 
 
 
@@ -306,6 +327,13 @@ def plotMeshPoints(outputFile):
 
 if __name__ == "__main__":
     gaugeShift=-0.5
+    
+    
+#     import matplotlib
+#     matplotlib.use('Qt4Agg')
+#     from matplotlib import pyplot as plt
+#     from mpl_toolkits.mplot3d import Axes3D
+    rprint(rank, "matplotlib.get_backend(): ", matplotlib.get_backend())
 
     
 # #     ## THIS WAS USED TO GENERATE FIGURES IN PAPER
@@ -348,19 +376,20 @@ if __name__ == "__main__":
 #     outputFile="/home/njvaughn/PSPmesh/C20"
 
     inputFile=srcdir+'molecularConfigurations/C60AuxiliaryPSP.csv'
-    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C60-AE"
+#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C60-PSP"
+    outputFile="/home/njvaughn/PSPmesh/C60-PSP"
     
     
     coreRepresentation="Pseudopotential"
     MESHTYPE='coarsenedUniformTwoLevel'
  
-    order=2
+    order=3
     gaugeShift=-0.5
      
     domainSize=32
-    MAXSIDELENGTH=16
+    MAXSIDELENGTH=8
     
-    MESHPARAM1=1.0 # near field spacing 
+    MESHPARAM1=0.5 # near field spacing 
     MESHPARAM2=8.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
     MESHPARAM4=0 # additional inner refinement 
@@ -405,8 +434,8 @@ if __name__ == "__main__":
     
 #     if rank==0:
 #         plotMeshPoints(outputFile)
-        
-    
+#         
+#     
 #     tree = timeConvolutions(domainSize,MAXSIDELENGTH,coreRepresentation, 
 #                           inputFile,outputFile,srcdir,order,gaugeShift,
 #                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)

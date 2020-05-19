@@ -127,6 +127,8 @@ void loadBalanceRCB(double **cellsX, double **cellsY, double **cellsZ,
     Zoltan_Set_Param(zz, "LB_METHOD", "RCB");
     Zoltan_Set_Param(zz, "NUM_GID_ENTRIES", "1");
     Zoltan_Set_Param(zz, "NUM_LID_ENTRIES", "1");
+//    Zoltan_Set_Param(zz, "RCB_RECOMPUTE_BOX", "1");
+//    Zoltan_Set_Param(zz, "RCB_MAX_ASPECT_RATIO", "3");
     Zoltan_Set_Param(zz, "OBJ_WEIGHT_DIM", "1");
     Zoltan_Set_Param(zz, "RETURN_LISTS", "ALL");
     Zoltan_Set_Param(zz, "AUTO_MIGRATE", "TRUE");
