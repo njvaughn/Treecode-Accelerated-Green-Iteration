@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --job-name="gl-testing"
+#SBATCH --output="dataFiles/8ranks_%j.%N.out"
+#SBATCH --partition=standard
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --mem-per-cpu=8gb  
+#SBATCH -t 01:00:00
+#SBATCH --no-requeue   
+#SBATCH -A krasny1
+ 
+
+
+ 
+
+
+
+mpirun --mca btl_openib_allow_ib true --mca plm_rsh_no_tree_spawn true -n 1 python -u testPseudopotentialMesh.py

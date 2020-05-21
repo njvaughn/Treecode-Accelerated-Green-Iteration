@@ -59,12 +59,12 @@ def fermiObjectiveFunctionClosure(Energies,nElectrons):
 
 def clenshawCurtisNormClosure(W):
     def clenshawCurtisNorm(psi):
-        appendedWeights = np.append(W, 1.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
-#         appendedWeights = np.append(np.zeros_like(W), 10.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
+#         appendedWeights = np.append(W, 1.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
+        appendedWeights = np.append(np.zeros_like(W), 10.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
         norm = np.sqrt( global_dot( psi, psi*appendedWeights, comm ) )
         return norm
     return clenshawCurtisNorm
-
+ 
 def clenshawCurtisNormClosureWithoutEigenvalue(W):
     def clenshawCurtisNormWithoutEigenvalue(psi):
         appendedWeights = np.append(W, 0.0)
@@ -639,8 +639,8 @@ def scfFixedPointClosure(scf_args):
                     if verbosity>0: rprint(rank,'Eigenvalue Diff: %f' %eigenvalueDiff)
                     if ( (eigenvalueDiff<scf_args['currentGItolerance']/10) and (gi_args["greenIterationsCount"]>8) ): 
                         Done=True
-                    if greenIterationsCount>50:
-                        rprint(rank,"Terminating fixed point iteration for state %i at 50 iterations." %m) 
+                    if greenIterationsCount>75:
+                        rprint(rank,"Terminating fixed point iteration for state %i at 75 iterations." %m) 
                         Done=True
                         
 #                     if ( (greenIterationsCount>20) and (Energies['orbitalEnergies'][m] > Energies['gaugeShift']) ):

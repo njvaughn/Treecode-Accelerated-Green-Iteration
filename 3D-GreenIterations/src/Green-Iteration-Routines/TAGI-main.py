@@ -505,10 +505,11 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 
 
     comm.barrier()
-    rprint(rank,"Copying data to GPU and starting while loop for density...")
+    rprint(rank,"Copying data to GPUs.")
     if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
     if GPUpresent: MOVEDATA.callCopyVectorToDevice(W)
     comm.barrier()
+    rprint(rank,"Copied data to GPUs.  Starting while loop for density...")
     while ( (densityResidual > SCFtolerance) or (energyResidual > SCFtolerance) ):  # terminate SCF when both energy and density are converged.
           
         ## CALL SCF FIXED POINT FUNCTION
