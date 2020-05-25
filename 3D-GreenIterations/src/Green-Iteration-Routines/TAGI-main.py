@@ -364,8 +364,20 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         except OSError as e:
             rprint(rank,'Unable to make restart directory %s for this test case due to %s'  %(exampleDir,e))
 
-            
-    restartFilesDir =       exampleDir + "numPoints_" + str(globalNumPoints)
+#     restartFilesDir =       exampleDir + "numPoints_" + str(globalNumPoints)
+         
+#     restartFilesDir =       exampleDir + "backup_numPoints_" + str(globalNumPoints) + "/numPoints_1778176"
+    restartFilesDir = "/home/njvaughn/restartFiles/C60/backup_numPoints_1778176/numPoints_1778176"
+    rprint(0,"USING RESTART DATA FROM backup_numPoints_")
+    rprint(0,"USING RESTART DATA FROM backup_numPoints_")
+    rprint(0,"USING RESTART DATA FROM backup_numPoints_")
+    rprint(0,"USING RESTART DATA FROM backup_numPoints_")
+    rprint(0,"USING RESTART DATA FROM backup_numPoints_")
+    rprint(0,"USING RESTART DATA FROM backup_numPoints_")
+    rprint(0,"USING RESTART DATA FROM backup_numPoints_")
+    rprint(0,"USING RESTART DATA FROM backup_numPoints_")
+    rprint(0,"USING RESTART DATA FROM backup_numPoints_")
+    rprint(0,"USING RESTART DATA FROM backup_numPoints_") 
     if rank==0:
         try:
             os.mkdir(restartFilesDir)
@@ -524,6 +536,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         if GI_form=="Sequential":
             scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
             densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
+#             rprint(rank,"******** REPEATING GREEN ITERATION FOR SAME INPUT DENSITY AFTER SORTING *******")
+#             scf_args['GItolerancesIdx']-=1
+#             densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)  # call this a second time, will have wavefunctions sorted from the first call.
         elif GI_form=="Simultaneous":
             scfFixedPointSimultaneous, scf_args = scfFixedPointClosureSimultaneous(scf_args)
             densityResidualVector = scfFixedPointSimultaneous(RHO,scf_args,abortAfterInitialHartree)

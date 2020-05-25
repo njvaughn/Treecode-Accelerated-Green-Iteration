@@ -46,7 +46,7 @@ GRADIENTFREE='True'
 MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
      
-INITIAL_GI_TOLERANCE=3e-1 
+INITIAL_GI_TOLERANCE=3e-2
 FINAL_GI_TOLERANCE=3e-5
 GRADUALSTEPS=8
 SCF_TOLERANCE=3e-5
@@ -90,7 +90,7 @@ do
         for MAXPARNODE in 30
         do   
 
-        OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/beryllium/restart_testing/restart_with_anderson_after_2nd_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+        OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/Si2/repeat_GI_each_SCF/2passes_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
         #OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/beryllium/restart_testing/no_restart_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
         mpirun -n 6 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \

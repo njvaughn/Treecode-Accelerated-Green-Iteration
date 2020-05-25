@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/restart_with_extra_states_and_tighterGI_LDA_C60_correctedReference-%j.%N.out"
+#SBATCH --output="dataFiles/8nodes_repeating_converged_LDA_C60_correctedReference-%j.%N.out"
 #SBATCH --partition=gpu
-#SBATCH --nodes=4
+#SBATCH --nodes=8
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:p100:4   
 #SBATCH --mem=100GB 
-#SBATCH -t 10:00:00  
+#SBATCH -t 16:00:00  
 #SBATCH --no-requeue
 #SBATCH -A mia320
 #SBATCH --constraint=exclusive
@@ -22,15 +22,15 @@ GPUPRESENT='True'
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'  
 
 #COREREPRESENTATION="AllElectron" 
-#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'   
-#INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'     
+#INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv' 
 #INPUTFILE='molecularConfigurations/N2Auxiliary.csv'
 #INPUTFILE='molecularConfigurations/NAuxiliary.csv' 
 
 COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv' 
 #INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv' 
-INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv' 
 #INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'   
 #INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
@@ -52,9 +52,9 @@ GAUGESHIFT=-0.5
 MIXING='Anderson'
   
 #MESHTYPE='LW5'
-RESTART='True' 
+RESTART='False' 
 SAVEDMESH='None' 
-
+   
 ADDITIONALDEPTHATATOMS=0 
 GRADIENTFREE='True' 
 
@@ -81,7 +81,7 @@ THETA=0.85
 
 CELLORDER=3
 FINEORDER=3
-
+ 
 
  
 MESHTYPE='coarsenedUniformTwoLevel'
@@ -98,15 +98,15 @@ TWOMESHSTART=999
 GIFORM="Sequential"    
 #GIFORM="Greedy" 
 MESHPARAM4=-2
-  
+    
 BATCHSIZE=4000
 MAXPARNODE=4000   
 
                                                        
 
-OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/LDA/restart_with_extra_states_and_tighterGI_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
+OUTPUTFILE="/home/njvaughn/ONCV-testing/C60/LDA/8nodes_1_gi_pass_per_SCF_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
-ibrun -n 16 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+ibrun -n 32 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                         $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                         $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                         $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
