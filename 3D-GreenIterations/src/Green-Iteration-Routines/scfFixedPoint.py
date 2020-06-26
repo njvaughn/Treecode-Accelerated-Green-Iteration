@@ -40,7 +40,7 @@ def print_eigs_and_occupations(eigs,occupations,errors):
     rprint(rank," "+'-'*60+"\n")
     
  
-Temperature = 500
+Temperature = 100
 KB = 1/315774.6
 Sigma = Temperature*KB
 

@@ -225,7 +225,7 @@ def twoMeshCorrectionClosure(scf_args):
                                             np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
                                             kernel, numberOfKernelParameters, kernelParameters, 
                                             singularity, approximation, computeType,
-                                            treecodeOrder+1, theta-0.1, maxParNode, batchSize,
+                                            treecodeOrder+2, theta-0.15, maxParNode, batchSize,
                                             GPUpresent, treecode_verbosity
                                             )
 
@@ -364,9 +364,9 @@ def twoMeshCorrectionClosure(scf_args):
                                         np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
                                         kernel, numberOfKernelParameters, kernelParameters, 
                                         singularity, approximation, computeType,
-                                        treecodeOrder+1, theta-0.1, maxParNode, batchSize,
+                                        treecodeOrder+2, theta-0.15, maxParNode, batchSize,
                                         GPUpresent, treecode_verbosity
-                                        )
+                                        ) 
 
             psiNew /= (4*np.pi)
             comm.barrier()  

@@ -1,0 +1,12 @@
+../src/molecularConfigurations/Si30H40.csv
+../src/molecularConfigurations/Si30H40ReferenceEigenvaluesPSP.csv
+/restartFiles/Si30H40/
+-5.7442958329440387e+01 # Band energy
+0.0                     # Kinetic
+-4.0898046779499893e+01 # Exchange
+-7.4458151070096621e+00 # Correlation
+-1.8144506997022702e+02 # Local electrostatic
+-1.4172169213924045e+02  # Total energy
+
+
+# obtained with DFT-FE, order 5, h=0.25, temp 100.

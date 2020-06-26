@@ -1,12 +1,15 @@
 '''
 Created on Jun 25, 2018
-
 @author: nathanvaughn
 '''
 import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use('Qt4Agg')
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
+import csv
 import sys
+import os
 import mpi4py.MPI as MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -27,12 +30,12 @@ sys.path.append('../src/dataStructures')
 sys.path.append('../src/utilities')
 from mpiUtilities import global_dot, rprint
 from initializationRoutines import initializeDensityFromAtomicDataExternally
+import BaryTreeInterface as BT
+
 import itertools
 import time
 import numpy as np
 # import dask.array as da
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import bisect
 from pyevtk.hl import pointsToVTK
 try:
@@ -120,6 +123,15 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
 #                                                                                                      inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
 #                                                                                                      divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
     
+    # compute aspect ratios
+    
+    xl = np.max(X) - np.min(X)
+    yl = np.max(Y) - np.min(Y)
+    zl = np.max(Z) - np.min(Z)
+    
+    aspectRatio = max( xl, max(yl,zl) )/ min( xl, min(yl,zl) )
+    
+    
     # Gather all the remote points onto rank 0
     if rank==0:
         RANKS=np.zeros(len(X),dtype=np.int)
@@ -133,15 +145,18 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
             tempY = np.empty(numData)
             tempZ = np.empty(numData)
             tempRHO = np.empty(numData)
+            tempW = np.empty(numData)
             comm.Recv(tempX, source=sender)
             comm.Recv(tempY, source=sender)
             comm.Recv(tempZ, source=sender)
             comm.Recv(tempRHO, source=sender)
+            comm.Recv(tempW, source=sender)
             
             X = np.append(X,tempX)
             Y = np.append(Y,tempY)
             Z = np.append(Z,tempZ)
             RHO = np.append(RHO,tempRHO)
+            W = np.append(W,tempW)
             RANKS = np.append(RANKS, sender*np.ones(numData,dtype=np.int))
             rprint(rank,"New length of X: %i" %len(X))
         elif rank==sender:
@@ -150,6 +165,7 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
             comm.Send(Y,dest=0)
             comm.Send(Z,dest=0)
             comm.Send(RHO,dest=0)
+            comm.Send(W,dest=0)
         else:
             pass
         
@@ -158,7 +174,12 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
         np.savetxt(outputFile+'-Y.csv', Y, delimiter=',')
         np.savetxt(outputFile+'-Z.csv', Z, delimiter=',')
         np.savetxt(outputFile+'-RHO.csv', RHO, delimiter=',')
+        np.savetxt(outputFile+'-W.csv', W, delimiter=',')
         np.savetxt(outputFile+'-RANKS.csv', RANKS, delimiter=',')
+        
+        
+    comm.barrier()
+    rprint(0,"rank %i aspect ratio = %f" %(rank,aspectRatio))
     
     
     
@@ -264,25 +285,25 @@ def exportMeshForParaview(domainSize,maxSideLength,coreRepresentation,
     return tree
 
 
-def timeConvolutions(domainSize,maxSideLength,coreRepresentation, 
-                          inputFile,outputFile,srcdir,order,gaugeShift,
-                          divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4):    
-    
-    
-#     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
-    [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
-    [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
-
-    print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
-
-    
-    X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues,tree = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
-                                                                                                     inputFile,outputFile,srcdir,order,order,gaugeShift,
-                                                                                                     MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4,saveTree=True)
-   
-    print("Number of points: ", len(X))
-
-    return
+# def timeConvolutions(domainSize,maxSideLength,coreRepresentation, 
+#                           inputFile,outputFile,srcdir,order,gaugeShift,
+#                           divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4):    
+#     
+#     
+# #     [coordinateFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:2]
+#     [coordinateFile, referenceEigenvaluesFile, DummyOutputFile] = np.genfromtxt(inputFile,dtype="|U100")[:3]
+#     [Eband, Ekinetic, Eexchange, Ecorrelation, Eelectrostatic, Etotal] = np.genfromtxt(inputFile)[3:]
+# 
+#     print([coordinateFile, Etotal, Eexchange, Ecorrelation, Eband])
+# 
+#     
+#     X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues,tree = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
+#                                                                                                      inputFile,outputFile,srcdir,order,order,gaugeShift,
+#                                                                                                      MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4,saveTree=True)
+#    
+#     print("Number of points: ", len(X))
+# 
+#     return
 
 
 def plotMeshPoints(outputFile):
@@ -298,14 +319,120 @@ def plotMeshPoints(outputFile):
     ax = fig.add_subplot(111, projection = '3d')
     
     ax.scatter(X, Y, Z, c = RANKS)
-    plt.show()
+#     plt.savefig(outputFile+'_'+str(size)+"_rank_decomposition.png")
+#     plt.show()
+    
+    
+    for ii in range(180):
+        rprint(rank,2*ii)
+        ax.view_init(elev=10., azim=2*ii)
+        plt.savefig(outputFile+'_'+str(size)+"_rank_decomposition%d.png" % ii)
+        
+        
 
+def time_convolutions(  coordinates, kernelName,  approximationName, outputFile):
+    
+    ## Load in data.
+    X=np.loadtxt(coordinates+'-X.csv', delimiter=',')
+    Y=np.loadtxt(coordinates+'-Y.csv', delimiter=',')
+    Z=np.loadtxt(coordinates+'-Z.csv', delimiter=',')
+    RHO=np.loadtxt(coordinates+'-RHO.csv', delimiter=',')
+    W=np.loadtxt(coordinates+'-W.csv', delimiter=',')
+    nPoints=len(X)
+    
+    
+    # Treecode parameters
+    GPUpresent=True
+    treecode_verbosity=1
+    maxParNode=4000
+    batchSize=4000
+    singularity=BT.Singularity.SUBTRACTION
+    computeType=BT.ComputeType.PARTICLE_CLUSTER
+    
+    
+    
+    if kernelName=="coulomb":
+        kernel=BT.Kernel.COULOMB
+    elif kernelName=="yukawa": 
+        kernel=BT.Kernel.YUKAWA
+    else:
+        print("What should kernelName be?")
+         
+    numberOfKernelParameters=1 
+    kernelParameters=np.array([1.0])
+    
+    
+    
+    if approximationName=="lagrange":
+        approximation=BT.Approximation.LAGRANGE
+    elif approximationName=="hermite":
+        approximation=BT.Approximation.HERMITE
+    
+    
+    
+#     print("nPoints = ", nPoints)
+#     exit(-1)
+    direct = BT.callTreedriver(     nPoints, nPoints, 
+                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+                                    np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
+                                    kernel, numberOfKernelParameters, kernelParameters, 
+                                    singularity, approximation, computeType,
+                                    1, 0.0, maxParNode, batchSize,
+                                    GPUpresent, treecode_verbosity
+                                    )
+
+
+    treecode_verbosity=0 
+    
+#     for theta in [0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85, 0.9]:
+    for theta in [0.8,0.85, 0.9]:
+        for treecodeOrder in [2,3,4,5,6,7,8]:
+            start=time.time()
+            tree = BT.callTreedriver(   nPoints, nPoints, 
+                                        np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+                                        np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), np.copy(W),
+                                        kernel, numberOfKernelParameters, kernelParameters, 
+                                        singularity, approximation, computeType,
+                                        treecodeOrder, theta, maxParNode, batchSize,
+                                        GPUpresent, treecode_verbosity
+                                        )
+            end=time.time()
+            runtime=end-start
+            # measure error
+            
+            L2err = np.sqrt( np.dot( (tree-direct)**2, W) ) / np.sqrt( np.dot( (direct)**2, W) )
+            rprint(rank,"theta = %1.1f, order = %i,     error = %1.2e,     time = %1.3f" %(theta,treecodeOrder,L2err,runtime))
+            
+            
+            # write to data file
+            header = ["kernel", "approximation", "meshSize", "order", "theta", "batchSize", "clusterSize", "error", "time"]
+            myData = [kernelName, approximationName, nPoints, treecodeOrder, theta, batchSize, maxParNode, L2err, runtime]
+            if not os.path.isfile(outputFile):
+                myFile = open(outputFile, 'a')
+                with myFile:
+                    writer = csv.writer(myFile)
+                    writer.writerow(header) 
+                
+            
+            myFile = open(outputFile, 'a')
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(myData)
+    
+    
 
 
 
 
 if __name__ == "__main__":
     gaugeShift=-0.5
+    
+    
+#     import matplotlib
+#     matplotlib.use('Qt4Agg')
+#     from matplotlib import pyplot as plt
+#     from mpl_toolkits.mplot3d import Axes3D
+    rprint(rank, "matplotlib.get_backend(): ", matplotlib.get_backend())
 
     
 # #     ## THIS WAS USED TO GENERATE FIGURES IN PAPER
@@ -341,31 +468,33 @@ if __name__ == "__main__":
 #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/silicon-PSP"
     
 #     inputFile=srcdir+'molecularConfigurations/Si2AuxiliaryPSP.csv'
-#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/Si2"
+# #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/Si2"
+#     outputFile="/home/njvaughn/PSPmesh/Si2-PSP"
 
 #     inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
 #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
 #     outputFile="/home/njvaughn/PSPmesh/C20"
 
-    inputFile=srcdir+'molecularConfigurations/C60AuxiliaryPSP.csv'
-    outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C60-AE"
+    inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
+#     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C60-PSP"
+    outputFile="/home/njvaughn/PSPmesh/C20-PSP"
     
     
     coreRepresentation="Pseudopotential"
     MESHTYPE='coarsenedUniformTwoLevel'
  
-    order=2
+    order=4
     gaugeShift=-0.5
      
     domainSize=32
-    MAXSIDELENGTH=16
+    MAXSIDELENGTH=8
     
-    MESHPARAM1=1.0 # near field spacing 
+    MESHPARAM1=0.8 # near field spacing 
     MESHPARAM2=8.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
     MESHPARAM4=0 # additional inner refinement 
     
-    
+     
     
 #     coreRepresentation="AllElectron"
 #     MESHTYPE='ParentChildrenIntegral'
@@ -402,15 +531,20 @@ if __name__ == "__main__":
     tree = exportMeshForParaview(domainSize,MAXSIDELENGTH,coreRepresentation, 
                           inputFile,outputFile,srcdir,order,gaugeShift,
                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
+
+#     time_convolutions(  outputFile, "coulomb",  "lagrange", "/home/njvaughn/GLsync/hermite_vs_lagrange/C60/coulomb-times.csv")
+#     time_convolutions(  outputFile, "yukawa",  "hermite", "/home/njvaughn/GLsync/hermite_vs_lagrange/C60/yukawa-times.csv")
+    
+    
+#     time_convolutions(  outputFile, "yukawa",  "lagrange", "/home/njvaughn/GLsync/hermite_vs_lagrange/Si2/dummy-times.csv")
+#     time_convolutions(  outputFile, "yukawa",  "hermite", "/home/njvaughn/GLsync/hermite_vs_lagrange/Si2/yukawa-times.csv")
     
 #     if rank==0:
 #         plotMeshPoints(outputFile)
-        
-    
+#         
+#     
 #     tree = timeConvolutions(domainSize,MAXSIDELENGTH,coreRepresentation, 
 #                           inputFile,outputFile,srcdir,order,gaugeShift,
 #                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
      
-    
-    
     

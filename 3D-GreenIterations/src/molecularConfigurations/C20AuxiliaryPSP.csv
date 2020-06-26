@@ -1,5 +1,5 @@
 ../src/molecularConfigurations/C20.csv
-../src/molecularConfigurations/C20FirstSCFReferenceEigenvaluesPSP.csv
+../src/molecularConfigurations/C20ReferenceEigenvaluesPSP.csv
 /restartFiles/C20/
 -4.0204036760689050e+01 # band
  0.0
