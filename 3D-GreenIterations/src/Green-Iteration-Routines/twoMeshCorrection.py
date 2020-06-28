@@ -138,7 +138,8 @@ def twoMeshCorrectionClosure(scf_args):
         regularize=scf_args['regularize']
         epsilon=scf_args['epsilon']
         TwoMeshStart=scf_args['TwoMeshStart']
-        
+        CORECHARGERHO=scf_args['CORECHARGERHO']
+
 #         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
 #         scf_args['GItolerancesIdx']=0
         
@@ -243,8 +244,8 @@ def twoMeshCorrectionClosure(scf_args):
            
         comm.barrier()    
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
-        exchangeOutput = exchangeFunctional.compute(RHO)
-        correlationOutput = correlationFunctional.compute(RHO)        
+        exchangeOutput = exchangeFunctional.compute(RHO+CORECHARGERHO)
+        correlationOutput = correlationFunctional.compute(RHO+CORECHARGERHO)        
         Energies['Ex'] = global_dot( W, RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)), comm )
         Energies['Ec'] = global_dot( W, RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)), comm )
         

@@ -154,6 +154,7 @@ def scfFixedPointClosure(scf_args):
         regularize=scf_args['regularize']
         epsilon=scf_args['epsilon']
         TwoMeshStart=scf_args['TwoMeshStart']
+        CORECHARGERHO=scf_args['CORECHARGERHO']
         
         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
 #         scf_args['GItolerancesIdx']=0
@@ -423,8 +424,8 @@ def scfFixedPointClosure(scf_args):
         
         
     
-        exchangeOutput = exchangeFunctional.compute(RHO)
-        correlationOutput = correlationFunctional.compute(RHO)
+        exchangeOutput = exchangeFunctional.compute(RHO+CORECHARGERHO)
+        correlationOutput = correlationFunctional.compute(RHO+CORECHARGERHO) # For NLCC, evaluate the xc functionals on RHO+CORECHARGERHO.  For systems without NLCC, CORECHARGERHO==0 so it has no effect.
 #         Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
 #         Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
         
