@@ -39,6 +39,7 @@ class ONCV_PSP(object):
         self.psp = psp_temp['pseudo_potential']
         self.setProjectorInterpolators()
         self.setDensityInterpolator()
+        self.setCoreChargeDensityInterpolator()
         self.setLocalPotentialInterpolator()
         
     def atomicNumberToAtomicSymbol(self):
@@ -92,9 +93,48 @@ class ONCV_PSP(object):
 #         self.firstNonzeroDensityTimes4pirr = density[1]/(4*np.pi*r[1]*r[1])
         self.radialCutoff = r[-1]
         self.innerCutoff  = r[1]
+        
+    def setCoreChargeDensityInterpolator(self,verbose=0):
+        
+        if self.psp['header']['core_correction']==False:
+            return 
+        
+        
+        r = np.array(self.psp['radial_grid'])
+        self.maxRadialGrid = r[-1]
+        coreChargeDensity = np.array(self.psp['core_charge_density'])
+        ## Is it okay to set the boundary condition to zero?  
+        self.coreChargeDensityInterpolator = InterpolatedUnivariateSpline(r[:],coreChargeDensity[:],k=3,ext='zeros')
+        
+        # Setup decaying exponential for extrapolation beyond rcutoff.
+        a = r[-3]
+        b = r[-1]
+        
+        da = self.densityInterpolator(a)
+        db = self.densityInterpolator(b)
+        
+        logslope = (np.log(db)-np.log(da)) / (b-a)
+        self.coreChargeDensityFarFieldExponentialCoefficient = db
+        self.coreChargeDensityFarFieldExponentialDecayRate = logslope
+        
+        # Setup linear function for extrapolation beyond rcutoff.
+        a = r[1]
+        b = r[3]
+        
+        da = self.coreChargeDensityInterpolator(a)
+        db = self.coreChargeDensityInterpolator(b)
+        
+        slope = (db-da) / (b-a)
+        
+        self.coreChargeDensityNearFieldLinearSlope=slope
+        self.coreChargeDensityNearFieldHeight = da
+        
       
     def densityFarFieldExtrapolationFunction(self,r):
         return self.densityFarFieldExponentialCoefficient * np.exp( self.densityFarFieldExponentialDecayRate * (r-self.maxRadialGrid))
+    
+    def coreChargeDensityFarFieldExtrapolationFunction(self,r):
+        return self.coreChargeDensityFarFieldExponentialCoefficient * np.exp( self.coreChargeDensityFarFieldExponentialDecayRate * (r-self.maxRadialGrid))
         
     def densityNearFieldExtrapolation(self,r):
         return self.densityNearFieldLinearSlope * (r-self.innerCutoff) + self.densityNearFieldHeight
@@ -102,20 +142,12 @@ class ONCV_PSP(object):
     def evaluateDensityInterpolator(self,r):
         
         Rho = np.where( r<self.radialCutoff, self.densityInterpolator(r) / (4*np.pi*r*r) ,self.densityFarFieldExtrapolationFunction(r) / (4*np.pi*r*r) )
-
-#         nr=len(r)
-#         Rho = np.zeros(nr) 
-#         for i in range(nr):
-#             try:
-#                 Rho[i] = self.densityInterpolator(r[i]) / (4*np.pi*r[i]*r[i])
-#             except ValueError:
-#                 if r[i]>self.radialCutoff:
-#                     Rho[i] = self.densityFarFieldExtrapolationFunction(r[i]) / (4*np.pi*r[i]*r[i])
-#                 elif r[i]<self.innerCutoff:
-#                     rprint(rank,"DENSITY INTERPOLATOR FAILED EVALUATING")
-#                     exit(-1)
-# #                     Rho[i] = self.densityNearFieldExtrapolation(r[i]) # already has 4pirr taken care of
         return Rho
+    
+    def evaluateCoreChargeDensityInterpolator(self,r):
+        
+        CoreChargeRho = np.where( r<self.radialCutoff, self.coreChargeDensityInterpolator(r), self.coreChargeDensityFarFieldExtrapolationFunction(r) )
+        return CoreChargeRho
         
     def OLD_setLocalPotentialInterpolator(self,verbose=0):
         r = np.array(self.psp['radial_grid'])
