@@ -42,7 +42,9 @@ class ONCV_PSP(object):
         self.setLocalPotentialInterpolator()
         
     def atomicNumberToAtomicSymbol(self):
-        if self.atomicNumber==4:
+        if self.atomicNumber==1:
+            self.atomicSymbol="H"
+        elif self.atomicNumber==4:
             self.atomicSymbol="Be"
         elif self.atomicNumber==6:
             self.atomicSymbol="C"

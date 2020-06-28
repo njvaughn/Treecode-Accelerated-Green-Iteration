@@ -1,6 +1,5 @@
 '''
 Created on Jun 25, 2018
-
 @author: nathanvaughn
 '''
 import matplotlib
@@ -383,9 +382,11 @@ def time_convolutions(  coordinates, kernelName,  approximationName, outputFile)
                                     )
 
 
-    treecode_verbosity=0
+    treecode_verbosity=0 
     
-    for theta in [0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85, 0.9]:
+#     for theta in [0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85, 0.9]:
+    for theta in [0.8,0.85, 0.9]:
+
         for treecodeOrder in [2,3,4,5,6,7,8]:
             start=time.time()
             tree = BT.callTreedriver(   nPoints, nPoints, 
@@ -475,21 +476,23 @@ if __name__ == "__main__":
 #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C20"
 #     outputFile="/home/njvaughn/PSPmesh/C20"
 
-    inputFile=srcdir+'molecularConfigurations/C60AuxiliaryPSP.csv'
+    inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
 #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C60-PSP"
-    outputFile="/home/njvaughn/PSPmesh/C60-PSP"
+    outputFile="/home/njvaughn/PSPmesh/C20-PSP"
+
     
     
     coreRepresentation="Pseudopotential"
     MESHTYPE='coarsenedUniformTwoLevel'
  
-    order=3
+    order=4
     gaugeShift=-0.5
      
-    domainSize=64
+    domainSize=32
     MAXSIDELENGTH=8
     
-    MESHPARAM1=0.5 # near field spacing 
+    MESHPARAM1=0.8 # near field spacing 
+
     MESHPARAM2=8.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
     MESHPARAM4=0 # additional inner refinement 
@@ -528,12 +531,15 @@ if __name__ == "__main__":
     
 
   
-#     tree = exportMeshForParaview(domainSize,MAXSIDELENGTH,coreRepresentation, 
-#                           inputFile,outputFile,srcdir,order,gaugeShift,
-#                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
+    tree = exportMeshForParaview(domainSize,MAXSIDELENGTH,coreRepresentation, 
+                          inputFile,outputFile,srcdir,order,gaugeShift,
+                          MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
 
-    time_convolutions(  outputFile, "coulomb",  "lagrange", "/home/njvaughn/GLsync/hermite_vs_lagrange/C60/coulomb-times.csv")
-    time_convolutions(  outputFile, "yukawa",  "lagrange", "/home/njvaughn/GLsync/hermite_vs_lagrange/C60/yukawa-times.csv")
+#     time_convolutions(  outputFile, "coulomb",  "lagrange", "/home/njvaughn/GLsync/hermite_vs_lagrange/C60/coulomb-times.csv")
+#     time_convolutions(  outputFile, "yukawa",  "hermite", "/home/njvaughn/GLsync/hermite_vs_lagrange/C60/yukawa-times.csv")
+    
+    
+
 #     time_convolutions(  outputFile, "yukawa",  "lagrange", "/home/njvaughn/GLsync/hermite_vs_lagrange/Si2/dummy-times.csv")
 #     time_convolutions(  outputFile, "yukawa",  "hermite", "/home/njvaughn/GLsync/hermite_vs_lagrange/Si2/yukawa-times.csv")
     
@@ -545,6 +551,4 @@ if __name__ == "__main__":
 #                           inputFile,outputFile,srcdir,order,gaugeShift,
 #                           MESHTYPE,MESHPARAM1,MESHPARAM2,MESHPARAM3,MESHPARAM4)
      
-    
-    
     
