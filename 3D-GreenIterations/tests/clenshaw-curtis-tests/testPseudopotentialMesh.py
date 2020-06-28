@@ -16,8 +16,8 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 
 
-srcdir="/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/"
-# srcdir="/home/njvaughn/TAGI/3D-GreenIterations/src/"
+# srcdir="/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/"
+srcdir="/home/njvaughn/TAGI/3D-GreenIterations/src/"
 sys.path.append(srcdir+'dataStructures')
 sys.path.append(srcdir+'Green-Iteration-Routines')
 sys.path.append(srcdir+'utilities')
@@ -386,6 +386,7 @@ def time_convolutions(  coordinates, kernelName,  approximationName, outputFile)
     
 #     for theta in [0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85, 0.9]:
     for theta in [0.8,0.85, 0.9]:
+
         for treecodeOrder in [2,3,4,5,6,7,8]:
             start=time.time()
             tree = BT.callTreedriver(   nPoints, nPoints, 
@@ -478,6 +479,7 @@ if __name__ == "__main__":
     inputFile=srcdir+'molecularConfigurations/C20AuxiliaryPSP.csv'
 #     outputFile="/Users/nathanvaughn/Desktop/meshTests/PSPmeshes/C60-PSP"
     outputFile="/home/njvaughn/PSPmesh/C20-PSP"
+
     
     
     coreRepresentation="Pseudopotential"
@@ -490,6 +492,7 @@ if __name__ == "__main__":
     MAXSIDELENGTH=8
     
     MESHPARAM1=0.8 # near field spacing 
+
     MESHPARAM2=8.0 # far field spacing
     MESHPARAM3=2.0 # ball radius
     MESHPARAM4=0 # additional inner refinement 
@@ -536,6 +539,7 @@ if __name__ == "__main__":
 #     time_convolutions(  outputFile, "yukawa",  "hermite", "/home/njvaughn/GLsync/hermite_vs_lagrange/C60/yukawa-times.csv")
     
     
+
 #     time_convolutions(  outputFile, "yukawa",  "lagrange", "/home/njvaughn/GLsync/hermite_vs_lagrange/Si2/dummy-times.csv")
 #     time_convolutions(  outputFile, "yukawa",  "hermite", "/home/njvaughn/GLsync/hermite_vs_lagrange/Si2/yukawa-times.csv")
     
