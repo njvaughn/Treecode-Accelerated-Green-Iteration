@@ -31,7 +31,7 @@ class Atom(object):
         self.z = z
         self.atomicNumber = int(atomicNumber)
         self.nuclearCharge = self.atomicNumber # default for all-electron.  Will get changed if pseudopotential is initialized
-        self.orbitalInterpolators(coreRepresentation)
+#         self.orbitalInterpolators(coreRepresentation)
         self.nAtomicOrbitals = nAtomicOrbitals
         self.coreRepresentation = coreRepresentation
         
@@ -310,32 +310,68 @@ class Atom(object):
             rprint(rank, "What is coreRepresentation?  From orbitalInterpolators")
             exit(-1)
         
-#         rprint(rank, "Setting up interpolators.")
-        self.interpolators = {}
-        # search for single atom data, either on local machine or on flux
-#         if os.path.isdir('/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
-        if os.path.isdir('/Users/nathanvaughn/AtomicData/' + atomDir +'/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
-            # working on local machine
-#             path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
-            path = '/Users/nathanvaughn/AtomicData/' + atomDir +'/z'+str(int(self.atomicNumber))+'/singleAtomData/'
-#         elif os.path.isdir('/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
-        elif os.path.isdir('/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
-            # working on Flux or Great Lakes
-#             path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
-            path = '/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/'
-        else:
-            rprint(rank, 'Could not find single atom data...')
-#             rprint(rank, 'Checked in: /Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
-            rprint(rank, 'Checked in: /Users/nathanvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/')
-            rprint(rank, 'Checked in: /home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/')
+        
+        if coreRepresentation=="AllElectron":
+    #         rprint(rank, "Setting up interpolators.")
+            self.interpolators = {}
+            # search for single atom data, either on local machine or on flux
+    #         if os.path.isdir('/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
+            if os.path.isdir('/Users/nathanvaughn/AtomicData/' + atomDir +'/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
+                # working on local machine
+    #             path = '/Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
+                path = '/Users/nathanvaughn/AtomicData/' + atomDir +'/z'+str(int(self.atomicNumber))+'/singleAtomData/'
+    #         elif os.path.isdir('/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
+            elif os.path.isdir('/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
+                # working on Flux or Great Lakes
+    #             path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
+                path = '/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomDatazzz/'
+            else:
+                rprint(rank, 'Could not find single atom data...')
+    #             rprint(rank, 'Checked in: /Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')
+                rprint(rank, 'Checked in: /Users/nathanvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/')
+                rprint(rank, 'Checked in: /home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/')
+                
+                
+            if verbose>0: rprint(rank, 'Using single atom data from:')
+            if verbose>0: rprint(rank, path)
+            for singleAtomData in os.listdir(path): 
+                if singleAtomData[:3]=='psi':
+                    data = np.genfromtxt(path+singleAtomData)
+                    self.interpolators[singleAtomData[:5]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext='zeros')
+                elif singleAtomData[:7]=='density':
+                    data = np.genfromtxt(path+singleAtomData)
+                    self.interpolators[singleAtomData[:7]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext='zeros')        
+        
+        
+        elif coreRepresentation=="Pseudopotential":
+            self.interpolators = {}
+            if verbose>0: rprint(rank, 'Setting up orbital interpolators from PSP file')
             
             
-        if verbose>0: rprint(rank, 'Using single atom data from:')
-        if verbose>0: rprint(rank, path)
-        for singleAtomData in os.listdir(path): 
-            if singleAtomData[:3]=='psi':
-                data = np.genfromtxt(path+singleAtomData)
-                self.interpolators[singleAtomData[:5]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext='zeros')
-            elif singleAtomData[:7]=='density':
-                data = np.genfromtxt(path+singleAtomData)
-                self.interpolators[singleAtomData[:7]] = InterpolatedUnivariateSpline(data[:,0],data[:,1],k=3,ext='zeros')        
+            valenceShellStart=1
+            coreCharge = self.atomicNumber - self.PSP.psp['header']['z_valence']
+            if coreCharge>=2:
+                valenceShellStart=2
+            if coreCharge>=10:
+                valenceShellStart=3
+            if coreCharge>=18:
+                valenceShellStart=4
+            if coreCharge>=36:
+                valenceShellStart=5
+            if coreCharge>=54:
+                rprint(rank,"AtomStruct needs to be updated to initialize atoms for n>=6.")
+                return
+            
+            n=valenceShellStart-1
+            for i in range(len(self.PSP.psp['atomic_wave_functions'])):
+                ell = self.PSP.psp['atomic_wave_functions'][i]["angular_momentum"]
+                if ell==0:
+                    n += 1
+                name = "psi"+str(n)+str(ell)
+                radial_data = self.PSP.psp['atomic_wave_functions'][i]["radial_function"]
+                radial_grid = self.PSP.psp['radial_grid']
+                self.interpolators[name] = InterpolatedUnivariateSpline(radial_grid,radial_data,k=3,ext='zeros')
+                
+                rprint(rank,"Set pseudopotential orbital interpolator for ", name)
+            
+            

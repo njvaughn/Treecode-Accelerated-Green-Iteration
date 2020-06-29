@@ -60,6 +60,9 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
                         occupation=2.0
                     else:
                         occupation = (atom.nuclearCharge - electronCount) / ((2*ell+1))
+                        
+#                     rprint(rank,"atom.interpolators = ", atom.interpolators)
+#                     rprint(rank, "ATOM HEADERS\n", atom.PSP.psp['header'])
                     for m in range(-ell,ell+1):
                             
                         
@@ -172,7 +175,7 @@ def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms,coreRepresentation):
             totalElectrons += atom.PSP.psp['header']['z_valence']
             rho += atom.PSP.evaluateDensityInterpolator(r)
             
-            if atom.psp['headers']['core_correction']==True:
+            if atom.PSP.psp['header']['core_correction']==True:
                 rprint(rank,"Initializing core charge density for atom ", atom)
                 ccrho += atom.PSP.evaluateCoreChargeDensityInterpolator(r)
 

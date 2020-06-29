@@ -16,13 +16,15 @@ SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
 COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
-INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/carbonAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
-  
+ 
+INPUTFILE='molecularConfigurations/aluminumAtomAuxiliaryPSP.csv'
+ 
 
 VTKFILEDIR='/Users/nathanvaughn/Desktop/'
  
@@ -85,14 +87,14 @@ THETA=0.75
 
 for MESHPARAM4 in -2
 do                                                         
-    for BATCHSIZE in 30
+    for BATCHSIZE in 5
     do        
-        for MAXPARNODE in 30
+        for MAXPARNODE in 50
         do   
 
-        OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/Si2/repeat_GI_each_SCF/2passes_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+        OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/Al/nlcc-testing/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
         #OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/beryllium/restart_testing/no_restart_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
-        mpirun -n 6 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        mpirun -n 4 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

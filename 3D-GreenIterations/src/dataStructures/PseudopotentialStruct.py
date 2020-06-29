@@ -25,7 +25,9 @@ class ONCV_PSP(object):
         self.atomicNumber=atomicNumber
         self.atomicNumberToAtomicSymbol()
 #         pspFile_local = "/Users/nathanvaughn/Desktop/ONCV_PSPs_Z/"+self.atomicSymbol+"_ONCV_PBE-1.0.upf"
-        pspFile_local = "/Users/nathanvaughn/Desktop/ONCV_PSPs_LDA/"+self.atomicSymbol+"_ONCV_LDA.upf"
+#         pspFile_local = "/Users/nathanvaughn/Desktop/ONCV_PSPs_LDA/"+self.atomicSymbol+"_ONCV_LDA.upf"
+        pspFile_local = "/Users/nathanvaughn/Downloads/nc-sr-04_pw_standard_upf/"+self.atomicSymbol+".upf"
+
 #         pspFile_remote = "/home/njvaughn/ONCV_PSPs_Z/"+self.atomicSymbol+"_ONCV_PBE-1.0.upf"
         pspFile_remote = "/home/njvaughn/ONCV_PSPs_LDA/"+self.atomicSymbol+"_ONCV_LDA.upf"
         try:
@@ -47,10 +49,16 @@ class ONCV_PSP(object):
             self.atomicSymbol="H"
         elif self.atomicNumber==4:
             self.atomicSymbol="Be"
+        elif self.atomicNumber==5:
+            self.atomicSymbol="B"
         elif self.atomicNumber==6:
             self.atomicSymbol="C"
+        elif self.atomicNumber==7:
+            self.atomicSymbol="N"
         elif self.atomicNumber==8:
             self.atomicSymbol="O"
+        elif self.atomicNumber==13:
+            self.atomicSymbol="Al"
         elif self.atomicNumber==14:
             self.atomicSymbol="Si"
         elif self.atomicNumber==22:

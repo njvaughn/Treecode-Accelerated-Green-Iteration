@@ -92,7 +92,7 @@ def scfFixedPointClosure(scf_args):
     
     def scfFixedPoint(RHO,scf_args, abortAfterInitialHartree=False):
         
-        verbosity=0
+        verbosity=1
         
         ## Unpack scf_args
         inputDensities = scf_args['inputDensities']

@@ -732,7 +732,6 @@ if __name__ == "__main__":
     
 #     eigenvalues = -2*np.ones(nOrbitals)
     RHO, CORECHARGERHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
-    CORECHARGERHO = initializeCoreChargeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
     densityIntegral = global_dot( RHO, W, comm)
     rprint(rank,"Initial density integrates to ", densityIntegral)
     CCdensityIntegral = global_dot( CORECHARGERHO, W, comm)
@@ -740,6 +739,11 @@ if __name__ == "__main__":
     nPointsLocal = len(X)
 #     assert abs(2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
     orbitals = np.zeros((nOrbitals,nPointsLocal))
+    
+    for atom in atoms:
+        atom.orbitalInterpolators(coreRepresentation)
+            
+            
     if coreRepresentation=="AllElectron":
         orbitals,initialOccupations,initialEnergies = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z,W)
     elif coreRepresentation=="Pseudopotential":
@@ -752,7 +756,7 @@ if __name__ == "__main__":
     
 
     
-    eigenvalues=np.array(initialEnergies)
+    eigenvalues=np.array(initialEnergies)/3
     rprint(rank, "Initial eigenvalues:  ",initialEnergies)
     rprint(rank, "Initial occupations:  ",initialOccupations)
 #     input()
