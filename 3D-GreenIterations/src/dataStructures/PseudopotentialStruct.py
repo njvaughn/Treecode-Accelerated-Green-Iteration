@@ -22,14 +22,15 @@ class ONCV_PSP(object):
         '''
         PSP Constructor
         '''
-        self.atomicNumber=atomicNumber
+        self.atomicNumber=atomicNumber 
         self.atomicNumberToAtomicSymbol()
 #         pspFile_local = "/Users/nathanvaughn/Desktop/ONCV_PSPs_Z/"+self.atomicSymbol+"_ONCV_PBE-1.0.upf"
 #         pspFile_local = "/Users/nathanvaughn/Desktop/ONCV_PSPs_LDA/"+self.atomicSymbol+"_ONCV_LDA.upf"
         pspFile_local = "/Users/nathanvaughn/Downloads/nc-sr-04_pw_standard_upf/"+self.atomicSymbol+".upf"
 
 #         pspFile_remote = "/home/njvaughn/ONCV_PSPs_Z/"+self.atomicSymbol+"_ONCV_PBE-1.0.upf"
-        pspFile_remote = "/home/njvaughn/ONCV_PSPs_LDA/"+self.atomicSymbol+"_ONCV_LDA.upf"
+#         pspFile_remote = "/home/njvaughn/ONCV_PSPs_LDA/"+self.atomicSymbol+"_ONCV_LDA.upf"
+        pspFile_remote = "/home/njvaughn/nc-sr-04_pw_standard_upf/"+self.atomicSymbol+".upf"
         try:
             upf_str = open(pspFile_local, 'r').read()
             pspFile = pspFile_local

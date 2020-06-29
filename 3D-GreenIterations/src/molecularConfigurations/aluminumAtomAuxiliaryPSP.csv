@@ -1,4 +1,4 @@
-../src/molecularConfigurations/aluminumAtom.csv
+../src/molecularConfigurations/AluminumClusters/shell1.csv
 ../src/molecularConfigurations/aluminumReferenceEigenvaluesPSP.csv
 /restartFiles/aluminum/
 -0.0 # band
