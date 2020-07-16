@@ -440,18 +440,18 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         initialGItolerancesIdx = auxiliaryRestartData['GItolerancesIdx'] 
          
          
-         
+        NLCC_RHO = RHO+CORECHARGERHO
         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
-        exchangeOutput = exchangeFunctional.compute(RHO)
-        correlationOutput = correlationFunctional.compute(RHO)
-        Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
-        Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
+        exchangeOutput = exchangeFunctional.compute(NLCC_RHO)
+        correlationOutput = correlationFunctional.compute(NLCC_RHO) 
+        Energies['Ex'] = np.sum( W * NLCC_RHO * np.reshape(exchangeOutput['zk'],np.shape(NLCC_RHO)) )
+        Energies['Ec'] = np.sum( W * NLCC_RHO * np.reshape(correlationOutput['zk'],np.shape(NLCC_RHO)) )
          
-        Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
-        Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
+        Vx = np.reshape(exchangeOutput['vrho'],np.shape(NLCC_RHO))
+        Vc = np.reshape(correlationOutput['vrho'],np.shape(NLCC_RHO))
          
-        Energies['Vx'] = np.sum(W * RHO * Vx)
-        Energies['Vc'] = np.sum(W * RHO * Vc)        
+        Energies['Vx'] = np.sum(W * NLCC_RHO * Vx)
+        Energies['Vc'] = np.sum(W * NLCC_RHO * Vc)        
         
     
     else: 

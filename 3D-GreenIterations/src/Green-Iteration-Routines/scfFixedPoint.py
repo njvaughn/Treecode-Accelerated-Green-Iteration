@@ -156,6 +156,9 @@ def scfFixedPointClosure(scf_args):
         TwoMeshStart=scf_args['TwoMeshStart']
         CORECHARGERHO=scf_args['CORECHARGERHO']
         
+        NLCC_RHO = RHO+CORECHARGERHO
+        
+        
         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
 #         scf_args['GItolerancesIdx']=0
         
@@ -423,14 +426,14 @@ def scfFixedPointClosure(scf_args):
             return np.zeros(nPoints)
         
         
-    
-        exchangeOutput = exchangeFunctional.compute(RHO+CORECHARGERHO)
-        correlationOutput = correlationFunctional.compute(RHO+CORECHARGERHO) # For NLCC, evaluate the xc functionals on RHO+CORECHARGERHO.  For systems without NLCC, CORECHARGERHO==0 so it has no effect.
+        
+        exchangeOutput = exchangeFunctional.compute(NLCC_RHO)
+        correlationOutput = correlationFunctional.compute(NLCC_RHO) # For NLCC, evaluate the xc functionals on RHO+CORECHARGERHO.  For systems without NLCC, CORECHARGERHO==0 so it has no effect.
 #         Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
 #         Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
         
-        Energies['Ex'] = global_dot( W, RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)), comm )
-        Energies['Ec'] = global_dot( W, RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)), comm )
+        Energies['Ex'] = global_dot( W, NLCC_RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)), comm )
+        Energies['Ec'] = global_dot( W, NLCC_RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)), comm )
         
         Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
         Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
@@ -438,6 +441,9 @@ def scfFixedPointClosure(scf_args):
 #         Energies['Vx'] = np.sum(W * RHO * Vx)
 #         Energies['Vc'] = np.sum(W * RHO * Vc)
 
+#         Energies['Vx'] = global_dot(W, NLCC_RHO * Vx,comm)
+#         Energies['Vc'] = global_dot(W, NLCC_RHO * Vc,comm)
+        
         Energies['Vx'] = global_dot(W, RHO * Vx,comm)
         Energies['Vc'] = global_dot(W, RHO * Vc,comm)
         

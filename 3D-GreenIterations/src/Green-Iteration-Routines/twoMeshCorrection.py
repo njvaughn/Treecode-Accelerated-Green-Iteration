@@ -164,6 +164,11 @@ def twoMeshCorrectionClosure(scf_args):
         RHOf = interpolation_wrapper.callInterpolator(np.copy(X),  np.copy(Y),  np.copy(Z),  np.copy(RHO), pointsPerCell_coarse,
                                                            np.copy(Xf), np.copy(Yf), np.copy(Zf), pointsPerCell_fine, 
                                                            numberOfCells, order, GPUpresent)
+        
+        NLCC_RHO=RHO+CORECHARGERHO
+        NLCC_RHOf = interpolation_wrapper.callInterpolator(np.copy(X),  np.copy(Y),  np.copy(Z),  np.copy(NLCC_RHO), pointsPerCell_coarse,
+                                                           np.copy(Xf), np.copy(Yf), np.copy(Zf), pointsPerCell_fine, 
+                                                           numberOfCells, order, GPUpresent)
             
 
            
@@ -185,6 +190,7 @@ def twoMeshCorrectionClosure(scf_args):
         sourceY=Yf
         sourceZ=Zf
         sourceRHO=RHOf
+        sourceNLCCRHO=NLCC_RHOf
         sourceW=Wf
 
             
@@ -229,6 +235,16 @@ def twoMeshCorrectionClosure(scf_args):
                                             treecodeOrder+2, theta-0.15, maxParNode, batchSize,
                                             GPUpresent, treecode_verbosity
                                             )
+        
+#         V_hartreeNew = BT.callTreedriver(  
+#                                             nPoints, numSources, 
+#                                             np.copy(X), np.copy(Y), np.copy(Z), np.copy(NLCC_RHO), 
+#                                             np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceNLCCRHO), np.copy(sourceW),
+#                                             kernel, numberOfKernelParameters, kernelParameters, 
+#                                             singularity, approximation, computeType,
+#                                             treecodeOrder+2, theta-0.15, maxParNode, batchSize,
+#                                             GPUpresent, treecode_verbosity
+#                                             )
 
          
  
@@ -244,22 +260,31 @@ def twoMeshCorrectionClosure(scf_args):
            
         comm.barrier()    
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
-        exchangeOutput = exchangeFunctional.compute(RHO+CORECHARGERHO)
-        correlationOutput = correlationFunctional.compute(RHO+CORECHARGERHO)        
-        Energies['Ex'] = global_dot( W, RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)), comm )
-        Energies['Ec'] = global_dot( W, RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)), comm )
+#         Energies['Ehartree'] = 1/2*global_dot(W, NLCC_RHO * V_hartreeNew, comm)
         
-        Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
-        Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
         
-#         Energies['Vx'] = np.sum(W * RHO * Vx)
-#         Energies['Vc'] = np.sum(W * RHO * Vc)
-
-        Energies['Vx'] = global_dot(W, RHO * Vx,comm)
-        Energies['Vc'] = global_dot(W, RHO * Vc,comm)
+        ## Evaluate exchange and correlation using the interpolated NLCC_RHOf on the fine mesh.
+        exchangeOutput = exchangeFunctional.compute(NLCC_RHOf)
+        correlationOutput = correlationFunctional.compute(NLCC_RHOf)        
+        Energies['Ex'] = global_dot( Wf, NLCC_RHOf * np.reshape(exchangeOutput['zk'],np.shape(NLCC_RHOf)), comm )
+        Energies['Ec'] = global_dot( Wf, NLCC_RHOf * np.reshape(correlationOutput['zk'],np.shape(NLCC_RHOf)), comm )
+        Vxf = np.reshape(exchangeOutput['vrho'],np.shape(NLCC_RHOf))
+        Vcf = np.reshape(correlationOutput['vrho'],np.shape(NLCC_RHOf))
+        Energies['Vx'] = global_dot(Wf, RHOf * Vxf,comm)
+        Energies['Vc'] = global_dot(Wf, RHOf * Vcf,comm)
+        
+        
+        ## Evaluate exchange and correlation potentials using the NLCC_RHO on the coarse mesh.
+        exchangeOutput = exchangeFunctional.compute(NLCC_RHO)
+        correlationOutput = correlationFunctional.compute(NLCC_RHO)        
+        Vx = np.reshape(exchangeOutput['vrho'],np.shape(NLCC_RHO))
+        Vc = np.reshape(correlationOutput['vrho'],np.shape(NLCC_RHO))
+        
+        
         Energies["Repulsion"] = global_dot(RHO, Vext_local*W, comm)
         
         Veff_local_new = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
+#         Veff_local_new = V_hartreeNew + Vext_local + gaugeShift
         
         
 
@@ -279,6 +304,8 @@ def twoMeshCorrectionClosure(scf_args):
                                                            np.copy(Xf), np.copy(Yf), np.copy(Zf), pointsPerCell_fine, 
                                                            numberOfCells, order, GPUpresent)
             Veff_local_new -= Vext_local           
+            Veff_local_new -= Vx           
+            Veff_local_new -= Vc           
 #             Veff_local_fine_old = interpolation_wrapper.callInterpolator(X,  Y,  Z,  Veff_local_old, pointsPerCell_coarse,
 #                                                            Xf, Yf, Zf, pointsPerCell_fine, 
 #                                                            numberOfCells, order, GPUpresent)
@@ -288,6 +315,12 @@ def twoMeshCorrectionClosure(scf_args):
                 
             Veff_local_fine_new += Vext_local_fine       
             Veff_local_new += Vext_local
+            
+            Veff_local_fine_new += Vxf       
+            Veff_local_new += Vx
+            
+            Veff_local_fine_new += Vcf       
+            Veff_local_new += Vc
             
             
             # Update local piece
@@ -453,6 +486,7 @@ def twoMeshCorrectionClosure(scf_args):
         rprint(rank,'Updated V_c:                               % .10f Hartree' %Energies['Vc'])
         rprint(rank,'Updated Band Energy:                       % .10f H, %.10e Ha' %(Energies['Eband'], Energies['Eband']-referenceEnergies['Eband']) )
         rprint(rank,'Updated E_Hartree:                         % .10f H, %.10e Ha' %(Energies['Ehartree'], Energies['Ehartree']-referenceEnergies['Ehartree']) )
+        rprint(rank,'Updated E_Hartree (no core):               % .10f H, %.10e Ha' %(Energies['Ehartree_old'], Energies['Ehartree_old']-referenceEnergies['Ehartree']) )
         rprint(rank,'Updated E_x:                               % .10f H, %.10e Ha' %(Energies['Ex'], Energies['Ex']-referenceEnergies['Eexchange']) )
         rprint(rank,'Updated E_c:                               % .10f H, %.10e Ha' %(Energies['Ec'], Energies['Ec']-referenceEnergies['Ecorrelation']) )
         rprint(rank,'Updated totalElectrostatic:                % .10f H, %.10e Ha' %(Energies['totalElectrostatic'], Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"]))
