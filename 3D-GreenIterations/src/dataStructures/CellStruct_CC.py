@@ -3551,7 +3551,7 @@ class Cell(object):
         if aspectRatio > tolerance:  # fix tolerance to 1.5 for now
 #             for atom in self.tree.atoms
 #             distToAtom = np.sqrt(self.xmid-atom.x)
-            rprint(rank, 'Cell ', self.uniqueID,' has apsect ratio of ', aspectRatio,'.  Dividing')
+#             rprint(rank, 'Cell ', self.uniqueID,' has apsect ratio of ', aspectRatio,'.  Dividing')
             # find longest edge:
             dx = self.xmax-self.xmin
             dy = self.ymax-self.ymin

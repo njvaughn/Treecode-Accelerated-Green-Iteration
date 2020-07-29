@@ -27,7 +27,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #     gi_args_out = {}
     def greensIteration_FixedPoint(psiIn, gi_args):
         # what other things do we need?  Energies, Times, orbitals, Veff, runtime constants (symmetricIteration, GPUpresent, subtractSingularity, treecode, outputfiles, ...)  
-        verbosity=1
+        verbosity=0
         
 #         rprint(rank,"entered greensIteration_FixedPoint.")
         

@@ -27,7 +27,7 @@ class ONCV_PSP(object):
 #         pspFile_local = "/Users/nathanvaughn/Desktop/ONCV_PSPs_Z/"+self.atomicSymbol+"_ONCV_PBE-1.0.upf"
 #         pspFile_local = "/Users/nathanvaughn/Desktop/ONCV_PSPs_LDA/"+self.atomicSymbol+"_ONCV_LDA.upf"
         pspFile_local = "/Users/nathanvaughn/Downloads/nc-sr-04_pw_standard_upf/"+self.atomicSymbol+".upf"
-
+ 
 #         pspFile_remote = "/home/njvaughn/ONCV_PSPs_Z/"+self.atomicSymbol+"_ONCV_PBE-1.0.upf"
 #         pspFile_remote = "/home/njvaughn/ONCV_PSPs_LDA/"+self.atomicSymbol+"_ONCV_LDA.upf"
         pspFile_remote = "/home/njvaughn/nc-sr-04_pw_standard_upf/"+self.atomicSymbol+".upf"
@@ -112,8 +112,19 @@ class ONCV_PSP(object):
         r = np.array(self.psp['radial_grid'])
         self.maxRadialGrid = r[-1]
         coreChargeDensity = np.array(self.psp['core_charge_density'])
-        ## Is it okay to set the boundary condition to zero?  
-        self.coreChargeDensityInterpolator = InterpolatedUnivariateSpline(r[:],coreChargeDensity[:],k=3,ext='zeros')
+        
+        
+        a=r[0]
+        b=r[1]
+        fa=coreChargeDensity[0]
+        fb=coreChargeDensity[1]
+        slopeL = (fb-fa)/(b-a)
+        
+        
+#         ## Is it okay to set the boundary condition to zero?  
+#         self.coreChargeDensityInterpolator = InterpolatedUnivariateSpline(r[:],coreChargeDensity[:],k=3,ext='zeros')
+        self.coreChargeDensityInterpolator = CubicSpline(r,coreChargeDensity,bc_type=((1,0),(1,0)),extrapolate=True)
+#         self.coreChargeDensityInterpolator = CubicSpline(r,coreChargeDensity,bc_type=((1,slopeL),(2,0)),extrapolate=True)
         
         # Setup decaying exponential for extrapolation beyond rcutoff.
         a = r[-3]
@@ -138,6 +149,8 @@ class ONCV_PSP(object):
         self.coreChargeDensityNearFieldLinearSlope=slope
         self.coreChargeDensityNearFieldHeight = da
         
+        
+        
       
     def densityFarFieldExtrapolationFunction(self,r):
         return self.densityFarFieldExponentialCoefficient * np.exp( self.densityFarFieldExponentialDecayRate * (r-self.maxRadialGrid))
@@ -155,7 +168,8 @@ class ONCV_PSP(object):
     
     def evaluateCoreChargeDensityInterpolator(self,r):
         
-        CoreChargeRho = np.where( r<self.radialCutoff, self.coreChargeDensityInterpolator(r), self.coreChargeDensityFarFieldExtrapolationFunction(r) )
+#         CoreChargeRho = np.where( r<self.radialCutoff, self.coreChargeDensityInterpolator(r), self.coreChargeDensityFarFieldExtrapolationFunction(r) )
+        CoreChargeRho = np.where( r<self.radialCutoff, self.coreChargeDensityInterpolator(r), 0.0 )
         return CoreChargeRho
         
     def OLD_setLocalPotentialInterpolator(self,verbose=0):

@@ -196,11 +196,14 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
                                  onTheFlyRefinement=onTheFlyRefinement, vtkExport=False, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations,
                                  regularize=regularize,epsilon=epsilon)
-
+    
+    global_nPoints = comm.allreduce(nPoints)
 
     if rank==0:
         Times['totalKohnShamTime'] = time.time()-startTime
         rprint(rank, 'Total Time: ', Times['totalKohnShamTime'])
+        
+        
     
         header = ['numProcs','domainSize','maxSideLength','order','fineOrder','numberOfCells','numberOfPoints','gradientFree',
                   'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
@@ -210,7 +213,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
                   'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy',
                   'Treecode','approximationName','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
         
-        myData = [size,domainSize,maxSideLength,order,fine_order, nPoints/order**3,nPoints,gradientFree,
+        myData = [size,domainSize,maxSideLength,order,fine_order, nPoints/(order+1)**3,global_nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
                   gaussianAlpha,gaugeShift,finalGItolerance,
                   subtractSingularity, regularize, epsilon,
@@ -297,7 +300,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     verbosity=0
     polarization="unpolarized"
     exchangeFunctional="LDA_X"
-    correlationFunctional="LDA_C_PZ"
+    correlationFunctional="LDA_C_PW"
     exchangeFunctional = pylibxc.LibXCFunctional(exchangeFunctional, polarization)
     correlationFunctional = pylibxc.LibXCFunctional(correlationFunctional, polarization)
     
@@ -351,10 +354,13 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     gaugeShift = Energies['gaugeShift']
     
     globalNumPoints = comm.allreduce(nPoints)
+    
+    nPointsF=len(Xf)
+    globalFineMeshPoints = comm.allreduce(nPointsF)
 
-    greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(nPoints)+'_'+str(len(Xf))+outputFile[-4:]
-    SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(nPoints)+'_'+str(len(Xf))+outputFile[-4:]
-    densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(nPoints)+'_plots'
+    greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(globalNumPoints)+'_'+str(globalFineMeshPoints)+outputFile[-4:]
+    SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(globalNumPoints)+'_'+str(globalFineMeshPoints)+outputFile[-4:]
+    densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(globalNumPoints)+'_plots'
 
     comm.barrier()
     exampleDir = homePath+np.genfromtxt(inputFile,dtype=str)[2]
@@ -442,16 +448,18 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
          
         NLCC_RHO = RHO+CORECHARGERHO
         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
-        exchangeOutput = exchangeFunctional.compute(NLCC_RHO)
+        
+        exchangeOutput    =    exchangeFunctional.compute(NLCC_RHO)
         correlationOutput = correlationFunctional.compute(NLCC_RHO) 
-        Energies['Ex'] = np.sum( W * NLCC_RHO * np.reshape(exchangeOutput['zk'],np.shape(NLCC_RHO)) )
+        
+        Energies['Ex'] = np.sum( W * NLCC_RHO * np.reshape(   exchangeOutput['zk'],np.shape(NLCC_RHO)) )
         Energies['Ec'] = np.sum( W * NLCC_RHO * np.reshape(correlationOutput['zk'],np.shape(NLCC_RHO)) )
          
-        Vx = np.reshape(exchangeOutput['vrho'],np.shape(NLCC_RHO))
+        Vx = np.reshape(   exchangeOutput['vrho'],np.shape(NLCC_RHO))
         Vc = np.reshape(correlationOutput['vrho'],np.shape(NLCC_RHO))
          
-        Energies['Vx'] = np.sum(W * NLCC_RHO * Vx)
-        Energies['Vc'] = np.sum(W * NLCC_RHO * Vc)        
+        Energies['Vx'] = np.sum(W * RHO * Vx)
+        Energies['Vc'] = np.sum(W * RHO * Vc)        
         
     
     else: 

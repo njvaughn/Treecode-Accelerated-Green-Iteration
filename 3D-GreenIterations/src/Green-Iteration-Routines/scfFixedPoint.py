@@ -158,6 +158,10 @@ def scfFixedPointClosure(scf_args):
         
         NLCC_RHO = RHO+CORECHARGERHO
         
+#         if np.max(CORECHARGERHO)>0.0:
+#             rprint(rank,"CORECHARGERHO is not zero...")
+#             return
+        
         
         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
 #         scf_args['GItolerancesIdx']=0
@@ -427,25 +431,23 @@ def scfFixedPointClosure(scf_args):
         
         
         
-        exchangeOutput = exchangeFunctional.compute(NLCC_RHO)
         correlationOutput = correlationFunctional.compute(NLCC_RHO) # For NLCC, evaluate the xc functionals on RHO+CORECHARGERHO.  For systems without NLCC, CORECHARGERHO==0 so it has no effect.
+        exchangeOutput    =    exchangeFunctional.compute(NLCC_RHO)
 #         Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
 #         Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
         
-        Energies['Ex'] = global_dot( W, NLCC_RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)), comm )
-        Energies['Ec'] = global_dot( W, NLCC_RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)), comm )
+        Energies['Ec'] = global_dot( W, NLCC_RHO * np.reshape(correlationOutput['zk'],np.shape(NLCC_RHO)), comm )
+        Energies['Ex'] = global_dot( W, NLCC_RHO * np.reshape(   exchangeOutput['zk'],np.shape(NLCC_RHO)), comm )
         
-        Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
-        Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
+        Vc = np.reshape(correlationOutput['vrho'],np.shape(NLCC_RHO))
+        Vx = np.reshape(   exchangeOutput['vrho'],np.shape(NLCC_RHO))
         
-#         Energies['Vx'] = np.sum(W * RHO * Vx)
-#         Energies['Vc'] = np.sum(W * RHO * Vc)
 
 #         Energies['Vx'] = global_dot(W, NLCC_RHO * Vx,comm)
 #         Energies['Vc'] = global_dot(W, NLCC_RHO * Vc,comm)
         
-        Energies['Vx'] = global_dot(W, RHO * Vx,comm)
         Energies['Vc'] = global_dot(W, RHO * Vc,comm)
+        Energies['Vx'] = global_dot(W, RHO * Vx,comm)  # Vx and Vc energies use the valence rho, since they are correcting expressions in the eigenvalues.
         
         Veff_local = V_hartreeNew + Vx + Vc + Vext_local + gaugeShift
         
@@ -488,8 +490,8 @@ def scfFixedPointClosure(scf_args):
                 if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals) 
     #             if previousOccupations[m] > 1e-20:
                 if (  (previousOccupations[m] > 1e-20) or (SCFcount<8) ):  # 
-                    if verbosity>0: rprint(rank,'Working on orbital %i' %m)
-                    if verbosity>0: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                    if verbosity>1: rprint(rank,'Working on orbital %i' %m)
+                    if verbosity>1: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                     
                     eigenvalueResiduals=np.ones_like(residuals)           
                     greenIterationsCount=1
@@ -555,7 +557,7 @@ def scfFixedPointClosure(scf_args):
     #                 while resNorm>intraScfTolerance:
         #                 rprint(rank, 'MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
         #                 GPUtil.showUtilization()
-                        if verbosity>0: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                        if verbosity>1: rprint(rank,'MEMORY USAGE: %i' %resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                     
                         # Orthonormalize orbital m before beginning Green's iteration
         #                 n,M = np.shape(orbitals)
@@ -573,22 +575,22 @@ def scfFixedPointClosure(scf_args):
                         newEigenvalue = np.copy(Energies['orbitalEnergies'][m])
                         eigenvalueDiff=np.abs(oldEigenvalue - newEigenvalue )
                         comm.barrier()
-                        if verbosity>0: rprint(rank,'eigenvalueDiff = %f' %eigenvalueDiff)
+                        if verbosity>1: rprint(rank,'eigenvalueDiff = %f' %eigenvalueDiff)
 
                         
     
                         clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                         resNorm = clenshawCurtisNorm(r)
                         
-                        if verbosity>0: rprint(rank,'CC norm of residual vector: %f'%resNorm)
+                        if verbosity>1: rprint(rank,'CC norm of residual vector: %f'%resNorm)
                         if eigenvalueDiff < resNorm/10:
                             resNorm = eigenvalueDiff
-                            if verbosity>0: rprint(rank,'Using eigenvalueDiff: %f' %resNorm)
+                            if verbosity>1: rprint(rank,'Using eigenvalueDiff: %f' %resNorm)
     
         
                     
                     psiOut = np.append(orbitals[m,:],Energies['orbitalEnergies'][m])
-                    if verbosity>0: rprint(rank,'Power iteration tolerance met.  Beginning rootfinding now...') 
+                    if verbosity>1: rprint(rank,'Power iteration tolerance met.  Beginning rootfinding now...') 
                     
                     
                     ## Begin Anderson Mixing on Wavefunction
@@ -602,7 +604,7 @@ def scfFixedPointClosure(scf_args):
                     while Done==False:
                           
                         greenIterationsCount=gi_args["greenIterationsCount"]
-                        if verbosity>0: rprint(rank,'MEMORY USAGE: %i'%resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
+                        if verbosity>1: rprint(rank,'MEMORY USAGE: %i'%resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
                           
                           
                         # Why is this mgs call happening?  Isn't  orbitals[m,:] already orthogonal after exiting the previous Green Iteration call? 
@@ -644,11 +646,11 @@ def scfFixedPointClosure(scf_args):
                         psiOut = np.append( gi_args["orbitals"][m,:], Energies['orbitalEnergies'][m])
                         clenshawCurtisNorm = clenshawCurtisNormClosure(W)
                         errorNorm = clenshawCurtisNorm(r)
-                        if verbosity>0: rprint(rank,'Error Norm: %f' %errorNorm)
+                        if verbosity>1: rprint(rank,'Error Norm: %f' %errorNorm)
                         if errorNorm < scf_args['currentGItolerance']:
                             Done=True
                         eigenvalueDiff = np.abs(oldEigenvalue-newEigenvalue)
-                        if verbosity>0: rprint(rank,'Eigenvalue Diff: %f' %eigenvalueDiff)
+                        if verbosity>1: rprint(rank,'Eigenvalue Diff: %f' %eigenvalueDiff)
                         if ( (eigenvalueDiff<scf_args['currentGItolerance']/10) and (gi_args["greenIterationsCount"]>8) ): 
                             Done=True
                         if greenIterationsCount>50:
@@ -682,7 +684,7 @@ def scfFixedPointClosure(scf_args):
                           
                           
                         ## Compute next input wavefunctions
-                        if verbosity>0: rprint(rank,'Anderson mixing on the orbital.')
+                        if verbosity>1: rprint(rank,'Anderson mixing on the orbital.')
                         GImixingParameter=0.5
                         andersonOrbital, andersonWeights = densityMixing.computeNewDensity(inputWavefunctions, outputWavefunctions, GImixingParameter,np.append(W,1.0), returnWeights=True)
                         Energies['orbitalEnergies'][m] = andersonOrbital[-1]
@@ -705,9 +707,9 @@ def scfFixedPointClosure(scf_args):
     #       
           
                        
-                    if verbosity>0: rprint(rank,'Used %i iterations for wavefunction %i' %(gi_args["greenIterationsCount"],m))
+                    if verbosity>1: rprint(rank,'Used %i iterations for wavefunction %i' %(gi_args["greenIterationsCount"],m))
                 else:
-                    if verbosity>0: rprint(rank,"Not updating orbital %i because it is unoccupied." %m)
+                    if verbosity>1: rprint(rank,"Not updating orbital %i because it is unoccupied." %m)
                 
     
             
@@ -892,6 +894,7 @@ def scfFixedPointClosure(scf_args):
     #             filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
     #             Energies['Etotal']xportGridpoints(filename)
     
+        
         printEachIteration=True
     
         if printEachIteration==True:
