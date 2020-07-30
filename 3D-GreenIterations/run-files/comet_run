@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/shell1-%j.%N.out"
+#SBATCH --output="dataFiles/shell2-%j.%N.out"
 #SBATCH --partition=gpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:p100:4   
 #SBATCH --mem=100GB 
-#SBATCH -t 01:00:00    
+#SBATCH -t 24:00:00    
 #SBATCH --no-requeue
 #SBATCH -A mia320    
 #SBATCH --constraint=exclusive
@@ -42,7 +42,7 @@ COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/Si10H16AuxiliaryPSP.csv' 
 #INPUTFILE='molecularConfigurations/Si30H40AuxiliaryPSP.csv' 
   
-INPUTFILE='molecularConfigurations/AluminumClusters/shell1AuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/AluminumClusters/shell2AuxiliaryPSP.csv'
 
 
 VTKFILEDIR='/Users/nathanvaughn/Desktop/'
@@ -82,7 +82,7 @@ EPSILON=0.0
    
 GAUSSIANALPHA=2.0 
 TREECODEORDER=8
-THETA=0.85
+THETA=0.8
 
  
 CELLORDER=3
