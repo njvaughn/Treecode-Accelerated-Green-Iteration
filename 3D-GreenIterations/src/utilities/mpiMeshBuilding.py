@@ -385,7 +385,10 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     refinedPtsPerCellFine=np.empty(0,dtype=np.int32)
     
     divideBasedOnNuclei=False
-    rprint(rank, "Not dividing cells at nuclei. Seems to be okay for pseudopoential mesh.")
+    if divideBasedOnNuclei:
+        rprint(rank, "Dividing cells at nuclei.")
+    else:
+        rprint(rank, "Not dividing cells at nuclei. Seems to be okay for pseudopoential mesh.")
     
     for i in range(len(cells)):
 #         if i%size==rank:

@@ -432,7 +432,7 @@ class Tree(object):
         self.nAtoms = 0
         for atom in self.atoms:
             self.nAtoms += 1
-            rprint(rank, 'Searching for cell containing atom ', self.nAtoms)
+#             rprint(rank, 'Searching for cell containing atom ', self.nAtoms)
             recursiveDivideByAtom(self,atom,self.root)
             
 #         rprint(rank, "NOT CHECKING FOR ASPECT RATIO")

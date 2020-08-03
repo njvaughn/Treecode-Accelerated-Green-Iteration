@@ -317,7 +317,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             convolutionTime = time.time()-startTime
             if verbosity>0: rprint(rank,'Convolution time: ', convolutionTime)
             Times['timePerConvolution'] = convolutionTime
-            if verbosity>0: rprint(rank,"Batch size %i, cluster size %i, sizeCheck %1.1f, time per convolution %f" %(batchSize,maxParNode,sizeCheck,convolutionTime))
+#             if verbosity>0: rprint(rank,"Batch size %i, cluster size %i, sizeCheck %1.1f, time per convolution %f" %(batchSize,maxParNode,sizeCheck,convolutionTime))
 #             rprint(rank,"Exiting because only interested in time per convolution.")
 #             exit(-1)
 
@@ -340,7 +340,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
             # update the energy first
             
             orthWavefunction2 = np.zeros(nPoints)
-            if ( (gradientFree==True) and (SCFcount>-1)):                 
+            if ( (gradientFree==True) and (SCFcount>-1)):  
+                
+                psiInNorm = np.sqrt( global_dot( psiIn[:-1], psiIn[:-1]*W, comm))
+                if verbosity>0: rprint(rank,"psiInNorm = %f" %psiInNorm)               
                 
                 psiNewNorm = np.sqrt( global_dot( psiNew, psiNew*W, comm))
                 if verbosity>0: rprint(rank,"psiNewNorm = %f" %psiNewNorm)

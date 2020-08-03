@@ -60,6 +60,9 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
                         occupation=2.0
                     else:
                         occupation = (atom.nuclearCharge - electronCount) / ((2*ell+1))
+                        
+#                     rprint(rank,"atom.interpolators = ", atom.interpolators)
+#                     rprint(rank, "ATOM HEADERS\n", atom.PSP.psp['header'])
                     for m in range(-ell,ell+1):
                             
                         
@@ -154,6 +157,8 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
 def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms,coreRepresentation):
         
     rho = np.zeros(len(x))
+    ccrho = np.zeros(len(x))
+    
     
     totalElectrons = 0
     for atom in atoms:
@@ -170,11 +175,24 @@ def initializeDensityFromAtomicDataExternally(x,y,z,w,atoms,coreRepresentation):
             totalElectrons += atom.PSP.psp['header']['z_valence']
             rho += atom.PSP.evaluateDensityInterpolator(r)
             
+            if atom.PSP.psp['header']['core_correction']==True:
+                rprint(rank,"Initializing core charge density for atom ", atom)
+                ccrho += atom.PSP.evaluateCoreChargeDensityInterpolator(r)
+
+            else:
+                rprint(rank,"Not initializing core charge density for atom ", atom)
+            
+            
+            
         rprint(rank,"max density: ", max(abs(rho)))
+        rprint(rank,"max core charge density: ", max(abs(ccrho)))
         rprint(rank,"cumulative number of electrons: ", totalElectrons)
 
 
 #     rprint(0, "NOT NORMALIZING INITIAL DENSITY.")
     rho *= totalElectrons / global_dot(rho,w,comm)
     
-    return rho
+    return rho, ccrho
+
+
+

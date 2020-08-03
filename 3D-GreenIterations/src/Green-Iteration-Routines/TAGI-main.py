@@ -181,13 +181,13 @@ def clenshawCurtisNormClosure(W):
 
 
 
-def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
+def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
     
     startTime = time.time()
     
 
     
-    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                 scfTolerance, initialGItolerance, finalGItolerance, gradualSteps,
                                 gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
                                 singularityHandling,approximationName,
@@ -196,11 +196,14 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
                                  onTheFlyRefinement=onTheFlyRefinement, vtkExport=False, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations,
                                  regularize=regularize,epsilon=epsilon)
-
+    
+    global_nPoints = comm.allreduce(nPoints)
 
     if rank==0:
         Times['totalKohnShamTime'] = time.time()-startTime
         rprint(rank, 'Total Time: ', Times['totalKohnShamTime'])
+        
+        
     
         header = ['numProcs','domainSize','maxSideLength','order','fineOrder','numberOfCells','numberOfPoints','gradientFree',
                   'divideCriterion','divideParameter1','divideParameter2','divideParameter3','divideParameter4',
@@ -210,7 +213,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
                   'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy',
                   'Treecode','approximationName','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
         
-        myData = [size,domainSize,maxSideLength,order,fine_order, nPoints/order**3,nPoints,gradientFree,
+        myData = [size,domainSize,maxSideLength,order,fine_order, nPoints/(order+1)**3,global_nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
                   gaussianAlpha,gaugeShift,finalGItolerance,
                   subtractSingularity, regularize, epsilon,
@@ -241,7 +244,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
 
 
 
-def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                              SCFtolerance, initialGItolerance, finalGItolerance, gradualSteps, 
                                              gradientFree, symmetricIteration, GPUpresent, 
                                  treecode, treecodeOrder, theta, maxParNode, batchSize, singularityHandling, approximationName,
@@ -297,7 +300,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     verbosity=0
     polarization="unpolarized"
     exchangeFunctional="LDA_X"
-    correlationFunctional="LDA_C_PZ"
+    correlationFunctional="LDA_C_PW"
     exchangeFunctional = pylibxc.LibXCFunctional(exchangeFunctional, polarization)
     correlationFunctional = pylibxc.LibXCFunctional(correlationFunctional, polarization)
     
@@ -351,10 +354,13 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     gaugeShift = Energies['gaugeShift']
     
     globalNumPoints = comm.allreduce(nPoints)
+    
+    nPointsF=len(Xf)
+    globalFineMeshPoints = comm.allreduce(nPointsF)
 
-    greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(nPoints)+'_'+str(len(Xf))+outputFile[-4:]
-    SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(nPoints)+'_'+str(len(Xf))+outputFile[-4:]
-    densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(nPoints)+'_plots'
+    greenIterationOutFile = outputFile[:-4]+'_GREEN_'+str(globalNumPoints)+'_'+str(globalFineMeshPoints)+outputFile[-4:]
+    SCFiterationOutFile =   outputFile[:-4]+'_SCF_'+str(globalNumPoints)+'_'+str(globalFineMeshPoints)+outputFile[-4:]
+    densityPlotsDir =       outputFile[:-4]+'_SCF_'+str(globalNumPoints)+'_plots'
 
     comm.barrier()
     exampleDir = homePath+np.genfromtxt(inputFile,dtype=str)[2]
@@ -440,15 +446,17 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         initialGItolerancesIdx = auxiliaryRestartData['GItolerancesIdx'] 
          
          
-         
+        NLCC_RHO = RHO+CORECHARGERHO
         Energies['Ehartree'] = 1/2*np.sum(W * RHO * V_hartreeNew)
-        exchangeOutput = exchangeFunctional.compute(RHO)
-        correlationOutput = correlationFunctional.compute(RHO)
-        Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
-        Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
+        
+        exchangeOutput    =    exchangeFunctional.compute(NLCC_RHO)
+        correlationOutput = correlationFunctional.compute(NLCC_RHO) 
+        
+        Energies['Ex'] = np.sum( W * NLCC_RHO * np.reshape(   exchangeOutput['zk'],np.shape(NLCC_RHO)) )
+        Energies['Ec'] = np.sum( W * NLCC_RHO * np.reshape(correlationOutput['zk'],np.shape(NLCC_RHO)) )
          
-        Vx = np.reshape(exchangeOutput['vrho'],np.shape(RHO))
-        Vc = np.reshape(correlationOutput['vrho'],np.shape(RHO))
+        Vx = np.reshape(   exchangeOutput['vrho'],np.shape(NLCC_RHO))
+        Vc = np.reshape(correlationOutput['vrho'],np.shape(NLCC_RHO))
          
         Energies['Vx'] = np.sum(W * RHO * Vx)
         Energies['Vc'] = np.sum(W * RHO * Vc)        
@@ -512,7 +520,8 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
                'pointsPerCell_coarse':pointsPerCell_coarse, 
                'pointsPerCell_fine':pointsPerCell_fine,
                'TwoMeshStart':TwoMeshStart,
-               'occupations':initialOccupations}
+               'occupations':initialOccupations,
+               'CORECHARGERHO': CORECHARGERHO}
     
 
 
@@ -730,12 +739,19 @@ if __name__ == "__main__":
 # #     exit(-1)
     
 #     eigenvalues = -2*np.ones(nOrbitals)
-    RHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
+    RHO, CORECHARGERHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
     densityIntegral = global_dot( RHO, W, comm)
     rprint(rank,"Initial density integrates to ", densityIntegral)
+    CCdensityIntegral = global_dot( CORECHARGERHO, W, comm)
+    rprint(rank,"Initial core charge density integrates to ", CCdensityIntegral)
     nPointsLocal = len(X)
 #     assert abs(2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
     orbitals = np.zeros((nOrbitals,nPointsLocal))
+    
+    for atom in atoms:
+        atom.orbitalInterpolators(coreRepresentation)
+            
+            
     if coreRepresentation=="AllElectron":
         orbitals,initialOccupations,initialEnergies = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z,W)
     elif coreRepresentation=="Pseudopotential":
@@ -748,7 +764,7 @@ if __name__ == "__main__":
     
 
     
-    eigenvalues=np.array(initialEnergies)
+    eigenvalues=np.array(initialEnergies)/3
     rprint(rank, "Initial eigenvalues:  ",initialEnergies)
     rprint(rank, "Initial occupations:  ",initialOccupations)
 #     input()
@@ -757,7 +773,7 @@ if __name__ == "__main__":
 
     
     initialRho = np.copy(RHO)
-    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
+    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
 
     if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
     if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(W)

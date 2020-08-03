@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name="comet-testing"
-#SBATCH --output="dataFiles/Si30_0p5_8nodes_lagrange_order3_theta0p85_TCorder8-%j.%N.out"
+#SBATCH --output="dataFiles/shell2-%j.%N.out"
 #SBATCH --partition=gpu
-#SBATCH --nodes=8
+#SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:p100:4   
 #SBATCH --mem=100GB 
-#SBATCH -t 12:00:00    
+#SBATCH -t 24:00:00    
 #SBATCH --no-requeue
 #SBATCH -A mia320    
 #SBATCH --constraint=exclusive
@@ -40,8 +40,10 @@ COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv' 
 #INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv' 
 #INPUTFILE='molecularConfigurations/Si10H16AuxiliaryPSP.csv' 
-INPUTFILE='molecularConfigurations/Si30H40AuxiliaryPSP.csv' 
+#INPUTFILE='molecularConfigurations/Si30H40AuxiliaryPSP.csv' 
   
+INPUTFILE='molecularConfigurations/AluminumClusters/shell2AuxiliaryPSP.csv'
+
 
 VTKFILEDIR='/Users/nathanvaughn/Desktop/'
  
@@ -72,7 +74,7 @@ GRADUALSTEPS=10
 SCF_TOLERANCE=1e-4  
 
 
-APPROXIMATIONNAME=hermite
+APPROXIMATIONNAME=lagrange
 SINGULARITYHANDLING=subtraction
   
 REGULARIZE='False'
@@ -80,17 +82,17 @@ EPSILON=0.0
    
 GAUSSIANALPHA=2.0 
 TREECODEORDER=8
-THETA=0.85
+THETA=0.8
 
  
-CELLORDER=4
-FINEORDER=4
+CELLORDER=3
+FINEORDER=3
  
 
   
 MESHTYPE='coarsenedUniformTwoLevel'
 
-DOMAIN=64 
+DOMAIN=32 
 MAXSIDELENGTH=8 
 MESHPARAM1=1.0 # near field spacing     
 MESHPARAM2=8.0 # far field spacing
@@ -110,12 +112,14 @@ MAXPARNODE=4000
 
                                                        
 
-OUTPUTFILE="/home/njvaughn/ONCV-testing/Si30H40/LDA/Temp100_8nodes_order3_spacing0p5_1_gi_pass_per_SCF_10gradualSteps_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
+#OUTPUTFILE="/home/njvaughn/ONCV-testing/Si30H40/LDA/Temp100_8nodes_order3_spacing0p5_1_gi_pass_per_SCF_10gradualSteps_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 #OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/LDA/6steps_Temp100_8nodes_order4_1_gi_pass_per_SCF_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/LDA/Be_temp100_8nodes_1_gi_pass_per_SCF_6gradualSteps_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
+OUTPUTFILE="/home/njvaughn/ONCV-testing/Aluminum/shell0/spacing${MESHPARAM1}_order${CELLORDER}_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
-ibrun -n 32 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+
+ibrun -n 4 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                         $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                         $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                         $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
