@@ -12,11 +12,14 @@ from scipy.optimize import root as scipyRoot
 from scipy.optimize.nonlin import BroydenFirst, KrylovJacobian
 from scipy.optimize.nonlin import InverseJacobian
 from scipy.optimize import broyden1, anderson, brentq
+from scipy.sparse.linalg import lgmres
+from scipy.sparse.linalg import LinearOperator
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size() 
 from mpiUtilities import global_dot, rprint
+from gmres_routines import treecode_closure
 
 
 from meshUtilities import interpolateBetweenTwoMeshes
@@ -29,6 +32,17 @@ import orthogonalization_wrapper as ORTH
 import moveData_wrapper as MOVEDATA
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
 
+
+class gmres_counter(object):
+    def __init__(self, disp=True):
+        self._disp = disp
+        self.niter = 0
+    def __call__(self, rk=None):
+        self.niter += 1
+        if self._disp:
+            rprint(rank, 'iter %3i\trk = %s' % (self.niter, str(rk)))
+            
+            
 
 def print_eigs_and_occupations(eigs,occupations,errors):
     rprint(rank," ")
@@ -413,6 +427,36 @@ def scfFixedPointClosure(scf_args):
             
 
             if verbosity>0: rprint(rank,'Convolution time: ', MPI.Wtime()-start)
+            
+            
+            
+            TC=treecode_closure( nPoints, numSources,
+                     np.copy(X), np.copy(Y), np.copy(Z),
+                     np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceW),
+                     kernel, numberOfKernelParameters, kernelParameters,
+                     singularity, approximation, computeType,
+                     GPUpresent, treecode_verbosity, 
+                     theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf)
+    
+    
+    
+            b = V_hartreeNew
+            
+#             D = LinearOperator( (N,N), matvec=DS)
+#             xDS, exitCode = gmres(D,b)
+#             print("DS Result: ",xDS)
+            counter = gmres_counter()
+            T = LinearOperator( (nPoints,numSources), matvec=TC)
+            xTC, exitCode = lgmres(T,b, callback=counter,maxiter=20,inner_m=5, outer_k=3)
+#             print("TC Result: ",xTC)
+            rprint(rank,"Difference: ", RHO-xTC)
+            normdiff = np.sqrt( np.sum((RHO-xTC)**2*W) )
+            rprint(rank,"L2 Norm Difference: ", normdiff)
+
+            
+            
+            
+            exit(-1)
         
         
          
