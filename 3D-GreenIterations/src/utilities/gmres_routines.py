@@ -100,7 +100,7 @@ if __name__=="__main__":
 #         
         
     # set treecode parameters
-    N=50
+    N=120
     maxPerSourceLeaf = 5
     maxPerTargetLeaf = 5
     GPUpresent = False
@@ -110,12 +110,12 @@ if __name__=="__main__":
     verbosity = 0
      
     approximation = BT.Approximation.LAGRANGE
-    singularity   = BT.Singularity.SKIPPING
+    singularity   = BT.Singularity.SUBTRACTION
     computeType   = BT.ComputeType.PARTICLE_CLUSTER
      
     kernel = BT.Kernel.COULOMB
-    numberOfKernelParameters = 0
-    kernelParameters = np.array([])
+    numberOfKernelParameters = 1
+    kernelParameters = np.array([1.0])
  
  
     # initialize some random data
@@ -148,19 +148,24 @@ if __name__=="__main__":
     T = LinearOperator( (N,N), matvec=TC)
     counterTC = gmres_counter(disp=False)
     counterTC2 = gmres_counter(disp=False)
+    xTC1, exitCode = la.lgmres(T,b,callback=counterTC,tol=1e-5)
+    
+    
+    
     gmresStart=time.time()
 #     xTC1, exitCode = la.gmres(T,b,callback=counterTC,tol=1e-6, maxiter=5000)
-    xTC1, exitCode = la.gmres(T,b,callback=counterTC,tol=1e-5, maxiter=5000)
+    xTC1, exitCode = la.lgmres(T,b,callback=counterTC,tol=1e-5)
     gmresStop=time.time()
+    print(" GMRES took %f seconds and %i iterations." %(gmresStop-gmresStart, counterTC.niter) )
     lgmresStart=time.time()
-    xTC2, exitCode = la.lgmres(T,b,callback=counterTC2,tol=1e-5,inner_m=50, outer_k=3)
+#     xTC2, exitCode = la.lgmres(T,b,callback=counterTC2,tol=1e-5)
+    xTC2, exitCode = la.minres(T,b,callback=counterTC2,tol=1e-5)
     lgmresStop=time.time()
 #     print("TC Result: ",xTC)
-    print("Difference: ", xTC1-xTC2)
+#     print("Difference: ", xTC1-xTC2)
     normDiff = np.sqrt( np.sum( xTC1-xTC2)**2 )
-    print("L2 norm of difference: ", normDiff)
-    print(" GMRES took %f seconds and %i iterations." %(gmresStop-gmresStart, counterTC.niter) )
     print("LGMRES took %f seconds and %i iterations." %(lgmresStop-lgmresStart, counterTC2.niter) )
+    print("L2 norm of difference: ", normDiff)
 #     print(counterTC2)
     
 

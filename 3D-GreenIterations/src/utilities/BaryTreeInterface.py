@@ -94,7 +94,7 @@ def callTreedriver(numTargets, numSources,
     returns the results array.
     '''
     
-    rprint(rank,"Calling treedriver.")
+#     rprint(rank,"Calling treedriver.")
 
 #   Handle optional parameters.  Note, either beta must be supplied, or theta, degree, sourceLeafSize, AND targetLeafSize must be supplied.
     if beta:

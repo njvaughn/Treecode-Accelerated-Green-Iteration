@@ -38,10 +38,25 @@ class gmres_counter(object):
     def __init__(self, disp=True):
         self._disp = disp
         self.niter = 0
+    def __call__(self, rk=None, x=None):
+        self.niter += 1
+        if self._disp:
+#             if self.RHO:
+            rprint(rank, 'iter %3i\trk = %s' % (self.niter, str(rk)))
+            
+class lgmres_counter(object):
+    def __init__(self, disp=True, RHO=None, W=None):
+        self._disp = disp
+        self.niter = 0
+        self.RHO=RHO
+        self.W=W
     def __call__(self, rk=None):
         self.niter += 1
         if self._disp:
-            rprint(rank, 'iter %3i\trk = %s' % (self.niter, str(rk)))
+#             if self.RHO:
+            diff = np.sqrt(np.sum( (rk-self.RHO)**2*self.W ) )
+#             rprint(rank, 'iter %3i\trk = %s' % (self.niter, str(rk)))
+            rprint(rank, 'iter %3i\tdiff = %f' % (self.niter, diff))
             
             
 
@@ -430,7 +445,7 @@ def scfFixedPointClosure(scf_args):
             if verbosity>0: rprint(rank,'Convolution time: ', MPI.Wtime()-start)
             
             
-            
+#             singularity=BT.Singularity.SKIPPING
             TC=treecode_closure( nPoints, numSources,
                      np.copy(X), np.copy(Y), np.copy(Z),
                      np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceW),
@@ -446,16 +461,21 @@ def scfFixedPointClosure(scf_args):
 #             D = LinearOperator( (N,N), matvec=DS)
 #             xDS, exitCode = gmres(D,b)
 #             print("DS Result: ",xDS)
-            counter = gmres_counter(disp=True)
+#             counter = gmres_counter(disp=True)
+            counter = lgmres_counter(disp=True,RHO=RHO,W=W)
             T = LinearOperator( (nPoints,numSources), matvec=TC)
-            x0=RHO*(1+0.01*np.random.rand(nPoints))
+            x0=RHO#*(1+0.1*np.random.rand(nPoints))
 #             xTC, exitCode = lgmres(T,b, callback=counter,maxiter=20,inner_m=5, outer_k=3)
-            xTC, exitCode = la.lgmres(T, b, x0, callback=counter, tol=1e-5)
+
+            linSolveStart = time.time()
+            xTC, exitCode = la.lgmres(T, b, x0, callback=counter, tol=1e-4)
+            linSolveEnd   = time.time()
 #             xTC, exitCode = la.lgmres(T, b, x0, callback=counter, tol=1e-5,inner_m=50, outer_k=3)
 #             print("TC Result: ",xTC)
             rprint(rank,"Difference: ", RHO-xTC)
             normdiff = np.sqrt( np.sum((RHO-xTC)**2*W) )
-            rprint(rank,"L2 Norm Difference: ", normdiff)
+            rprint(rank,"L2 Norm Difference: ", normdiff) 
+            rprint(rank,"Took %f seconds" %(linSolveEnd-linSolveStart))
 
             
             
