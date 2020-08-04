@@ -50,10 +50,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
         singularityHandling = gi_args['singularityHandling']
         approximationName = gi_args['approximationName']
         treecode = gi_args['treecode']
-        treecodeOrder = gi_args['treecodeOrder']
+        treecodeDegree = gi_args['treecodeDegree']
         theta = gi_args['theta']
-        maxParNode=gi_args['maxParNode']
-        batchSize=gi_args['batchSize']
+        maxPerSourceLeaf=gi_args['maxPerSourceLeaf']
+        maxPerTargetLeaf=gi_args['maxPerTargetLeaf']
         nPoints = gi_args['nPoints']
         X = gi_args['X']
         Y = gi_args['Y']
@@ -234,7 +234,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
 #             kappa = k
             
-            treecode_verbosity=0
+            treecode_verbosity=1
             
             
             
@@ -254,8 +254,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 sourceW=W
             
             
-#             for batchSize in [1000, 2000, 4000, 8000, 16000]:
-#                 for maxParNode in [1000, 2000, 4000, 8000, 16000]:
+#             for maxPerTargetLeaf in [1000, 2000, 4000, 8000, 16000]:
+#                 for maxPerSourceLeaf in [1000, 2000, 4000, 8000, 16000]:
             kernel = BT.Kernel.YUKAWA
             if singularityHandling=="subtraction":
                 singularity=BT.Singularity.SUBTRACTION
@@ -282,13 +282,13 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #             
 #             if graduallyTightenTreecodeParameters:
 #                 if SCFcount<2:
-#                     treecodeOrder=max(2,treecodeOrder-3)
+#                     treecodeDegree=max(2,treecodeDegree-3)
 #                     theta = (theta+1.0)/2  # midway between input and 1.0
 #                 elif SCFcount<4:
-#                     treecodeOrder=max(2,treecodeOrder-2)
+#                     treecodeDegree=max(2,treecodeDegree-2)
 #                     theta = (theta+1.0)/2  # midway between input and 1.0
 #                 elif SCFcount<8:
-#                     treecodeOrder=max(2,treecodeOrder-1)
+#                     treecodeDegree=max(2,treecodeDegree-1)
 #                     theta = (3*theta+1.0)/4  # 3/4 of the way to input theta
 #                 else: 
 #                     # use the user input treecode parameters
@@ -299,15 +299,24 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                 verbosity=1
             comm.barrier()
             startTime = time.time()
+#             psiNew = BT.callTreedriver(
+#                                         nPoints, numSources, 
+#                                         np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
+#                                         np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
+#                                         kernel, numberOfKernelParameters, kernelParameters, 
+#                                         singularity, approximation, computeType,
+#                                         treecodeDegree, theta, maxPerSourceLeaf, maxPerTargetLeaf,
+#                                         GPUpresent, treecode_verbosity
+#                                         )
+            
             psiNew = BT.callTreedriver(
                                         nPoints, numSources, 
                                         np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
                                         np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
                                         kernel, numberOfKernelParameters, kernelParameters, 
                                         singularity, approximation, computeType,
-                                        treecodeOrder, theta, maxParNode, batchSize,
-                                        GPUpresent, treecode_verbosity
-                                        )
+                                        GPUpresent, verbosity, 
+                                        theta=theta, degree=treecodeDegree, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)
             if singularityHandling=="subtraction": psiNew /= (4*np.pi)
@@ -317,7 +326,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             convolutionTime = time.time()-startTime
             if verbosity>0: rprint(rank,'Convolution time: ', convolutionTime)
             Times['timePerConvolution'] = convolutionTime
-#             if verbosity>0: rprint(rank,"Batch size %i, cluster size %i, sizeCheck %1.1f, time per convolution %f" %(batchSize,maxParNode,sizeCheck,convolutionTime))
+#             if verbosity>0: rprint(rank,"Batch size %i, cluster size %i, sizeCheck %1.1f, time per convolution %f" %(maxPerTargetLeaf,maxPerSourceLeaf,sizeCheck,convolutionTime))
 #             rprint(rank,"Exiting because only interested in time per convolution.")
 #             exit(-1)
 

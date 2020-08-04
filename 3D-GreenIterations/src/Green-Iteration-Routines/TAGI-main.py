@@ -75,10 +75,10 @@ mixingParameter     = float(sys.argv[n]); n+=1
 mixingHistoryCutoff = int(sys.argv[n]) ; n+=1
 GPUpresent          = str(sys.argv[n]); n+=1
 treecode            = str(sys.argv[n]); n+=1
-treecodeOrder       = int(sys.argv[n]); n+=1
+treecodeDegree       = int(sys.argv[n]); n+=1
 theta               = float(sys.argv[n]); n+=1
-maxParNode          = int(sys.argv[n]); n+=1
-batchSize           = int(sys.argv[n]); n+=1
+maxPerSourceLeaf          = int(sys.argv[n]); n+=1
+maxPerTargetLeaf           = int(sys.argv[n]); n+=1
 divideParameter3    = float(sys.argv[n]); n+=1
 divideParameter4    = int(sys.argv[n]); n+=1
 restart             = str(sys.argv[n]); n+=1
@@ -189,7 +189,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
     
     Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                 scfTolerance, initialGItolerance, finalGItolerance, gradualSteps,
-                                gradientFree, symmetricIteration, GPUpresent, treecode, treecodeOrder, theta, maxParNode, batchSize, 
+                                gradientFree, symmetricIteration, GPUpresent, treecode, treecodeDegree, theta, maxPerSourceLeaf, maxPerTargetLeaf, 
                                 singularityHandling,approximationName,
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                  subtractSingularity, gaussianAlpha, gaugeShift,
@@ -211,14 +211,14 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
                   'GreenSingSubtracted', 'regularize', 'epsilon',
                   'orbitalEnergies', 'BandEnergy', 'KineticEnergy',
                   'ExchangeEnergy','CorrelationEnergy','ElectrostaticEnergy','TotalEnergy',
-                  'Treecode','approximationName','treecodeOrder','theta','maxParNode','batchSize','totalTime','timePerConvolution','totalIterationCount']
+                  'Treecode','approximationName','treecodeDegree','theta','maxPerSourceLeaf','maxPerTargetLeaf','totalTime','timePerConvolution','totalIterationCount']
         
         myData = [size,domainSize,maxSideLength,order,fine_order, nPoints/(order+1)**3,global_nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
                   gaussianAlpha,gaugeShift,finalGItolerance,
                   subtractSingularity, regularize, epsilon,
                   Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], Energies['Ex'], Energies['Ec'], Energies['totalElectrostatic'], Energies['Etotal'],
-                  treecode,approximationName,treecodeOrder,theta,maxParNode,batchSize, Times['totalKohnShamTime'],Times['timePerConvolution'],Times['totalIterationCount'] ]
+                  treecode,approximationName,treecodeDegree,theta,maxPerSourceLeaf,maxPerTargetLeaf, Times['totalKohnShamTime'],Times['timePerConvolution'],Times['totalIterationCount'] ]
 
     
         runComparisonFile = os.path.split(outputFile)[0] + '/runComparison.csv'
@@ -247,7 +247,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
 def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                              SCFtolerance, initialGItolerance, finalGItolerance, gradualSteps, 
                                              gradientFree, symmetricIteration, GPUpresent, 
-                                 treecode, treecodeOrder, theta, maxParNode, batchSize, singularityHandling, approximationName,
+                                 treecode, treecodeDegree, theta, maxPerSourceLeaf, maxPerTargetLeaf, singularityHandling, approximationName,
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
                                 subtractSingularity, gaussianAlpha, gaugeShift, inputFile='',outputFile='',restartFile=False,
                                 onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None,
@@ -504,7 +504,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     
     
     scf_args={'inputDensities':inputDensities,'outputDensities':outputDensities,'SCFcount':SCFcount,'nPoints':nPoints,'nOrbitals':nOrbitals,'mixingHistoryCutoff':mixingHistoryCutoff,
-               'GPUpresent':GPUpresent,'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta,'maxParNode':maxParNode,'batchSize':batchSize,'gaussianAlpha':gaussianAlpha,
+               'GPUpresent':GPUpresent,'treecode':treecode,'treecodeDegree':treecodeDegree,'theta':theta,'maxPerSourceLeaf':maxPerSourceLeaf,'maxPerTargetLeaf':maxPerTargetLeaf,'gaussianAlpha':gaussianAlpha,
                'Energies':Energies,'Times':Times,'exchangeFunctional':exchangeFunctional,'correlationFunctional':correlationFunctional,
                'Vext_local':Vext_local,'Vext_local_fine':Vext_local_fine,'gaugeShift':gaugeShift,'orbitals':orbitals,'oldOrbitals':oldOrbitals,'subtractSingularity':subtractSingularity,
                'X':X,'Y':Y,'Z':Z,'W':W,'Xf':Xf,'Yf':Yf,'Zf':Zf,'Wf':Wf,'gradientFree':gradientFree,'residuals':residuals,'greenIterationOutFile':greenIterationOutFile,
