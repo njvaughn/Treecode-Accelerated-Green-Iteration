@@ -105,10 +105,10 @@ def scfFixedPointClosure(scf_args):
         mixingHistoryCutoff = scf_args['mixingHistoryCutoff']
         GPUpresent = scf_args['GPUpresent']
         treecode = scf_args['treecode']
-        treecodeOrder=scf_args['treecodeOrder']
+        treecodeDegree=scf_args['treecodeDegree']
         theta=scf_args['theta']
-        maxParNode=scf_args['maxParNode']
-        batchSize=scf_args['batchSize']
+        maxPerSourceLeaf=scf_args['maxPerSourceLeaf']
+        maxPerTargetLeaf=scf_args['maxPerTargetLeaf']
         gaussianAlpha=scf_args['gaussianAlpha']
         Energies=scf_args['Energies']
         exchangeFunctional=scf_args['exchangeFunctional']
@@ -393,15 +393,23 @@ def scfFixedPointClosure(scf_args):
     
             comm.barrier()
 #             rprint(rank,"Using tighter treecode parameters for Hartree solve.")
-            V_hartreeNew = BT.callTreedriver(  
-                                            nPoints, numSources, 
-                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-                                            np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
-                                            kernel, numberOfKernelParameters, kernelParameters, 
-                                            singularity, approximation, computeType,
-                                            treecodeOrder+0, theta-0.0, maxParNode, batchSize,
-                                            GPUpresent, treecode_verbosity
-                                            )
+#             V_hartreeNew = BT.callTreedriver(  
+#                                             nPoints, numSources, 
+#                                             np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+#                                             np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
+#                                             kernel, numberOfKernelParameters, kernelParameters, 
+#                                             singularity, approximation, computeType,
+#                                             treecodeDegree+0, theta-0.0, maxPerSourceLeaf, maxPerTargetLeaf,
+#                                             GPUpresent, treecode_verbosity
+#                                             )
+            
+            V_hartreeNew = BT.callTreedriver(  nPoints, numSources,
+                                 np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO),
+                                 np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
+                                 kernel, numberOfKernelParameters, kernelParameters,
+                                 singularity, approximation, computeType,
+                                 GPUpresent, treecode_verbosity, 
+                                 theta=theta, degree=treecodeDegree, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
             
 
             if verbosity>0: rprint(rank,'Convolution time: ', MPI.Wtime()-start)
@@ -499,7 +507,7 @@ def scfFixedPointClosure(scf_args):
                                'Veff_local':Veff_local, 'Vext_local':Vext_local, 'Vext_local_fine':Vext_local_fine,
                                    'symmetricIteration':symmetricIteration,'GPUpresent':GPUpresent,
                                    'singularityHandling':singularityHandling, 'approximationName':approximationName,
-                                   'treecode':treecode,'treecodeOrder':treecodeOrder,'theta':theta, 'maxParNode':maxParNode,'batchSize':batchSize,
+                                   'treecode':treecode,'treecodeDegree':treecodeDegree,'theta':theta, 'maxPerSourceLeaf':maxPerSourceLeaf,'maxPerTargetLeaf':maxPerTargetLeaf,
                                    'nPoints':nPoints, 'm':m, 'X':X,'Y':Y,'Z':Z,'W':W,'Xf':Xf,'Yf':Yf,'Zf':Zf,'Wf':Wf,'gradientFree':gradientFree,
                                    'SCFcount':SCFcount,'greenIterationsCount':greenIterationsCount,
                                    'residuals':residuals,
@@ -831,7 +839,7 @@ def scfFixedPointClosure(scf_args):
 #                                         np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(newDensity), np.copy(sourceW),
 #                                         kernel, numberOfKernelParameters, kernelParameters, 
 #                                         singularity, approximation, computeType,
-#                                         treecodeOrder, theta, maxParNode, batchSize,
+#                                         treecodeDegree, theta, maxPerSourceLeaf, maxPerSourceLeaf,
 #                                         GPUpresent, treecode_verbosity
 #                                         )
 #         
