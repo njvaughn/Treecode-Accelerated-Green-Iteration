@@ -1,6 +1,10 @@
 import numpy as np
 import ctypes
 from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size() 
+from mpiUtilities import global_dot, rprint
 import resource
 from enum import IntEnum
 
@@ -89,6 +93,8 @@ def callTreedriver(numTargets, numSources,
     python function which creates pointers to the arrays and calls treedriverWrapper.
     returns the results array.
     '''
+    
+    rprint(rank,"Calling treedriver.")
 
 #   Handle optional parameters.  Note, either beta must be supplied, or theta, degree, sourceLeafSize, AND targetLeafSize must be supplied.
     if beta:

@@ -14,6 +14,7 @@ from scipy.optimize.nonlin import InverseJacobian
 from scipy.optimize import broyden1, anderson, brentq
 from scipy.sparse.linalg import lgmres
 from scipy.sparse.linalg import LinearOperator
+import scipy.sparse.linalg as la
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -445,9 +446,12 @@ def scfFixedPointClosure(scf_args):
 #             D = LinearOperator( (N,N), matvec=DS)
 #             xDS, exitCode = gmres(D,b)
 #             print("DS Result: ",xDS)
-            counter = gmres_counter()
+            counter = gmres_counter(disp=True)
             T = LinearOperator( (nPoints,numSources), matvec=TC)
-            xTC, exitCode = lgmres(T,b, callback=counter,maxiter=20,inner_m=5, outer_k=3)
+            x0=RHO*(1+0.01*np.random.rand(nPoints))
+#             xTC, exitCode = lgmres(T,b, callback=counter,maxiter=20,inner_m=5, outer_k=3)
+            xTC, exitCode = la.lgmres(T, b, x0, callback=counter, tol=1e-5)
+#             xTC, exitCode = la.lgmres(T, b, x0, callback=counter, tol=1e-5,inner_m=50, outer_k=3)
 #             print("TC Result: ",xTC)
             rprint(rank,"Difference: ", RHO-xTC)
             normdiff = np.sqrt( np.sum((RHO-xTC)**2*W) )

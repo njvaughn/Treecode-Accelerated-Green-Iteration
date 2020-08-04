@@ -2,8 +2,21 @@ import numpy as np
 import scipy as sp
 from scipy.sparse.linalg import gmres
 from scipy.sparse.linalg import LinearOperator
+import time
+
+import scipy.sparse.linalg as la
 
 import BaryTreeInterface as BT
+
+
+class gmres_counter(object):
+    def __init__(self, disp=True):
+        self._disp = disp
+        self.niter = 0
+    def __call__(self, rk=None):
+        self.niter += 1
+        if self._disp:
+            print('iter %3i\trk = %s' % (self.niter, str(rk)))
 
 
 def matrix_free(x):
@@ -15,7 +28,7 @@ def matrix_free(x):
 
 def direct_sum_closure(x,y,z):
     def direct_sum(psi):
-        print("calling direct_sum")
+#         print("calling direct_sum")
         phi = np.zeros_like(psi)
         
         for i in range(len(psi)):
@@ -128,13 +141,27 @@ if __name__=="__main__":
     
     b = np.random.rand(N)
     
-    D = LinearOperator( (N,N), matvec=DS)
-    xDS, exitCode = gmres(D,b)
-    print("DS Result: ",xDS)
+#     D = LinearOperator( (N,N), matvec=DS)
+#     counterDS = gmres_counter()
+#     xDS, exitCode = gmres(D,b,callback=counterDS)
+#     print("DS Result: ",xDS)
     T = LinearOperator( (N,N), matvec=TC)
-    xTC, exitCode = gmres(T,b)
-    print("TC Result: ",xTC)
-    print("Difference: ", xDS-xTC)
+    counterTC = gmres_counter(disp=False)
+    counterTC2 = gmres_counter(disp=False)
+    gmresStart=time.time()
+#     xTC1, exitCode = la.gmres(T,b,callback=counterTC,tol=1e-6, maxiter=5000)
+    xTC1, exitCode = la.gmres(T,b,callback=counterTC,tol=1e-5, maxiter=5000)
+    gmresStop=time.time()
+    lgmresStart=time.time()
+    xTC2, exitCode = la.lgmres(T,b,callback=counterTC2,tol=1e-5,inner_m=50, outer_k=3)
+    lgmresStop=time.time()
+#     print("TC Result: ",xTC)
+    print("Difference: ", xTC1-xTC2)
+    normDiff = np.sqrt( np.sum( xTC1-xTC2)**2 )
+    print("L2 norm of difference: ", normDiff)
+    print(" GMRES took %f seconds and %i iterations." %(gmresStop-gmresStart, counterTC.niter) )
+    print("LGMRES took %f seconds and %i iterations." %(lgmresStop-lgmresStart, counterTC2.niter) )
+#     print(counterTC2)
     
 
     
