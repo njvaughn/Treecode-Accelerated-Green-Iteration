@@ -13,7 +13,7 @@ sys.path.append('../dataStructures')
 from TreeStruct_CC import Tree
 from AtomStruct import Atom
 from zoltan_wrapper import callZoltan
-from meshUtilities import ChebyshevPointsFirstKind,unscaledWeightsFirstKind,weights3DFirstKind
+from meshUtilities import ChebyshevPointsFirstKind,unscaledWeightsFirstKind,weights3DFirstKind, computeDerivativeMatrix
 
 
 
@@ -504,8 +504,13 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     assert abs((2*XL*2*YL*2*ZL) - totalVolume) < 1e-12, "AFTER LOAD BALANCING: base mesh cells volumes do not add up to the expected total volume.  Expected volume = %f" %(2*XL*2*YL*2*ZL)
      
      
+    numCells=len(newCellsX)
     
-    for i in range(len(newCellsX)):
+    DX_matrices=np.empty( (numCells, order+1, order+1) )
+    DY_matrices=np.empty( (numCells, order+1, order+1) )
+    DZ_matrices=np.empty( (numCells, order+1, order+1) )
+    
+    for i in range(numCells):
         # construct quadrature points for base mesh
         xl=newCellsX[i]-newCellsDX[i]/2
         xh=newCellsX[i]+newCellsDX[i]/2
@@ -540,6 +545,14 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
         wf = np.append(wf,wfc)
         
         
+        # genreate derivative matrices
+        DX_matrices[i,:,:] = computeDerivativeMatrix(xl, xh, order)
+        DY_matrices[i,:,:] = computeDerivativeMatrix(yl, yh, order)
+        DZ_matrices[i,:,:] = computeDerivativeMatrix(zl, zh, order)
+        
+        
+        
+        
     
     comm.barrier()
     nPoints=len(x)
@@ -558,9 +571,9 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     comm.barrier()
 #     return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
     if saveTree==False:
-        return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
+        return x,y,z,w,xf,yf,zf,wf,DX_matrices,DY_matrices,DZ_matrices,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues
     elif saveTree==True:
-        return x,y,z,w,xf,yf,zf,wf,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
+        return x,y,z,w,xf,yf,zf,wf,DX_matrices,DY_matrices,DZ_matrices,PtsPerCellCoarse, PtsPerCellFine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues, tree
 
 def func(X,Y,Z,pow):
     
@@ -688,7 +701,7 @@ def refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,coordina
 #     tree.exportGridpoints
     cellsX,cellsY,cellsZ,cellsDX,cellsDY,cellsDZ,PtsPerCellCoarse,PtsPerCellFine, RHO, XV, YV, ZV, vertexIdx, centerIdx, ghostCells = tree.extractCellXYZ()
     
-    
+#     DX,DY,DZ = tree.extractDerivativeMatrices()
 
     PtsPerCellCoarse = PtsPerCellCoarse.astype(int)
     PtsPerCellFine = PtsPerCellFine.astype(int)

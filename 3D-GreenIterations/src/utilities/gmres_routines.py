@@ -7,6 +7,7 @@ import time
 import scipy.sparse.linalg as la
 
 import BaryTreeInterface as BT
+from meshUtilities import GlobalLaplacian
 
 
 class gmres_counter(object):
@@ -55,15 +56,6 @@ def treecode_closure(Nt, Ns,
     
     def treecode(RHO):
         
-#         output = BT.callTreedriver(  Nt, Ns,
-#                              Xt, Yt, Zt, np.copy(RHO),
-#                              Xs, Ys, Zs, np.copy(RHO), Ws,
-#                              kernel, numberOfKernelParameters, kernelParameters,
-#                              singularity, approximation, computeType,
-#                              treecodeDegree, theta, maxPerSourceLeaf, maxPerTargetLeaf,
-#                             GPUpresent, verbosity
-#                             )
-#         print("calling treecode in GMRES...")
         output = BT.callTreedriver(  Nt, Ns,
                                  np.copy(Xt), np.copy(Yt), np.copy(Zt), np.copy(RHO),
                                  np.copy(Xs), np.copy(Ys), np.copy(Zs), np.copy(RHO), np.copy(Ws),
@@ -71,11 +63,54 @@ def treecode_closure(Nt, Ns,
                                  singularity, approximation, computeType,
                                  GPUpresent, treecode_verbosity, 
                                  theta=theta, degree=treecodeDegree, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
-                           
+                                   
         return output
     
     return treecode
 
+
+
+def D_closure(   Nt, Ns,
+                 Xt, Yt, Zt, Vt,
+                 Xs, Ys, Zs, Vs, Ws,
+                 kernel, numberOfKernelParameters, kernelParameters,
+                 singularity, approximation, computeType,
+                 GPUpresent, treecode_verbosity, 
+                 theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf,
+                 DX_matrices, DY_matrices, DZ_matrices, order):
+    
+    def D_operator(psi):
+        
+#         Dv = B{-1}Av
+        
+        
+#         Av = (I+GV)v
+        y = psi + BT.callTreedriver(  Nt, Ns,
+                                 np.copy(Xt), np.copy(Yt), np.copy(Zt), Vt*psi,
+                                 np.copy(Xs), np.copy(Ys), np.copy(Zs), Vs*psi, np.copy(Ws),
+                                 kernel, numberOfKernelParameters, kernelParameters,
+                                 singularity, approximation, computeType,
+                                 GPUpresent, treecode_verbosity, 
+                                 theta=theta, degree=treecodeDegree, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
+        
+#         B^{-1}v = (-1/4pi) Delta v
+        x = GlobalLaplacian( DX_matrices, DY_matrices, DZ_matrices, y, order)
+        x /= -4*np.pi
+                                   
+        return x
+    
+    return D_operator
+
+def H_closure( Veff, DX_matrices, DY_matrices, DZ_matrices, order):
+    
+    def H_operator(psi):
+        
+        x = -1/2 * GlobalLaplacian( DX_matrices, DY_matrices, DZ_matrices, psi, order) + Veff*psi 
+#         x = GlobalLaplacian( DX_matrices, DY_matrices, DZ_matrices, psi, order)  
+                
+        return x
+    
+    return H_operator
 
 
 if __name__=="__main__":

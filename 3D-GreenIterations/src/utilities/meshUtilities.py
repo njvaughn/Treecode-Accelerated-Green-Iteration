@@ -1039,6 +1039,45 @@ def ChebLaplacian3D(DopenX,DopenY,DopenZ,N,F):
             D2FDZ2[i,j,:] = -np.dot(DopenZ,temp) #ChebDerivative(F[i,j,:],DopenZ)
     return D2FDX2 + D2FDY2 + D2FDZ2
 
+def GlobalLaplacian( DX_matrices, DY_matrices, DZ_matrices, Field, N):
+    
+    numPoints = len(Field)
+    numCells  = int(numPoints / ( (N+1)**3 ))
+    
+    F = np.empty((N+1,N+1,N+1))
+    LapField = np.zeros_like(Field)
+    
+    for cellID in range(numCells):
+    
+        # Grab derivative matrices
+        DX = DX_matrices[cellID]
+        DY = DY_matrices[cellID]
+        DZ = DZ_matrices[cellID]
+        
+        # Pack cell into 3D array
+        
+        index=(N+1)**3*cellID
+        for i in range(N+1):
+            for j in range(N+1):
+                for k in range(N+1):
+                    F[i,j,k] = Field[index]
+                    index+=1
+                    
+        # Call Laplacian routine
+        D2F = ChebLaplacian3D(DX,DY,DZ,N,F) 
+        
+        # Unpack Laplacian into vector
+        index=(N+1)**3*cellID
+        for i in range(N+1):
+            for j in range(N+1):
+                for k in range(N+1): 
+                    LapField[index] = D2F[i,j,k]
+                    index+=1
+                    
+    return LapField     
+                
+    
+
 def interpolator1Dchebyshev(x,f):
     n = len(x)
     w = np.ones(n)

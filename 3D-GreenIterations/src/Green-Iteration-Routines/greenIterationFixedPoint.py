@@ -159,42 +159,44 @@ def greensIteration_FixedPoint_Closure(gi_args):
             start=time.time()
             V_nl_psi_fine = np.zeros(len(Veff_local_fine))
             V_nl_psi_coarse = np.zeros(len(Veff_local))
-#             if verbosity>0: rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
-#             print(nearbyAtoms)
-#             comm.barrier()
-#             exit(-1)
-#             for atom in nearbyAtoms:
-            for atom in atoms:
-                
-#                 pass
-#                 V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(orbitals[m,:],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
-#                 V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi(interpolatedInputWavefunction,Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="fine")
-#                 V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi(orbitals[m,:],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="coarse")
-
-                if twoMesh: 
-                    V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_coarse(orbitals[m,:],W,interpolatedInputWavefunction,Wf,comm=comm)
-                else:
-                    V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_SingleMesh(orbitals[m,:],W,comm=comm)
+            rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
+            
+            if False:
+                #             print(nearbyAtoms)
+    #             comm.barrier()
+    #             exit(-1)
+    #             for atom in nearbyAtoms:
+                for atom in atoms:
                     
-                if twoMesh: 
-                    V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi_fine(interpolatedInputWavefunction,Wf,comm=comm)
-                else:
-                    pass
-
-#                 norm_of_V_nl_psi = np.sqrt(global_dot(V_nl_psi**2,W,comm))
-#                 if verbosity>0: rprint(rank,"NORM OF V_NL_PSI = ", norm_of_V_nl_psi)
-#             f = -2* ( orbitals[m,:]*Veff_local + V_nl_psi )
-
-#             if fine_order!=coarse_order:
-#                 V_nl_psi_coarse = interpolateBetweenTwoMeshes(Xf, Yf, Zf, V_nl_psi_fine, fine_order,X, Y, Z, coarse_order) 
-#             else:
-#                 V_nl_psi_coarse=V_nl_psi_fine
-
-
-            if twoMesh: f_fine = -2* ( interpolatedInputWavefunction*Veff_local_fine + V_nl_psi_fine )
+    #                 pass
+    #                 V_nl_psi += atom.V_nonlocal_pseudopotential_times_psi(orbitals[m,:],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm)
+    #                 V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi(interpolatedInputWavefunction,Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="fine")
+    #                 V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi(orbitals[m,:],Wf,interpolatedPsi=interpolatedInputWavefunction,comm=comm,outputMesh="coarse")
+    
+                    if twoMesh: 
+                        V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_coarse(orbitals[m,:],W,interpolatedInputWavefunction,Wf,comm=comm)
+                    else:
+                        V_nl_psi_coarse += atom.V_nonlocal_pseudopotential_times_psi_SingleMesh(orbitals[m,:],W,comm=comm)
+                        
+                    if twoMesh: 
+                        V_nl_psi_fine += atom.V_nonlocal_pseudopotential_times_psi_fine(interpolatedInputWavefunction,Wf,comm=comm)
+                    else:
+                        pass
+    
+    #                 norm_of_V_nl_psi = np.sqrt(global_dot(V_nl_psi**2,W,comm))
+    #                 if verbosity>0: rprint(rank,"NORM OF V_NL_PSI = ", norm_of_V_nl_psi)
+    #             f = -2* ( orbitals[m,:]*Veff_local + V_nl_psi )
+    
+    #             if fine_order!=coarse_order:
+    #                 V_nl_psi_coarse = interpolateBetweenTwoMeshes(Xf, Yf, Zf, V_nl_psi_fine, fine_order,X, Y, Z, coarse_order) 
+    #             else:
+    #                 V_nl_psi_coarse=V_nl_psi_fine
+    
+    
+                if twoMesh: f_fine = -2* ( interpolatedInputWavefunction*Veff_local_fine + V_nl_psi_fine )
             f_coarse = -2* ( orbitals[m,:]*Veff_local + V_nl_psi_coarse )
             end=time.time()
-#             if verbosity>0: rprint(rank,"Constructing f with nonlocal routines took %f seconds." %(end-start))
+    #             if verbosity>0: rprint(rank,"Constructing f with nonlocal routines took %f seconds." %(end-start))
         else:
             rprint(rank, "coreRepresentation not set to allowed value. Exiting from greenIterationFixedPoint.")
             return

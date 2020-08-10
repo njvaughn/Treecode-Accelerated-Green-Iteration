@@ -28,6 +28,7 @@ sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
 
 from mpiUtilities import global_dot, scatterArrays, rprint
 from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
+from meshUtilities import GlobalLaplacian
 
 from initializationRoutines import initializeDensityFromAtomicDataExternally, initializeOrbitalsFromAtomicDataExternally
 
@@ -181,13 +182,13 @@ def clenshawCurtisNormClosure(W):
 
 
 
-def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
+def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,DX_matrices, DY_matrices, DZ_matrices,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,vtkExport=False,onTheFlyRefinement=False, maxOrbitals=None, maxSCFIterations=None, restartFile=None):
     
     startTime = time.time()
     
 
     
-    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+    Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,DX_matrices, DY_matrices, DZ_matrices,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                 scfTolerance, initialGItolerance, finalGItolerance, gradualSteps,
                                 gradientFree, symmetricIteration, GPUpresent, treecode, treecodeDegree, theta, maxPerSourceLeaf, maxPerTargetLeaf, 
                                 singularityHandling,approximationName,
@@ -244,7 +245,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
 
 
 
-def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,DX_matrices, DY_matrices, DZ_matrices,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                              SCFtolerance, initialGItolerance, finalGItolerance, gradualSteps, 
                                              gradientFree, symmetricIteration, GPUpresent, 
                                  treecode, treecodeDegree, theta, maxPerSourceLeaf, maxPerTargetLeaf, singularityHandling, approximationName,
@@ -507,7 +508,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
                'GPUpresent':GPUpresent,'treecode':treecode,'treecodeDegree':treecodeDegree,'theta':theta,'maxPerSourceLeaf':maxPerSourceLeaf,'maxPerTargetLeaf':maxPerTargetLeaf,'gaussianAlpha':gaussianAlpha,
                'Energies':Energies,'Times':Times,'exchangeFunctional':exchangeFunctional,'correlationFunctional':correlationFunctional,
                'Vext_local':Vext_local,'Vext_local_fine':Vext_local_fine,'gaugeShift':gaugeShift,'orbitals':orbitals,'oldOrbitals':oldOrbitals,'subtractSingularity':subtractSingularity,
-               'X':X,'Y':Y,'Z':Z,'W':W,'Xf':Xf,'Yf':Yf,'Zf':Zf,'Wf':Wf,'gradientFree':gradientFree,'residuals':residuals,'greenIterationOutFile':greenIterationOutFile,
+               'X':X,'Y':Y,'Z':Z,'W':W,'Xf':Xf,'Yf':Yf,'Zf':Zf,'Wf':Wf,
+               "DX_matrices":DX_matrices,"DY_matrices":DY_matrices,"DZ_matrices":DZ_matrices,
+               'gradientFree':gradientFree,'residuals':residuals,'greenIterationOutFile':greenIterationOutFile,
                'referenceEigenvalues':referenceEigenvalues,'symmetricIteration':symmetricIteration,
                'SCFtolerance':SCFtolerance,'initialGItolerance':initialGItolerance, 'finalGItolerance':finalGItolerance, 'gradualSteps':gradualSteps, 'nElectrons':nElectrons,'referenceEnergies':referenceEnergies,'SCFiterationOutFile':SCFiterationOutFile,
                'wavefunctionFile':wavefunctionFile,'densityFile':densityFile,'outputDensityFile':outputDensityFile,'inputDensityFile':inputDensityFile,'vHartreeFile':vHartreeFile,
@@ -688,11 +691,36 @@ if __name__ == "__main__":
         
     
 
-    X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
+    X,Y,Z,W,Xf,Yf,Zf,Wf,DX_matrices, DY_matrices, DZ_matrices, pointsPerCell_coarse, pointsPerCell_fine, atoms,PSPs,nPoints,nOrbitals,nElectrons,referenceEigenvalues = buildMeshFromMinimumDepthCells(domainSize,domainSize,domainSize,maxSideLength,coreRepresentation,
                                                                                                      inputFile,outputFile,srcdir,order,fine_order,gaugeShift,
                                                                                                      divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4)
     
     rprint(rank,"Returned from buildMeshFromMinimumDepthCells()")
+    
+    
+    P = X**4 + Y**5 + Z**6
+    D2P_analytic = 12*X**2 + 20*Y**3 + 30*Z**4
+    
+#     P = Z**6
+#     D2P_analytic = 30*Z**4
+    
+    D2P = GlobalLaplacian( DX_matrices, DY_matrices, DZ_matrices, P, order)
+    
+#     print(DX_matrices[0,:,:])
+#     print(DY_matrices[0,:,:])
+#     print(DZ_matrices[0,:,:])
+    
+#     rprint(rank, X[0:9])
+#     rprint(rank, Y[0:9])
+#     rprint(rank, Z[0:9])
+#     rprint(rank, P[0:9])
+#     rprint(rank, D2P[0:9])
+#     rprint(rank, D2P[0:9]-D2P_analytic[0:9])
+
+    L2error = np.sqrt( np.sum( (D2P-D2P_analytic)**2*W ) / np.sum(D2P_analytic**2*W) )
+    
+    assert L2error<1e5, "D2P didn't agree with analytic, L2error = %e" %L2error
+#     exit(-1)
 
     
     
@@ -771,9 +799,18 @@ if __name__ == "__main__":
 
     
 
+    W = np.ones_like(X)
+    Wf = np.ones_like(Xf)
+    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
     
     initialRho = np.copy(RHO)
-    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
+    finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,DX_matrices, DY_matrices, DZ_matrices,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)
 
     if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
     if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(W)

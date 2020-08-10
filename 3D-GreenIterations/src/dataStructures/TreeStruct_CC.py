@@ -1798,6 +1798,31 @@ class Tree(object):
         for _,cell in self.masterList:
             if cell.leaf==True:
                 cell.computeDerivativeMatrices()
+                
+#     def cellCount(self):
+#         self.numCells=0
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 self.numCells+=1
+#                 
+#     def extractDerivativeMatrices(self):
+#         
+#         self.cellCount()
+#         
+#         DX_matrices = np.empty((self.numCells, N+1, N+1 ))
+#         DY_matrices = np.empty((self.numCells, N+1, N+1 ))
+#         DZ_matrices = np.empty((self.numCells, N+1, N+1 ))
+#         
+#         cellID=0
+#         for _,cell in self.masterList:
+#             if cell.leaf==True:
+#                 DX_matrices[cellID][:][:] = cell.DopenX
+#                 DY_matrices[cellID][:][:] = cell.DopenY
+#                 DZ_matrices[cellID][:][:] = cell.DopenZ
+#                 cellID+=1
+#         
+#         return DX_matrices, DY_matrices, DZ_matrices
+                
                           
     def computeNuclearNuclearEnergy(self):
         self.nuclearNuclear = 0.0
