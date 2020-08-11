@@ -27,7 +27,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #     gi_args_out = {}
     def greensIteration_FixedPoint(psiIn, gi_args):
         # what other things do we need?  Energies, Times, orbitals, Veff, runtime constants (symmetricIteration, GPUpresent, subtractSingularity, treecode, outputfiles, ...)  
-        verbosity=0
+        verbosity=1
         
 #         rprint(rank,"entered greensIteration_FixedPoint.")
         
@@ -234,7 +234,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             
 #             kappa = k
             
-            treecode_verbosity=1
+            treecode_verbosity=0
             
             
             
@@ -259,6 +259,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
             kernel = BT.Kernel.YUKAWA
             if singularityHandling=="subtraction":
                 singularity=BT.Singularity.SUBTRACTION
+#                 singularity=BT.Singularity.SKIPPING
             elif singularityHandling=="skipping":
                 singularity=BT.Singularity.SKIPPING
             else:
@@ -274,6 +275,8 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 exit(-1)
             
             computeType=BT.ComputeType.PARTICLE_CLUSTER
+#             computeType=BT.ComputeType.CLUSTER_PARTICLE
+#             computeType=BT.ComputeType.CLUSTER_CLUSTER
             
             
             ## Optimization:  Can get away with looser treecode parameters in the early SCF iterations since high accuracy is not demanded
@@ -315,7 +318,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                                         np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
                                         kernel, numberOfKernelParameters, kernelParameters, 
                                         singularity, approximation, computeType,
-                                        GPUpresent, verbosity, 
+                                        GPUpresent, treecode_verbosity, 
                                         theta=theta, degree=treecodeDegree, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
 
             if singularityHandling=="skipping": psiNew /= (4*np.pi)

@@ -389,6 +389,7 @@ def scfFixedPointClosure(scf_args):
                 exit(-1)
             
             computeType=BT.ComputeType.PARTICLE_CLUSTER
+#             computeType=BT.ComputeType.CLUSTER_CLUSTER
                 
     
             comm.barrier()
@@ -986,6 +987,8 @@ def scfFixedPointClosure(scf_args):
         scf_args['Veff_local']=Veff_local
     
     
+        rprint(rank,"Exiting after first SCF iteration...")
+        exit(-1)
         return newDensity-oldDensity
     return scfFixedPoint, scf_args
 

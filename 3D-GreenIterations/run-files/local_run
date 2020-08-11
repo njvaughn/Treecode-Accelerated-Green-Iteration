@@ -23,7 +23,7 @@ COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/carbonAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
  
-INPUTFILE='molecularConfigurations/aluminumAtomAuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/AluminumClusters/shell0AuxiliaryPSP.csv'
  
 
 VTKFILEDIR='/Users/nathanvaughn/Desktop/'
@@ -82,12 +82,12 @@ GIFORM="Sequential"
 
 
 APPROXIMATIONNAME=lagrange
-TREECODEORDER=7
-THETA=0.75
+TREECODEORDER=5
+THETA=0.7
 
 for MESHPARAM4 in -2
 do                                                         
-    for BATCHSIZE in 5
+    for BATCHSIZE in 50
     do        
         for MAXPARNODE in 50
         do   

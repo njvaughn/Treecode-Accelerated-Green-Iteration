@@ -19,7 +19,7 @@ cd /home/njvaughn/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
 SINGSUBT=1        
 GPUPRESENT='True'  
 
-    
+      
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIterations/src/'  
 
 #COREREPRESENTATION="AllElectron" 
@@ -85,8 +85,8 @@ TREECODEORDER=8
 THETA=0.8
 
  
-CELLORDER=3
-FINEORDER=3
+CELLORDER=4
+FINEORDER=4
  
 
   
@@ -116,7 +116,7 @@ MAXPARNODE=4000
 #OUTPUTFILE="/home/njvaughn/ONCV-testing/C20/LDA/6steps_Temp100_8nodes_order4_1_gi_pass_per_SCF_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 #OUTPUTFILE="/home/njvaughn/ONCV-testing/beryllium/LDA/Be_temp100_8nodes_1_gi_pass_per_SCF_6gradualSteps_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
-OUTPUTFILE="/home/njvaughn/ONCV-testing/Aluminum/shell0/spacing${MESHPARAM1}_order${CELLORDER}_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
+OUTPUTFILE="/home/njvaughn/ONCV-testing/Aluminum/shell1/spacing${MESHPARAM1}_order${CELLORDER}_${APPROXIMATIONNAME}_theta_${THETA}_TCorder_${TREECODEORDER}.csv" 
 
 
 ibrun -n 4 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
