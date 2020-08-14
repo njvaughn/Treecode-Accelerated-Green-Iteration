@@ -799,15 +799,15 @@ if __name__ == "__main__":
 
     
 
-    W = np.ones_like(X)
-    Wf = np.ones_like(Xf)
-    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#     W = np.ones_like(X)
+#     Wf = np.ones_like(Xf)
+#     print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#     print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#     print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#     print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#     print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#     print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#     print("SETTING W TO ONES!!!!!!!!!!!!!!!!!!!!!!!!!!")
     
     initialRho = np.copy(RHO)
     finalRho = testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,DX_matrices, DY_matrices, DZ_matrices,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPointsLocal,nOrbitals,nElectrons,referenceEigenvalues)

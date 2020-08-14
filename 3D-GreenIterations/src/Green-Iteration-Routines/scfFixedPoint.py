@@ -20,7 +20,7 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size() 
 from mpiUtilities import global_dot, rprint
-from gmres_routines import treecode_closure, D_closure, H_closure
+from gmres_routines import treecode_closure, D_closure, H_closure, inv_block_diagonal_closure
 
 
 from meshUtilities import interpolateBetweenTwoMeshes, GlobalLaplacian
@@ -45,7 +45,15 @@ def Diagonal_closure(RHO, alpha):
     
     def diagonal_inv(b):
         
-        return 1/(2*np.pi*alpha*alpha*RHO)*b
+#         inv = np.zeros_like(b)
+#         for i in range(len(b)):
+#             if abs(b[i])>1e-2:
+#                 inv[i] = 1/(2*np.pi*alpha*alpha*b[i])
+        
+        return 1/(2*np.pi*alpha*alpha*b)
+#         return inv
+     
+    
     return diagonal_inv
 
 class gmres_counter(object):
@@ -58,7 +66,7 @@ class gmres_counter(object):
         self.residuals.append(rk)
         if self._disp:
 #             if self.RHO:
-            rprint(rank, 'iter %3i\trk = %s' % (self.niter, str(rk)))
+            rprint(rank, 'iter %3i\trk = %1.3e' % (self.niter, rk))
     
     def print_residuals(self):
         rprint(rank, self.residuals)
@@ -92,14 +100,14 @@ class lgmres_counter(object):
         if self.niter==1:
             self.old_x=np.zeros_like(rk)
         
-        residual = np.sqrt( (self.old_x-rk)**2 )
+        residual = np.sqrt( np.sum ( (self.old_x-rk)**2 ) )
         self.residuals.append(residual)
         self.old_x = np.copy(rk)
         
         if self._disp:
 #             if self.RHO:
 #             diff = np.sqrt(np.sum( (rk-self.RHO)**2*self.W ) )
-            rprint(rank, 'iter %3i\trk = %s' % (self.niter, self.residuals[-1]))
+            rprint(rank, 'iter %3i\trk = %1.3e' % (self.niter, self.residuals[-1]))
 #             rprint(rank, 'iter %3i\tdiff = %f' % (self.niter, diff))
             
     def print_residuals(self):
@@ -252,6 +260,8 @@ def scfFixedPointClosure(scf_args):
         CORECHARGERHO=scf_args['CORECHARGERHO']
         
         NLCC_RHO = RHO+CORECHARGERHO
+        
+        INITIAL_RHO=np.copy(RHO)
         
 #         if np.max(CORECHARGERHO)>0.0:
 #             rprint(rank,"CORECHARGERHO is not zero...")
@@ -509,8 +519,15 @@ def scfFixedPointClosure(scf_args):
 
             if verbosity>0: rprint(rank,'Convolution time: ', MPI.Wtime()-start)
             
-            testGMRES=False
+            testGMRES=True
             if testGMRES==True:
+                
+                numCells=len(pointsPerCell_coarse)
+                PC = inv_block_diagonal_closure(np.copy(X), np.copy(Y), np.copy(Z), np.copy(W), gaussianAlpha, np.copy(order), np.copy(numCells) )
+                M = LinearOperator( (nPoints,numSources), matvec=PC)
+
+#                 singularity=BT.Singularity.SKIPPING
+                
                 TC=treecode_closure( nPoints, numSources,
                          np.copy(X), np.copy(Y), np.copy(Z),
                          np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceW),
@@ -518,7 +535,8 @@ def scfFixedPointClosure(scf_args):
                          singularity, approximation, computeType,
                          GPUpresent, treecode_verbosity, 
                          theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf)
-        
+                T = LinearOperator( (nPoints,numSources), matvec=TC)
+
         
         
                 b = V_hartreeNew
@@ -528,64 +546,100 @@ def scfFixedPointClosure(scf_args):
                 LapStart = time.time()
                 x0 = GlobalLaplacian( DX_matrices, DY_matrices, DZ_matrices, b, order)
                 x0 /= -4*np.pi
+                
+#                 y0 = INITIAL_RHO
+#                 z0=y0+0.001*np.random.rand(len(x0))
                 LapEnd = time.time()
                 rprint(rank,"Applying discrete laplacian took %f seconds" %(LapEnd-LapStart))
                 
                 
-                PC = Laplacian_closure( DX_matrices, DY_matrices, DZ_matrices, order)
-    #             PC = Diagonal_closure( RHO, gaussianAlpha )
+#                 PC = Laplacian_closure( DX_matrices, DY_matrices, DZ_matrices, order)
+#                 PC = Diagonal_closure( RHO, gaussianAlpha )
+
+                
+
                 
     #             D = LinearOperator( (N,N), matvec=DS)
     #             xDS, exitCode = gmres(D,b)
     #             print("DS Result: ",xDS)
-                counter1 = gmres_counter(disp=True)
-    #             counter1 = lgmres_counter(disp=True,RHO=RHO,W=W)
-                T = LinearOperator( (nPoints,numSources), matvec=TC)
-                M = LinearOperator( (nPoints,numSources), matvec=PC)
-    #             x0=RHO#*(1+0.1*np.random.rand(nPoints))
-    #             xTC, exitCode = lgmres(T,b, callback=counter,maxiter=20,inner_m=5, outer_k=3)
+                counter1a = gmres_counter(disp=True)
+                counter1b = gmres_counter(disp=True)
+#                 counter1 = lgmres_counter(disp=True,RHO=RHO,W=W)
+                
+                rprint(rank, "No preconditioner.")
+                xTC1, exitCode = la.gmres(T, b, x0=x0, callback=counter1a, tol=1e-5,maxiter=100) 
+#                 xTC1, exitCode = la.gmres(T, b,callback=counter1a, tol=1e-5,maxiter=50) 
+                
+                
+                x0 = GlobalLaplacian( DX_matrices, DY_matrices, DZ_matrices, b, order)
+                x0 /= -4*np.pi
+                
+#                 rprint(rank, "Laplacian preconditioner.")
+                rprint(rank, "Block Diagonal preconditioner.")
+                xTC2, exitCode = la.gmres(T, b, x0=x0, M=M, callback=counter1b, tol=1e-5,maxiter=100) 
+#                 xTC2, exitCode = la.gmres(T, b, M=M, callback=counter1b, tol=1e-5,maxiter=200) 
+                
+                
+#     #             x0=RHO#*(1+0.1*np.random.rand(nPoints))
+#     #             xTC, exitCode = lgmres(T,b, callback=counter,maxiter=20,inner_m=5, outer_k=3)
+#     
+#     #             linSolveStart = time.time()
+#     #             xTC, exitCode = la.gmres(T, b, callback=counter1, tol=5e-5)
+#     #             linSolveEnd   = time.time()
+#     #             rprint(rank,"Default initial guess took %f seconds" %(linSolveEnd-linSolveStart))
+#     #             
+#                 counter2 = gmres_counter(disp=True)
+#     #             counter2 = lgmres_counter(disp=True,RHO=RHO,W=W)
+#                 linSolveStart = time.time()
+# #                 xTC, exitCode = la.gmres(T, b, x0=y0, callback=counter2, tol=1e-5,maxiter=50) 
+#                 xTC, exitCode = la.lgmres(T, b, x0=x0, callback=counter1, tol=1e-15,maxiter=5000) 
+#                 linSolveEnd   = time.time()
+#                 rprint(rank,"Laplacian initial guess took %f seconds" %(linSolveEnd-linSolveStart))
+#                 
+#                 rprint(rank,"Vector norm of solution: ", np.sqrt(np.sum(xTC**2)))
+#                 
+#     
+#                 
+#     #             counter3 = gmres_counter(disp=True)
+#     #             linSolveStart = time.time()
+#     #             xTC, exitCode = la.gmres(T, b, x0=x0, M=M, callback=counter3, tol=1e-4, maxiter=50)
+#     #             linSolveEnd   = time.time()
+#     #             rprint(rank,"Preconditioned with Laplacian initial guess took %f seconds" %(linSolveEnd-linSolveStart))
+#                 
+#                 
+#                 #             counter1.print_residuals()
+#                 counter2.print_residuals()
+#     #             counter3.print_residuals()
+#                 counter1.save_residuals("/Users/nathanvaughn/Documents/GLsync/gmres/local_zerosInit.csv")
+#                 counter2.save_residuals("/Users/nathanvaughn/Documents/GLsync/gmres/local_goodInit.csv")
+#                 
+#     #             counter1.save_residuals("/home/njvaughn/GLsync/gmres/gl_dummy_zerosInit.csv")
+# #                 counter2.save_residuals("/home/njvaughn/GLsync/gmres/gl_goodInit_0p25.csv")
+#     #             counter3.save_residuals("/home/njvaughn/GLsync/gmres/gl_precond_goodInit.csv")
+#                 
+#                 
+#     #             xTC, exitCode = la.lgmres(T, b, x0, callback=counter, tol=1e-5,inner_m=50, outer_k=3)
+#     #             print("TC Result: ",xTC)
+#     #             rprint(rank,"Converged density Difference: ", RHO-xTC)
     
-    #             linSolveStart = time.time()
-    #             xTC, exitCode = la.gmres(T, b, callback=counter1, tol=5e-5)
-    #             linSolveEnd   = time.time()
-    #             rprint(rank,"Default initial guess took %f seconds" %(linSolveEnd-linSolveStart))
-    #             
-                counter2 = gmres_counter(disp=True)
-    #             counter2 = lgmres_counter(disp=True,RHO=RHO,W=W)
-                linSolveStart = time.time()
-                xTC, exitCode = la.gmres(T, b, x0=x0, callback=counter2, tol=1e-5,maxiter=50) 
-                linSolveEnd   = time.time()
-                rprint(rank,"Laplacian initial guess took %f seconds" %(linSolveEnd-linSolveStart))
-                
-                rprint(rank,"Vector norm of solution: ", np.sqrt(np.sum(xTC**2)))
-                
     
+#                 converged_normdiff = np.sqrt( np.sum((RHO-xTC)**2*W) )
                 
-    #             counter3 = gmres_counter(disp=True)
-    #             linSolveStart = time.time()
-    #             xTC, exitCode = la.gmres(T, b, x0=x0, M=M, callback=counter3, tol=1e-4, maxiter=50)
-    #             linSolveEnd   = time.time()
-    #             rprint(rank,"Preconditioned with Laplacian initial guess took %f seconds" %(linSolveEnd-linSolveStart))
+                converged_normdiff_noPC = np.sqrt( np.sum((RHO-xTC1)**2*W) )
+                converged_normdiff_PC = np.sqrt( np.sum((RHO-xTC2)**2*W) )
                 
                 
-                #             counter1.print_residuals()
-                counter2.print_residuals()
-    #             counter3.print_residuals()
-    #             counter1.save_residuals("/Users/nathanvaughn/Documents/GLsync/gmres/local_zerosInit.csv")
-    #             counter2.save_residuals("/Users/nathanvaughn/Documents/GLsync/gmres/local_goodInit.csv")
+#                 counter1a.save_residuals("/Users/nathanvaughn/Documents/GLsync/gmres/local_goodInit_noPreCond.csv")
+#                 counter1b.save_residuals("/Users/nathanvaughn/Documents/GLsync/gmres/local_goodInit_PreCond.csv")
                 
-    #             counter1.save_residuals("/home/njvaughn/GLsync/gmres/gl_dummy_zerosInit.csv")
-                counter2.save_residuals("/home/njvaughn/GLsync/gmres/gl_goodInit_0p25.csv")
-    #             counter3.save_residuals("/home/njvaughn/GLsync/gmres/gl_precond_goodInit.csv")
+                counter1a.save_residuals("/home/njvaughn/GLsync/gmres/local_goodInit_noPreCond.csv")
+                counter1b.save_residuals("/home/njvaughn/GLsync/gmres/local_goodInit_PreCond.csv")
+
                 
-                
-    #             xTC, exitCode = la.lgmres(T, b, x0, callback=counter, tol=1e-5,inner_m=50, outer_k=3)
-    #             print("TC Result: ",xTC)
-    #             rprint(rank,"Converged density Difference: ", RHO-xTC)
-                converged_normdiff = np.sqrt( np.sum((RHO-xTC)**2*W) )
                 initial_normdiff = np.sqrt( np.sum((RHO-x0)**2*W) )
-                rprint(rank,"  Initial L2 Norm Difference: ", converged_normdiff) 
-                rprint(rank,"Converged L2 Norm Difference: ", initial_normdiff) 
+                rprint(rank,"                       Initial L2 Norm Difference: ", initial_normdiff) 
+                rprint(rank," Converged L2 Norm Difference (no preconditioner): ", converged_normdiff_noPC) 
+                rprint(rank,"Converged L2 Norm Difference (Laplacian precond.): ", converged_normdiff_PC) 
     
                 
                 
