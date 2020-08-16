@@ -84,6 +84,75 @@ class gmres_counter(object):
             with myFile:
                 writer = csv.writer(myFile)
                 writer.writerow(np.array(self.residuals))
+                
+class gmres_counter_x(object):
+    def __init__(self, x_init, x_true, W, disp=True):
+        self._disp = disp
+        self.niter = 0
+        self.residuals = []
+        self.errors = []
+        
+        self.x_old = np.copy(x_init)
+        self.x_true = np.copy(x_true)
+        self.W = W
+    def __call__(self, x):
+        self.niter += 1
+        
+#         rprint(rank,"")
+#         rprint(rank,np.max(np.abs(self.x_old)))
+#         rprint(rank,np.max(np.abs(x)))
+#         rprint(rank,self.x_old[0:3])
+#         rprint(rank,x[0:3])
+#         rprint(rank,"")
+        
+#         vector_residual_2 = np.sqrt( global_dot( (x-self.x_old), (x-self.x_old), comm ) )
+        vector_residual_2 = np.linalg.norm(x-self.x_old)
+        vector_residual_1 = global_dot( np.abs(x-self.x_old), np.ones_like(x), comm )
+        vector_residual_inf_local = np.max( np.abs(x-self.x_old) )
+        vector_residual_inf = comm.allreduce(vector_residual_inf_local,op=MPI.MAX)
+        quadrature_residual = np.sqrt( global_dot( (x-self.x_old)**2, self.W, comm ) )
+        self.x_old = np.copy(x)
+        
+        vector_error  = np.linalg.norm(x-self.x_true) / np.linalg.norm(self.x_true)
+        quadrature_error  = np.sqrt( global_dot( (x-self.x_true)**2, self.W, comm ) ) / np.sqrt( global_dot( (self.x_true)**2, self.W, comm ) )
+        
+        self.residuals.append(vector_residual_2)
+        self.errors.append(quadrature_error)
+        if self._disp:
+#             if self.RHO:
+            rprint(rank, 'iter %3i\tvector residual (1, 2, inf) = %1.2e, %1.2e, %1.2e, quadrature residual = %1.2e, vector error = %1.2e, quadrature error = %1.2e' % (self.niter, vector_residual_1, vector_residual_2, vector_residual_inf, quadrature_residual, vector_error, quadrature_error))
+    
+    def print_residuals(self):
+        rprint(rank, self.residuals)
+        
+    
+        
+    
+    def save_residuals(self, fileName):
+        if rank==0:
+            myFile = open(fileName, 'a')
+            header=["residuals"]
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(header) 
+            
+            myFile = open(fileName, 'a')
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(np.array(self.residuals))
+                
+    def save_errors(self, fileName):
+        if rank==0:
+            myFile = open(fileName, 'a')
+            header=["errors"]
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(header) 
+            
+            myFile = open(fileName, 'a')
+            with myFile:
+                writer = csv.writer(myFile)
+                writer.writerow(np.array(self.errors))
             
             
 class lgmres_counter(object):
@@ -522,9 +591,9 @@ def scfFixedPointClosure(scf_args):
             testGMRES=True
             if testGMRES==True:
                 
-                numCells=len(pointsPerCell_coarse)
-                PC = inv_block_diagonal_closure(np.copy(X), np.copy(Y), np.copy(Z), np.copy(W), gaussianAlpha, np.copy(order), np.copy(numCells) )
-                M = LinearOperator( (nPoints,numSources), matvec=PC)
+#                 numCells=len(pointsPerCell_coarse)
+#                 PC = inv_block_diagonal_closure(np.copy(X), np.copy(Y), np.copy(Z), np.copy(W), gaussianAlpha, np.copy(order), np.copy(numCells) )
+#                 M = LinearOperator( (nPoints,numSources), matvec=PC)
 
 #                 singularity=BT.Singularity.SKIPPING
                 
@@ -553,8 +622,9 @@ def scfFixedPointClosure(scf_args):
                 rprint(rank,"Applying discrete laplacian took %f seconds" %(LapEnd-LapStart))
                 
                 
-#                 PC = Laplacian_closure( DX_matrices, DY_matrices, DZ_matrices, order)
+                PC = Laplacian_closure( DX_matrices, DY_matrices, DZ_matrices, order)
 #                 PC = Diagonal_closure( RHO, gaussianAlpha )
+                M = LinearOperator( (nPoints,numSources), matvec=PC)
 
                 
 
@@ -564,10 +634,19 @@ def scfFixedPointClosure(scf_args):
     #             print("DS Result: ",xDS)
                 counter1a = gmres_counter(disp=True)
                 counter1b = gmres_counter(disp=True)
+                
+#                 counter1a = gmres_counter_x(x0,INITIAL_RHO,W)
+#                 counter1b = gmres_counter_x(x0,INITIAL_RHO,W)
 #                 counter1 = lgmres_counter(disp=True,RHO=RHO,W=W)
                 
-                rprint(rank, "No preconditioner.")
-                xTC1, exitCode = la.gmres(T, b, x0=x0, callback=counter1a, tol=1e-5,maxiter=100) 
+                rprint(rank, "Using Laplacian initial guess.")
+#                 rprint(rank, "No preconditioner.")
+#                 xTC1, exitCode = la.gmres(T, b, x0=np.zeros(nPoints), callback=counter1a, callback_type='x', tol=1e-5,maxiter=100) 
+#                 xTC1, exitCode = la.gmres(T, b, x0=x0, callback=counter1a, callback_type='x', tol=1e-5,maxiter=100) 
+#                 xTC1, exitCode = la.gmres(T, b, callback=counter1a, callback_type='rk', tol=1e-5,maxiter=100) 
+                xTC1, exitCode = la.gmres(T, b, x0=x0, callback=counter1a, tol=1e-5,maxiter=40) 
+                rprint(rank,"Using zeros initial guess.")
+                xTC2, exitCode = la.gmres(T, b, callback=counter1b, tol=1e-5,maxiter=40) 
 #                 xTC1, exitCode = la.gmres(T, b,callback=counter1a, tol=1e-5,maxiter=50) 
                 
                 
@@ -575,10 +654,12 @@ def scfFixedPointClosure(scf_args):
                 x0 /= -4*np.pi
                 
 #                 rprint(rank, "Laplacian preconditioner.")
-                rprint(rank, "Block Diagonal preconditioner.")
-                xTC2, exitCode = la.gmres(T, b, x0=x0, M=M, callback=counter1b, tol=1e-5,maxiter=100) 
-#                 xTC2, exitCode = la.gmres(T, b, M=M, callback=counter1b, tol=1e-5,maxiter=200) 
-                
+# #                 rprint(rank, "Block Diagonal preconditioner.")
+# #                 xTC2, exitCode = la.gmres(T, b, x0=x0, M=M, callback=counter1b, callback_type='x', tol=1e-5,maxiter=100) 
+# #                 xTC2, exitCode = la.gmres(T, b, M=M, callback=counter1b, callback_type='x', tol=1e-5,maxiter=100) 
+#                 xTC2, exitCode = la.gmres(T, b, M=M, callback=counter1b, tol=1e-5,maxiter=40) 
+# #                 xTC2, exitCode = la.gmres(T, b, M=M, callback=counter1b, tol=1e-5,maxiter=200) 
+                 
                 
 #     #             x0=RHO#*(1+0.1*np.random.rand(nPoints))
 #     #             xTC, exitCode = lgmres(T,b, callback=counter,maxiter=20,inner_m=5, outer_k=3)
@@ -632,8 +713,11 @@ def scfFixedPointClosure(scf_args):
 #                 counter1a.save_residuals("/Users/nathanvaughn/Documents/GLsync/gmres/local_goodInit_noPreCond.csv")
 #                 counter1b.save_residuals("/Users/nathanvaughn/Documents/GLsync/gmres/local_goodInit_PreCond.csv")
                 
-                counter1a.save_residuals("/home/njvaughn/GLsync/gmres/local_goodInit_noPreCond.csv")
-                counter1b.save_residuals("/home/njvaughn/GLsync/gmres/local_goodInit_PreCond.csv")
+                counter1a.save_residuals("/home/njvaughn/GLsync/gmres/res_and_errors__Laplace_residuals.csv")
+                counter1b.save_residuals("/home/njvaughn/GLsync/gmres/res_and_errors__Zeros_residuals.csv")
+                
+#                 counter1a.save_errors("/home/njvaughn/GLsync/gmres/res_and_errors__Laplace_errors.csv")
+#                 counter1b.save_errors("/home/njvaughn/GLsync/gmres/res_and_errors__Zeros_errors.csv")
 
                 
                 initial_normdiff = np.sqrt( np.sum((RHO-x0)**2*W) )
