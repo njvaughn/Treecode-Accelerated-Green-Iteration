@@ -18,6 +18,17 @@ class gmres_counter(object):
         self.niter += 1
         if self._disp:
             print('iter %3i\trk = %s' % (self.niter, str(rk)))
+            
+class gmres_counter_x(object):
+    def __init__(self, disp=True):
+        self._disp = disp
+        self.niter = 0
+        self.sol = None
+    def __call__(self, x=None):
+        self.sol = np.copy(x)
+        self.niter += 1
+        if self._disp:
+            print('iter %3i' % (self.niter))
 
 
 def matrix_free(x):
@@ -27,11 +38,11 @@ def matrix_free(x):
     return b
 
 
-def create_block_diagonal(X, Y, Z, W, quadratureOrder, numCells, alpha=0.0, gaussian=False):
+def create_block_diagonal(X, Y, Z, W, quadratureOrder, numCells, alpha):
     
     ptsPerCell = (quadratureOrder+1)**3
-    block_diag = np.empty([numCells,ptsPerCell,ptsPerCell])
-
+    block_diag = np.zeros([numCells,ptsPerCell,ptsPerCell])
+ 
     
     for cellIdx in range(numCells):
         startingIdx = ptsPerCell*cellIdx
@@ -41,26 +52,43 @@ def create_block_diagonal(X, Y, Z, W, quadratureOrder, numCells, alpha=0.0, gaus
             yi = Y[startingIdx+i]
             zi = Z[startingIdx+i]
             
+            # Intialize diagonal to the added correction term
+            block_diag[cellIdx,i,i] = (2*np.pi*alpha*alpha) 
+            
             for j in range(ptsPerCell):
                 
                 if j!=i:
                     dx = xi - X[startingIdx+j]
                     dy = yi - Y[startingIdx+j]
                     dz = zi - Z[startingIdx+j]
-                    wj = W[startingIdx+j]
+                    wj =      W[startingIdx+j]
                     
                     
                     rij = np.sqrt( dx*dx + dy*dy + dz*dz )
                     
-                    if not gaussian:
-                        block_diag[cellIdx,i,j] = wj/rij
-                    else:
-                        block_diag[cellIdx,i,j] = np.exp(-alpha**2*rij*rij)*wj/rij
-                else: 
-                    if not gaussian:
-                        block_diag[cellIdx,i,j] = (2*np.pi*alpha*alpha) 
-                    else:
-                        block_diag[cellIdx,i,j] = 0.0
+                    # Fill In Off-Diagonal (i,j)
+                    block_diag[cellIdx,i,j] = wj/rij
+                    
+                    
+                    # Increment Diagonal (i,i)
+                    block_diag[cellIdx,i,i] -= np.exp(-rij*rij/(alpha*alpha))*wj/rij
+                    
+        if cellIdx==0:
+#             print(block_diag[cellIdx,:,:])
+            print("cell 0 diagonal: ")
+            print(np.diag(block_diag[cellIdx,:,:]) )
+                    
+                    
+                    
+#                     if not gaussian:
+#                         block_diag[cellIdx,i,j] = wj/rij
+#                     else:
+#                         block_diag[cellIdx,i,j] = np.exp(-alpha**2*rij*rij)*wj/rij
+#                 else: 
+#                     if not gaussian:
+#                         block_diag[cellIdx,i,j] = (2*np.pi*alpha*alpha) 
+#                     else:
+#                         block_diag[cellIdx,i,j] = 0.0
         
     return block_diag
 
@@ -112,11 +140,11 @@ def verify_inverse(block_diag, inv_block_diag):
 
 def inv_block_diagonal_closure(X, Y, Z, W, alpha, quadratureOrder, numCells, verify=False):
     
-    block_diag_alpha = create_block_diagonal(X, Y, Z, W, quadratureOrder, numCells, alpha=alpha)
-    inv_block_diag_alpha = invert_block_diagonal(block_diag_alpha)
+    block_diag = create_block_diagonal(X, Y, Z, W, quadratureOrder, numCells, alpha)
+    inv_block_diag = invert_block_diagonal(block_diag)
     
-    block_diag_noAlpha = create_block_diagonal(X, Y, Z, W, quadratureOrder, numCells, alpha=alpha, gaussian=True)
-    inv_block_diag_noAlpha = invert_block_diagonal(block_diag_noAlpha)
+#     block_diag_noAlpha = create_block_diagonal(X, Y, Z, W, quadratureOrder, numCells, alpha=alpha, gaussian=True)
+#     inv_block_diag_noAlpha = invert_block_diagonal(block_diag_noAlpha)
     
     if verify:
         verify_inverse(block_diag, inv_block_diag)
@@ -125,25 +153,34 @@ def inv_block_diagonal_closure(X, Y, Z, W, alpha, quadratureOrder, numCells, ver
         
         
         
-        _, ptsPerCell, _ = np.shape(block_diag_alpha)
+        _, ptsPerCell, _ = np.shape(block_diag)
         
         y = np.empty_like(q)
         
-        
-        
         # Compute y = Ainv*q
         for cellIdx in range(numCells):
+            
             startingIdx = cellIdx*ptsPerCell
-            A = inv_block_diag_alpha[cellIdx,:,:]
-            B = inv_block_diag_noAlpha[cellIdx,:,:]
+            Ainv = inv_block_diag[cellIdx,:,:]
             x = q[startingIdx:startingIdx+ptsPerCell]
+            y[startingIdx:startingIdx+ptsPerCell] = Ainv.dot(x)
             
-            temp = B*x
-            ones = np.ones_like(x)
-            y[startingIdx:startingIdx+ptsPerCell] = A.dot(x) - temp.dot(ones)
-#             y[startingIdx:startingIdx+ptsPerCell] = B.dot(x)
             
-#             print("shapes: ", np.shape(A.dot(x)), np.shape(x.dot(A)))
+        
+#         # Compute y = Ainv*q
+#         for cellIdx in range(numCells):
+#             startingIdx = cellIdx*ptsPerCell
+#             A = inv_block_diag_alpha[cellIdx,:,:]
+# #             B = inv_block_diag_noAlpha[cellIdx,:,:]
+#             x = q[startingIdx:startingIdx+ptsPerCell]
+#             
+# #             temp = B*x
+# #             ones = np.ones_like(x)
+#             y[startingIdx:startingIdx+ptsPerCell] = A.dot(x)
+# #             y[startingIdx:startingIdx+ptsPerCell] = A.dot(x) - temp.dot(ones)
+# #             y[startingIdx:startingIdx+ptsPerCell] = B.dot(x)
+#             
+# #             print("shapes: ", np.shape(A.dot(x)), np.shape(x.dot(A)))
         
         if verify:
             
@@ -157,7 +194,8 @@ def inv_block_diagonal_closure(X, Y, Z, W, alpha, quadratureOrder, numCells, ver
                 qq[startingIdx:startingIdx+ptsPerCell] = A.dot(x)
                 
             error = np.sqrt( np.sum( (q-qq)**2 ))
-            assert error < 1e-14, "recovered q not accurate enough, error = %1.3e" %error
+            assert error < 1e-13, "recovered q not accurate enough, error = %1.3e" %error
+            print("Inverse verification passed.")
         
         return y
     return inv_block_diagonal

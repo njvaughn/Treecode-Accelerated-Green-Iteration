@@ -59,19 +59,19 @@ SINGULARITYHANDLING=subtraction
 REGULARIZE='False'
 EPSILON=0.0
    
-GAUSSIANALPHA=2.0 
+GAUSSIANALPHA=1.0
 
 
-CELLORDER=3
-FINEORDER=3
+CELLORDER=2
+FINEORDER=2
 
-
+ 
  
 MESHTYPE='coarsenedUniformTwoLevel'
 
 DOMAIN=32
 MAXSIDELENGTH=8
-MESHPARAM1=1.0 # near field spacing 
+MESHPARAM1=2.0 # near field spacing 
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
@@ -94,7 +94,7 @@ do
 
         OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/Al/nlcc-testing/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
         #OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/beryllium/restart_testing/no_restart_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
-        mpirun -n 4 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+        mpirun -n 1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
                                                 $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                                 $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                                 $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
