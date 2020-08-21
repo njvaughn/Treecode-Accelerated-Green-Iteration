@@ -2,12 +2,226 @@ import numpy as np
 import scipy as sp
 import time
 import scipy.sparse.linalg as sla
+from scipy.sparse.linalg import LinearOperator
 import numpy.linalg as nla
 
 import BaryTreeInterface as BT
-from gmres_routines import gmres_counter, gmres_counter_x
+from gmres_routines import gmres_counter, gmres_counter_x, inv_block_diagonal_closure
+from gmres_routines import treecode_closure, treecode_closure_Veff
 
 
+
+def Diagonal_closure():
+    
+    def diagonal_inv(b):
+        
+        return 1/b
+     
+    
+    return diagonal_inv
+
+def power_iteration_treecode_gmres(  psi, 
+                                     Nt, Ns,
+                                     Xt, Yt, Zt, Vt,
+                                     Xs, Ys, Zs, Vs, Ws,
+                                     kernel, numberOfKernelParameters, kernelParameters,
+                                     singularity, approximation, computeType,
+                                     GPUpresent, treecode_verbosity, 
+                                     theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, order, preconditioning=True  ):
+    
+    count=1
+    residual=2
+    eigenvalue=-2
+    psi_old = np.copy(psi) / np.sqrt(np.sum(psi*psi*Ws))
+    
+    
+    TC=treecode_closure( Nt, Ns,
+                         np.copy(Xt), np.copy(Yt), np.copy(Zt),
+                         np.copy(Xs), np.copy(Ys), np.copy(Zs), np.copy(Ws),
+                         kernel, numberOfKernelParameters, kernelParameters,
+                         singularity, approximation, computeType,
+                         GPUpresent, treecode_verbosity, 
+                         theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf)
+    B = 1/2/np.pi* LinearOperator( (Nt,Ns), matvec=TC)
+    print("Constructed treecode operator for use in GMRES.")    
+    
+    if preconditioning:
+        numCells = int(len(Xt) / ( (order+1)**3 ) )
+        print("alpha = ", kernelParameters[0])
+        PC = inv_block_diagonal_closure(np.copy(Xt), np.copy(Yt), np.copy(Zt), np.copy(Ws), kernelParameters[0], np.copy(order), np.copy(numCells) )
+        M = 2*np.pi*LinearOperator( (Nt,Ns), matvec=PC)   
+        
+        print("constructed preconditioner.") 
+                
+    
+    
+    counter = gmres_counter(disp=True)
+    counter_pc = gmres_counter(disp=True)
+    counter_x = gmres_counter_x()
+    
+    referenceEigenvalue = -1.808977
+    
+    while ( (residual>1e-8) and (count<200) ):  # Power iteration loop
+        
+        # Apply A = (I+GV)
+#         y = A.dot(z_old)
+        y = psi_old + 1 / 2 / np.pi * BT.callTreedriver(  Nt, Ns,
+                                 np.copy(Xt), np.copy(Yt), np.copy(Zt), Vt*psi_old,
+                                 np.copy(Xs), np.copy(Ys), np.copy(Zs), Vs*psi_old, np.copy(Ws),
+                                 kernel, numberOfKernelParameters, kernelParameters,
+                                 singularity, approximation, computeType,
+                                 GPUpresent, treecode_verbosity, 
+                                 theta=theta, degree=treecodeDegree, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
+        
+#         print("Computed y = (I+GV)psi")
+        
+        # Solve Binv
+        numIterations=40
+#         psi_new, exitcode = sla.gmres(B, y, callback=counter, maxiter=3*numIterations, restart=numIterations)
+
+
+#         if preconditioning:
+#         print("block-diagonal preconditioning") 
+#         psi_new, exitcode = sla.lgmres(B, y, M=M, x0=eigenvalue*psi_old, callback=counter_x, maxiter=numIterations)
+        psi_new, exitcode = sla.lgmres(B, y, M=M, x0=eigenvalue*psi_old, callback=counter_x, maxiter=numIterations) 
+        if exitcode!=0:
+            print("exitcode = ", exitcode)
+#         psi_new, exitcode = sla.gmres(B, y, M=M, x0=eigenvalue*psi_old, callback=counter_pc, maxiter=numIterations, restart=numIterations)
+#         else:
+#         print("not preconditioning")
+#         psi_new, exitcode = sla.gmres(B, y, x0=eigenvalue*psi_old, callback=counter, maxiter=3*numIterations, restart=numIterations)
+
+#         psi_new_norm = nla.norm(psi_new)
+#         eigenvalue = np.sign(np.sum(psi_old*psi_new*Ws)) * np.abs(np.sum(psi_old*psi_new*Ws))  /  np.sum(psi_old*psi_old*Ws) 
+        eigenvalue = np.sum(psi_old*psi_new*Ws)  /  np.sum(psi_old*psi_old*Ws) 
+
+#         print("numerator = ", np.sum(psi_old*psi_new*Ws)  )
+#         print("denominator = ",  np.sum(psi_old*psi_old*Ws) )
+        psi_new_norm = np.sqrt(np.sum(psi_new*psi_new*Ws))
+        psi_new /= psi_new_norm
+#         print("Solved (G)psi = y")
+        
+        
+#         if np.sqrt(np.sum((psi_old-psi_new)**2*Ws)) > np.sqrt(np.sum((psi_old+psi_new)**2*Ws)):
+#             eigenvalue = -psi_new_norm
+#         else:
+#             eigenvalue =  psi_new_norm
+            
+        
+        
+        residual = min( np.sqrt(np.sum((psi_old-psi_new)**2*Ws)), np.sqrt(np.sum((psi_old+psi_new)**2*Ws)) )  # account for positive or negative eigenvalues
+        print("count %2i (GMRES %3i): Power iteration residual = %1.3e, Rayleigh quotient  = %1.8f, error = %1.3e" %(count, counter_x.niter, residual, eigenvalue, eigenvalue-referenceEigenvalue))
+        count+=1
+        psi_old=np.copy(psi_new)
+        
+    return eigenvalue, psi_new
+        
+        
+def power_iteration_treecode_gmres_B(  psi, 
+                                     Nt, Ns,
+                                     Xt, Yt, Zt, Vt,
+                                     Xs, Ys, Zs, Vs, Ws,
+                                     kernel, numberOfKernelParameters, kernelParameters,
+                                     singularity, approximation, computeType,
+                                     GPUpresent, treecode_verbosity, 
+                                     theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, order, preconditioning=True  ):
+    
+    count=1
+    residual=2
+    eigenvalue=2
+    RQ=1/2
+    psi_old = np.copy(psi) / np.sqrt(np.sum(psi*psi*Ws))
+    
+    
+    TC=treecode_closure_Veff( Nt, Ns,
+                         np.copy(Xt), np.copy(Yt), np.copy(Zt), np.copy(Vt),
+                         np.copy(Xs), np.copy(Ys), np.copy(Zs), np.copy(Vs), np.copy(Ws),
+                         kernel, numberOfKernelParameters, kernelParameters,
+                         singularity, approximation, computeType,
+                         GPUpresent, treecode_verbosity, 
+                         theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf)
+    B = 1/2/np.pi* LinearOperator( (Nt,Ns), matvec=TC)
+    print("Constructed treecode operator for use in GMRES.")    
+    
+    if preconditioning:
+#         numCells = int(len(Xt) / ( (order+1)**3 ) )
+#         print("alpha = ", kernelParameters[0])
+#         PC = inv_block_diagonal_closure(np.copy(Xt), np.copy(Yt), np.copy(Zt), np.copy(Ws), kernelParameters[0], np.copy(order), np.copy(numCells) )
+#         M = 2*np.pi*LinearOperator( (Nt,Ns), matvec=PC)   
+
+        PC = Diagonal_closure()
+        M  = LinearOperator( (Nt,Ns), matvec=PC )
+         
+        print("constructed preconditioner.") 
+                
+    
+    
+    counter = gmres_counter(disp=True)
+    counter_pc = gmres_counter(disp=True)
+    counter_x = gmres_counter_x()
+    
+    referenceEigenvalue = -1.808977
+    
+    while ( (residual>1e-8) and (count<200) ):  # Power iteration loop
+        
+        # Apply B = (G)
+        y = 1 / 2 / np.pi * BT.callTreedriver(  Nt, Ns,
+                                 np.copy(Xt), np.copy(Yt), np.copy(Zt), Vt*psi_old,
+                                 np.copy(Xs), np.copy(Ys), np.copy(Zs), Vs*psi_old, np.copy(Ws),
+                                 kernel, numberOfKernelParameters, kernelParameters,
+                                 singularity, approximation, computeType,
+                                 GPUpresent, treecode_verbosity, 
+                                 theta=theta, degree=treecodeDegree, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
+        
+#         print("Computed y = (I+GV)psi")
+        
+        # Solve Binv
+        numIterations=20
+#         psi_new, exitcode = sla.gmres(B, y, callback=counter, maxiter=3*numIterations, restart=numIterations)
+
+
+#         if preconditioning:
+#         print("block-diagonal preconditioning") 
+#         psi_new, exitcode = sla.gmres(B, y, x0=eigenvalue*psi_old, callback=counter, maxiter=numIterations)
+        psi_new, exitcode = sla.gmres(B, y, x0=RQ*psi_old, callback=counter, maxiter=10*numIterations, restart=numIterations)
+#         psi_new, exitcode = sla.lgmres(B, y, x0=eigenvalue*psi_old, callback=counter_x, maxiter=numIterations) 
+        if exitcode!=0:
+            print("exitcode = ", exitcode)
+#         psi_new, exitcode = sla.gmres(B, y, M=M, x0=eigenvalue*psi_old, callback=counter_pc, maxiter=numIterations, restart=numIterations)
+#         else:
+#         print("not preconditioning")
+#         psi_new, exitcode = sla.gmres(B, y, x0=eigenvalue*psi_old, callback=counter, maxiter=3*numIterations, restart=numIterations)
+
+#         psi_new_norm = nla.norm(psi_new)
+#         eigenvalue = np.sign(np.sum(psi_old*psi_new*Ws)) * np.abs(np.sum(psi_old*psi_new*Ws))  /  np.sum(psi_old*psi_old*Ws) 
+        RQ = np.sum(psi_old*psi_new*Ws)  /  np.sum(psi_old*psi_old*Ws) 
+        eigenvalue=1/RQ
+#         print("Rayleigh quotient = %f, eigenvalue = %f" %(RQ, eigenvalue) ) 
+
+#         print("numerator = ", np.sum(psi_old*psi_new*Ws)  )
+#         print("denominator = ",  np.sum(psi_old*psi_old*Ws) )
+        psi_new_norm = np.sqrt(np.sum(psi_new*psi_new*Ws))
+        psi_new /= psi_new_norm
+#         print("Solved (G)psi = y")
+        
+        
+#         if np.sqrt(np.sum((psi_old-psi_new)**2*Ws)) > np.sqrt(np.sum((psi_old+psi_new)**2*Ws)):
+#             eigenvalue = -psi_new_norm
+#         else:
+#             eigenvalue =  psi_new_norm
+            
+        
+        
+        residual = min( np.sqrt(np.sum((psi_old-psi_new)**2*Ws)), np.sqrt(np.sum((psi_old+psi_new)**2*Ws)) )  # account for positive or negative eigenvalues
+        print("count %2i (GMRES %3i): Power iteration residual = %1.3e, Rayleigh quotient  = %1.8f, eigenvalue  = %1.8f, error = %1.3e" %(count, counter_x.niter, residual, RQ, eigenvalue, eigenvalue-referenceEigenvalue))
+        count+=1
+        psi_old=np.copy(psi_new)
+        
+    return eigenvalue, psi_new
+        
+        
+        
+        
 
 def power_iteration_A(A,B,x,referenceEigenvalue=-1.76758271):
     

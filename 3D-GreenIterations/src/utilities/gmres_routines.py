@@ -20,7 +20,7 @@ class gmres_counter(object):
             print('iter %3i\trk = %s' % (self.niter, str(rk)))
             
 class gmres_counter_x(object):
-    def __init__(self, disp=True):
+    def __init__(self, disp=False):
         self._disp = disp
         self.niter = 0
         self.sol = None
@@ -73,10 +73,10 @@ def create_block_diagonal(X, Y, Z, W, quadratureOrder, numCells, alpha):
                     # Increment Diagonal (i,i)
                     block_diag[cellIdx,i,i] -= np.exp(-rij*rij/(alpha*alpha))*wj/rij
                     
-        if cellIdx==0:
-#             print(block_diag[cellIdx,:,:])
-            print("cell 0 diagonal: ")
-            print(np.diag(block_diag[cellIdx,:,:]) )
+#         if cellIdx==0:
+# #             print(block_diag[cellIdx,:,:])
+#             print("cell 0 diagonal: ")
+#             print(np.diag(block_diag[cellIdx,:,:]) )
                     
                     
                     
@@ -242,6 +242,31 @@ def treecode_closure(Nt, Ns,
     
     return treecode
 
+def treecode_closure_Veff(Nt, Ns,
+                     Xt, Yt, Zt, Vt,
+                     Xs, Ys, Zs, Vs, Ws,
+                     kernel, numberOfKernelParameters, kernelParameters,
+                     singularity, approximation, computeType,
+                     GPUpresent, treecode_verbosity, 
+                     theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf):
+    
+    def treecode(psi):
+        
+        # Apply A*psi = (I+GV)*psi
+        output = BT.callTreedriver(  Nt, Ns,
+                                 np.copy(Xt), np.copy(Yt), np.copy(Zt), np.copy(psi)*Vt,
+                                 np.copy(Xs), np.copy(Ys), np.copy(Zs), np.copy(psi)*Vs, np.copy(Ws),
+                                 kernel, numberOfKernelParameters, kernelParameters,
+                                 singularity, approximation, computeType,
+                                 GPUpresent, treecode_verbosity, 
+                                 theta=theta, degree=treecodeDegree, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
+        
+        y = psi + 1/2/np.pi*output
+                                   
+        return y
+    
+    return treecode
+
 
 
 def D_closure(   Nt, Ns,
@@ -259,7 +284,7 @@ def D_closure(   Nt, Ns,
         
         
 #         Av = (I+GV)v
-        y = psi + BT.callTreedriver(  Nt, Ns,
+        y = psi + -1/2/np.pi * BT.callTreedriver(  Nt, Ns,
                                  np.copy(Xt), np.copy(Yt), np.copy(Zt), Vt*psi,
                                  np.copy(Xs), np.copy(Ys), np.copy(Zs), Vs*psi, np.copy(Ws),
                                  kernel, numberOfKernelParameters, kernelParameters,

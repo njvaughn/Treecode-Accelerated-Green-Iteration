@@ -21,6 +21,7 @@ rank = comm.Get_rank()
 size = comm.Get_size() 
 from mpiUtilities import global_dot, rprint
 from gmres_routines import treecode_closure, D_closure, H_closure, inv_block_diagonal_closure
+from generalized_eigenvalue_problem import power_iteration_treecode_gmres, power_iteration_treecode_gmres_B
 
 
 from meshUtilities import interpolateBetweenTwoMeshes, GlobalLaplacian
@@ -41,7 +42,7 @@ def Laplacian_closure(DX_matrices, DY_matrices, DZ_matrices, order):
         return y
     return laplacian
 
-def Diagonal_closure(RHO, alpha):
+def Diagonal_closure():
     
     def diagonal_inv(b):
         
@@ -50,7 +51,8 @@ def Diagonal_closure(RHO, alpha):
 #             if abs(b[i])>1e-2:
 #                 inv[i] = 1/(2*np.pi*alpha*alpha*b[i])
         
-        return 1/(2*np.pi*alpha*alpha*b)
+#         return 1/(2*np.pi*alpha*alpha*b)
+        return 1/b
 #         return inv
      
     
@@ -588,7 +590,7 @@ def scfFixedPointClosure(scf_args):
 
             if verbosity>0: rprint(rank,'Convolution time: ', MPI.Wtime()-start)
             
-            testGMRES=True
+            testGMRES=False
             if testGMRES==True:
                 
                 numCells=len(pointsPerCell_coarse)
@@ -873,8 +875,8 @@ def scfFixedPointClosure(scf_args):
         elif SCFcount==1: 
             previousOccupations = np.ones(nOrbitals)
             
-        if True: 
-#         if method=="GreenIteration":   
+#         if True: 
+        if method=="GreenIteration":   
             eigStartTime = time.time() 
             numPasses=1
             for passID in range(numPasses):
@@ -1126,88 +1128,117 @@ def scfFixedPointClosure(scf_args):
             eigEndTime=time.time()
             rprint(rank,"Green Iteration took %f seconds" %(eigEndTime-eigStartTime))
     
-#         elif method=="GeneralizedEigenvalue":
+    
+    
+        elif method=="GeneralizedEigenvalue":
             eigStartTime=time.time()
             rprint(rank,"Using generalized eigenvalue approach.")
             
-#             D_Closure=D_closure( nPoints, numSources,
-#                          np.copy(X), np.copy(Y), np.copy(Z), np.copy(Veff_local),
-#                          np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(Veff_local), np.copy(sourceW),
-#                          kernel, numberOfKernelParameters, kernelParameters,
-#                          singularity, approximation, computeType,
-#                          GPUpresent, treecode_verbosity, 
-#                          theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, 
-#                          DX_matrices, DY_matrices, DZ_matrices, order)
+            
+            
+#             nPoints, numSources,
+#                                  np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO),
+#                                  np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
+                                 
+            psi = np.zeros(nPoints) / np.sqrt(np.sum(sourceW))  
+            
+            psi = np.copy(orbitals[0,:])
+            
+                            
+            eval,evec = power_iteration_treecode_gmres_B(  psi, 
+                                     nPoints, numSources,
+                                     np.copy(X), np.copy(Y), np.copy(Z), np.copy(Veff_local),
+                                     np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(Veff_local), np.copy(sourceW),
+                                     kernel, numberOfKernelParameters, kernelParameters,
+                                     singularity, approximation, computeType,
+                                     GPUpresent, treecode_verbosity, 
+                                     theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, order  )
+            
+            
+            
+            
+            
+            
 #             
-#             D_LinearOperator = LinearOperator( (nPoints,numSources), matvec=D_Closure)
 #             
-#             eigs, eigvecs = la.eigs(D_LinearOperator,k=nOrbitals, sigma=-1.0, OPpart="r", which="LM", tol=1e-4)
-#             eigs, eigvecs = la.eigs(D_LinearOperator,k=nOrbitals, which="SR", ncv=6, tol=1e-4)
-#             eigs, eigvecs = la.eigsh(D_LinearOperator,k=nOrbitals, which="SA", ncv=6, tol=1e-4)
-
-
-
-            H_Closure = H_closure(Veff_local, DX_matrices, DY_matrices, DZ_matrices, order)
-            H_LinearOperator = LinearOperator( (nPoints,numSources), matvec=H_Closure)
-            eigs, eigvecs = la.eigsh(H_LinearOperator,k=2*nOrbitals, which="SA", tol=1e-4)
-#             eigs, eigvecs = la.eigsh(H_LinearOperator,k=2*nOrbitals, which="LM", tol=1e-4)
-#             eigs, eigvecs2 = la.eigs(H_LinearOperator,k=10*nOrbitals, which="LM", tol=1e-12)
-            
-            eigEndTime=time.time()
-            rprint(rank,"Scipy Eigs took %f seconds" %(eigEndTime-eigStartTime))
-            
-            rprint(rank,"  Krylov Method Eigenvalues: ", eigs)
-#             rprint(rank,"  Krylov Method Eigenvalues2: ", eigs2)
-            rprint(rank, "Green Iteration Eigenvalues: ", Energies['orbitalEnergies'])
-            
-            rprint(rank, np.shape(eigvecs))
-            
-#             orthWavefunctions = np.zeros_like(orbitals)
-            for i in range(nOrbitals):
-                print("Eigenpair ", i)
-                norm = np.sum(eigvecs[:,i]*eigvecs[:,i])
-                print("vector norm = ", norm)
-                norm = np.sum(eigvecs[:,i]*eigvecs[:,i]*W)
-                print("integral norm = ", norm)
-                eigvecs[:,i]/=norm
-                
-                psi = eigvecs[:,i]
-                eig = np.sum(  psi*(-1/2 * GlobalLaplacian( DX_matrices, DY_matrices, DZ_matrices, psi, order) + Veff_local*psi ) * W  ) / np.sum(psi*psi*W)
-                print("old eig = ", eigs[i])
-                print("new eig = ", eig)
-                
-#             for i in range(nOrbitals):
-#                 
-#                 print()
-            
-            return
-            
-#             orthWavefunctions=np.copy(orbitals)
-#                 
-#             for i in range(nOrbitals):
-#                 orthWavefunctions[i,:] = mgs(orthWavefunctions,W,i, comm)
-#                 
+# #             D_Closure=D_closure( nPoints, numSources,
+# #                          np.copy(X), np.copy(Y), np.copy(Z), np.copy(Veff_local),
+# #                          np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(Veff_local), np.copy(sourceW),
+# #                          kernel, numberOfKernelParameters, kernelParameters,
+# #                          singularity, approximation, computeType,
+# #                          GPUpresent, treecode_verbosity, 
+# #                          theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, 
+# #                          DX_matrices, DY_matrices, DZ_matrices, order)
+# #             
+# #             D_LinearOperator = LinearOperator( (nPoints,numSources), matvec=D_Closure)
+# #             
+# #             eigs, eigvecs = la.eigs(D_LinearOperator,k=nOrbitals, sigma=-1.0, OPpart="r", which="LM", tol=1e-4)
+# #             eigs, eigvecs = la.eigs(D_LinearOperator,k=nOrbitals, which="SR", ncv=6, tol=1e-4)
+# #             eigs, eigvecs = la.eigsh(D_LinearOperator,k=nOrbitals, which="SA", ncv=6, tol=1e-4)
+# 
+# 
+# 
+#             H_Closure = H_closure(Veff_local, DX_matrices, DY_matrices, DZ_matrices, order)
+#             H_LinearOperator = LinearOperator( (nPoints,numSources), matvec=H_Closure)
+#             eigs, eigvecs = la.eigsh(H_LinearOperator,k=2*nOrbitals, which="SA", tol=1e-4)
+# #             eigs, eigvecs = la.eigsh(H_LinearOperator,k=2*nOrbitals, which="LM", tol=1e-4)
+# #             eigs, eigvecs2 = la.eigs(H_LinearOperator,k=10*nOrbitals, which="LM", tol=1e-12)
 #             
+#             eigEndTime=time.time()
+#             rprint(rank,"Scipy Eigs took %f seconds" %(eigEndTime-eigStartTime))
+#             
+#             rprint(rank,"  Krylov Method Eigenvalues: ", eigs)
+# #             rprint(rank,"  Krylov Method Eigenvalues2: ", eigs2)
+#             rprint(rank, "Green Iteration Eigenvalues: ", Energies['orbitalEnergies'])
+#             
+#             rprint(rank, np.shape(eigvecs))
+#             
+# #             orthWavefunctions = np.zeros_like(orbitals)
 #             for i in range(nOrbitals):
-#                 psi=orthWavefunctions[i,:]
+#                 print("Eigenpair ", i)
+#                 norm = np.sum(eigvecs[:,i]*eigvecs[:,i])
+#                 print("vector norm = ", norm)
+#                 norm = np.sum(eigvecs[:,i]*eigvecs[:,i]*W)
+#                 print("integral norm = ", norm)
+#                 eigvecs[:,i]/=norm
+#                 
+#                 psi = eigvecs[:,i]
 #                 eig = np.sum(  psi*(-1/2 * GlobalLaplacian( DX_matrices, DY_matrices, DZ_matrices, psi, order) + Veff_local*psi ) * W  ) / np.sum(psi*psi*W)
-#                 rprint(rank, "eig  = ", eig )
-                # compute Rayleigh quotient
-                
-                
-#                 psi_i = eigvecs[:,i]
-#                 norm = np.sqrt(psi_i**2*W)
-#                 psi_i /= norm
+#                 print("old eig = ", eigs[i])
+#                 print("new eig = ", eig)
 #                 
-#                 for j in range(i):
-#                     psi_j = eigvecs[:,j]
-#                     overlap = np.sqrt((psi_i-psi_j)**2*W)
-                    
-                    
-            
-#             for i in range(nOrbitals):
-                
-            
+# #             for i in range(nOrbitals):
+# #                 
+# #                 print()
+#             
+#             return
+#             
+# #             orthWavefunctions=np.copy(orbitals)
+# #                 
+# #             for i in range(nOrbitals):
+# #                 orthWavefunctions[i,:] = mgs(orthWavefunctions,W,i, comm)
+# #                 
+# #             
+# #             for i in range(nOrbitals):
+# #                 psi=orthWavefunctions[i,:]
+# #                 eig = np.sum(  psi*(-1/2 * GlobalLaplacian( DX_matrices, DY_matrices, DZ_matrices, psi, order) + Veff_local*psi ) * W  ) / np.sum(psi*psi*W)
+# #                 rprint(rank, "eig  = ", eig )
+#                 # compute Rayleigh quotient
+#                 
+#                 
+# #                 psi_i = eigvecs[:,i]
+# #                 norm = np.sqrt(psi_i**2*W)
+# #                 psi_i /= norm
+# #                 
+# #                 for j in range(i):
+# #                     psi_j = eigvecs[:,j]
+# #                     overlap = np.sqrt((psi_i-psi_j)**2*W)
+#                     
+#                     
+#             
+# #             for i in range(nOrbitals):
+#                 
+#             
             
             
             exit(-1)
@@ -1372,6 +1403,8 @@ def scfFixedPointClosure(scf_args):
     
         scf_args['energyResidual']=energyResidual
         scf_args['densityResidual']=densityResidual
+        
+        exit(-1)
         
         
             

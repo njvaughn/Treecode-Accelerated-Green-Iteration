@@ -62,8 +62,8 @@ EPSILON=0.0
 GAUSSIANALPHA=1.0
 
 
-CELLORDER=2
-FINEORDER=2
+CELLORDER=3
+FINEORDER=3
 
  
  
@@ -71,7 +71,7 @@ MESHTYPE='coarsenedUniformTwoLevel'
 
 DOMAIN=32
 MAXSIDELENGTH=8
-MESHPARAM1=2.0 # near field spacing 
+MESHPARAM1=1.0 # near field spacing 
 MESHPARAM2=8.0 # far field spacing
 MESHPARAM3=2.0 # ball radius
 
