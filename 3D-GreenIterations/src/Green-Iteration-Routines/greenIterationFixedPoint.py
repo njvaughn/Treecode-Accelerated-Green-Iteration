@@ -159,9 +159,10 @@ def greensIteration_FixedPoint_Closure(gi_args):
             start=time.time()
             V_nl_psi_fine = np.zeros(len(Veff_local_fine))
             V_nl_psi_coarse = np.zeros(len(Veff_local))
-            rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
             
-            if False:
+            
+            rprint(rank,"SKIPPING NONLOCAL POTENTIAL ::::::::::::::: FOR TESTING ONLY")
+            if False:  # can toggle to false to skip nonlocal potential
                 #             print(nearbyAtoms)
     #             comm.barrier()
     #             exit(-1)
@@ -311,10 +312,17 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #                                         GPUpresent, treecode_verbosity
 #                                         )
             
+            if singularityHandling=="skipping":
+                # if skipping, W array doesn't get used.  Need to pre-multiply.
+                charge = sourceF*sourceW
+            else:
+                charge = np.copy(sourceF)
+                
+                
             psiNew = BT.callTreedriver(
                                         nPoints, numSources, 
                                         np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
-                                        np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
+                                        np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(charge), np.copy(sourceW),
                                         kernel, numberOfKernelParameters, kernelParameters, 
                                         singularity, approximation, computeType,
                                         GPUpresent, treecode_verbosity, 

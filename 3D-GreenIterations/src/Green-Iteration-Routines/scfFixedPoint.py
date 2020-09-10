@@ -42,17 +42,17 @@ def Laplacian_closure(DX_matrices, DY_matrices, DZ_matrices, order):
         return y
     return laplacian
 
-def Diagonal_closure():
+def Diagonal_closure(w, epsilon):
     
     def diagonal_inv(b):
         
-#         inv = np.zeros_like(b)
-#         for i in range(len(b)):
-#             if abs(b[i])>1e-2:
-#                 inv[i] = 1/(2*np.pi*alpha*alpha*b[i])
+        
+        diag = np.zeros_like(b)
+        for i in range(len(b)):
+            diag[i] = w[i]/(epsilon*epsilon)
         
 #         return 1/(2*np.pi*alpha*alpha*b)
-        return 1/b
+        return b/diag
 #         return inv
      
     
@@ -263,11 +263,12 @@ def scfFixedPointClosure(scf_args):
     def scfFixedPoint(RHO,scf_args, abortAfterInitialHartree=False):
         
         method="GeneralizedEigenvalue"
+#         method="GreenIteration" 
         verbosity=1
         
         ## Unpack scf_args
         inputDensities = scf_args['inputDensities']
-        outputDensities=scf_args['outputDensities']
+        outputDensities=scf_args['outputDensities'] 
         SCFcount = scf_args['SCFcount']
         coreRepresentation = scf_args['coreRepresentation']
         nPoints = scf_args['nPoints']
@@ -276,7 +277,7 @@ def scfFixedPointClosure(scf_args):
         mixingHistoryCutoff = scf_args['mixingHistoryCutoff']
         GPUpresent = scf_args['GPUpresent']
         treecode = scf_args['treecode']
-        treecodeDegree=scf_args['treecodeDegree']
+        treecodeDegree=scf_args['treecodeDegree']  
         theta=scf_args['theta']
         maxPerSourceLeaf=scf_args['maxPerSourceLeaf']
         maxPerTargetLeaf=scf_args['maxPerTargetLeaf']
@@ -487,12 +488,12 @@ def scfFixedPointClosure(scf_args):
         else:    
             if singularityHandling=='skipping':
                 if regularize==False:
-                    if verbosity>0: rprint(rank,"Using singularity skipping in Hartree solve.")
+                    if verbosity>-1: rprint(rank,"Using singularity skipping in Hartree solve.")
                     kernelName = "coulomb"
                     numberOfKernelParameters=1
                     kernelParameters=np.array([0.0])
                 elif regularize==True:
-                    if verbosity>0: rprint(rank,"Using regularize coulomb kernel with epsilon = ", epsilon)
+                    if verbosity>-1: rprint(rank,"Using regularize coulomb kernel with epsilon = ", epsilon)
                     kernelName = "regularized-coulomb"
                     numberOfKernelParameters=1
                     kernelParameters=np.array([epsilon])
@@ -511,6 +512,8 @@ def scfFixedPointClosure(scf_args):
                     kernelName="regularized-coulomb"
                     numberOfKernelParameters=2
                     kernelParameters=np.array([gaussianAlpha,epsilon])
+                    rprint(rank, "Is regularization + singularity subtraction set up yet?  Exiting")
+                    exit(-1)
                     
             else: 
                 rprint(rank,"What should singularityHandling be?")
@@ -547,7 +550,12 @@ def scfFixedPointClosure(scf_args):
 #             singularity   = BT.Singularity.SUBTRACTION
 #             computeType   = BT.ComputeType.PARTICLE_CLUSTER
 #             
-            kernel = BT.Kernel.COULOMB
+            
+            if kernelName=="regularized-coulomb":
+                kernel = BT.Kernel.REGULARIZED_COULOMB
+            elif kernelName=="coulomb":
+                kernel = BT.Kernel.COULOMB
+                
             if singularityHandling=="subtraction":
                 singularity=BT.Singularity.SUBTRACTION
             elif singularityHandling=="skipping":
@@ -579,9 +587,15 @@ def scfFixedPointClosure(scf_args):
 #                                             GPUpresent, treecode_verbosity
 #                                             )
             
+            if singularityHandling=="skipping":
+                # if skipping, W array doesn't get used.  Need to pre-multiply.
+                charge = sourceRHO*sourceW
+            else:
+                charge = np.copy(sourceRHO)
+                
             V_hartreeNew = BT.callTreedriver(  nPoints, numSources,
-                                 np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO),
-                                 np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
+                                 np.copy(X), np.copy(Y), np.copy(Z), np.copy(charge),
+                                 np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), charge, np.copy(sourceW),
                                  kernel, numberOfKernelParameters, kernelParameters,
                                  singularity, approximation, computeType,
                                  GPUpresent, treecode_verbosity, 
@@ -812,6 +826,8 @@ def scfFixedPointClosure(scf_args):
         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
         
         rprint(rank,"Initial Hartree, nuclear, and repulsion energies: % .6f, % .6f, % .6f Ha" %(Energies["Ehartree"], Energies["Enuclear"], Energies["Repulsion"]))
+#         rprint(rank,"exiting after Hartree...")
+#         exit(-1)
         if abortAfterInitialHartree==True:
             Energies["Repulsion"] = global_dot(RHO, Vext_local*W, comm)
         
@@ -1145,7 +1161,7 @@ def scfFixedPointClosure(scf_args):
             psi = np.copy(orbitals[0,:])
             
                             
-            eval,evec = power_iteration_treecode_gmres_B(  psi, 
+            eval,evec = power_iteration_treecode_gmres(  psi, 
                                      nPoints, numSources,
                                      np.copy(X), np.copy(Y), np.copy(Z), np.copy(Veff_local),
                                      np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(Veff_local), np.copy(sourceW),
@@ -1153,6 +1169,15 @@ def scfFixedPointClosure(scf_args):
                                      singularity, approximation, computeType,
                                      GPUpresent, treecode_verbosity, 
                                      theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, order  )
+            
+#             eval,evec = power_iteration_treecode_gmres_B(  psi, 
+#                                      nPoints, numSources,
+#                                      np.copy(X), np.copy(Y), np.copy(Z), np.copy(Veff_local),
+#                                      np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(Veff_local), np.copy(sourceW),
+#                                      kernel, numberOfKernelParameters, kernelParameters,
+#                                      singularity, approximation, computeType,
+#                                      GPUpresent, treecode_verbosity, 
+#                                      theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, order  )
             
             
             

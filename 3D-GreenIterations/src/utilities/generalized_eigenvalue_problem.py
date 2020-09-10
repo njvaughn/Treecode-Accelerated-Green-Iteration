@@ -9,13 +9,22 @@ import BaryTreeInterface as BT
 from gmres_routines import gmres_counter, gmres_counter_x, inv_block_diagonal_closure
 from gmres_routines import treecode_closure, treecode_closure_Veff
 
+import BaryTreeInterface as BT
 
 
-def Diagonal_closure():
+
+
+def Diagonal_closure(w, epsilon):
     
     def diagonal_inv(b):
         
-        return 1/b
+        
+        diag = np.zeros_like(b)
+        for i in range(len(b)):
+#             diag[i] = w[i]/(epsilon)
+            diag[i] = 1/(epsilon)
+        
+        return b/diag
      
     
     return diagonal_inv
@@ -27,14 +36,20 @@ def power_iteration_treecode_gmres(  psi,
                                      kernel, numberOfKernelParameters, kernelParameters,
                                      singularity, approximation, computeType,
                                      GPUpresent, treecode_verbosity, 
-                                     theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, order, preconditioning=True  ):
+                                     theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, order, preconditioning=False  ):
     
     count=1
     residual=2
-    eigenvalue=-2
+    eigenvalue=-1
     psi_old = np.copy(psi) / np.sqrt(np.sum(psi*psi*Ws))
     
-    
+    print("Treecode Settings:")
+    print("singularity    = ", singularity)
+    print("kernel         = ", kernel)
+    print("paramerter     = ", kernelParameters)
+
+                
+                
     TC=treecode_closure( Nt, Ns,
                          np.copy(Xt), np.copy(Yt), np.copy(Zt),
                          np.copy(Xs), np.copy(Ys), np.copy(Zs), np.copy(Ws),
@@ -42,14 +57,19 @@ def power_iteration_treecode_gmres(  psi,
                          singularity, approximation, computeType,
                          GPUpresent, treecode_verbosity, 
                          theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf)
-    B = 1/2/np.pi* LinearOperator( (Nt,Ns), matvec=TC)
+    B = 1/2/np.pi * LinearOperator( (Nt,Ns), matvec=TC)
     print("Constructed treecode operator for use in GMRES.")    
     
     if preconditioning:
         numCells = int(len(Xt) / ( (order+1)**3 ) )
         print("alpha = ", kernelParameters[0])
-        PC = inv_block_diagonal_closure(np.copy(Xt), np.copy(Yt), np.copy(Zt), np.copy(Ws), kernelParameters[0], np.copy(order), np.copy(numCells) )
+#         PC = inv_block_diagonal_closure(np.copy(Xt), np.copy(Yt), np.copy(Zt), np.copy(Ws), kernelParameters[0], np.copy(order), np.copy(numCells) )
+#         M = 2*np.pi*LinearOperator( (Nt,Ns), matvec=PC)   
+        PC = Diagonal_closure(np.copy(Ws), kernelParameters[0] )
         M = 2*np.pi*LinearOperator( (Nt,Ns), matvec=PC)   
+#         M = LinearOperator( (Nt,Ns), matvec=PC)   
+#         M = 1/(2*np.pi)*LinearOperator( (Nt,Ns), matvec=PC)   
+#         M = LinearOperator( (Nt,Ns), matvec=PC)   
         
         print("constructed preconditioner.") 
                 
@@ -61,13 +81,29 @@ def power_iteration_treecode_gmres(  psi,
     
     referenceEigenvalue = -1.808977
     
+    gmres_residuals = []
+    gmres_count = []
+    power_iteration_residuals = []
+    power_iteration_eigenvalues = []
+    
+    
     while ( (residual>1e-8) and (count<200) ):  # Power iteration loop
         
         # Apply A = (I+GV)
 #         y = A.dot(z_old)
+
+        if singularity==BT.Singularity.SKIPPING:
+            # if skipping, W array doesn't get used.  Need to pre-multiply.
+            charge = Vs*psi_old*Ws
+        elif singularity==BT.Singularity.SUBTRACTION:
+            charge = Vs*psi_old
+        else: 
+            print("What is singularity? ", singularity)
+            exit(-1)
+            
         y = psi_old + 1 / 2 / np.pi * BT.callTreedriver(  Nt, Ns,
-                                 np.copy(Xt), np.copy(Yt), np.copy(Zt), Vt*psi_old,
-                                 np.copy(Xs), np.copy(Ys), np.copy(Zs), Vs*psi_old, np.copy(Ws),
+                                 np.copy(Xt), np.copy(Yt), np.copy(Zt), np.copy(charge),
+                                 np.copy(Xs), np.copy(Ys), np.copy(Zs), np.copy(charge), np.copy(Ws),
                                  kernel, numberOfKernelParameters, kernelParameters,
                                  singularity, approximation, computeType,
                                  GPUpresent, treecode_verbosity, 
@@ -81,9 +117,36 @@ def power_iteration_treecode_gmres(  psi,
 
 
 #         if preconditioning:
-#         print("block-diagonal preconditioning") 
+
+
+        counter = gmres_counter(disp=True)
+        if preconditioning:
+            print("Yes preconditioning:") 
+            psi_new, exitcode = sla.gmres(B, y, x0=eigenvalue*psi_old, M=M, callback=counter, callback_type="pr_norm", maxiter=1, restart=numIterations,tol=1e-4)
+        elif not preconditioning:
+            print("No preconditioning:") 
+            psi_new, exitcode = sla.gmres(B, y, x0=eigenvalue*psi_old, callback=counter, callback_type="pr_norm", maxiter=1, restart=numIterations,tol=1e-4)
+        else: 
+            print("What is preconditioning? ", preconditioning)
+            exit(-1)
+            
+        
+            
+#         psi_new/=np.sqrt(Ws)  # divide out by Ws if the GMRES solved for (psi*w) instead of for (psi)
+#         print("Solved for psi*w, now dividing by w.")
+        
+        
+#         print("Yes preconditioning:") 
+#         psi_new, exitcode = sla.gmres(B, y, x0=eigenvalue*psi_old, M=M, callback=counter, callback_type="pr_norm", maxiter=1, restart=numIterations,tol=1e-4)
+
+#         x_init = M(eigenvalue*psi_old)
+#         print("diagonal preconditioning:") 
+#         psi_new_PC, exitcode = sla.gmres(B, y, x0=eigenvalue*psi_old, M=M, callback=counter, callback_type="pr_norm", maxiter=1, restart=numIterations,tol=1e-4)
+        
+#         print("Error between PC and no-PC: ", np.linalg.norm(psi_new-psi_new_PC), np.linalg.norm(psi_new+psi_new_PC))
+#         psi_new, exitcode = sla.gmres(B, y, callback=counter, callback_type="pr_norm", maxiter=1, restart=numIterations)
 #         psi_new, exitcode = sla.lgmres(B, y, M=M, x0=eigenvalue*psi_old, callback=counter_x, maxiter=numIterations)
-        psi_new, exitcode = sla.lgmres(B, y, M=M, x0=eigenvalue*psi_old, callback=counter_x, maxiter=numIterations) 
+#         psi_new, exitcode = sla.lgmres(B, y, M=M, x0=eigenvalue*psi_old, callback=counter_x, maxiter=numIterations) 
         if exitcode!=0:
             print("exitcode = ", exitcode)
 #         psi_new, exitcode = sla.gmres(B, y, M=M, x0=eigenvalue*psi_old, callback=counter_pc, maxiter=numIterations, restart=numIterations)
@@ -93,12 +156,14 @@ def power_iteration_treecode_gmres(  psi,
 
 #         psi_new_norm = nla.norm(psi_new)
 #         eigenvalue = np.sign(np.sum(psi_old*psi_new*Ws)) * np.abs(np.sum(psi_old*psi_new*Ws))  /  np.sum(psi_old*psi_old*Ws) 
-        eigenvalue = np.sum(psi_old*psi_new*Ws)  /  np.sum(psi_old*psi_old*Ws) 
-
+        RQ = np.sum(psi_old*psi_new*Ws)  /  np.sum(psi_old*psi_old*Ws) 
+        eigenvalue=RQ
 #         print("numerator = ", np.sum(psi_old*psi_new*Ws)  )
 #         print("denominator = ",  np.sum(psi_old*psi_old*Ws) )
+        print("vector norm of psi_new = %1.3e" %np.linalg.norm(psi_new))
         psi_new_norm = np.sqrt(np.sum(psi_new*psi_new*Ws))
         psi_new /= psi_new_norm
+        print("integral norm of psi_new = %1.3e" %psi_new_norm)
 #         print("Solved (G)psi = y")
         
         
@@ -110,7 +175,30 @@ def power_iteration_treecode_gmres(  psi,
         
         
         residual = min( np.sqrt(np.sum((psi_old-psi_new)**2*Ws)), np.sqrt(np.sum((psi_old+psi_new)**2*Ws)) )  # account for positive or negative eigenvalues
-        print("count %2i (GMRES %3i): Power iteration residual = %1.3e, Rayleigh quotient  = %1.8f, error = %1.3e" %(count, counter_x.niter, residual, eigenvalue, eigenvalue-referenceEigenvalue))
+        print("count %2i (GMRES %3i): Power iteration residual = %1.3e, Rayleigh quotient  = %1.8f, error = %1.3e" %(count, counter_x.niter, residual, RQ, eigenvalue-referenceEigenvalue))
+        
+        gmres_residuals.extend(counter.residuals)
+        power_iteration_residuals.append(residual)
+        power_iteration_eigenvalues.append(eigenvalue)
+        gmres_count.append(len(gmres_residuals))
+        
+   
+        
+        folder="/Users/nathanvaughn/Desktop/GMRES_data/local/subtraction40/"
+        folder="/Users/nathanvaughn/Desktop/GMRES_data/local/skipping10/"
+        folder="/Users/nathanvaughn/Desktop/GMRES_data/local/regularizing40b/"
+        
+#         folder="/home/njvaughn/GLsync/gmres/power_iteration/subtraction40/"
+        
+        
+        np.save(folder+"gmres_residuals", np.array(gmres_residuals))
+        np.save(folder+"power_iteration_residuals", np.array(power_iteration_residuals))
+        np.save(folder+"power_iteration_eigenvalues", np.array(power_iteration_eigenvalues))
+        np.save(folder+"gmres_count", np.array(gmres_count))
+        
+        
+        
+        
         count+=1
         psi_old=np.copy(psi_new)
         
@@ -124,7 +212,7 @@ def power_iteration_treecode_gmres_B(  psi,
                                      kernel, numberOfKernelParameters, kernelParameters,
                                      singularity, approximation, computeType,
                                      GPUpresent, treecode_verbosity, 
-                                     theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, order, preconditioning=True  ):
+                                     theta, treecodeDegree, maxPerSourceLeaf, maxPerTargetLeaf, order, preconditioning=False  ):
     
     count=1
     residual=2
@@ -183,7 +271,7 @@ def power_iteration_treecode_gmres_B(  psi,
 #         if preconditioning:
 #         print("block-diagonal preconditioning") 
 #         psi_new, exitcode = sla.gmres(B, y, x0=eigenvalue*psi_old, callback=counter, maxiter=numIterations)
-        psi_new, exitcode = sla.gmres(B, y, x0=RQ*psi_old, callback=counter, maxiter=10*numIterations, restart=numIterations)
+        psi_new, exitcode = sla.gmres(B, y, x0=RQ*psi_old, callback=counter, callback_type="pr_norm", maxiter=1, restart=numIterations,tol=1e-6)
 #         psi_new, exitcode = sla.lgmres(B, y, x0=eigenvalue*psi_old, callback=counter_x, maxiter=numIterations) 
         if exitcode!=0:
             print("exitcode = ", exitcode)
