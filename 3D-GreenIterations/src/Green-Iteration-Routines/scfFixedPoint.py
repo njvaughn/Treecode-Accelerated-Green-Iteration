@@ -934,33 +934,34 @@ def scfFixedPointClosure(scf_args):
         
         ## Write the restart files
         ## COMMENTED OUT FOR NOW UNTIL RESTART CAPABILITY IS SUPPORTED FOR DOMAIN DECOMPOSITION APPROACH
-         
-        # save arrays 
-        try:
-            np.save(wavefunctionFile, orbitals)
-             
-    #             sources = tree.extractLeavesDensity()
-            np.save(densityFile, RHO)
-            np.save(outputDensityFile, outputDensities)
-            np.save(inputDensityFile, inputDensities)
-             
-            np.save(vHartreeFile, V_hartreeNew)
-             
-             
-             
-            # make and save dictionary
-            auxiliaryRestartData = {}
-            auxiliaryRestartData['SCFcount'] = SCFcount
-            auxiliaryRestartData['totalIterationCount'] = Times['totalIterationCount']
-            auxiliaryRestartData['GItolerancesIdx'] = scf_args['GItolerancesIdx']
-            auxiliaryRestartData['eigenvalues'] = Energies['orbitalEnergies']
-            auxiliaryRestartData['Eold'] = Energies['Eold']
-     
-            np.save(auxiliaryFile, auxiliaryRestartData)
-        except FileNotFoundError as e:
-            rprint(rank,"FileNotFoundError: ", e)
-            exit(-1)
-#             pass
+#          
+#         # save arrays 
+#         try:
+#             print("wavefunction file = ", wavefunctionFile)
+#             np.save(wavefunctionFile, orbitals)
+#              
+#     #             sources = tree.extractLeavesDensity()
+#             np.save(densityFile, RHO)
+#             np.save(outputDensityFile, outputDensities)
+#             np.save(inputDensityFile, inputDensities)
+#              
+#             np.save(vHartreeFile, V_hartreeNew)
+#              
+#              
+#              
+#             # make and save dictionary
+#             auxiliaryRestartData = {}
+#             auxiliaryRestartData['SCFcount'] = SCFcount
+#             auxiliaryRestartData['totalIterationCount'] = Times['totalIterationCount']
+#             auxiliaryRestartData['GItolerancesIdx'] = scf_args['GItolerancesIdx']
+#             auxiliaryRestartData['eigenvalues'] = Energies['orbitalEnergies']
+#             auxiliaryRestartData['Eold'] = Energies['Eold']
+#      
+#             np.save(auxiliaryFile, auxiliaryRestartData)
+#         except FileNotFoundError as e:
+#             rprint(rank,"FileNotFoundError: ", e)
+#             exit(-1)
+# #             pass
                 
         
         

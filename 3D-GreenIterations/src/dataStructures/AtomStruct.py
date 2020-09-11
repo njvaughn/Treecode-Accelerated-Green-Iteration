@@ -31,7 +31,9 @@ class Atom(object):
         self.z = z
         self.atomicNumber = int(atomicNumber)
         self.nuclearCharge = self.atomicNumber # default for all-electron.  Will get changed if pseudopotential is initialized
-#         self.orbitalInterpolators(coreRepresentation)
+        if coreRepresentation=="AllElectron":  # for PSP, these get set up somewhere else... sorry
+            self.orbitalInterpolators(coreRepresentation)
+        
         self.nAtomicOrbitals = nAtomicOrbitals
         self.coreRepresentation = coreRepresentation
         

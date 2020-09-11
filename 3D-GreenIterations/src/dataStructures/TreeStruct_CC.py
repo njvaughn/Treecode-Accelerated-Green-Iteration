@@ -1102,7 +1102,7 @@ class Tree(object):
                         Cell.checkDensityInterpolation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                         
                     elif divideCriterion=='ParentChildrenIntegral':
-                        rprint(rank, "USING ParentChildrenIntegral##########################################################")
+#                         rprint(rank, "USING ParentChildrenIntegral##########################################################")
                         Cell.refineByCheckingParentChildrenIntegrals(divideParameter1)
                     elif divideCriterion=="VPsiIntegral":
                         Cell.refineByCheckingParentChildrenIntegrals_nonlocal(divideParameter1)

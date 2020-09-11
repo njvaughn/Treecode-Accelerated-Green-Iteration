@@ -384,6 +384,8 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     refinedPtsPerCellCoarse=np.empty(0,dtype=np.int32)
     refinedPtsPerCellFine=np.empty(0,dtype=np.int32)
     
+    
+    
     divideBasedOnNuclei=False
     if divideBasedOnNuclei:
         rprint(rank, "Dividing cells at nuclei.")
