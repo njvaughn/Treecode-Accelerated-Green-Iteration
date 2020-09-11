@@ -15,13 +15,21 @@ if __name__=="__main__":
     numPoints=int(sys.argv[1])
     numWavefunctions=int(sys.argv[2])
     
+    if int(sys.argv[3])==0:
+        gpuPresent=False
+    elif int(sys.argv[3])==1:
+        gpuPresent=True
+    else:
+        print("What was sys.argv[3] supposed to be?  It was ", sys.argv[3])
+        exit(-1)
+    
     print("rank = ", rank)
     np.random.seed(rank)
     wavefunctions=np.random.rand(numWavefunctions,numPoints)
     
     wavefunctions=np.zeros( (numWavefunctions,numPoints), order='C')
     W = np.ones(numPoints)
-    gpuPresent=True 
+#     gpuPresent=True 
     
  
     wavefunctions=np.random.rand(numWavefunctions,numPoints)
@@ -64,7 +72,7 @@ if __name__=="__main__":
         if (norm-1)/numPoints>1e-12:
             print("norm-1 of wavefunction %i = %1.3e." %(i,norm-1))
       
-    print("Python time to orthogonalize %i wavefnctions of %i points distributed over %i precessors: %f seconds" %(numWavefunctions,numPoints,size,end-start))  
+    print("Python time to orthogonalize %i wavefunctions of %i points distributed over %i precessors: %f seconds" %(numWavefunctions,numPoints,size,end-start))  
     
     
     
