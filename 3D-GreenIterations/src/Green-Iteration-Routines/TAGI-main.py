@@ -617,21 +617,22 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #         twoMeshCorrection(RHO,scf_args)
         
     
-    ## DO ONE FINAL ITERATION WITH TWO LEVEL MESH
-    rprint(rank,"\n\n\n\n")
-    rprint(rank,"\n\n\n\nCalling the Two-Level Mesh Correction.\n\n\n")
-    if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
-    if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
-    scf_args["TwoMeshStart"]=SCFcount
-      
-#     scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
-#     densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
-    
-    twoMeshCorrection, scf_args = twoMeshCorrectionClosure(scf_args)
-    twoMeshCorrection(RHO,scf_args)
-    
-    Energies['Etotal']=Energies['Etotal_corrected']
-    Energies['Etotal']=Energies['Etotal_corrected']
+    ## If a pseudopotential calculation, call the two-mesh correction scheme.
+    if coreRepresentation=="Pseudopotential":
+        rprint(rank,"\n\n\n\n")
+        rprint(rank,"\n\n\n\nCalling the Two-Level Mesh Correction.\n\n\n")
+        if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
+        if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
+        scf_args["TwoMeshStart"]=SCFcount
+          
+    #     scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
+    #     densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
+        
+        twoMeshCorrection, scf_args = twoMeshCorrectionClosure(scf_args)
+        twoMeshCorrection(RHO,scf_args)
+        
+        Energies['Etotal']=Energies['Etotal_corrected']
+        Energies['Etotal']=Energies['Etotal_corrected']
      
      
               
