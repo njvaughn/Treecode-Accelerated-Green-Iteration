@@ -267,6 +267,9 @@ class Tree(object):
         return
           
     def finalDivideBasedOnNuclei(self, coordinateFile):
+        
+#         rprint(rank, "Dividing cells at nuclei, necessary for singular all-electron potentials.")
+#         exit(-1)
         def refineToMinDepth(self,Cell):
             # Divide the root to the minimum depth, BEFORE dividing at the nuclear positions
             

@@ -24,7 +24,8 @@ cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Green-Iterat
 ##################################################################### 
  
 SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
-INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv' 
+#INPUTFILE='molecularConfigurations/AluminumClusters/shell0AuxiliaryPSP.csv' 
+INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/all_electron_testing/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
  
  
@@ -41,13 +42,14 @@ SAVEDMESH='None'
 ###########  ALL ELECTRON ################## 
 COREREPRESENTATION="AllElectron"
 MESHTYPE='ParentChildrenIntegral'
-MESHPARAM1=1e-4
+MESHPARAM1=1e-3
 MESHPARAM2=0
 MESHPARAM3=0
 MESHPARAM4=0
  
 ##########  PSEUDOPOTENTIAL ###############
 #COREREPRESENTATION="Pseudopotential"
+#MESHTYPE='coarsenedUniformTwoLevel'
 #MESHPARAM1=1.0 # near field spacing 
 #MESHPARAM2=8.0 # far field spacing
 #MESHPARAM3=2.0 # ball radius
@@ -73,7 +75,7 @@ EPSILON=0.0
 TREECODE='True'      
 APPROXIMATIONNAME=lagrange
 TREECODEORDER=7
-THETA=0.75
+THETA=0.85
 BATCHSIZE=5
 MAXPARNODE=50
 
@@ -90,7 +92,7 @@ MIXINGHISTORY=10
 INITIAL_GI_TOLERANCE=3e-2
 FINAL_GI_TOLERANCE=3e-5
 GRADUALSTEPS=8
-SCF_TOLERANCE=3e-5
+SCF_TOLERANCE=1e-4
 GIFORM="Sequential"
 
 

@@ -326,7 +326,7 @@ class Atom(object):
             elif os.path.isdir('/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
                 # working on Flux or Great Lakes
     #             path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
-                path = '/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomDatazzz/'
+                path = '/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/'
             else:
                 rprint(rank, 'Could not find single atom data...')
     #             rprint(rank, 'Checked in: /Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')

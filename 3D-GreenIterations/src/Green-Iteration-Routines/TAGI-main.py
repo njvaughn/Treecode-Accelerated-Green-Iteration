@@ -488,6 +488,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     rprint(rank,'Entering greenIterations_KohnSham_SCF()')
     rprint(0, 'Number of targets on proc %i:   %i' %(rank,nPoints) )
     comm.barrier()
+#     exit(-1)
     
     densityResidual = 10                                   # initialize the densityResidual to something that fails the convergence tolerance
 
