@@ -1,3 +1,12 @@
+'''
+twoMeshCorrection.py
+
+twoMeshCorrection() is called towards the end of pseudopotential calculations.
+It performs a final correction to the eigenvalues using an additional fine
+mesh that is more refined than the mesh used throughout the rest of the 
+calculation.
+Similar approaches could be explored for all-electron calculations.
+'''
 import numpy as np
 import os
 import csv

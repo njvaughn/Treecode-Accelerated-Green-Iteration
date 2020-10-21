@@ -1,9 +1,11 @@
 '''
 TAGI-main.py
-This is the main run file for TAGI.  
 
-Created on Mar 13, 2018
-@author: nathanvaughn
+This is the main run file for TAGI.  
+It first reads in the input arguments.
+It then initializes the calculation (atoms, meshes, data structures, domain decomposition, etc.).
+It finally calls the SCF routines to update the density, until convergence.
+It returns the converged density and ground state energy
 '''
 
 import time
@@ -161,12 +163,7 @@ else:
 
 
 vtkFileBase='/home/njvaughn/results_CO/orbitals'
-# rprint(0, "Converting command line arguments to correct types.")
 
-# def global_dot(u,v,comm):
-#     local_dot = np.dot(u,v)
-#     global_dot = comm.allreduce(local_dot)
-#     return global_dot
 
 
 def clenshawCurtisNormClosure(W):
@@ -307,7 +304,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     Vext_local = np.zeros(nPoints)
     Vext_local_fine = np.zeros(len(Xf))
     atomCount=1
-#     for atom in nearbyAtoms:
     for atom in atoms:
         if coreRepresentation=="Pseudopotential":
             atom.generateChi(X,Y,Z)
@@ -372,18 +368,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 
     restartFilesDir =       exampleDir + "numPoints_" + str(globalNumPoints)
          
-# #     restartFilesDir =       exampleDir + "backup_numPoints_" + str(globalNumPoints) + "/numPoints_1778176"
-#     restartFilesDir = "/home/njvaughn/restartFiles/C60/backup_numPoints_1778176/numPoints_1778176"
-#     rprint(0,"USING RESTART DATA FROM backup_numPoints_")
-#     rprint(0,"USING RESTART DATA FROM backup_numPoints_")
-#     rprint(0,"USING RESTART DATA FROM backup_numPoints_")
-#     rprint(0,"USING RESTART DATA FROM backup_numPoints_")
-#     rprint(0,"USING RESTART DATA FROM backup_numPoints_")
-#     rprint(0,"USING RESTART DATA FROM backup_numPoints_")
-#     rprint(0,"USING RESTART DATA FROM backup_numPoints_")
-#     rprint(0,"USING RESTART DATA FROM backup_numPoints_")
-#     rprint(0,"USING RESTART DATA FROM backup_numPoints_")
-#     rprint(0,"USING RESTART DATA FROM backup_numPoints_") 
     if rank==0:
         try:
             os.mkdir(restartFilesDir)
@@ -411,10 +395,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 
     
     
-#     tr = tracker.SummaryTracker()   
     if restartFile!=False:
-#         rprint(0, "Not ready to handle restarts in mpi version.")
-#         return
         try:
             orbitals = np.load(wavefunctionFile+'.npy')
         except FileNotFoundError:
@@ -475,15 +456,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         oldOrbitals = np.copy(orbitals)
 
     
-#     if plotSliceOfDensity==True:
-#         densitySliceSavefile = densityPlotsDir+'/densities'
-#         r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
-#         
-#         densities = np.concatenate( (np.reshape(r, (numpts,1)), np.reshape(rho, (numpts,1))), axis=1)
-#         np.save(densitySliceSavefile,densities)
-
     
-    ## Barrier...
     comm.barrier()
     rprint(rank,'Entering greenIterations_KohnSham_SCF()')
     rprint(0, 'Number of targets on proc %i:   %i' %(rank,nPoints) )
@@ -534,10 +507,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     rprint(rank,"Copied data to GPUs.  Starting while loop for density...")
     while ( (densityResidual > SCFtolerance) or (energyResidual > SCFtolerance) ):  # terminate SCF when both energy and density are converged.
           
-        ## CALL SCF FIXED POINT FUNCTION
-#         if SCFcount > 0:
-#             rprint(0, 'Exiting before first SCF (for testing initialized mesh accuracy)')
-#             return
         abortAfterInitialHartree=False 
         
         if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
@@ -547,9 +516,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         if GI_form=="Sequential":
             scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
             densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
-#             rprint(rank,"******** REPEATING GREEN ITERATION FOR SAME INPUT DENSITY AFTER SORTING *******")
-#             scf_args['GItolerancesIdx']-=1
-#             densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)  # call this a second time, will have wavefunctions sorted from the first call.
         elif GI_form=="Simultaneous":
             scfFixedPointSimultaneous, scf_args = scfFixedPointClosureSimultaneous(scf_args)
             densityResidualVector = scfFixedPointSimultaneous(RHO,scf_args,abortAfterInitialHartree)
@@ -581,14 +547,12 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         elif mixingScheme == 'Anderson':
             if verbosity>0: rprint(rank, 'Using anderson mixing.')
             andersonDensity = densityMixing.computeNewDensity(scf_args['inputDensities'], scf_args['outputDensities'], mixingParameter,W)
-#             integratedDensity = np.sum( andersonDensity*W )
             integratedDensity = global_dot( andersonDensity, W, comm )
             if verbosity>0: rprint(rank,'Integrated anderson density: ', integratedDensity)
             RHO = np.copy(andersonDensity)
           
         elif mixingScheme == 'None':
             rprint(rank,'Using no mixing.')
-#             RHO += densityResidualVector
             RHO = np.copy( scf_args['outputDensities'][:,SCFindex] )
                
           
@@ -610,12 +574,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
             densityResidual = -1
             
             
-#         # perform two mesh correction after each SCF iteration
-# #         rprint(rank,"Performing two mesh correction after %i SCF iteration." %SCFcount)
-# #         if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
-# #         if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
-#         twoMeshCorrection, scf_args = twoMeshCorrectionClosure(scf_args)
-#         twoMeshCorrection(RHO,scf_args)
         
     
     ## If a pseudopotential calculation, call the two-mesh correction scheme.
@@ -626,8 +584,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
         scf_args["TwoMeshStart"]=SCFcount
           
-    #     scfFixedPoint, scf_args = scfFixedPointClosure(scf_args)
-    #     densityResidualVector = scfFixedPoint(RHO,scf_args,abortAfterInitialHartree)
+
         
         twoMeshCorrection, scf_args = twoMeshCorrectionClosure(scf_args)
         twoMeshCorrection(RHO,scf_args)
@@ -657,7 +614,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 
     
 if __name__ == "__main__": 
-    #import sys;sys.argv = ['', 'Test.testName']
     
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
@@ -698,56 +654,13 @@ if __name__ == "__main__":
 
     
     
-    ## NO LONGER PERFORMING LOAD BALANCING AFTER CREATING MESH POINTS.  IT IS TAKEN CARE OF WHEN CHOPPING THE DOMAIN INTO INITIAL BASE MESH.
-#     comm.barrier()
-#     xSum = np.sqrt( global_dot(X,X,comm) ) 
-#     ySum = np.sqrt( global_dot(Y,Y,comm) ) 
-#     zSum = np.sqrt( global_dot(Z,Z,comm) ) 
-#     wSum = np.sqrt( global_dot(W,W,comm) ) 
-#     
-# #     rprint(0, "NOT CALLING LOAD BALANCER.")
-#     rprint(0, 'Before load balancing, nPoints and nCells on proc %i: %i, %i' %(rank,len(X),len(X)/(order+1)**3) )
-#     rprint(0, "BEFORE BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
-# 
-# #     X,Y,Z,W = scatterArrays(X,Y,Z,W,comm)
-# #     rprint(0, 'After scattering, nPoints on proc %i: %i' %(rank,len(X)) )
-#     comm.barrier()
-#     start=MPI.Wtime()
-#     X,Y,Z,W = loadBalance(X,Y,Z,W)
-#     comm.barrier()
-#     end=MPI.Wtime()
-#     rprint(0, "LOAD BALANCING TIME WHEN NOT USING RANDOM FIRST: ", end-start)
-#     rprint(0, 'After load balancing, nPoints on proc %i: %i' %(rank,len(X)) )
-#     rprint(0, "proc %i: average x, y, z: %f,%f,%f"%(rank, np.mean(X), np.mean(Y), np.mean(Z)))
-# #     atoms = comm.bcast(atoms, root=0)
-# #     nOrbitals = comm.bcast(nOrbitals, root=0)
-# #     nElectrons = comm.bcast(nElectrons, root=0)
-# #     eigenvalues = comm.bcast(eigenvalues, root=0)
-# #     referenceEigenvalues = comm.bcast(referenceEigenvalues, root=0)
 
-#     xSum2 = np.sqrt( global_dot(X,X,comm) ) 
-#     ySum2 = np.sqrt( global_dot(Y,Y,comm) ) 
-#     zSum2 = np.sqrt( global_dot(Z,Z,comm) ) 
-#     wSum2 = np.sqrt( global_dot(W,W,comm) )
-#     assert abs(xSum-xSum2)/xSum<1e-12, "xSum not matching after DD. xSum=%f, xSum2=%f"%(xSum,xSum2)
-#     assert abs(ySum-ySum2)/ySum<1e-12, "ySum not matching after DD. ySum=%f, ySum2=%f"%(ySum,ySum2)
-#     assert abs(zSum-zSum2)/zSum<1e-12, "zSum not matching after DD. zSum=%f, zSum2=%f"%(zSum,zSum2)
-#     assert abs(wSum-wSum2)/wSum<1e-12, "wSum not matching after DD. wSum=%f, wSum2=%f"%(wSum,wSum2)
-#     
-#     comm.barrier()
-#     
-#     ## Test if load balancing worked...
-#     rprint(0, "AFTER BALANCING: rank %i, xmin, xmax, ymin, ymax, zmin, zmax: " %(rank), np.min(X),np.max(X),np.min(Y),np.max(Y),np.min(Z),np.max(Z) )
-# #     exit(-1)
-    
-#     eigenvalues = -2*np.ones(nOrbitals)
     RHO, CORECHARGERHO = initializeDensityFromAtomicDataExternally(X,Y,Z,W,atoms,coreRepresentation)
     densityIntegral = global_dot( RHO, W, comm)
     rprint(rank,"Initial density integrates to ", densityIntegral)
     CCdensityIntegral = global_dot( CORECHARGERHO, W, comm)
     rprint(rank,"Initial core charge density integrates to ", CCdensityIntegral)
     nPointsLocal = len(X)
-#     assert abs(2-global_dot(RHO,W,comm)) < 1e-12, "Initial density not integrating to 2"
     orbitals = np.zeros((nOrbitals,nPointsLocal))
     
     for atom in atoms:
@@ -758,10 +671,7 @@ if __name__ == "__main__":
         orbitals,initialOccupations,initialEnergies = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z,W)
     elif coreRepresentation=="Pseudopotential":
         orbitals,initialOccupations,initialEnergies = initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z,W)
-#         orbitals = initializeOrbitalsRandomly(atoms,coreRepresentation,orbitals,nOrbitals,X,Y,Z)
-#         initialOccupations=2*np.ones(nOrbitals)
-#         initialEnergies=-1*np.ones(nOrbitals)
-#     rprint(0, 'nOrbitals: ', nOrbitals)
+
     comm.barrier()
     
 
@@ -769,7 +679,6 @@ if __name__ == "__main__":
     eigenvalues=np.array(initialEnergies)/3
     rprint(rank, "Initial eigenvalues:  ",initialEnergies)
     rprint(rank, "Initial occupations:  ",initialOccupations)
-#     input()
 
     
 

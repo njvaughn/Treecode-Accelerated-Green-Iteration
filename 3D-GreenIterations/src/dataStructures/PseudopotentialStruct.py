@@ -1,5 +1,12 @@
 '''
-@author: nathanvaughn
+PseudopotentialStruct.py
+
+Class for ONCV pseudopotentials.
+Atoms will inherit this functionality is their atom is being
+treated with ONCV pseudopotentials.
+
+
+
 '''
 import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline, CubicSpline, UnivariateSpline

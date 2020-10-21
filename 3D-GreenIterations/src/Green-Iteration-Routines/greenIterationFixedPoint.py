@@ -1,3 +1,11 @@
+'''
+greenIterationFixedPoint.py
+
+Contains the primary routines for performing green iteration for a single wavefunction.
+greensIteration_FixedPoint() is called for each wavefunction, at each step of the 
+SCF iteration.  It returns data in gi_args structure.
+'''
+
 import inspect
 import numpy as np
 import time

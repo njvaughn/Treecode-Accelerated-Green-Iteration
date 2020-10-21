@@ -1,7 +1,14 @@
 '''
-Created on Mar 5, 2018
+GridpointStruct.py
 
-@author: nathanvaughn
+Gridpoint structure, initially designed to solve the issue of neighboring cells sharing 
+points along a boundary.  If they each point to the same gridpoint struct then they 
+can both own and modify the same gridpoint, removing the issue of duplicated points.
+However, operating on individial gridpoints doesn't make use of vectorization and
+in general is very slow.  
+
+The boundary issue was avoided by using only interior chebyshev points,
+although this may have led to more points than absolutely necessary.
 '''
 import numpy as np
 

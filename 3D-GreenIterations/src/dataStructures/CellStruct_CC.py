@@ -1,4 +1,11 @@
 '''
+CellStruct_CC.py
+
+Trees are composed of cells.
+Cells are composed of gridpoints, in this case using the clenshaw curtis quadrature.
+Cell structures are used in the initialization, but not throughout the calculation,
+although many features would benefit from retaining the cell structure.
+
 Created on Mar 5, 2018
 
 @author: nathanvaughn

@@ -1,5 +1,7 @@
 '''
-The main Tree data structure.  The root of the tree is a Cell object that is comprised of the 
+TreeStruct_CC.py
+
+The main Tree data structure (with Clenshaw-Curtis quadrature rules).  The root of the tree is a Cell object that is comprised of the 
 entire domain.  The tree gets built by dividing the root cell, recursively, based on the set 
 divide condition.  The current implementation uses the variation of phi within a cell to 
 dictate whether or not it divides.  
@@ -8,7 +10,11 @@ Cells can perform recursive functions on the tree.  The tree can also extract al
 all midpoints as arrays which can be fed in to the GPU kernels, or other tree-external functions.
 -- 03/20/2018 NV
 
-@author: nathanvaughn
+
+The tree structure is used to generate the mesh, however it is not used during the calculation.
+It was more efficient to extract the necessary arrays and then operate on those directly, 
+rather than constantly iterate through a tree.  However, many features would benefit from
+retaining the explicit tree structure.
 '''
 
 import numpy as np
@@ -31,7 +37,6 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 from mpiUtilities import rprint
 
-# from numba.targets.options import TargetOptions
 try:
     import vtk
 except ModuleNotFoundError:

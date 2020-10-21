@@ -1,4 +1,9 @@
 '''
+AtomStruct.py
+
+The data structure to store each atom.  
+Contains local functions to evaluate atom-centric fields,
+wavefunction interpolators, PSP projectors, etc. 
 @author: nathanvaughn
 '''
 import numpy as np

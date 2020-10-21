@@ -3,6 +3,7 @@ scfFixedPoint.py
 
 Contains the primary routines for performing the SCF iteration.
 scfFixedPoint() is called from main, and it calls greenIterationFixedPoint() at each step.
+It inputs and outputs data through the scf_args structure.
 '''
 
 import numpy as np
