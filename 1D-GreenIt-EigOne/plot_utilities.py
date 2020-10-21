@@ -1,3 +1,7 @@
+'''
+Plot utilities for analyzing the 1-d calculation results.
+
+'''
 import numpy as np
 import numpy.linalg as la
 import os

@@ -1,4 +1,10 @@
 """
+GreenIt_EigOne.py
+
+Performs comparison between Green-Iteration and Eigenvalue-One for 1-dimensional test problems.
+
+
+
 
 Structure the Schrodinger Calculation Method
 
