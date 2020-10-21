@@ -31,7 +31,9 @@ class Atom(object):
         self.z = z
         self.atomicNumber = int(atomicNumber)
         self.nuclearCharge = self.atomicNumber # default for all-electron.  Will get changed if pseudopotential is initialized
-#         self.orbitalInterpolators(coreRepresentation)
+        if coreRepresentation=="AllElectron":  # for PSP, these get set up somewhere else... sorry
+            self.orbitalInterpolators(coreRepresentation)
+        
         self.nAtomicOrbitals = nAtomicOrbitals
         self.coreRepresentation = coreRepresentation
         
@@ -324,7 +326,7 @@ class Atom(object):
             elif os.path.isdir('/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/'):
                 # working on Flux or Great Lakes
     #             path = '/home/njvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/'
-                path = '/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomDatazzz/'
+                path = '/home/njvaughn/AtomicData/'+atomDir+'/z'+str(int(self.atomicNumber))+'/singleAtomData/'
             else:
                 rprint(rank, 'Could not find single atom data...')
     #             rprint(rank, 'Checked in: /Users/nathanvaughn/AtomicData/allElectron/z'+str(int(self.atomicNumber))+'/singleAtomData/')

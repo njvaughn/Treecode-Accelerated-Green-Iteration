@@ -75,6 +75,21 @@ def twoMeshCorrectionClosure(scf_args):
     
     def twoMeshCorrection(RHO,scf_args, abortAfterInitialHartree=False):
         
+        
+        """
+        twoMeshCorrection(electron density, scf argument)
+        
+        Purpose: to compute a correction to the energies using a secondary refined mesh for pseudopotential calculations
+        
+        Details: 
+            - called after the SCF iteration converges for pseudopotential calculations
+            - uses a second mesh that is more refined near the atoms
+            - computes convolutions with source data on the fine mesh, target data on the coarse mesh
+            - projectors and local potential evaluated directly on fine mesh.  Other fields are interpolated
+            - uses more refined treecode parameters (higher degree, lower MAC)
+            
+        """
+        
         verbosity=0
         
         ## Unpack scf_args
@@ -88,10 +103,10 @@ def twoMeshCorrectionClosure(scf_args):
         mixingHistoryCutoff = scf_args['mixingHistoryCutoff']
         GPUpresent = scf_args['GPUpresent']
         treecode = scf_args['treecode']
-        treecodeOrder=scf_args['treecodeOrder']
+        treecodeDegree=scf_args['treecodeDegree']
         theta=scf_args['theta']
-        maxParNode=scf_args['maxParNode']
-        batchSize=scf_args['batchSize']
+        maxPerSourceLeaf=scf_args['maxPerSourceLeaf']
+        maxPerTargetLeaf=scf_args['maxPerTargetLeaf']
         gaussianAlpha=scf_args['gaussianAlpha']
         Energies=scf_args['Energies']
         exchangeFunctional=scf_args['exchangeFunctional']
@@ -226,15 +241,23 @@ def twoMeshCorrectionClosure(scf_args):
         comm.barrier()
 #         V_hartreeNew=np.ones(len(X))
 #         rprint(rank,"Using tighter treecode parameters for Hartree solve.")
-        V_hartreeNew = BT.callTreedriver(  
-                                            nPoints, numSources, 
-                                            np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-                                            np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
-                                            kernel, numberOfKernelParameters, kernelParameters, 
-                                            singularity, approximation, computeType,
-                                            treecodeOrder+2, theta-0.15, maxParNode, batchSize,
-                                            GPUpresent, treecode_verbosity
-                                            )
+#         V_hartreeNew = BT.callTreedriver(  
+#                                             nPoints, numSources, 
+#                                             np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
+#                                             np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
+#                                             kernel, numberOfKernelParameters, kernelParameters, 
+#                                             singularity, approximation, computeType,
+#                                             treecodeDegree+2, theta-0.15, maxPerSourceLeaf, maxPerTargetLeaf,
+#                                             GPUpresent, treecode_verbosity
+#                                             )
+        
+        V_hartreeNew = BT.callTreedriver(  nPoints, numSources,
+                                 np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO),
+                                 np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
+                                 kernel, numberOfKernelParameters, kernelParameters,
+                                 singularity, approximation, computeType,
+                                 GPUpresent, treecode_verbosity, 
+                                 theta=theta-0.15, degree=treecodeDegree+2, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
          
 
          
@@ -386,15 +409,23 @@ def twoMeshCorrectionClosure(scf_args):
               
             comm.barrier()
             startTime = time.time()
-            psiNew = BT.callTreedriver(
-                                        nPoints, numSources, 
-                                        np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
-                                        np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
-                                        kernel, numberOfKernelParameters, kernelParameters, 
-                                        singularity, approximation, computeType,
-                                        treecodeOrder+2, theta-0.15, maxParNode, batchSize,
-                                        GPUpresent, treecode_verbosity
-                                        ) 
+#             psiNew = BT.callTreedriver(
+#                                         nPoints, numSources, 
+#                                         np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse), 
+#                                         np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
+#                                         kernel, numberOfKernelParameters, kernelParameters, 
+#                                         singularity, approximation, computeType,
+#                                         treecodeDegree+2, theta-0.15, maxPerSourceLeaf, maxPerTargetLeaf,
+#                                         GPUpresent, treecode_verbosity
+#                                         ) 
+            
+            psiNew = BT.callTreedriver(  nPoints, numSources,
+                                 np.copy(X), np.copy(Y), np.copy(Z), np.copy(f_coarse),
+                                 np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceF), np.copy(sourceW),
+                                 kernel, numberOfKernelParameters, kernelParameters,
+                                 singularity, approximation, computeType,
+                                 GPUpresent, treecode_verbosity, 
+                                 theta=theta-0.15, degree=treecodeDegree+2, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
 
             psiNew /= (4*np.pi)
             comm.barrier()  

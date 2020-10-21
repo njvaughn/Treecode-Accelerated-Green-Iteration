@@ -1,19 +1,13 @@
 #!/bin/bash
-
-
 cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
-SINGSUBT=1 
-GPUPRESENT='False'  
-SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
+  
 
 
-#COREREPRESENTATION="AllElectron"
 #INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv' 
 #INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/N2Auxiliary.csv'
 #INPUTFILE='molecularConfigurations/NAuxiliary.csv'
 
-COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
@@ -23,84 +17,107 @@ COREREPRESENTATION="Pseudopotential"
 #INPUTFILE='molecularConfigurations/carbonAuxiliaryPSP.csv'
 #INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv'
  
-INPUTFILE='molecularConfigurations/aluminumAtomAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/aluminumAtomAuxiliaryPSP.csv'
  
-
-VTKFILEDIR='/Users/nathanvaughn/Desktop/'
+#####################################################################
+###################### INPUT/OUTPUT #################################
+##################################################################### 
  
+SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
+#INPUTFILE='molecularConfigurations/AluminumClusters/shell0AuxiliaryPSP.csv' 
+INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
+OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/all_electron_testing/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+ 
+ 
+#####################################################################
+#################### MESH PARAMETERS ################################
+#####################################################################
 
-GRADIENTFREE='True'
-SYMMETRICITERATION='False'
+RESTART='False' 
+DOMAIN=20
+MAXSIDELENGTH=5.5
+ADDITIONALDEPTHATATOMS=0
+SAVEDMESH='None'
+ 
+###########  ALL ELECTRON ################## 
+COREREPRESENTATION="AllElectron"
+MESHTYPE='ParentChildrenIntegral'
+MESHPARAM1=1e-3
+MESHPARAM2=0
+MESHPARAM3=0
+MESHPARAM4=0
+ 
+##########  PSEUDOPOTENTIAL ###############
+#COREREPRESENTATION="Pseudopotential"
+#MESHTYPE='coarsenedUniformTwoLevel'
+#MESHPARAM1=1.0 # near field spacing 
+#MESHPARAM2=8.0 # far field spacing
+#MESHPARAM3=2.0 # ball radius
+#MESHPARAM4=-2
+
+  
+#####################################################################
+################### QUADRATURE PARAMETERS ###########################
+#####################################################################
+
+CELLORDER=3
+FINEORDER=3
+SINGULARITYHANDLING=subtraction
+GAUSSIANALPHA=1.0 
+REGULARIZE='False'
+EPSILON=0.0
+
+
+#####################################################################
+################### TREECODE PARAMETERS #############################
+#####################################################################
  
 TREECODE='True'      
- 
- 
+APPROXIMATIONNAME=lagrange
+TREECODEORDER=7
+THETA=0.8
+BATCHSIZE=5
+MAXPARNODE=50
+
+
+#####################################################################
+################## ITERATION PARAMETERS #############################
+#####################################################################
+
 GAUGESHIFT=-0.5
 MIXING='Anderson'
- 
-#MESHTYPE='LW5'
-RESTART='False' 
-SAVEDMESH='None'
-
-ADDITIONALDEPTHATATOMS=0
-GRADIENTFREE='True' 
-
 MIXINGPARAMETER=0.5
 MIXINGHISTORY=10  
      
 INITIAL_GI_TOLERANCE=3e-2
-FINAL_GI_TOLERANCE=3e-5
+FINAL_GI_TOLERANCE=1e-5
 GRADUALSTEPS=8
-SCF_TOLERANCE=3e-5
-     
-
-SINGULARITYHANDLING=subtraction
-
-REGULARIZE='False'
-EPSILON=0.0
-   
-GAUSSIANALPHA=2.0 
-
-
-CELLORDER=3
-FINEORDER=3
-
-
- 
-MESHTYPE='coarsenedUniformTwoLevel'
-
-DOMAIN=32
-MAXSIDELENGTH=8
-MESHPARAM1=1.0 # near field spacing 
-MESHPARAM2=8.0 # far field spacing
-MESHPARAM3=2.0 # ball radius
-
-  
-TWOMESHSTART=999
+SCF_TOLERANCE=1e-4
 GIFORM="Sequential"
 
 
+#####################################################################
+################ MISCELLANEOUS PARAMETERS ###########################
+#####################################################################
 
-APPROXIMATIONNAME=lagrange
-TREECODEORDER=7
-THETA=0.75
+SINGSUBT=1 
+GPUPRESENT='False'
+VTKFILEDIR='/Users/nathanvaughn/Desktop/'
+GRADIENTFREE='True'
+SYMMETRICITERATION='False'
+TWOMESHSTART=999
 
-for MESHPARAM4 in -2
-do                                                         
-    for BATCHSIZE in 5
-    do        
-        for MAXPARNODE in 50
-        do   
+     
+#####################################################################
+##################### LAUNCH COMMANDS ###############################
+#####################################################################
 
-        OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/Al/nlcc-testing/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
-        #OUTPUTFILE="/Users/nathanvaughn/Documents/ONCV-testing/beryllium/restart_testing/no_restart_${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
-        mpirun -n 4 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
-                                                $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
-                                                $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
-                                                $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
-                                                $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-                                                $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART $GIFORM
-        done 
-    done      
-done
+mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+                                        $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
+                                        $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
+                                        $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
+                                        $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
+                                        $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART $GIFORM
+
        

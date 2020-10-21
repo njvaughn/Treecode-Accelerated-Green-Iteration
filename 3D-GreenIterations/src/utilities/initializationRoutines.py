@@ -102,7 +102,12 @@ def initializeOrbitalsFromAtomicDataExternally(atoms,coreRepresentation,orbitals
     #                                     Y = np.real(sph_harm(m,ell,azimuthal,inclination))
     #                         phi = atom.interpolators[psiID](r)*np.real(Y)
                             try:
-                                phi = atom.interpolators[psiID](r)*np.real(Ysp) / np.sqrt(4*np.pi*r*r) 
+                                phi = atom.interpolators[psiID](r)*np.real(Ysp)
+#                                 phi = np.random.rand(len(r))
+                                
+                                if coreRepresentation=="Pseudopotential":  # account for different ways the radial functions are stored.
+                                    phi /= np.sqrt(4*np.pi*r*r) 
+                                
                             except ValueError:
                                 phi = 0.0   # if outside the interpolation range, assume 0.
                             except KeyError:

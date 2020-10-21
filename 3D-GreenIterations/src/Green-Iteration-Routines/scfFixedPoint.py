@@ -40,7 +40,7 @@ def print_eigs_and_occupations(eigs,occupations,errors):
     rprint(rank," "+'-'*60+"\n")
     
  
-Temperature = 100
+Temperature = 300
 KB = 1/315774.6
 Sigma = Temperature*KB
 
@@ -59,8 +59,8 @@ def fermiObjectiveFunctionClosure(Energies,nElectrons):
 
 def clenshawCurtisNormClosure(W):
     def clenshawCurtisNorm(psi):
-#         appendedWeights = np.append(W, 1.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
-        appendedWeights = np.append(np.zeros_like(W), 10.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
+        appendedWeights = np.append(W, 10.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
+#         appendedWeights = np.append(np.zeros_like(W), 10.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
         norm = np.sqrt( global_dot( psi, psi*appendedWeights, comm ) )
         return norm
     return clenshawCurtisNorm
@@ -934,33 +934,34 @@ def scfFixedPointClosure(scf_args):
         
         ## Write the restart files
         ## COMMENTED OUT FOR NOW UNTIL RESTART CAPABILITY IS SUPPORTED FOR DOMAIN DECOMPOSITION APPROACH
-         
-        # save arrays 
-        try:
-            np.save(wavefunctionFile, orbitals)
-             
-    #             sources = tree.extractLeavesDensity()
-            np.save(densityFile, RHO)
-            np.save(outputDensityFile, outputDensities)
-            np.save(inputDensityFile, inputDensities)
-             
-            np.save(vHartreeFile, V_hartreeNew)
-             
-             
-             
-            # make and save dictionary
-            auxiliaryRestartData = {}
-            auxiliaryRestartData['SCFcount'] = SCFcount
-            auxiliaryRestartData['totalIterationCount'] = Times['totalIterationCount']
-            auxiliaryRestartData['GItolerancesIdx'] = scf_args['GItolerancesIdx']
-            auxiliaryRestartData['eigenvalues'] = Energies['orbitalEnergies']
-            auxiliaryRestartData['Eold'] = Energies['Eold']
-     
-            np.save(auxiliaryFile, auxiliaryRestartData)
-        except FileNotFoundError as e:
-            rprint(rank,"FileNotFoundError: ", e)
-            exit(-1)
-#             pass
+#          
+#         # save arrays 
+#         try:
+#             print("wavefunction file = ", wavefunctionFile)
+#             np.save(wavefunctionFile, orbitals)
+#              
+#     #             sources = tree.extractLeavesDensity()
+#             np.save(densityFile, RHO)
+#             np.save(outputDensityFile, outputDensities)
+#             np.save(inputDensityFile, inputDensities)
+#              
+#             np.save(vHartreeFile, V_hartreeNew)
+#              
+#              
+#              
+#             # make and save dictionary
+#             auxiliaryRestartData = {}
+#             auxiliaryRestartData['SCFcount'] = SCFcount
+#             auxiliaryRestartData['totalIterationCount'] = Times['totalIterationCount']
+#             auxiliaryRestartData['GItolerancesIdx'] = scf_args['GItolerancesIdx']
+#             auxiliaryRestartData['eigenvalues'] = Energies['orbitalEnergies']
+#             auxiliaryRestartData['Eold'] = Energies['Eold']
+#      
+#             np.save(auxiliaryFile, auxiliaryRestartData)
+#         except FileNotFoundError as e:
+#             rprint(rank,"FileNotFoundError: ", e)
+#             exit(-1)
+# #             pass
                 
         
         

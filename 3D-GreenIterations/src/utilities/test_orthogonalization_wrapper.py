@@ -36,41 +36,52 @@ if __name__=="__main__":
     
 
     X=np.ones(10) #dummy array to init GPU
-    MD.callCopyVectorToDevice(X)   
+    if gpuPresent: MD.callCopyVectorToDevice(X)   
     
+#     print("Before copyin: ", wavefunctions[:,0])
       
-    MD.callCopyVectorToDevice(W)
-    MD.callCopyVectorToDevice(wavefunctions)
+    if gpuPresent: MD.callCopyVectorToDevice(W)
+    if gpuPresent: MD.callCopyVectorToDevice(wavefunctions)
 
 #     U=np.copy(wavefunctions[0])
 #     MD.callCopyVectorToDevice(U)
     start=time.time()
     for targetWavefunction in range(numWavefunctions):
         U=np.copy(wavefunctions[targetWavefunction])
-        MD.callCopyVectorToDevice(U)
+        if gpuPresent: MD.callCopyVectorToDevice(U)
         orth.callOrthogonalization(wavefunctions, U, W, targetWavefunction, gpuPresent)
-        MD.callRemoveVectorFromDevice(U)
+        if gpuPresent: MD.callRemoveVectorFromDevice(U)
     
     
     end=time.time()
-    MD.callCopyVectorFromDevice(wavefunctions)
+    if gpuPresent: MD.callCopyVectorFromDevice(wavefunctions)
     
-    print("After copyout: ", wavefunctions[:,0])
+#     print("After copyout: ", wavefunctions[:,0])
 #     input()
        
-    # check orthogonalization 
-    for i in range(numWavefunctions):
-        for j in range(i):
-            overlap=abs(global_dot(wavefunctions[i,:],wavefunctions[j,:],comm))
-            if overlap/numPoints>1e-12:
-                print("overlap between %i and %i = %1.3e." %(i,j,overlap))
-    
-    
-    # check normalization
-    for i in range(numWavefunctions):
-        norm=abs(global_dot(wavefunctions[i,:],wavefunctions[i,:],comm))
-        if (norm-1)/numPoints>1e-12:
-            print("norm-1 of wavefunction %i = %1.3e." %(i,norm-1))
+    check=True
+    # check orthogonalization
+    if check==True:
+        flag=0 
+        for i in range(numWavefunctions):
+            for j in range(i):
+                overlap=abs(global_dot(wavefunctions[i,:],wavefunctions[j,:],comm))
+                if overlap/numPoints>1e-12:
+                    flag=1
+    #                 print("overlap between %i and %i = %1.3e." %(i,j,overlap))
+        if flag==1:
+            print("Error in overlaps.")
+        
+        
+        # check normalization
+        flag=0
+        for i in range(numWavefunctions):
+            norm=abs(global_dot(wavefunctions[i,:],wavefunctions[i,:],comm))
+            if (norm-1)/numPoints>1e-12:
+                flag=1
+    #             print("norm-1 of wavefunction %i = %1.3e." %(i,norm-1))
+        if flag==1:
+            print("Error in norms.")
       
     print("Python time to orthogonalize %i wavefunctions of %i points distributed over %i precessors: %f seconds" %(numWavefunctions,numPoints,size,end-start))  
     

@@ -267,6 +267,9 @@ class Tree(object):
         return
           
     def finalDivideBasedOnNuclei(self, coordinateFile):
+        
+#         rprint(rank, "Dividing cells at nuclei, necessary for singular all-electron potentials.")
+#         exit(-1)
         def refineToMinDepth(self,Cell):
             # Divide the root to the minimum depth, BEFORE dividing at the nuclear positions
             
@@ -1102,7 +1105,7 @@ class Tree(object):
                         Cell.checkDensityInterpolation(divideParameter1, divideParameter2, divideParameter3, divideParameter4)
                         
                     elif divideCriterion=='ParentChildrenIntegral':
-                        rprint(rank, "USING ParentChildrenIntegral##########################################################")
+#                         rprint(rank, "USING ParentChildrenIntegral##########################################################")
                         Cell.refineByCheckingParentChildrenIntegrals(divideParameter1)
                     elif divideCriterion=="VPsiIntegral":
                         Cell.refineByCheckingParentChildrenIntegrals_nonlocal(divideParameter1)

@@ -1820,7 +1820,7 @@ class Cell(object):
 #                     rho += atom.interpolators['density'](r)    # increment rho for each atom  
 #                 except ValueError:
 #                     rho += 0 
- 
+#                 print("About to use atom interpolator for atom ", atom)
                 if atom.coreRepresentation=="AllElectron":
                     rho += atom.interpolators['density'](r)    # increment rho for each atom 
                     Vext += -atom.atomicNumber / r

@@ -384,9 +384,11 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     refinedPtsPerCellCoarse=np.empty(0,dtype=np.int32)
     refinedPtsPerCellFine=np.empty(0,dtype=np.int32)
     
+    
+    
     divideBasedOnNuclei=False
     if divideBasedOnNuclei:
-        rprint(rank, "Dividing cells at nuclei.")
+        rprint(rank, "Going to divide cells at nuclei.")
     else:
         rprint(rank, "Not dividing cells at nuclei. Seems to be okay for pseudopoential mesh.")
     
@@ -442,8 +444,9 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
         localVolume += (refinedCellsDX[i]*refinedCellsDY[i]*refinedCellsDZ[i])
     rprint(0, "rank %i local volume: %f" %(rank,localVolume))
     totalVolume = comm.allreduce(np.sum(localVolume))
+    expectedTotalVolume = (2*XL*2*YL*2*ZL)
     rprint(rank,"Total volume: ", totalVolume)
-    assert abs((2*XL*2*YL*2*ZL) - totalVolume) < 1e-12, "BEFORE LOAD BALANCING: base mesh cells volumes do not add up to the expected total volume.  Expected volume = %f" %(2*XL*2*YL*2*ZL) 
+    assert abs(expectedTotalVolume - totalVolume)/expectedTotalVolume < 1e-14, "BEFORE LOAD BALANCING: base mesh cells volumes do not add up to the expected total volume.  Expected volume = %f" %(2*XL*2*YL*2*ZL) 
       
     
         
@@ -501,7 +504,7 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     totalVolume = comm.allreduce(np.sum(localVolume))
     
     rprint(rank,"Total volume: ", totalVolume)
-    assert abs((2*XL*2*YL*2*ZL) - totalVolume) < 1e-12, "AFTER LOAD BALANCING: base mesh cells volumes do not add up to the expected total volume.  Expected volume = %f" %(2*XL*2*YL*2*ZL)
+    assert abs(expectedTotalVolume - totalVolume)/expectedTotalVolume < 1e-12, "AFTER LOAD BALANCING: base mesh cells volumes do not add up to the expected total volume.  Expected volume = %f" %(2*XL*2*YL*2*ZL)
      
      
     
@@ -571,7 +574,7 @@ def integral_func(X,Y,Z,pow,xL,xH,yL,yH,zL,zH):
     return (xH**(pow+1)/(pow+1) - (xL)**(pow+1)/(pow+1))*(yH-yL)*(zH-zL)
 
 
-def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,fine_order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0, saveTree=False):
+def refineCell_unused(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,fine_order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0, saveTree=False):
     '''
     setUp() gets called before every test below.
     '''
@@ -676,13 +679,15 @@ def refineCellReturnCells(nElectrons,nOrbitals,atoms,coreRepresentation,coordina
     tree = Tree(xmin,xmax,order,ymin,ymax,order,zmin,zmax,order,atoms,coreRepresentation,nElectrons,nOrbitals,additionalDepthAtAtoms=additionalDepthAtAtoms,minDepth=minDepth,gaugeShift=gaugeShift,
                 coordinateFile=srcdir+coordinateFile, inputFile=srcdir+inputFile, fine_order=fine_order)#, iterationOutFile=outputFile)
 
-    if divideBasedOnNuclei:
-        tree.finalDivideBasedOnNuclei(coordinateFile)
+#     if divideBasedOnNuclei:
+#         tree.finalDivideBasedOnNuclei(coordinateFile)
 #     rprint(rank,"Not dividing based on Nuclei.")
     tree.buildTree( initializationType='atomic',divideCriterion=divideCriterion, 
                     divideParameter1=divideParameter1, divideParameter2=divideParameter2, divideParameter3=divideParameter3, divideParameter4=divideParameter4, 
                     savedMesh=savedMesh, restart=restart, printTreeProperties=False,onlyFillOne=False)
     
+    if divideBasedOnNuclei:
+        tree.finalDivideBasedOnNuclei(coordinateFile)
 #     tree.finalDivideBasedOnNuclei(coordinateFile)
     
 #     tree.exportGridpoints
