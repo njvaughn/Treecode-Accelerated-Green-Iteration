@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Green-Iteration-Routines
+cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIteration/src/Green-Iteration-Routines
   
 
 
@@ -23,7 +23,7 @@ cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Green-Iterat
 ###################### INPUT/OUTPUT #################################
 ##################################################################### 
  
-SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
+SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIteration/src/'
 #INPUTFILE='molecularConfigurations/AluminumClusters/shell0AuxiliaryPSP.csv' 
 INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'
@@ -76,8 +76,8 @@ EPSILON=0.0
 TREECODE='True'      
 APPROXIMATIONNAME=lagrange
 TREECODEORDER=7
-THETA=0.8
-BATCHSIZE=5
+THETA=0.7
+BATCHSIZE=50
 MAXPARNODE=50
 
 
