@@ -1,2 +1,13 @@
-# Greens-Functions-Iterative-Methods
-This is a Kohn-Sham Density Functional Theory solver that uses Treecodes to accelerate convolution integrals.  The Kohn-Sham equations are rearranged as Helmholtz equations, which are then converted to integral equations using Greens Functions.  The orbitals and orbital energies are computed with an iterative process called Green Iterations.  
+# Treecode-Accelerated Green Iteration
+
+This repository contains the code used to investigate treecode-accelerated Green iteration for Kohn-Sham Density Functional Theory.
+Descriptions of the method and results can be found in the paper and the thesis.
+
+
+# File Structure
+
+
+# Building
+
+
+# Running
