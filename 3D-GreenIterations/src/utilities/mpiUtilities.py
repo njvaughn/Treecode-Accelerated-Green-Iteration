@@ -1,3 +1,6 @@
+'''
+Useful wrappers for MPI routines, such as global dot products and printing from a single rank.
+'''
 import sys
 import mpi4py.MPI as MPI
 # comm = MPI.COMM_WORLD

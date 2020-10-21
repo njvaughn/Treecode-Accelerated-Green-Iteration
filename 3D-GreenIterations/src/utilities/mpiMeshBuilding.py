@@ -1,3 +1,12 @@
+'''
+mpiMeshBuilding.py
+
+These routines perform the mesh generation in parallel.  Details of how this is done can be found in
+the thesis.  The domain is divided into coarse cells, then each MPI rank starts performing local 
+refinement of these cells.
+Once all cells are refined, zoltan is called to perform the load balancing and localization.
+
+'''
 import sys
 import mpi4py.MPI as MPI
 comm = MPI.COMM_WORLD

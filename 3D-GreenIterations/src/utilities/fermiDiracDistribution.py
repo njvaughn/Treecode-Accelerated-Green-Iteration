@@ -1,7 +1,5 @@
 '''
-Created on Jan 16, 2019
-
-@author: nathanvaughn
+Routines for computing the fractional occupations according to Fermi-Dirac distributions
 '''
 import numpy as np
 from scipy.optimize import broyden1, anderson, brentq

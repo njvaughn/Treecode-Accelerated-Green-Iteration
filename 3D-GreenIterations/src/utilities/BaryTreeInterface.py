@@ -1,3 +1,9 @@
+'''
+BaryTreeInterface.py
+
+These routines provide the interface for TAGI to call BaryTree in order to perform the convolutions on GPUs.
+'''
+
 import numpy as np
 import ctypes
 from mpi4py import MPI

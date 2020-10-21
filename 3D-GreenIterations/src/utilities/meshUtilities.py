@@ -1,7 +1,6 @@
 '''
-Mesh utilities for the adaptive mesh refinement.
+Mesh utilities for the adaptive mesh refinement and clenshaw curtis quadrature.
 
-@author: nathanvaughn
 '''
 from numpy import pi, cos, arccos, sin, sqrt, exp, abs
 import numpy as np

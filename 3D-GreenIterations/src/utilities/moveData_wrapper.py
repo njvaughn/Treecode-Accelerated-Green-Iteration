@@ -1,3 +1,7 @@
+'''
+Wrapper for data movement routines.
+In this case, data movement refers to transfering data between host (CPU) and device (GPU)
+'''
 import numpy as np
 import ctypes
 from mpi4py import MPI

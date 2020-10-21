@@ -1,3 +1,7 @@
+'''
+Wrapper for calling the zoltan load balancing.
+Alternative is to use pyZoltan, although that gave me a lot of trouble.
+'''
 import numpy as np
 import ctypes
 from mpi4py import MPI

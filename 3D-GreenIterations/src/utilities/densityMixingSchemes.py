@@ -1,5 +1,6 @@
 '''
-Density mixing scheme
+Density mixing scheme routines.
+computeNewDensity() performs Anderson mixing and is called during the SCF and Green iterations.
 
 @author: nathanvaughn
 '''
@@ -66,7 +67,7 @@ def computeNewDensity(inputDensities, outputDensities, mixingParameter,weights, 
     :param inputDensity: array of input densities.  After nth SCF, it has shape (M,n) where M is the number of quadrature points
     :param outputDensity: similar to inputDensities
     
-    :returns input density for the (n+1) SCF iteration
+    :returns input density for the (n+1) SCF iteration as determined by ANDERSON mixing.
     '''
     
     (M,n) = np.shape(inputDensities)

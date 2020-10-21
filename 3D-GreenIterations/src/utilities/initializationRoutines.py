@@ -1,3 +1,6 @@
+'''
+Routines for initializing wavefunctions and densities.
+'''
 import numpy as np
 import sys
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')

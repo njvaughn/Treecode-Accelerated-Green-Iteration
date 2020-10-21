@@ -1,3 +1,6 @@
+'''
+Wrapper for interpolation routines (which are implemented in C, with GPU acceleration available)
+'''
 import numpy as np
 import ctypes
 from mpi4py import MPI

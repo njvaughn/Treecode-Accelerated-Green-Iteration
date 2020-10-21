@@ -1,3 +1,7 @@
+'''
+Testing functions for load balancing.  In the end, using Zoltan instead.
+'''
+
 import sys
 import mpi4py.MPI as MPI
 comm = MPI.COMM_WORLD
