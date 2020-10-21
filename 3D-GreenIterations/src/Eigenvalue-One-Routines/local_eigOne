@@ -1,14 +1,14 @@
 #!/bin/bash
 
 
-cd /Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/Green-Iteration-Routines
+cd /Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/Eigenvalue-One-Routines
 
 DOMAIN=20
 MINDEPTH=3
 SINGSUBT=1
 
-SRCDIR='/Users/nathanvaughn/Documents/GitHub/Greens-Functions-Iterative-Methods/3D-GreenIterations/adaptiveMesh/src/'
-INPUTFILE='utilities/molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/'
+INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/berylliumAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/oxygenAtomAuxiliary.csv'
 #INPUTFILE='utilities/molecularConfigurations/carbonMonoxideAuxiliary.csv' 
@@ -22,8 +22,8 @@ SYMMETRICITERATION='False'
 GPUPRESENT='False'
  
 TREECODE='True'      
-MAXPARNODE=4000
-BATCHSIZE=4000   
+MAXPARNODE=2000
+BATCHSIZE=2000   
  
  
 GAUSSIANALPHA=1.0 

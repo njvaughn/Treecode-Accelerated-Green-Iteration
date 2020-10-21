@@ -2,6 +2,8 @@ import numpy as np
 import ctypes
 from mpi4py import MPI
 
+from mpiUtilities import rprint
+
 
 
 # try:
@@ -28,56 +30,56 @@ from mpi4py import MPI
 
 # _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
 try: 
-    _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.so')
+    _cpu_treecodeRoutines = ctypes.CDLL('libBaryTree_cpu.so')
 except OSError:
-        _cpu_treecodeRoutines = ctypes.CDLL('libtreelib-cpu.dylib')
+        _cpu_treecodeRoutines = ctypes.CDLL('libBaryTree_cpu.dylib')
         
 try: 
-    _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
+    _gpu_treecodeRoutines = ctypes.CDLL('libBaryTree_gpu.so')
 except OSError:
     try:
-        _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.dylib')
+        _gpu_treecodeRoutines = ctypes.CDLL('libBaryTree_gpu.dylib')
     except OSError:
-        print("Could not load GPU treecode library.")  
+        print("Could not load GPU treecode library.") 
+        
+# _gpu_treecodeRoutines = ctypes.CDLL('libtreelib-gpu.so')
     
     
         
-# try:
-#     _gpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
-#             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
-#             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
-#             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_double, 
-#             ctypes.c_int, ctypes.c_double,  ctypes.c_int )
-# except NameError:
-#     pass
+""" Set argtypes of the wrappers. """
 try:
-    _gpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
+    _gpu_treecodeRoutines.BaryTreeInterface.argtypes = ( ctypes.c_int, ctypes.c_int,
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
-            ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_double,  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
-            ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int ) 
+            ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_int, ctypes.POINTER(ctypes.c_double),  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
+            ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int,  ctypes.c_int ) 
 except NameError:
-    pass
+    print("Could not set argtypes of _gpu_treecodeRoutines")
+
 try:
-    _cpu_treecodeRoutines.treedriverWrapper.argtypes = ( ctypes.c_int, ctypes.c_int,
+    _cpu_treecodeRoutines.BaryTreeInterface.argtypes = ( ctypes.c_int, ctypes.c_int,
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double),
-            ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_double,  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
-            ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int ) 
+            ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_int, ctypes.POINTER(ctypes.c_double),  ctypes.POINTER(ctypes.c_char), ctypes.POINTER(ctypes.c_char),
+            ctypes.c_int, ctypes.c_double,  ctypes.c_int,  ctypes.c_int,  ctypes.c_int ) 
 except NameError:
-    pass
+    print("Could not set argtypes of _cpu_treecodeRoutines")
 
 print('_treecodeRoutines set.')
+
 
 
 
 def callTreedriver(numTargets, numSources, 
                    targetX, targetY, targetZ, targetValue, 
                    sourceX, sourceY, sourceZ, sourceValue, sourceWeight,
-                   kernelName, kappa, singularityHandling, approximationName, order, theta, maxParNode, batchSize, GPUversion):
+                   kernelName, numberOfKernelParameters, kernelParameters, singularityHandling, approximationName, order, theta, maxParNode, batchSize, GPUversion, verbosity):
+    '''
+    python function which creates pointers to the arrays and calls BaryTreeInterface.
+    returns the results array.
+    '''
 
    
-    global _treecodeRoutines
     c_double_p = ctypes.POINTER(ctypes.c_double)
 
     
@@ -92,6 +94,8 @@ def callTreedriver(numTargets, numSources,
     sourceZ_p = sourceZ.ctypes.data_as(c_double_p)  
     sourceValue_p =  sourceValue.ctypes.data_as(c_double_p)
     sourceWeight_p = sourceWeight.ctypes.data_as(c_double_p)
+
+    kernelParameters_p = kernelParameters.ctypes.data_as(c_double_p)
     
     resultArray = np.zeros(numTargets)
     resultArray_p = resultArray.ctypes.data_as(c_double_p)
@@ -101,25 +105,21 @@ def callTreedriver(numTargets, numSources,
     b_singularityHandling = singularityHandling.encode('utf-8')
     
     if GPUversion==True:
-        _gpu_treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
+        _gpu_treecodeRoutines.BaryTreeInterface(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
                                                      targetX_p, targetY_p, targetZ_p, targetValue_p,
                                                      sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
-                                                     resultArray_p, b_kernelName, ctypes.c_double(kappa),
+                                                     resultArray_p, b_kernelName, ctypes.c_int(numberOfKernelParameters), kernelParameters_p,
                                                      b_singularityHandling, b_approximationName,
-                                                     ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode), ctypes.c_int(batchSize) )
+                                                     ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode), ctypes.c_int(batchSize), ctypes.c_int(verbosity) )
     elif GPUversion==False: # No gpu present
-#         print('No GPU, calling CPU treecode.')
-        _cpu_treecodeRoutines.treedriverWrapper(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
+        _cpu_treecodeRoutines.BaryTreeInterface(ctypes.c_int(numTargets),  ctypes.c_int(numSources),
                                                      targetX_p, targetY_p, targetZ_p, targetValue_p,
                                                      sourceX_p, sourceY_p, sourceZ_p, sourceValue_p, sourceWeight_p,
-                                                     resultArray_p, b_kernelName, ctypes.c_double(kappa),
+                                                     resultArray_p, b_kernelName, ctypes.c_int(numberOfKernelParameters), kernelParameters_p,
                                                      b_singularityHandling, b_approximationName,
-                                                     ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode), ctypes.c_int(batchSize) ) 
-#         print('Control returned to python...') 
+                                                     ctypes.c_int(order), ctypes.c_double(theta), ctypes.c_int(maxParNode), ctypes.c_int(batchSize), ctypes.c_int(verbosity) ) 
     else: 
         print("What should GPUversion be set to in the wrapper?")
-        return 
+        exit(-1) 
     
-
-
     return resultArray

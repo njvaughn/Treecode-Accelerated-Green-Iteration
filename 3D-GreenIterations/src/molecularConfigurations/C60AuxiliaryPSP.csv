@@ -1,0 +1,9 @@
+../src/molecularConfigurations/C60.csv
+../src/molecularConfigurations/C60ReferenceEigenvaluesPSP.csv
+/restartFiles/C60/
+-1.2288291042240243e+02 # band
+ 0.0
+-9.2352100819176314e+01 # exchange
+-1.3217085195181673e+01 # correlation
+-5.0952204027951581e+02 # local electrostatics 
+-3.4214586464388969e+02 # total energy

@@ -1,0 +1,9 @@
+../src/molecularConfigurations/AluminumClusters/shell1.csv
+../src/molecularConfigurations/aluminumReferenceEigenvaluesPSP.csv
+/restartFiles/aluminum/
+-10.617887417886729 # band
+ 0.0 # Hartree
+-10.948535361345698 # exchange
+-2.1315334368227750 # correlation
+-31.897625863492991 # local electrostatic               
+-30.162803972050458 # total energy

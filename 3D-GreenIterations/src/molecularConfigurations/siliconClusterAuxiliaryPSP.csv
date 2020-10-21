@@ -1,0 +1,12 @@
+../src/molecularConfigurations/siliconCluster.csv
+../src/molecularConfigurations/siliconClusterReferenceEigenvaluesPSP.csv
+/home/njvaughn/results_Be/results.csv
+000 # Band energy
+-4.9790235236531926e+00 # Local electrostatic
+-7.9373964146605602e-01 # Exchange
+-1.6400501121632932e-01 # Correlation
+0.0 				
+000  # Total energy
+
+
+# obtained with DFT-FE, order 5, h=0.3, temp 500.

@@ -1,0 +1,10 @@
+../src/molecularConfigurations/N.csv
+../src/molecularConfigurations/NReferenceEigenvalues.csv
+/home/njvaughn/results_N2/results.csv
+-8.1232305760491457e+00
+ 1.4309060170370618e+01
+-2.2903921833555341e+00
+-2.2343205529440757e-01
+7.115210167512 				# Hartree from NWChem pc-4
+-1.4446199722277111e+01 # tight order 5
+

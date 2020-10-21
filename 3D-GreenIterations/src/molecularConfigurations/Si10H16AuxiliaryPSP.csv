@@ -1,0 +1,12 @@
+../src/molecularConfigurations/Si10H16.csv
+../src/molecularConfigurations/Si10H16ReferenceEigenvaluesPSP.csv
+/restartFiles/Si10H16/
+-1.9984776519815437e+01 # Band energy
+0.0                     # Kinetic
+-1.4300136180371377e+01 # Exchange
+-2.5997557066017238e+00 # Correlation
+-6.2320254056897980e+01 # Local electrostatic
+-4.8737699199835561e+01  # Total energy
+
+
+# obtained with DFT-FE, order 5, h=0.25, temp 100.

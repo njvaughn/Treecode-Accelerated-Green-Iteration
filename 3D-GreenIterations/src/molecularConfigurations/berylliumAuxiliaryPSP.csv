@@ -1,0 +1,12 @@
+../src/molecularConfigurations/berylliumAtom.csv
+../src/molecularConfigurations/berylliumAtomReferenceEigenvaluesPSP.csv
+/restartFiles/Beryllium/
+-8.1250053053130067e+00
+ 0.0
+-1.5991132093119815e+00
+-2.0557675508852308e-01
+0.0 				
+-13.038902918810440
+
+
+# obtained with DFT-FE, order 5, h=0.3, temp 500.

@@ -4,9 +4,9 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-from cyarray.api import UIntArray, DoubleArray
-from pyzoltan.core import zoltan
-from pyzoltan.core import zoltan_comm
+# from cyarray.api import UIntArray, DoubleArray
+# from pyzoltan.core import zoltan
+# from pyzoltan.core import zoltan_comm
 
 import numpy as np
 
@@ -45,7 +45,249 @@ def plot_points_single_proc(x, y, z, rank, title):
 #     plt.savefig(savedir+filename)
 
 
-def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
+
+def loadBalance_manual(x,y,z):
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    
+    assert ((size==1) or (size%2==0)), "manual load balancer needs size%2==0 or size=1"
+    
+    xmax=np.max(x)
+    xmin=np.min(x)
+    
+    ymax=np.max(y)
+    ymin=np.min(y)
+    
+    zmax=np.max(z)
+    zmin=np.min(z)
+    
+#     subdomains=1
+#     cycle=0
+#     while subdomains<size:
+#         subdomains*=
+#         if cycle%3==0:   # cut the x
+#             pass
+#         elif cycle%3==1: # cut in y
+#             pass
+#         elif cycle%3==2: # cut in z
+#             pass
+
+    if size==1:
+        bounds=[xmin, xmax, ymin, ymax, zmin, zmax] # 02/02/02
+    elif size==2:
+        xmid = (xmax+xmin)/2
+        if rank==0:
+            bounds=[xmin, xmid, ymin, ymax, zmin, zmax] # 01/02/02
+        elif rank==1:
+            bounds=[xmid, xmax, ymin, ymax, zmin, zmax] # 12/02/02
+    
+    elif size==4:
+        xmid = (xmax+xmin)/2
+        ymid = (ymax+ymin)/2
+        if rank==0:
+            bounds=[xmin, xmid, ymin, ymid, zmin, zmax] # 01/01/02
+        elif rank==1:
+            bounds=[xmin, xmid, ymid, ymax, zmin, zmax] # 01/12/02
+        elif rank==2:
+            bounds=[xmid, xmax, ymin, ymid, zmin, zmax] # 12/01/02
+        elif rank==3:
+            bounds=[xmid, xmax, ymid, ymax, zmin, zmax] # 12/12/02
+            
+            
+    elif size==8:
+        xmid = (xmax+xmin)/2
+        ymid = (ymax+ymin)/2
+        zmid = (zmax+zmin)/2
+        if rank==0:
+            bounds=[xmin, xmid, ymin, ymid, zmin, zmid] # 01/01/01
+        elif rank==1:
+            bounds=[xmin, xmid, ymid, ymax, zmin, zmid] # 01/12/01
+        elif rank==2:
+            bounds=[xmid, xmax, ymin, ymid, zmin, zmid] # 12/01/01
+        elif rank==3:
+            bounds=[xmid, xmax, ymid, ymax, zmin, zmid] # 12/12/01
+        elif rank==4:
+            bounds=[xmin, xmid, ymin, ymid, zmid, zmax] # 01/01/12
+        elif rank==5:
+            bounds=[xmin, xmid, ymid, ymax, zmid, zmax] # 01/12/12
+        elif rank==6:
+            bounds=[xmid, xmax, ymin, ymid, zmid, zmax] # 12/01/12
+        elif rank==7:
+            bounds=[xmid, xmax, ymid, ymax, zmid, zmax] # 12/12/12
+    
+    elif size==16:
+        xmid = (xmax+xmin)/2
+        xmidL = (xmin+xmid)/2
+        xmidR = (xmax+xmid)/2
+        ymid = (ymax+ymin)/2
+        zmid = (zmax+zmin)/2
+        if rank==0:
+            bounds=[xmin, xmidL, ymin, ymid, zmin, zmid] # 01/01/01
+        elif rank==1:
+            bounds=[xmin, xmidL, ymid, ymax, zmin, zmid] # 01/12/01
+        elif rank==2:
+            bounds=[xmidL, xmid, ymin, ymid, zmin, zmid] # 12/01/01
+        elif rank==3:
+            bounds=[xmidL, xmid, ymid, ymax, zmin, zmid] # 12/12/01
+        elif rank==4:
+            bounds=[xmin, xmidL, ymin, ymid, zmid, zmax] # 01/01/12
+        elif rank==5:
+            bounds=[xmin, xmidL, ymid, ymax, zmid, zmax] # 01/12/12
+        elif rank==6:
+            bounds=[xmidL, xmid, ymin, ymid, zmid, zmax] # 12/01/12
+        elif rank==7:
+            bounds=[xmidL, xmid, ymid, ymax, zmid, zmax] # 12/12/12
+        
+        elif rank==8:
+            bounds=[xmid, xmidR, ymin, ymid, zmin, zmid] # 01/01/01
+        elif rank==9:
+            bounds=[xmid, xmidR, ymid, ymax, zmin, zmid] # 01/12/01
+        elif rank==10:
+            bounds=[xmidR, xmax, ymin, ymid, zmin, zmid] # 12/01/01
+        elif rank==11:
+            bounds=[xmidR, xmax, ymid, ymax, zmin, zmid] # 12/12/01
+        elif rank==12:
+            bounds=[xmid, xmidR, ymin, ymid, zmid, zmax] # 01/01/12
+        elif rank==13:
+            bounds=[xmid, xmidR, ymid, ymax, zmid, zmax] # 01/12/12
+        elif rank==14:
+            bounds=[xmidR, xmax, ymin, ymid, zmid, zmax] # 12/01/12
+        elif rank==15:
+            bounds=[xmidR, xmax, ymid, ymax, zmid, zmax] # 12/12/12
+            
+    elif size==32:
+        
+        fraction=4
+        xmid = (xmax+xmin)/2
+        xmidL = (xmin+fraction*xmid)/(fraction+1)
+        xmidR = (xmax+fraction*xmid)/(fraction+1)
+        ymid = (ymax+ymin)/2
+        ymidL = (ymin+fraction*ymid)/(fraction+1)
+        ymidR = (ymax+fraction*ymid)/(fraction+1)
+        zmid = (zmax+zmin)/2
+        if rank==0:
+            bounds=[xmin, xmidL, ymin, ymidL, zmin, zmid] # 01/01/01
+        elif rank==1:
+            bounds=[xmin, xmidL, ymidL, ymid, zmin, zmid] # 01/12/01
+        elif rank==2:
+            bounds=[xmidL, xmid, ymin, ymidL, zmin, zmid] # 12/01/01
+        elif rank==3:
+            bounds=[xmidL, xmid, ymidL, ymid, zmin, zmid] # 12/12/01
+        elif rank==4:
+            bounds=[xmin, xmidL, ymin, ymidL, zmid, zmax] # 01/01/12
+        elif rank==5:
+            bounds=[xmin, xmidL, ymidL, ymid, zmid, zmax] # 01/12/12
+        elif rank==6:
+            bounds=[xmidL, xmid, ymin, ymidL, zmid, zmax] # 12/01/12
+        elif rank==7:
+            bounds=[xmidL, xmid, ymidL, ymid, zmid, zmax] # 12/12/12
+        
+        elif rank==8:
+            bounds=[xmid, xmidR, ymin, ymidL, zmin, zmid] # 01/01/01
+        elif rank==9:
+            bounds=[xmid, xmidR, ymidL, ymid, zmin, zmid] # 01/12/01
+        elif rank==10:
+            bounds=[xmidR, xmax, ymin, ymidL, zmin, zmid] # 12/01/01
+        elif rank==11:
+            bounds=[xmidR, xmax, ymidL, ymid, zmin, zmid] # 12/12/01
+        elif rank==12:
+            bounds=[xmid, xmidR, ymin, ymidL, zmid, zmax] # 01/01/12
+        elif rank==13:
+            bounds=[xmid, xmidR, ymidL, ymid, zmid, zmax] # 01/12/12
+        elif rank==14:
+            bounds=[xmidR, xmax, ymin, ymidL, zmid, zmax] # 12/01/12
+        elif rank==15:
+            bounds=[xmidR, xmax, ymidL, ymid, zmid, zmax] # 12/12/12
+        
+        elif rank==16:
+            bounds=[xmin, xmidL, ymid, ymidR, zmin, zmid] # 01/01/01
+        elif rank==17:
+            bounds=[xmin, xmidL, ymidR, ymax, zmin, zmid] # 01/12/01
+        elif rank==18:
+            bounds=[xmidL, xmid, ymid, ymidR, zmin, zmid] # 12/01/01
+        elif rank==19:
+            bounds=[xmidL, xmid, ymidR, ymax, zmin, zmid] # 12/12/01
+        elif rank==20:
+            bounds=[xmin, xmidL, ymid, ymidR, zmid, zmax] # 01/01/12
+        elif rank==21:
+            bounds=[xmin, xmidL, ymidR, ymax, zmid, zmax] # 01/12/12
+        elif rank==22:
+            bounds=[xmidL, xmid, ymid, ymidR, zmid, zmax] # 12/01/12
+        elif rank==23:
+            bounds=[xmidL, xmid, ymidR, ymax, zmid, zmax] # 12/12/12
+        
+        elif rank==24:
+            bounds=[xmid, xmidR, ymid, ymidR, zmin, zmid] # 01/01/01
+        elif rank==25:
+            bounds=[xmid, xmidR, ymidR, ymax, zmin, zmid] # 01/12/01
+        elif rank==26:
+            bounds=[xmidR, xmax, ymid, ymidR, zmin, zmid] # 12/01/01
+        elif rank==27:
+            bounds=[xmidR, xmax, ymidR, ymax, zmin, zmid] # 12/12/01
+        elif rank==28:
+            bounds=[xmid, xmidR, ymid, ymidR, zmid, zmax] # 01/01/12
+        elif rank==29:
+            bounds=[xmid, xmidR, ymidR, ymax, zmid, zmax] # 01/12/12
+        elif rank==30:
+            bounds=[xmidR, xmax, ymid, ymidR, zmid, zmax] # 12/01/12
+        elif rank==31:
+            bounds=[xmidR, xmax, ymidR, ymax, zmid, zmax] # 12/12/12
+    
+    else:
+        print("Not set up for domain decomosition of size %i" %size)
+    
+#     elif size==16:
+#         pass
+#     elif size==32:
+#         pass
+
+    print("Rank %i owns " %rank, bounds)
+    comm.barrier()
+    
+    
+    cells = []
+    cellsX = []
+    cellsY = []
+    cellsZ = []
+    
+    for i in range(len(x)):
+        if ( (x[i]>=bounds[0]) and (x[i]<=bounds[1]) ):
+            if ( (y[i]>=bounds[2]) and (y[i]<=bounds[3]) ):
+                if ( (z[i]>=bounds[4]) and (z[i]<=bounds[5]) ):
+                    cellsX.append(x[i])
+                    cellsY.append(y[i])
+                    cellsZ.append(z[i])
+#     exit(-1)
+    return cellsX, cellsY, cellsZ
+        
+
+
+def loadBalance_bins(x,y,z,atoms):
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+        
+    xmax=np.max(x)
+    xmin=np.min(x)
+    
+    ymax=np.max(y)
+    ymin=np.min(y)
+    
+    zmax=np.max(z)
+    zmin=np.min(z)
+    
+    # construct subdomains that each contain an (almost) equal number of atoms.
+    
+    atomsPerBin=int(len(atoms))/size
+    
+    
+    
+    
+    
+    
+
+def loadBalance(x,y,z,data=None,LBMETHOD='RCB',verbosity=0):
     '''
     Each processor calls loadBalance.  Using zoltan, the particles are balanced and redistributed as necessary.  Returns the balanced arrays.
     Does not require each processor to have started with the same number of particles.
@@ -99,25 +341,34 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
     pz.Zoltan_Set_Param('DEBUG_LEVEL', '0')
     pz.Zoltan_Set_Param('IMBALANCE_TOL','1.1')
     pz.Zoltan_LB_Balance()
-    if ( (verbosity>0) and (rank==0) ): print("Load balancer complete.")
+    if ( (verbosity>0) and (rank==0) ): print("Zoltan_LB_Balance complete.")
     
     # get the new assignments
     my_global_ids = list( gid )
     original_my_global_ids = np.copy(my_global_ids)
+    if ( (verbosity>0) and (rank==0) ): print("new assignments set.")   
     
     # remove points to be exported
-    for i in range(pz.numExport):
-        my_global_ids.remove( pz.exportGlobalids[i] )
+#     for i in range(pz.numExport):
+#         if ( (verbosity>0) and (rank==0) ): print("removing: ",pz.exportGlobalids[i])
+#         my_global_ids.remove( pz.exportGlobalids[i] )
+    if ( (verbosity>0)): print("num export = %i, len my_global_ids = %i." %(pz.numExport,len(my_global_ids)))   
+    if ( (verbosity>0)): print("type of pz.exportGlobalids:", type(pz.exportGlobalids))   
+    if ( (verbosity>0)): print("type of my_global_ids:", type(my_global_ids))   
+    
+    my_global_ids = [x for x in my_global_ids if x not in pz.exportGlobalids]
     afterExport_my_global_ids = np.copy(my_global_ids)
     
-    comm.barrier()    
+    if ( (verbosity>0)): print("removed points to be exported from rank %i." %rank)   
+    comm.barrier() 
     ## Communicate the changes
     
     # create the ZComm object
     nsend=len(pz.exportProcs)
     tag = np.int32(0)
     zcomm = zoltan_comm.ZComm(comm, tag=tag, nsend=nsend, proclist=pz.exportProcs.get_npy_array())
-    
+    if ( (verbosity>0) and (rank==0) ): print("zcomm object set.")   
+
     # the data to send and receive
     send_x=np.zeros(nsend)
     send_y=np.zeros(nsend)
@@ -137,6 +388,8 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
     recv_z = np.ones( zcomm.nreturn )
     if dataExists==True: recv_data = np.ones( zcomm.nreturn )
     
+    if ( (verbosity>0) and (rank==0) ): print("send and receive buffers set.")   
+
     # use zoltan to exchange data
     comm.barrier() 
     zcomm.Comm_Do(send_x, recv_x)
@@ -144,6 +397,7 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
     zcomm.Comm_Do(send_z, recv_z)
     if dataExists==True: zcomm.Comm_Do(send_data, recv_data)
 
+    if ( (verbosity>0) and (rank==0) ): print("Comm_Do sends and received complete.")
     
     # Grab particles that remain on this processor.
     original_x = np.zeros(len(afterExport_my_global_ids))
@@ -159,6 +413,8 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
         for i in range(len(afterExport_my_global_ids)):
             original_data[i] = data[ afterExport_my_global_ids[i] - localOffset]
     
+    if ( (verbosity>0) and (rank==0) ): print("Grabbed original particles that remained local.")
+    
     # Append the received particles
     balanced_x = np.append( original_x, np.copy(recv_x))
     balanced_y = np.append( original_y, np.copy(recv_y))
@@ -166,8 +422,9 @@ def loadBalance(x,y,z,data=None,LBMETHOD='HSFC',verbosity=0):
     if dataExists==True: 
         balanced_data = np.append( original_data, np.copy(recv_data))
     
+    if ( (verbosity>0) and (rank==0) ): print("balanced arrays set.  Returning.")
     comm.barrier() 
-    print("Rank %i started with %i points.  After load balancing it has %i points." %(rank,initialNumPoints,len(balanced_x)))
+#     print("Rank %i started with %i points.  After load balancing it has %i points." %(rank,initialNumPoints,len(balanced_x)))  
     
     if dataExists==True: 
         return balanced_x,balanced_y,balanced_z, balanced_data

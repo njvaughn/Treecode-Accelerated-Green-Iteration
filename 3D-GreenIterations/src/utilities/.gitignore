@@ -1,1 +1,11 @@
 /savedMeshes/
+/Orthogonalization.o
+/libMoveData.so
+/libOrthogonalization_cpu.so
+/libOrthogonalization_gpu.so
+/moveData.o
+/cpu_testParallelOrthogonalization
+/gpu_testParallelOrthogonalization
+/libInterpolation_cpu.so
+/testParallelOrthogonalization.o
+/ZoltanRCB.so

@@ -1,9 +1,10 @@
 import sys
 import mpi4py.MPI as MPI
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-size = comm.Get_size()
+# comm = MPI.COMM_WORLD
+# rank = comm.Get_rank()
+# size = comm.Get_size()
 import numpy as np
+import inspect
 
 
 
@@ -69,18 +70,25 @@ def scatterArrays(x,y,z,w,comm, verbose=0):
     return xloc, yloc, zloc, wloc
     
     
-def rprint(message, message2=None, message3=None):
+def rprint(rank, message, message2=None, message3=None):
     '''
     Stands for root-print, meaning only the root proc will print the message.
     :param message:
     '''
     if message2 is not None:
         if message3 is not None:
-            if rank==0: print(message, message2, message3)
+            if rank==0: print("[", inspect.stack()[1][3], "] ", message, message2, message3)
         else:
-            if rank==0: print(message, message2)
+            if rank==0: print("[", inspect.stack()[1][3], "] ", message, message2)
     else:
-        if rank==0: print(message)
+#         if rank==0: print("[", __file__, "] ", message)
+        if rank==0: print("[", inspect.stack()[1][3], "] ", message)
+        
+                
+        
+
+
+
 
 
 if __name__=="__main__":
