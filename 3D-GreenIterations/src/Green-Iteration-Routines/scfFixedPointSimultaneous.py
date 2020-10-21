@@ -1,3 +1,12 @@
+'''
+scfFixedPointSimultaneous.py
+
+Performs Green iteration update to each wavefunction before orthogonalizing the set.
+Typically this is very wasteful, as the higher energy states don't converge 
+until the lower energy states have converged tightly.
+This approach is less efficient than the sequential version.
+'''
+
 import numpy as np
 import os
 import csv

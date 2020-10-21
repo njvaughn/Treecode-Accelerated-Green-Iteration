@@ -1,3 +1,10 @@
+'''
+scfFixedPoint.py
+
+Contains the primary routines for performing the SCF iteration.
+scfFixedPoint() is called from main, and it calls greenIterationFixedPoint() at each step.
+'''
+
 import numpy as np
 import os
 import csv
@@ -8,10 +15,7 @@ import sys
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
 sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
 sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
-from scipy.optimize import root as scipyRoot
-from scipy.optimize.nonlin import BroydenFirst, KrylovJacobian
-from scipy.optimize.nonlin import InverseJacobian
-from scipy.optimize import broyden1, anderson, brentq
+from scipy.optimize import brentq
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -24,10 +28,10 @@ import interpolation_wrapper
 from fermiDiracDistribution import computeOccupations
 import densityMixingSchemes as densityMixing
 import BaryTreeInterface as BT
-# from orthogonalizationRoutines import modifiedGramSchmidt_singleOrbital_transpose as mgs
 import orthogonalization_wrapper as ORTH
 import moveData_wrapper as MOVEDATA
 from greenIterationFixedPoint import greensIteration_FixedPoint_Closure
+
 
 
 def print_eigs_and_occupations(eigs,occupations,errors):
@@ -45,13 +49,10 @@ KB = 1/315774.6
 Sigma = Temperature*KB
 
 def fermiObjectiveFunctionClosure(Energies,nElectrons):
+
     def fermiObjectiveFunction(fermiEnergy):
         exponentialArg = (Energies['orbitalEnergies']-fermiEnergy)/Sigma
         temp = 1/(1+np.exp( exponentialArg ) )
-#         rprint(rank, "input fermiEnergy = ", fermiEnergy)
-#         rprint(rank, "Energies['orbitalEnergies'] = ", Energies['orbitalEnergies'])
-#         rprint(rank, "exponentialArg = ", exponentialArg)
-#         rprint(rank, "temp = ", temp)
         
         return nElectrons - 2 * np.sum(temp)
     return fermiObjectiveFunction
@@ -59,8 +60,7 @@ def fermiObjectiveFunctionClosure(Energies,nElectrons):
 
 def clenshawCurtisNormClosure(W):
     def clenshawCurtisNorm(psi):
-        appendedWeights = np.append(W, 10.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
-#         appendedWeights = np.append(np.zeros_like(W), 10.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
+        appendedWeights = np.append(W, 1.0)   # NOTE: The appended weight was previously set to 10, giving extra weight to the eigenvalue 
         norm = np.sqrt( global_dot( psi, psi*appendedWeights, comm ) )
         return norm
     return clenshawCurtisNorm
@@ -69,8 +69,6 @@ def clenshawCurtisNormClosureWithoutEigenvalue(W):
     def clenshawCurtisNormWithoutEigenvalue(psi):
         appendedWeights = np.append(W, 0.0)
         norm = np.sqrt( global_dot( psi, psi*appendedWeights, comm ) )
-#         norm = np.sqrt( np.sum( psi*psi*appendedWeights ) )
-#         norm = np.sqrt( np.sum( psi[-1]*psi[-1]*appendedWeights[-1] ) )
         return norm
     return clenshawCurtisNormWithoutEigenvalue
     
@@ -158,13 +156,9 @@ def scfFixedPointClosure(scf_args):
         
         NLCC_RHO = RHO+CORECHARGERHO
         
-#         if np.max(CORECHARGERHO)>0.0:
-#             rprint(rank,"CORECHARGERHO is not zero...")
-#             return
         
         
         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
-#         scf_args['GItolerancesIdx']=0
         
         scf_args['currentGItolerance']=GItolerances[scf_args['GItolerancesIdx']]
         rprint(rank,"Current GI toelrance: ", scf_args['currentGItolerance'])
@@ -181,10 +175,7 @@ def scfFixedPointClosure(scf_args):
             twoMesh=True
         else:
             twoMesh=False
-#             
-#         twoMesh=True
-#         rprint(rank,"Setting twoMesh=True in SCF iteration so that the Hartree energy is computed more accurately.  Might not be necessary, but want to check results for C60 before convergence.")
-            
+
             
         SCFindex = SCFcount
         if SCFcount>TwoMeshStart:
@@ -788,74 +779,7 @@ def scfFixedPointClosure(scf_args):
         if verbosity>0: rprint(rank,'Integrated density: ', integratedDensity)
         if verbosity>0: rprint(rank,'Density Residual ', densityResidual)
         
-        
-#         ## Compute new Hartree potential and energy
-# #         if twoMesh:  # idea: only turn on the two mesh if beyond 4 SCF iterations
-# #             numSources = len(Xf)
-# #             sourceX=Xf
-# #             sourceY=Yf
-# #             sourceZ=Zf
-# #             sourceRHO=RHOf
-# #             sourceW=Wf
-# #         else: 
-#         numSources = len(X)
-#         sourceX=X
-#         sourceY=Y
-#         sourceZ=Z
-#         sourceRHO=newDensity
-#         sourceW=W
-# 
-#         if verbosity>0: rprint(rank,"Performing Hartree solve on %i mesh points" %numSources)
-# #             rprint(rank,"Coarse order ", order)
-# #             rprint(rank,"Fine order   ", fine_order)
-# #             approximation = BT.Approximation.LAGRANGE
-# #             singularity   = BT.Singularity.SUBTRACTION
-# #             computeType   = BT.ComputeType.PARTICLE_CLUSTER
-# #             
-#         kernel = BT.Kernel.COULOMB
-#         if singularityHandling=="subtraction":
-#             singularity=BT.Singularity.SUBTRACTION
-# #         elif singularityHandling=="skipping":
-# #             singularity=BT.Singularity.SKIPPING
-#         else:
-#             rprint(rank, "What should singularityHandling be?")
-#             exit(-1)
-#         
-#         if approximationName=="lagrange":
-#             approximation=BT.Approximation.LAGRANGE
-#         elif approximationName=="hermite":
-#             approximation=BT.Approximation.HERMITE
-#         else:
-#             rprint(rank, "What should approximationName be?")
-#             exit(-1)
-#         
-#         computeType=BT.ComputeType.PARTICLE_CLUSTER
-#             
-# 
-#         comm.barrier()
-#         V_hartreeNew = BT.callTreedriver(  
-#                                         nPoints, numSources, 
-#                                         np.copy(X), np.copy(Y), np.copy(Z), np.copy(newDensity), 
-#                                         np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(newDensity), np.copy(sourceW),
-#                                         kernel, numberOfKernelParameters, kernelParameters, 
-#                                         singularity, approximation, computeType,
-#                                         treecodeDegree, theta, maxPerSourceLeaf, maxPerSourceLeaf,
-#                                         GPUpresent, treecode_verbosity
-#                                         )
-#         
-# 
-#         if verbosity>0: rprint(rank,'Hartree Convolution time: ', MPI.Wtime()-start)
-#         
-#         
-#         
-#         """ 
-#         Compute the new orbital and total energies 
-#         """
-#         
-#         ## Energy update after computing Vhartree
-#         
-#         comm.barrier()    
-#         Energies['Ehartree'] = 1/2*global_dot(W, RHO * V_hartreeNew, comm)
+    
         
         
         Energies["Repulsion"] = global_dot(newDensity, Vext_local*W, comm)
@@ -898,11 +822,6 @@ def scfFixedPointClosure(scf_args):
         
         
             
-    #         if vtkExport != False:
-    #             filename = vtkExport + '/mesh%03d'%(SCFcount-1) + '.vtk'
-    #             Energies['Etotal']xportGridpoints(filename)
-    
-        
         printEachIteration=True
     
         if printEachIteration==True:
@@ -932,50 +851,56 @@ def scfFixedPointClosure(scf_args):
             rprint(rank,'Reducing GI tolerance to ', scf_args['currentGItolerance'])
         
         
-        ## Write the restart files
-        ## COMMENTED OUT FOR NOW UNTIL RESTART CAPABILITY IS SUPPORTED FOR DOMAIN DECOMPOSITION APPROACH
-#          
-#         # save arrays 
-#         try:
-#             print("wavefunction file = ", wavefunctionFile)
-#             np.save(wavefunctionFile, orbitals)
-#              
-#     #             sources = tree.extractLeavesDensity()
-#             np.save(densityFile, RHO)
-#             np.save(outputDensityFile, outputDensities)
-#             np.save(inputDensityFile, inputDensities)
-#              
-#             np.save(vHartreeFile, V_hartreeNew)
-#              
-#              
-#              
-#             # make and save dictionary
-#             auxiliaryRestartData = {}
-#             auxiliaryRestartData['SCFcount'] = SCFcount
-#             auxiliaryRestartData['totalIterationCount'] = Times['totalIterationCount']
-#             auxiliaryRestartData['GItolerancesIdx'] = scf_args['GItolerancesIdx']
-#             auxiliaryRestartData['eigenvalues'] = Energies['orbitalEnergies']
-#             auxiliaryRestartData['Eold'] = Energies['Eold']
-#      
-#             np.save(auxiliaryFile, auxiliaryRestartData)
-#         except FileNotFoundError as e:
-#             rprint(rank,"FileNotFoundError: ", e)
-#             exit(-1)
-# #             pass
-                
-        
-        
-#         if plotSliceOfDensity==True:
-#     #             densitySliceSavefile = densityPlotsDir+'/iteration'+str(SCFcount)
-#             r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
+            ## Write the restart files
+            """
+            ## Restart capability was developed for serial calculations.  
+            ## It does not currently support restart of parallel calculations.
 
-#         
-#     #
-#             densities = np.load(densitySliceSavefile+'.npy')
-#             densities = np.concatenate( (densities, np.reshape(rho, (numpts,1))), axis=1)
-#             np.save(densitySliceSavefile,densities)
+
+          
+        # save arrays 
+        try:
+            print("wavefunction file = ", wavefunctionFile)
+            np.save(wavefunctionFile, orbitals)
+              
+    #             sources = tree.extractLeavesDensity()
+            np.save(densityFile, RHO)
+            np.save(outputDensityFile, outputDensities)
+            np.save(inputDensityFile, inputDensities)
+              
+            np.save(vHartreeFile, V_hartreeNew)
+              
+              
+              
+            # make and save dictionary
+            auxiliaryRestartData = {}
+            auxiliaryRestartData['SCFcount'] = SCFcount
+            auxiliaryRestartData['totalIterationCount'] = Times['totalIterationCount']
+            auxiliaryRestartData['GItolerancesIdx'] = scf_args['GItolerancesIdx']
+            auxiliaryRestartData['eigenvalues'] = Energies['orbitalEnergies']
+            auxiliaryRestartData['Eold'] = Energies['Eold']
+      
+            np.save(auxiliaryFile, auxiliaryRestartData)
+        except FileNotFoundError as e:
+            rprint(rank,"FileNotFoundError: ", e)
+            exit(-1)
+#             pass
+                 
+         
+         
+        if plotSliceOfDensity==True:
+    #             densitySliceSavefile = densityPlotsDir+'/iteration'+str(SCFcount)
+            r, rho = tree.interpolateDensity(xi,yi,zi,xf,yf,zf, numpts, plot=False, save=False)
+ 
+         
+    #
+            densities = np.load(densitySliceSavefile+'.npy')
+            densities = np.concatenate( (densities, np.reshape(rho, (numpts,1))), axis=1)
+            np.save(densitySliceSavefile,densities)
             
-            
+        """  
+        
+          
         ## Pack up scf_args
         scf_args['outputDensities']=outputDensities
         scf_args['inputDensities']=inputDensities
@@ -991,13 +916,6 @@ def scfFixedPointClosure(scf_args):
     return scfFixedPoint, scf_args
 
 
-if __name__=="__main__":
-    
-    
 
-
-    eigs = -1*np.random.rand(10)
-    occs = np.random.rand(10)
-    print_eigs_and_occupations(eigs,occs)
 
 

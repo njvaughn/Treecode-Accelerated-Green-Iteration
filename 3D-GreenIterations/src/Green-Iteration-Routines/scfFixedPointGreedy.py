@@ -1,3 +1,10 @@
+'''
+scfFixedPointGreedy.py
+
+Attempted to perform a greedy on-the-fly density update.
+This did not robustly converge, and is not used in standard calculations.
+'''
+
 import numpy as np
 import os
 import csv
