@@ -1,3 +1,7 @@
+'''
+Routines for performing eigenvalue-one algorithm, which was used for spectral analysis of the integral operator.
+
+'''
 import numpy as np
 import os
 import csv

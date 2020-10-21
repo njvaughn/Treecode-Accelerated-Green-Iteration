@@ -1,11 +1,5 @@
 '''
-testGreenIterations.py
-This is a unitTest module for testing Green iterations.  It begins by building the tree-based
-adaotively refined mesh, then performs Green iterations to obtain the ground state energy
-and wavefunction for the single electron hydrogen atom.  -- 03/20/2018 NV
-
-Created on Mar 13, 2018
-@author: nathanvaughn
+Running the eigenvalue-one algorithm to perform spectral analysis of integral operator.
 '''
 import os
 import sys
