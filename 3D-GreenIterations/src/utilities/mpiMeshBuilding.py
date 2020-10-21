@@ -386,9 +386,9 @@ def buildMeshFromMinimumDepthCells(XL,YL,ZL,maxSideLength,coreRepresentation,inp
     
     
     
-    divideBasedOnNuclei=True
+    divideBasedOnNuclei=False
     if divideBasedOnNuclei:
-        rprint(rank, "Dividing cells at nuclei.")
+        rprint(rank, "Going to divide cells at nuclei.")
     else:
         rprint(rank, "Not dividing cells at nuclei. Seems to be okay for pseudopoential mesh.")
     
@@ -574,7 +574,7 @@ def integral_func(X,Y,Z,pow,xL,xH,yL,yH,zL,zH):
     return (xH**(pow+1)/(pow+1) - (xL)**(pow+1)/(pow+1))*(yH-yL)*(zH-zL)
 
 
-def refineCell(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,fine_order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0, saveTree=False):
+def refineCell_unused(nElectrons,nOrbitals,atoms,coreRepresentation,coordinates,inputFile,outputFile,srcdir,order,fine_order,gaugeShift,additionalDepthAtAtoms=0,minDepth=0,divideCriterion='ParentChildrenIntegral',divideParameter1=0,divideParameter2=0,divideParameter3=0,divideParameter4=0, verbose=0, saveTree=False):
     '''
     setUp() gets called before every test below.
     '''
