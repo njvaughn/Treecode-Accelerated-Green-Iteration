@@ -4,7 +4,7 @@ This repository contains the code used to investigate treecode-accelerated Green
 The method uses Green's fucntions to invert differential operators in the Kohn-Sham problem.
 Rather than solve eigenvalue problems for differential operators, this approach solves fixed-point problems for integral operators.
 It is a real-space method using adaptive mesh refinement and Clenshaw-Curtis quadrature to discretize the integrals.
-It uses the **BaryTree library** to compute fast approximations to the discrete convolutions on GPUs.
+It uses the **BaryTree** library to compute fast approximations to the discrete convolutions on GPUs.
 
 Details of the method and results can be found in the paper and the thesis.
 
