@@ -5,7 +5,9 @@ This is the main run file for TAGI.
 It first reads in the input arguments.
 It then initializes the calculation (atoms, meshes, data structures, domain decomposition, etc.).
 It finally calls the SCF routines to update the density, until convergence.
-It returns the converged density and ground state energy
+It returns the converged density and ground state energy.
+
+A new user should modify the sys.path.insert() lines below to accommodate their own directories. 
 '''
 
 import time
@@ -24,9 +26,10 @@ import os
 import sys
 from pathlib import Path
 homePath = str(Path.home())
-sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/utilities')
-sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIterations/src/dataStructures')
-sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIterations/src/utilities')
+
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIteration/src/utilities')
+sys.path.insert(1, '/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIteration/src/dataStructures')
+sys.path.insert(1, '/home/njvaughn/TAGI/3D-GreenIteration/src/utilities')
 
 from mpiUtilities import global_dot, scatterArrays, rprint
 from mpiMeshBuilding import  buildMeshFromMinimumDepthCells
