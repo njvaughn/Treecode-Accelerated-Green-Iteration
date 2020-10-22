@@ -4,7 +4,7 @@ This repository contains the code used to investigate treecode-accelerated Green
 The method uses Green's fucntions to invert differential operators in the Kohn-Sham problem.
 Rather than solve eigenvalue problems for differential operators, this approach solves fixed-point problems for integral operators.
 It is a real-space method using adaptive mesh refinement and Clenshaw-Curtis quadrature to discretize the integrals.
-It uses the **BaryTree library** to compute fast approximations to the discrete convolutions on GPUs.
+It uses the **BaryTree** library to compute fast approximations to the discrete convolutions on GPUs.
 
 Details of the method and results can be found in the paper and the thesis.
 
@@ -20,8 +20,9 @@ The main directory contains two sub-directories, **1D-GreenIt-EigOne** and **3D-
 TAGI has several dependencies.
 First, there are several python modules that must be installed such as pyLibXC and mpi4py (which requries first installing MPI).
 Second, there are several external libraries that must be installed (**BaryTree**, **Zoltan**).
-Third, there are several internal C libraries that must be installed (see TAGI/3D-GreenIterations/src/utilities/Makefile).
-To run on CPUS, these C routines can be compiled with any C compiler, however to run on GPUs they must be compiled with PGI.  
+Third, there are several internal C libraries that must be installed (orthogonalization, mesh interpolation, load balancing, and host/device data movement routines).
+See TAGI/3D-GreenIterations/src/utilities/Makefile for an example Makefile.
+To run on CPUS, these C routines can be compiled with any C compiler, however to run on GPUs they must be compiled with the PGI C compiler.  
 
 
 # Running
