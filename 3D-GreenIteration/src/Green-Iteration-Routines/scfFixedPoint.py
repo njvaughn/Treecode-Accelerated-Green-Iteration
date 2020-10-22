@@ -482,9 +482,9 @@ def scfFixedPointClosure(scf_args):
         elif SCFcount==1: 
             previousOccupations = np.ones(nOrbitals)
             
-        numPasses=1
+        numPasses=1  # if struggling to converge all wavefunctions, can try using multiple Green Iteration passes per SCF step.
         for passID in range(numPasses):
-            rprint(rank,"GI pass %i" %(passID+1) )
+            if verbosity>0: rprint(rank,"GI pass %i" %(passID+1) )
             for m in range(nOrbitals): 
                 if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
                 if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals) 

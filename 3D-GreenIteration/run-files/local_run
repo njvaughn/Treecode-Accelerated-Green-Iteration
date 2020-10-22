@@ -34,7 +34,7 @@ SRCDIR='/Users/nathanvaughn/Documents/GitHub/TAGI/3D-GreenIteration/src/'
 #INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'  
 INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
-OUTPUTFILE="/Users/nathanvaughn/Documents/GitHub/all_electron_testing/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+OUTPUTFILE="/Users/nathanvaughn/Documents/all_electron_testing/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
  
  
 #####################################################################
@@ -108,7 +108,6 @@ GIFORM="Sequential"
 ################ MISCELLANEOUS PARAMETERS ###########################
 #####################################################################
 
-SINGSUBT=1 
 GPUPRESENT='False'
 VTKFILEDIR='/Users/nathanvaughn/Desktop/'
 GRADIENTFREE='True' 
@@ -121,7 +120,7 @@ TWOMESHSTART=999
 ##################### LAUNCH COMMANDS ###############################
 #####################################################################
 
-mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER $SINGSUBT \
+mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER \
                                         $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                         $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                         $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \

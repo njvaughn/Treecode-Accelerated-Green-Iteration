@@ -53,47 +53,46 @@ from twoMeshCorrection import twoMeshCorrectionClosure
 ## Read in command line arguments
 
 
-n=1
-domainSize          = int(sys.argv[n]); n+=1
-maxSideLength       = float(sys.argv[n]); n+=1
-order               = int(sys.argv[n]); n+=1
-fine_order          = int(sys.argv[n]); n+=1
-subtractSingularity = int(sys.argv[n]); n+=1
-gaussianAlpha       = float(sys.argv[n]); n+=1
-gaugeShift          = float(sys.argv[n]); n+=1
-divideCriterion     = str(sys.argv[n]); n+=1
-divideParameter1    = float(sys.argv[n]); n+=1 
-divideParameter2    = float(sys.argv[n]); n+=1
-scfTolerance        = float(sys.argv[n]); n+=1
-initialGItolerance  = float(sys.argv[n]); n+=1
-finalGItolerance    = float(sys.argv[n]); n+=1
-gradualSteps        = int(sys.argv[n]); n+=1
-outputFile          = str(sys.argv[n]); n+=1
-inputFile           = str(sys.argv[n]); n+=1
-coreRepresentation  = str(sys.argv[n]); n+=1
-srcdir              = str(sys.argv[n]); n+=1
-vtkDir              = str(sys.argv[n]); n+=1
-noGradients         = str(sys.argv[n]) ; n+=1
-symmetricIteration  = str(sys.argv[n]) ; n+=1
-mixingScheme        = str(sys.argv[n]); n+=1
-mixingParameter     = float(sys.argv[n]); n+=1
-mixingHistoryCutoff = int(sys.argv[n]) ; n+=1
-GPUpresent          = str(sys.argv[n]); n+=1
-treecode            = str(sys.argv[n]); n+=1
-treecodeDegree       = int(sys.argv[n]); n+=1
-theta               = float(sys.argv[n]); n+=1
-maxPerSourceLeaf          = int(sys.argv[n]); n+=1
-maxPerTargetLeaf           = int(sys.argv[n]); n+=1
-divideParameter3    = float(sys.argv[n]); n+=1
-divideParameter4    = int(sys.argv[n]); n+=1
-restart             = str(sys.argv[n]); n+=1
-savedMesh           = str(sys.argv[n]); n+=1
-singularityHandling = str(sys.argv[n]); n+=1
-approximationName   = str(sys.argv[n]); n+=1
-regularize          = str(sys.argv[n]); n+=1
-epsilon             = float(sys.argv[n]); n+=1
-TwoMeshStart        = int(sys.argv[n]); n+=1
-GI_form             = str(sys.argv[n]); n+=1
+n=1                                                         # argument index
+domainSize          = int(sys.argv[n]); n+=1                # computational domain will be [-L,L] x [-L,L] x [-L,L]
+maxSideLength       = float(sys.argv[n]); n+=1              # before refinement, domain divided into coarse cells of size no larger than maxSideLength
+order               = int(sys.argv[n]); n+=1                # default mesh clenshaw-curtis quadrature order
+fine_order          = int(sys.argv[n]); n+=1                # fine mesh quadrature order.  Can use higher order quadrature for projectors.  Needs updating
+gaussianAlpha       = float(sys.argv[n]); n+=1              # Coulomb singularity subtraction parameter.  For domains of size O(10), alpha size O(1) seems to work well. 
+gaugeShift          = float(sys.argv[n]); n+=1              # Shift in the potential that shifts wanted spectrum away from 0, where the singularity subtraction becomes unstable
+divideCriterion     = str(sys.argv[n]); n+=1                # Adaptive mesh refinement method: defaults are 'ParentChildrenIntegral' for AE, 'coarsenedUniformTwoLevel' for PSP
+divideParameter1    = float(sys.argv[n]); n+=1              # First of four divide criterion parameters.  Its meaning depends on AE or PSP calculation
+divideParameter2    = float(sys.argv[n]); n+=1              # Second of four divide criterion parameters.  Its meaning depends on AE or PSP calculation
+scfTolerance        = float(sys.argv[n]); n+=1              # SCF tolerance for density convergence
+initialGItolerance  = float(sys.argv[n]); n+=1              # GI Tolerance: initial loose tolerance for Green Iteration
+finalGItolerance    = float(sys.argv[n]); n+=1              # GI Tolerance: final tight tolerance for Green Iteration
+gradualSteps        = int(sys.argv[n]); n+=1                # GI Tolerance: number of steps to reduce from max to min
+outputFile          = str(sys.argv[n]); n+=1                # Output file
+inputFile           = str(sys.argv[n]); n+=1                # Input file, e.g. 'molecularConfigurations/C60AuxiliaryPSP.csv'
+coreRepresentation  = str(sys.argv[n]); n+=1                # 'AllElectron' or 'Pseudopotential'
+srcdir              = str(sys.argv[n]); n+=1                # Absolute path to the src directory in TAGI
+vtkDir              = str(sys.argv[n]); n+=1                # Directory for saving output vtk files
+noGradients         = str(sys.argv[n]) ; n+=1               # 'True' or 'False'.  Default is 'True' which performs gradient-free approach
+symmetricIteration  = str(sys.argv[n]) ; n+=1               # 'True' or 'False'.  Integral equation can be made symmetric, which may have advantages.  Default 'False'
+mixingScheme        = str(sys.argv[n]); n+=1                # Mixing scheme: 'None', 'Simple', or 'Anderson'
+mixingParameter     = float(sys.argv[n]); n+=1              # Anderson mixing parameter
+mixingHistoryCutoff = int(sys.argv[n]) ; n+=1               # Anderson mixing history size
+GPUpresent          = str(sys.argv[n]); n+=1                # 'True' if using GPUs, 'False' if not
+treecode            = str(sys.argv[n]); n+=1                # 'True' to use treecode, 'False' to use direct sum
+treecodeDegree       = int(sys.argv[n]); n+=1               # Treecode parameter: interpolation degree
+theta               = float(sys.argv[n]); n+=1              # Treecode parameter: mulktipole acceptance criterion
+maxPerSourceLeaf    = int(sys.argv[n]); n+=1                # Treecode parameter: source cluster size
+maxPerTargetLeaf    = int(sys.argv[n]); n+=1                # Treecode parameter: target batch size
+divideParameter3    = float(sys.argv[n]); n+=1              # Third of four divide criterion parameters.  Its meaning depends on AE or PSP calculation
+divideParameter4    = int(sys.argv[n]); n+=1                # Fourth of four divide criterion parameters.  Its meaning depends on AE or PSP calculation
+restart             = str(sys.argv[n]); n+=1                # Is this calculation being restarted from a saved step of the SCF iteration?
+savedMesh           = str(sys.argv[n]); n+=1                # Filename of saved mesh, otherwise new mesh generated
+singularityHandling = str(sys.argv[n]); n+=1                # Subtraction, skipping, regularization are options.  Subtraction achieves best accuracy so far.
+approximationName   = str(sys.argv[n]); n+=1                # Treecode approximation type.  Lagrange or Hermite
+regularize          = str(sys.argv[n]); n+=1                # Are the interaction kernels regularized?
+epsilon             = float(sys.argv[n]); n+=1              # If regularized, this is the regularization parameter
+TwoMeshStart        = int(sys.argv[n]); n+=1                # When to start applying the two-mesh scheme for PSP calculations.  Setting this larger than the SCF steps causes scheme to be used only at very end.
+GI_form             = str(sys.argv[n]); n+=1                # Sequential, simultaneous, greedy.  Sequential is cheaper than simultaneous, and greedy doesn't seem to be robust
 
 
 
@@ -188,11 +187,11 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
 
     
     Energies, Rho, Times = greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
-                                scfTolerance, initialGItolerance, finalGItolerance, gradualSteps,
-                                gradientFree, symmetricIteration, GPUpresent, treecode, treecodeDegree, theta, maxPerSourceLeaf, maxPerTargetLeaf, 
-                                singularityHandling,approximationName,
+                                 scfTolerance, initialGItolerance, finalGItolerance, gradualSteps,
+                                 gradientFree, symmetricIteration, GPUpresent, treecode, treecodeDegree, theta, maxPerSourceLeaf, maxPerTargetLeaf, 
+                                 singularityHandling,approximationName,
                                  mixingScheme, mixingParameter, mixingHistoryCutoff,
-                                 subtractSingularity, gaussianAlpha, gaugeShift,
+                                 gaussianAlpha, gaugeShift,
                                  inputFile=inputFile,outputFile=outputFile, restartFile=restart,
                                  onTheFlyRefinement=onTheFlyRefinement, vtkExport=False, maxOrbitals=maxOrbitals, maxSCFIterations=maxSCFIterations,
                                  regularize=regularize,epsilon=epsilon)
@@ -216,7 +215,7 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
         myData = [size,domainSize,maxSideLength,order,fine_order, nPoints/(order+1)**3,global_nPoints,gradientFree,
                   divideCriterion,divideParameter1,divideParameter2,divideParameter3,divideParameter4,
                   gaussianAlpha,gaugeShift,finalGItolerance,
-                  subtractSingularity, regularize, epsilon,
+                  regularize, epsilon,
                   Energies['orbitalEnergies']-Energies['gaugeShift'], Energies['Eband'], Energies['kinetic'], Energies['Ex'], Energies['Ec'], Energies['totalElectrostatic'], Energies['Etotal'],
                   treecode,approximationName,treecodeDegree,theta,maxPerSourceLeaf,maxPerTargetLeaf, Times['totalKohnShamTime'],Times['timePerConvolution'],Times['totalIterationCount'] ]
 
@@ -244,14 +243,15 @@ def testGreenIterationsGPU_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse,
 
 
 
-def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
+def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_coarse, pointsPerCell_fine,RHO, CORECHARGERHO,orbitals,eigenvalues,
+                                             initialOccupations,atoms,coreRepresentation,nPoints,nOrbitals,nElectrons,referenceEigenvalues,
                                              SCFtolerance, initialGItolerance, finalGItolerance, gradualSteps, 
                                              gradientFree, symmetricIteration, GPUpresent, 
-                                 treecode, treecodeDegree, theta, maxPerSourceLeaf, maxPerTargetLeaf, singularityHandling, approximationName,
-                                 mixingScheme, mixingParameter, mixingHistoryCutoff,
-                                subtractSingularity, gaussianAlpha, gaugeShift, inputFile='',outputFile='',restartFile=False,
-                                onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None,
-                                regularize=False, epsilon=0.0): 
+                                             treecode, treecodeDegree, theta, maxPerSourceLeaf, maxPerTargetLeaf, singularityHandling, approximationName,
+                                             mixingScheme, mixingParameter, mixingHistoryCutoff,
+                                             gaussianAlpha, gaugeShift, inputFile='',outputFile='',restartFile=False,
+                                             onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None,
+                                             regularize=False, epsilon=0.0): 
     '''
     Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
     '''
@@ -483,7 +483,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
     scf_args={'inputDensities':inputDensities,'outputDensities':outputDensities,'SCFcount':SCFcount,'nPoints':nPoints,'nOrbitals':nOrbitals,'mixingHistoryCutoff':mixingHistoryCutoff,
                'GPUpresent':GPUpresent,'treecode':treecode,'treecodeDegree':treecodeDegree,'theta':theta,'maxPerSourceLeaf':maxPerSourceLeaf,'maxPerTargetLeaf':maxPerTargetLeaf,'gaussianAlpha':gaussianAlpha,
                'Energies':Energies,'Times':Times,'exchangeFunctional':exchangeFunctional,'correlationFunctional':correlationFunctional,
-               'Vext_local':Vext_local,'Vext_local_fine':Vext_local_fine,'gaugeShift':gaugeShift,'orbitals':orbitals,'oldOrbitals':oldOrbitals,'subtractSingularity':subtractSingularity,
+               'Vext_local':Vext_local,'Vext_local_fine':Vext_local_fine,'gaugeShift':gaugeShift,'orbitals':orbitals,'oldOrbitals':oldOrbitals,
                'X':X,'Y':Y,'Z':Z,'W':W,'Xf':Xf,'Yf':Yf,'Zf':Zf,'Wf':Wf,'gradientFree':gradientFree,'residuals':residuals,'greenIterationOutFile':greenIterationOutFile,
                'referenceEigenvalues':referenceEigenvalues,'symmetricIteration':symmetricIteration,
                'SCFtolerance':SCFtolerance,'initialGItolerance':initialGItolerance, 'finalGItolerance':finalGItolerance, 'gradualSteps':gradualSteps, 'nElectrons':nElectrons,'referenceEnergies':referenceEnergies,'SCFiterationOutFile':SCFiterationOutFile,
