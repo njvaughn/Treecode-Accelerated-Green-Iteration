@@ -57,16 +57,16 @@ n=1                                                         # argument index
 domainSize          = int(sys.argv[n]); n+=1                # computational domain will be [-L,L] x [-L,L] x [-L,L]
 maxSideLength       = float(sys.argv[n]); n+=1              # before refinement, domain divided into coarse cells of size no larger than maxSideLength
 order               = int(sys.argv[n]); n+=1                # default mesh clenshaw-curtis quadrature order
-fine_order          = int(sys.argv[n]); n+=1                # fine mesh quadrature order.  Can use higher order quadrature for projectors.  Needs updating
-gaussianAlpha       = float(sys.argv[n]); n+=1              # Coulomb singularity subtraction parameter.  For domains of size O(10), alpha size O(1) seems to work well. 
-gaugeShift          = float(sys.argv[n]); n+=1              # Shift in the potential that shifts wanted spectrum away from 0, where the singularity subtraction becomes unstable
+fine_order          = int(sys.argv[n]); n+=1                # fine mesh quadrature order.  Can use higher order quadrature for projectors.  Needs updating.  Default = order
+gaussianAlpha       = float(sys.argv[n]); n+=1              # Coulomb singularity subtraction parameter.  For domains of size O(10), alpha size O(1) seems to work well. Default 1.0
+gaugeShift          = float(sys.argv[n]); n+=1              # Shift in the potential that shifts wanted spectrum away from 0, where the singularity subtraction becomes unstable. Default -0.5
 divideCriterion     = str(sys.argv[n]); n+=1                # Adaptive mesh refinement method: defaults are 'ParentChildrenIntegral' for AE, 'coarsenedUniformTwoLevel' for PSP
 divideParameter1    = float(sys.argv[n]); n+=1              # First of four divide criterion parameters.  Its meaning depends on AE or PSP calculation
 divideParameter2    = float(sys.argv[n]); n+=1              # Second of four divide criterion parameters.  Its meaning depends on AE or PSP calculation
-scfTolerance        = float(sys.argv[n]); n+=1              # SCF tolerance for density convergence
-initialGItolerance  = float(sys.argv[n]); n+=1              # GI Tolerance: initial loose tolerance for Green Iteration
-finalGItolerance    = float(sys.argv[n]); n+=1              # GI Tolerance: final tight tolerance for Green Iteration
-gradualSteps        = int(sys.argv[n]); n+=1                # GI Tolerance: number of steps to reduce from max to min
+scfTolerance        = float(sys.argv[n]); n+=1              # SCF tolerance for density convergence.                     Default 1e-4
+initialGItolerance  = float(sys.argv[n]); n+=1              # GI Tolerance: initial loose tolerance for Green Iteration. Default 1e-2
+finalGItolerance    = float(sys.argv[n]); n+=1              # GI Tolerance: final tight tolerance for Green Iteration.   Default 1e-5
+gradualSteps        = int(sys.argv[n]); n+=1                # GI Tolerance: number of steps to reduce from max to min.   Default 8
 outputFile          = str(sys.argv[n]); n+=1                # Output file
 inputFile           = str(sys.argv[n]); n+=1                # Input file, e.g. 'molecularConfigurations/C60AuxiliaryPSP.csv'
 coreRepresentation  = str(sys.argv[n]); n+=1                # 'AllElectron' or 'Pseudopotential'
@@ -75,23 +75,23 @@ vtkDir              = str(sys.argv[n]); n+=1                # Directory for savi
 noGradients         = str(sys.argv[n]) ; n+=1               # 'True' or 'False'.  Default is 'True' which performs gradient-free approach
 symmetricIteration  = str(sys.argv[n]) ; n+=1               # 'True' or 'False'.  Integral equation can be made symmetric, which may have advantages.  Default 'False'
 mixingScheme        = str(sys.argv[n]); n+=1                # Mixing scheme: 'None', 'Simple', or 'Anderson'
-mixingParameter     = float(sys.argv[n]); n+=1              # Anderson mixing parameter
-mixingHistoryCutoff = int(sys.argv[n]) ; n+=1               # Anderson mixing history size
+mixingParameter     = float(sys.argv[n]); n+=1              # Anderson mixing parameter.  Default 0.5
+mixingHistoryCutoff = int(sys.argv[n]) ; n+=1               # Anderson mixing history size. Default 10
 GPUpresent          = str(sys.argv[n]); n+=1                # 'True' if using GPUs, 'False' if not
-treecode            = str(sys.argv[n]); n+=1                # 'True' to use treecode, 'False' to use direct sum
-treecodeDegree       = int(sys.argv[n]); n+=1               # Treecode parameter: interpolation degree
-theta               = float(sys.argv[n]); n+=1              # Treecode parameter: mulktipole acceptance criterion
-maxPerSourceLeaf    = int(sys.argv[n]); n+=1                # Treecode parameter: source cluster size
-maxPerTargetLeaf    = int(sys.argv[n]); n+=1                # Treecode parameter: target batch size
+treecode            = str(sys.argv[n]); n+=1                # 'True' to use treecode, 'False' to use direct sum.  Default 'True'
+treecodeDegree       = int(sys.argv[n]); n+=1               # Treecode parameter: interpolation degree, default 8
+theta               = float(sys.argv[n]); n+=1              # Treecode parameter: multipole acceptance criterion, default 0.75
+maxPerSourceLeaf    = int(sys.argv[n]); n+=1                # Treecode parameter: source cluster size, default 2000 for GPU, 50 for CPU
+maxPerTargetLeaf    = int(sys.argv[n]); n+=1                # Treecode parameter: target batch size, default 2000 for GPU, 10 for CPU
 divideParameter3    = float(sys.argv[n]); n+=1              # Third of four divide criterion parameters.  Its meaning depends on AE or PSP calculation
 divideParameter4    = int(sys.argv[n]); n+=1                # Fourth of four divide criterion parameters.  Its meaning depends on AE or PSP calculation
-restart             = str(sys.argv[n]); n+=1                # Is this calculation being restarted from a saved step of the SCF iteration?
-savedMesh           = str(sys.argv[n]); n+=1                # Filename of saved mesh, otherwise new mesh generated
+restart             = str(sys.argv[n]); n+=1                # Is this calculation being restarted from a saved step of the SCF iteration?  Default 'False'
+savedMesh           = str(sys.argv[n]); n+=1                # Filename of saved mesh, otherwise new mesh generated.  Default 'None'
 singularityHandling = str(sys.argv[n]); n+=1                # Subtraction, skipping, regularization are options.  Subtraction achieves best accuracy so far.
-approximationName   = str(sys.argv[n]); n+=1                # Treecode approximation type.  Lagrange or Hermite
-regularize          = str(sys.argv[n]); n+=1                # Are the interaction kernels regularized?
-epsilon             = float(sys.argv[n]); n+=1              # If regularized, this is the regularization parameter
-TwoMeshStart        = int(sys.argv[n]); n+=1                # When to start applying the two-mesh scheme for PSP calculations.  Setting this larger than the SCF steps causes scheme to be used only at very end.
+approximationName   = str(sys.argv[n]); n+=1                # Treecode approximation type.  'Lagrange' or 'Hermite'.  Default 'Lagrange
+regularize          = str(sys.argv[n]); n+=1                # Are the interaction kernels regularized?  Default 'False'
+epsilon             = float(sys.argv[n]); n+=1              # If regularized, this is the regularization parameter. Default 'False'
+TwoMeshStart        = int(sys.argv[n]); n+=1                # When to start applying the two-mesh scheme for PSP calculations.  Default 999, which only uses two-mesh for final correction.
 GI_form             = str(sys.argv[n]); n+=1                # Sequential, simultaneous, greedy.  Sequential is cheaper than simultaneous, and greedy doesn't seem to be robust
 
 
@@ -101,16 +101,9 @@ inputFile = srcdir+inputFile
 sys.path.append(srcdir+'dataStructures')
 sys.path.append(srcdir+'Green-Iteration-Routines')
 sys.path.append(srcdir+'utilities')
-sys.path.append(srcdir+'../ctypesTests/src')
-
 sys.path.append(srcdir+'../ctypesTests')
+sys.path.append(srcdir+'../ctypesTests/src')
 sys.path.append(srcdir+'../ctypesTests/lib') 
-
-
-
-
-
-
 
 
 
