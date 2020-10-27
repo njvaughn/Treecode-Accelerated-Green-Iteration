@@ -40,8 +40,6 @@ def greensIteration_FixedPoint_Closure(gi_args):
 #         rprint(rank,"entered greensIteration_FixedPoint.")
         
         ## UNPACK GIARGS
-#         print('MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
-#         GPUtil.showUtilization()
         orbitals = gi_args['orbitals']
         oldOrbitals = gi_args['oldOrbitals']
         Energies = gi_args['Energies']
@@ -89,21 +87,14 @@ def greensIteration_FixedPoint_Closure(gi_args):
         fine_order=gi_args["fine_order"]
         regularize=gi_args['regularize']
         epsilon=gi_args["epsilon"]
-        TwoMeshStart=gi_args["TwoMeshStart"]
         singleWavefunctionOrthogonalization=gi_args["singleWavefunctionOrthogonalization"]
         
         order=coarse_order
 
         
-#         print('Who called F(x)? ', inspect.stack()[2][3])
         inputWave = np.copy(psiIn[:-1])
-        
-#         TwoMeshStart=1
-        
-        if ( (len(X)!=len(Xf)) and (SCFcount>TwoMeshStart)  ):
-            twoMesh=True
-        else:
-            twoMesh=False
+
+        twoMesh=False  # could be set to true (together with other changes) to employ the fine-mesh projectors during Green iteration.  Seems not necessary.
     
 
         
@@ -115,7 +106,6 @@ def greensIteration_FixedPoint_Closure(gi_args):
         orbitals[m,:] = np.copy(psiIn[:-1])
         Energies['orbitalEnergies'][m] = np.copy(psiIn[-1])
         
-        # get the input wavefunction on the fine mesh.
         
         if ( twoMesh ):
             start=time.time()
@@ -281,8 +271,11 @@ def greensIteration_FixedPoint_Closure(gi_args):
                 rprint(rank,"What should approximationName be?")
                 exit(-1)
             
+            
+            ## Multiple compute options.  Currently just set up for Particle-Cluster.  Others need development for singularity subtraction
             computeType=BT.ComputeType.PARTICLE_CLUSTER
-            computeType=BT.ComputeType.CLUSTER_PARTICLE
+#             computeType=BT.ComputeType.CLUSTER_CLUSTER
+#             computeType=BT.ComputeType.CLUSTER_PARTICLE
             
             
             ## Optimization:  Can get away with looser treecode parameters in the early SCF iterations since high accuracy is not demanded
@@ -326,7 +319,7 @@ def greensIteration_FixedPoint_Closure(gi_args):
                                         singularity, approximation, computeType,
                                         GPUpresent, treecode_verbosity, 
                                         theta=theta, degree=treecodeDegree, sourceLeafSize=maxPerSourceLeaf, targetLeafSize=maxPerTargetLeaf, sizeCheck=1.0)
-
+            comm.barrier()
             if singularityHandling=="skipping": psiNew /= (4*np.pi)
             if singularityHandling=="subtraction": psiNew /= (4*np.pi)
 #             if singularityHandling=="regularized": psiNew /= (4*np.pi)
