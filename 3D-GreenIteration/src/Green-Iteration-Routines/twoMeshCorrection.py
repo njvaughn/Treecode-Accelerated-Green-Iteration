@@ -161,27 +161,13 @@ def twoMeshCorrectionClosure(scf_args):
         fine_order=scf_args['fine_order']
         regularize=scf_args['regularize']
         epsilon=scf_args['epsilon']
-        TwoMeshStart=scf_args['TwoMeshStart']
         CORECHARGERHO=scf_args['CORECHARGERHO']
 
-#         GItolerances = np.logspace(np.log10(initialGItolerance),np.log10(finalGItolerance),gradualSteps)
-#         scf_args['GItolerancesIdx']=0
-        
-#         scf_args['currentGItolerance']=GItolerances[scf_args['GItolerancesIdx']]
-        
-#         GImixingHistoryCutoff = 10
-         
-#         SCFcount += 1
-#         TwoMeshStart=1
 
         twoMesh=True
         
             
-            
-#         SCFindex = SCFcount
-#         if SCFcount>TwoMeshStart:
-#             SCFindex = SCFcount - TwoMeshStart
-            
+
 
         rprint(rank,"Interpolating density from %i to %i point mesh." %(len(X),len(Xf)))
         numberOfCells=len(pointsPerCell_coarse)

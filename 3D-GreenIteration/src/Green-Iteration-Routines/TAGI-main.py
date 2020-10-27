@@ -91,7 +91,6 @@ singularityHandling = str(sys.argv[n]); n+=1                # Subtraction, skipp
 approximationName   = str(sys.argv[n]); n+=1                # Treecode approximation type.  'Lagrange' or 'Hermite'.  Default 'Lagrange
 regularize          = str(sys.argv[n]); n+=1                # Are the interaction kernels regularized?  Default 'False'
 epsilon             = float(sys.argv[n]); n+=1              # If regularized, this is the regularization parameter. Default 'False'
-TwoMeshStart        = int(sys.argv[n]); n+=1                # When to start applying the two-mesh scheme for PSP calculations.  Default 999, which only uses two-mesh for final correction.
 GI_form             = str(sys.argv[n]); n+=1                # Sequential, simultaneous, greedy.  Sequential is cheaper than simultaneous, and greedy doesn't seem to be robust
 
 
@@ -246,8 +245,11 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
                                              onTheFlyRefinement = False, vtkExport=False, outputErrors=False, maxOrbitals=None, maxSCFIterations=None,
                                              regularize=False, epsilon=0.0): 
     '''
-    Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis quadrature.
+    Green Iterations for Kohn-Sham DFT using Clenshaw-Curtis (Fejer) quadrature.
     '''
+    
+    verbosity=0
+
 
     ### Determine nearby atoms.  Note, this does not work due to the global dot products in the atom nonlocal potential evaluation.
     nearbyAtoms = atoms
@@ -287,10 +289,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 #             
 #             
 #     rprint(0, np.shape(nearbyAtoms))
-             
-            
+                 
     
-    verbosity=0
+    ## Setup exchange and correlation functionals using pyLibxc.
     polarization="unpolarized"
     exchangeFunctional="LDA_X"
     correlationFunctional="LDA_C_PW"
@@ -344,9 +345,7 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
 
     # Store Tree variables locally
     gaugeShift = Energies['gaugeShift']
-    
     globalNumPoints = comm.allreduce(nPoints)
-    
     nPointsF=len(Xf)
     globalFineMeshPoints = comm.allreduce(nPointsF)
 
@@ -489,7 +488,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
                'regularize':regularize,'epsilon':epsilon,
                'pointsPerCell_coarse':pointsPerCell_coarse, 
                'pointsPerCell_fine':pointsPerCell_fine,
-               'TwoMeshStart':TwoMeshStart,
                'occupations':initialOccupations,
                'CORECHARGERHO': CORECHARGERHO}
     
@@ -557,8 +555,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
             rprint(0, 'Mixing must be set to either Simple, Anderson, or None')
             return
       
-                  
-       
           
         if Energies['Etotal'] > 0.0:                       # Check that the current guess for energy didn't go positive.  Reset it if it did. 
             rprint(rank, 'Warning, Energy is positive')
@@ -578,7 +574,6 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         rprint(rank,"\n\n\n\nCalling the Two-Level Mesh Correction.\n\n\n")
         if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
         if GPUpresent: MOVEDATA.callCopyVectorToDevice(orbitals)
-        scf_args["TwoMeshStart"]=SCFcount
           
 
         
@@ -587,21 +582,9 @@ def greenIterations_KohnSham_SCF_rootfinding(X,Y,Z,W,Xf,Yf,Zf,Wf,pointsPerCell_c
         
         Energies['Etotal']=Energies['Etotal_corrected']
         Energies['Etotal']=Energies['Etotal_corrected']
-     
-     
-              
-#     if SCFcount >= 1:
-#         rprint(0, 'Setting density residual to -1 to exit after the First SCF just to test treecode or restart')
-#         energyResidual = -1
-#         densityResidual = -1
-          
-  
-   
-  
-      
+           
       
     rprint(rank,'\nConvergence to a tolerance of %f took %i iterations' %(SCFtolerance, SCFcount))
-#     """
     return Energies, RHO, Times
     
     

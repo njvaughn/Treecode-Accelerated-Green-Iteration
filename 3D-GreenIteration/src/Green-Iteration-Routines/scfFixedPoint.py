@@ -152,7 +152,6 @@ def scfFixedPointClosure(scf_args):
         fine_order=scf_args['fine_order']
         regularize=scf_args['regularize']
         epsilon=scf_args['epsilon']
-        TwoMeshStart=scf_args['TwoMeshStart']
         CORECHARGERHO=scf_args['CORECHARGERHO']
         
         NLCC_RHO = RHO+CORECHARGERHO
@@ -170,18 +169,12 @@ def scfFixedPointClosure(scf_args):
         rprint(rank,'\n')
         rprint(rank,'SCF Count ', SCFcount)
         if verbosity>0: rprint(rank,'Orbital Energies: ', Energies['orbitalEnergies'])
-#         TwoMeshStart=1
 
-        if ( (len(X)!=len(Xf)) and (SCFcount>TwoMeshStart)  ):
-            twoMesh=True
-        else:
-            twoMesh=False
+        twoMesh=False  # this can be set to true to use a second mesh for the projectors during the SCF iteration.  Observations show this is only needed for a final correction
 
             
         SCFindex = SCFcount
-        if SCFcount>TwoMeshStart:
-            SCFindex = SCFcount - TwoMeshStart
-            
+           
         if SCFcount==1:
             ## For the greedy approach, let the density start as the sum of wavefunctions.
             if GPUpresent: MOVEDATA.callRemoveVectorFromDevice(orbitals)
@@ -208,90 +201,17 @@ def scfFixedPointClosure(scf_args):
             else:
                 inputDensities[:,(SCFindex-1)%mixingHistoryCutoff] = np.copy(RHO)
         
-            if SCFcount == TwoMeshStart:
-                inputDensities = np.zeros((nPoints,1))         
-                inputDensities[:,0] = np.copy(RHO)
-                
-                outputDensities = np.zeros((nPoints,1))
-                
-                eigenvalueResiduals=np.ones_like(residuals)  # reset eigenvalue residuals
-                residuals = np.ones_like(Energies['orbitalEnergies'])
-     
-        
-    
-        ### Compute Veff
-        """ 
-        Compute new electron-electron potential and update pointwise potential values 
-        """
-        
-        # interpolate density to fine mesh for computing hartree potential
-#         rprint(rank, pointsPerCell_coarse)
-#         rprint(rank, pointsPerCell_fine)
-#         rprint(rank, len(X))
-#         rprint(rank, len(Xf))
-#         exit(-1)
 
-#         if len(X) != len(Xf):
         if twoMesh==True:
-            rprint(rank, "Interpolating density from %i to %i point mesh." %(len(X),len(Xf)))
-#             start=time.time()
-#             RHOf = interpolateBetweenTwoMeshes(X, Y, Z, RHO, pointsPerCell_coarse,
-#                                                    Xf, Yf, Zf, pointsPerCell_fine)
-#             end=time.time()
-#             rprint(rank, "Original interpolation time: ", end-start)
-#             
+            rprint(rank, "Interpolating density from %i to %i point mesh." %(len(X),len(Xf)))  
             numberOfCells=len(pointsPerCell_coarse)
-#             start=time.time()
-#             rprint(rank, "pointsPerCell_coarse = ", pointsPerCell_coarse[0:5])
-#             rprint(rank, "pointsPerCell_fine = ", pointsPerCell_fine[0:5])
-#             if numberOfCells
-#             rprint(rank, "Type: ", pointsPerCell_fine.dtype)
             RHOf = interpolation_wrapper.callInterpolator(X,  Y,  Z,  RHO, pointsPerCell_coarse,
                                                            Xf, Yf, Zf, pointsPerCell_fine, 
                                                            numberOfCells, order, GPUpresent)
-            
-            
-            
-            
-#             end=time.time()
-#             comm.barrier() 
-#             rprint(rank, "External interpolation time: ", end-start)
-#             rprint(rank, "Difference: ", np.max( np.abs(RHOf-RHOf2)))
-#             
-#             fCount=0
-#             f2Count=0
-#             for i in range(len(RHOf)):
-#                 
-#                 if abs(RHOf[i])==0.0:
-#                     fCount+=1
-#                 if abs(RHOf2[i])==0.0:
-#                     f2Count+=1
-# #                 if abs(RHOf[i]-RHOf2[i])>1e-12:
-# #                     rprint(rank, i,RHOf[i], RHOf2[i])
-#                     
-#             rprint(rank, "Number of zeros: ", fCount, f2Count)
-#             exit(-1)
-#             rprint(rank, "RHOf = ", RHOf)
-#             rprint(rank, "RHOf2 = ", RHOf2)
-#             
-#             
-#             start=0
-#             for i in range(numberOfCells):
-#                 if pointsPerCell_fine[i]==512:
-#                     for j in range(512):
-#                         rprint(rank, RHOf[start+j], RHOf2[start+j])
-#                     exit(-1)
-#                 start+=int(pointsPerCell_fine[i])
-#             exit(-1)
+                 
         else:
-#             rprint(rank, "WHY IS LEN(X)=LEN(Xf)?")
-#             exit(-1)
             RHOf=RHO
-#         if order!=fine_order:
-#             RHOf = interpolateBetweenTwoMeshes_variableOrder(X, Y, Z, RHO, order,
-#                                                    Xf, Yf, Zf, fine_order) 
-#         else:
-#             RHOf=RHO
+
         
         
         if treecode==False:
@@ -332,13 +252,10 @@ def scfFixedPointClosure(scf_args):
                 rprint(rank,"What should singularityHandling be?")
                 return
             start = MPI.Wtime()
-            
-            
-#             rprint(0, "Rank %i calling treecode through wrapper..." %(rank))
-            
+                        
             treecode_verbosity=0
             
-            if twoMesh:  # idea: only turn on the two mesh if beyond 4 SCF iterations
+            if twoMesh:  
                 numSources = len(Xf)
                 sourceX=Xf
                 sourceY=Yf
@@ -353,16 +270,8 @@ def scfFixedPointClosure(scf_args):
                 sourceRHO=RHO
                 sourceW=W
                 
-#             singularityHandling="skipping"
-#             rprint(rank, "Forcing the Hartree solve to use singularity skipping.")
-
             if verbosity>0: rprint(rank,"Performing Hartree solve on %i mesh points" %numSources)
-#             rprint(rank,"Coarse order ", order)
-#             rprint(rank,"Fine order   ", fine_order)
-#             approximation = BT.Approximation.LAGRANGE
-#             singularity   = BT.Singularity.SUBTRACTION
-#             computeType   = BT.ComputeType.PARTICLE_CLUSTER
-#             
+           
             kernel = BT.Kernel.COULOMB
             if singularityHandling=="subtraction":
                 singularity=BT.Singularity.SUBTRACTION
@@ -384,16 +293,6 @@ def scfFixedPointClosure(scf_args):
                 
     
             comm.barrier()
-#             rprint(rank,"Using tighter treecode parameters for Hartree solve.")
-#             V_hartreeNew = BT.callTreedriver(  
-#                                             nPoints, numSources, 
-#                                             np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO), 
-#                                             np.copy(sourceX), np.copy(sourceY), np.copy(sourceZ), np.copy(sourceRHO), np.copy(sourceW),
-#                                             kernel, numberOfKernelParameters, kernelParameters, 
-#                                             singularity, approximation, computeType,
-#                                             treecodeDegree+0, theta-0.0, maxPerSourceLeaf, maxPerTargetLeaf,
-#                                             GPUpresent, treecode_verbosity
-#                                             )
             
             V_hartreeNew = BT.callTreedriver(  nPoints, numSources,
                                  np.copy(X), np.copy(Y), np.copy(Z), np.copy(RHO),
@@ -425,7 +324,6 @@ def scfFixedPointClosure(scf_args):
             Energies['totalElectrostatic'] = Energies["Ehartree"] + Energies["Enuclear"] + Energies["Repulsion"]
             rprint(rank,"Energies['Repulsion'] after initial convolution: ", Energies['Repulsion'])
             rprint(rank,"Energies['Ehartree'] after initial convolution: ", Energies['Ehartree'])
-#             rprint(rank,"Electrostatics error after initial convolution: ", Energies['totalElectrostatic']-referenceEnergies["Eelectrostatic"])
             exit(-1)
             return np.zeros(nPoints)
         
@@ -433,18 +331,13 @@ def scfFixedPointClosure(scf_args):
         
         correlationOutput = correlationFunctional.compute(NLCC_RHO) # For NLCC, evaluate the xc functionals on RHO+CORECHARGERHO.  For systems without NLCC, CORECHARGERHO==0 so it has no effect.
         exchangeOutput    =    exchangeFunctional.compute(NLCC_RHO)
-#         Energies['Ex'] = np.sum( W * RHO * np.reshape(exchangeOutput['zk'],np.shape(RHO)) )
-#         Energies['Ec'] = np.sum( W * RHO * np.reshape(correlationOutput['zk'],np.shape(RHO)) )
-        
+    
         Energies['Ec'] = global_dot( W, NLCC_RHO * np.reshape(correlationOutput['zk'],np.shape(NLCC_RHO)), comm )
         Energies['Ex'] = global_dot( W, NLCC_RHO * np.reshape(   exchangeOutput['zk'],np.shape(NLCC_RHO)), comm )
         
         Vc = np.reshape(correlationOutput['vrho'],np.shape(NLCC_RHO))
         Vx = np.reshape(   exchangeOutput['vrho'],np.shape(NLCC_RHO))
         
-
-#         Energies['Vx'] = global_dot(W, NLCC_RHO * Vx,comm)
-#         Energies['Vc'] = global_dot(W, NLCC_RHO * Vc,comm)
         
         Energies['Vc'] = global_dot(W, RHO * Vc,comm)
         Energies['Vx'] = global_dot(W, RHO * Vx,comm)  # Vx and Vc energies use the valence rho, since they are correcting expressions in the eigenvalues.
@@ -515,7 +408,6 @@ def scfFixedPointClosure(scf_args):
                                    'regularize':regularize, 'epsilon':epsilon,
                                    'pointsPerCell_coarse':pointsPerCell_coarse,
                                    'pointsPerCell_fine':pointsPerCell_fine,
-                                   'TwoMeshStart':TwoMeshStart,
                                    'singleWavefunctionOrthogonalization':True} 
                     
                     n,M = np.shape(orbitals)
@@ -547,12 +439,7 @@ def scfFixedPointClosure(scf_args):
     
                     
                     comm.barrier()
-                    if SCFcount==1:  
-                        AndersonActivationTolerance=3e-2
-                    elif SCFcount == TwoMeshStart:
-                        AndersonActivationTolerance=3e-2
-                    else:
-                        AndersonActivationTolerance=3e-2
+                    AndersonActivationTolerance=3e-2
                     while ( (resNorm> max(AndersonActivationTolerance,scf_args['currentGItolerance'])) or (Energies['orbitalEnergies'][m]>0.0) ):
     #                 while resNorm>intraScfTolerance:
         #                 rprint(rank, 'MEMORY USAGE: ', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss )
@@ -762,11 +649,6 @@ def scfFixedPointClosure(scf_args):
     #                                 rprint(rank, 'Shape of oldOrbitals[m,:]: ', np.shape(oldOrbitals[m,:]))
                 outputDensities[:,(SCFindex-1)%mixingHistoryCutoff] = newDensity
             
-            if SCFcount == TwoMeshStart:
-                outputDensities = np.zeros((nPoints,1))         
-                outputDensities[:,0] = np.copy(newDensity)
-    
-         
   
         if verbosity>0: 
             rprint(rank,'outputDensities[0,:] = ', outputDensities[0,:])

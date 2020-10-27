@@ -32,8 +32,9 @@ cd /home/njvaughn/TAGI/3D-GreenIteration/src/Green-Iteration-Routines
 SRCDIR='/home/njvaughn/TAGI/3D-GreenIteration/src/'  
 #INPUTFILE='molecularConfigurations/carbonMonoxideAuxiliary.csv' 
 #INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'  
-INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+#INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
 #INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
+INPUTFILE='molecularConfigurations/AluminumClusters/shell0AuxiliaryPSP.csv'
 OUTPUTFILE="/home/njvaughn/all_electron_testing/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
  
  
@@ -42,8 +43,8 @@ OUTPUTFILE="/home/njvaughn/all_electron_testing/${APPROXIMATIONNAME}_${TREECODEO
 #####################################################################
 
 RESTART='False' 
-DOMAIN=20
-MAXSIDELENGTH=5.5
+DOMAIN=32
+MAXSIDELENGTH=8.0
 ADDITIONALDEPTHATATOMS=0 
 SAVEDMESH='None'
  
@@ -56,12 +57,12 @@ MESHPARAM3=0
 MESHPARAM4=0
  
 ##########  PSEUDOPOTENTIAL ###############
-#COREREPRESENTATION="Pseudopotential"
-#MESHTYPE='coarsenedUniformTwoLevel'
-#MESHPARAM1=2.0 # near field spacing 
-#MESHPARAM2=8.0 # far field spacing 
-#MESHPARAM3=2.0 # ball radius
-#MESHPARAM4=-2
+COREREPRESENTATION="Pseudopotential"
+MESHTYPE='coarsenedUniformTwoLevel'
+MESHPARAM1=1.0 # near field spacing 
+MESHPARAM2=8.0 # far field spacing 
+MESHPARAM3=2.0 # ball radius
+MESHPARAM4=-2
 
   
 #####################################################################
@@ -97,7 +98,7 @@ MIXING='Anderson'
 MIXINGPARAMETER=0.5
 MIXINGHISTORY=10
      
-INITIAL_GI_TOLERANCE=1e-3
+INITIAL_GI_TOLERANCE=1e-2
 FINAL_GI_TOLERANCE=3e-5
 GRADUALSTEPS=4
 SCF_TOLERANCE=1e-4
@@ -108,12 +109,11 @@ GIFORM="Sequential"
 ################ MISCELLANEOUS PARAMETERS ###########################
 #####################################################################
 
-GPUPRESENT='True'
+GPUPRESENT='False'
 VTKFILEDIR='/Users/nathanvaughn/Desktop/'
 GRADIENTFREE='True' 
 SYMMETRICITERATION='False'
 GRADIENTFREE='True' 
-TWOMESHSTART=999
 
      
 #####################################################################
@@ -125,6 +125,6 @@ mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEO
                                         $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                         $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
                                         $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-                                        $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART $GIFORM
+                                        $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $GIFORM
 
    

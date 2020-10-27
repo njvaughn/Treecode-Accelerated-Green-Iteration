@@ -84,8 +84,8 @@ MESHPARAM4=0
 ################### QUADRATURE PARAMETERS ###########################
 #####################################################################
 
-CELLORDER=4
-FINEORDER=4
+CELLORDER=3
+FINEORDER=3
 SINGULARITYHANDLING=subtraction 
 GAUSSIANALPHA=1.0 
 REGULARIZE='False'
@@ -100,8 +100,8 @@ TREECODE='True'
 APPROXIMATIONNAME=lagrange
 TREECODEORDER=7
 THETA=0.7
-BATCHSIZE=2000
-MAXPARNODE=2000
+BATCHSIZE=50
+MAXPARNODE=50
 
 
 #####################################################################
@@ -111,7 +111,7 @@ MAXPARNODE=2000
 GAUGESHIFT=-0.5
 MIXING='Anderson'
 MIXINGPARAMETER=0.5
-MIXINGHISTORY=10  
+MIXINGHISTORY=10   
      
 INITIAL_GI_TOLERANCE=3e-2
 FINAL_GI_TOLERANCE=3e-5
@@ -124,24 +124,23 @@ GIFORM="Sequential"
 ################ MISCELLANEOUS PARAMETERS ###########################
 #####################################################################
 
-GPUPRESENT='True'
+GPUPRESENT='False'
 VTKFILEDIR='/Users/nathanvaughn/Desktop/'
 GRADIENTFREE='True'
 SYMMETRICITERATION='False'
 GRADIENTFREE='True' 
-TWOMESHSTART=999
 
      
 #####################################################################
 ##################### LAUNCH COMMANDS ###############################
 #####################################################################
 
-mpirun -n 8 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER \
+mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER \
                                         $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
                                         $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
                                         $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
                                         $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
-                                        $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $TWOMESHSTART $GIFORM
+                                        $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $GIFORM
 
        
        
