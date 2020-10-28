@@ -1,3 +1,1 @@
-adaptiveMesh/src/utilities/*.o3*
-adaptiveMesh/src/utilities/tree_order*
-adaptiveMesh/src/utilities/*.pyc
+results*
