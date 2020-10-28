@@ -1,0 +1,146 @@
+#!/bin/bash
+#SBATCH --job-name="gl-testing"
+#SBATCH --output="dataFiles/benzene_8ranks_gpu_testing_all_electron_%j.%N.out"
+#SBATCH --partition=gpu
+#SBATCH --nodes=4
+#SBATCH --gres=gpu:2
+#SBATCH --ntasks-per-node=2
+#SBATCH --mem-per-cpu=24gb  
+#SBATCH -t 00:20:00
+#SBATCH --no-requeue   
+#SBATCH -A krasny1
+ 
+
+cd /home/njvaughn/TAGI/3D-GreenIteration/src/Green-Iteration-Routines    
+
+
+#####################################################################
+################### EXAMPLE INPUT FILES #############################
+##################################################################### 
+
+#COREREPRESENTATION="AllElectron" 
+#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'    
+#INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+#INPUTFILE='molecularConfigurations/N2Auxiliary.csv'
+#INPUTFILE='molecularConfigurations/NAuxiliary.csv'  
+
+#COREREPRESENTATION="Pseudopotential"
+#INPUTFILE='molecularConfigurations/testingAuxiliaryPSP.csv' 
+#INPUTFILE='molecularConfigurations/C20AuxiliaryPSP.csv' 
+#INPUTFILE='molecularConfigurations/C60AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/Si2AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/Si10H16AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/Si30H40AuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'   
+#INPUTFILE='molecularConfigurations/berylliumAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/TiO2AuxiliaryPSP.csv' 
+#INPUTFILE='molecularConfigurations/carbonAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/N2AuxiliaryPSP.csv' 
+#INPUTFILE='molecularConfigurations/AluminumClusters/shell1AuxiliaryPSP.csv'
+  
+
+#####################################################################
+#################### SET INPUT/OUTPUT ###############################
+##################################################################### 
+ 
+SRCDIR='/home/njvaughn/TAGI/3D-GreenIteration/src/'  
+#INPUTFILE='molecularConfigurations/carbonMonoxideAuxiliary.csv' 
+INPUTFILE='molecularConfigurations/benzeneAuxiliary.csv' 
+#INPUTFILE='molecularConfigurations/hydrogenMoleculeAuxiliary.csv'
+#INPUTFILE='molecularConfigurations/berylliumAuxiliary.csv'  
+#INPUTFILE='molecularConfigurations/siliconAuxiliaryPSP.csv'
+#INPUTFILE='molecularConfigurations/AluminumClusters/shell1AuxiliaryPSP.csv'
+OUTPUTFILE="/home/njvaughn/all_electron_testing/${APPROXIMATIONNAME}_${TREECODEORDER}_theta_${THETA}_leafsize_${MAXPARNODE}_batchsize_${BATCHSIZE}.csv" 
+ 
+ 
+#####################################################################
+#################### MESH PARAMETERS ################################
+#####################################################################
+
+RESTART='False' 
+DOMAIN=20 
+MAXSIDELENGTH=5.5
+ADDITIONALDEPTHATATOMS=0
+SAVEDMESH='None'
+ 
+###########  ALL ELECTRON ################## 
+COREREPRESENTATION="AllElectron"
+MESHTYPE='ParentChildrenIntegral'
+MESHPARAM1=1e-6
+MESHPARAM2=0
+MESHPARAM3=0
+MESHPARAM4=0
+ 
+##########  PSEUDOPOTENTIAL ###############
+#COREREPRESENTATION="Pseudopotential"
+#MESHTYPE='coarsenedUniformTwoLevel'
+#MESHPARAM1=1.0 # near field spacing 
+#MESHPARAM2=8.0 # far field spacing 
+#MESHPARAM3=2.0 # ball radius
+#MESHPARAM4=-2
+
+  
+#####################################################################
+################### QUADRATURE PARAMETERS ###########################
+#####################################################################
+
+CELLORDER=3
+FINEORDER=3
+SINGULARITYHANDLING=subtraction 
+GAUSSIANALPHA=1.0 
+REGULARIZE='False'
+EPSILON=0.0
+
+
+#####################################################################
+################### TREECODE PARAMETERS #############################
+#####################################################################
+ 
+TREECODE='True'      
+APPROXIMATIONNAME=lagrange
+TREECODEORDER=7
+THETA=0.7
+BATCHSIZE=50
+MAXPARNODE=50
+
+
+#####################################################################
+################## ITERATION PARAMETERS #############################
+#####################################################################
+
+GAUGESHIFT=-0.5
+MIXING='Anderson'
+MIXINGPARAMETER=0.5
+MIXINGHISTORY=10   
+     
+INITIAL_GI_TOLERANCE=3e-2
+FINAL_GI_TOLERANCE=3e-5
+GRADUALSTEPS=8
+SCF_TOLERANCE=1e-4
+GIFORM="Sequential"
+
+
+#####################################################################
+################ MISCELLANEOUS PARAMETERS ###########################
+#####################################################################
+
+GPUPRESENT='False'
+VTKFILEDIR='/Users/nathanvaughn/Desktop/'
+GRADIENTFREE='True'
+SYMMETRICITERATION='False'
+GRADIENTFREE='True' 
+
+     
+#####################################################################
+##################### LAUNCH COMMANDS ###############################
+#####################################################################
+
+mpirun -n $1 python -u TAGI-main.py     $DOMAIN $MAXSIDELENGTH $CELLORDER $FINEORDER \
+                                        $GAUSSIANALPHA $GAUGESHIFT $MESHTYPE $MESHPARAM1 $MESHPARAM2 $SCF_TOLERANCE \
+                                        $INITIAL_GI_TOLERANCE $FINAL_GI_TOLERANCE $GRADUALSTEPS \
+                                        $OUTPUTFILE $INPUTFILE $COREREPRESENTATION $SRCDIR $VTKFILEDIR $GRADIENTFREE $SYMMETRICITERATION $MIXING $MIXINGPARAMETER $MIXINGHISTORY \
+                                        $GPUPRESENT $TREECODE $TREECODEORDER $THETA $MAXPARNODE $BATCHSIZE $MESHPARAM3 $MESHPARAM4 $RESTART $SAVEDMESH \
+                                        $SINGULARITYHANDLING $APPROXIMATIONNAME $REGULARIZE $EPSILON $GIFORM
+
+       
+       
