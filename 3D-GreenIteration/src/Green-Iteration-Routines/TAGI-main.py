@@ -655,7 +655,7 @@ if __name__ == "__main__":
     
 
     
-    eigenvalues=np.array(initialEnergies)/3
+#     eigenvalues=np.array(initialEnergies)/3
     rprint(rank, "Initial eigenvalues:  ",initialEnergies)
     rprint(rank, "Initial occupations:  ",initialOccupations)
 
