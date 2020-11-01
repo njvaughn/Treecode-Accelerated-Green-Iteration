@@ -11,8 +11,8 @@ Details of the method and results can be found in the paper and the thesis.
 
 # File Structure
 The main directory contains two sub-directories, **1D-GreenIteration-EigenvalueOne** and **3D-GreenIteration**.
-1D-GreenIt-EigOne contains routines that compare Green Iteration to an unpublished algorithm called eigenvalue-one for several 1-dimensional test problems for the Schrodinger equation.
-3D-GreenIterations contains the routines that perform 3D Kohn-Sham DFT calculations using Green Iteration.  
+1D-GreenIteration-EigenvalueOne contains routines that compare Green Iteration to an unpublished algorithm called eigenvalue-one for several 1-dimensional test problems for the Schrodinger equation.
+3D-GreenIteration contains the routines that perform 3D Kohn-Sham DFT calculations using Green Iteration.  
 
 
 # Building
